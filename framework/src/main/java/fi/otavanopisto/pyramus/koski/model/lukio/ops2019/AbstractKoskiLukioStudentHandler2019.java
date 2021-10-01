@@ -52,6 +52,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 
 public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler {
 
+  // KU, LI, MU, TE kuuluisivat listaan, mutta ilmoitetaan paikallisina
   private static final EnumSet<KoskiOppiaineetYleissivistava> VALTAKUNNALLISETOPPIAINEET2019 = EnumSet.of(
       KoskiOppiaineetYleissivistava.BI,
       KoskiOppiaineetYleissivistava.ET,
@@ -60,12 +61,8 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       KoskiOppiaineetYleissivistava.GE,
       KoskiOppiaineetYleissivistava.HI,
       KoskiOppiaineetYleissivistava.KE,
-      KoskiOppiaineetYleissivistava.KU,
-      KoskiOppiaineetYleissivistava.LI,
-      KoskiOppiaineetYleissivistava.MU,
       KoskiOppiaineetYleissivistava.OP,
       KoskiOppiaineetYleissivistava.PS,
-      KoskiOppiaineetYleissivistava.TE,
       KoskiOppiaineetYleissivistava.YH
   );
 
@@ -92,7 +89,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritusWSubject, studentSubjects, accomplished);
       
       if (settings.isReportedCredit(credit) && oppiaineenSuoritusWSubject != null) {
-        LukionOpintojaksonSuoritus2019 kurssiSuoritus = createKurssiSuoritus(student, studentSubjects, ops, credit);
+        LukionOpintojaksonSuoritus2019 kurssiSuoritus = createKurssiSuoritus(student, studentSubjects, oppiaineenSuoritusWSubject.isPaikallinenOppiaine(), ops, credit);
         if (kurssiSuoritus != null) {
           oppiaineenSuoritusWSubject.getOppiaineenSuoritus().addOsasuoritus(kurssiSuoritus);
         } else {
@@ -192,7 +189,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
 
       LukionMuidenOpintojenTunniste2019 tunniste = new LukionMuidenOpintojenTunniste2019(LukionMuutOpinnot.LD);
       LukionOsasuoritus2019 mo = new MuidenLukioOpintojenSuoritus2019(tunniste);
-      OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> os = new OppiaineenSuoritusWithSubject<>(subject, mo);
+      OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> os = new OppiaineenSuoritusWithSubject<>(subject, false, mo);
       map.put("LD", os);
       return os;
     }
@@ -210,7 +207,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       if (StringUtils.equals(subjectCode, studentSubjects.getMath())) {
         LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusMatematiikka2019(
             OppiaineMatematiikka.valueOf(subjectCode), isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -219,7 +216,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusAidinkieli2019(
             OppiaineAidinkieliJaKirjallisuus.AI1, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -227,7 +224,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusAidinkieli2019(
             OppiaineAidinkieliJaKirjallisuus.AI7, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -241,7 +238,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
           KoskiOppiaineetYleissivistava valinta = studentSubjects.koskiKoodi(ops, subjectCode);          
           LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusVierasKieli2019(valinta, kieli, 
               isPakollinenOppiaine(student, valinta));
-          return mapSubject(subject, subjectCode, tunniste, map);
+          return mapSubject(subject, subjectCode, false, tunniste, map);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -260,7 +257,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
         
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen2019(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-        return mapSubject(subject, "KT", tunniste, map);
+        return mapSubject(subject, "KT", false, tunniste, map);
       } else
         return null;
     }
@@ -270,13 +267,13 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
 
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen2019(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, false, tunniste, map);
     } else {
       // Other local subject
       
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       LukionOppiaineenSuoritusPaikallinen2019 tunniste = new LukionOppiaineenSuoritusPaikallinen2019(paikallinenKoodi, false, kuvaus(subject.getName()));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, true, tunniste, map);
     }
   }
 
@@ -288,16 +285,16 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       : false;
   }
 
-  private OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> mapSubject(Subject subject, String subjectCode, LukionOppiaineenTunniste2019 tunniste, Map<String, OppiaineenSuoritusWithSubject<LukionOsasuoritus2019>> map) {
+  private OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> mapSubject(Subject subject, String subjectCode, boolean paikallinenOppiaine, LukionOppiaineenTunniste2019 tunniste, Map<String, OppiaineenSuoritusWithSubject<LukionOsasuoritus2019>> map) {
     // TODO
     boolean suoritettuErityisenäTutkintona = false;
     LukionOppiaineenSuoritus2019 lukionOppiaineenSuoritus = new LukionOppiaineenSuoritus2019(tunniste, suoritettuErityisenäTutkintona);
-    OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> os = new OppiaineenSuoritusWithSubject<>(subject, lukionOppiaineenSuoritus);
+    OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> os = new OppiaineenSuoritusWithSubject<>(subject, paikallinenOppiaine, lukionOppiaineenSuoritus);
     map.put(subjectCode, os);
     return os;
   }
   
-  protected LukionOpintojaksonSuoritus2019 createKurssiSuoritus(Student student, StudentSubjectSelections studentSubjects, OpiskelijanOPS ops, CreditStub courseCredit) {
+  protected LukionOpintojaksonSuoritus2019 createKurssiSuoritus(Student student, StudentSubjectSelections studentSubjects, boolean paikallinenOppiaine, OpiskelijanOPS ops, CreditStub courseCredit) {
     String kurssiKoodi = courseCredit.getCourseCode();
     LukionOpintojaksonTunniste2019 tunniste;
 
@@ -306,7 +303,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
     Laajuus laajuus = kurssinLaajuus(student, courseCredit);
     SuorituksenTyyppi suorituksenTyyppi;
 
-    if (EnumUtils.isValidEnum(ModuuliKoodistoLOPS2021.class, kurssiKoodi)) {
+    if (!paikallinenOppiaine && EnumUtils.isValidEnum(ModuuliKoodistoLOPS2021.class, kurssiKoodi)) {
       /**
        * Tässä yhteydessä:
        * * pakollinen => valtakunnallinen pakollinen
