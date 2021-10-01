@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -135,6 +137,9 @@ import fi.otavanopisto.security.LoggedIn;
 @RequestScoped
 public class StudentRESTService extends AbstractRESTService {
 
+  @Inject
+  private Logger logger;
+  
   @Inject
   private RESTSecurity restSecurity;
 
@@ -2904,8 +2909,7 @@ public class StudentRESTService extends AbstractRESTService {
       StudentTOR studentTOR = StudentTORController.constructStudentTOR(student);
       numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
     }
     
     response.setNumberCompletedCourses(numCompletedCourses);
