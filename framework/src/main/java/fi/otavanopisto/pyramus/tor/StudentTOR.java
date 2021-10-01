@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.students.tor;
+package fi.otavanopisto.pyramus.tor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +34,16 @@ public class StudentTOR {
     return problems;
   }
 
+  public double getTotalCourseLengths(TORCourseLengthUnit lengthUnit) {
+    return subjects.stream()
+      .flatMap(torSubject -> torSubject.getCourses().stream())
+      .filter(torCourse -> torCourse.isPassed())
+      .filter(torCourse -> torCourse.getLengthUnit() == lengthUnit)
+      .mapToDouble(torCourse -> torCourse.getCourseLength())
+      .filter(Objects::nonNull)
+      .sum();
+  }
+  
   protected void postProcess() {
     Collections.sort(subjects, Comparator.comparing(TORSubject::getName));
     subjects.forEach(subject -> subject.postProcess(problems));

@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.students.tor;
+package fi.otavanopisto.pyramus.tor;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +22,6 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
-import fi.otavanopisto.pyramus.rest.model.Grade;
 
 public class StudentTORController {
 
@@ -129,7 +128,7 @@ public class StudentTORController {
     }
     
     Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
-    fi.otavanopisto.pyramus.rest.model.Subject subjectModel = new fi.otavanopisto.pyramus.rest.model.Subject(
+    fi.otavanopisto.pyramus.tor.Subject subjectModel = new fi.otavanopisto.pyramus.tor.Subject(
         subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived());
     
     TORSubject torSubject = tor.findSubject(subject.getId());

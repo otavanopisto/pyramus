@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -119,10 +121,13 @@ import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
-import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
+import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
+import fi.otavanopisto.pyramus.tor.StudentTOR;
+import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -132,6 +137,9 @@ import fi.otavanopisto.security.LoggedIn;
 @RequestScoped
 public class StudentRESTService extends AbstractRESTService {
 
+  @Inject
+  private Logger logger;
+  
   @Inject
   private RESTSecurity restSecurity;
 
@@ -2881,6 +2889,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Education subtype does not exist").build();
     }
     
+    // TODO StudentTOR might be able to solve this more elegantly
+    
     int numCompletedCourses = assessmentController.getAcceptedCourseCount(
         student,
         null,
@@ -2894,7 +2904,17 @@ public class StudentRESTService extends AbstractRESTService {
         true,
         student.getCurriculum());
 
+    double numCreditPoints = 0;
+    try {
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student);
+      numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op);
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
+    }
+    
     response.setNumberCompletedCourses(numCompletedCourses);
+    response.setNumberCreditPoints(numCreditPoints);
+    
     return Response.ok(response).build();
   }
 

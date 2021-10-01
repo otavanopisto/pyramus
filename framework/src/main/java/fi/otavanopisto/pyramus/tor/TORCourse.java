@@ -1,12 +1,10 @@
-package fi.otavanopisto.pyramus.views.students.tor;
+package fi.otavanopisto.pyramus.tor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-
-import fi.otavanopisto.pyramus.rest.model.Subject;
 
 public class TORCourse {
 

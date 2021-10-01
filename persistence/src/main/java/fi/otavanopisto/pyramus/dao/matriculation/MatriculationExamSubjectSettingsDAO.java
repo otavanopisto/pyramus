@@ -50,4 +50,19 @@ public class MatriculationExamSubjectSettingsDAO extends PyramusEntityDAO<Matric
     return persist(subjectSettings);
   }
 
+  public Date findMaxExamDate(MatriculationExam exam) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Date> criteria = criteriaBuilder.createQuery(Date.class);
+    Root<MatriculationExamSubjectSettings> root = criteria.from(MatriculationExamSubjectSettings.class);
+    
+    criteria.select(criteriaBuilder.greatest(root.get(MatriculationExamSubjectSettings_.examDate)));
+    criteria.where(
+        criteriaBuilder.equal(root.get(MatriculationExamSubjectSettings_.exam), exam)
+    );
+    
+    return entityManager.createQuery(criteria).getSingleResult();
+  }
+
 }

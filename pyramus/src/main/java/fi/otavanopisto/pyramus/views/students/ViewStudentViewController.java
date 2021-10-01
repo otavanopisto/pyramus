@@ -84,10 +84,10 @@ import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.tor.StudentTOR;
+import fi.otavanopisto.pyramus.tor.StudentTORController;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
-import fi.otavanopisto.pyramus.views.students.tor.StudentTOR;
-import fi.otavanopisto.pyramus.views.students.tor.StudentTORController;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
