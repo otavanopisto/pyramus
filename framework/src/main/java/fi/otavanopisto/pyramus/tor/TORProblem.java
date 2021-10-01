@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.students.tor;
+package fi.otavanopisto.pyramus.tor;
 
 public class TORProblem {
 

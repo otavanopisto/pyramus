@@ -5,8 +5,7 @@ public class MatriculationEligibilities {
   public MatriculationEligibilities() {
   }
   
-  public MatriculationEligibilities(boolean compulsoryEducation, boolean upperSecondarySchoolCurriculum) {
-    this.compulsoryEducation = compulsoryEducation;
+  public MatriculationEligibilities(boolean upperSecondarySchoolCurriculum) {
     this.upperSecondarySchoolCurriculum = upperSecondarySchoolCurriculum;
   }
 
@@ -18,14 +17,5 @@ public class MatriculationEligibilities {
     this.upperSecondarySchoolCurriculum = upperSecondarySchoolCurriculum;
   }
 
-  public boolean isCompulsoryEducation() {
-    return compulsoryEducation;
-  }
-
-  public void setCompulsoryEducation(boolean compulsoryEducation) {
-    this.compulsoryEducation = compulsoryEducation;
-  }
-
-  private boolean compulsoryEducation;
   private boolean upperSecondarySchoolCurriculum;
 }

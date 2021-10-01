@@ -1,13 +1,16 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
@@ -26,6 +29,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -52,6 +56,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
@@ -95,6 +101,9 @@ public class StudentController {
   @Inject
   private StudentLodgingPeriodDAO studentLodgingPeriodDAO;
   
+  @Inject
+  private StudentStudyPeriodDAO studentStudyPeriodDAO;
+
   @Inject
   private CreditLinkDAO creditLinkDAO;
 
@@ -360,6 +369,50 @@ public class StudentController {
   
   public void deleteLodgingPeriod(StudentLodgingPeriod period) {
     studentLodgingPeriodDAO.delete(period);
+  }
+  
+  /* Study Period */
+  
+  public EnumSet<StudentStudyPeriodType> getActiveStudyPeriods(Student student, Date date) {
+    List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
+    
+    List<StudentStudyPeriod> filteredPeriods = studyPeriods.stream()
+        .filter(studyPeriod -> studyPeriod != null && studyPeriod.getBegin() != null)
+        .sorted(Comparator.comparing(StudentStudyPeriod::getBegin))
+        .collect(Collectors.toList());
+
+    EnumSet<StudentStudyPeriodType> result = EnumSet.noneOf(StudentStudyPeriodType.class);
+    
+    for (StudentStudyPeriod studyPeriod : filteredPeriods) {
+      // Potentially (may be cancelled by another period) active period?
+      boolean isPotentiallyActivePeriod = 
+          (date.equals(studyPeriod.getBegin()) || date.after(studyPeriod.getBegin())) && 
+          (studyPeriod.getEnd() == null || date.equals(studyPeriod.getEnd()) || date.before(studyPeriod.getEnd()));
+      
+      if (isPotentiallyActivePeriod) {
+        switch (studyPeriod.getPeriodType()) {
+          case COMPULSORY_EDUCATION:
+            // Compulsory and non-compulsory are mutually exclusive - the latter period cancels the previous 
+            result.add(StudentStudyPeriodType.COMPULSORY_EDUCATION);
+            result.remove(StudentStudyPeriodType.NON_COMPULSORY_EDUCATION);
+          break;
+          
+          case NON_COMPULSORY_EDUCATION:
+            // Compulsory and non-compulsory are mutually exclusive - the latter period cancels the previous 
+            result.add(StudentStudyPeriodType.NON_COMPULSORY_EDUCATION);
+            result.remove(StudentStudyPeriodType.COMPULSORY_EDUCATION);
+          break;
+            
+          case PROLONGED_STUDYENDDATE:
+          case TEMPORARILY_SUSPENDED:
+          case EXTENDED_COMPULSORY_EDUCATION:
+            result.add(studyPeriod.getPeriodType());
+          break;
+        }
+      }
+    }
+
+    return result;
   }
 
 }
