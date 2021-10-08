@@ -34,6 +34,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
+import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.settings.KoskiIntegrationSettingsWrapper;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 import net.sf.json.JSONObject;
@@ -137,6 +138,16 @@ public class KoskiSettings {
           OpintojenRahoitus or = OpintojenRahoitus.reverseLookup(opintojenRahoitusStr);
           if (or != null) {
             opintojenRahoitus.put(studyProgrammeId, or);
+          }
+        }
+      }
+      
+      if (studyProgramme.has("perusopetuksenSuoritusTapa")) {
+        String pstString = studyProgramme.getString("perusopetuksenSuoritusTapa");
+        if (EnumUtils.isValidEnum(PerusopetuksenSuoritusTapa.class, pstString)) {
+          PerusopetuksenSuoritusTapa pst = EnumUtils.getEnum(PerusopetuksenSuoritusTapa.class, pstString);
+          if (pst != null) {
+            perusopetuksenSuoritusTapa.put(studyProgrammeId, pst);
           }
         }
       }
@@ -324,6 +335,11 @@ public class KoskiSettings {
     return studyEndReason != null ? getSettings().getKoski().getStudyEndReasonMapping(studyEndReason.getId()) : null;
   }
 
+  public PerusopetuksenSuoritusTapa getSuoritusTapa(Long studyProgrammeId, PerusopetuksenSuoritusTapa defaultValue) {
+    return perusopetuksenSuoritusTapa.containsKey(studyProgrammeId) 
+        ? perusopetuksenSuoritusTapa.get(studyProgrammeId) : defaultValue;
+  }
+  
   private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
@@ -331,6 +347,7 @@ public class KoskiSettings {
   @Deprecated private Set<Long> yksityisopiskelijaStudyProgrammes = new HashSet<Long>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, OpintojenRahoitus> opintojenRahoitus = new HashMap<>();
+  private Map<Long, PerusopetuksenSuoritusTapa> perusopetuksenSuoritusTapa = new HashMap<>();
   private Map<Long, String> toimipisteOIDt = new HashMap<>();
   private Map<String, String> diaarinumerot = new HashMap<>();
   private Map<Long, String> courseTypeMapping = new HashMap<>();

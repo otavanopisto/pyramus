@@ -7,12 +7,16 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.lukio.Maksuttomuus;
 import fi.otavanopisto.pyramus.koski.model.lukio.OikeuttaMaksuttomuuteenPidennetty;
@@ -22,6 +26,12 @@ public abstract class AbstractAikuistenPerusopetuksenHandler extends KoskiStuden
   @Inject
   private StudentStudyPeriodDAO studentStudyPeriodDAO;
 
+  protected PerusopetuksenSuoritusTapa suoritusTapa(Student student) {
+    return StringUtils.equals(userVariableDAO.findByUserAndKey(student, KoskiConsts.UserVariables.PK_GRADE_UPGRADE), "1")
+        ? PerusopetuksenSuoritusTapa.erityinentutkinto 
+        : settings.getSuoritusTapa(student.getStudyProgramme().getId(), PerusopetuksenSuoritusTapa.koulutus);
+  }
+  
   protected AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
     AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot = new AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot();
     
