@@ -144,7 +144,7 @@ public class MuikkuRESTService {
     // Endpoint only supports creation of managers and teachers
     
     Role role = Role.valueOf(payload.getRole());
-    if (role != Role.MANAGER && role != Role.TEACHER && role != Role.STUDY_GUIDER && role != Role.STUDY_PROGRAMME_LEADER) {
+    if (role != Role.MANAGER && role != Role.TEACHER) {
       return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
     }
     
@@ -186,7 +186,7 @@ public class MuikkuRESTService {
     Role role;
     try {
       role = Role.valueOf(payload.getRole());
-      if (role != Role.MANAGER && role != Role.TEACHER && role != Role.STUDY_GUIDER && role != Role.STUDY_PROGRAMME_LEADER) {
+      if (role != Role.MANAGER && role != Role.TEACHER) {
         return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
       }
     }
@@ -202,8 +202,8 @@ public class MuikkuRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     Role existingRole = staffMember.getRole();
-    if (existingRole != Role.MANAGER && existingRole != Role.TEACHER && existingRole != Role.STUDY_GUIDER && existingRole != Role.STUDY_PROGRAMME_LEADER) {
-      return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", existingRole)).build();
+    if (existingRole != Role.MANAGER && existingRole != Role.TEACHER) {
+      role = existingRole;
     }
 
     List<Email> staffMemberEmails = userController.listStaffMemberEmails(staffMember);
