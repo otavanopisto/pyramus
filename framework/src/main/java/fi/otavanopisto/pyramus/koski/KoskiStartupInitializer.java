@@ -31,6 +31,7 @@ public class KoskiStartupInitializer {
 
     ensureUserVariableExists(KoskiConsts.UserVariables.STARTED_UNDER18, "Aloittanut lukio-op. alle 18-vuotiaana", VariableType.BOOLEAN, true);
     ensureUserVariableExists(KoskiConsts.UserVariables.UNDER18_STARTREASON, "Alle 18-vuotiaana aloittaneen aloittamissyy", VariableType.TEXT, true);
+    ensureUserVariableExists(KoskiConsts.UserVariables.PK_GRADE_UPGRADE, "Perusopetuksen arvosanojen korottaja", VariableType.BOOLEAN, true);
 
     // Subject Selections
     
