@@ -367,10 +367,10 @@
                 <jsp:param name="helpLocale" value="students.createStudent.lodgingHelp"/>
               </jsp:include>
               
-              <div id="noLodgingPeriodsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
-                <span><fmt:message key="students.createStudent.noLodgingPeriodsAddedPreFix"/> <span onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable'));" class="genericTableAddRowLink"><fmt:message key="students.createStudent.noLodgingPeriodsAddedClickHereLink"/></span>.</span>
+              <div class="genericTableAddRowContainer">
+                <span class="genericTableAddRowLinkContainer" onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable'));"><fmt:message key="students.createStudent.addLodgingPeriodLink"/></span>
               </div>
-              
+
               <div id="lodgingPeriodsTableContainer"></div>
             </div>
 

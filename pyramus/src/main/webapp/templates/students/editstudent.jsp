@@ -41,7 +41,7 @@
       }
 
       function addLodgingPeriodTableRow(lodgingPeriodTable) {
-        lodgingPeriodTable.addRow([-1, '', '', '', '']);
+        lodgingPeriodTable.addRow([-1, '', '', '']);
       }
 
       function addStudyPeriodTableRow(studyPeriodTable) {
@@ -432,47 +432,17 @@
             dataType: 'date',
             editable: true,
             paramName: 'end'
-          },{
-            width: 30,
-            left: 8 + 160 + 8 + 160 + 8,
-            dataType: 'button',
-            paramName: 'addButton',
-            hidden: true,
-            imgsrc: GLOBAL_contextPath + '/gfx/list-add.png',
-            tooltip: '<fmt:message key="students.editStudent.lodgingPeriodsTable.addTooltip"/>',
-            onclick: function (event) {
-              addLodgingPeriodTableRow(event.tableComponent);
-            }
           }, {
             width: 30,
             left: 8 + 160 + 8 + 160 + 8,
             dataType: 'button',
             paramName: 'removeButton',
-            hidden: true,
             imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
             tooltip: '<fmt:message key="students.editStudent.lodgingPeriodsTable.removeTooltip"/>',
             onclick: function (event) {
               event.tableComponent.deleteRow(event.row);
-              
-              if (event.tableComponent.getRowCount() == 0) {
-                $('noLodgingPeriodsAddedMessageContainer.' + studentId).setStyle({
-                  display : ''
-                });
-              }
             }
           }]
-        });
-
-        lodgingPeriodsTable.addListener("rowAdd", function (event) {
-          var table = event.tableComponent; 
-          var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
-          lodgingPeriodsTable.showCell(event.row, table.getNamedColumnIndex(enabledButton));
-
-          if (table.getRowCount() > 0) {
-       	    $('noLodgingPeriodsAddedMessageContainer.' + studentId).setStyle({
-       	      display : 'none'
-       	    });
-       	  }
         });
 
         return lodgingPeriodsTable;
@@ -753,7 +723,6 @@
               lodgingPeriods[i].id,
               lodgingPeriods[i].begin,
               lodgingPeriods[i].end,
-              '',
               ''
             ]);
           }
@@ -1497,10 +1466,10 @@
                   <jsp:param name="helpLocale" value="students.editStudent.lodgingHelp"/>
                 </jsp:include>
 
-                <div id="noLodgingPeriodsAddedMessageContainer.${student.id}" class="genericTableNotAddedMessageContainer">
-                  <span><fmt:message key="students.editStudent.noLodgingPeriodsAddedPreFix"/> <span onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable.${student.id}'));" class="genericTableAddRowLink"><fmt:message key="students.editStudent.noLodgingPeriodsAddedClickHereLink"/></span></span>
+                <div class="genericTableAddRowContainer">
+                  <span class="genericTableAddRowLinkContainer" onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable.${student.id}'));"><fmt:message key="students.editStudent.addLodgingPeriodLink"/></span>
                 </div>
-                
+
                 <div id="lodgingPeriodsTableContainer.${student.id}"></div>
               </div>
   
