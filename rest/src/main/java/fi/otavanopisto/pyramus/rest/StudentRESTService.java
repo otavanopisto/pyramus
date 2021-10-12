@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -117,6 +118,8 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentStudyEndReason
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
@@ -2859,6 +2862,136 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/courseActivity")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentStudyActivity(
+      @PathParam("STUDENTID") Long studentId,
+      @QueryParam("courseIds") String courseIds,
+      @QueryParam("includeTransferCredits") boolean includeTransferCredits) {
+    
+    // Access check
+
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    List<CourseActivity> courseActivities = new ArrayList<>();
+    List<CreditLink> linkedAssessments = assessmentController.listLinkedCreditsByStudent(student);
+    
+    // Get courses of the student (all or those specified with courseIds)
+    
+    List<CourseStudent> courseStudents;
+    if (StringUtils.isEmpty(courseIds)) {
+      courseStudents = courseController.listByStudent(student);
+    }
+    else {
+      courseStudents = new ArrayList<>();
+      String[] courseIdArray = courseIds.split(",");
+      for (int i = 0; i < courseIdArray.length; i++) {
+        Course course = courseController.findCourseById(new Long(courseIdArray[i]));
+        if (course != null) {
+          CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
+          if (courseStudent != null) {
+            courseStudents.add(courseStudent);
+          }
+        }
+      }
+    }
+    
+    // Go through the courses
+    
+    for (CourseStudent courseStudent : courseStudents) {
+      Course course = courseStudent.getCourse();
+      
+      // Construct course base information and assume it's ongoing
+      
+      CourseActivity courseActivity = new CourseActivity();
+      courseActivity.setCourseId(course.getId());
+      courseActivity.setCurriculumId(course.getCurriculums().stream().map(Curriculum::getId).collect(Collectors.toList()));
+      String courseName = course.getName();
+      if (!StringUtils.isEmpty(course.getNameExtension())) {
+        courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+      }
+      courseActivity.setCourseName(courseName);
+      courseActivity.setActivityDate(courseStudent.getEnrolmentTime());
+      courseActivity.setState(CourseActivityState.ONGOING);
+      
+      // Status override if course has been graded
+      
+      CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+      if (courseAssessment != null && courseAssessment.getGrade() != null) {
+        courseActivity.setGrade(courseAssessment.getGrade().getName());
+        courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
+        courseActivity.setActivityDate(courseAssessment.getDate());
+        courseActivity.setState(CourseActivityState.GRADED);
+      }
+      
+      // Status override if course has been graded as linked credit
+      
+      CreditLink linkedAssessment = linkedAssessments.stream()
+          .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
+          .findAny()
+          .orElse(null);
+      if (linkedAssessment != null) {
+        courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
+        courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
+        courseActivity.setActivityDate(linkedAssessment.getCreated());
+        courseActivity.setState(CourseActivityState.GRADED);
+      }
+      
+      // Status override if student has requested the course to be assessed
+      
+      CourseAssessmentRequest request = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
+      if (request != null && !request.getHandled() && request.getCreated().getTime() > courseActivity.getActivityDate().getTime()) {
+        courseActivity.setActivityDate(request.getCreated());
+        courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
+      }
+      
+      courseActivities.add(courseActivity);
+    }    
+
+    // Optionally include transfer credits as well
+    
+    if (includeTransferCredits) {
+      List<TransferCredit> transferCredits = studentController.listStudentTransferCredits(student);
+      for (TransferCredit transferCredit : transferCredits) {
+        CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCourseName(transferCredit.getCourseName());
+        courseActivity.setGrade(transferCredit.getGrade().getName());
+        courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
+        courseActivity.setState(CourseActivityState.TRANSFERRED);
+        courseActivities.add(courseActivity);
+      }
+      
+      // Linked transfer credits
+
+      List<CreditLink> linkedTransferCredits = includeTransferCredits
+          ? studentController.listStudentLinkedTransferCredits(student)
+          : Collections.emptyList();
+      for (CreditLink creditLink : linkedTransferCredits) {
+        TransferCredit transferCredit = (TransferCredit) creditLink.getCredit();
+        CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCourseName(transferCredit.getCourseName());
+        courseActivity.setGrade(transferCredit.getGrade().getName());
+        courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
+        courseActivity.setState(CourseActivityState.TRANSFERRED);
+        courseActivities.add(courseActivity);
+      }
+    }
+    
+    return Response.ok(courseActivities).build();
+  }
+  
   @Path("/students/{STUDENTID:[0-9]*}/courseStats")
   @GET
   @RESTPermit(handling = Handling.INLINE)

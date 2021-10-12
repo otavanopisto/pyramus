@@ -130,7 +130,7 @@ public class CompositeRESTService {
           if (staffMember == null || !studentController.isStudentGuider(staffMember, courseStudent.getStudent()))
           continue;
         }
-        CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestByCourseStudent(courseStudent);
+        CourseAssessmentRequest courseAssessmentRequest = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
         CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setCourseStudentId(courseStudent.getId());
