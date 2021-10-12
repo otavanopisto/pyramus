@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
@@ -25,6 +27,8 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
+import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -46,6 +50,10 @@ import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
@@ -63,6 +71,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
+import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
 
 @Dependent
 @Stateless
@@ -109,7 +119,13 @@ public class StudentController {
 
   @Inject
   private UserVariableDAO userVariableDAO;
+
+  @Inject
+  private CourseAssessmentDAO courseAssessmentDAO;
   
+  @Inject
+  private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
+
   @Inject
   private KoskiClient koskiClient;
   
@@ -369,6 +385,104 @@ public class StudentController {
   
   public void deleteLodgingPeriod(StudentLodgingPeriod period) {
     studentLodgingPeriodDAO.delete(period);
+  }
+  
+  /* Course activity */
+  
+  public List<CourseActivity> listCourseActivities(List<CourseStudent> courseStudents, boolean includeTransferCredits) {
+    if (courseStudents.isEmpty()) {
+      return Collections.emptyList();
+    }
+    Student student = courseStudents.get(0).getStudent();
+    List<CourseActivity> courseActivities = new ArrayList<>();
+    List<CreditLink> linkedAssessments = creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment); 
+    
+    // Go through the courses
+    
+    for (CourseStudent courseStudent : courseStudents) {
+      Course course = courseStudent.getCourse();
+      
+      // Construct course base information and assume it's ongoing
+      
+      CourseActivity courseActivity = new CourseActivity();
+      courseActivity.setCourseId(course.getId());
+      courseActivity.setCurriculumId(course.getCurriculums().stream().map(Curriculum::getId).collect(Collectors.toList()));
+      String courseName = course.getName();
+      if (!StringUtils.isEmpty(course.getNameExtension())) {
+        courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+      }
+      courseActivity.setCourseName(courseName);
+      courseActivity.setActivityDate(courseStudent.getEnrolmentTime());
+      courseActivity.setState(CourseActivityState.ONGOING);
+      
+      // Status override if course has been graded
+      
+      CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE); 
+      if (courseAssessment != null && courseAssessment.getGrade() != null) {
+        courseActivity.setGrade(courseAssessment.getGrade().getName());
+        courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
+        courseActivity.setActivityDate(courseAssessment.getDate());
+        courseActivity.setState(CourseActivityState.GRADED);
+      }
+      
+      // Status override if course has been graded as linked credit
+      
+      CreditLink linkedAssessment = linkedAssessments.stream()
+          .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
+          .findAny()
+          .orElse(null);
+      if (linkedAssessment != null) {
+        courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
+        courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
+        courseActivity.setActivityDate(linkedAssessment.getCreated());
+        courseActivity.setState(CourseActivityState.GRADED);
+      }
+      
+      // Status override if student has requested the course to be assessed
+      
+      CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
+      if (request != null && !request.getHandled() && request.getCreated().getTime() > courseActivity.getActivityDate().getTime()) {
+        courseActivity.setActivityDate(request.getCreated());
+        courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
+      }
+      
+      courseActivities.add(courseActivity);
+    }    
+
+    // Optionally include transfer credits as well
+    
+    if (includeTransferCredits) {
+      List<TransferCredit> transferCredits = listStudentTransferCredits(student);
+      for (TransferCredit transferCredit : transferCredits) {
+        CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCurriculumId(Collections.emptyList());
+        courseActivity.setCourseName(transferCredit.getCourseName());
+        courseActivity.setGrade(transferCredit.getGrade().getName());
+        courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
+        courseActivity.setActivityDate(transferCredit.getDate());
+        courseActivity.setState(CourseActivityState.TRANSFERRED);
+        courseActivities.add(courseActivity);
+      }
+      
+      // Linked transfer credits
+
+      List<CreditLink> linkedTransferCredits = includeTransferCredits
+          ? listStudentLinkedTransferCredits(student)
+          : Collections.emptyList();
+      for (CreditLink creditLink : linkedTransferCredits) {
+        TransferCredit transferCredit = (TransferCredit) creditLink.getCredit();
+        CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCourseName(transferCredit.getCourseName());
+        courseActivity.setGrade(transferCredit.getGrade().getName());
+        courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
+        courseActivity.setActivityDate(transferCredit.getDate());
+        courseActivity.setState(CourseActivityState.TRANSFERRED);
+        courseActivities.add(courseActivity);
+      }
+    }
+    
+    return courseActivities;
+    
   }
   
   /* Study Period */
