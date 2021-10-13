@@ -419,6 +419,7 @@ public class StudentController {
       
       CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE); 
       if (courseAssessment != null && courseAssessment.getGrade() != null) {
+        courseActivity.setText(courseAssessment.getVerbalAssessment());
         courseActivity.setGrade(courseAssessment.getGrade().getName());
         courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
         courseActivity.setActivityDate(courseAssessment.getDate());
@@ -432,6 +433,7 @@ public class StudentController {
           .findAny()
           .orElse(null);
       if (linkedAssessment != null) {
+        courseActivity.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
         courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
         courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
         courseActivity.setActivityDate(linkedAssessment.getCreated());
@@ -442,6 +444,7 @@ public class StudentController {
       
       CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
       if (request != null && !request.getHandled() && request.getCreated().getTime() > courseActivity.getActivityDate().getTime()) {
+        courseActivity.setText(request.getRequestText());
         courseActivity.setActivityDate(request.getCreated());
         courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
       }

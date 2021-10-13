@@ -61,11 +61,20 @@ public class CourseActivity {
     this.state = state;
   }
 
+  public String getText() {
+    return text;
+  }
+
+  public void setText(String text) {
+    this.text = text;
+  }
+
   private Long courseId;
   private String courseName;
   private List<Long> curriculumIds;
   private String grade;
   private Boolean passingGrade;
+  private String text;
   private Date activityDate;
   private CourseActivityState state;
 
