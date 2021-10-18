@@ -127,7 +127,7 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus = new AikuistenPerusopetuksenOppiaineenSuoritus(oppiaineenTunniste );
 
       PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = PerusopetuksenOppiaineenOppimaaranSuoritus.from(
-          oppiaineenSuoritus, PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
+          oppiaineenSuoritus, suoritusTapa(student), Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
       opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     
@@ -181,6 +181,8 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       }
     }
     
+    PerusopetuksenSuoritusTapa perusopetuksenSuoritusTapa = suoritusTapa(student);
+
     for (OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritus : map.values()) {
       if (CollectionUtils.isEmpty(oppiaineenSuoritus.getOppiaineenSuoritus().getOsasuoritukset())) {
         // Skip empty subjects
@@ -206,7 +208,7 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       }
       
       PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = PerusopetuksenOppiaineenOppimaaranSuoritus.from(
-          oppiaineenSuoritus.getOppiaineenSuoritus(), PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
+          oppiaineenSuoritus.getOppiaineenSuoritus(), perusopetuksenSuoritusTapa, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
       oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaineenSuoritus.getOps()));
       oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       
