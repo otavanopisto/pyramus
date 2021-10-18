@@ -423,6 +423,7 @@ public class StudentController {
         courseActivity.setGrade(courseAssessment.getGrade().getName());
         courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
         courseActivity.setActivityDate(courseAssessment.getDate());
+        courseActivity.setGradeDate(courseAssessment.getDate());
         courseActivity.setState(CourseActivityState.GRADED);
       }
       
@@ -437,6 +438,7 @@ public class StudentController {
         courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
         courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
         courseActivity.setActivityDate(linkedAssessment.getCreated());
+        courseActivity.setGradeDate(linkedAssessment.getCreated());
         courseActivity.setState(CourseActivityState.GRADED);
       }
       
@@ -485,7 +487,6 @@ public class StudentController {
     }
     
     return courseActivities;
-    
   }
   
   /* Study Period */

@@ -69,11 +69,20 @@ public class CourseActivity {
     this.text = text;
   }
 
+  public Date getGradeDate() {
+    return gradeDate;
+  }
+
+  public void setGradeDate(Date gradeDate) {
+    this.gradeDate = gradeDate;
+  }
+
   private Long courseId;
   private String courseName;
   private List<Long> curriculumIds;
   private String grade;
   private Boolean passingGrade;
+  private Date gradeDate;
   private String text;
   private Date activityDate;
   private CourseActivityState state;

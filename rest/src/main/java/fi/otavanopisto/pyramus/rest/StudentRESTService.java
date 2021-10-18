@@ -2888,7 +2888,6 @@ public class StudentRESTService extends AbstractRESTService {
     List<CourseStudent> courseStudents;
     if (StringUtils.isEmpty(courseIds)) {
       courseStudents = courseController.listByStudent(student);
-      System.out.println("Filter not defined, " + student.getId() + " has " + courseStudents.size() + " courses");
     }
     else {
       courseStudents = new ArrayList<>();
@@ -2900,9 +2899,11 @@ public class StudentRESTService extends AbstractRESTService {
           if (courseStudent != null) {
             courseStudents.add(courseStudent);
           }
+          else {
+            logger.warning(String.format("Course student not found asking activity for student %d in course %d", student.getId(), course.getId()));
+          }
         }
       }
-      System.out.println("Filter defined, has " + courseStudents.size() + " courses");
     }
     
     // Serve data
