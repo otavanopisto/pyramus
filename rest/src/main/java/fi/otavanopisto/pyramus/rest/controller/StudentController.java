@@ -406,7 +406,7 @@ public class StudentController {
       
       CourseActivity courseActivity = new CourseActivity();
       courseActivity.setCourseId(course.getId());
-      courseActivity.setCurriculumId(course.getCurriculums().stream().map(Curriculum::getId).collect(Collectors.toList()));
+      courseActivity.setCurriculumIds(course.getCurriculums().stream().map(Curriculum::getId).collect(Collectors.toList()));
       String courseName = course.getName();
       if (!StringUtils.isEmpty(course.getNameExtension())) {
         courseName = String.format("%s (%s)", courseName, course.getNameExtension());
@@ -460,7 +460,7 @@ public class StudentController {
       List<TransferCredit> transferCredits = listStudentTransferCredits(student);
       for (TransferCredit transferCredit : transferCredits) {
         CourseActivity courseActivity = new CourseActivity();
-        courseActivity.setCurriculumId(Collections.emptyList());
+        courseActivity.setCurriculumIds(Collections.emptyList());
         courseActivity.setCourseName(transferCredit.getCourseName());
         courseActivity.setGrade(transferCredit.getGrade().getName());
         courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
@@ -477,6 +477,7 @@ public class StudentController {
       for (CreditLink creditLink : linkedTransferCredits) {
         TransferCredit transferCredit = (TransferCredit) creditLink.getCredit();
         CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCurriculumIds(Collections.emptyList());
         courseActivity.setCourseName(transferCredit.getCourseName());
         courseActivity.setGrade(transferCredit.getGrade().getName());
         courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());

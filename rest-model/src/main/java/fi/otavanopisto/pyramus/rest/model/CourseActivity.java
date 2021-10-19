@@ -25,7 +25,7 @@ public class CourseActivity {
     return curriculumIds;
   }
 
-  public void setCurriculumId(List<Long> curriculumIds) {
+  public void setCurriculumIds(List<Long> curriculumIds) {
     this.curriculumIds = curriculumIds;
   }
 
