@@ -445,7 +445,7 @@ public class StudentController {
       // Status override if student has requested the course to be assessed
       
       CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
-      if (request != null && !request.getHandled() && request.getCreated().getTime() > courseActivity.getActivityDate().getTime()) {
+      if (request != null && !request.getHandled() && request.getCreated().after(courseActivity.getActivityDate())) {
         courseActivity.setText(request.getRequestText());
         courseActivity.setActivityDate(request.getCreated());
         courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
