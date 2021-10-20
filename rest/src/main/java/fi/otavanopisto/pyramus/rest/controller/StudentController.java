@@ -436,7 +436,7 @@ public class StudentController {
       if (linkedAssessment != null) {
         courseActivity.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
         courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
-        courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
+        courseActivity.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
         courseActivity.setActivityDate(linkedAssessment.getCreated());
         courseActivity.setGradeDate(linkedAssessment.getCreated());
         courseActivity.setState(CourseActivityState.GRADED);
