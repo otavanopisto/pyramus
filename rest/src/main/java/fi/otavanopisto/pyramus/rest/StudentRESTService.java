@@ -2887,7 +2887,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
     studyTimeEnd = DateUtils.addMonths(studyTimeEnd, months);
     student = studentController.updateStudyTimeEnd(student, studyTimeEnd);
-    logger.info(String.format("Student %d study time end updated to %s", id, studyTimeEnd));
+    logger.info(String.format("Student %d study time end updated to %tF", id, studyTimeEnd));
 
     // return student
     
