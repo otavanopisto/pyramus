@@ -17,12 +17,13 @@ public class KoskiConsts {
     // Skipped from integration
     public static final String KOSKI_SKIPPED_STUDENT = "koski.skippedStudent";
   }
-  
+
   public static class UserVariables {
     public static final String STARTED_UNDER18 = "lukioAlle18v";
     public static final String UNDER18_STARTREASON = "under18studyStartReason";
+    public static final String PK_GRADE_UPGRADE = "perusopetusKorottaja";
   }
-  
+
   public static class SubjectSelections {
     public static final String MATH = "lukioMatematiikka";
     public static final String NATIVE_LANGUAGE = "lukioAidinkieli";
@@ -35,7 +36,7 @@ public class KoskiConsts {
     public static final String RELIGION = "lukioUskonto";
     public static final String COMPLETION_MARKS = "lukioSmerkinta";
   }
-  
+
   public static String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {
     return handler.name() + ":" + String.valueOf(studentId);
   }
