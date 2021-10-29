@@ -27,6 +27,7 @@ public class UserRESTService {
   @Inject
   private UserController userController;
 
+  @Produces("text/plain")
   @Path("/users/{ID:[0-9]*}/defaultEmailAddress")
   @GET
   @RESTPermit(UserPermissions.GET_USER_DEFAULT_EMAIL_ADDRESS)
