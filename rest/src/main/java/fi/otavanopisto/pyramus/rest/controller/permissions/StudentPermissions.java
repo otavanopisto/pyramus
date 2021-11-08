@@ -82,6 +82,10 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String ADD_STUDENTCONTACTURL = "ADD_STUDENTCONTACTURL";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ TRUSTED_SYSTEM })
+  public static final String INCREASE_STUDY_TIME = "INCREASE_STUDY_TIME";
   
   /**
    * STUDENT emails

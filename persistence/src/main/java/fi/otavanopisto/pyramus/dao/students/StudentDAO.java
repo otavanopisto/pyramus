@@ -241,6 +241,14 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     entityManager.persist(student);
     studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
   }
+  
+  public Student updateStudyTimeEnd(Student student, Date studyTimeEnd) {
+    EntityManager entityManager = getEntityManager();
+    student.setStudyTimeEnd(studyTimeEnd);
+    entityManager.persist(student);
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+    return student;
+  }
 
   public Student setStudentTags(Student student, Set<Tag> tags) {
     EntityManager entityManager = getEntityManager();
