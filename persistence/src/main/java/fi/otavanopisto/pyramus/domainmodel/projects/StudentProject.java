@@ -245,6 +245,28 @@ public class StudentProject implements ArchivableEntity {
     }
   }
 
+  public List<StudentProjectSubjectCourse> getStudentProjectSubjectCourses() {
+    return studentProjectSubjectCourses;
+  }
+
+  @SuppressWarnings("unused")
+  private void setStudentProjectSubjectCourses(List<StudentProjectSubjectCourse> studentProjectSubjectCourses) {
+    this.studentProjectSubjectCourses = studentProjectSubjectCourses;
+  }
+  
+  public void addStudentProjectSubjectCourse(StudentProjectSubjectCourse studentProjectSubjectCourse) {
+    if (studentProjectSubjectCourse.getStudentProject() != null) {
+      studentProjectSubjectCourse.getStudentProject().removeStudentProjectSubjectCourse(studentProjectSubjectCourse);
+    }
+    studentProjectSubjectCourse.setStudentProject(this);
+    studentProjectSubjectCourses.add(studentProjectSubjectCourse);
+  }
+  
+  public void removeStudentProjectSubjectCourse(StudentProjectSubjectCourse studentProjectSubjectCourse) {
+    studentProjectSubjectCourse.setStudentProject(null);
+    studentProjectSubjectCourses.remove(studentProjectSubjectCourse);
+  }
+
   public Set<Tag> getTags() {
     return tags;
   }
@@ -333,6 +355,12 @@ public class StudentProject implements ArchivableEntity {
   @JoinColumn (name="studentProject")
   @IndexedEmbedded 
   private List<StudentProjectModule> studentProjectModules = new Vector<>();
+
+  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderColumn (name = "indexColumn")
+  @JoinColumn (name="studentProject")
+  @IndexedEmbedded 
+  private List<StudentProjectSubjectCourse> studentProjectSubjectCourses = new Vector<>();
 
   @ManyToOne 
   @JoinColumn(name="creator")

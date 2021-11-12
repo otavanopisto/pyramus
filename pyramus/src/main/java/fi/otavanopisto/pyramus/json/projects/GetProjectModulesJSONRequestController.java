@@ -12,6 +12,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
@@ -36,7 +37,18 @@ public class GetProjectModulesJSONRequestController extends JSONRequestControlle
       projectModules.add(moduleInfo);
     }
 
+    List<Map<String, Object>> projectSubjectCourses = new ArrayList<>();
+    for (ProjectSubjectCourse projectSubjectCourse : project.getProjectSubjectCourses()) {
+      Map<String, Object> moduleInfo = new HashMap<>();
+      moduleInfo.put("id", projectSubjectCourse.getId());
+      moduleInfo.put("subjectId", projectSubjectCourse.getSubject().getId());
+      moduleInfo.put("courseNumber", projectSubjectCourse.getCourseNumber());
+      moduleInfo.put("optionality", projectSubjectCourse.getOptionality().getValue());
+      projectSubjectCourses.add(moduleInfo);
+    }
+
     jsonRequestContext.addResponseParameter("projectModules", projectModules);
+    jsonRequestContext.addResponseParameter("projectSubjectCourses", projectSubjectCourses);
   }
 
   public UserRole[] getAllowedRoles() {

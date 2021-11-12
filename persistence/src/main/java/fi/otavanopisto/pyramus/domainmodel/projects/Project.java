@@ -106,6 +106,28 @@ public class Project implements ArchivableEntity {
     projectModules.remove(projectModule);
   }
 
+  public List<ProjectSubjectCourse> getProjectSubjectCourses() {
+    return projectSubjectCourses;
+  }
+
+  @SuppressWarnings("unused")
+  private void setProjectSubjectCourses(List<ProjectSubjectCourse> projectSubjectCourses) {
+    this.projectSubjectCourses = projectSubjectCourses;
+  }
+  
+  public void addProjectSubjectCourse(ProjectSubjectCourse projectSubjectCourse) {
+    if (projectSubjectCourse.getProject() != null) {
+      projectSubjectCourse.getProject().removeProjectSubjectCourse(projectSubjectCourse);
+    }
+    projectSubjectCourse.setProject(this);
+    projectSubjectCourses.add(projectSubjectCourse);
+  }
+  
+  public void removeProjectSubjectCourse(ProjectSubjectCourse projectSubjectCourse) {
+    projectSubjectCourse.setProject(null);
+    projectSubjectCourses.remove(projectSubjectCourse);
+  }
+
   /**
    * Returns the creator, and therefore the owner, of this entity.
    * 
@@ -291,6 +313,12 @@ public class Project implements ArchivableEntity {
   @IndexedEmbedded
   private List<ProjectModule> projectModules = new Vector<>();
 
+  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderColumn (name = "indexColumn")
+  @JoinColumn (name="project")
+  @IndexedEmbedded
+  private List<ProjectSubjectCourse> projectSubjectCourses = new Vector<>();
+  
   @ManyToOne
   @JoinColumn(name="creator")
   @IndexedEmbedded (depth = 1)

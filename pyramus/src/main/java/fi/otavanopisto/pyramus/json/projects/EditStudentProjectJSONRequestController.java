@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
@@ -27,6 +28,7 @@ import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.StudentProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
@@ -34,6 +36,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
@@ -44,6 +47,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
@@ -61,11 +65,13 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
     StudentProjectModuleDAO studentProjectModuleDAO = DAOFactory.getInstance().getStudentProjectModuleDAO();
+    StudentProjectSubjectCourseDAO studentProjectSubjectCourseDAO = DAOFactory.getInstance().getStudentProjectSubjectCourseDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     AcademicTermDAO academicTermDAO = DAOFactory.getInstance().getAcademicTermDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
 
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     Defaults defaults = defaultsDAO.getDefaults();
@@ -184,6 +190,40 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
     for (StudentProjectModule studentProjectModule : studentProjectModules) {
       if (!existingModuleIds.contains(studentProjectModule.getId())) {
         studentProjectModuleDAO.delete(studentProjectModule);
+      }
+    }
+    
+    // Student subject courses
+
+    Set<Long> existingSubjectCourseIds = new HashSet<>();
+    rowCount = jsonRequestContext.getInteger("subjectCoursesTable.rowCount").intValue();
+    for (int i = 0; i < rowCount; i++) {
+      String colPrefix = "subjectCoursesTable." + i;
+      
+      Long studentProjectSubjectCourseId = jsonRequestContext.getLong(colPrefix + ".projectSubjectCourseId");
+      int optionalityInt = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality")).intValue();
+      CourseOptionality optionality = CourseOptionality.getOptionality(optionalityInt);
+      Long studyTermId = jsonRequestContext.getLong(colPrefix + ".academicTerm");
+      AcademicTerm academicTerm = studyTermId == null ? null : academicTermDAO.findById(studyTermId);
+      
+      if (studentProjectSubjectCourseId == -1) {
+        Long subjectId = jsonRequestContext.getLong(colPrefix + ".subjectId");
+        Subject subject = subjectDAO.findById(subjectId);
+        Integer courseNumber = jsonRequestContext.getInteger(colPrefix + ".courseNumber");
+        studentProjectSubjectCourseId = studentProjectSubjectCourseDAO.create(studentProject, subject, courseNumber , academicTerm, optionality).getId();
+      } else {
+        studentProjectSubjectCourseDAO.update(studentProjectSubjectCourseDAO.findById(studentProjectSubjectCourseId), academicTerm, optionality);
+      }
+      
+      existingSubjectCourseIds.add(studentProjectSubjectCourseId);
+    }
+    
+    // Removed Student project subject courses 
+    
+    List<StudentProjectSubjectCourse> studentProjectSubjectCourses = studentProjectSubjectCourseDAO.listByStudentProject(studentProject);
+    for (StudentProjectSubjectCourse studentProjectSubjectCourse : studentProjectSubjectCourses) {
+      if (!existingSubjectCourseIds.contains(studentProjectSubjectCourse.getId())) {
+        studentProjectSubjectCourseDAO.delete(studentProjectSubjectCourse);
       }
     }
     

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table ProjectSubjectCourse (
+      id bigint not null auto_increment, 
+      courseNumber integer, 
+      optionality varchar(255) not null, 
+      version bigint not null, 
+      project bigint, 
+      subject bigint, 
+      indexColumn integer, 
+      primary key (id)
+    );
+  </sql>
+
+  <sql>alter table ProjectSubjectCourse add constraint FK37aapnc03r4s9pdtxcvka66j5 foreign key (project) references Project (id);</sql>
+  <sql>alter table ProjectSubjectCourse add constraint FKevo9j1k44j4yk4lcgsbi8iyf3 foreign key (subject) references Subject (id);</sql>
+
+  <sql>
+    create table StudentProjectSubjectCourse (
+      id bigint not null auto_increment, 
+      courseNumber integer, 
+      optionality varchar(255) not null, 
+      version bigint not null, 
+      academicTerm bigint, 
+      studentProject bigint, 
+      subject bigint, 
+      indexColumn integer, 
+      primary key (id)
+    );
+  </sql>
+
+  <sql>alter table StudentProjectSubjectCourse add constraint FKa1xwyf0or70j13b6j6bw7hsge foreign key (academicTerm) references AcademicTerm (id);</sql>
+  <sql>alter table StudentProjectSubjectCourse add constraint FK66cgj0s5l8epp4tdymd6624m5 foreign key (studentProject) references StudentProject (id);</sql>
+  <sql>alter table StudentProjectSubjectCourse add constraint FKbgh7anm28yggn3a1i51jpkj73 foreign key (subject) references Subject (id);</sql>
+
+</update>
