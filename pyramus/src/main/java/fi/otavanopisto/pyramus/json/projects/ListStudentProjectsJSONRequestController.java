@@ -23,6 +23,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
@@ -124,6 +125,7 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
      *  c) create beans to be passed to jsp
      */
 
+    List<CourseAssessment> courseAssessmentsByStudent = courseAssessmentDAO.listByStudent(studentProject.getStudent());
     List<TransferCredit> transferCreditsByStudent = transferCreditDAO.listByStudent(studentProject.getStudent());
     
     for (StudentProjectModule studentProjectModule : studentProject.getStudentProjectModules()) {
@@ -161,6 +163,48 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
         if (hasPassingGrade)
           passedMandatoryModuleCount++;
       } else if (studentProjectModule.getOptionality() == CourseOptionality.OPTIONAL) {
+        optionalModuleCount++;
+        if (hasPassingGrade)
+          passedOptionalModuleCount++;
+      }
+    }
+    
+    for (StudentProjectSubjectCourse studentProjectsubjectCourse : studentProject.getStudentProjectSubjectCourses()) {
+      boolean hasPassingGrade = false;
+
+      if ((studentProjectsubjectCourse.getCourseNumber() != null) && (studentProjectsubjectCourse.getCourseNumber() != -1) && (studentProjectsubjectCourse.getSubject() != null)) {
+        for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
+          if ((courseAssessment.getCourseNumber() != null) && (courseAssessment.getCourseNumber() != -1) && (courseAssessment.getSubject() != null)) {
+            if (courseAssessment.getCourseNumber().equals(studentProjectsubjectCourse.getCourseNumber()) && courseAssessment.getSubject().equals(studentProjectsubjectCourse.getSubject())) {
+              if (courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade()) {
+                hasPassingGrade = true; 
+                break;
+              }
+            }
+          }
+        }
+
+        if (!hasPassingGrade) {
+          if ((studentProjectsubjectCourse.getCourseNumber() != null) && (studentProjectsubjectCourse.getCourseNumber() != -1) && (studentProjectsubjectCourse.getSubject() != null)) {
+            for (TransferCredit tc : transferCreditsByStudent) {
+              if ((tc.getCourseNumber() != null) && (tc.getCourseNumber() != -1) && (tc.getSubject() != null)) {
+                if (tc.getCourseNumber().equals(studentProjectsubjectCourse.getCourseNumber()) && tc.getSubject().equals(studentProjectsubjectCourse.getSubject())) {
+                  if (tc.getGrade() != null && tc.getGrade().getPassingGrade()) {
+                    hasPassingGrade = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      if (studentProjectsubjectCourse.getOptionality() == CourseOptionality.MANDATORY) {
+        mandatoryModuleCount++;
+        if (hasPassingGrade)
+          passedMandatoryModuleCount++;
+      } else if (studentProjectsubjectCourse.getOptionality() == CourseOptionality.OPTIONAL) {
         optionalModuleCount++;
         if (hasPassingGrade)
           passedOptionalModuleCount++;

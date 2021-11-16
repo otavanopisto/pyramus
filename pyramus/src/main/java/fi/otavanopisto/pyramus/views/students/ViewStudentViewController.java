@@ -67,6 +67,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -233,7 +234,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     Map<Long, List<StudentProjectBean>> studentProjects = new HashMap<>();
     Map<Long, CourseAssessment> courseAssessmentsByCourseStudent = new HashMap<>();
     // StudentProject.id -> List of module beans
-    Map<Long, List<StudentProjectModuleBean>> studentProjectModules = new HashMap<>();
+    Map<Long, List<StudentProjectModuleBean<StudentProjectModule>>> studentProjectModules = new HashMap<>();
+    Map<Long, List<StudentProjectModuleBean<StudentProjectSubjectCourse>>> studentProjectSubjectCourses = new HashMap<>();
     final Map<Long, List<StudentContactLogEntryComment>> contactEntryComments = new HashMap<>();
     Map<Long, List<StudentLodgingPeriod>> studentLodgingPeriods = new HashMap<>();
     Map<Long, List<StudentStudyPeriod>> studentStudyPeriods = new HashMap<>();
@@ -632,7 +634,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         int passedMandatoryModuleCount = 0;
         int passedOptionalModuleCount = 0;
         
-        List<StudentProjectModuleBean> studentProjectModuleBeans = new ArrayList<>();
+        List<StudentProjectModuleBean<StudentProjectModule>> studentProjectModuleBeans = new ArrayList<>();
+        List<StudentProjectModuleBean<StudentProjectSubjectCourse>> studentProjectSubjectCourseBeans = new ArrayList<>();
         
         /**
          * Go through project modules to
@@ -698,12 +701,62 @@ public class ViewStudentViewController extends PyramusViewController2 implements
               passedOptionalModuleCount++;
           }
           
-          StudentProjectModuleBean moduleBean = new StudentProjectModuleBean(studentProjectModule, hasPassingGrade, projectCourseCourseStudentList, projectCourseTransferCreditList);
+          StudentProjectModuleBean<StudentProjectModule> moduleBean = new StudentProjectModuleBean<>(studentProjectModule, hasPassingGrade, projectCourseCourseStudentList, projectCourseTransferCreditList);
           studentProjectModuleBeans.add(moduleBean);
         }
 
         // Add ModuleBeans to response
         studentProjectModules.put(studentProject.getId(), studentProjectModuleBeans);
+
+        
+        for (StudentProjectSubjectCourse studentProjectSubjectCourse : studentProject.getStudentProjectSubjectCourses()) {
+          boolean hasPassingGrade = false;
+
+          List<CourseStudent> projectCourseCourseStudentList = new ArrayList<>();
+          List<TransferCredit> projectCourseTransferCreditList = new ArrayList<>();
+
+          // Find out if there is a course that has passing grade for the module
+          
+          if ((studentProjectSubjectCourse.getCourseNumber() != null) && (studentProjectSubjectCourse.getCourseNumber() != -1) && (studentProjectSubjectCourse.getSubject() != null)) {
+
+            for (CourseAssessment assessment : allStudentCourseAssessments) {
+              if ((assessment.getCourseNumber() != null) && (assessment.getCourseNumber() != -1) && (assessment.getSubject() != null)) {
+                if (assessment.getCourseNumber().equals(studentProjectSubjectCourse.getCourseNumber()) && assessment.getSubject().equals(studentProjectSubjectCourse.getSubject())) {
+                  projectCourseCourseStudentList.add(assessment.getCourseStudent());
+                  if (assessment.getGrade() != null && assessment.getGrade().getPassingGrade()) {
+                    hasPassingGrade = true;
+                  }
+                }
+              }
+            }
+          
+            for (TransferCredit tc : allStudentTransferCredits) {
+              if ((tc.getCourseNumber() != null) && (tc.getCourseNumber() != -1) && (tc.getSubject() != null)) {
+                if (tc.getCourseNumber().equals(studentProjectSubjectCourse.getCourseNumber()) && tc.getSubject().equals(studentProjectSubjectCourse.getSubject())) {
+                  projectCourseTransferCreditList.add(tc);
+                  if (tc.getGrade() != null && tc.getGrade().getPassingGrade())
+                    hasPassingGrade = true;
+                }
+              }
+            }
+          }
+          
+          if (studentProjectSubjectCourse.getOptionality() == CourseOptionality.MANDATORY) {
+            mandatoryModuleCount++;
+            if (hasPassingGrade)
+              passedMandatoryModuleCount++;
+          } else if (studentProjectSubjectCourse.getOptionality() == CourseOptionality.OPTIONAL) {
+            optionalModuleCount++;
+            if (hasPassingGrade)
+              passedOptionalModuleCount++;
+          }
+          
+          StudentProjectModuleBean<StudentProjectSubjectCourse> moduleBean = new StudentProjectModuleBean<>(studentProjectSubjectCourse, hasPassingGrade, projectCourseCourseStudentList, projectCourseTransferCreditList);
+          studentProjectSubjectCourseBeans.add(moduleBean);
+        }
+
+        // Add ModuleBeans to response
+        studentProjectSubjectCourses.put(studentProject.getId(), studentProjectSubjectCourseBeans);
         
         List<ProjectAssessment> projectAssessments = projectAssessmentDAO.listByProjectAndArchived(studentProject, Boolean.FALSE);
         Collections.sort(projectAssessments, new Comparator<ProjectAssessment>() {
@@ -808,6 +861,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("studentGroups", studentGroups);
     pageRequestContext.getRequest().setAttribute("studentProjects", studentProjects);
     pageRequestContext.getRequest().setAttribute("studentProjectModules", studentProjectModules);
+    pageRequestContext.getRequest().setAttribute("studentProjectSubjectCourses", studentProjectSubjectCourses);
     pageRequestContext.getRequest().setAttribute("courseAssessmentsByCourseStudent", courseAssessmentsByCourseStudent);
     pageRequestContext.getRequest().setAttribute("studentHasImage", studentHasImage);
     pageRequestContext.getRequest().setAttribute("courseAssessmentRequests", courseAssessmentRequests);
@@ -874,13 +928,13 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     }
   }
   
-  public class StudentProjectModuleBean {
-    private final StudentProjectModule studentProjectModule;
+  public class StudentProjectModuleBean<T> {
+    private final T studentProjectModule;
     private final boolean hasPassingGrade;
     private final List<CourseStudent> courseStudents;
     private final List<TransferCredit> transferCredits;
 
-    public StudentProjectModuleBean(StudentProjectModule studentProjectModule, boolean hasPassingGrade, 
+    public StudentProjectModuleBean(T studentProjectModule, boolean hasPassingGrade, 
         List<CourseStudent> courseStudents, List<TransferCredit> transferCredits) {
       this.studentProjectModule = studentProjectModule;
       this.hasPassingGrade = hasPassingGrade;
@@ -888,7 +942,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       this.transferCredits = transferCredits;
     }
 
-    public StudentProjectModule getStudentProjectModule() {
+    public T getStudentProjectModule() {
       return studentProjectModule;
     }
 

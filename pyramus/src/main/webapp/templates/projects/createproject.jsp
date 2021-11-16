@@ -83,22 +83,46 @@
           <!--  Modules tab -->
           
           <div id="modules" class="tabContentixTableFormattedData">
-            <div class="genericTableAddRowContainer">
-              <span class="genericTableAddRowLinkContainer" onclick="openSearchModulesDialog();"><fmt:message key="projects.createProject.addModuleLink"/></span>
-            </div>
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="projects.createProject.modulesTitle"/>
+                <jsp:param name="helpLocale" value="projects.createProject.modulesHelp"/>
+              </jsp:include>
+              <div class="genericTableAddRowContainer">
+                <span class="genericTableAddRowLinkContainer" onclick="openSearchModulesDialog();"><fmt:message key="projects.createProject.addModuleLink"/></span>
+              </div>
+              
+              <div id="noModulesAddedMessageContainer" class="genericTableNotAddedMessageContainer">
+                <span><fmt:message key="projects.createProject.noModulesAddedPreFix"/> <span onclick="openSearchModulesDialog();" class="genericTableAddRowLink"><fmt:message key="projects.createProject.noModulesAddedClickHereLink"/></span>.</span>
+              </div>
             
-            <div id="noModulesAddedMessageContainer" class="genericTableNotAddedMessageContainer">
-              <span><fmt:message key="projects.createProject.noModulesAddedPreFix"/> <span onclick="openSearchModulesDialog();" class="genericTableAddRowLink"><fmt:message key="projects.createProject.noModulesAddedClickHereLink"/></span>.</span>
-            </div>
-            
-            <div id="modulesContainer">
-              <div id="modulesTableContainer"></div>
+              <div id="modulesContainer">
+                <div id="modulesTableContainer"></div>
+              </div>
+
+              <div id="createProjectModulesTotalContainer" style="display:none;">
+                <fmt:message key="projects.createProject.modulesTotal"/> <span id="createProjectModulesTotalValue"></span>
+              </div>
             </div>
 
-            <div id="createProjectModulesTotalContainer" style="display:none;">
-              <fmt:message key="projects.createProject.modulesTotal"/> <span id="createProjectModulesTotalValue"></span>
-            </div>
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="projects.createProject.subjectCoursesTitle"/>
+                <jsp:param name="helpLocale" value="projects.createProject.subjectCoursesHelp"/>
+              </jsp:include>
 
+              <div class="genericTableAddRowContainer">
+                <span class="genericTableAddRowLinkContainer" onclick="addSubjectCourseTableRow();"><fmt:message key="projects.createProject.addSubjectCourseLink"/></span>
+              </div>
+
+              <div id="subjectCoursesContainer">
+                <div id="subjectCoursesTableContainer"></div>
+              </div>
+  
+              <div id="createProjectSubjectCoursesTotalContainer" style="display:none;">
+                <fmt:message key="projects.createProject.modulesTotal"/> <span id="createProjectSubjectCoursesTotalValue"></span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

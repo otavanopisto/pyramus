@@ -127,6 +127,8 @@
           }]
         });
 
+        var subjectCoursesTable = setupSubjectCoursesTable();
+        
         JSONRequest.request("projects/getprojectmodules.json", {
           parameters: {
             project: projectId
@@ -143,6 +145,16 @@
                   projectModules[i].id]);
             }
             modulesTable.addRows(rows);
+
+            var subjectCourses = jsonResponse.projectSubjectCourses;
+            rows = new Array();
+            for (var i = 0; i < subjectCourses.length; i++) {
+              rows.push([
+                  subjectCourses[i].subjectId,
+                  subjectCourses[i].courseNumber,
+                  subjectCourses[i].optionality]);
+            }
+            subjectCoursesTable.addRows(rows);
           } 
         });
 
@@ -369,6 +381,102 @@
         doSearch(projectId, 0);
       }
 
+      function setupSubjectCoursesTable() {
+        var subjects = JSDATA["subjects"].evalJSON();
+        var subjectGroups = { "null": { subjects: [] } };
+        var subjectGroupsIds = [ "null" ];
+        
+        // Group subjects under education types
+        for (var i = 0, l = subjects.length; i < l; i++) {
+          var educationTypeId = subjects[i].educationTypeId ? subjects[i].educationTypeId : "null";
+          if (!subjectGroups[educationTypeId]) {
+            subjectGroups[educationTypeId] = { name: subjects[i].educationTypeName, subjects: [] };
+            subjectGroupsIds.push(educationTypeId);
+          }
+          subjectGroups[educationTypeId].subjects.push(subjects[i]);
+        }
+        
+        var subjectOptions = [];
+        for (var i = 0, l = subjectGroupsIds.length; i < l; i++) {
+          var subjectGroupId = subjectGroupsIds[i];
+          var subjectGroup = subjectGroups[subjectGroupId];
+          if (subjectGroup && subjectGroup.subjects && subjectGroup.subjects.length > 0) {
+            if (subjectGroupId != "null" && subjectGroup.name) {
+              var subjectOptGroup = { optionGroup: true, text: subjectGroup.name, options: [] };
+              
+              for (var j = 0; j < subjectGroup.subjects.length; j++) {
+                var option = subjectGroup.subjects[j];
+                subjectOptGroup.options.push({
+                  value: option.id,
+                  text: getLocale().getText("generic.subjectFormatterNoEducationType", option.code, option.name)
+                });
+              }
+              subjectOptions.push(subjectOptGroup);
+            } else {
+              // No opt group
+              
+              for (var j = 0; j < subjectGroup.subjects.length; j++) {
+                var option = subjectGroup.subjects[j];
+                subjectOptions.push({
+                  value: option.id,
+                  text: getLocale().getText("generic.subjectFormatterNoEducationType", option.code, option.name)
+                });
+              }
+            }
+          }
+        }
+        
+        var subjectCoursesTable = new IxTable($('subjectCoursesTableContainer'), {
+          id : "subjectCoursesTable",
+          columns : [ {
+            header : getLocale().getText("projects.generic.subjectCourseTable.subjectHeader"),
+            left : 8,
+            width : 200,
+            dataType : 'select',
+            editable : false,
+            paramName : 'subjectId',
+            options: subjectOptions
+          }, {
+            header : getLocale().getText("projects.generic.subjectCourseTable.courseNumberHeader"),
+            left : 8 + 200 + 8,
+            width : 100,
+            dataType : 'number',
+            editable : false,
+            paramName : 'courseNumber'
+          }, {
+            header : getLocale().getText("projects.generic.table.optionalityHeader"),
+            width : 150,
+            right : 40,
+            dataType : 'select',
+            editable : false,
+            paramName : 'optionality',
+            options : [ {
+              text : getLocale().getText("projects.generic.table.optionalityMandatory"),
+              value : 0
+            }, {
+              text : getLocale().getText("projects.generic.table.optionalityOptional"),
+              value : 1
+            } ],
+            sortAttributes : {
+              sortAscending : {
+                toolTip : getLocale().getText("generic.sort.ascending"),
+                sortAction : IxTable_ROWSELECTSORT
+              },
+              sortDescending : {
+                toolTip : getLocale().getText("generic.sort.descending"),
+                sortAction : IxTable_ROWSELECTSORT
+              }
+            },
+            contextMenu : [ {
+              text : getLocale().getText("generic.action.copyValues"),
+              onclick : new IxTable_COPYVALUESTOCOLUMNACTION(true)
+            } ]
+          } ]
+        });
+
+        return subjectCoursesTable;
+      }
+      
       function doSearch(projectId, page) {
         JSONRequest.request("projects/liststudentprojects.json", {
           parameters: {
@@ -508,13 +616,32 @@
         <!-- Modules tab -->
         
         <div id="modules" class="tabContentixTableFormattedData">
-          <div id="modulesContainer">
-            <div id="modulesTableContainer"></div>
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="projects.viewProject.modulesTitle"/>
+              <jsp:param name="helpLocale" value="projects.viewProject.modulesHelp"/>
+            </jsp:include>
+
+            <div id="modulesContainer">
+              <div id="modulesTableContainer"></div>
+            </div>
+
+            <div id="viewProjectModulesTotalContainer">
+              <fmt:message key="projects.viewProject.modulesTotal"/> <span id="viewProjectModulesTotalValue"></span>
+            </div>
           </div>
 
-          <div id="viewProjectModulesTotalContainer">
-            <fmt:message key="projects.viewProject.modulesTotal"/> <span id="viewProjectModulesTotalValue"></span>
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="projects.viewProject.subjectCoursesTitle"/>
+              <jsp:param name="helpLocale" value="projects.viewProject.subjectCoursesHelp"/>
+            </jsp:include>
+
+            <div id="subjectCoursesContainer">
+              <div id="subjectCoursesTableContainer"></div>
+            </div>
           </div>
+          
         </div>
         
         <!-- StudentProjects tab -->
