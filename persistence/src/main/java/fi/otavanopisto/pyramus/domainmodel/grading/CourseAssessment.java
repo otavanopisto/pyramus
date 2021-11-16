@@ -6,6 +6,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
@@ -18,6 +21,26 @@ public class CourseAssessment extends Credit {
     setCreditType(CreditType.CourseAssessment);
   }
   
+  @Transient
+  public Student getStudent() {
+    return courseStudent != null ? courseStudent.getStudent() : null;
+  }
+  
+  @Transient
+  public Subject getSubject() {
+    return getCourseModule() != null ? getCourseModule().getSubject() : null; 
+  }
+  
+  @Transient
+  public Integer getCourseNumber() {
+    return getCourseModule() != null ? getCourseModule().getCourseNumber() : null; 
+  }
+  
+  @Transient
+  public EducationalLength getCourseLength() {
+    return getCourseModule() != null ? getCourseModule().getCourseLength() : null; 
+  }
+  
   public void setCourseStudent(CourseStudent courseStudent) {
     this.courseStudent = courseStudent;
   }
@@ -26,12 +49,20 @@ public class CourseAssessment extends Credit {
     return courseStudent;
   }
 
-  @Transient
-  public Student getStudent() {
-    return courseStudent != null ? courseStudent.getStudent() : null;
+  public CourseModule getCourseModule() {
+    return courseModule;
   }
-  
+
+  public void setCourseModule(CourseModule courseModule) {
+    this.courseModule = courseModule;
+  }
+
   @ManyToOne
   @JoinColumn(name="courseStudent")
   private CourseStudent courseStudent;
+  
+  @ManyToOne
+  @JoinColumn(name="courseModule")
+  private CourseModule courseModule;
+  
 }

@@ -36,8 +36,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
-import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
-import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
@@ -50,22 +48,14 @@ import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 @Stateless
 public class ModuleDAO extends PyramusEntityDAO<Module> {
 
-  public Module create(String name, Subject subject, Integer courseNumber, Double moduleLength, 
-      EducationalTimeUnit moduleLengthTimeUnit, String description, Long maxParticipantCount, User creatingUser) {
+  public Module create(String name, String description, Long maxParticipantCount, User creatingUser) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
 
-    EducationalLength educationalLength = new EducationalLength();
-    educationalLength.setUnit(moduleLengthTimeUnit);
-    educationalLength.setUnits(moduleLength);
-
     Module module = new Module();
     module.setName(name);
     module.setDescription(description);
-    module.setSubject(subject);
-    module.setCourseNumber(courseNumber);
-    module.setCourseLength(educationalLength);
     module.setMaxParticipantCount(maxParticipantCount);
 
     module.setCreator(creatingUser);
@@ -76,37 +66,6 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     entityManager.persist(module);
 
     return module;
-  }
-
-  public List<Module> listBySubject(Subject subject) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
-    Root<Module> root = criteria.from(Module.class);
-    criteria.select(root);
-    criteria.where(
-      criteriaBuilder.equal(root.get(Module_.subject), subject)
-    );
-    
-    return entityManager.createQuery(criteria).getResultList();
-  }
-
-  public List<Module> listBySubjectAndCourseNumber(Subject subject, Integer courseNumber) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
-    Root<Module> root = criteria.from(Module.class);
-    criteria.select(root);
-    criteria.where(
-      criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(Module_.subject), subject),
-        criteriaBuilder.equal(root.get(Module_.courseNumber), courseNumber)
-      )
-    );
-    
-    return entityManager.createQuery(criteria).getResultList();
   }
 
   public Module updateTags(Module module, Set<Tag> tags) {
@@ -129,24 +88,13 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     return module;
   }
 
-  public Module update(Module module, String name, Subject subject, Integer courseNumber, Double length, 
-      EducationalTimeUnit lengthTimeUnit, String description, Long maxParticipantCount, User user) {
+  public Module update(Module module, String name, String description, Long maxParticipantCount, User user) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
 
-    EducationalLength educationalLength = module.getCourseLength();
-    if (educationalLength == null) {
-      educationalLength = new EducationalLength();
-    }
-    educationalLength.setUnit(lengthTimeUnit);
-    educationalLength.setUnits(length);
-
     module.setName(name);
     module.setDescription(description);
-    module.setSubject(subject);
-    module.setCourseNumber(courseNumber);
-    module.setCourseLength(educationalLength);
     module.setLastModifier(user);
     module.setLastModified(now);
     module.setMaxParticipantCount(maxParticipantCount);

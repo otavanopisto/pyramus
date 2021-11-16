@@ -166,23 +166,23 @@ public abstract class CourseBase implements ArchivableEntity {
     this.description = description;
   }
 
-  /**
-   * Returns the subject of this entity.
-   * 
-   * @return The subject of this entity
-   */
-  public Subject getSubject() {
-    return subject;
-  }
-  
-  /**
-   * Sets the subject of this entity.
-   * 
-   * @param subject The subject of this entity
-   */
-  public void setSubject(Subject subject) {
-    this.subject = subject;
-  }
+//  /**
+//   * Returns the subject of this entity.
+//   * 
+//   * @return The subject of this entity
+//   */
+//  public Subject getSubject() {
+//    return subject;
+//  }
+//  
+//  /**
+//   * Sets the subject of this entity.
+//   * 
+//   * @param subject The subject of this entity
+//   */
+//  public void setSubject(Subject subject) {
+//    this.subject = subject;
+//  }
 
   /**
    * Returns the course education types of this entity.
@@ -254,24 +254,24 @@ public abstract class CourseBase implements ArchivableEntity {
     return null;
   }
   
-  /**
-   * Sets the course length of this course base.
-   * 
-   * @param courseLength The course length of this course base
-   */
-  public void setCourseLength(EducationalLength courseLength) {
-    this.courseLength = courseLength;
-  }
-
-  /**
-   * Returns the course length of this course base.
-   * 
-   * @return The course length of this course base
-   */
-  public EducationalLength getCourseLength() {
-    return courseLength;
-  }
-
+//  /**
+//   * Sets the course length of this course base.
+//   * 
+//   * @param courseLength The course length of this course base
+//   */
+//  public void setCourseLength(EducationalLength courseLength) {
+//    this.courseLength = courseLength;
+//  }
+//
+//  /**
+//   * Returns the course length of this course base.
+//   * 
+//   * @return The course length of this course base
+//   */
+//  public EducationalLength getCourseLength() {
+//    return courseLength;
+//  }
+//
   /**
    * Sets the archived flag of this object.
    * 
@@ -298,13 +298,13 @@ public abstract class CourseBase implements ArchivableEntity {
     this.variables = variables;
   }
   
-  public void setCourseNumber(Integer courseNumber) {
-    this.courseNumber = courseNumber;
-  }
-
-  public Integer getCourseNumber() {
-    return courseNumber;
-  }
+//  public void setCourseNumber(Integer courseNumber) {
+//    this.courseNumber = courseNumber;
+//  }
+//
+//  public Integer getCourseNumber() {
+//    return courseNumber;
+//  }
   
   @Transient
   @Field (analyze = Analyze.NO, store = Store.NO)
@@ -374,18 +374,18 @@ public abstract class CourseBase implements ArchivableEntity {
   @Field
   private String description;
   
-  @ManyToOne  
-  @JoinColumn(name="subject")
-  @IndexedEmbedded(includeEmbeddedObjectId = true)
-  private Subject subject;
+//  @ManyToOne  
+//  @JoinColumn(name="subject")
+//  @IndexedEmbedded(includeEmbeddedObjectId = true)
+//  private Subject subject;
 
-  @Column
-  @Field
-  private Integer courseNumber;
+//  @Column
+//  @Field
+//  private Integer courseNumber;
   
-  @OneToOne (cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name = "courseLength")
-  private EducationalLength courseLength;
+//  @OneToOne (cascade = CascadeType.ALL, orphanRemoval = true)
+//  @JoinColumn (name = "courseLength")
+//  private EducationalLength courseLength;
   
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="courseBase")

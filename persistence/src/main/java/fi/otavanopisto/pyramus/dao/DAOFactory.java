@@ -69,6 +69,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudyProgrammeDAO;
@@ -313,6 +314,10 @@ public class DAOFactory {
   
   public fi.otavanopisto.pyramus.dao.courses.CourseDAO getCourseDAO() {
     return (CourseDAO) findByClass(fi.otavanopisto.pyramus.dao.courses.CourseDAO.class);
+  }
+  
+  public fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO getCourseModuleDAO() {
+    return (CourseModuleDAO) findByClass(fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO.class);
   }
   
   public CourseDescriptionCategoryDAO getCourseDescriptionCategoryDAO() {

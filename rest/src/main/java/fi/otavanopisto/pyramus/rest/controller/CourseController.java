@@ -22,6 +22,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
@@ -64,6 +65,9 @@ public class CourseController {
   
   @Inject
   private CourseDAO courseDAO;
+  
+  @Inject
+  private CourseModuleDAO courseModuleDAO;
   
   @Inject
   private CourseStateDAO courseStateDAO;
@@ -115,10 +119,12 @@ public class CourseController {
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, BigDecimal courseFee, Currency courseFeeCurrency, Date enrolmentTimeEnd, User creatingUser) {
     
     Course course = courseDAO
-        .create(module, organization, name, nameExtension, state, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays,
+        .create(module, organization, name, nameExtension, state, type, beginDate, endDate, distanceTeachingDays,
             localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, courseFee, courseFeeCurrency, 
             enrolmentTimeEnd, creatingUser);
 
+    courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
+    
     return course;
   }
   
@@ -331,8 +337,11 @@ public class CourseController {
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
     
-    courseDAO.update(course, organization, name, nameExtension, courseState, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit,
+    courseDAO.update(course, organization, name, nameExtension, courseState, type, beginDate, endDate,
         distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, user);
+    
+    // TODO update course module with these
+    subject, courseNumber, courseLength, courseLengthTimeUnit,
     
     return course;
   }
@@ -422,9 +431,9 @@ public class CourseController {
     course.removeTag(tag);
   }
 
-  public List<Course> listCoursesBySubject(Subject subject) {
-    return courseDAO.listBySubject(subject);
-  }
+//  public List<Course> listCoursesBySubject(Subject subject) {
+//    return courseDAO.listBySubject(subject);
+//  }
 
   public List<Course> listCoursesByStaffMember(StaffMember staffMember) {
     return courseDAO.listByStaffMember(staffMember);
@@ -496,9 +505,9 @@ public class CourseController {
    * @param subject course subject
    * @return list of course students
    */
-  public List<CourseStudent> listByStudentAndCourseSubject(Student student, Subject subject) {
-    return courseStudentDAO.listByStudentAndCourseSubject(student, subject);
-  }
+//  public List<CourseStudent> listByStudentAndCourseSubject(Student student, Subject subject) {
+//    return courseStudentDAO.listByStudentAndCourseSubject(student, subject);
+//  }
   
   /**
    * Lists course students by student, course subject and course curriculum
@@ -508,9 +517,9 @@ public class CourseController {
    * @param curriculum course curriculum
    * @return list of course students
    */
-  public List<CourseStudent> listByStudentAndCourseSubjectAndCourseCurriculum(Student student, Subject subject, Curriculum curriculum) {
-    return courseStudentDAO.listByStudentAndCourseSubjectAndCourseCurriculum(student, subject, curriculum);
-  }
+//  public List<CourseStudent> listByStudentAndCourseSubjectAndCourseCurriculum(Student student, Subject subject, Curriculum curriculum) {
+//    return courseStudentDAO.listByStudentAndCourseSubjectAndCourseCurriculum(student, subject, curriculum);
+//  }
 
   public List<CourseStudent> listByStudentAndCourseCurriculum(Student student, Curriculum curriculum) {
     return courseStudentDAO.listByStudentAndCourseCurriculum(student, curriculum);

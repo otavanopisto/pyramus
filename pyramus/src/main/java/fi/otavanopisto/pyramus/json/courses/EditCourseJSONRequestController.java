@@ -39,6 +39,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudyProgrammeDAO;
@@ -58,6 +59,7 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
@@ -280,6 +282,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();
     
     Locale locale = requestContext.getRequest().getLocale();
     StaffMember loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
@@ -301,13 +304,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     CourseState courseState = courseStateId == null ? course.getState() : courseStateDAO.findById(courseStateId);
     CourseType courseType = courseTypeId != null ? courseTypeDAO.findById(courseTypeId) : null; 
     String description = requestContext.getString("description");
-    Subject subject = subjectDAO.findById(requestContext.getLong("subject"));
-    Integer courseNumber = requestContext.getInteger("courseNumber");
     Date beginDate = requestContext.getDate("beginDate");
     Date endDate = requestContext.getDate("endDate");
-    Double courseLength = requestContext.getDouble("courseLength");
-    EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(requestContext
-        .getLong("courseLengthTimeUnit"));
     Double distanceTeachingDays = requestContext.getDouble("distanceTeachingDays");
     Double localTeachingDays = requestContext.getDouble("localTeachingDays");
     Double teachingHours = requestContext.getDouble("teachingHours");
@@ -345,9 +343,29 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     StaffMember staffMember = userDAO.findById(requestContext.getLoggedUserId());
 
-    courseDAO.update(course, organization, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
-        courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
+    courseDAO.update(course, organization, name, nameExtension, courseState, courseType, beginDate, endDate,
+        distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
+
+
+//    Set<Long> existingIds = new HashSet<>();
+    int rowCount = requestContext.getInteger("courseModuleTable.rowCount").intValue();
+    for (int i = 0; i < rowCount; i++) {
+      String colPrefix = "courseModuleTable." + i;
+      Long courseModuleId = requestContext.getLong(colPrefix + ".courseModuleId");
+    
+      Subject subject = subjectDAO.findById(requestContext.getLong(colPrefix + ".subject"));
+      Integer courseNumber = requestContext.getInteger(colPrefix + ".courseNumber");
+      Double courseLength = requestContext.getDouble(colPrefix + ".courseLength");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(requestContext.getLong(colPrefix + ".courseLengthTimeUnit"));
+
+      if (courseModuleId == -1) {
+        courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
+      } else {
+        CourseModule existing = courseModuleDAO.findById(courseModuleId);
+        courseModuleDAO.update(existing, subject, courseNumber, courseLength, courseLengthTimeUnit);
+      }
+    }
     
     courseDAO.updateCurriculums(course, curriculums);
 
@@ -459,7 +477,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     // Personnel
 
     Set<Long> existingIds = new HashSet<>();
-    int rowCount = requestContext.getInteger("personnelTable.rowCount").intValue();
+    rowCount = requestContext.getInteger("personnelTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "personnelTable." + i;
       Long courseUserId = requestContext.getLong(colPrefix + ".courseUserId");
