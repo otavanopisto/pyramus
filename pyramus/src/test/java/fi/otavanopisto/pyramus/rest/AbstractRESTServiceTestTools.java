@@ -6,17 +6,23 @@ import static org.junit.Assert.assertEquals;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import fi.otavanopisto.pyramus.rest.model.Course;
 import fi.otavanopisto.pyramus.rest.model.CourseAssessment;
+import fi.otavanopisto.pyramus.rest.model.CourseLength;
+import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
+import fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.rest.model.Organization;
 import fi.otavanopisto.pyramus.rest.model.Person;
 import fi.otavanopisto.pyramus.rest.model.Sex;
 import fi.otavanopisto.pyramus.rest.model.Student;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
+import fi.otavanopisto.pyramus.rest.model.Subject;
 import io.restassured.response.Response;
 
 public class AbstractRESTServiceTestTools {
@@ -101,9 +107,15 @@ public class AbstractRESTServiceTestTools {
     course.setOrganizationId(organizationId);
     course.setModuleId(1l);
     course.setStateId(1l);
-    course.setLength(30d);
-    course.setLengthUnitId(1l);
     
+    EducationalTimeUnit courseLengthUnit = new EducationalTimeUnit(1l, null, null, null, false);
+    CourseLength courseLength = new CourseLength(null, null, 30d, courseLengthUnit);
+    Subject subject = new Subject(1l, null, null, null, false);
+    CourseModule courseModule = new CourseModule(null, subject, 1, courseLength);
+
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(courseModule));
+    course.setCourseModules(courseModules);
+        
     Response response = given().headers(getAdminAuthHeaders())
         .contentType("application/json")
         .body(course)

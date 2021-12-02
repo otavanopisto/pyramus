@@ -14,6 +14,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -33,6 +34,8 @@ import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable_;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -274,6 +277,27 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Course_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(Course_.module), module)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<Course> listBySubject(Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
+    Root<Course> courseRoot = criteria.from(Course.class);
+    
+    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
+    
+    criteria.select(courseRoot);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseRoot.get(Course_.archived), Boolean.FALSE),
+            courseRoot.in(courseModuleSubquery)
         ));
     
     return entityManager.createQuery(criteria).getResultList();

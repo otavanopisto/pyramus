@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -33,6 +34,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase_;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType_;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -66,6 +69,51 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     entityManager.persist(module);
 
     return module;
+  }
+
+  public List<Module> listBySubject(Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
+    Root<Module> root = criteria.from(Module.class);
+    
+    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
+    
+    criteria.select(root);
+    criteria.where(
+        root.in(courseModuleSubquery)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<Module> listBySubjectAndCourseNumber(Subject subject, Integer courseNumber) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
+    Root<Module> root = criteria.from(Module.class);
+
+    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject),
+            criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.courseNumber), courseNumber)
+        )
+    );
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+          root.in(courseModuleSubquery)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public Module updateTags(Module module, Set<Tag> tags) {

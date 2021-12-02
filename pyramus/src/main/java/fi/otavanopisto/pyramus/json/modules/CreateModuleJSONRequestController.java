@@ -24,6 +24,7 @@ import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -39,6 +40,8 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 
 /**
  * The controller responsible of creating a new module.
@@ -67,16 +70,12 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();    
 
     String name = requestContext.getString("name");
     String description = requestContext.getString("description");
-    Subject subject = subjectDAO.findById(requestContext.getLong("subject"));
-    Integer courseNumber = requestContext.getInteger("courseNumber"); 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
-    Long moduleLengthTimeUnitId = requestContext.getLong("moduleLengthTimeUnit");
     Long maxParticipantCount = requestContext.getLong("maxParticipantCount");
-    EducationalTimeUnit moduleLengthTimeUnit = educationalTimeUnitDAO.findById(moduleLengthTimeUnitId);
-    Double moduleLength = requestContext.getDouble("moduleLength");
     String tagsText = requestContext.getString("tags");
 
     List<Curriculum> allCurriculums = curriculumDAO.listUnarchived();
@@ -100,7 +99,17 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
       }
     }
     
-    Module module = moduleDAO.create(name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, loggedUser);
+    Module module = moduleDAO.create(name, description, maxParticipantCount, loggedUser);
+
+    PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");
+    for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
+      Subject subject = subjectDAO.findById(courseModulesTableRow.getLong("subject"));
+      Integer courseNumber = courseModulesTableRow.getInteger("courseNumber");
+      Double courseLength = courseModulesTableRow.getDouble("courseLength");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
+
+      courseModuleDAO.create(module, subject, courseNumber, courseLength, courseLengthTimeUnit);
+    }
 
     moduleDAO.updateCurriculums(module, curriculums);
     

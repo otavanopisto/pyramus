@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,10 @@ import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.model.Course;
+import fi.otavanopisto.pyramus.rest.model.CourseLength;
+import fi.otavanopisto.pyramus.rest.model.CourseModule;
+import fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.rest.model.Subject;
 
 @RunWith(Parameterized.class)
 public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
@@ -111,9 +116,11 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
 
     course.setId(new Long(response.body().jsonPath().getInt("id")));
     course.setName("Updated name");
-    course.setCourseNumber(999);
+    
     course.setDescription("Updated description");
-    course.setLength(888d);
+    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setCourseNumber(999);
+    firstCourseModule(course).getCourseLength().setUnits(888d);
     course.setMaxParticipantCount(1234l);
     
     Response updateResponse = given().headers(getAuthHeaders())
@@ -140,9 +147,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       
     course.setId(new Long(response.body().jsonPath().getInt("id")));
     course.setName("Updated name");
-    course.setCourseNumber(999);
     course.setDescription("Updated description");
-    course.setLength(888d);
+    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setCourseNumber(999);
+    firstCourseModule(course).getCourseLength().setUnits(888d);
     course.setMaxParticipantCount(1234l);
     course.setTags(Arrays.asList("tag1", "tag3", "tag4", "tag5"));
     
@@ -183,14 +191,25 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .statusCode(204);
   }
   
+  private CourseModule createCourseModule(Long courseModuleId, long subjectId, int courseNumber, double courseLengthUnits, long courseLengthUnitId) {
+    EducationalTimeUnit courseLengthUnit = new EducationalTimeUnit(courseLengthUnitId, null, null, null, false);
+    CourseLength courseLength = new CourseLength(null, null, courseLengthUnits, courseLengthUnit);
+    Subject subject = new Subject(subjectId, null, null, null, false);
+    return new CourseModule(courseModuleId, subject, courseNumber, courseLength);
+  }
+
   private Course createCourse(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags, Long organizationId) {
-    return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(null, subjectId, courseNumber, length, lengthUnitId)));
+    return new Course(null, name, created, lastModified, description, archived, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags, organizationId, false, null, null);
+        creatorId, lastModifierId, curriculumIds, moduleId, stateId, typeId, variables, tags, organizationId, false, null, null, courseModules);
   }
   
+  private CourseModule firstCourseModule(Course course) {
+    return course.getCourseModules().iterator().next();
+  }
 }

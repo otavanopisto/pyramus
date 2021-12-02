@@ -28,6 +28,9 @@ public class CourseModuleDAO extends PyramusEntityDAO<CourseModule> {
     courseModule.setCourseLength(educationalLength);
     entityManager.persist(courseModule);
 
+    course.addCourseModule(courseModule);
+    entityManager.persist(course);
+    
     return courseModule;
   }
 
@@ -59,23 +62,13 @@ public class CourseModuleDAO extends PyramusEntityDAO<CourseModule> {
   @Override
   public void delete(CourseModule courseModule) {
     EntityManager entityManager = getEntityManager();
+    
+    if (courseModule.getCourse() != null && courseModule.getCourse().getCourseModules().contains(courseModule)) {
+      courseModule.getCourse().getCourseModules().remove(courseModule);
+      entityManager.persist(courseModule.getCourse());
+    }
+    
     entityManager.remove(courseModule);
   }
-
-//  public List<CourseModule> listByCourse(Course course) {
-//    EntityManager entityManager = getEntityManager(); 
-//    
-//    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//    CriteriaQuery<CourseModule> criteria = criteriaBuilder.createQuery(CourseModule.class);
-//    Root<CourseModule> root = criteria.from(CourseModule.class);
-//    criteria.select(root);
-//    criteria.where(
-//        criteriaBuilder.and(
-//            criteriaBuilder.equal(root.get(CourseModule_.archived), Boolean.FALSE),
-//            criteriaBuilder.equal(root.get(CourseModule_.course), course)
-//        ));
-//    
-//    return entityManager.createQuery(criteria).getResultList();
-//  }
 
 }

@@ -81,6 +81,8 @@ import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 
 /** A JSON request controller responsible for creating courses.
  *
@@ -317,18 +319,16 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
         distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, 
         assessingHours, description, maxParticipantCount, courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
 
-    int rowCount = requestContext.getInteger("courseModuleTable.rowCount").intValue();
-    for (int i = 0; i < rowCount; i++) {
-      String colPrefix = "courseModuleTable." + i;
-    
-      Subject subject = subjectDAO.findById(requestContext.getLong(colPrefix + ".subject"));
-      Integer courseNumber = requestContext.getInteger(colPrefix + ".courseNumber");
-      Double courseLength = requestContext.getDouble(colPrefix + ".courseLength");
-      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(requestContext.getLong(colPrefix + ".courseLengthTimeUnit"));
+    PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");
+    for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
+      Subject subject = subjectDAO.findById(courseModulesTableRow.getLong("subject"));
+      Integer courseNumber = courseModulesTableRow.getInteger("courseNumber");
+      Double courseLength = courseModulesTableRow.getDouble("courseLength");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
 
       courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
     }
-    
+
     // Curriculums
     
     courseDAO.updateCurriculums(course, curriculums);
@@ -354,7 +354,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     
     // Personnel
 
-    rowCount = requestContext.getInteger("personnelTable.rowCount");
+    int rowCount = requestContext.getInteger("personnelTable.rowCount");
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "personnelTable." + i;
       Long userId = requestContext.getLong(colPrefix + ".userId");

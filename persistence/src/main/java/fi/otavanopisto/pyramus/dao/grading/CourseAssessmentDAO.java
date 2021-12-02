@@ -15,9 +15,12 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.Subquery;
 
 import fi.otavanopisto.pyramus.dao.Predicates;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -50,10 +53,11 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
   @Removed
   private Event<CourseAssessmentEvent> courseAssessmentRemovedEvent;
   
-  public CourseAssessment create(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment) {
+  public CourseAssessment create(CourseStudent courseStudent, CourseModule courseModule, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment) {
     CourseAssessment courseAssessment = new CourseAssessment();
     courseAssessment.setAssessor(assessingUser);
     courseAssessment.setCourseStudent(courseStudent);
+    courseAssessment.setCourseModule(courseModule);
     courseAssessment.setDate(date);
     courseAssessment.setGrade(grade);
     courseAssessment.setVerbalAssessment(verbalAssessment);
@@ -98,57 +102,65 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
    * 
    * @return list of all students course assessments
    */
-//  public List<CourseAssessment> listByStudentAndSubject(Student student, Subject subject) {
-//    EntityManager entityManager = getEntityManager(); 
-//    
-//    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
-//    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
-//    Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
-//    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
-//    
-//    criteria.select(root);
-//    criteria.where(
-//        criteriaBuilder.and(
-//            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student),
-//            criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE),
-//            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),
-//            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
-//            criteriaBuilder.equal(courseJoin.get(Course_.subject), subject)
-//        ));
-//    
-//    return entityManager.createQuery(criteria).getResultList();
-//  }
+  public List<CourseAssessment> listByStudentAndSubject(Student student, Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+    Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
+    
+    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
+
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student),
+            criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+            courseJoin.in(courseModuleSubquery)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
   
-//  public List<CourseAssessment> listByStudentAndSubjectAndCurriculum(Student student, Subject subject, Curriculum curriculum) {
-//    EntityManager entityManager = getEntityManager(); 
-//    
-//    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
-//    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
-//    Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
-//    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
-//
-//    Predicates predicates = Predicates.newInstance()
-//        .add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student))
-//        .add(criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE))
-//        .add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE))
-//        .add(criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE));
-//    
-//    if (subject != null) {
-//      predicates.add(criteriaBuilder.equal(courseJoin.get(Course_.subject), subject));
-//    }
-//        
-//    if (curriculum != null) {
-//      SetJoin<Course, Curriculum> curriculumJoin = courseJoin.join(Course_.curriculums);
-//      predicates.add(criteriaBuilder.equal(curriculumJoin, curriculum));
-//    }
-//        
-//    criteria.select(root);
-//    criteria.where(criteriaBuilder.and(predicates.array()));
-//    
-//    return entityManager.createQuery(criteria).getResultList();
-//  }
+  public List<CourseAssessment> listByStudentAndSubjectAndCurriculum(Student student, Subject subject, Curriculum curriculum) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+    Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
+
+    Predicates predicates = Predicates.newInstance()
+        .add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student))
+        .add(criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE))
+        .add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE))
+        .add(criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE));
+    
+    if (subject != null) {
+      Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+      Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+      courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
+      
+      predicates.add(courseJoin.in(courseModuleSubquery));
+    }
+        
+    if (curriculum != null) {
+      SetJoin<Course, Curriculum> curriculumJoin = courseJoin.join(Course_.curriculums);
+      predicates.add(criteriaBuilder.equal(curriculumJoin, curriculum));
+    }
+        
+    criteria.select(root);
+    criteria.where(criteriaBuilder.and(predicates.array()));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
   
   public List<CourseAssessment> listByStudentAndCourse(Student student, Course course) {
     EntityManager entityManager = getEntityManager(); 
@@ -178,6 +190,12 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     return courseAssessments.isEmpty() ? null : courseAssessments.get(0);
   }
   
+  public CourseAssessment findLatestByCourseStudentAndCourseModuleAndArchived(CourseStudent courseStudent, CourseModule courseModule, Boolean archived) {
+    List<CourseAssessment> courseAssessments = listByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, archived);
+    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+    return courseAssessments.isEmpty() ? null : courseAssessments.get(0);
+  }
+  
   public List<CourseAssessment> listByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -188,6 +206,24 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     criteria.where(
       criteriaBuilder.and(
         criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent),
+        criteriaBuilder.equal(root.get(CourseAssessment_.archived), archived)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<CourseAssessment> listByCourseStudentAndCourseModuleAndArchived(CourseStudent courseStudent, CourseModule courseModule, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent),
+        criteriaBuilder.equal(root.get(CourseAssessment_.courseModule), courseModule),
         criteriaBuilder.equal(root.get(CourseAssessment_.archived), archived)
       )
     );

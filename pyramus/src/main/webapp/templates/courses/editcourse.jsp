@@ -30,6 +30,8 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursecomponenteditor.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursecomponentseditor.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursecomponenteditordrafttask.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursemoduleutils.js"></script>
+
     <script type="text/javascript">
 
       var archivedStudentRowIndex;
@@ -1475,6 +1477,22 @@
         setupResources();
         setupStudentsTable();
 
+        var courseModulesData = JSDATA["courseModules"].evalJSON();
+        var courseModulesTable = setupCourseModulesTable();
+        var courseModulesRows = [];
+        for (var i = 0, l = courseModulesData.length; i < l; i++) {
+          var courseModule = courseModulesData[i];
+          courseModulesRows.push([
+            courseModule.subject.id,
+            courseModule.courseNumber,
+            courseModule.courseLength.units,
+            courseModule.courseLength.unit.id,
+            '',
+            courseModule.id
+          ]);
+        }
+        courseModulesTable.addRows(courseModulesRows);
+
         initializeSignupStudyProgrammesTable($('signupStudyProgrammesTable'), courseId);
         initializeSignupStudyProgrammeSearchField(courseId, $('searchStudyProgrammesInput'), $('searchStudyProgrammesInputAutoComplete'), $('searchSignupStudyProgrammes_indicator'));
         
@@ -1669,76 +1687,17 @@
   
             <div class="genericFormSection">  
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="courses.editCourse.subjectTitle"/>
-                <jsp:param name="helpLocale" value="courses.editCourse.subjectHelp"/>
-              </jsp:include>    
-              <select name="subject">
-                <c:forEach var="educationType" items="${educationTypes}">
-                  <c:if test="${subjectsByEducationType[educationType.id] ne null}">
-                    <optgroup label="${educationType.name}">
-                      <c:forEach var="subject" items="${subjectsByEducationType[educationType.id]}">
-                        <c:choose>
-                          <c:when test="${empty subject.code}">
-                            <c:set var="subjectName">${subject.name}</c:set>
-                          </c:when>
-                          <c:otherwise>
-                            <c:set var="subjectName">
-                              <fmt:message key="generic.subjectFormatterNoEducationType">
-                                <fmt:param value="${subject.code}"/>
-                                <fmt:param value="${subject.name}"/>
-                              </fmt:message>
-                            </c:set>
-                          </c:otherwise>
-                        </c:choose>
-
-                        <c:choose>
-                          <c:when test="${subject.id eq course.subject.id}">
-                            <option value="${subject.id}" selected="selected">${subjectName}</option>
-                          </c:when>
-                          <c:otherwise>
-                            <option value="${subject.id}">${subjectName}</option> 
-                          </c:otherwise>
-                        </c:choose>
-                      </c:forEach>
-
-                      <c:if test="${course.subject.archived and course.subject.educationType.id eq educationType.id}">
-                        <option value="${course.subject.id}" selected="selected">${subjectName}*</option>
-                      </c:if>
-                    </optgroup>
-                  </c:if>
-                </c:forEach>
-
-                <c:forEach var="subject" items="${subjectsByNoEducationType}">
-                  <c:choose>
-                    <c:when test="${empty subject.code}">
-                      <c:set var="subjectName">${subject.name}</c:set>
-                    </c:when>
-                    <c:otherwise>
-                      <c:set var="subjectName">
-                        <fmt:message key="generic.subjectFormatterNoEducationType">
-                          <fmt:param value="${subject.code}"/>
-                          <fmt:param value="${subject.name}"/>
-                        </fmt:message>
-                      </c:set>
-                    </c:otherwise>
-                  </c:choose>
-
-                  <c:choose>
-                    <c:when test="${subject.id eq course.subject.id}">
-                      <option value="${subject.id}" selected="selected">${subjectName}</option>
-                    </c:when>
-                    <c:otherwise>
-                      <option value="${subject.id}">${subjectName}</option> 
-                    </c:otherwise>
-                  </c:choose>
-                </c:forEach>
-
-                <c:if test="${course.subject.archived and course.subject.educationType.id eq null}">
-                  <option value="${course.subject.id}" selected="selected">${course.subject.name} (${course.subject.code})*</option>
-                </c:if>
-              </select>
+                <jsp:param name="titleLocale" value="courses.generic.courseModules.label"/>
+                <jsp:param name="helpLocale" value="courses.generic.courseModules.labelHelp"/>
+              </jsp:include>
+              
+              <div class="genericTableAddRowContainer">
+                <span class="genericTableAddRowLinkContainer" onclick="addCourseModuleTableRow();"><fmt:message key="modules.editModule.addCourseModuleLink"/></span>
+              </div>
+              
+              <div id="courseModulesTableContainer"></div>
             </div>
-            
+
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="courses.editCourse.curriculumTitle"/>
@@ -1759,14 +1718,6 @@
               </c:forEach>
             </div>
             
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="courses.editCourse.courseNumberTitle"/>
-                <jsp:param name="helpLocale" value="courses.editCourse.courseNumberHelp"/>
-              </jsp:include>    
-              <input type="text" name="courseNumber" value="${course.courseNumber}" size="2">
-            </div>
-
             <table>
               <tr>
                 <td>
@@ -1781,12 +1732,6 @@
                     <jsp:param name="helpLocale" value="courses.editCourse.endsHelp"/>
                   </jsp:include>    
                 </td>
-                <td>
-                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                    <jsp:param name="titleLocale" value="courses.editCourse.lengthTitle"/>
-                    <jsp:param name="helpLocale" value="courses.editCourse.lengthHelp"/>
-                  </jsp:include>    
-                </td>
               </tr>
               <tr>
                 <td>
@@ -1794,14 +1739,6 @@
                 </td>
                 <td>
                   <input type="text" name="endDate" class="ixDateField" value="${course.endDate.time}"/>
-                </td>
-                <td>
-                  <input type="text" name="courseLength" class="float required" value="${course.courseLength.units}" size="15"/>
-                  <select name="courseLengthTimeUnit">           
-                    <c:forEach var="courseLengthTimeUnit" items="${courseLengthTimeUnits}">
-                      <option value="${courseLengthTimeUnit.id}" <c:if test="${course.courseLength.unit.id eq courseLengthTimeUnit.id}">selected="selected"</c:if>>${courseLengthTimeUnit.name}</option> 
-                    </c:forEach>
-                  </select>   
                 </td>
               </tr>
             </table>

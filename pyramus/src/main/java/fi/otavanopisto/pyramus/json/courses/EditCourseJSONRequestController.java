@@ -100,6 +100,8 @@ import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 
 /**
  * The controller responsible of modifying an existing course. 
@@ -348,22 +350,30 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
 
 
-//    Set<Long> existingIds = new HashSet<>();
-    int rowCount = requestContext.getInteger("courseModuleTable.rowCount").intValue();
-    for (int i = 0; i < rowCount; i++) {
-      String colPrefix = "courseModuleTable." + i;
-      Long courseModuleId = requestContext.getLong(colPrefix + ".courseModuleId");
+    Set<Long> existingCourseModuleIds = new HashSet<>();
+
+    PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");
+    for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
+      Long courseModuleId = courseModulesTableRow.getLong("courseModuleId");
     
-      Subject subject = subjectDAO.findById(requestContext.getLong(colPrefix + ".subject"));
-      Integer courseNumber = requestContext.getInteger(colPrefix + ".courseNumber");
-      Double courseLength = requestContext.getDouble(colPrefix + ".courseLength");
-      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(requestContext.getLong(colPrefix + ".courseLengthTimeUnit"));
+      Subject subject = subjectDAO.findById(courseModulesTableRow.getLong("subject"));
+      Integer courseNumber = courseModulesTableRow.getInteger("courseNumber");
+      Double courseLength = courseModulesTableRow.getDouble("courseLength");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
 
       if (courseModuleId == -1) {
-        courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
+        CourseModule created = courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
+        existingCourseModuleIds.add(created.getId());
       } else {
         CourseModule existing = courseModuleDAO.findById(courseModuleId);
         courseModuleDAO.update(existing, subject, courseNumber, courseLength, courseLengthTimeUnit);
+        existingCourseModuleIds.add(existing.getId());
+      }
+    }
+    
+    for (CourseModule courseModule : course.getCourseModules()) {
+      if (!existingCourseModuleIds.contains(courseModule.getId())) {
+        courseModuleDAO.delete(courseModule);
       }
     }
     
@@ -477,7 +487,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     // Personnel
 
     Set<Long> existingIds = new HashSet<>();
-    rowCount = requestContext.getInteger("personnelTable.rowCount").intValue();
+    int rowCount = requestContext.getInteger("personnelTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "personnelTable." + i;
       Long courseUserId = requestContext.getLong(colPrefix + ".courseUserId");

@@ -44,6 +44,8 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 
 /**
  * The controller responsible of modifying an existing module. 
@@ -218,26 +220,34 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     }
     
     moduleDAO.update(module, name, description, maxParticipantCount, loggedUser);
-
-    // TODO remove the removed modules
-    rowCount = requestContext.getInteger("courseModuleTable.rowCount").intValue();
-    for (int i = 0; i < rowCount; i++) {
-      String colPrefix = "courseModuleTable." + i;
-      Long courseModuleId = requestContext.getLong(colPrefix + ".courseModuleId");
     
-      Subject subject = subjectDAO.findById(requestContext.getLong(colPrefix + ".subject"));
-      Integer courseNumber = requestContext.getInteger(colPrefix + ".courseNumber");
-      Double courseLength = requestContext.getDouble(colPrefix + ".courseLength");
-      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(requestContext.getLong(colPrefix + ".courseLengthTimeUnit"));
+    Set<Long> existingCourseModuleIds = new HashSet<>();
+
+    PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");
+    for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
+      Long courseModuleId = courseModulesTableRow.getLong("courseModuleId");
+    
+      Subject subject = subjectDAO.findById(courseModulesTableRow.getLong("subject"));
+      Integer courseNumber = courseModulesTableRow.getInteger("courseNumber");
+      Double courseLength = courseModulesTableRow.getDouble("courseLength");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
 
       if (courseModuleId == -1) {
-        courseModuleDAO.create(module, subject, courseNumber, courseLength, courseLengthTimeUnit);
+        CourseModule created = courseModuleDAO.create(module, subject, courseNumber, courseLength, courseLengthTimeUnit);
+        existingCourseModuleIds.add(created.getId());
       } else {
         CourseModule existing = courseModuleDAO.findById(courseModuleId);
         courseModuleDAO.update(existing, subject, courseNumber, courseLength, courseLengthTimeUnit);
+        existingCourseModuleIds.add(existing.getId());
       }
     }
     
+    for (CourseModule courseModule : module.getCourseModules()) {
+      if (!existingCourseModuleIds.contains(courseModule.getId())) {
+        courseModuleDAO.delete(courseModule);
+      }
+    }
+
     moduleDAO.updateCurriculums(module, curriculums);
     
     // Tags

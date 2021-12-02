@@ -10,9 +10,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.Subquery;
 
 import fi.otavanopisto.pyramus.dao.Predicates;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -83,40 +86,44 @@ public class CreditLinkDAO extends PyramusEntityDAO<CreditLink> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-//  public List<CreditLink> listLinkedCourseAssessments(Student student, Subject subject, Curriculum curriculum) {
-//    EntityManager entityManager = getEntityManager(); 
-//    
-//    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//    CriteriaQuery<CreditLink> criteria = criteriaBuilder.createQuery(CreditLink.class);
-//    
-//    Root<CreditLink> creditLink = criteria.from(CreditLink.class);
-//    Root<CourseAssessment> courseAssessment = criteria.from(CourseAssessment.class);
-//
-//    Join<CourseAssessment, CourseStudent> courseStudentJoin = courseAssessment.join(CourseAssessment_.courseStudent);
-//    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
-//
-//    Predicates predicates = Predicates.newInstance()
-//      .add(criteriaBuilder.equal(creditLink.get(CreditLink_.student), student))
-//      .add(criteriaBuilder.equal(creditLink.get(CreditLink_.credit), courseAssessment))
-//      .add(criteriaBuilder.equal(creditLink.get(CreditLink_.archived), Boolean.FALSE))
-//      .add(criteriaBuilder.equal(courseAssessment.get(CourseAssessment_.archived), Boolean.FALSE))
-//      .add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE))
-//      .add(criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE));
-//
-//    if (subject != null) {
-//      predicates.add(criteriaBuilder.equal(courseJoin.get(Course_.subject), subject));
-//    }
-//    
-//    if (curriculum != null) {
-//      SetJoin<Course, Curriculum> curriculumJoin = courseJoin.join(Course_.curriculums);
-//      predicates.add(criteriaBuilder.equal(curriculumJoin, curriculum));
-//    }
-//    
-//    criteria.select(creditLink);
-//    criteria.where(criteriaBuilder.and(predicates.array()));
-//    
-//    return entityManager.createQuery(criteria).getResultList();
-//  }
+  public List<CreditLink> listLinkedCourseAssessments(Student student, Subject subject, Curriculum curriculum) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CreditLink> criteria = criteriaBuilder.createQuery(CreditLink.class);
+    
+    Root<CreditLink> creditLink = criteria.from(CreditLink.class);
+    Root<CourseAssessment> courseAssessment = criteria.from(CourseAssessment.class);
+
+    Join<CourseAssessment, CourseStudent> courseStudentJoin = courseAssessment.join(CourseAssessment_.courseStudent);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
+
+    Predicates predicates = Predicates.newInstance()
+      .add(criteriaBuilder.equal(creditLink.get(CreditLink_.student), student))
+      .add(criteriaBuilder.equal(creditLink.get(CreditLink_.credit), courseAssessment))
+      .add(criteriaBuilder.equal(creditLink.get(CreditLink_.archived), Boolean.FALSE))
+      .add(criteriaBuilder.equal(courseAssessment.get(CourseAssessment_.archived), Boolean.FALSE))
+      .add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE))
+      .add(criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE));
+
+    if (subject != null) {
+      Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+      Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+      courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
+
+      predicates.add(courseJoin.in(courseModuleSubquery));
+    }
+    
+    if (curriculum != null) {
+      SetJoin<Course, Curriculum> curriculumJoin = courseJoin.join(Course_.curriculums);
+      predicates.add(criteriaBuilder.equal(curriculumJoin, curriculum));
+    }
+    
+    criteria.select(creditLink);
+    criteria.where(criteriaBuilder.and(predicates.array()));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
   
   public List<CreditLink> listLinkedTransferCredits(Student student, Subject subject, Curriculum curriculum) {
     EntityManager entityManager = getEntityManager(); 
