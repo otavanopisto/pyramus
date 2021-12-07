@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.Person;
@@ -68,6 +69,18 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
       .get("/persons/persons/{ID}", 3);
     
     assertOk(response, personPermissions, PersonPermissions.FIND_PERSON);
+  }
+  
+  @Test
+  public void testFindPersonOppija() throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders())
+      .get("/persons/persons/{ID}/oppija", 3);
+
+    int expectedStatusCode = isCurrentRole(Role.ADMINISTRATOR) ? 200 : isCurrentRole(Role.EVERYONE) ? 403 : 404;
+    int statusCode = response.statusCode();
+    
+    assertEquals(String.format("Status code <%d> didn't match expected code <%d> when Role = %s", statusCode, expectedStatusCode, getRole()),
+        expectedStatusCode, statusCode);
   }
   
   @Test
