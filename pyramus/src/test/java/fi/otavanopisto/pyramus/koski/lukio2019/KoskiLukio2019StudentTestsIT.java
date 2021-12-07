@@ -118,8 +118,6 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
       Response response = given().headers(getAuthHeaders())
         .get("/persons/persons/{ID}/oppija", person.getId());
       
-      System.out.println(response.body().asString());
-      
       response
         .then()
         .statusCode(200);
@@ -196,8 +194,6 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     try {
       Response response = given().headers(getAuthHeaders())
         .get("/persons/persons/{ID}/oppija", person.getId());
-      
-      System.out.println(response.body().asString());
       
       response
         .then()

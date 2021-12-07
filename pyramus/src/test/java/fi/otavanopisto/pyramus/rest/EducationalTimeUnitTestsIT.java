@@ -43,7 +43,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
       .get("/common/educationalTimeUnits")
       .then()
       .statusCode(200)
-      .body("id.size()", is(2))
+      .body("id.size()", is(3))
       .body("id[0]", is(1) )
       .body("name[0]", is("Hour"))
       .body("baseUnits[0]", is(1f))
