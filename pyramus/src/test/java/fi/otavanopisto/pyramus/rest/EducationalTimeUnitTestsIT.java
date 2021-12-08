@@ -49,9 +49,13 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
       .body("baseUnits[0]", is(1f))
       .body("archived[0]", is( false ))
       .body("id[1]", is(2) )
-      .body("name[1]", is("Week"))
-      .body("baseUnits[1]", is(168f))
-      .body("archived[1]", is( false ));
+      .body("name[1]", is("Points"))
+      .body("baseUnits[1]", is(1f))
+      .body("archived[1]", is( false ))
+      .body("id[2]", is(3) )
+      .body("name[2]", is("Week"))
+      .body("baseUnits[2]", is(168f))
+      .body("archived[2]", is( false ));
   }
   
   @Test
