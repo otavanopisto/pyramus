@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryCommentDAO;
@@ -65,6 +66,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
@@ -173,6 +175,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     PersonVariableKeyDAO personVariableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
+    MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
 
     Long loggedUserId = pageRequestContext.getLoggedUserId();
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
@@ -238,6 +241,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     Map<Long, List<StudentLodgingPeriod>> studentLodgingPeriods = new HashMap<>();
     Map<Long, List<StudentStudyPeriod>> studentStudyPeriods = new HashMap<>();
     Map<Long, StudentTOR> subjectCredits = new HashMap<>();
+    Map<Long, List<MatriculationExamEnrollment>> studentMatriculationEnrollments = new HashMap<>();
     
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
@@ -763,6 +767,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       studentProjects.put(student.getId(), studentProjectBeans);
       studentLodgingPeriods.put(student.getId(), studentLodgingPeriodEntities);
       studentStudyPeriods.put(student.getId(), studentStudyPeriodEntities);
+      studentMatriculationEnrollments.put(student.getId(), matriculationExamEnrollmentDAO.listByStudent(student));
       
       try {
         StudentTOR tor = StudentTORController.constructStudentTOR(student);
@@ -813,6 +818,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("courseAssessmentRequests", courseAssessmentRequests);
     pageRequestContext.getRequest().setAttribute("studentLodgingPeriods", studentLodgingPeriods);
     pageRequestContext.getRequest().setAttribute("studentStudyPeriods", studentStudyPeriods);
+    pageRequestContext.getRequest().setAttribute("studentMatriculationEnrollments", studentMatriculationEnrollments);
 
     pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 
