@@ -38,12 +38,12 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testListSubject() {
+  public void testListSubjects() {
     given().headers(getAuthHeaders())
       .get("/common/subjects")
       .then()
       .statusCode(200)
-      .body("id.size()", is(3))
+      .body("id.size()", is(4))
       .body("id[0]", is(1) )
       .body("name[0]", is("Test Subject" ))
       .body("code[0]", is("TEST"))

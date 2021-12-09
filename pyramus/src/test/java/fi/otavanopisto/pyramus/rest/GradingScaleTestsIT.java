@@ -42,7 +42,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
       .get("/common/gradingScales")
       .then()
       .statusCode(200)
-      .body("id.size()", is(2))
+      .body("id.size()", is(3))
       .body("id[0]", is(1) )
       .body("name[0]", is("test scale #1" ))
       .body("description[0]", is("grading scale for testing #1"))
