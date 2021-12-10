@@ -35,6 +35,10 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   public static final String LIST_STAFFMEMBER_EMAILS = "LIST_STAFFMEMBER_EMAILS";
 
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ TRUSTED_SYSTEM })
+  public static final String GET_USER_DEFAULT_EMAIL_ADDRESS = "GET_USER_DEFAULT_EMAIL_ADDRESS";
+
   /**
    * UserVariable
    */

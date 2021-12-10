@@ -41,7 +41,7 @@ public class CurriculumTestsIT extends AbstractRESTServiceTest {
       .get("/common/curriculums")
       .then()
       .statusCode(200)
-      .body("id.size()", is(2))
+      .body("id.size()", is(4))
       .body("id[0]", is(1) )
       .body("name[0]", is("Curriculum #1"))
       .body("archived[0]", is(false))

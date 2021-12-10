@@ -29,13 +29,21 @@ insert into
   GradingScale (id, archived, name, description, version)
 values  
   (1, false, 'test scale #1', 'grading scale for testing #1', 1),
-  (2, false, 'test scale #2', 'grading scale for testing #2', 1);
+  (2, false, 'test scale #2', 'grading scale for testing #2', 1),
+  (3, false, 'test scale #3 (4-10)', 'grading scale for testing #3', 1);
 
 insert into 
   Grade (id, GPA, archived, name, description, passingGrade, qualification, gradingScale, indexColumn, version)
 values  
   (1, 10, false, 'test grade #1', 'grade for testing #1', false, 'qualification #1', 1, 1, 1),
-  (2, 20, false, 'test grade #2', 'grade for testing #2', true, 'qualification #2', 1, 2, 1);
+  (2, 20, false, 'test grade #2', 'grade for testing #2', true, 'qualification #2', 1, 2, 1),
+  (3, 4, false, '4', 'grade for testing #3', false, 'qualification #1', 3, 1, 1),
+  (4, 5, false, '5', 'grade for testing #4', true, 'qualification #1', 3, 1, 1),
+  (5, 6, false, '6', 'grade for testing #5', true, 'qualification #1', 3, 1, 1),
+  (6, 7, false, '7', 'grade for testing #6', true, 'qualification #1', 3, 1, 1),
+  (7, 8, false, '8', 'grade for testing #7', true, 'qualification #1', 3, 1, 1),
+  (8, 9, false, '9', 'grade for testing #8', true, 'qualification #1', 3, 1, 1),
+  (9, 10, false, '10', 'grade for testing #9', true, 'qualification #1', 3, 1, 1);
   
 insert into 
   ContactInfo (id, additionalInfo, version)
@@ -153,7 +161,8 @@ insert into
 values 
   (1, false, 'TEST', 'Test Subject', 1, 1),
   (2, false, 'TST2', 'Test Subject #2', 1, 2),
-  (3, false, 'TST3', 'Test Subject #3', 1, 2);
+  (3, false, 'TST3', 'Test Subject #3', 1, 2),
+  (4, false, 'BI', 'Biology', 1, 1);
   
 insert into
   CourseState (id, archived, name, version)
@@ -184,7 +193,8 @@ insert into
   EducationalTimeUnit (id, archived, baseUnits, name, symbol, version)
 values 
   (1, false, 1, 'Hour', 'h', 1),
-  (2, false, 168, 'Week', 'w', 1);
+  (2, false, 1, 'Points', 'p', 1),
+  (3, false, 168, 'Week', 'w', 1);
 
 insert into
   EducationalLength (id, units, unit, version)
@@ -361,7 +371,9 @@ insert into
   Curriculum (id, name, archived)
 values 
   (1, 'Curriculum #1', false),
-  (2, 'Curriculum #2', false);  
+  (2, 'Curriculum #2', false),
+  (3, 'Curriculum #3', false),
+  (4, 'Curriculum #4', false);  
 
 insert into 
   Municipality (id, code, name, version, archived)
@@ -415,12 +427,12 @@ values
 insert into 
   Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 
     additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
-    examinationType, education)
+    examinationType, education, curriculum_id)
 values 
-  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1'),
-  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2'),
-  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg'),
-  (13, 1, 'TEST-Student2', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg2');
+  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', 3),
+  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', null),
+  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', null),
+  (13, 1, 'TEST-Student2', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg2', null);
 
 insert into StudentGroupStudent
   (id, studentGroup, student, version)

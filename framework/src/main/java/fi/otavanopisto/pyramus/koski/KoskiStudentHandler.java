@@ -824,9 +824,18 @@ public abstract class KoskiStudentHandler {
   }
 
   protected <T extends KurssinSuoritus> T luoKurssiSuoritus(T suoritus, CreditStub courseCredit) {
+    if (CollectionUtils.isEmpty(courseCredit.getCredits())) {
+      return null;
+    }
+    
     CreditStubCredit parasArvosana = courseCredit.getCredits().getBestCredit();
     
     if (parasArvosana != null) {
+      /**
+       * Korkein arvosana määrittää, välitetäänkö arvosana tunnustettuna vai ei.
+       * - Korkein arvosana on hyväksiluku -> tunnustettu
+       * - Korkein arvosana kurssisuoritus -> ei tunnustettu
+       */
       if (parasArvosana.getType() == Type.RECOGNIZED) {
         OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
         
@@ -837,19 +846,22 @@ public abstract class KoskiStudentHandler {
         suoritus.setTunnustettu(tunnustettu);
       }
       
-      ArviointiasteikkoYleissivistava arvosana = getArvosana(parasArvosana.getGrade());
-      
-      KurssinArviointi arviointi = null;
-      if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
-        arviointi =  new KurssinArviointiNumeerinen(arvosana, parasArvosana.getDate());
-      } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
-        arviointi = new KurssinArviointiSanallinen(arvosana, parasArvosana.getDate(), kuvaus(parasArvosana.getGrade().getName()));
-      } else {
-        logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
-        return null;
-      }
+      for (CreditStubCredit credit : courseCredit.getCredits()) {
+        ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
+        
+        KurssinArviointi arviointi = null;
+        if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
+          arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
+        } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
+          arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
+        } else {
+          logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
+          return null;
+        }
 
-      suoritus.addArviointi(arviointi);
+        suoritus.addArviointi(arviointi);
+      }
+      
       return suoritus;
     } else {
       // Kurssisuoritus ohitetaan jos arvosanaa ei ole
