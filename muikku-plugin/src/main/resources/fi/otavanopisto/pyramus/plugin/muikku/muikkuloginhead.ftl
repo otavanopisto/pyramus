@@ -143,6 +143,7 @@
   input[type="submit"].muikku-login-button {
     align-items: center;
     background-color: #009fe3;
+    border: 0;
     border-radius: 20px;
     color: #ffffff;
     cursor: pointer;
