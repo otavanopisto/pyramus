@@ -23,13 +23,13 @@ public class LukionOppiaineenOppimaaranSuoritus2019 extends LukionSuoritus2019 {
     this.koulutusmoduuli.setPerusteenDiaarinumero(perusteenDiaarinumero);
   }
   
-  @JsonProperty("lukionOppimääräSuoritettu")
-  public boolean isLukionOppimaaraSuoritettu() {
-    return lukionOppimaaraSuoritettu;
+  @JsonProperty("oppimääräSuoritettu")
+  public boolean isOppimaaraSuoritettu() {
+    return oppimaaraSuoritettu;
   }
 
-  public void setLukionOppimaaraSuoritettu(boolean lukionOppimaaraSuoritettu) {
-    this.lukionOppimaaraSuoritettu = lukionOppimaaraSuoritettu;
+  public void setOppimaaraSuoritettu(boolean oppimaaraSuoritettu) {
+    this.oppimaaraSuoritettu = oppimaaraSuoritettu;
   }
 
   public void addOsasuoritus(LukionOppiaineenSuoritus2019 osasuoritus) {
@@ -45,6 +45,6 @@ public class LukionOppiaineenOppimaaranSuoritus2019 extends LukionSuoritus2019 {
   }
 
   private final LukionOppiaineenOppimaaranKoulutusmoduuli2019 koulutusmoduuli = new LukionOppiaineenOppimaaranKoulutusmoduuli2019();
-  private boolean lukionOppimaaraSuoritettu;
+  private boolean oppimaaraSuoritettu;
   private final Set<LukionOppiaineenSuoritus2019> osasuoritukset = new HashSet<>();
 }

@@ -78,7 +78,7 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
     LukionOppiaineenOppimaaranSuoritus2019 suoritus = new LukionOppiaineenOppimaaranSuoritus2019(
         LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, getDiaarinumero(student));
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
-    suoritus.setLukionOppimaaraSuoritettu(lukionOppimääräSuoritettu);
+    suoritus.setOppimaaraSuoritettu(lukionOppimääräSuoritettu);
     if (sisällytäVahvistus) {
       suoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
     }
