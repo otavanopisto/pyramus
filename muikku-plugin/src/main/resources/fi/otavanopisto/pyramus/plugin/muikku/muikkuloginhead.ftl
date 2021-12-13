@@ -24,6 +24,13 @@
     box-sizing: border-box;
   }
   
+  form {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
   .muikku-login-card-wrapper {
     align-items: center;
     bottom: 0;
@@ -40,9 +47,10 @@
   .muikku-login-card {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto;
     margin: 10px;
-    width: 100%;
+    max-width: 500px;
+    width: calc(100% + 20px);
   }
   
   .muikku-logo-container {
@@ -62,13 +70,14 @@
     font-family: "Exo 2", Arial, sans-serif;
     font-size: 2rem;
     font-weight: 900;
+    line-height: 2rem;
     padding: 0 1rem;
   }
   
   .muikku-login-container {
     background: #fff;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-radius: 10px;
+    box-shadow: 0 25px 30px rgba(0,0,0,0.05);
     flex-grow: 1;
     font-weight: 400;
     line-height: 1.2rem;
@@ -125,11 +134,9 @@
   .muikku-login-footer {
     align-items: center;
     background: #fff;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
     display: flex;
     justify-content: space-between;
-    padding: 0.55rem 1.1rem 1.1rem;
+    padding: 1.6rem 0 0;
   }
   
   .external-login-button,
@@ -173,10 +180,7 @@
   @media screen and (min-width: 48em) {
   
     .muikku-login-card {
-      height: auto;
-      margin: 10px;
-      max-width: 500px;
-      width: 100%;
+      width: 400px;
     }
   
     .muikku-login-title {
@@ -196,7 +200,7 @@
     }
     
     .muikku-login-footer {
-      padding: 0.8rem 1.6rem 1.6rem;
+      padding: 1.6rem 0 0;
     }
   }
  
