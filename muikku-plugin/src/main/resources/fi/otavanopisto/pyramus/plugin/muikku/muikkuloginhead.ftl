@@ -76,8 +76,8 @@
   
   .muikku-login-container {
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 25px 30px rgba(0,0,0,0.05);
+    border: solid 1px #e2e2e2;
+    border-radius: 5px;
     flex-grow: 1;
     font-weight: 400;
     line-height: 1.2rem;
@@ -152,7 +152,7 @@
     font-weight: 600;
     height: 2.125rem;
     justify-content: center;
-    margin: 0 10px 10px 0;
+    margin: 0;
     overflow: hidden;
     padding: 5px 15px;
     text-decoration: none;
@@ -162,11 +162,6 @@
     user-select: none;
     white-space: nowrap;
   }
-  
-  .external-login-button:last-child,
-  input[type="submit"].muikku-login-button:last-child {
-    margin: 0 0 10px 0;
-  } 
   
   .Google-oauth-login-button {
     background: url("../gfx/icons/32x32/google-auth-icon.png") no-repeat center center;

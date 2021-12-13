@@ -21,12 +21,12 @@
 		      <label class="muikku-login-label" for="password">Salasana</label>
   		    <input class="muikku-login-input" type="password" required="required" name="password" id="password">
 		    </div>
-		    <footer class="muikku-login-footer">
+		    <div class="muikku-login-footer">
 	          <input type="submit" class="muikku-login-button" value="Kirjaudu">
 	          <#list externalProviders as externalProvider>
   	            <a class="${externalProvider.name}-login-button external-login-button" href="?external=${externalProvider.name}"></a>
               </#list>
-            </footer>
+            </div>
 	      </main>
 	    </section>
 	  </form>
