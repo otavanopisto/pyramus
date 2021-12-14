@@ -36,6 +36,16 @@ public class LukionOpiskeluoikeus extends Opiskeluoikeus {
     this.lisatiedot = lisatiedot;
   }
 
+  @JsonProperty("oppimääräSuoritettu")
+  public boolean isOppimaaraSuoritettu() {
+    return oppimaaraSuoritettu;
+  }
+
+  public void setOppimaaraSuoritettu(boolean oppimaaraSuoritettu) {
+    this.oppimaaraSuoritettu = oppimaaraSuoritettu;
+  }
+
   private final Set<LukionSuoritus> suoritukset = new HashSet<>();
   private LukionOpiskeluoikeudenLisatiedot lisatiedot;
+  private boolean oppimaaraSuoritettu;
 }

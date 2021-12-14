@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -845,15 +847,43 @@ public abstract class KoskiStudentHandler {
         
         suoritus.setTunnustettu(tunnustettu);
       }
+
+      boolean korotukset2022 = courseCredit.getCredits().stream().anyMatch(credit -> {
+        Date arvosananPäivämäärä = credit.getDate();
+        Date vuodenAlku2022 = Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return (arvosananPäivämäärä != null) && arvosananPäivämäärä.after(vuodenAlku2022);
+      });
       
-      for (CreditStubCredit credit : courseCredit.getCredits()) {
-        ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
+      if (korotukset2022) {
+        /**
+         * 1.1.2022 alkaen välitetään kaikki arvosanat
+         */
+        for (CreditStubCredit credit : courseCredit.getCredits()) {
+          ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
+          
+          KurssinArviointi arviointi = null;
+          if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
+            arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
+          } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
+            arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
+          } else {
+            logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
+            return null;
+          }
+  
+          suoritus.addArviointi(arviointi);
+        }
+      } else {
+        /**
+         * Ennen 1.1.2022 tehdyistä suorituksista välitetään vain paras arvosana.
+         */
+        ArviointiasteikkoYleissivistava arvosana = getArvosana(parasArvosana.getGrade());
         
         KurssinArviointi arviointi = null;
         if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
-          arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
+          arviointi =  new KurssinArviointiNumeerinen(arvosana, parasArvosana.getDate());
         } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
-          arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
+          arviointi = new KurssinArviointiSanallinen(arvosana, parasArvosana.getDate(), kuvaus(parasArvosana.getGrade().getName()));
         } else {
           logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
           return null;
