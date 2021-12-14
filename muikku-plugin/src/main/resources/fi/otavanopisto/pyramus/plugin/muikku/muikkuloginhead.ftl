@@ -119,7 +119,7 @@
     border-radius: 3px;
     color: #2c2c2c;
     font-family: "Open Sans", Arial, sans-serif;
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 300;
     height: auto;
     outline: none;
