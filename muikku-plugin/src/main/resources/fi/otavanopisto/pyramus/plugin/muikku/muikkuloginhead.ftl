@@ -1,6 +1,6 @@
 <meta content="width=device-width, initial-scale=1.0, minimum-scale=1" name="viewport" />
 <link href='https://fonts.googleapis.com/css?family=Exo+2:200,300,400,600,900' rel='stylesheet' type='text/css'/>
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'/>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'/>
 
 <@include_page path="/templates/generic/head_generic.jsp"/>
 <@include_page path="/templates/generic/jsonrequest_support.jsp"/>
@@ -81,7 +81,7 @@
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
     flex-grow: 1;
     font-weight: 400;
-    line-height: 1.2rem;
+    line-height: 1.375rem;
     padding: 1.1rem;
     position: relative;
     text-align: left;
@@ -109,7 +109,7 @@
   .muikku-login-label {
     display: block;
     font-weight: 400;
-    padding: 0 0 8px;
+    padding: 0 0 4px;
     width: 100%;
   }
   
