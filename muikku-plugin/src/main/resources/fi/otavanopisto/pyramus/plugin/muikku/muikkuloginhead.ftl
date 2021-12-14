@@ -152,7 +152,6 @@
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 1rem;
     font-weight: 400;
-    height: 2.125rem;
     justify-content: center;
     margin: 0;
     overflow: hidden;
