@@ -71,13 +71,14 @@
     font-size: 2rem;
     font-weight: 900;
     line-height: 2rem;
-    padding: 0 1rem;
+    padding: 0 1rem; 
   }
   
   .muikku-login-container {
     background: #fff;
     border: solid 1px #e2e2e2;
     border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
     flex-grow: 1;
     font-weight: 400;
     line-height: 1.2rem;
