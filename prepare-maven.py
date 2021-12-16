@@ -33,13 +33,13 @@ if (("OOM2_USER" in os.environ) and ("OOM2_PASSWORD" in os.environ)):
   oo_snapshots_mirror = ET.SubElement(mirrors, 'mirror')
   ET.SubElement(oo_snapshots_mirror, 'id').text = 'otavanopisto-snapshots-http-unblocker'
   ET.SubElement(oo_snapshots_mirror, 'mirrorOf').text = 'otavanopisto-snapshots'
-  ET.SubElement(oo_snapshots_mirror, 'url').text = 'http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots'
+  ET.SubElement(oo_snapshots_mirror, 'url').text = 'http://nexus.muikkuverkko.fi:8081/repository/otavanopisto-snapshots/'
   ET.SubElement(oo_snapshots_mirror, 'blocked').text = 'false'  
 
   oo_releases_mirror = ET.SubElement(mirrors, 'mirror')
   ET.SubElement(oo_releases_mirror, 'id').text = 'otavanopisto-releases-http-unblocker'
   ET.SubElement(oo_releases_mirror, 'mirrorOf').text = 'otavanopisto-releases'
-  ET.SubElement(oo_releases_mirror, 'url').text = 'http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases'
+  ET.SubElement(oo_releases_mirror, 'url').text = 'http://nexus.muikkuverkko.fi:8081/repository/otavanopisto-releases/'
   ET.SubElement(oo_releases_mirror, 'blocked').text = 'false'
 
   m2.write(homedir + '/.m2/mySettings.xml',

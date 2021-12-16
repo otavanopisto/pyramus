@@ -39,13 +39,13 @@
     </dependency>
   </dependencies>
 
-  <repositories>
+<!--   <repositories>
     <repository>
       <id>otavanopisto-thirdparty</id>
         <name>Otavan Opisto Thirdparty</name>
       <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/thirdparty</url>
     </repository>
-  </repositories>
+  </repositories> -->
   
   <build>
     <directory>target</directory>
