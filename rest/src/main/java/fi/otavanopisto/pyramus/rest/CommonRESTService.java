@@ -355,6 +355,17 @@ public class CommonRESTService extends AbstractRESTService {
     return Response.ok().entity(objectFactory.createModel(commonController.createSubject(code, name, educationType))).build();
   }
   
+  @Path("/subjectByCode/{CODE}")
+  @GET
+  @RESTPermit (CommonPermissions.FIND_SUBJECT)
+  public Response findSubjectByCode(@PathParam("CODE") String code) {
+    Subject subject = commonController.findSubjectByCode(code);
+    if (subject == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    return Response.ok().entity(objectFactory.createModel(subject)).build();
+  }
+
   @Path("/subjects")
   @GET
   @RESTPermit (CommonPermissions.LIST_SUBJECTS)
