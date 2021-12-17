@@ -392,13 +392,13 @@
       <uniqueVersion>false</uniqueVersion>
       <id>otavanopisto-snapshots</id>
       <name>Otavan Opisto Snapshots</name>
-      <url>http://nexus.muikkuverkko.fi:8081/repository/otavanopisto-snapshots/</url>
+      <url>https://nexus.muikkuverkko.fi/repository/otavanopisto-snapshots/</url>
     </snapshotRepository>
     <repository>
       <uniqueVersion>false</uniqueVersion>
       <id>otavanopisto-releases</id>
       <name>Otavan Opisto Releases</name>
-      <url>http://nexus.muikkuverkko.fi:8081/repository/otavanopisto-releases/</url>
+      <url>https://nexus.muikkuverkko.fi/repository/otavanopisto-releases/</url>
     </repository>
   </distributionManagement>
 
