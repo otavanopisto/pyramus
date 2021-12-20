@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.grading;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
@@ -34,6 +36,12 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     entityManager.persist(courseAssessmentRequest);
     
     return courseAssessmentRequest;
+  }
+  
+  public CourseAssessmentRequest findLatestByCourseStudent(CourseStudent courseStudent) {
+    List<CourseAssessmentRequest> requests = listByCourseStudent(courseStudent);
+    requests.sort(Comparator.comparing(CourseAssessmentRequest::getCreated).reversed());
+    return requests.isEmpty() ? null : requests.get(0);
   }
   
   /**
