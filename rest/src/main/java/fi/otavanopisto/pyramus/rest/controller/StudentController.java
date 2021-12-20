@@ -201,6 +201,10 @@ public class StudentController {
     
     return student;
   }
+  
+  public Student updateStudyTimeEnd(Student student, Date studyTimeEnd) {
+    return studentDAO.updateStudyTimeEnd(student, studyTimeEnd);
+  }
 
   public Student updateStudentPerson(Student student, Person person) {
     if (!student.getPerson().getId().equals(person.getId())) {

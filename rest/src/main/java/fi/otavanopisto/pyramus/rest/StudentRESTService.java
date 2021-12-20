@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
@@ -2912,6 +2913,40 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(courseActivities).build();
   }
   
+  @Path("/students/{ID:[0-9]*}/increaseStudyTime")
+  @POST
+  @RESTPermit(StudentPermissions.INCREASE_STUDY_TIME)
+  public Response increaseStudyTime(@PathParam("ID") Long id, @QueryParam("months") Integer months) {
+    logger.info(String.format("Increasing student %d study time for %d months", id, months));
+
+    // Validation
+
+    if (months == null || months <= 0) {
+      logger.severe("Invalid months");
+      return Response.status(Status.BAD_REQUEST).entity("Invalid months").build();
+    }
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      logger.severe("Student not found");
+      return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
+    }
+
+    // Update study time end
+
+    Date studyTimeEnd = student.getStudyTimeEnd();
+    if (studyTimeEnd == null) {
+      logger.warning("Student has no study time end set. Defaulting to now");
+      studyTimeEnd = new Date();
+    }
+    studyTimeEnd = DateUtils.addMonths(studyTimeEnd, months);
+    student = studentController.updateStudyTimeEnd(student, studyTimeEnd);
+    logger.info(String.format("Student %d study time end updated to %tF", id, studyTimeEnd));
+
+    // return student
+    
+    return Response.ok(objectFactory.createModel(student)).build();    
+  }
+
   @Path("/students/{STUDENTID:[0-9]*}/courseStats")
   @GET
   @RESTPermit(handling = Handling.INLINE)

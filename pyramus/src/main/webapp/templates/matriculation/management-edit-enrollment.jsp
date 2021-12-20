@@ -166,7 +166,7 @@
         });
         enrolledAttendances.addRows(JSON.parse(JSDATA["enrolledAttendances"]));
         document.getElementById("addEnrolledTableRow").addEventListener('click', function() {
-          var rowIndex = enrolledAttendances.addRow([-1, '', 'ENA', 'MANDATORY', 'FIRST_TIME', '', '']);
+          var rowIndex = enrolledAttendances.addRow([-1, '', 'ENA', 'MANDATORY', 'FIRST_TIME', '', '', '']);
           var subjectColumn = enrolledAttendances.getNamedColumnIndex('subject');
           enrolledAttendances.setCellEditable(rowIndex, subjectColumn, true);
         });
@@ -227,7 +227,7 @@
         });
         finishedAttendances.addRows(JSON.parse(JSDATA["finishedAttendances"]));
         document.getElementById("addFinishedTableRow").addEventListener('click', function() {
-          finishedAttendances.addRow([-1, 'SPRING2019', 'ENA', 'MANDATORY', 'IMPROBATUR', '']);
+          finishedAttendances.addRow([-1, 'SPRING2019', 'ENA', 'MANDATORY', 'IMPROBATUR', '', '']);
         });
 
         var plannedAttendances = new IxTable($('plannedAttendancesTableContainer'), {

@@ -209,7 +209,21 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .createQuery(criteria)
       .getResultList();
   }
-  
+
+  public List<MatriculationExamEnrollment> listByStudent(Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.student), student)
+    );
+    criteria.orderBy(criteriaBuilder.desc(root.get(MatriculationExamEnrollment_.enrollmentDate)));
+
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public MatriculationExamEnrollment findLatestByExamAndStudent(MatriculationExam exam, Student student) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

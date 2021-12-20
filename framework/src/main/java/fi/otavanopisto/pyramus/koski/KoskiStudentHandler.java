@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -824,9 +826,18 @@ public abstract class KoskiStudentHandler {
   }
 
   protected <T extends KurssinSuoritus> T luoKurssiSuoritus(T suoritus, CreditStub courseCredit) {
+    if (CollectionUtils.isEmpty(courseCredit.getCredits())) {
+      return null;
+    }
+    
     CreditStubCredit parasArvosana = courseCredit.getCredits().getBestCredit();
     
     if (parasArvosana != null) {
+      /**
+       * Korkein arvosana määrittää, välitetäänkö arvosana tunnustettuna vai ei.
+       * - Korkein arvosana on hyväksiluku -> tunnustettu
+       * - Korkein arvosana kurssisuoritus -> ei tunnustettu
+       */
       if (parasArvosana.getType() == Type.RECOGNIZED) {
         OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
         
@@ -836,20 +847,51 @@ public abstract class KoskiStudentHandler {
         
         suoritus.setTunnustettu(tunnustettu);
       }
-      
-      ArviointiasteikkoYleissivistava arvosana = getArvosana(parasArvosana.getGrade());
-      
-      KurssinArviointi arviointi = null;
-      if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
-        arviointi =  new KurssinArviointiNumeerinen(arvosana, parasArvosana.getDate());
-      } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
-        arviointi = new KurssinArviointiSanallinen(arvosana, parasArvosana.getDate(), kuvaus(parasArvosana.getGrade().getName()));
-      } else {
-        logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
-        return null;
-      }
 
-      suoritus.addArviointi(arviointi);
+      boolean korotukset2022 = courseCredit.getCredits().stream().anyMatch(credit -> {
+        Date arvosananPäivämäärä = credit.getDate();
+        Date vuodenAlku2022 = Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return (arvosananPäivämäärä != null) && arvosananPäivämäärä.after(vuodenAlku2022);
+      });
+      
+      if (korotukset2022) {
+        /**
+         * 1.1.2022 alkaen välitetään kaikki arvosanat
+         */
+        for (CreditStubCredit credit : courseCredit.getCredits()) {
+          ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
+          
+          KurssinArviointi arviointi = null;
+          if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
+            arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
+          } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
+            arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
+          } else {
+            logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
+            return null;
+          }
+  
+          suoritus.addArviointi(arviointi);
+        }
+      } else {
+        /**
+         * Ennen 1.1.2022 tehdyistä suorituksista välitetään vain paras arvosana.
+         */
+        ArviointiasteikkoYleissivistava arvosana = getArvosana(parasArvosana.getGrade());
+        
+        KurssinArviointi arviointi = null;
+        if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
+          arviointi =  new KurssinArviointiNumeerinen(arvosana, parasArvosana.getDate());
+        } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
+          arviointi = new KurssinArviointiSanallinen(arvosana, parasArvosana.getDate(), kuvaus(parasArvosana.getGrade().getName()));
+        } else {
+          logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
+          return null;
+        }
+
+        suoritus.addArviointi(arviointi);
+      }
+      
       return suoritus;
     } else {
       // Kurssisuoritus ohitetaan jos arvosanaa ei ole
