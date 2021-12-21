@@ -2,14 +2,11 @@ package fi.otavanopisto.pyramus.views.courses;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -20,6 +17,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
@@ -28,6 +26,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * The controller responsible of the Edit Course view of the application.
@@ -62,28 +62,6 @@ public class ManageCourseAssessmentsViewController extends PyramusViewController
       }
     });
     
-    Map<Long, CourseAssessment> courseAssessments = new HashMap<>();
-    Map<Long, String> verbalAssessments = new HashMap<>();
-
-    Iterator<CourseStudent> students = courseStudents.iterator();
-    while (students.hasNext()) {
-      CourseStudent courseStudent = students.next();
-      
-      CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
-      if (courseAssessment != null) {
-        courseAssessments.put(courseStudent.getId(), courseAssessment);
-        
-        // Shortened descriptions
-        String description = courseAssessment.getVerbalAssessment();
-        if (description != null) {
-          description = StringEscapeUtils.unescapeHtml(description.replaceAll("\\<.*?>",""));
-          description = description.replaceAll("\\n", "");
-          
-          verbalAssessments.put(courseAssessment.getId(), description);
-        }
-      }
-    }
-    
     List<CourseParticipationType> courseParticipationTypes = participationTypeDAO.listUnarchived();
     Collections.sort(courseParticipationTypes, new Comparator<CourseParticipationType>() {
       public int compare(CourseParticipationType o1, CourseParticipationType o2) {
@@ -91,11 +69,46 @@ public class ManageCourseAssessmentsViewController extends PyramusViewController
       }
     });
     
+    JSONObject jsonAllCourseModuleCourseStudents = new JSONObject();
+
+    for (CourseModule courseModule : course.getCourseModules()) {
+      JSONArray jsonCourseModuleCourseStudents = new JSONArray();
+      
+      for (CourseStudent courseStudent : courseStudents) {
+        CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE);
+
+        String verbalAssessment = courseAssessment != null ? courseAssessment.getVerbalAssessment() : null;
+        if (verbalAssessment != null) {
+          verbalAssessment = StringEscapeUtils.unescapeHtml4(verbalAssessment.replaceAll("\\<.*?>",""));
+          verbalAssessment = verbalAssessment.replaceAll("\\n", "");
+        }
+
+        JSONObject jsonCourseStudent = new JSONObject();
+        
+        jsonCourseStudent.put("courseStudentId", courseStudent.getId());
+        jsonCourseStudent.put("personId", courseStudent.getStudent().getPerson().getId());
+        jsonCourseStudent.put("assessmentId", courseAssessment != null ? courseAssessment.getId() : null);
+        jsonCourseStudent.put("assessmentDate", (courseAssessment != null && courseAssessment.getDate() != null) ? courseAssessment.getDate().getTime() : null);
+        jsonCourseStudent.put("verbalAssessment", verbalAssessment);
+        jsonCourseStudent.put("assessorId", (courseAssessment != null && courseAssessment.getAssessor() != null) ? courseAssessment.getAssessor().getId() : null);
+        jsonCourseStudent.put("assessorName", (courseAssessment != null && courseAssessment.getAssessor() != null) ? courseAssessment.getAssessor().getFullName() : null);
+        jsonCourseStudent.put("gradeId", (courseAssessment != null && courseAssessment.getGrade() != null) ? courseAssessment.getGrade().getId() : null);
+        jsonCourseStudent.put("participationTypeId", courseStudent.getParticipationType() != null ? courseStudent.getParticipationType().getId() : null);
+        jsonCourseStudent.put("fullName", courseStudent.getStudent().getLastName() + ", " + courseStudent.getStudent().getFirstName());
+        jsonCourseStudent.put("studyProgrammeName", courseStudent.getStudent().getStudyProgramme() != null ? courseStudent.getStudent().getStudyProgramme().getName() : null);
+        
+        jsonCourseModuleCourseStudents.add(jsonCourseStudent);
+      }
+
+      jsonAllCourseModuleCourseStudents.put(courseModule.getId(), jsonCourseModuleCourseStudents);
+    }
+    
+    setJsDataVariable(pageRequestContext, "courseModuleCourseStudents", jsonAllCourseModuleCourseStudents.toString());
+    
     pageRequestContext.getRequest().setAttribute("course", course);
+    pageRequestContext.getRequest().setAttribute("courseModules", course.getCourseModules());
     pageRequestContext.getRequest().setAttribute("courseStudents", courseStudents);
     pageRequestContext.getRequest().setAttribute("courseParticipationTypes", courseParticipationTypes);
-    pageRequestContext.getRequest().setAttribute("assessments", courseAssessments);
-    pageRequestContext.getRequest().setAttribute("verbalAssessments", verbalAssessments);
     pageRequestContext.getRequest().setAttribute("gradingScales", gradingScales);
     
     pageRequestContext.setIncludeJSP("/templates/courses/managecourseassessments.jsp");

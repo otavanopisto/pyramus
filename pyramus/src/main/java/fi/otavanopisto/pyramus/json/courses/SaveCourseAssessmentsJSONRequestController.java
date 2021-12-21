@@ -5,11 +5,14 @@ import java.util.Date;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradeDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -58,54 +61,61 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
+    CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
 
-    int rowCount = requestContext.getInteger("studentsTable.rowCount");
-    for (int i = 0; i < rowCount; i++) {
-      String colPrefix = "studentsTable." + i;
-
-      Long modified = requestContext.getLong(colPrefix + ".modified");
-      if (modified == null || modified.intValue() != 1)
-        continue;
-      
-      Long courseStudentId = requestContext.getLong(colPrefix + ".courseStudentId");
-      CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
-
-      if (courseStudent != null) {
-        Long assessingUserId = requestContext.getLong(colPrefix + ".assessingUserId");
-        StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
-        Long gradeId = requestContext.getLong(colPrefix + ".gradeId");
-        Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
-        Date assessmentDate = requestContext.getDate(colPrefix + ".assessmentDate");
-
-        Long participationTypeId = requestContext.getLong(colPrefix + ".participationType");
-        CourseParticipationType participationType = participationTypeDAO.findById(participationTypeId);
-        String verbalAssessment = null;
-
-        CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
-        Long verbalModified = requestContext.getLong(colPrefix + ".verbalModified");
-        if (verbalModified != null && verbalModified.intValue() == 1) {
-          verbalAssessment = requestContext.getString(colPrefix + ".verbalAssessment");
-        }
-        else {
-          if (courseAssessment != null) {
-            verbalAssessment = courseAssessment.getVerbalAssessment();
+    Long courseId = requestContext.getLong("courseId");
+    Course course = courseDAO.findById(courseId);
+    
+    for (CourseModule courseModule : course.getCourseModules()) {
+      int rowCount = requestContext.getInteger(String.format("courseModule.%d.studentsTable.rowCount", courseModule.getId()));
+      for (int i = 0; i < rowCount; i++) {
+        String colPrefix = String.format("courseModule.%d.studentsTable.%d", courseModule.getId(), i);
+  
+        Long modified = requestContext.getLong(colPrefix + ".modified");
+        if (modified == null || modified.intValue() != 1)
+          continue;
+        
+        Long courseStudentId = requestContext.getLong(colPrefix + ".courseStudentId");
+        CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
+  
+        if (courseStudent != null) {
+          Long assessingUserId = requestContext.getLong(colPrefix + ".assessingUserId");
+          StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
+          Long gradeId = requestContext.getLong(colPrefix + ".gradeId");
+          Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
+          Date assessmentDate = requestContext.getDate(colPrefix + ".assessmentDate");
+  
+          Long participationTypeId = requestContext.getLong(colPrefix + ".participationType");
+          CourseParticipationType participationType = participationTypeDAO.findById(participationTypeId);
+          String verbalAssessment = null;
+  
+          CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+          Long verbalModified = requestContext.getLong(colPrefix + ".verbalModified");
+          if (verbalModified != null && verbalModified.intValue() == 1) {
+            verbalAssessment = requestContext.getString(colPrefix + ".verbalAssessment");
           }
-        }
-
-        if (courseAssessment != null) {
-          courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
+          else {
+            if (courseAssessment != null) {
+              verbalAssessment = courseAssessment.getVerbalAssessment();
+            }
+          }
+  
+          if (courseAssessment != null) {
+            courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
+          }
+          else {
+            courseAssessment = courseAssessmentDAO.create(courseStudent, courseModule, assessingUser, grade, assessmentDate, verbalAssessment);
+          }
+  
+          // Update Participation type
+          courseStudentDAO.updateParticipationType(courseStudent, participationType);
         }
         else {
-          courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, assessmentDate, verbalAssessment);
+          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "CourseStudent was not defined");
         }
-
-        // Update Participation type
-        courseStudentDAO.updateParticipationType(courseStudent, participationType);
-      }
-      else {
-        throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "CourseStudent was not defined");
       }
     }
+    
     requestContext.setRedirectURL(requestContext.getReferer(true));
   }
 

@@ -3,13 +3,13 @@ package fi.otavanopisto.pyramus.domainmodel.base;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
 public class CourseModule {
@@ -76,22 +76,18 @@ public class CourseModule {
   }
 
   @Id
-//  @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseBase")  
-//  @TableGenerator(name="CourseBase", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)  
   private Long id;
 
-  @ManyToOne  
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="course")
-  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private CourseBase course;
   
   @ManyToOne  
   @JoinColumn(name="subject")
-  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private Subject subject;
   
   @Column
-  @Field
   private Integer courseNumber;
   
   @OneToOne (cascade = CascadeType.ALL, orphanRemoval = true)

@@ -181,9 +181,10 @@ public class AbstractRESTServiceTestTools {
 
   private AbstractRestServicePermissionsTestI testClass;
 
-  public CourseAssessment createCourseAssessment(Long courseId, Long studentId, Long courseStudentId) {
+  public CourseAssessment createCourseAssessment(Long courseId, Long courseModuleId, Long studentId, Long courseStudentId) {
     CourseAssessment courseAssessment = new CourseAssessment();
     courseAssessment.setCourseStudentId(courseStudentId);
+    courseAssessment.setCourseModuleId(courseModuleId);
     courseAssessment.setGradeId(2l);
     courseAssessment.setGradingScaleId(1l);
     courseAssessment.setAssessorId(1l);

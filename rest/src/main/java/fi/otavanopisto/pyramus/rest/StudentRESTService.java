@@ -38,9 +38,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -214,6 +216,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private OrganizationDAO organizationDAO;
+  
+  @Inject
+  private CourseModuleDAO courseModuleDAO;
   
   @Path("/languages")
   @POST
@@ -1908,19 +1913,29 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match student").build();
     }
     
+    if(!courseStudent.getCourse().getId().equals(course.getId())){
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match course").build();
+    }
+    
     StaffMember assessor = userController.findStaffMemberById(entity.getAssessorId());
     
-    if(assessor == null){
+    if (assessor == null) {
       return Response.status(Status.BAD_REQUEST).entity("Could not find assessor").build();
     }
     
     Grade grade = commonController.findGradeByIdId(entity.getGradeId());
     
-    if(grade == null){
+    if (grade == null) {
       return Response.status(Status.BAD_REQUEST).entity("Could not find grade").build();
     }
     
-    CourseAssessment courseAssessment = assessmentController.createCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
+    CourseModule courseModule = entity.getCourseModuleId() != null ? courseModuleDAO.findById(entity.getCourseModuleId()) : null;
+    
+    if ((courseModule == null) || !courseModule.getCourse().getId().equals(course.getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Invalid course module").build();
+    }
+    
+    CourseAssessment courseAssessment = assessmentController.createCourseAssessment(courseStudent, courseModule, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
     
     // #1198: Create a worklist entry for this assessment, if applicable
     
