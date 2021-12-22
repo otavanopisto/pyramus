@@ -238,10 +238,10 @@ values
   (1001, 'Test Course #2', false, PARSEDATETIME('1 1 2011', 'd M yyyy'), PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Course #2 for testing', 1, 1, 1, 200);
 
 insert into
-  CourseModule (course, subject, courseNumber, courseLength)
+  CourseModule (id, course, subject, courseNumber, courseLength)
 values
-  (1000, 1, 1, 1),
-  (1001, 1, 2, 1);
+  (1000, 1000, 1, 1, 1),
+  (1001, 1001, 1, 2, 1);
 
 insert into 
   Course (id, beginDate, endDate, localTeachingDays, nameExtension, module, state, teachingHours, distanceTeachingDays, planningHours, assessingHours, enrolmentTimeEnd, courseTemplate)
@@ -525,9 +525,9 @@ values
   (1, false, 'TEST ASSESSMENT', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'CourseAssessment', 1, 6, 2);
   
 insert into
-  CourseAssessment (id, courseStudent)
+  CourseAssessment (id, courseStudent, courseModule)
 values
-  (1, 5);
+  (1, 5, 1);
 
 insert into Defaults 
   (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization, studentDefaultContactType, userDefaultContactType)
