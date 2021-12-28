@@ -395,7 +395,7 @@
       <url>https://nexus.muikkuverkko.fi/repository/otavanopisto-snapshots/</url>
     </snapshotRepository>
     <repository>
-      <uniqueVersion>false</uniqueVersion>
+      <uniqueVersion>true</uniqueVersion>
       <id>otavanopisto-releases</id>
       <name>Otavan Opisto Releases</name>
       <url>https://nexus.muikkuverkko.fi/repository/otavanopisto-releases/</url>
