@@ -23,6 +23,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import fi.otavanopisto.pyramus.dao.base.OrganizationContactPersonDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationContractPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
@@ -34,8 +36,10 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
@@ -178,16 +182,32 @@ public class ObjectFactory {
             return new fi.otavanopisto.pyramus.rest.model.CourseEducationSubtype(entity.getId(), entity.getEducationSubtype().getId(), false);
           }
         }, 
+
+        new Mapper<CourseModule>() {
+          @Override
+          public Object map(CourseModule entity) {
+            Subject subject = entity.getSubject();
+            Long educationTypeId = (subject != null && subject.getEducationType() != null) 
+                ? subject.getEducationType().getId() : null;
+            fi.otavanopisto.pyramus.rest.model.Subject subjectModel = subject != null 
+                ? new fi.otavanopisto.pyramus.rest.model.Subject(subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived()) : null;
+            
+            EducationalLength courseLength = entity.getCourseLength();
+            EducationalTimeUnit courseLengthTimeUnit = courseLength != null ? courseLength.getUnit() : null;
+            fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit educationalTimeUnitModel = courseLengthTimeUnit != null
+                ? new fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit(courseLengthTimeUnit.getId(), courseLengthTimeUnit.getName(), courseLengthTimeUnit.getSymbol(), courseLengthTimeUnit.getBaseUnits(), courseLengthTimeUnit.getArchived()) : null;
+            fi.otavanopisto.pyramus.rest.model.CourseLength courseLengthModel = courseLength != null 
+                ? new fi.otavanopisto.pyramus.rest.model.CourseLength(courseLength.getId(), courseLength.getBaseUnits(), courseLength.getUnits(), educationalTimeUnitModel) : null;
+                
+            Integer courseNumber = entity.getCourseNumber();
+            
+            return new fi.otavanopisto.pyramus.rest.model.CourseModule(entity.getId(), subjectModel, courseNumber, courseLengthModel);
+          }
+        }, 
         
         new Mapper<Course>() {
           @Override
           public Object map(Course entity) {
-            Long subjectId = null;
-            Subject courseSubject = entity.getSubject();
-            if (courseSubject != null) {
-              subjectId = courseSubject.getId();
-            }
-            
             List<String> tags = new ArrayList<>();
             Set<Tag> courseTags = entity.getTags();
             if (courseTags != null) {
@@ -196,8 +216,6 @@ public class ObjectFactory {
               }
             }
 
-            Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null;
-            Long lengthUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null;
             OffsetDateTime created = toOffsetDateTime(entity.getCreated());
             OffsetDateTime lastModified = toOffsetDateTime(entity.getLastModified());
             OffsetDateTime beginDate = fromDateToOffsetDateTime(entity.getBeginDate());
@@ -227,8 +245,18 @@ public class ObjectFactory {
 
             EducationType educationType = null;
             EducationSubtype educationSubtype = null;
-            if (entity.getSubject() != null && entity.getSubject().getEducationType() != null) {
-              educationType = entity.getSubject().getEducationType();
+            
+            Set<Long> courseModuleEducationTypeIds = entity.getCourseModules().stream()
+              .map(courseModule -> {
+                // There may be nulls coming out of this but we'll keep them as they 
+                // help indicate there may be conflicting education types
+                return (courseModule.getSubject() != null && courseModule.getSubject().getEducationType() != null) 
+                    ? courseModule.getSubject().getEducationType().getId() : null;
+              })
+              .collect(Collectors.toSet());
+            
+            if (CollectionUtils.isNotEmpty(courseModuleEducationTypeIds) && courseModuleEducationTypeIds.size() == 1) {
+              educationType = entity.getCourseModules().get(0).getSubject().getEducationType();
             }
             else if (entity.getCourseEducationTypes().size() == 1) {
               educationType = entity.getCourseEducationTypes().get(0).getEducationType();
@@ -243,16 +271,20 @@ public class ObjectFactory {
                 }
               }
             }
-
+            
+            Set<fi.otavanopisto.pyramus.rest.model.CourseModule> courseModuleModels = entity.getCourseModules().stream()
+                .map(courseModule -> (fi.otavanopisto.pyramus.rest.model.CourseModule) createModel(courseModule))
+                .collect(Collectors.toSet());
+              
             return new fi.otavanopisto.pyramus.rest.model.Course(entity.getId(), entity.getName(), created, 
-                lastModified, entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
+                lastModified, entity.getDescription(), entity.getArchived(), 
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
                 entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
-                creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags,
+                creatorId, lastModifierId, curriculumIds, moduleId, stateId, typeId, variables, tags,
                 entity.getOrganization() == null ? null : entity.getOrganization().getId(), entity.isCourseTemplate(),
                 educationType == null ? null : educationType.getId(),
-                educationSubtype == null ? null : educationSubtype.getId());
+                educationSubtype == null ? null : educationSubtype.getId(), courseModuleModels);
           }
         }, 
         
@@ -283,6 +315,7 @@ public class ObjectFactory {
           @Override
           public Object map(CourseAssessment entity) {
             Long courseStudentId = entity.getCourseStudent() != null ? entity.getCourseStudent().getId() : null;
+            Long courseModuleId = entity.getCourseModule() != null ? entity.getCourseModule().getId() : null;
             Long gradeId = entity.getGrade() != null ? entity.getGrade().getId() : null;
             Long gradingScaleId = entity.getGrade() != null && entity.getGrade().getGradingScale() != null ? entity.getGrade().getGradingScale().getId() : null;
             Long assessorId = entity.getAssessor() != null ? entity.getAssessor().getId() : null;
@@ -290,6 +323,7 @@ public class ObjectFactory {
             
             return new fi.otavanopisto.pyramus.rest.model.CourseAssessment(entity.getId(), 
                 courseStudentId, 
+                courseModuleId,
                 gradeId,
                 gradingScaleId, 
                 assessorId, 
@@ -400,9 +434,6 @@ public class ObjectFactory {
           public Object map(Module entity) {
             Long creatorId = entity.getCreator().getId();
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
-            Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
-            Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null; 
-            Long lenghtUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null;
             List<String> tags = new ArrayList<>();
             
             Set<Tag> moduleTags = entity.getTags();
@@ -411,17 +442,21 @@ public class ObjectFactory {
                 tags.add(courseTag.getText());
               }
             }
+
+            Set<fi.otavanopisto.pyramus.rest.model.CourseModule> courseModuleModels = entity.getCourseModules().stream()
+              .map(courseModule -> (fi.otavanopisto.pyramus.rest.model.CourseModule) createModel(courseModule))
+              .collect(Collectors.toSet());
             
-            Set<Long> curriculumIds = new HashSet<Long>();
-            for (fi.otavanopisto.pyramus.domainmodel.base.Curriculum curriculum : entity.getCurriculums())
-              curriculumIds.add(curriculum.getId());
-            
+            Set<Long> curriculumIds = entity.getCurriculums().stream()
+                .map(curriculum -> curriculum.getId())
+                .collect(Collectors.toSet());
+
             return new fi.otavanopisto.pyramus.rest.model.Module(entity.getId(), entity.getName(), toOffsetDateTime(entity.getCreated()),
-                toOffsetDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
-                entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, curriculumIds, length, lenghtUnitId, tags);
+                toOffsetDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), 
+                entity.getMaxParticipantCount(), creatorId, lastModifierId, curriculumIds, tags, courseModuleModels);
           }
         }, 
-        
+
         new Mapper<ModuleComponent>() {
           @Override
           public Object map(ModuleComponent entity) {

@@ -23,7 +23,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -166,24 +165,6 @@ public abstract class CourseBase implements ArchivableEntity {
     this.description = description;
   }
 
-//  /**
-//   * Returns the subject of this entity.
-//   * 
-//   * @return The subject of this entity
-//   */
-//  public Subject getSubject() {
-//    return subject;
-//  }
-//  
-//  /**
-//   * Sets the subject of this entity.
-//   * 
-//   * @param subject The subject of this entity
-//   */
-//  public void setSubject(Subject subject) {
-//    this.subject = subject;
-//  }
-
   /**
    * Returns the course education types of this entity.
    * 
@@ -254,24 +235,6 @@ public abstract class CourseBase implements ArchivableEntity {
     return null;
   }
   
-//  /**
-//   * Sets the course length of this course base.
-//   * 
-//   * @param courseLength The course length of this course base
-//   */
-//  public void setCourseLength(EducationalLength courseLength) {
-//    this.courseLength = courseLength;
-//  }
-//
-//  /**
-//   * Returns the course length of this course base.
-//   * 
-//   * @return The course length of this course base
-//   */
-//  public EducationalLength getCourseLength() {
-//    return courseLength;
-//  }
-//
   /**
    * Sets the archived flag of this object.
    * 
@@ -297,14 +260,6 @@ public abstract class CourseBase implements ArchivableEntity {
   public void setVariables(List<CourseBaseVariable> variables) {
     this.variables = variables;
   }
-  
-//  public void setCourseNumber(Integer courseNumber) {
-//    this.courseNumber = courseNumber;
-//  }
-//
-//  public Integer getCourseNumber() {
-//    return courseNumber;
-//  }
   
   @Transient
   @Field (analyze = Analyze.NO, store = Store.NO)
@@ -338,6 +293,33 @@ public abstract class CourseBase implements ArchivableEntity {
     this.curriculums = curriculums;
   }
   
+  public void addCourseModule(CourseModule courseModule) {
+    if (courseModule.getCourse() != this) {
+      courseModule.getCourse().removeCourseModule(courseModule);
+      courseModule.setCourse(this);
+    }
+    courseModules.add(courseModule);
+  }
+  
+  public boolean removeCourseModule(CourseModule courseModule) {
+    if (courseModules.contains(courseModule)) {
+      courseModule.setCourse(null);
+      courseModules.remove(courseModule);
+      return true;
+    }
+    
+    return false;
+  }
+
+  public List<CourseModule> getCourseModules() {
+    return courseModules;
+  }
+
+  @SuppressWarnings("unused")
+  private void setCourseModules(List<CourseModule> courseModules) {
+    this.courseModules = courseModules;
+  }
+
   @Id
   @DocumentId
   @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseBase")  
@@ -374,19 +356,6 @@ public abstract class CourseBase implements ArchivableEntity {
   @Field
   private String description;
   
-//  @ManyToOne  
-//  @JoinColumn(name="subject")
-//  @IndexedEmbedded(includeEmbeddedObjectId = true)
-//  private Subject subject;
-
-//  @Column
-//  @Field
-//  private Integer courseNumber;
-  
-//  @OneToOne (cascade = CascadeType.ALL, orphanRemoval = true)
-//  @JoinColumn (name = "courseLength")
-//  private EducationalLength courseLength;
-  
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="courseBase")
   @IndexedEmbedded(includeEmbeddedObjectId = true)
@@ -412,4 +381,8 @@ public abstract class CourseBase implements ArchivableEntity {
   @JoinTable (name = "__CourseBaseCurriculums", joinColumns = @JoinColumn(name = "courseBase"), inverseJoinColumns = @JoinColumn(name = "curriculum"))
   @IndexedEmbedded(includeEmbeddedObjectId = true) 
   private Set<Curriculum> curriculums = new HashSet<>();
+
+  @OneToMany (mappedBy = "course")
+  @IndexedEmbedded
+  private List<CourseModule> courseModules = new Vector<>();
 }

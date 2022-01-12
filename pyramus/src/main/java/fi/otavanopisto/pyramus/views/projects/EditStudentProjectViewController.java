@@ -140,27 +140,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
           }
         }
       }
-      
-      if ((studentProjectModule.getModule().getCourseNumber() != null) && (studentProjectModule.getModule().getCourseNumber() != -1) && (studentProjectModule.getModule().getSubject() != null)) {
-        for (TransferCredit tc : allStudentTransferCredits) {
-          if ((tc.getCourseNumber() != null) && (tc.getCourseNumber() != -1) && (tc.getSubject() != null)) {
-            if (tc.getCourseNumber().equals(studentProjectModule.getModule().getCourseNumber()) && tc.getSubject().equals(studentProjectModule.getModule().getSubject())) {
-              if (tc.getGrade() != null) {
-                JSONObject transferCredit = new JSONObject();
-                
-                transferCredit.put("creditType", tc.getCreditType().toString());
-                transferCredit.put("courseName", tc.getCourseName());
-                transferCredit.put("gradeName", tc.getGrade().getName());
-                
-                moduleCredits.add(transferCredit);
-                hasPassingGrade = hasPassingGrade || tc.getGrade().getPassingGrade();
-              }
-            }
-          }
-        }
-      }
-      
-      
+
       JSONObject obj = new JSONObject();
       
       obj.put("projectModuleId", studentProjectModule.getId().toString());

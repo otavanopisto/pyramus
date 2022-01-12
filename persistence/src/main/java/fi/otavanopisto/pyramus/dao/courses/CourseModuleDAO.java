@@ -1,11 +1,17 @@
 package fi.otavanopisto.pyramus.dao.courses;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -54,21 +60,27 @@ public class CourseModuleDAO extends PyramusEntityDAO<CourseModule> {
     return courseModule;
   }
 
-  /**
-   * Deletes the given course component from the database.
-   * 
-   * @param courseComponent The course component to be deleted
-   */
-  @Override
-  public void delete(CourseModule courseModule) {
-    EntityManager entityManager = getEntityManager();
+  public List<CourseModule> listByCourse(CourseBase courseBase) {
+    EntityManager entityManager = getEntityManager(); 
     
-    if (courseModule.getCourse() != null && courseModule.getCourse().getCourseModules().contains(courseModule)) {
-      courseModule.getCourse().getCourseModules().remove(courseModule);
-      entityManager.persist(courseModule.getCourse());
-    }
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseModule> criteria = criteriaBuilder.createQuery(CourseModule.class);
+    Root<CourseModule> root = criteria.from(CourseModule.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(root.get(CourseModule_.course), courseBase)
+    );
     
-    entityManager.remove(courseModule);
+    return entityManager.createQuery(criteria).getResultList();
   }
 
+  @Override
+  public void delete(CourseModule courseModule) {
+    if (courseModule.getCourse() != null) {
+      courseModule.getCourse().removeCourseModule(courseModule);
+    }
+    
+    super.delete(courseModule);
+  }
+  
 }

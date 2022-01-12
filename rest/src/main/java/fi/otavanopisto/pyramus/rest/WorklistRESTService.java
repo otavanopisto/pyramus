@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -56,6 +57,7 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.WorklistPermissions;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistApproverRestModel;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistBasePriceRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemBilledPriceRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemCourseAssessmentRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemRestModel;
@@ -412,8 +414,14 @@ public class WorklistRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     else {
-      Double basePrice = worklistController.getCourseBasePrice(course);
-      return basePrice == null ? Response.status(Status.NOT_FOUND).build() : Response.ok(basePrice).build();
+      WorklistBasePriceRestModel basePrices = new WorklistBasePriceRestModel();
+      for (CourseModule courseModule : course.getCourseModules()) {
+        Double basePrice = worklistController.getCourseModuleBasePrice(courseModule);
+        if (basePrice != null) {
+          basePrices.put(courseModule.getId(), basePrice);
+        }
+      }
+      return Response.ok(basePrices).build();
     }
   }
 
