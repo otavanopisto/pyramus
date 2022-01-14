@@ -12,7 +12,7 @@
   		  <span class="muikku-logo-text">Muikku</span>
 		  </header>
 		  <main class="muikku-login-container">
-		    <h1 class="muikku-login-title">Muikku kirjautuminen</h1>
+		    <h1 class="muikku-login-title">Kirjaudu sisään</h1>
 		    <div class="muikku-login-container-row">
 		      <label class="muikku-login-label" for="username">Käyttäjätunnus</label>
 		      <input class="muikku-login-input" type="text" required="required" name="username" id="username">
