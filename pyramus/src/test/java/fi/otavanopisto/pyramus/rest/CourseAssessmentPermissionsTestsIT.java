@@ -171,7 +171,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   
   @Test
   public void testFindCourseAssessment() throws NoSuchFieldException {
-    CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId());
+    CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
     try {
       Response response = given().headers(getAuthHeaders())
         .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", testCOURSESTUDENT.getStudentId(), testCOURSE.getId(), testASSESSMENT.getId());
@@ -217,7 +217,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   @Test
   public void testFindCourseAssessmentAsCourseTeacher() throws NoSuchFieldException {
     if (StringUtils.equals(Role.TEACHER.toString(), getRole()) || StringUtils.equals(Role.STUDY_GUIDER.toString(), getRole())) {
-      CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId());
+      CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
       try {
         // Add the current test user to the course so they have access to the course assessments
         CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLEID);

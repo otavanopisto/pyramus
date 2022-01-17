@@ -100,6 +100,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
     StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
     boolean laskeKeskiarvot = lopetusSyy != null ? lopetusSyy.getLaskeAinekeskiarvot() : false;
     boolean sisällytäVahvistus = lopetusSyy != null ? lopetusSyy.getSisällytäVahvistaja() : false;
+    opiskeluoikeus.setOppimaaraSuoritettu(sisällytäVahvistus);
 
     String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
     

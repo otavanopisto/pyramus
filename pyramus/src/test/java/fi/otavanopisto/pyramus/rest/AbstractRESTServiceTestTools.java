@@ -73,7 +73,7 @@ public class AbstractRESTServiceTestTools {
         1l, // educationalLevelId
         getDate(2020, 11, 2), // studyTimeEnd
         studyProgrammeId, // studyProgrammeId
-        null, // curriculumId
+        1l, // curriculumId
         2d, // previousStudies
         "not updated education", // education
         Boolean.FALSE, // lodging
@@ -102,6 +102,10 @@ public class AbstractRESTServiceTestTools {
   }
   
   public Course createCourse(String name, Long organizationId) {
+    return createCourse(name, organizationId, 1l, null);
+  }
+  
+  public Course createCourse(String name, Long organizationId, Long subjectId, Integer courseNumber) {
     Course course = new Course();
     course.setName(name);
     course.setOrganizationId(organizationId);
@@ -181,14 +185,18 @@ public class AbstractRESTServiceTestTools {
 
   private AbstractRestServicePermissionsTestI testClass;
 
-  public CourseAssessment createCourseAssessment(Long courseId, Long courseModuleId, Long studentId, Long courseStudentId) {
+  public CourseAssessment createCourseAssessment(Long courseId, Long courseModuleId, Long studentId, Long courseStudentId, Long gradeId) {
+    return createCourseAssessment(courseId, courseModuleId, studentId, courseStudentId, gradeId, OffsetDateTime.now());
+  }
+  
+  public CourseAssessment createCourseAssessment(Long courseId, Long courseModuleId, Long studentId, Long courseStudentId, Long gradeId, OffsetDateTime assessmentDate) {
     CourseAssessment courseAssessment = new CourseAssessment();
     courseAssessment.setCourseStudentId(courseStudentId);
     courseAssessment.setCourseModuleId(courseModuleId);
-    courseAssessment.setGradeId(2l);
+    courseAssessment.setGradeId(gradeId);
     courseAssessment.setGradingScaleId(1l);
     courseAssessment.setAssessorId(1l);
-    courseAssessment.setDate(OffsetDateTime.now());
+    courseAssessment.setDate(assessmentDate);
     courseAssessment.setPassing(Boolean.TRUE);
     
     Response response = given().headers(getAdminAuthHeaders())

@@ -73,18 +73,14 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListModules() {
     given().headers(getAuthHeaders())
-      .get("/common/gradingScales")
+      .get("/modules/modules")
       .then()
       .statusCode(200)
-      .body("id.size()", is(2))
+      .body("id.size()", is(1))
       .body("id[0]", is(1) )
-      .body("name[0]", is("test scale #1" ))
-      .body("description[0]", is("grading scale for testing #1"))
-      .body("archived[0]", is( false ))
-      .body("id[1]", is(2) )
-      .body("name[1]", is("test scale #2" ))
-      .body("description[1]", is("grading scale for testing #2"))
-      .body("archived[1]", is( false ));
+      .body("name[0]", is("Test Module #1" ))
+      .body("description[0]", is("Module #1 for testing"))
+      .body("archived[0]", is( false ));
   }
   
   @Test

@@ -2,9 +2,12 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +41,10 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
+import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
+import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -45,7 +52,15 @@ import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -62,6 +77,8 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
+import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
+import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.ClientApplicationController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
@@ -69,12 +86,17 @@ import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemRestModel;
+import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemStatus;
 import fi.otavanopisto.pyramus.rest.model.muikku.CredentialResetPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StaffMemberPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StudentGroupMembersPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StudentGroupPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StudentPayload;
+import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 @Path("/muikku")
 @Produces(MediaType.APPLICATION_JSON)
@@ -82,6 +104,9 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @Stateful
 @RequestScoped
 public class MuikkuRESTService {
+
+  @Inject
+  private RESTSecurity restSecurity;
 
   @Resource
   private SessionContext sessionContext;
@@ -118,7 +143,114 @@ public class MuikkuRESTService {
 
   @Inject
   private PasswordResetRequestDAO passwordResetRequestDAO;
+  
+  @Inject
+  private TransferCreditDAO transferCreditDAO;
 
+  @Inject
+  private CourseAssessmentDAO courseAssessmentDAO;
+
+  @Inject
+  private CourseStudentDAO courseStudentDAO;
+  
+  @Inject
+  private CreditLinkDAO creditLinkDAO;
+  
+  @Path("/students/{ID:[0-9]*}/studyActivity")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentStudyActivity(@PathParam("ID") Long id) {
+    
+    // Access check
+    
+    Student student = studentController.findStudentById(id);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { MuikkuPermissions.GET_STUDENT_COURSE_ACTIVITY, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    Map<String, StudyActivityItemRestModel> items = new HashMap<>();
+    
+    // Transfer credits
+
+    List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
+    transferCredits.sort(Comparator.comparing(TransferCredit::getDate).reversed());
+    for (TransferCredit transferCredit : transferCredits) {
+      String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
+      StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
+      if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+        items.put(key, item);
+      }
+    }
+    
+    // Course assessments
+    
+    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
+    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+    for (CourseAssessment courseAssessment : courseAssessments) {
+      Course course = courseAssessment.getCourseStudent().getCourse();
+      String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
+      StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+      if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+        items.put(key, item);
+      }
+    }
+    
+    // Linked credits
+    
+    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
+    for (CreditLink creditLink : creditLinks) {
+      Credit credit = creditLink.getCredit();
+      if (credit.getCreditType() == CreditType.CourseAssessment) {
+        CourseAssessment courseAssessment = (CourseAssessment) credit;
+        Course course = courseAssessment.getCourseStudent().getCourse();
+        String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
+        StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+          items.put(key, item);
+        }
+      }
+      else if (credit.getCreditType() == CreditType.TransferCredit) {
+        TransferCredit transferCredit = (TransferCredit) credit;
+        String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
+        StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
+        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+          items.put(key, item);
+        }
+      }
+    }
+    
+    
+    // Courses
+    
+    List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
+    for (CourseStudent courseStudent : courseStudents) {
+      Course course = courseStudent.getCourse();
+      String key = getActivityItemKey(course.getSubject(),  course.getCourseNumber());
+      if (!items.containsKey(key)) {
+        StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+        item.setCourseId(course.getId());
+        item.setCourseName(course.getName());
+        if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
+          item.setCourseNumber(course.getCourseNumber());
+        }
+        item.setDate(courseStudent.getEnrolmentTime());
+        item.setStatus(StudyActivityItemStatus.ONGOING);
+        item.setSubject(course.getSubject().getCode());
+        items.put(key, item);
+      }
+    }
+
+    return Response.ok(items.values()).build();
+  }
+  
   @Path("/users")
   @POST
   @RESTPermit(MuikkuPermissions.MUIKKU_CREATE_STAFF_MEMBER)
@@ -829,6 +961,42 @@ public class MuikkuRESTService {
   private String getMessage(Locale locale, String key) {
     ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
     return bundle.getString(key);
+  }
+
+  private String getActivityItemKey(Subject subject, Integer courseNumber) {
+    return courseNumber == null ? subject.getCode() : subject.getCode() + courseNumber;
+  }
+  
+  private StudyActivityItemRestModel getCourseAssessmentActivityItem(CourseAssessment courseAssessment) {
+    Course course = courseAssessment.getCourseStudent().getCourse();
+    StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+    item.setCourseId(course.getId());
+    item.setCourseName(course.getName());
+    if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
+      item.setCourseNumber(course.getCourseNumber());
+    }
+    item.setDate(courseAssessment.getDate());
+    if (courseAssessment.getGrade() != null) {
+      item.setGrade(courseAssessment.getGrade().getName());
+    }
+    item.setStatus(StudyActivityItemStatus.GRADED);
+    item.setSubject(course.getSubject().getCode());
+    return item;
+  }
+
+  private StudyActivityItemRestModel getTransferCreditActivityItem(TransferCredit transferCredit) {
+    StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+    item.setCourseName(transferCredit.getCourseName());
+    if (transferCredit.getCourseNumber() != null && transferCredit.getCourseNumber() > 0) {
+      item.setCourseNumber(transferCredit.getCourseNumber());
+    }
+    item.setDate(transferCredit.getDate());
+    if (transferCredit.getGrade() != null) {
+      item.setGrade(transferCredit.getGrade().getName());
+    }
+    item.setStatus(StudyActivityItemStatus.TRANSFERRED);
+    item.setSubject(transferCredit.getSubject().getCode());
+    return item;
   }
 
 }

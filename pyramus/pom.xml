@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.165-SNAPSHOT</version>
+    <version>0.7.169-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
@@ -709,7 +709,7 @@
               <container>
                 <containerId>wildfly10x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
-                <output>${project.basedir}/target/wildfly.log</output>
+                <output>${project.basedir}/target/wildfly-it-tests.log</output>
                 <zipUrlInstaller>
                   <url>https://download.jboss.org/wildfly/10.0.0.Final/wildfly-10.0.0.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
@@ -723,6 +723,14 @@
                 </dependencies>
               </container>
               <configuration>
+                <files>
+                  <copy>
+                    <file>${project.basedir}/src/test/resources/koski-config.json</file>
+                    <tofile>/configuration/koski-config.json</tofile>
+                    <configfile>false</configfile>
+                    <overwrite>true</overwrite>
+                  </copy>
+                </files>
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
@@ -1042,7 +1050,7 @@
               <container>
                 <containerId>wildfly10x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
-                <output>${project.basedir}/target/jboss.log</output>
+                <output>${project.basedir}/target/wildfly-ui-tests.log</output>
                 <zipUrlInstaller>
                   <url>https://download.jboss.org/wildfly/10.0.0.Final/wildfly-10.0.0.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
@@ -1056,6 +1064,14 @@
                 </dependencies>
               </container>
               <configuration>
+                <files>
+                  <copy>
+                    <file>${project.basedir}/src/test/resources/koski-config.json</file>
+                    <tofile>/configuration/koski-config.json</tofile>
+                    <configfile>false</configfile>
+                    <overwrite>true</overwrite>
+                  </copy>
+                </files>
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>

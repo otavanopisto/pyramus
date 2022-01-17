@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
@@ -119,6 +120,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentStudyEndReason
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.CourseActivity;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
@@ -2872,6 +2874,92 @@ public class StudentRESTService extends AbstractRESTService {
     List<CreditLink> transferCredits = studentController.listStudentLinkedTransferCredits(student);
     
     return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/courseActivity")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentStudyActivity(
+      @PathParam("STUDENTID") Long studentId,
+      @QueryParam("courseIds") String courseIds,
+      @QueryParam("includeTransferCredits") boolean includeTransferCredits) {
+    
+    // Access check
+
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    // Get courses of the student (all or those specified with courseIds)
+    
+    List<CourseStudent> courseStudents;
+    if (StringUtils.isEmpty(courseIds)) {
+      courseStudents = courseController.listByStudent(student);
+    }
+    else {
+      courseStudents = new ArrayList<>();
+      String[] courseIdArray = courseIds.split(",");
+      for (int i = 0; i < courseIdArray.length; i++) {
+        Course course = courseController.findCourseById(new Long(courseIdArray[i]));
+        if (course != null) {
+          CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
+          if (courseStudent != null) {
+            courseStudents.add(courseStudent);
+          }
+          else {
+            logger.warning(String.format("Course student not found asking activity for student %d in course %d", student.getId(), course.getId()));
+          }
+        }
+      }
+    }
+    
+    // Serve data
+    
+    List<CourseActivity> courseActivities = studentController.listCourseActivities(courseStudents, includeTransferCredits);
+    return Response.ok(courseActivities).build();
+  }
+  
+  @Path("/students/{ID:[0-9]*}/increaseStudyTime")
+  @POST
+  @RESTPermit(StudentPermissions.INCREASE_STUDY_TIME)
+  public Response increaseStudyTime(@PathParam("ID") Long id, @QueryParam("months") Integer months) {
+    logger.info(String.format("Increasing student %d study time for %d months", id, months));
+
+    // Validation
+
+    if (months == null || months <= 0) {
+      logger.severe("Invalid months");
+      return Response.status(Status.BAD_REQUEST).entity("Invalid months").build();
+    }
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      logger.severe("Student not found");
+      return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
+    }
+
+    // Update study time end
+
+    Date studyTimeEnd = student.getStudyTimeEnd();
+    if (studyTimeEnd == null) {
+      logger.warning("Student has no study time end set. Defaulting to now");
+      studyTimeEnd = new Date();
+    }
+    studyTimeEnd = DateUtils.addMonths(studyTimeEnd, months);
+    student = studentController.updateStudyTimeEnd(student, studyTimeEnd);
+    logger.info(String.format("Student %d study time end updated to %tF", id, studyTimeEnd));
+
+    // return student
+    
+    return Response.ok(objectFactory.createModel(student)).build();    
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/courseStats")

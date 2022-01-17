@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -75,6 +76,18 @@ public class KoskiPersonLogDAO extends PyramusEntityDAO<KoskiPersonLog> {
     query.setMaxResults(1);
     
     return getSingleResult(query);
+  }
+
+  public void deleteByPerson(Person person) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaDelete<KoskiPersonLog> criteria = criteriaBuilder.createCriteriaDelete(KoskiPersonLog.class);
+    Root<KoskiPersonLog> root = criteria.from(KoskiPersonLog.class);
+    criteria.where(
+        criteriaBuilder.equal(root.get(KoskiPersonLog_.person), person)
+    );
+    entityManager.createQuery(criteria).executeUpdate();
   }
   
 }

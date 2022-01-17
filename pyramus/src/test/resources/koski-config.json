@@ -1,0 +1,90 @@
+{
+  "koski": {
+    "academyIdentifier": "1.0.000.000.00.00000000000",
+    "studyEndReasonMapping": {
+      "1": {
+        "opiskeluoikeudenTila": "valmistunut",
+        "sisällytäVahvistaja": true,
+        "laskeAinekeskiarvot": true
+      },
+      "2": {
+        "opiskeluoikeudenTila": "eronnut",
+        "sisällytäVahvistaja": false,
+        "laskeAinekeskiarvot": false
+      }
+    },
+    "courseTypeMapping": {
+      "1": "pakollinen",
+      "2": "syventava",
+      "3": "syventava",
+      "4": "soveltava"
+    },
+    "courseTypeMapping2019": {
+      "1": "pakollinen",
+      "2": "syventava",
+      "3": "syventava",
+      "4": "soveltava"
+    },
+    "educationalTimeUnitMapping": {
+      "1": "tuntia",
+      "2": "op",
+      "3": "ov"
+    },
+    "subjectToLanguageMapping": {
+      "EN": "EN",
+      "EA": "ES",
+      "IA": "IT",
+      "KX": "XX",
+      "KI": "ZH",
+      "LA": "LA",
+      "RA": "FR",
+      "RU": "SV",
+      "SM": "SE",
+      "SA": "DE",
+      "VE": "RU",
+      "JP": "JA",
+      "AR": "AR"
+    },
+    "handlerParams": {
+      "aineopiskeluperusopetus": {
+        "toimipisteOID": "1.2.000.000.00.00000000000",
+        "educationTypes": [2],
+        "excludedEducationTypes": [1],
+        "diaarinumerot": {
+          "ops2005": "4/011/2004",
+          "ops2016": "19/011/2015",
+          "ops2018": "OPH-1280-2017"
+        },
+        "pakollisetOppiaineet": ["MA","AI","BI","FY","GE","HI","KE","KT","OP","OPA","TE","YH","A1","B1"]
+      },
+      "aineopiskelulukio": {
+        "toimipisteOID": "1.1.000.000.00.00000000000",
+        "educationTypes": [1],
+        "excludedEducationTypes": [2],
+        "diaarinumerot": {
+          "ops2005": "4/011/2004",
+          "ops2016": "70/011/2015",
+          "ops2019": "OPH-2267-2019"
+        },
+        "pakollisetOppiaineet": ["MA","AI","BI","FI","FY","GE","HI","KE","YH","A1","B1"]
+      }
+    },
+    "filteredGrades": [ ],
+    "studyProgrammes": {
+      "1": {
+        "enabled": true,
+        "handler": "lukio",
+        "toimipisteOID": "1.1.000.000.00.00000000000",
+        "diaari": {
+          "1": "70/011/2015",
+          "2": "4/011/2004",
+          "3": "OPH-2267-2019"
+        },
+        "freeLodging": false,
+        "suorituksentyyppi": "lukionoppimaara",
+        "opiskeluoikeudentyyppi": "lukiokoulutus",
+        "pakollisetOppiaineet": "MA,AI,BI,FI,FY,GE,HI,KE,YH,A1,B1"
+      }
+    }
+  }
+}
