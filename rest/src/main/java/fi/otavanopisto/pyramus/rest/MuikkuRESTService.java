@@ -192,61 +192,61 @@ public class MuikkuRESTService {
     
     // Course assessments
     
-    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
-    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
-    for (CourseAssessment courseAssessment : courseAssessments) {
-      Course course = courseAssessment.getCourseStudent().getCourse();
-      String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
-      StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-      if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
-        items.put(key, item);
-      }
-    }
-    
-    // Linked credits
-    
-    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
-    for (CreditLink creditLink : creditLinks) {
-      Credit credit = creditLink.getCredit();
-      if (credit.getCreditType() == CreditType.CourseAssessment) {
-        CourseAssessment courseAssessment = (CourseAssessment) credit;
-        Course course = courseAssessment.getCourseStudent().getCourse();
-        String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
-        StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
-          items.put(key, item);
-        }
-      }
-      else if (credit.getCreditType() == CreditType.TransferCredit) {
-        TransferCredit transferCredit = (TransferCredit) credit;
-        String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
-        StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
-        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
-          items.put(key, item);
-        }
-      }
-    }
-    
-    
-    // Courses
-    
-    List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
-    for (CourseStudent courseStudent : courseStudents) {
-      Course course = courseStudent.getCourse();
-      String key = getActivityItemKey(course.getSubject(),  course.getCourseNumber());
-      if (!items.containsKey(key)) {
-        StudyActivityItemRestModel item = new StudyActivityItemRestModel();
-        item.setCourseId(course.getId());
-        item.setCourseName(course.getName());
-        if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
-          item.setCourseNumber(course.getCourseNumber());
-        }
-        item.setDate(courseStudent.getEnrolmentTime());
-        item.setStatus(StudyActivityItemStatus.ONGOING);
-        item.setSubject(course.getSubject().getCode());
-        items.put(key, item);
-      }
-    }
+//    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
+//    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+//    for (CourseAssessment courseAssessment : courseAssessments) {
+//      Course course = courseAssessment.getCourseStudent().getCourse();
+//      String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
+//      StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+//      if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+//        items.put(key, item);
+//      }
+//    }
+//    
+//    // Linked credits
+//    
+//    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
+//    for (CreditLink creditLink : creditLinks) {
+//      Credit credit = creditLink.getCredit();
+//      if (credit.getCreditType() == CreditType.CourseAssessment) {
+//        CourseAssessment courseAssessment = (CourseAssessment) credit;
+//        Course course = courseAssessment.getCourseStudent().getCourse();
+//        String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
+//        StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+//        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+//          items.put(key, item);
+//        }
+//      }
+//      else if (credit.getCreditType() == CreditType.TransferCredit) {
+//        TransferCredit transferCredit = (TransferCredit) credit;
+//        String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
+//        StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
+//        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+//          items.put(key, item);
+//        }
+//      }
+//    }
+//    
+//    
+//    // Courses
+//    
+//    List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
+//    for (CourseStudent courseStudent : courseStudents) {
+//      Course course = courseStudent.getCourse();
+//      String key = getActivityItemKey(course.getSubject(),  course.getCourseNumber());
+//      if (!items.containsKey(key)) {
+//        StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+//        item.setCourseId(course.getId());
+//        item.setCourseName(course.getName());
+//        if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
+//          item.setCourseNumber(course.getCourseNumber());
+//        }
+//        item.setDate(courseStudent.getEnrolmentTime());
+//        item.setStatus(StudyActivityItemStatus.ONGOING);
+//        item.setSubject(course.getSubject().getCode());
+//        items.put(key, item);
+//      }
+//    }
 
     return Response.ok(items.values()).build();
   }
@@ -972,15 +972,15 @@ public class MuikkuRESTService {
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseId(course.getId());
     item.setCourseName(course.getName());
-    if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
-      item.setCourseNumber(course.getCourseNumber());
-    }
-    item.setDate(courseAssessment.getDate());
-    if (courseAssessment.getGrade() != null) {
-      item.setGrade(courseAssessment.getGrade().getName());
-    }
-    item.setStatus(StudyActivityItemStatus.GRADED);
-    item.setSubject(course.getSubject().getCode());
+//    if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
+//      item.setCourseNumber(course.getCourseNumber());
+//    }
+//    item.setDate(courseAssessment.getDate());
+//    if (courseAssessment.getGrade() != null) {
+//      item.setGrade(courseAssessment.getGrade().getName());
+//    }
+//    item.setStatus(StudyActivityItemStatus.GRADED);
+//    item.setSubject(course.getSubject().getCode());
     return item;
   }
 
