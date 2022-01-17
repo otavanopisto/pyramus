@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+  </sql>
+
+create table CourseModule (
+  id bigint not null auto_increment, 
+  courseNumber integer, 
+  course bigint, 
+  courseLength bigint, 
+  subject bigint, 
+  primary key (id)
+);
+
+alter table CourseModule add constraint FKqbamliiubym6e3x71t0bn5dn0 foreign key (course) references CourseBase (id);
+alter table CourseModule add constraint FK7webkvnrmum5gi4c6arqym0s2 foreign key (courseLength) references EducationalLength (id);
+alter table CourseModule add constraint FKe146x10mwmycchi71884gebiv foreign key (subject) references Subject (id);
+
+insert into CourseModule 
+  (course, subject, courseNumber, courseLength)
+select 
+  id, subject, courseNumber, courseLength
+from 
+  CourseBase;
+
+alter table CourseAssessment add column courseModule bigint;
+alter table CourseAssessment add constraint FKn1s84cc2pt0v04uvnyakahu2x foreign key (courseModule) references CourseModule (id);
+
+update CourseAssessment ca, CourseStudent cs, CourseUser cu, Course co, CourseModule cm
+set ca.courseModule = cm.id
+where
+  ca.courseStudent = cs.id and
+  cu.id = cs.id and
+  cu.course = co.id and
+  cm.course = co.id
+
+
+</update>
