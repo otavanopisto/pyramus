@@ -77,7 +77,16 @@ public class CourseActivity {
     this.gradeDate = gradeDate;
   }
 
+  public Long getCourseModuleId() {
+    return courseModuleId;
+  }
+
+  public void setCourseModuleId(Long courseModuleId) {
+    this.courseModuleId = courseModuleId;
+  }
+
   private Long courseId;
+  private Long courseModuleId;
   private String courseName;
   private List<Long> curriculumIds;
   private String grade;

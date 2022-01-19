@@ -29,7 +29,7 @@ public class CourseModule {
    * @return The subject of this entity
    */
   public Subject getSubject() {
-   return subject;
+    return subject;
   }
   
   /**
@@ -38,7 +38,7 @@ public class CourseModule {
    * @param subject The subject of this entity
    */
   public void setSubject(Subject subject) {
-   this.subject = subject;
+    this.subject = subject;
   }
   
   /**
@@ -47,7 +47,7 @@ public class CourseModule {
    * @param courseLength The course length of this course base
    */
   public void setCourseLength(EducationalLength courseLength) {
-   this.courseLength = courseLength;
+    this.courseLength = courseLength;
   }
   
   /**
@@ -56,7 +56,7 @@ public class CourseModule {
    * @return The course length of this course base
    */
   public EducationalLength getCourseLength() {
-   return courseLength;
+    return courseLength;
   }
   
   public void setCourseNumber(Integer courseNumber) {
