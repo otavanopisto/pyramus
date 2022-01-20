@@ -77,6 +77,7 @@ public class AssessmentController {
     return courseAssessmentDAO.findById(id);
   }
 
+  @Deprecated
   public CourseAssessment findLatestCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
     return courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, archived);
   }

@@ -184,6 +184,7 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     return entityManager.createQuery(criteria).getResultList();
   }
   
+  @Deprecated // TODO Check the uses of this
   public CourseAssessment findLatestByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
     List<CourseAssessment> courseAssessments = listByCourseStudentAndArchived(courseStudent, archived);
     courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
