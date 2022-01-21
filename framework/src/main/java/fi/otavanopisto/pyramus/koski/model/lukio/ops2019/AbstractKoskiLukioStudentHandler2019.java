@@ -301,6 +301,11 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
     String subjectCode = subjectCode(courseCredit.getSubject());
 
     Laajuus laajuus = kurssinLaajuus(student, courseCredit);
+    
+    if (laajuus != null && laajuus.getYksikko() != null && laajuus.getYksikko().getValue() != OpintojenLaajuusYksikko.op) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.LUKIO2019_CREDIT_NOT_IN_POINTS, new Date(), kurssiKoodi);
+    }
+    
     SuorituksenTyyppi suorituksenTyyppi;
 
     if (!paikallinenOppiaine && EnumUtils.isValidEnum(ModuuliKoodistoLOPS2021.class, kurssiKoodi)) {
