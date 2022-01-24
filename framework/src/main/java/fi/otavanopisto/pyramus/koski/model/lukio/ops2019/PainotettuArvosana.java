@@ -4,12 +4,12 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 
 public class PainotettuArvosana {
 
-  public PainotettuArvosana(int kurssinLaajuus, ArviointiasteikkoYleissivistava arvosana) {
+  public PainotettuArvosana(double kurssinLaajuus, ArviointiasteikkoYleissivistava arvosana) {
     this.kurssinLaajuus = kurssinLaajuus;
     this.arvosana = arvosana;
   }
   
-  public int getKurssinLaajuus() {
+  public double getKurssinLaajuus() {
     return kurssinLaajuus;
   }
 
@@ -17,6 +17,6 @@ public class PainotettuArvosana {
     return arvosana;
   }
 
-  private final int kurssinLaajuus;
+  private final double kurssinLaajuus;
   private final ArviointiasteikkoYleissivistava arvosana;
 }

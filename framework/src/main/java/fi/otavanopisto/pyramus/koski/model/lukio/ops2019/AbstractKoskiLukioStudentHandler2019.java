@@ -150,7 +150,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
             }
           }
           
-          int kurssinLaajuus = laajuus.getArvo();
+          double kurssinLaajuus = laajuus.getArvo();
           
           Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
           ArviointiasteikkoYleissivistava kurssiArvosana = ArviointiasteikkoYleissivistava.bestGrade(arvosanat);

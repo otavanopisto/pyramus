@@ -11,7 +11,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 
 public class CreditStubCredit {
 
-  public CreditStubCredit(Credit credit, Type type, int courseLength, OpintojenLaajuusYksikko lengthUnit) {
+  public CreditStubCredit(Credit credit, Type type, double courseLength, OpintojenLaajuusYksikko lengthUnit) {
     this.type = type;
     this.credit = credit;
     this.courseLength = courseLength;
@@ -70,7 +70,7 @@ public class CreditStubCredit {
     return credit instanceof TransferCredit ? ((TransferCredit) credit).getFunding() : null;
   }
 
-  public int getCourseLength() {
+  public double getCourseLength() {
     return courseLength;
   }
 
@@ -80,6 +80,6 @@ public class CreditStubCredit {
 
   private final Credit credit;
   private final Type type;
-  private final int courseLength;
+  private final double courseLength;
   private final OpintojenLaajuusYksikko courseLenghtUnit;
 }

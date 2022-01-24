@@ -927,7 +927,7 @@ public abstract class KoskiStudentHandler {
     CreditStubCredits credits = stub.getCredits();
     
     if (CollectionUtils.isNotEmpty(credits)) {
-      int laajuus = credits.get(0).getCourseLength();
+      double laajuus = credits.get(0).getCourseLength();
       OpintojenLaajuusYksikko yksikko = credits.get(0).getCourseLenghtUnit();
       
       // Tarkistetaan, ettei arvosanalistassa ole ristiriitaisia arvoja

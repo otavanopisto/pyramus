@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssitOPS2004Aikuiset;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
@@ -112,9 +113,10 @@ public abstract class AbstractKoskiLukioStudentHandler extends KoskiStudentHandl
       LukionKurssinTyyppi kurssinTyyppi = findCourseType(student, courseCredit, true, LukionKurssinTyyppi.syventava, LukionKurssinTyyppi.soveltava);
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
-      
-    Laajuus laajuus = kurssinLaajuus(student, courseCredit);
-    tunniste.setLaajuus(laajuus);
+
+    // TODO Verify this  --- new Laajuus(0.5f, OpintojenLaajuusYksikko.kurssia);
+//    Laajuus laajuus = kurssinLaajuus(student, courseCredit);
+//    tunniste.setLaajuus(laajuus);
 
     LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste);
 

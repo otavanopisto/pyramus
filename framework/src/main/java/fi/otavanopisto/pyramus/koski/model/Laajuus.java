@@ -10,12 +10,12 @@ public class Laajuus {
   public Laajuus() {
   }
   
-  public Laajuus(int arvo, OpintojenLaajuusYksikko yksikko) {
+  public Laajuus(double arvo, OpintojenLaajuusYksikko yksikko) {
     this.arvo = arvo;
     this.yksikko.setValue(yksikko);
   }
 
-  public int getArvo() {
+  public double getArvo() {
     return arvo;
   }
   
@@ -24,6 +24,6 @@ public class Laajuus {
     return yksikko;
   }
   
-  private int arvo;
+  private double arvo;
   private final KoodistoViite<OpintojenLaajuusYksikko> yksikko = new KoodistoViite<>();
 }
