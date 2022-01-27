@@ -284,17 +284,38 @@ public class OnnistuuClient {
     return null;
   }
 
-  private Long getPrimarySignerId() {
+  private Long getPrimarySignerId(String line) {
+    
+    Long signerId = null;
+    
+    // #1333: Primary signer depends on line. Fall back to default signer if line specific one isn't found
+    
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
-    SettingKey settingKey = settingKeyDAO.findByName(SETTINGKEY_SIGNERID);
+    SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+    
+    // Try line specific signer first...
+    
+    SettingKey settingKey = settingKeyDAO.findByName(String.format("%s.%s", SETTINGKEY_SIGNERID, line));
     if (settingKey != null) {
-      SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
       Setting setting = settingDAO.findByKey(settingKey);
       if (setting != null) {
-        return NumberUtils.toLong(setting.getValue());
+        signerId = NumberUtils.toLong(setting.getValue());
       }
     }
-    return null;
+    
+    // ...and fall back to default signer if not found
+    
+    if (signerId == null) {
+      settingKey = settingKeyDAO.findByName(SETTINGKEY_SIGNERID);
+      if (settingKey != null) {
+        Setting setting = settingDAO.findByKey(settingKey);
+        if (setting != null) {
+          signerId = NumberUtils.toLong(setting.getValue());
+        }
+      }
+    }
+
+    return signerId;
   }
 
   private String dateToRFC2822(Date date) {
@@ -334,7 +355,7 @@ public class OnnistuuClient {
 
       // Replace primary and (optional) secondary signers
 
-      Long primarySignerId = getPrimarySignerId();
+      Long primarySignerId = getPrimarySignerId(line);
       if (primarySignerId == null) {
         primarySignerId = signer.getId();
       }
