@@ -22,13 +22,16 @@ insert into CourseModule
 select 
   id, subject, courseNumber, courseLength
 from 
-  CourseBase;
+  CourseBase
+where 
+  id not in (select course from CourseModule);
 
 alter table CourseAssessment add column courseModule bigint;
 alter table CourseAssessment add constraint FKn1s84cc2pt0v04uvnyakahu2x foreign key (courseModule) references CourseModule (id);
 
 update CourseAssessment ca, CourseStudent cs, CourseUser cu, Course co, CourseModule cm
-set ca.courseModule = cm.id
+set 
+  ca.courseModule = cm.id
 where
   ca.courseStudent = cs.id and
   cu.id = cs.id and
