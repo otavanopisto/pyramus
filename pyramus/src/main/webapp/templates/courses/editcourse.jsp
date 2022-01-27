@@ -1483,10 +1483,10 @@
         for (var i = 0, l = courseModulesData.length; i < l; i++) {
           var courseModule = courseModulesData[i];
           courseModulesRows.push([
-            courseModule.subject.id,
+            courseModule.subject ? courseModule.subject.id : '',
             courseModule.courseNumber,
-            courseModule.courseLength.units,
-            courseModule.courseLength.unit.id,
+            courseModule.courseLength ? courseModule.courseLength.units : '',
+            (courseModule.courseLength && courseModule.courseLength.unit) ? courseModule.courseLength.unit.id : '',
             '',
             courseModule.id
           ]);
