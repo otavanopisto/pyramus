@@ -392,13 +392,13 @@
       <uniqueVersion>false</uniqueVersion>
       <id>otavanopisto-snapshots</id>
       <name>Otavan Opisto Snapshots</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
+      <url>https://nexus.muikkuverkko.fi/repository/otavanopisto-snapshots/</url>
     </snapshotRepository>
     <repository>
-      <uniqueVersion>false</uniqueVersion>
+      <uniqueVersion>true</uniqueVersion>
       <id>otavanopisto-releases</id>
       <name>Otavan Opisto Releases</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
+      <url>https://nexus.muikkuverkko.fi/repository/otavanopisto-releases/</url>
     </repository>
   </distributionManagement>
 
