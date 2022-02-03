@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
 public class CourseModule {
@@ -80,11 +83,13 @@ public class CourseModule {
   private Long id;
 
   @ManyToOne (fetch = FetchType.LAZY)
-  @JoinColumn(name="course")
+  @JoinColumn(name="course", nullable = false)
+  @NotNull
   private CourseBase course;
   
   @ManyToOne  
   @JoinColumn(name="subject")
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private Subject subject;
   
   @Column
@@ -92,6 +97,7 @@ public class CourseModule {
   
   @OneToOne (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name = "courseLength")
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private EducationalLength courseLength;
   
 }

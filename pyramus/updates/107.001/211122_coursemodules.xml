@@ -7,7 +7,7 @@
 create table CourseModule (
   id bigint not null auto_increment, 
   courseNumber integer, 
-  course bigint, 
+  course bigint not null, 
   courseLength bigint, 
   subject bigint, 
   primary key (id)
@@ -36,7 +36,10 @@ where
   ca.courseStudent = cs.id and
   cu.id = cs.id and
   cu.course = co.id and
-  cm.course = co.id
+  cm.course = co.id and
+  ca.courseModule is null;
 
+alter table CourseAssessment modify column courseModule bigint not null;
+alter table CourseAssessment modify column courseStudent bigint not null;
 
 </update>

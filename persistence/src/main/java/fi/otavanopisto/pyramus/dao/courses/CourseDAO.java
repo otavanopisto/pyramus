@@ -404,7 +404,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     }
 
     if (subject != null) {
-      addTokenizedSearchCriteria(queryBuilder, "subject.id", subject.getId().toString(), true);
+      addTokenizedSearchCriteria(queryBuilder, "courseModules.subject.id", subject.getId().toString(), true);
     }
 
     if (educationType != null)
