@@ -7,7 +7,7 @@
 
   <h2 class="application-form-section-header">Valitse hakukohteesi</h2>
 
-  <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true" data-preselect="${preselectLine}">
+  <select id="field-line" name="field-line" data-dependencies="true" data-preselect="${preselectLine}">
     <option value="">-- Valitse --</option>
     <option value="aineopiskelu" data-underage-support="true" data-attachment-support="false">Aineopiskelu</option>
     <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
@@ -52,7 +52,7 @@
   
       <div class="form-section__field-container" data-dependent-field="field-nettilukio_compulsory" data-dependent-values="compulsory" style="display:none;">
         <label for="field-nettilukio_compulsory_enddate">Maksuton oppivelvollisuus päättynyt alkaen</label>
-        <input type="text" id="field-nettilukio_compulsory_enddate" name="field-nettilukio_compulsory_enddate" data-parsley-date-format="" />
+        <input type="text" id="field-nettilukio_compulsory_enddate" name="field-nettilukio_compulsory_enddate"/>
       </div>
     </div>
   </c:if>

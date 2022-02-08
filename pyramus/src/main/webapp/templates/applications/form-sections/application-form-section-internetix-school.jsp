@@ -13,7 +13,7 @@
 
     <div class="form-section__field-container field-internetix-school">
       <label for="field-internetix-school" class="required">Opiskelu muussa oppilaitoksessa</label>
-      <select id="field-internetix-school" name="field-internetix-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+      <select id="field-internetix-school" name="field-internetix-school" data-dependencies="true">
         <option value="">-- Valitse --</option>
         <option value="en">En opiskele missään oppilaitoksessa</option>
         <option value="kylla">Opiskelen toisessa oppilaitoksessa</option>
@@ -26,7 +26,7 @@
 
     <div class="form-section__field-container field-internetix-contract-school dependent" data-dependent-field="field-internetix-school" data-dependent-values="kylla" style="display:none;">
       <label for="field-internetix-contract-school" class="required">Oppilaitokseni</label>
-      <select id="field-internetix-contract-school" name="field-internetix-contract-school" data-source="/1/applications/contractschools" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+      <select id="field-internetix-contract-school" name="field-internetix-contract-school" data-source="/1/applications/contractschools" data-dependencies="true">
         <option value="">-- Valitse --</option>
         <option value="muu">Muu oppilaitos</option>
       </select>
@@ -34,22 +34,22 @@
 
     <div class="form-section__field-container field-internetix-contract-school-name dependent" data-dependent-field="field-internetix-contract-school" data-dependent-values="muu" style="display:none;">
       <label for="field-internetix-contract-school-name" class="required">Oppilaitos</label>
-      <input type="text" id="field-internetix-contract-school-name" name="field-internetix-contract-school-name" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <input type="text" id="field-internetix-contract-school-name" name="field-internetix-contract-school-name">
     </div>
 
     <div class="form-section__field-container field-internetix-contract-school-municipality dependent" data-dependent-field="field-internetix-contract-school" data-dependent-values="muu" style="display:none;">
       <label for="field-internetix-contract-school-municipality" class="required">Opiskelupaikkakunta</label>
-      <input id="field-internetix-contract-school-municipality" type="text" name="field-internetix-contract-school-municipality" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <input id="field-internetix-contract-school-municipality" type="text" name="field-internetix-contract-school-municipality">
     </div>
 
     <div class="form-section__field-container field-internetix-contract-school-contact dependent" data-dependent-field="field-internetix-contract-school" data-dependent-values="muu" style="display:none;">
       <label for="field-internetix-contract-school-contact" class="required">Oppilaitoksen yhteyshenkilö ja yhteystiedot</label>
-      <textarea id="field-internetix-contract-school-contact" name="field-internetix-contract-school-contact" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
+      <textarea id="field-internetix-contract-school-contact" name="field-internetix-contract-school-contact" rows="5" cols="40"></textarea>
     </div>
 
     <div class="form-section__field-container field-internetix-contract-school-degree dependent" data-dependent-field="field-internetix-school" data-dependent-values="kylla" style="display:none;">
       <label for="field-internetix-contract-school-degree" class="required">Suoritan</label>
-      <select id="field-internetix-contract-school-degree" name="field-internetix-contract-school-degree" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <select id="field-internetix-contract-school-degree" name="field-internetix-contract-school-degree">
         <option value="">-- Valitse --</option>
         <option value="muu">Muu tutkinto</option>
         <option value="yo-tutkinto">YO-tutkinto / lukion oppimäärä</option>

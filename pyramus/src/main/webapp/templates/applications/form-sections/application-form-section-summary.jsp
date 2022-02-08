@@ -25,7 +25,7 @@
     <div class="summary-container field-privacy">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+          <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla">
         </div>
         <div class="field-row-label">
           <label for="field-privacy" class="required">Olen lukenut <a href="https://otavia.fi/opiskelija-ja-opintotietorekisterin-tietosuojaseloste/" target="_blank" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavian oppilashallintojärjestelmään sekä verkko-oppimisympäristöön.</label>
@@ -36,7 +36,7 @@
     <div class="summary-container field-changes">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-changes" name="field-changes" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+          <input type="checkbox" id="field-changes" name="field-changes" value="kylla">
         </div>
         <div class="field-row-label">
           <label for="field-changes" class="required">Vakuutan, että antamani tiedot ovat oikein. Lupaan ilmoittaa, jos antamissani tiedoissa tapahtuu muutoksia.</label>
@@ -47,7 +47,7 @@
     <div class="summary-container field-nettilukio-promise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-nettilukio-promise" name="field-nettilukio-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+          <input type="checkbox" id="field-nettilukio-promise" name="field-nettilukio-promise" value="kylla">
         </div>
         <div class="field-row-label">
           <label for="field-nettilukio-promise" class="required">Ymmärrän, että verkko-oppimisympäristö Muikussa tekemäni itsenäiset verkkokurssisuoritukset ovat näyttöjä omasta osaamisestani ja sitoudun tekemään tehtävät itsenäisesti. Ymmärrän myös, että opiskeluoikeus edellyttää lukiolain nojalla opintojen säännöllistä etenemistä (Lukiolaki 714/2018, 24 § ja 25 §). <a href="#" class="nettilukio-promise-link">Opiskelun säännöt Nettilukiossa</a>.</label>
@@ -58,7 +58,7 @@
     <div class="summary-container field-nettilukio-contactpromise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-nettilukio-contactpromise" name="field-nettilukio-contactpromise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+          <input type="checkbox" id="field-nettilukio-contactpromise" name="field-nettilukio-contactpromise" value="kylla">
         </div>
         <div class="field-row-label">
           <label for="field-nettilukio-contactpromise" class="required">
@@ -71,7 +71,7 @@
     <div class="summary-container field-aineopiskelu-promise dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-aineopiskelu-promise" name="field-aineopiskelu-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+          <input type="checkbox" id="field-aineopiskelu-promise" name="field-aineopiskelu-promise" value="kylla">
         </div>
         <div class="field-row-label">
           <label for="field-aineopiskelu-promise" class="required">Ymmärrän, että verkko-oppimisympäristö Muikussa tekemäni itsenäiset verkkokurssisuoritukset ovat näyttöjä omasta osaamisestani, ja sitoudun tekemään tehtävät itsenäisesti. <a href="#" class="aineopiskelu-promise-link">Opiskelun säännöt Nettilukiossa</a>.</label>
@@ -82,7 +82,7 @@
     <div class="summary-container field-nettipk-promise dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-nettipk-promise" name="field-nettipk-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+          <input type="checkbox" id="field-nettipk-promise" name="field-nettipk-promise" value="kylla">
         </div>
         <div class="field-row-label">
           <label for="field-nettipk-promise" class="required">Ymmärrän, että verkko-oppimisympäristö Muikussa tekemäni itsenäiset verkkokurssisuoritukset ovat näyttöjä omasta osaamisestani, ja sitoudun tekemään tehtävät itsenäisesti. Ymmärrän myös, että opiskeluoikeus edellyttää opintojen säännöllistä etenemistä. <a href="#" class="nettipk-promise-link">Opiskelun säännöt Nettiperuskoulussa</a>.</label>

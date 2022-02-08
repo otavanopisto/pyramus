@@ -127,7 +127,7 @@
 
     <div class="form-section__field-container field-source-other dependent" data-dependent-field="field-source" data-dependent-values="sanomalehti,valotaulumainos,elokuva,messut,muu" style="display:none;">
       <label for="field-source-other" class="required">Kerro tarkemmin mistä</label>
-      <input id="field-source-other" type="text" name="field-source-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <input id="field-source-other" type="text" name="field-source-other">
     </div>
   
   </section>

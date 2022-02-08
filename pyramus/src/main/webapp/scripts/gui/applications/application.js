@@ -128,97 +128,97 @@
     
     // Custom validators
     
-    Parsley.addValidator('dateFormat', {
-      requirementType: 'string',
-      validateString: function(value) {
-        var dateRegExp = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
-        return value && moment(value, 'D.M.YYYY').isValid() && value.match(dateRegExp) != null;
-      },
-      messages: {
-        fi: 'Päivämäärän muoto on virheellinen'
-      }
-    });
-    
-    Parsley.addValidator('nickname', {
-      requirementType: 'string',
-      validateString: function(value) {
-        return value != '';
-      },
-      messages: {
-        fi: 'Klikkaa kutsumanimeäsi'
-      }
-    });
-    
-    Parsley.addValidator('ssnEndFormat', {
-      requirementType: 'string',
-      validateString: function(value) {
-        return isValidSsnEnd(value, $('#field-line').val() == 'mk');
-      },
-      messages: {
-        fi: 'Henkilötunnuksen loppuosan muoto on virheellinen'
-      }
-    });
-    
-    Parsley.addValidator('requiredIfShown', {
-      requirementType: 'string',
-      validateString: function(value, requirement, event) {
-        var element = event.element;
-        if ($(element).is(':visible')) { 
-          if (!value || value.trim().length == 0) {
-            return false;
-          }
-        }
-        return true;
-      },
-      validateMultiple: function(value, requirement, event) {
-        var element = event.element;
-        if ($(element).is(':visible')) { 
-          if (value.length == 0) {
-            return false;
-          }
-        }
-        return true;
-      },
-      messages: {
-        fi: 'Tämä kenttä on pakollinen'
-      }
-    });
-
-    Parsley.addValidator('requiredEmailIfShown', {
-      requirementType: 'string',
-      validateString: function(value, requirement, event) {
-        var element = event.element;
-        if ($(element).is(':visible')) {
-          var emailRegExp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-          if (!value || value.trim().length == 0 || !value.match(emailRegExp)) {
-            return false;
-          }
-        }
-        return true;
-      },
-      validateMultiple: function(value, requirement, event) {
-        var element = event.element;
-        if ($(element).is(':visible')) { 
-          if (value.length == 0) {
-            return false;
-          }
-        }
-        return true;
-      },
-      messages: {
-        fi: 'Sähköpostiosoite puuttuu tai on virheellinen'
-      }
-    });
-
-    Parsley.addValidator('emailMatch', {
-      requirementType: 'string',
-      validateString: function(value) {
-        return value == $('#field-email').val();
-      },
-      messages: {
-        fi: 'Sähköpostiosoitteet eivät täsmää'
-      }
-    });
+//    Parsley.addValidator('dateFormat', {
+//      requirementType: 'string',
+//      validateString: function(value) {
+//        var dateRegExp = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
+//        return value && moment(value, 'D.M.YYYY').isValid() && value.match(dateRegExp) != null;
+//      },
+//      messages: {
+//        fi: 'Päivämäärän muoto on virheellinen'
+//      }
+//    });
+//    
+//    Parsley.addValidator('nickname', {
+//      requirementType: 'string',
+//      validateString: function(value) {
+//        return value != '';
+//      },
+//      messages: {
+//        fi: 'Klikkaa kutsumanimeäsi'
+//      }
+//    });
+//    
+//    Parsley.addValidator('ssnEndFormat', {
+//      requirementType: 'string',
+//      validateString: function(value) {
+//        return isValidSsnEnd(value, $('#field-line').val() == 'mk');
+//      },
+//      messages: {
+//        fi: 'Henkilötunnuksen loppuosan muoto on virheellinen'
+//      }
+//    });
+//    
+//    Parsley.addValidator('requiredIfShown', {
+//      requirementType: 'string',
+//      validateString: function(value, requirement, event) {
+//        var element = event.element;
+//        if ($(element).is(':visible')) { 
+//          if (!value || value.trim().length == 0) {
+//            return false;
+//          }
+//        }
+//        return true;
+//      },
+//      validateMultiple: function(value, requirement, event) {
+//        var element = event.element;
+//        if ($(element).is(':visible')) { 
+//          if (value.length == 0) {
+//            return false;
+//          }
+//        }
+//        return true;
+//      },
+//      messages: {
+//        fi: 'Tämä kenttä on pakollinen'
+//      }
+//    });
+//
+//    Parsley.addValidator('requiredEmailIfShown', {
+//      requirementType: 'string',
+//      validateString: function(value, requirement, event) {
+//        var element = event.element;
+//        if ($(element).is(':visible')) {
+//          var emailRegExp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+//          if (!value || value.trim().length == 0 || !value.match(emailRegExp)) {
+//            return false;
+//          }
+//        }
+//        return true;
+//      },
+//      validateMultiple: function(value, requirement, event) {
+//        var element = event.element;
+//        if ($(element).is(':visible')) { 
+//          if (value.length == 0) {
+//            return false;
+//          }
+//        }
+//        return true;
+//      },
+//      messages: {
+//        fi: 'Sähköpostiosoite puuttuu tai on virheellinen'
+//      }
+//    });
+//
+//    Parsley.addValidator('emailMatch', {
+//      requirementType: 'string',
+//      validateString: function(value) {
+//        return value == $('#field-email').val();
+//      },
+//      messages: {
+//        fi: 'Sähköpostiosoitteet eivät täsmää'
+//      }
+//    });
     
     // Dependencies
     
@@ -288,16 +288,17 @@
     });
     
     $('.button-next-section').click(function() {
-      var valid = false;
-      if ($('.form-section.current').hasClass('section-source')) {
-        valid = $('input[name="field-source"]:checked').val();
-        if (!valid) {
-          $('#field-source-mandatory').show();
-        }
-      }
-      else {
-        valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
-      }
+      var valid = true;
+//      var valid = false;
+//      if ($('.form-section.current').hasClass('section-source')) {
+//        valid = $('input[name="field-source"]:checked').val();
+//        if (!valid) {
+//          $('#field-source-mandatory').show();
+//        }
+//      }
+//      else {
+//        valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+//      }
       if (valid) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
