@@ -18,6 +18,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
@@ -145,18 +146,21 @@ public class ContactInfo {
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
+  @Audited // TODO Not needed if we could audit address.contactInfo :|
   private List<Address> addresses = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
+  @Audited // TODO Not needed if we could audit email.contactInfo :|
   private List<Email> emails = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
+  @Audited // TODO Not needed if we could audit phoneNumber.contactInfo :|
   private List<PhoneNumber> phoneNumbers = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)

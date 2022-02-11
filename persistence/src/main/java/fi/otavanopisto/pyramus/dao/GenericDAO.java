@@ -125,8 +125,9 @@ public abstract class GenericDAO<T> {
   
 //  private static final ThreadLocal<EntityManager> THREAD_LOCAL = new ThreadLocal<EntityManager>();
   
-//  @Override
-  protected EntityManager getEntityManager() {
+  //@Override
+  // TODO Can we get access to entityManager some other way? 
+  public EntityManager getEntityManager() {
     return entityManager;
   }
   

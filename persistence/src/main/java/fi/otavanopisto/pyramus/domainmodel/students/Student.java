@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
@@ -291,6 +292,7 @@ public class Student extends User implements ArchivableEntity {
     this.funding = funding;
   }
 
+  @Audited // TODO Need to audit at least one field to audit User changes :| 
   private String nickname;
     
   @Lob

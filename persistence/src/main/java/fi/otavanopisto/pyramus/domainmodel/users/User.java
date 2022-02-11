@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -179,12 +180,14 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   @Column (nullable = false)
   @NotEmpty
   @Field
+  @Audited
   private String firstName;
   
   @NotNull
   @Column (nullable = false)
   @NotEmpty
   @Field
+  @Audited
   private String lastName;
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -195,6 +198,7 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   @NotNull
   @Column (nullable = false)
   @Field
+  @Audited
   private Boolean archived;
   
   @Version

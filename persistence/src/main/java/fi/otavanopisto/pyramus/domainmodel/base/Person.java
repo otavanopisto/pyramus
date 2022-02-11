@@ -29,6 +29,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -995,6 +996,7 @@ public class Person implements ContextReference {
 
   @Column
   @Field(store = Store.NO)
+  @Audited
   private String socialSecurityNumber;
 
   @Column

@@ -11,6 +11,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
@@ -106,6 +107,7 @@ public class Address {
   @NotNull
   @Column(nullable = false)
   @Field
+  @Audited
   private Boolean defaultAddress = Boolean.FALSE;
 
   @ManyToOne
@@ -113,18 +115,23 @@ public class Address {
   private ContactType contactType;
   
   @Field (store = Store.NO)
+  @Audited
   private String name;
   
   @Field (store = Store.NO)
+  @Audited
   private String streetAddress;
 
   @Field (store = Store.NO)
+  @Audited
   private String postalCode;
 
   @Field (store = Store.NO)
+  @Audited
   private String city;
   
   @Field (store = Store.NO)
+  @Audited
   private String country;
 
   @ManyToOne

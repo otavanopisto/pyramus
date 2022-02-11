@@ -11,6 +11,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
@@ -79,6 +80,7 @@ public class Email {
   @NotNull
   @Column(nullable = false)
   @Field
+  @Audited
   private Boolean defaultAddress = Boolean.FALSE;
 
   @NotNull
@@ -86,6 +88,7 @@ public class Email {
   @NotEmpty
   @Field (store = Store.NO)
   @org.hibernate.validator.constraints.Email
+  @Audited
   private String address;
 
   @ManyToOne

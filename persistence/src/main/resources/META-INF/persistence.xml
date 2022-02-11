@@ -28,6 +28,10 @@
       <property name="hibernate.search.default.optimizer.operation_limit.max" value="1000" />
       <property name="hibernate.search.default.optimizer.transaction_limit.max" value="100" />
       <property name="hibernate.search.default.exclusive_index_use" value="true"/>
+      
+      <!-- Envers -->
+      
+      <property name="org.hibernate.envers.store_data_at_delete" value="true"/>
  
       <!-- Byte code instrumentation
  

@@ -71,6 +71,13 @@
       <artifactId>lucene-queries</artifactId>
     </dependency>
     
+    <!-- Envers (for auditing entity field changes) -->
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-envers</artifactId>
+    </dependency>    
+    
     <!-- JMS -->
     
     <dependency>
