@@ -29,6 +29,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 
 public class AuditLogViewController extends PyramusViewController {
 
+  @SuppressWarnings("unchecked")
   public void process(PageRequestContext requestContext) {
 
     // Some crummy test page
@@ -43,7 +44,6 @@ public class AuditLogViewController extends PyramusViewController {
 
     // Results and other search objects
 
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     List<AuditLogItem> items = new ArrayList<>();
     List<Number> revisions;
     List<Object[]> changes;
@@ -51,7 +51,7 @@ public class AuditLogViewController extends PyramusViewController {
 
     // TODO Access to entity manager via a more sophisticated way
 
-    EntityManager em = userDAO.getEntityManager();
+    EntityManager em = personDAO.getEntityManager();
     AuditReader reader = AuditReaderFactory.get(em);
 
     // Changes to person
@@ -71,8 +71,7 @@ public class AuditLogViewController extends PyramusViewController {
         item.setDate(pre.getRevisionDate());
         item.setTarget("PERSON");
         item.setType(revType);
-        User culprit = userDAO.findById(pre.getUserId());
-        item.setUser(culprit.getFullName());
+        item.setUser(getUserName(pre));
         items.add(item);
       }
     }
@@ -98,8 +97,7 @@ public class AuditLogViewController extends PyramusViewController {
           item.setDate(pre.getRevisionDate());
           item.setTarget("USER");
           item.setType(revType);
-          User culprit = userDAO.findById(pre.getUserId());
-          item.setUser(culprit.getFullName());
+          item.setUser(getUserName(pre));
           items.add(item);
         }
       }
@@ -124,8 +122,7 @@ public class AuditLogViewController extends PyramusViewController {
           item.setDate(pre.getRevisionDate());
           item.setTarget("ADDRESS");
           item.setType(revType);
-          User culprit = userDAO.findById(pre.getUserId());
-          item.setUser(culprit.getFullName());
+          item.setUser(getUserName(pre));
           items.add(item);
         }
 
@@ -144,8 +141,7 @@ public class AuditLogViewController extends PyramusViewController {
           item.setDate(pre.getRevisionDate());
           item.setTarget("EMAIL");
           item.setType(revType);
-          User culprit = userDAO.findById(pre.getUserId());
-          item.setUser(culprit.getFullName());
+          item.setUser(getUserName(pre));
           items.add(item);
         }
 
@@ -164,8 +160,7 @@ public class AuditLogViewController extends PyramusViewController {
           item.setDate(pre.getRevisionDate());
           item.setTarget("PHONE");
           item.setType(revType);
-          User culprit = userDAO.findById(pre.getUserId());
-          item.setUser(culprit.getFullName());
+          item.setUser(getUserName(pre));
           items.add(item);
         }
       }
@@ -174,11 +169,20 @@ public class AuditLogViewController extends PyramusViewController {
     items.sort(Comparator.comparing(AuditLogItem::getDate).reversed());
 
     requestContext.getRequest().setAttribute("items", items);
-
   }
 
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.ADMINISTRATOR };
+  }
+  
+  private String getUserName(PyramusRevisionEntity pre) {
+    if (pre.getUserId() == null) {
+      return "???";
+    }
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    User user = userDAO.findById(pre.getUserId());
+    return user ==  null ? "???" : user.getFullName();
+    
   }
 
 }
