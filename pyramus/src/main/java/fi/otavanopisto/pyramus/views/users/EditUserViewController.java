@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -29,15 +29,17 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
-import fi.otavanopisto.pyramus.framework.PyramusViewController;
-import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.EntityProperty;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
+import fi.otavanopisto.pyramus.framework.PyramusViewController;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * The controller responsible of the Edit User view of the application.
@@ -137,6 +139,10 @@ public class EditUserViewController extends PyramusViewController implements Bre
       propertiesJSON.add(propertyJSON);
     }
     setJsDataVariable(pageRequestContext, "properties", propertiesJSON.toString());
+
+    if (!StringUtils.contains(pageRequestContext.getReferer(false), "edituser.page")) {
+      staffDAO.auditView(user.getPerson().getId(), null, EditUserViewController.class);
+    }
     
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("user", user);
