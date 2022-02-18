@@ -148,14 +148,9 @@ public abstract class GenericDAO<T> {
     }
   }
 
-  public void auditView(Long personId, Long userId, Class c) {
-    try {
-      AuditLogDAO auditLogDAO = DAOFactory.getInstance().getAuditLogDAO();
-      auditLogDAO.create(personId, userId, AuditLogType.VIEW, c.getSimpleName(), null, null, null);
-    }
-    catch (Exception e) {
-      // Reflection failure 
-    }
+  public void auditView(Long personId, Long userId, Class<?> c) {
+    AuditLogDAO auditLogDAO = DAOFactory.getInstance().getAuditLogDAO();
+    auditLogDAO.create(personId, userId, AuditLogType.VIEW, c.getSimpleName(), null, null, null);
   }
 
 //  protected abstract EntityManager getEntityManager();
