@@ -357,7 +357,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   
   public StaffMember update(StaffMember staffMember, Organization organization, String firstName, String lastName, Role role) {
     auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, "firstName", firstName, true);
-    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, "lastName", firstName, true);
+    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, "lastName", lastName, true);
     auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, "role", role, true);
 
     staffMember.setOrganization(organization);
