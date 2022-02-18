@@ -11,10 +11,32 @@
 </head>
 <body>
 
-  <p><b>Date</b> | <b>Author</b> | <b>Person</b> | <b>User</b> | <b>Type</b> | <b>Entity</b> | <b>Entity id</b> | <b>Field</b> | <b>Value</b></p>
-  <c:forEach var="e" items="${entries}">
-    <p>${e.date} | ${e.authorId} | ${e.personId} | ${e.userId} | ${e.type} | ${e.className} | ${e.entityId} | ${e.field} | ${e.data}</p>
-  </c:forEach>
+  <table border="1">
+    <tr>
+      <td><b>Date</b></td>
+      <td><b>Author</b></td>
+      <td><b>Person</b></td>
+      <td><b>User</b></td>
+      <td><b>Type</b></td>
+      <td><b>Entity</b></td>
+      <td><b>Id</b></td>
+      <td><b>Field</b></td>
+      <td><b>Value</b></td>
+    </tr>
+    <c:forEach var="e" items="${entries}">
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.authorId}</td>
+        <td>${e.personId}</td>
+        <td>${e.userId}</td>
+        <td>${e.type}</td>
+        <td>${e.className}</td>
+        <td>${e.entityId}</td>
+        <td>${e.field}</td>
+        <td>${e.data}</td>
+      </tr>
+    </c:forEach>
+  </table>
 
 </body>
 </html>
