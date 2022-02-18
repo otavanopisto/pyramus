@@ -9,6 +9,7 @@ import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
+import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
@@ -30,7 +31,7 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(phoneNumber.getContactInfo());
     if (user != null) {
-      auditCreate(user.getPersonId(), user.getId(), phoneNumber, "number", true);
+      auditCreate(user.getPersonId(), user.getId(), phoneNumber, PhoneNumber_.number, true);
     }
 
     return phoneNumber;
@@ -42,7 +43,7 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(phoneNumber.getContactInfo());
     if (user != null) {
-      auditUpdate(user.getPersonId(), user.getId(), phoneNumber, "number", number, true);
+      auditUpdate(user.getPersonId(), user.getId(), phoneNumber, PhoneNumber_.number, number, true);
     }
 
     phoneNumber.setContactType(contactType);
@@ -60,7 +61,7 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
       UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
       User user = userDAO.findByContactInfo(phoneNumber.getContactInfo());
       if (user != null) {
-        auditDelete(user.getPersonId(), user.getId(), phoneNumber, "number", true);
+        auditDelete(user.getPersonId(), user.getId(), phoneNumber, PhoneNumber_.number, true);
       }
       
       phoneNumber.getContactInfo().removePhoneNumber(phoneNumber);

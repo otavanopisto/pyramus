@@ -79,8 +79,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
   public void update(Person person, Date birthday, String socialSecurityNumber, Sex sex, String basicInfo, Boolean secureInfo) {
     EntityManager entityManager = getEntityManager();
     
-    auditUpdate(person.getId(), null, person, "socialSecurityNumber", socialSecurityNumber, false);
-    auditUpdate(person.getId(), null, person, "secureInfo", secureInfo, true);
+    auditUpdate(person.getId(), null, person, Person_.socialSecurityNumber, socialSecurityNumber, false);
+    auditUpdate(person.getId(), null, person, Person_.secureInfo, secureInfo, true);
     
     person.setBirthday(birthday);
     person.setSocialSecurityNumber(socialSecurityNumber);
@@ -95,7 +95,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
   public void updateSocialSecurityNumber(Person person, String socialSecurityNumber) {
     EntityManager entityManager = getEntityManager();
 
-    auditUpdate(person.getId(), null, person, "socialSecurityNumber", socialSecurityNumber, false);
+    auditUpdate(person.getId(), null, person, Person_.socialSecurityNumber, socialSecurityNumber, false);
     
     person.setSocialSecurityNumber(socialSecurityNumber);
     entityManager.persist(person);

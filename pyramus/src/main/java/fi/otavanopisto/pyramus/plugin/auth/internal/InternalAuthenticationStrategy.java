@@ -12,6 +12,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
+import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -128,7 +129,7 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
 
     User user = getUserByName(internalAuth.getUsername());
     if (user != null) {
-      internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, "username", username, false);
+      internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, false);
     }
     
     internalAuthDAO.updateUsername(internalAuth, username);
@@ -145,7 +146,7 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
 
       User user = getUserByName(internalAuth.getUsername());
       if (user != null) {
-        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, "password", passwordEncoded, false);
+        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.password, passwordEncoded, false);
       }
       
       internalAuthDAO.updatePassword(internalAuth, passwordEncoded);
@@ -170,8 +171,8 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
       
       User user = getUserByName(internalAuth.getUsername());
       if (user != null) {
-        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, "username", username, false);
-        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, "password", passwordEncoded, false);
+        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, false);
+        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.password, passwordEncoded, false);
       }
       
       internalAuthDAO.updateUsernameAndPassword(internalAuth, username, passwordEncoded);
