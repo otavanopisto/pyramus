@@ -795,6 +795,10 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    
+    if (!StringUtils.contains(pageRequestContext.getReferer(false), "viewstudent.page")) {
+      studentDAO.auditView(personId, null, ViewStudentViewController.class);
+    }
 
     setJsDataVariable(pageRequestContext, "studentAssessments", studentAssessmentsJSON.toString());
     setJsDataVariable(pageRequestContext, "linkedCourseAssessments", linkedCourseAssessments.toString());

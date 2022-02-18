@@ -3,10 +3,13 @@ package fi.otavanopisto.pyramus.dao.base;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
+import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class AddressDAO extends PyramusEntityDAO<Address> {
@@ -28,6 +31,16 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
 
     contactInfo.addAddress(address);
     entityManager.persist(contactInfo);
+
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    User user = userDAO.findByContactInfo(address.getContactInfo());
+    if (user != null) {
+      auditCreate(user.getPerson().getId(), user.getId(), address, "name", true);
+      auditCreate(user.getPerson().getId(), user.getId(), address, "streetAddress", true);
+      auditCreate(user.getPerson().getId(), user.getId(), address, "postalCode", true);
+      auditCreate(user.getPerson().getId(), user.getId(), address, "city", true);
+      auditCreate(user.getPerson().getId(), user.getId(), address, "country", true);
+    }
 
     return address;
   }
@@ -58,6 +71,16 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
       String city, String country) {
     EntityManager entityManager = getEntityManager();
 
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    User user = userDAO.findByContactInfo(address.getContactInfo());
+    if (user != null) {
+      auditUpdate(user.getPerson().getId(), user.getId(), address, "name", name, true);
+      auditUpdate(user.getPerson().getId(), user.getId(), address, "streetAddress", streetAddress, true);
+      auditUpdate(user.getPerson().getId(), user.getId(), address, "postalCode", postalCode, true);
+      auditUpdate(user.getPerson().getId(), user.getId(), address, "city", city, true);
+      auditUpdate(user.getPerson().getId(), user.getId(), address, "country", country, true);
+    }
+
     address.setDefaultAddress(defaultAddress);
     address.setContactType(contactType);
     address.setName(name);
@@ -74,6 +97,17 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
   @Override
   public void delete(Address address) {
     if (address.getContactInfo() != null) {
+
+      UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+      User user = userDAO.findByContactInfo(address.getContactInfo());
+      if (user != null) {
+        auditDelete(user.getPerson().getId(), user.getId(), address, "name", true);
+        auditDelete(user.getPerson().getId(), user.getId(), address, "streetAddress", true);
+        auditDelete(user.getPerson().getId(), user.getId(), address, "postalCode", true);
+        auditDelete(user.getPerson().getId(), user.getId(), address, "city", true);
+        auditDelete(user.getPerson().getId(), user.getId(), address, "country", true);
+      }
+      
       address.getContactInfo().removeAddress(address);
     }
     super.delete(address);

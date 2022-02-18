@@ -125,6 +125,12 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
 
     InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
+
+    User user = getUserByName(internalAuth.getUsername());
+    if (user != null) {
+      internalAuthDAO.auditUpdate(user.getPerson().getId(), user.getId(), internalAuth, "username", username, false);
+    }
+    
     internalAuthDAO.updateUsername(internalAuth, username);
   }
   
@@ -136,6 +142,12 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
       InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
 
       String passwordEncoded = EncodingUtils.md5EncodeString(password);
+
+      User user = getUserByName(internalAuth.getUsername());
+      if (user != null) {
+        internalAuthDAO.auditUpdate(user.getPerson().getId(), user.getId(), internalAuth, "password", passwordEncoded, false);
+      }
+      
       internalAuthDAO.updatePassword(internalAuth, passwordEncoded);
     }
     catch (UnsupportedEncodingException e) {
@@ -155,6 +167,13 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
         throw new IllegalStateException(String.format("InternalAuth for id %s not found", externalId));
       }
       String passwordEncoded = EncodingUtils.md5EncodeString(password);
+      
+      User user = getUserByName(internalAuth.getUsername());
+      if (user != null) {
+        internalAuthDAO.auditUpdate(user.getPerson().getId(), user.getId(), internalAuth, "username", username, false);
+        internalAuthDAO.auditUpdate(user.getPerson().getId(), user.getId(), internalAuth, "password", passwordEncoded, false);
+      }
+      
       internalAuthDAO.updateUsernameAndPassword(internalAuth, username, passwordEncoded);
     }
     catch (UnsupportedEncodingException e) {

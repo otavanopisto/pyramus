@@ -354,6 +354,10 @@ public class EditStudentViewController extends PyramusViewController2 implements
     }
     studyApprovers.sort(Comparator.comparing(StaffMember::getLastName).thenComparing(StaffMember::getFirstName));
     
+    if (!StringUtils.contains(pageRequestContext.getReferer(false), "editstudent.page")) {
+      studentDAO.auditView(personId, null, EditStudentViewController.class);
+    }
+
     readUserVariablePresets(pageRequestContext);
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);

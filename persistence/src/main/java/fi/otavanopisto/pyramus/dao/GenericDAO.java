@@ -3,14 +3,18 @@ package fi.otavanopisto.pyramus.dao;
 import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import fi.otavanopisto.pyramus.dao.auditlog.AuditLogDAO;
+import fi.otavanopisto.pyramus.domainmodel.audit.AuditLogType;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.util.ReflectionApiUtils;
 
 public abstract class GenericDAO<T> {
   
@@ -103,6 +107,55 @@ public abstract class GenericDAO<T> {
       return list.get(0);
     
     throw new NonUniqueResultException("SingleResult query returned " + list.size() + " elements");
+  }
+  
+  public void auditCreate(Long personId, Long userId, T entity, String field, boolean logValueData) {
+    try {
+      AuditLogDAO auditLogDAO = DAOFactory.getInstance().getAuditLogDAO();
+      Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
+      String data = logValueData ? String.valueOf(ReflectionApiUtils.getObjectFieldValue(entity, field, true)) : null; 
+      auditLogDAO.create(personId, userId, AuditLogType.ADD, getGenericTypeClass().getSimpleName(), entityId, field, data);
+    }
+    catch (Exception e) {
+      // Reflection failure 
+    }
+  }
+  
+  public void auditUpdate(Long personId, Long userId, T entity, String field, Object newValue, boolean logValueData) {
+    try {
+      AuditLogDAO auditLogDAO = DAOFactory.getInstance().getAuditLogDAO();
+      Object oldValue = ReflectionApiUtils.getObjectFieldValue(entity, field, true);
+      if (!Objects.equals(oldValue, newValue)) {
+        Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
+        String data = logValueData ? String.valueOf(oldValue + " -> " + newValue) : null;
+        auditLogDAO.create(personId, userId, AuditLogType.MOD, getGenericTypeClass().getSimpleName(), entityId, field, data);
+      }
+    }
+    catch (Exception e) {
+      // Reflection failure 
+    }
+  }
+
+  public void auditDelete(Long personId, Long userId, T entity, String field, boolean logValueData) {
+    try {
+      AuditLogDAO auditLogDAO = DAOFactory.getInstance().getAuditLogDAO();
+      Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
+      String data = logValueData ? String.valueOf(ReflectionApiUtils.getObjectFieldValue(entity, field, true)) : null; 
+      auditLogDAO.create(personId, userId, AuditLogType.DEL, getGenericTypeClass().getSimpleName(), entityId, field, data);
+    }
+    catch (Exception e) {
+      // Reflection failure 
+    }
+  }
+
+  public void auditView(Long personId, Long userId, Class c) {
+    try {
+      AuditLogDAO auditLogDAO = DAOFactory.getInstance().getAuditLogDAO();
+      auditLogDAO.create(personId, userId, AuditLogType.VIEW, c.getSimpleName(), null, null, null);
+    }
+    catch (Exception e) {
+      // Reflection failure 
+    }
   }
 
 //  protected abstract EntityManager getEntityManager();

@@ -85,6 +85,10 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
    */
   @Override
   public void archive(ArchivableEntity entity, User modifier) {
+    if (entity instanceof Student) {
+      Student s = (Student) entity;
+      auditUpdate(s.getPerson().getId(), s.getId(), s, "archived", true, true);
+    }
     super.archive(entity, modifier);
     
     if (entity instanceof Student) {
@@ -119,6 +123,10 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
    */
   @Override
   public void unarchive(ArchivableEntity entity, User modifier) {
+    if (entity instanceof Student) {
+      Student s = (Student) entity;
+      auditUpdate(s.getPerson().getId(), s.getId(), s, "archived", false, true);
+    }
     super.unarchive(entity, modifier);
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
@@ -185,6 +193,9 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       Curriculum curriculum, Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, 
       String studyEndText) {
     EntityManager entityManager = getEntityManager();
+    
+    auditUpdate(student.getPerson().getId(), student.getId(), student, "firstName", firstName, true);
+    auditUpdate(student.getPerson().getId(), student.getId(), student, "lastName", lastName, true);
 
     student.setFirstName(firstName);
     student.setLastName(lastName);
