@@ -36,7 +36,7 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(email.getContactInfo());
     if (user != null) {
-      auditCreate(user.getPerson().getId(), user.getId(), email, "address", true);
+      auditCreate(user.getPersonId(), user.getId(), email, "address", true);
     }
 
     return email;
@@ -94,7 +94,7 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(email.getContactInfo());
     if (user != null) {
-      auditUpdate(user.getPerson().getId(), user.getId(), email, "address", address, true);
+      auditUpdate(user.getPersonId(), user.getId(), email, "address", address, true);
     }
 
     email.setContactType(contactType);
@@ -112,7 +112,7 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
       UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
       User user = userDAO.findByContactInfo(email.getContactInfo());
       if (user != null) {
-        auditDelete(user.getPerson().getId(), user.getId(), email, "address", true);
+        auditDelete(user.getPersonId(), user.getId(), email, "address", true);
       }
       
       email.getContactInfo().removeEmail(email);

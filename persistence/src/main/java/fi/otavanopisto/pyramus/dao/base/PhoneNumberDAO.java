@@ -30,7 +30,7 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(phoneNumber.getContactInfo());
     if (user != null) {
-      auditCreate(user.getPerson().getId(), user.getId(), phoneNumber, "number", true);
+      auditCreate(user.getPersonId(), user.getId(), phoneNumber, "number", true);
     }
 
     return phoneNumber;
@@ -42,7 +42,7 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(phoneNumber.getContactInfo());
     if (user != null) {
-      auditUpdate(user.getPerson().getId(), user.getId(), phoneNumber, "number", number, true);
+      auditUpdate(user.getPersonId(), user.getId(), phoneNumber, "number", number, true);
     }
 
     phoneNumber.setContactType(contactType);
@@ -60,7 +60,7 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
       UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
       User user = userDAO.findByContactInfo(phoneNumber.getContactInfo());
       if (user != null) {
-        auditDelete(user.getPerson().getId(), user.getId(), phoneNumber, "number", true);
+        auditDelete(user.getPersonId(), user.getId(), phoneNumber, "number", true);
       }
       
       phoneNumber.getContactInfo().removePhoneNumber(phoneNumber);

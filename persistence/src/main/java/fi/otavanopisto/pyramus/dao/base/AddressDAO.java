@@ -35,11 +35,11 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(address.getContactInfo());
     if (user != null) {
-      auditCreate(user.getPerson().getId(), user.getId(), address, "name", true);
-      auditCreate(user.getPerson().getId(), user.getId(), address, "streetAddress", true);
-      auditCreate(user.getPerson().getId(), user.getId(), address, "postalCode", true);
-      auditCreate(user.getPerson().getId(), user.getId(), address, "city", true);
-      auditCreate(user.getPerson().getId(), user.getId(), address, "country", true);
+      auditCreate(user.getPersonId(), user.getId(), address, "name", true);
+      auditCreate(user.getPersonId(), user.getId(), address, "streetAddress", true);
+      auditCreate(user.getPersonId(), user.getId(), address, "postalCode", true);
+      auditCreate(user.getPersonId(), user.getId(), address, "city", true);
+      auditCreate(user.getPersonId(), user.getId(), address, "country", true);
     }
 
     return address;
@@ -74,11 +74,11 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     User user = userDAO.findByContactInfo(address.getContactInfo());
     if (user != null) {
-      auditUpdate(user.getPerson().getId(), user.getId(), address, "name", name, true);
-      auditUpdate(user.getPerson().getId(), user.getId(), address, "streetAddress", streetAddress, true);
-      auditUpdate(user.getPerson().getId(), user.getId(), address, "postalCode", postalCode, true);
-      auditUpdate(user.getPerson().getId(), user.getId(), address, "city", city, true);
-      auditUpdate(user.getPerson().getId(), user.getId(), address, "country", country, true);
+      auditUpdate(user.getPersonId(), user.getId(), address, "name", name, true);
+      auditUpdate(user.getPersonId(), user.getId(), address, "streetAddress", streetAddress, true);
+      auditUpdate(user.getPersonId(), user.getId(), address, "postalCode", postalCode, true);
+      auditUpdate(user.getPersonId(), user.getId(), address, "city", city, true);
+      auditUpdate(user.getPersonId(), user.getId(), address, "country", country, true);
     }
 
     address.setDefaultAddress(defaultAddress);
@@ -101,11 +101,11 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
       UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
       User user = userDAO.findByContactInfo(address.getContactInfo());
       if (user != null) {
-        auditDelete(user.getPerson().getId(), user.getId(), address, "name", true);
-        auditDelete(user.getPerson().getId(), user.getId(), address, "streetAddress", true);
-        auditDelete(user.getPerson().getId(), user.getId(), address, "postalCode", true);
-        auditDelete(user.getPerson().getId(), user.getId(), address, "city", true);
-        auditDelete(user.getPerson().getId(), user.getId(), address, "country", true);
+        auditDelete(user.getPersonId(), user.getId(), address, "name", true);
+        auditDelete(user.getPersonId(), user.getId(), address, "streetAddress", true);
+        auditDelete(user.getPersonId(), user.getId(), address, "postalCode", true);
+        auditDelete(user.getPersonId(), user.getId(), address, "city", true);
+        auditDelete(user.getPersonId(), user.getId(), address, "country", true);
       }
       
       address.getContactInfo().removeAddress(address);
