@@ -155,6 +155,16 @@ public abstract class GenericDAO<T> {
     createAuditLogEntry(personId, userId, AuditLogType.VIEW, c.getSimpleName(), null, null, null);
   }
 
+  public void auditView(Long personId, Long userId, Class<?> c, T entity) {
+    try {
+      Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
+      createAuditLogEntry(personId, userId, AuditLogType.VIEW, c.getSimpleName(), entityId, null, null);
+    }
+    catch (Exception e) {
+      // Reflection failure 
+    }
+  }
+
 //  protected abstract EntityManager getEntityManager();
   
 //  protected EntityManager getEntityManager() {
