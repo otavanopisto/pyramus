@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.views.auditlog;
 
-import java.util.Comparator;
 import java.util.List;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
@@ -14,9 +13,23 @@ public class AuditLogViewController extends PyramusViewController {
 
   public void process(PageRequestContext requestContext) {
     requestContext.setIncludeJSP("/templates/auditlog/auditlog.jsp");
+    
+    Long authorId = requestContext.getLong("author");
+    Long personId = requestContext.getLong("person");
+    Long userId = requestContext.getLong("user");
+    Integer count = requestContext.getInteger("count");
+    if (count == null) {
+      count = 100;
+    }
+    
     AuditLogDAO auditLogDAO = DAOFactory.getInstance().getAuditLogDAO();
-    List<AuditLog> entries = auditLogDAO.listAll();
-    entries.sort(Comparator.comparing(AuditLog::getDate).reversed());
+    
+    auditLogDAO.auditView(null, null, "Audit log");
+    
+    List<AuditLog> entries = auditLogDAO.listLatestByAuthorAndPersonAndUserAndCount(authorId, personId, userId, count);
+    
+    requestContext.getRequest().setAttribute("count", entries.size());
+    requestContext.getRequest().setAttribute("total", auditLogDAO.count());
     requestContext.getRequest().setAttribute("entries", entries);
   }
 

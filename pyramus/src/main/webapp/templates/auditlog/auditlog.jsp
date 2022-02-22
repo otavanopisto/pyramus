@@ -7,12 +7,23 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Audishoooooooooon!</title>
+<title>Audit Log</title>
 </head>
+<style>
+  table {
+    border-collapse: collapse;
+  }
+  td {
+    border: 0.5px solid black;
+    padding: 2px 8px 2px 8px;
+  }
+</style>
 <body>
 
-  <table border="1">
-    <tr>
+  <p>Showing ${count} / ${total} entries</p>
+  
+  <table>
+    <tr bgcolor="#ddd">
       <td><b>Date</b></td>
       <td><b>Author</b></td>
       <td><b>Person</b></td>
@@ -25,12 +36,12 @@
     </tr>
     <c:forEach var="e" items="${entries}">
       <tr>
-        <td>${e.date}</td>
-        <td>${e.authorId}</td>
-        <td>${e.personId}</td>
-        <td>${e.userId}</td>
+        <td><fmt:formatDate value="${e.date}" pattern="d.M.y H.mm"/></td>
+        <td align="right">${e.authorId}</td>
+        <td align="right">${e.personId}</td>
+        <td align="right">${e.userId}</td>
         <td>${e.className}</td>
-        <td>${e.entityId}</td>
+        <td align="right">${e.entityId}</td>
         <td>${e.type}</td>
         <td>${e.field}</td>
         <td>${e.data}</td>

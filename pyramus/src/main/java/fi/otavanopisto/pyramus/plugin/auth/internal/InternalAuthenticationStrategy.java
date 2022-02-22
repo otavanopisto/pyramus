@@ -129,7 +129,7 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
 
     User user = getUserByName(internalAuth.getUsername());
     if (user != null) {
-      internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, false);
+      internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, true);
     }
     
     internalAuthDAO.updateUsername(internalAuth, username);
@@ -171,7 +171,7 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
       
       User user = getUserByName(internalAuth.getUsername());
       if (user != null) {
-        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, false);
+        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, true);
         internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.password, passwordEncoded, false);
       }
       

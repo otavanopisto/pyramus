@@ -141,7 +141,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
     setJsDataVariable(pageRequestContext, "properties", propertiesJSON.toString());
 
     if (!StringUtils.contains(pageRequestContext.getReferer(false), "edituser.page")) {
-      staffDAO.auditView(user.getPersonId(), user.getId(), EditUserViewController.class);
+      staffDAO.auditView(user.getPersonId(), user.getId(), "Edit staff");
     }
     
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());

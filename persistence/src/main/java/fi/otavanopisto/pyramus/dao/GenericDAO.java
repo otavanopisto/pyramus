@@ -124,6 +124,16 @@ public abstract class GenericDAO<T> {
     }
   }
   
+  public void auditUpdate(Long personId, Long userId, T entity) {
+    try {
+      Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
+      createAuditLogEntry(personId, userId, AuditLogType.MOD, getGenericTypeClass().getSimpleName(), entityId, null, null);
+    }
+    catch (Exception e) {
+      // Reflection failure 
+    }
+  }
+
   @SuppressWarnings("rawtypes")
   public void auditUpdate(Long personId, Long userId, T entity, SingularAttribute field, Object newValue, boolean logValueData) {
     try {
@@ -151,14 +161,14 @@ public abstract class GenericDAO<T> {
     }
   }
 
-  public void auditView(Long personId, Long userId, Class<?> c) {
-    createAuditLogEntry(personId, userId, AuditLogType.VIEW, c.getSimpleName(), null, null, null);
+  public void auditView(Long personId, Long userId, String view) {
+    createAuditLogEntry(personId, userId, AuditLogType.VIEW, view, null, null, null);
   }
 
-  public void auditView(Long personId, Long userId, Class<?> c, T entity) {
+  public void auditView(Long personId, Long userId, String view, T entity) {
     try {
       Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
-      createAuditLogEntry(personId, userId, AuditLogType.VIEW, c.getSimpleName(), entityId, null, null);
+      createAuditLogEntry(personId, userId, AuditLogType.VIEW, view, entityId, null, null);
     }
     catch (Exception e) {
       // Reflection failure 

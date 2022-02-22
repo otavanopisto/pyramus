@@ -62,8 +62,10 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, Map<String, String>> sections = new LinkedHashMap<>();
       
       // Audit
-
-      applicationDAO.auditView(null, null, ViewApplicationViewController.class, application);
+      
+      if (!StringUtils.contains(pageRequestContext.getReferer(false), "manage.page")) {
+        applicationDAO.auditView(null, null, "View application", application);
+      }
       
       // Perustiedot
       
