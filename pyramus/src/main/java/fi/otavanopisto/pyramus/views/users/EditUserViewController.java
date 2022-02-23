@@ -140,6 +140,8 @@ public class EditUserViewController extends PyramusViewController implements Bre
     }
     setJsDataVariable(pageRequestContext, "properties", propertiesJSON.toString());
 
+    // Audit (not logging when returning to this page after save reloads it) 
+
     if (!StringUtils.contains(pageRequestContext.getReferer(false), "edituser.page")) {
       staffDAO.auditView(user.getPersonId(), user.getId(), "Edit staff");
     }

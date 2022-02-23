@@ -3,5 +3,9 @@
 
   <sql>drop table if exists AuditLog;</sql>
   <sql>create table AuditLog (id bigint not null auto_increment, authorId bigint, className varchar(255) not null, data varchar(255), date datetime not null, entityId bigint, field varchar(255), personId bigint, type varchar(255) not null, userId bigint, primary key (id));</sql>
+  <sql>create index ind_auditlog_author on AuditLog (authorId);</sql>
+  <sql>create index ind_auditlog_person on AuditLog (personId);</sql>
+  <sql>create index ind_auditlog_user on AuditLog (userId);</sql>
+  <sql>create index ind_auditlog_date on AuditLog (date);</sql>
 
 </update>

@@ -796,6 +796,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       e.printStackTrace();
     }
     
+    // Audit (not logging when returning to this page after save reloads it) 
+
     if (!StringUtils.contains(pageRequestContext.getReferer(false), "viewstudent.page")) {
       studentDAO.auditView(personId, null, "View student");
     }
