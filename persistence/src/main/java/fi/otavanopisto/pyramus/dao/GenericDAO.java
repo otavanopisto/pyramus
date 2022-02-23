@@ -116,7 +116,10 @@ public abstract class GenericDAO<T> {
   public void auditCreate(Long personId, Long userId, T entity, SingularAttribute field, boolean logValueData) {
     try {
       Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
-      String data = logValueData ? String.valueOf(ReflectionApiUtils.getObjectFieldValue(entity, field.getName(), true)) : null; 
+      String data = logValueData ? String.valueOf(ReflectionApiUtils.getObjectFieldValue(entity, field.getName(), true)) : null;
+      if (data != null && data.length() > 255) {
+        data = data.substring(0, 250) + "...";
+      }
       createAuditLogEntry(personId, userId, AuditLogType.ADD, getGenericTypeClass().getSimpleName(), entityId, field.getName(), data);
     }
     catch (Exception e) {
@@ -141,6 +144,9 @@ public abstract class GenericDAO<T> {
       if (!Objects.equals(oldValue, newValue)) {
         Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
         String data = logValueData ? String.valueOf(oldValue + " -> " + newValue) : null;
+        if (data != null && data.length() > 255) {
+          data = data.substring(0, 250) + "...";
+        }
         createAuditLogEntry(personId, userId, AuditLogType.MOD, getGenericTypeClass().getSimpleName(), entityId, field.getName(), data);
       }
     }
@@ -154,6 +160,9 @@ public abstract class GenericDAO<T> {
     try {
       Long entityId = (Long) ReflectionApiUtils.getObjectFieldValue(entity, "id", true);
       String data = logValueData ? String.valueOf(ReflectionApiUtils.getObjectFieldValue(entity, field.getName(), true)) : null; 
+      if (data != null && data.length() > 255) {
+        data = data.substring(0, 250) + "...";
+      }
       createAuditLogEntry(personId, userId, AuditLogType.DEL, getGenericTypeClass().getSimpleName(), entityId, field.getName(), data);
     }
     catch (Exception e) {
