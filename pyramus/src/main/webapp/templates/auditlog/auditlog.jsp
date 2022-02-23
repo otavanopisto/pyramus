@@ -28,7 +28,7 @@
       <td><b>Author</b></td>
       <td><b>Person</b></td>
       <td><b>User</b></td>
-      <td><b>Entity</b></td>
+      <td><b>Target</b></td>
       <td><b>Id</b></td>
       <td><b>Type</b></td>
       <td><b>Field</b></td>
@@ -40,7 +40,7 @@
         <td align="right">${e.authorId}</td>
         <td align="right">${e.personId}</td>
         <td align="right">${e.userId}</td>
-        <td>${e.className}</td>
+        <td>${e.target}</td>
         <td align="right">${e.entityId}</td>
         <td>${e.type}</td>
         <td>${e.field}</td>

@@ -202,11 +202,11 @@ public abstract class GenericDAO<T> {
     return (Class<?>) parameterizedType.getActualTypeArguments()[0];
   }
   
-  private void createAuditLogEntry(Long personId, Long userId, AuditLogType type, String className, Long entityId, String field, String data) {
+  private void createAuditLogEntry(Long personId, Long userId, AuditLogType type, String target, Long entityId, String field, String data) {
     AuditLog auditLog = new AuditLog();
     
     auditLog.setAuthorId(getLoggedUserId());
-    auditLog.setClassName(className);
+    auditLog.setTarget(target);
     auditLog.setData(data);
     auditLog.setDate(new Date());
     auditLog.setEntityId(entityId);

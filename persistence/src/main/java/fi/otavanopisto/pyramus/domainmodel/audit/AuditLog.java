@@ -62,12 +62,12 @@ public class AuditLog {
     this.type = type;
   }
 
-  public String getClassName() {
-    return className;
+  public String getTarget() {
+    return target;
   }
 
-  public void setClassName(String className) {
-    this.className = className;
+  public void setTarget(String target) {
+    this.target = target;
   }
 
   public Long getEntityId() {
@@ -120,7 +120,7 @@ public class AuditLog {
   @NotNull
   @Column(nullable = false)
   @NotEmpty
-  private String className;
+  private String target;
 
   @Column
   private Long entityId;
