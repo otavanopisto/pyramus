@@ -93,6 +93,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-ssn-end"))) {
         fields.put("Henkilötunnuksen loppuosa", StringUtils.upperCase(getFormValue(formData, "field-ssn-end"))); 
       }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-education"))) {
+        fields.put("Oppivelvollinen", simpleBooleanUiValue(getFormValue(formData, "field-compulsory-education")));
+      }
       fields.put("Sukupuoli", ApplicationUtils.genderUiValue(getFormValue(formData, "field-sex")));
       fields.put("Osoite", String.format("%s\n%s %s\n%s",
           getFormValue(formData, "field-street-address"),
@@ -124,9 +127,19 @@ public class ViewApplicationViewController extends PyramusViewController {
           "Sähköposti: " + StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")))));
       }
       
-      // Aineopiskelijan oppilaitos
+      // Aineopiskelijan koulutusaste ja oppilaitos
       
       if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+        fields = new LinkedHashMap<>();
+        sections.put("Koulutusaste", fields);
+        fields.put("Haluaa opiskella", StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")
+            ? "Lukion kursseja tai opintojaksoja"
+            : "Perusopetuksen kursseja");
+        if (StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")) {
+          fields.put("Opetussuunnitelma", StringUtils.equals(getFormValue(formData, "field-internetix-curriculum"), "ops2016")
+              ? "OPS 2016"
+              : "OPS 2021");
+        }
         fields = new LinkedHashMap<>();
         sections.put("Aineopiskelijan oppilaitos", fields);
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");

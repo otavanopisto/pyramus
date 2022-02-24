@@ -7,6 +7,26 @@
 
     <div class="application-line"></div>
 
+    <h2 class="form-section__header">Koulutusaste</h2>
+    
+    <div class="form-section__field-container field-internetix-line">
+      <label for="field-internetix-line" class="required">Haluan opiskella</label>
+      <select id="field-internetix-line" name="field-internetix-line" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+        <option value="">-- Valitse --</option>
+        <option value="lukio">Lukion kursseja tai opintojaksoja</option>
+        <option value="pk">Perusopetuksen kursseja</option>
+      </select>
+    </div>
+
+    <div class="form-section__field-container field-internetix-curriculum dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">
+      <label for="field-internetix-curriculum" class="required">Opetussuunnitelma</label>
+      <select id="field-internetix-curriculum" name="field-internetix-curriculum" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <option value="">-- Valitse --</option>
+        <option value="ops2016">OPS 2016</option>
+        <option value="ops2021">OPS 2021</option>
+      </select>
+    </div>
+
     <h2 class="form-section__header">Oppilaitostiedot</h2>
     <p>Kurssimateriaalien käyttäminen itseopiskelussa on ilmaista. Voit siis ilmoittautua Muikun käyttäjäksi ja ilmoittautua kursseille, vaikka et haluaisikaan niistä arviointia tai kurssisuoritusta. Jos haluat, että opettaja arvioi kurssisuorituksesi, se on joissakin tapauksissa maksullista. <a href="#" class="internetix-course-fees-link">Lue lisää</a>.</p>
     <p><b>Huom!</b> Oppilaitostieto tarkistetaan vielä jälkikäteen ja lähetämme laskun kurssin suorittamisesta, mikäli olet opiskelijana jossain toisessa oppilaitoksessa.</p>
@@ -56,9 +76,10 @@
         <option value="ammatillinen-perus">Ammatillinen perustutkinto</option>
         <option value="kaksoistutkinto">Kaksoistutkinto</option>
         <option value="oppisopimus">Oppisopimuskoulutus</option>
-        <option value="peruskoulu">Peruskoulun oppimäärä</option>
-        <option value="korkeakoulu">Korkeakoulututkinto</option>
-        <option value="ylempi-kk">Ylempi korkeakoulututkinto</option>
+        <option value="peruskoulu">Perusopetuksen oppimäärä</option>
+        <option value="korkeakoulu" class="dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">Korkeakoulututkinto</option>
+        <option value="ylempi-kk" class="dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">Ylempi korkeakoulututkinto</option>
+        <option value="tuva">TUVA-koulutus</option>
       </select>
     </div>
     

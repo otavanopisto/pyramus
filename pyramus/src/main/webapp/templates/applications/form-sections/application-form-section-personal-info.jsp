@@ -35,6 +35,14 @@
       <input type="text" id="field-ssn-end" name="field-ssn-end" maxlength="4" style="text-transform:uppercase;" data-parsley-validate-if-empty="true" data-parsley-ssn-end-format="">
       <span class="field-help">Esitysmuoto XXXX (ilman edeltävää välimerkkiä A tai -)</span>
     </div>
+    
+    <div class="-form-section__field-container-field-compulsory-education dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
+      <label for="field-compulsory-education"class="required" >Oppivelvollisuuden suorittaminen</label>
+      <input type="radio" id="field-compulsory-education-yes" name="field-compulsory-education" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <label for="field-compulsory-education-yes">Olen oppivelvollinen (olen syntynyt 2004–2006 ja olen alle 18-vuotias ja en ole suorittanut toisen asteen tutkintoa)</label>
+      <input type="radio" id="field-compulsory-education-no" name="field-compulsory-education" value="ei" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <label for="field-compulsory-education-no">En ole oppivelvollinen (olen syntynyt 2004 tai aiemmin ja olen saanut perusopetuksen päättötodistuksen ennen 1.1.2021)</label>
+    </div>
 
     <div class="form-section__field-container field-sex">
       <label for="field-sex" class="required">Sukupuoli</label>

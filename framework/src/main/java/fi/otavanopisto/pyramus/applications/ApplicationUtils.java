@@ -34,6 +34,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
@@ -62,6 +63,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -271,6 +273,18 @@ public class ApplicationUtils {
     }
   }
   
+  public static Curriculum resolveCurriculum(String curriculumValue) {
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    switch (curriculumValue) {
+    case "ops2016":
+      return curriculumDAO.findById(1L); // OPS 2016
+    case "ops2021":
+      return curriculumDAO.findById(4L); // OPS 2021
+    default:
+      return null;
+    }
+  }
+  
   public static Sex resolveGender(String genderValue) {
     return StringUtils.equals("mies",  genderValue) ? Sex.MALE : StringUtils.equals("nainen",  genderValue) ? Sex.FEMALE : Sex.OTHER;
   }
@@ -317,20 +331,23 @@ public class ApplicationUtils {
     }
   }
   
-  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, AlternativeLine nettilukioAlternative) {
+  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, String internetixLine, AlternativeLine nettilukioAlternative) {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
-      return studyProgrammeDAO.findById(13L); // Internetix/lukio
+      if (StringUtils.equals(internetixLine, "pk")) {
+        return studyProgrammeDAO.findById(12L); // Aineopiskelu/peruskoulu
+      }
+      else {
+        return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
+      }
     case "nettilukio": {
       if (nettilukioAlternative == AlternativeLine.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
       }
-      
       if (nettilukioAlternative == AlternativeLine.YO) {
         return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
       }
-      
       return studyProgrammeDAO.findById(6L); // Nettilukio
     }
     case "nettipk":
@@ -645,10 +662,20 @@ public class ApplicationUtils {
     StudyProgramme studyProgramme = ApplicationUtils.resolveStudyProgramme(
         getFormValue(formData, "field-line"),
         getFormValue(formData, "field-foreign-line"),
+        getFormValue(formData, "field-internetix-line"),
         EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines")));
     if (studyProgramme == null) {
       logger.severe(String.format("Unable to resolve study programme of application entity %d", application.getId()));
       return null;
+    }
+    
+    // Curriculum (for Internetix students in high school)
+    
+    Curriculum curriculum = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      if (StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")) {
+        curriculum = resolveCurriculum(getFormValue(formData, "field-internetix-curriculum"));
+      }
     }
     
     // Study time end plus one year (for Internetix students)  
@@ -695,7 +722,7 @@ public class ApplicationUtils {
         ApplicationUtils.resolveLanguage(getFormValue(formData, "field-language")),
         ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school")),
         studyProgramme,
-        null, // curriculum (TODO can this be resolved?)
+        curriculum,
         null, // previous studies (double)
         studyStartDate, // study start date
         null, // study end date

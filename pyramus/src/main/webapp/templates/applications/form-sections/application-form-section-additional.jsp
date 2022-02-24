@@ -120,7 +120,7 @@
       </select>
     </div>
 
-    <div class="form-section__field-container field-foreign-student dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
+    <div class="form-section__field-container field-foreign-student dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">
       <label for="field-foreign-student" class="required">Oletko ulkomainen vaihto-opiskelija?</label>
       <select id="field-foreign-student" name="field-foreign-student" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
