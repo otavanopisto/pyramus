@@ -288,16 +288,7 @@
     });
     
     $('.button-next-section').click(function() {
-      var valid = false;
-      if ($('.form-section.current').hasClass('section-source')) {
-        valid = $('input[name="field-source"]:checked').val();
-        if (!valid) {
-          $('#field-source-mandatory').show();
-        }
-      }
-      else {
-        valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
-      }
+      var valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       if (valid) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
