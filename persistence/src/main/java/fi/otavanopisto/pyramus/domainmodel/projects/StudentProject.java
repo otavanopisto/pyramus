@@ -357,7 +357,6 @@ public class StudentProject implements ArchivableEntity {
   private List<StudentProjectModule> studentProjectModules = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @OrderColumn (name = "indexColumn")
   @JoinColumn (name="studentProject")
   @IndexedEmbedded 
   private List<StudentProjectSubjectCourse> studentProjectSubjectCourses = new Vector<>();
