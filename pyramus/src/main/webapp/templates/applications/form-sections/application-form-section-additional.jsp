@@ -57,15 +57,69 @@
     </div>
 
     <div class="form-section__field-container field-previous-studies-nettilukio dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
-      <!-- TODO id "field-previous-studies-nettilukio" doesn't exist, labels for individual items -->
       <label for="field-previous-studies-nettilukio" class="required">Aiemmat opinnot</label>
-      <input type="checkbox" id="field-previous-studies-nettilukio-perus" name="field-previous-studies-nettilukio" value="perus" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>Peruskoulu<br/>
-      <input type="checkbox" id="field-previous-studies-nettilukio-kansa" name="field-previous-studies-nettilukio" value="kansa" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>Kansakoulu<br/>
-      <input type="checkbox" id="field-previous-studies-nettilukio-lukio" name="field-previous-studies-nettilukio" value="lukio" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"  data-dependencies="true"/>Lukio (keskeytynyt)<br/>
-      <input type="checkbox" id="field-previous-studies-nettilukio-ammatillinen-kesken" name="field-previous-studies-nettilukio" value="ammatillinen-kesken" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>Ammatilliset 2. asteen opinnot (keskeytynyt)<br/>
-      <input type="checkbox" id="field-previous-studies-nettilukio-ammatillinen-valmis" name="field-previous-studies-nettilukio" value="ammatillinen-valmis" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>Ammatilliset 2. asteen opinnot (valmis tutkinto)<br/>
-      <input type="checkbox" id="field-previous-studies-nettilukio-korkea" name="field-previous-studies-nettilukio" value="korkea" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>Korkeakoulu<br/>
-      <input type="checkbox" id="field-previous-studies-nettilukio-muu" name="field-previous-studies-nettilukio" value="muu" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>Muu
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukio-perus" name="field-previous-studies-nettilukio" value="perus" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukio-perus">Peruskoulu</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukio-kansa" name="field-previous-studies-nettilukio" value="kansa" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukio-kansa">Kansakoulu</label>
+        </div>
+      </div>
+
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukio-lukio" name="field-previous-studies-nettilukio" value="lukio" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"  data-dependencies="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukio-lukio">Lukio (keskeytynyt)</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukio-ammatillinen-kesken" name="field-previous-studies-nettilukio" value="ammatillinen-kesken" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukio-ammatillinen-kesken">Ammatilliset 2. asteen opinnot (keskeytynyt)</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukio-ammatillinen-valmis" name="field-previous-studies-nettilukio" value="ammatillinen-valmis" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukio-ammatillinen-valmis">Ammatilliset 2. asteen opinnot (valmis tutkinto)</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukio-korkea" name="field-previous-studies-nettilukio" value="korkea" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukio-korkea">Korkeakoulu</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukio-muu" name="field-previous-studies-nettilukio" value="muu" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukio-muu">Muu</label>
+        </div>
+      </div>
     </div>
 
     <div class="form-section__field-container field-previous-studies-nettilukio-other dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
