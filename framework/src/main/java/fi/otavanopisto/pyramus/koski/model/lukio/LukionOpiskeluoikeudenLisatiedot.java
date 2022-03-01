@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,20 +16,9 @@ public class LukionOpiskeluoikeudenLisatiedot {
   public LukionOpiskeluoikeudenLisatiedot() {
   }
   
-  public LukionOpiskeluoikeudenLisatiedot(boolean pidennettyPaattymispaiva, boolean ulkomainenVaihtoopiskelija, boolean yksityisopiskelija, boolean oikeusMaksuttomaanAsuntolapaikkaan) {
+  public LukionOpiskeluoikeudenLisatiedot(boolean pidennettyPaattymispaiva, boolean ulkomainenVaihtoopiskelija) {
     this.pidennettyPaattymispaiva = pidennettyPaattymispaiva;
     this.ulkomainenVaihtoopiskelija = ulkomainenVaihtoopiskelija;
-    this.yksityisopiskelija = yksityisopiskelija;
-    this.oikeusMaksuttomaanAsuntolapaikkaan = oikeusMaksuttomaanAsuntolapaikkaan;
-  }
-  
-  public Kuvaus getAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy() {
-    return alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
-  }
-  
-  public void setAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy(
-      Kuvaus alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy) {
-    this.alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy = alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
   }
   
   @JsonProperty("pidennettyPäättymispäivä")
@@ -42,15 +30,6 @@ public class LukionOpiskeluoikeudenLisatiedot {
     return ulkomainenVaihtoopiskelija;
   }
   
-  @Deprecated
-  public boolean isYksityisopiskelija() {
-    return yksityisopiskelija;
-  }
-  
-  public boolean isOikeusMaksuttomaanAsuntolapaikkaan() {
-    return oikeusMaksuttomaanAsuntolapaikkaan;
-  }
-
   public void addSisaoppilaitosmainenMajoitus(Majoitusjakso jakso) {
     sisaoppilaitosmainenMajoitus.add(jakso);
   }
@@ -66,15 +45,6 @@ public class LukionOpiskeluoikeudenLisatiedot {
 
   public void setUlkomainenVaihtoopiskelija(boolean ulkomainenVaihtoopiskelija) {
     this.ulkomainenVaihtoopiskelija = ulkomainenVaihtoopiskelija;
-  }
-
-  @Deprecated
-  public void setYksityisopiskelija(boolean yksityisopiskelija) {
-    this.yksityisopiskelija = yksityisopiskelija;
-  }
-
-  public void setOikeusMaksuttomaanAsuntolapaikkaan(boolean oikeusMaksuttomaanAsuntolapaikkaan) {
-    this.oikeusMaksuttomaanAsuntolapaikkaan = oikeusMaksuttomaanAsuntolapaikkaan;
   }
 
   public void setSisaoppilaitosmainenMajoitus(List<Majoitusjakso> sisaoppilaitosmainenMajoitus) {
@@ -107,9 +77,6 @@ public class LukionOpiskeluoikeudenLisatiedot {
 
   private boolean pidennettyPaattymispaiva;
   private boolean ulkomainenVaihtoopiskelija;
-  private Kuvaus alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
-  @Deprecated private boolean yksityisopiskelija;
-  private boolean oikeusMaksuttomaanAsuntolapaikkaan;
   private List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
   private List<Maksuttomuus> maksuttomuus = new ArrayList<>();
   private List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty = new ArrayList<>();
