@@ -71,15 +71,13 @@
       <label for="field-internetix-contract-school-degree" class="required">Suoritan</label>
       <select id="field-internetix-contract-school-degree" name="field-internetix-contract-school-degree" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
-        <option value="muu">Muu tutkinto</option>
+        <option value="peruskoulu">Perusopetuksen oppimäärä</option>
+        <option value="tuva">TUVA-koulutus</option>
         <option value="yo-tutkinto">YO-tutkinto / lukion oppimäärä</option>
         <option value="ammatillinen-perus">Ammatillinen perustutkinto</option>
         <option value="kaksoistutkinto">Kaksoistutkinto</option>
         <option value="oppisopimus">Oppisopimuskoulutus</option>
-        <option value="peruskoulu">Perusopetuksen oppimäärä</option>
         <option value="korkeakoulu" class="dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">Korkeakoulututkinto</option>
-        <option value="ylempi-kk" class="dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">Ylempi korkeakoulututkinto</option>
-        <option value="tuva">TUVA-koulutus</option>
       </select>
     </div>
     

@@ -140,11 +140,13 @@ public class ViewApplicationViewController extends PyramusViewController {
               ? "OPS 2016"
               : "OPS 2021");
         }
+        boolean isContractSchool = false;
         fields = new LinkedHashMap<>();
         sections.put("Aineopiskelijan oppilaitos", fields);
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
         if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
           School school = ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school"));
+          isContractSchool = school != null;
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
             fields.put("Sopimusoppilaitos", "Ei");
@@ -160,6 +162,9 @@ public class ViewApplicationViewController extends PyramusViewController {
             fields.put("Oppilaitos", school.getName());
             fields.put("Sopimusoppilaitos", "Kyllä");
           }
+        }
+        if (!isContractSchool && StringUtils.equals(getFormValue(formData, "field-compulsory-education"), "kylla")) {
+          pageRequestContext.getRequest().setAttribute("contractSchoolConflict", Boolean.TRUE);
         }
       }
 
@@ -256,6 +261,10 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (sb.length() > 0) {
         fields.put("Mistä sai tiedon koulutuksesta", sb.toString());
       }
+      
+      // Aineopiskelu; opiskeleeko oppivelvollinen sopimusoppilaitoksessa
+      
+      
       
       // Hakemuksen tilatiedot
       

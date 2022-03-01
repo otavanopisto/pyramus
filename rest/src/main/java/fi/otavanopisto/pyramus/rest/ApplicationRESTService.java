@@ -464,6 +464,19 @@ public class ApplicationRESTService extends AbstractRESTService {
         // Automatic registration of new Internetix students
         
         boolean autoRegistration = StringUtils.equals("aineopiskelu", line);
+        
+        // #1347: Jos aineopiskelijaksi hakeva on oppivelvollinen mutta ei sopimusoppilaitoksessa, käsitellään manuaalisesti
+
+        // Aineopiskelija
+        if (autoRegistration) {
+          // Oppivelvollinen
+          if (StringUtils.equals(getFormValue(formData, "field-compulsory-education"), "kylla")) {
+            // Sopimusoppilaitos
+            School school = ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school")); // Sopimusoppilaitors
+            autoRegistration = school != null;
+          }
+        }
+        
         if (autoRegistration) {
           Person person = null;
           try {
@@ -848,6 +861,10 @@ public class ApplicationRESTService extends AbstractRESTService {
       Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, application.getEmail(),
           application.getHandler().getPrimaryEmail().getAddress(), subject, content);
     }
+  }
+
+  private String getFormValue(JSONObject object, String key) {
+    return object.has(key) ? object.getString(key) : null;
   }
 
 }
