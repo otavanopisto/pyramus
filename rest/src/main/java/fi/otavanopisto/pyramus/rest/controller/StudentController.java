@@ -407,7 +407,6 @@ public class StudentController {
     for (CourseStudent courseStudent : courseStudents) {
       Course course = courseStudent.getCourse();
 
-      // TODO Is this what we want?
       for (CourseModule courseModule : course.getCourseModules()) {
         // Construct course base information and assume it's ongoing
         

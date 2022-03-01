@@ -1556,8 +1556,6 @@
               );
             </c:forEach>
             projectTable.addRows(rows);
-            console.log(rows);
-
             
             rows.clear();
             projectTable = setupStudentProjectSubjectCourseTable(${student.id}, ${sp.studentProject.id});
@@ -1626,7 +1624,6 @@
               );
             </c:forEach>
             projectTable.addRows(rows);
-            console.log(rows);
           </c:forEach>
 
           // Setup course tabs

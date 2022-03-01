@@ -352,6 +352,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
     Set<Long> existingCourseModuleIds = new HashSet<>();
 
+    // Store the list of courseModules separate from course.getCourseModules() as the latter may change inside the loop
     List<CourseModule> courseModules = courseModuleDAO.listByCourse(course);
     
     PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");

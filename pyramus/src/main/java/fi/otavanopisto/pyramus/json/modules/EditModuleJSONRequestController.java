@@ -223,6 +223,9 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     
     Set<Long> existingCourseModuleIds = new HashSet<>();
 
+    // Store the list of courseModules separate from module.getCourseModules() as the latter may change inside the loop
+    List<CourseModule> courseModules = courseModuleDAO.listByCourse(module);
+    
     PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");
     for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
       Long courseModuleId = courseModulesTableRow.getLong("courseModuleId");
@@ -233,8 +236,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
       EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
 
       if (courseModuleId == -1) {
-        CourseModule created = courseModuleDAO.create(module, subject, courseNumber, courseLength, courseLengthTimeUnit);
-        existingCourseModuleIds.add(created.getId());
+        courseModuleDAO.create(module, subject, courseNumber, courseLength, courseLengthTimeUnit);
       } else {
         CourseModule existing = courseModuleDAO.findById(courseModuleId);
         courseModuleDAO.update(existing, subject, courseNumber, courseLength, courseLengthTimeUnit);
@@ -242,7 +244,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
       }
     }
     
-    for (CourseModule courseModule : module.getCourseModules()) {
+    for (CourseModule courseModule : courseModules) {
       if (!existingCourseModuleIds.contains(courseModule.getId())) {
         courseModuleDAO.delete(courseModule);
       }
