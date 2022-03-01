@@ -297,6 +297,7 @@ public class ApplicationUtils {
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     switch (examinationType) {
     case "muu":
+    case "tuva":
       return studentExaminationTypeDAO.findById(1L); // Muu tutkinto
     case "ammatillinen-perus":
       return studentExaminationTypeDAO.findById(2L); // Ammatillinen perustutkinto
