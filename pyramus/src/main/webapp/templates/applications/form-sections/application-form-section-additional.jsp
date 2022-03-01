@@ -60,7 +60,7 @@
       <label for="field-previous-studies-nettilukio" class="required">Aiemmat opinnot</label>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-previous-studies-nettilukio-perus" name="field-previous-studies-nettilukio" value="perus" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+          <input type="checkbox" id="field-previous-studies-nettilukio-perus" name="field-previous-studies-nettilukio" value="perus" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-errors-container="#field-previous-studies-nettilukio-errors"/>
         </div>
         <div class="field-row-label">
           <label for="field-previous-studies-nettilukio-perus">Peruskoulu</label>
@@ -120,6 +120,7 @@
           <label for="field-previous-studies-nettilukio-muu">Muu</label>
         </div>
       </div>
+      <div id="field-previous-studies-nettilukio-errors"></div>
     </div>
 
     <div class="form-section__field-container field-previous-studies-nettilukio-other dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
