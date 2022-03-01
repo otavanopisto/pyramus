@@ -5,6 +5,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
@@ -19,8 +20,15 @@ public class KoskiStartupInitializer {
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
   
+  @Inject
+  private SettingKeyDAO settingKeyDAO;
+  
   @PostConstruct
   private void ensureVariableKeysExist() {
+    ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_AUTH);
+    ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_BASEURL);
+    ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_CSRF);
+    
     if (personVariableKeyDAO.findByVariableKey(KoskiConsts.VariableNames.KOSKI_HENKILO_OID) == null) {
       personVariableKeyDAO.create(KoskiConsts.VariableNames.KOSKI_HENKILO_OID, "Koski: henkilön oid", VariableType.TEXT, true);
     }
@@ -50,6 +58,12 @@ public class KoskiStartupInitializer {
   private void ensureUserVariableExists(String key, String description, VariableType variableType, Boolean userEditable) {
     if (userVariableKeyDAO.findByVariableKey(key) == null) {
       userVariableKeyDAO.create(key, description, variableType, userEditable);
+    }
+  }
+  
+  private void ensureSettingKeyExists(String settingName) {
+    if (settingKeyDAO.findByName(settingName) == null) {
+      settingKeyDAO.create(settingName);
     }
   }
   
