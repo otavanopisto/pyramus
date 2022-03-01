@@ -38,7 +38,7 @@
     
     <div class="-form-section__field-container-field-compulsory-education dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
       <label for="field-compulsory-education" class="required">Olen oppivelvollinen</label>
-      <select id="field-compulsory-education" name="field-compulsory-education" data-parsley-required="true">
+      <select id="field-compulsory-education" name="field-compulsory-education" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
         <option value="kylla">Kyllä</option>
         <option value="en">En ole</option>

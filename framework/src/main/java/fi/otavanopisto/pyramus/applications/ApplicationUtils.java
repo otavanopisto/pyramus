@@ -214,7 +214,11 @@ public class ApplicationUtils {
       case "lukio":
         return "Lukio (keskeytynyt)";
       case "ammatillinen":
-        return "Ammatillinen 2. aste";
+        return "Ammatillinen 2. aste"; // #1349: Tämä poistunut lomakkeelta
+      case "ammatillinen-kesken":
+        return "Ammatilliset 2. asteen opinnot (keskeytynyt)";
+      case "ammatillinen-valmis":
+        return "Ammatilliset 2. asteen opinnot (valmis tutkinto)";
       case "korkea":
         return "Korkeakoulu";
       case "muu":
