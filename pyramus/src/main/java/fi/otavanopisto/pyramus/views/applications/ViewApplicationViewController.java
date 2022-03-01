@@ -323,10 +323,6 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Mistä sai tiedon koulutuksesta", sb.toString());
       }
       
-      // Aineopiskelu; opiskeleeko oppivelvollinen sopimusoppilaitoksessa
-      
-      
-      
       // Hakemuksen tilatiedot
       
       pageRequestContext.getRequest().setAttribute("infoState", application.getState());
