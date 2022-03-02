@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,9 +11,11 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectModuleDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -40,6 +43,9 @@ public class ModuleController {
   
   @Inject
   private CourseDAO courseDAO;
+
+  @Inject
+  private CourseModuleDAO courseModuleDAO;
   
   /* Module */
 
@@ -81,6 +87,11 @@ public class ModuleController {
   }
   
   public void deleteModule(Module module) {
+    List<CourseModule> courseModules = new ArrayList<>(module.getCourseModules());
+    if (courseModules != null) {
+      courseModules.forEach(courseModule -> courseModuleDAO.delete(courseModule));
+    }
+    
     moduleDAO.delete(module);
   }
   
