@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
@@ -376,6 +377,11 @@ public class CourseController {
     Set<Tag> tags = new HashSet<>(course.getTags());
     for (Tag tag : tags) {
       removeCourseTag(course, tag);
+    }
+    
+    List<CourseModule> courseModules = new ArrayList<>(course.getCourseModules());
+    if (courseModules != null) {
+      courseModules.forEach(courseModule -> courseModuleDAO.delete(courseModule));
     }
     
     courseDAO.delete(course);
