@@ -12,7 +12,7 @@
     <div class="form-section__field-container field-source">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="known" type="radio" name="field-source" value="tuttu" data-dependencies="true" data-parsley-required=true" data-parsley-errors-container="#field-source-errors">
+          <input id="known" type="radio" name="field-source" value="tuttu" data-dependencies="true" data-parsley-required="true" data-parsley-errors-container="#field-source-errors">
         </div>
         <div class="field-row-label">
           <label for="known">Ennestään tuttu</label>
@@ -20,7 +20,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="google" type="radio" name="field-source" value="google" data-dependencies="true" data-parsley-required=true">
+          <input id="google" type="radio" name="field-source" value="google" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="google">Googlaamalla</label>
@@ -28,7 +28,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="facebook" type="radio" name="field-source" value="facebook" data-dependencies="true" data-parsley-required=true">
+          <input id="facebook" type="radio" name="field-source" value="facebook" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="facebook">Facebook</label>
@@ -36,7 +36,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="instagram" type="radio" name="field-source" value="instagram" data-dependencies="true" data-parsley-required=true">
+          <input id="instagram" type="radio" name="field-source" value="instagram" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="instagram">Instagram</label>
@@ -44,7 +44,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="sanomalehti" type="radio" name="field-source" value="sanomalehti" data-dependencies="true" data-parsley-required=true">
+          <input id="sanomalehti" type="radio" name="field-source" value="sanomalehti" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="sanomalehti">Sanomalehti</label>
@@ -52,7 +52,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="tienvarsimainos" type="radio" name="field-source" value="tienvarsimainos" data-dependencies="true" data-parsley-required=true">
+          <input id="tienvarsimainos" type="radio" name="field-source" value="tienvarsimainos" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="tienvarsimainos">Tienvarsimainos</label>
@@ -60,7 +60,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="valotaulumainos" type="radio" name="field-source" value="valotaulumainos" data-dependencies="true" data-parsley-required=true">
+          <input id="valotaulumainos" type="radio" name="field-source" value="valotaulumainos" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="valotaulumainos">Valotaulumainos</label>
@@ -68,7 +68,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="elokuva" type="radio" name="field-source" value="elokuva" data-dependencies="true" data-parsley-required=true">
+          <input id="elokuva" type="radio" name="field-source" value="elokuva" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="elokuva">Elokuva- tai TV-mainos</label>
@@ -76,7 +76,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="tuttava" type="radio" name="field-source" value="tuttava" data-dependencies="true" data-parsley-required=true">
+          <input id="tuttava" type="radio" name="field-source" value="tuttava" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="tuttava">Kuulin kaverilta, tuttavalta, tms.</label>
@@ -84,7 +84,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="opot" type="radio" name="field-source" value="opot" data-dependencies="true" data-parsley-required=true">
+          <input id="opot" type="radio" name="field-source" value="opot" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="opot">Opo</label>
@@ -92,7 +92,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="messut" type="radio" name="field-source" value="messut" data-dependencies="true" data-parsley-required=true">
+          <input id="messut" type="radio" name="field-source" value="messut" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="messut">Messut</label>
@@ -100,7 +100,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="te-toimisto" type="radio" name="field-source" value="te-toimisto" data-dependencies="true" data-parsley-required=true">
+          <input id="te-toimisto" type="radio" name="field-source" value="te-toimisto" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="te-toimisto">TE-toimisto</label>
@@ -108,7 +108,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="nuorisotyo" type="radio" name="field-source" value="nuorisotyo" data-dependencies="true" data-parsley-required=true">
+          <input id="nuorisotyo" type="radio" name="field-source" value="nuorisotyo" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="nuorisotyo">Nuorisotyö</label>
@@ -116,7 +116,7 @@
       </div>
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input id="muu" type="radio" name="field-source" value="muu" data-dependencies="true" data-parsley-required=true">
+          <input id="muu" type="radio" name="field-source" value="muu" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
           <label for="muu">Muu</label>
