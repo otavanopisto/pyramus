@@ -66,6 +66,11 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   public void setLastName(String lastName) {
     this.lastName = lastName;
   }
+  
+  @Transient
+  public Long getPersonId() {
+    return person == null ? null : person.getId();
+  }
 
   @Transient  
   public Email getPrimaryEmail() {
