@@ -12,6 +12,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
+import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -125,6 +126,12 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
 
     InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
+
+    User user = getUserByName(internalAuth.getUsername());
+    if (user != null) {
+      internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, true);
+    }
+    
     internalAuthDAO.updateUsername(internalAuth, username);
   }
   
@@ -136,6 +143,12 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
       InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
 
       String passwordEncoded = EncodingUtils.md5EncodeString(password);
+
+      User user = getUserByName(internalAuth.getUsername());
+      if (user != null) {
+        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.password, passwordEncoded, false);
+      }
+      
       internalAuthDAO.updatePassword(internalAuth, passwordEncoded);
     }
     catch (UnsupportedEncodingException e) {
@@ -155,6 +168,13 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
         throw new IllegalStateException(String.format("InternalAuth for id %s not found", externalId));
       }
       String passwordEncoded = EncodingUtils.md5EncodeString(password);
+      
+      User user = getUserByName(internalAuth.getUsername());
+      if (user != null) {
+        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.username, username, true);
+        internalAuthDAO.auditUpdate(user.getPersonId(), user.getId(), internalAuth, InternalAuth_.password, passwordEncoded, false);
+      }
+      
       internalAuthDAO.updateUsernameAndPassword(internalAuth, username, passwordEncoded);
     }
     catch (UnsupportedEncodingException e) {

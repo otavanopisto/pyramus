@@ -234,6 +234,7 @@ public class KoskiSettings {
     return null;
   }
 
+  @Deprecated
   public boolean isFreeLodging(Long studyProgrammeId) {
     return freeLodgingStudyProgrammes.contains(studyProgrammeId);
   }

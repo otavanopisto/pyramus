@@ -184,6 +184,8 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
       User updatingUser) {
     EntityManager entityManager = getEntityManager();
     
+    auditUpdate(null,  null,  application);
+    
     application.setLine(line);
     application.setFirstName(firstName);
     application.setLastName(lastName);

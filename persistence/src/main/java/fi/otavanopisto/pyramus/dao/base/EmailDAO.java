@@ -8,11 +8,14 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class EmailDAO extends PyramusEntityDAO<Email> {
@@ -29,6 +32,12 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
 
     contactInfo.addEmail(email);
     entityManager.persist(contactInfo);
+
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    User user = userDAO.findByContactInfo(email.getContactInfo());
+    if (user != null) {
+      auditCreate(user.getPersonId(), user.getId(), email, Email_.address, true);
+    }
 
     return email;
   }
@@ -82,6 +91,12 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
   public Email update(Email email, ContactType contactType, Boolean defaultAddress, String address) {
     EntityManager entityManager = getEntityManager();
 
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    User user = userDAO.findByContactInfo(email.getContactInfo());
+    if (user != null) {
+      auditUpdate(user.getPersonId(), user.getId(), email, Email_.address, address, true);
+    }
+
     email.setContactType(contactType);
     email.setDefaultAddress(defaultAddress);
     email.setAddress(address);
@@ -93,6 +108,13 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
   @Override
   public void delete(Email email) {
     if (email.getContactInfo() != null) {
+
+      UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+      User user = userDAO.findByContactInfo(email.getContactInfo());
+      if (user != null) {
+        auditDelete(user.getPersonId(), user.getId(), email, Email_.address, true);
+      }
+      
       email.getContactInfo().removeEmail(email);
     }
     super.delete(email);

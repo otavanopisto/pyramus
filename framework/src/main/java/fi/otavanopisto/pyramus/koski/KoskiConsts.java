@@ -7,6 +7,12 @@ public class KoskiConsts {
 
   public static final List<String> LUKIO2019_DIAARIT = Arrays.asList(new String[] { "OPH-2263-2019", "OPH-2267-2019" });
 
+  public static class Setting {
+    public static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
+    public static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";
+    public static final String KOSKI_SETTINGKEY_CSRF = "koski.csrf";
+  }
+  
   public static class VariableNames {
     // Persons' oid
     public static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";

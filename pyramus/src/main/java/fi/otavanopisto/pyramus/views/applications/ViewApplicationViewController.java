@@ -61,6 +61,12 @@ public class ViewApplicationViewController extends PyramusViewController {
 
       Map<String, Map<String, String>> sections = new LinkedHashMap<>();
       
+      // Audit (not logging when returning to this page after save reloads it) 
+      
+      if (!StringUtils.contains(pageRequestContext.getReferer(false), "manage.page")) {
+        applicationDAO.auditView(null, null, "View application", application);
+      }
+      
       // Perustiedot
       
       Map<String, String> fields = new LinkedHashMap<>();

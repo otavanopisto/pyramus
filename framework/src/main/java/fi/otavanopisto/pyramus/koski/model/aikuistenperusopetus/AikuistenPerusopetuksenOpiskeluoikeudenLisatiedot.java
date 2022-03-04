@@ -25,32 +25,8 @@ public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
     return sisaoppilaitosmainenMajoitus;
   }
 
-  public List<Majoitusjakso> getUlkomailla() {
-    return ulkomailla;
-  }
-
-  public Boolean getVuosiluokkiinSitoutumatonOpetus() {
-    return vuosiluokkiinSitoutumatonOpetus;
-  }
-
-  public void setVuosiluokkiinSitoutumatonOpetus(Boolean vuosiluokkiinSitoutumatonOpetus) {
-    this.vuosiluokkiinSitoutumatonOpetus = vuosiluokkiinSitoutumatonOpetus;
-  }
-
-  public Boolean getVammainen() {
-    return vammainen;
-  }
-
-  public void setVammainen(Boolean vammainen) {
-    this.vammainen = vammainen;
-  }
-
-  public Boolean getVaikeastiVammainen() {
-    return vaikeastiVammainen;
-  }
-
-  public void setVaikeastiVammainen(Boolean vaikeastiVammainen) {
-    this.vaikeastiVammainen = vaikeastiVammainen;
+  public List<Majoitusjakso> getUlkomaanjaksot() {
+    return ulkomaanjaksot;
   }
 
   public Majoitusjakso getMajoitusetu() {
@@ -59,14 +35,6 @@ public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
 
   public void setMajoitusetu(Majoitusjakso majoitusetu) {
     this.majoitusetu = majoitusetu;
-  }
-
-  public Majoitusjakso getOikeusMaksuttomaanAsuntolapaikkaan() {
-    return oikeusMaksuttomaanAsuntolapaikkaan;
-  }
-
-  public void setOikeusMaksuttomaanAsuntolapaikkaan(Majoitusjakso oikeusMaksuttomaanAsuntolapaikkaan) {
-    this.oikeusMaksuttomaanAsuntolapaikkaan = oikeusMaksuttomaanAsuntolapaikkaan;
   }
 
   public void addOikeuttaMaksuttomuuteenPidennetty(OikeuttaMaksuttomuuteenPidennetty oikeuttaMaksuttomuuteenPidennetty) {
@@ -93,12 +61,8 @@ public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
     this.maksuttomuus = maksuttomuus;
   }
 
-  private Boolean vuosiluokkiinSitoutumatonOpetus;
-  private Boolean vammainen;
-  private Boolean vaikeastiVammainen;
-  private final List<Majoitusjakso> ulkomailla = new ArrayList<>();
+  private final List<Majoitusjakso> ulkomaanjaksot = new ArrayList<>();
   private Majoitusjakso majoitusetu;
-  private Majoitusjakso oikeusMaksuttomaanAsuntolapaikkaan;
   private final List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
   private List<Maksuttomuus> maksuttomuus = new ArrayList<>();
   private List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty = new ArrayList<>();

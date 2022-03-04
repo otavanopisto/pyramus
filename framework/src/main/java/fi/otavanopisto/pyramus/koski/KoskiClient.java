@@ -59,9 +59,6 @@ public class KoskiClient {
 
   private static final String KOSKI_HENKILO_OID = KoskiConsts.VariableNames.KOSKI_HENKILO_OID;
   
-  private static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
-  private static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";
-  
   @Inject
   private Logger logger;
   
@@ -87,11 +84,7 @@ public class KoskiClient {
   private KoskiController koskiController;
   
   private String getBaseUrl() {
-    return getSetting(KOSKI_SETTINGKEY_BASEURL);
-  }
-  
-  private String getAuth() {
-    return getSetting(KOSKI_SETTINGKEY_AUTH);
+    return getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_BASEURL);
   }
   
   private String getSetting(String settingName) {
@@ -112,12 +105,7 @@ public class KoskiClient {
   public OppijaReturnVal findPersonByOid(String personOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), personOid);
     
-    Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(uri);
-    Builder request = target
-        .request(MediaType.APPLICATION_JSON_TYPE)
-        .header("Authorization", "Basic " + getAuth());
-
+    Builder request = getClientBuilder(uri);
     return request.get(OppijaReturnVal.class);
   }
 
@@ -127,12 +115,7 @@ public class KoskiClient {
   public Oppija findOppijaByOid(String oppijaOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), oppijaOid);
     
-    Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(uri);
-    Builder request = target
-        .request(MediaType.APPLICATION_JSON_TYPE)
-        .header("Authorization", "Basic " + getAuth());
-
+    Builder request = getClientBuilder(uri);
     return request.get(Oppija.class);
   }
 
@@ -269,15 +252,6 @@ public class KoskiClient {
   
   private boolean updatePersonToKoski(Oppija oppija, Person person, String personOid) {
     try {
-      String uri = String.format("%s/oppija", getBaseUrl());
-      
-      Client client = ClientBuilder.newClient();
-      WebTarget target = client.target(uri);
-      Builder request = target
-          .request(MediaType.APPLICATION_JSON_TYPE)
-          .header("Authorization", "Basic " + getAuth());
-
-      
       ObjectMapper mapper = new ObjectMapper();
       StringWriter writer = new StringWriter();
       mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
@@ -285,6 +259,8 @@ public class KoskiClient {
       
       String requestStr = writer.toString();
 
+      String uri = String.format("%s/oppija", getBaseUrl());
+      Builder request = getClientBuilder(uri);
       Response response = request.put(Entity.json(requestStr));
       if (response.getStatus() == 200) {
         String ret = response.readEntity(String.class);
@@ -440,5 +416,23 @@ public class KoskiClient {
       return false;
     }
   }
-  
+
+  private Builder getClientBuilder(String uri) {
+    String auth = getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_AUTH);
+    Client client = ClientBuilder.newClient();
+    WebTarget target = client.target(uri);
+    Builder request = target
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .header("Authorization", "Basic " + auth);
+    
+    String csrf = getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_CSRF);
+    if (StringUtils.isNotBlank(csrf)) {
+      request
+        .header("CSRF", csrf)
+        .cookie("CSRF", csrf);
+    }
+    
+    return request;
+  }
+
 }
