@@ -69,6 +69,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
@@ -406,6 +407,7 @@ public class StudentController {
     
     for (CourseStudent courseStudent : courseStudents) {
       Course course = courseStudent.getCourse();
+      CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
 
       for (CourseModule courseModule : course.getCourseModules()) {
         // Construct course base information and assume it's ongoing
@@ -422,10 +424,23 @@ public class StudentController {
         courseActivity.setActivityDate(courseStudent.getEnrolmentTime());
         courseActivity.setState(CourseActivityState.ONGOING);
         
-        // Status override if course has been graded
+        // Status override if student has requested the course to be assessed
+
+        /**
+         * Note: since CourseModule implementation this has dropped '&& !request.getHandled() && request.getCreated().after(courseActivity.getActivityDate())' 
+         * restriction as the request may be handled but not for the current CourseModule in this loop. We'll put the request first
+         * as it should get overwritten by an assessment if such exists.
+         */
         
+        if (request != null) {
+          courseActivity.setText(request.getRequestText());
+          courseActivity.setActivityDate(request.getCreated());
+          courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
+        }
+        
+        // Status override if course has been graded
         CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE); 
-        if (courseAssessment != null && courseAssessment.getGrade() != null) {
+        if (courseAssessment != null && courseAssessment.getGrade() != null && courseAssessment.getDate() != null && DateUtils.isAfterOrNull(courseAssessment.getDate(), courseActivity.getActivityDate())) {
           courseActivity.setText(courseAssessment.getVerbalAssessment());
           courseActivity.setGrade(courseAssessment.getGrade().getName());
           courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
@@ -435,27 +450,17 @@ public class StudentController {
         }
         
         // Status override if course has been graded as linked credit
-        
         CreditLink linkedAssessment = linkedAssessments.stream()
             .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
             .findAny()
             .orElse(null);
-        if (linkedAssessment != null) {
+        if (linkedAssessment != null && linkedAssessment.getCredit().getDate() != null && DateUtils.isAfterOrNull(linkedAssessment.getCredit().getDate(), courseActivity.getActivityDate())) {
           courseActivity.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
           courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
           courseActivity.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
           courseActivity.setActivityDate(linkedAssessment.getCreated());
           courseActivity.setGradeDate(linkedAssessment.getCreated());
           courseActivity.setState(CourseActivityState.GRADED);
-        }
-        
-        // Status override if student has requested the course to be assessed
-        
-        CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
-        if (request != null && !request.getHandled() && request.getCreated().after(courseActivity.getActivityDate())) {
-          courseActivity.setText(request.getRequestText());
-          courseActivity.setActivityDate(request.getCreated());
-          courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
         }
         
         courseActivities.add(courseActivity);
