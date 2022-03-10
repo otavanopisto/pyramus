@@ -53,10 +53,12 @@ public class AssessmentController {
   
   public CourseAssessment createCourseAssessment(CourseStudent courseStudent, CourseModule courseModule, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
     CourseAssessment courseAssessment = courseAssessmentDAO.create(courseStudent, courseModule, assessingUser, grade, date, verbalAssessment);
-    // Mark respective course assessment requests as handled
-    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(courseStudent, Boolean.FALSE, Boolean.FALSE);
-    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+    // Mark respective course assessment requests as handled if all CourseModules are assessed
+    if (isAllCourseModulesAssessed(courseStudent)) {
+      List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(courseStudent, Boolean.FALSE, Boolean.FALSE);
+      for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+      }
     }
     return courseAssessment;
   }
@@ -64,11 +66,13 @@ public class AssessmentController {
   public CourseAssessment updateCourseAssessment(CourseAssessment courseAssessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment){
     // Update course assessment...
     courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
-    // ...and mark respective course assessment requests as handled
-    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(
-        courseAssessment.getCourseStudent(), Boolean.FALSE, Boolean.FALSE);
-    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+    // ...and mark respective course assessment requests as handled if all CourseModules are assessed
+    if (isAllCourseModulesAssessed(courseAssessment.getCourseStudent())) {
+      List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(
+          courseAssessment.getCourseStudent(), Boolean.FALSE, Boolean.FALSE);
+      for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+      }
     }
     return courseAssessment;
   }
@@ -85,6 +89,10 @@ public class AssessmentController {
   @Deprecated
   public CourseAssessment findLatestCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
     return courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, archived);
+  }
+  
+  public CourseAssessment findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(CourseStudent courseStudent, CourseModule courseModule, Boolean archived) {
+    return courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, archived);
   }
   
   public List<CourseAssessment> listByStudent(Student student){
@@ -320,6 +328,22 @@ public class AssessmentController {
      return true;
   }
 
+  /**
+   * Returns true if courseStudent has all CourseModules assessed.
+   * 
+   * @param courseStudent CourseStudent for who the assessments are checked
+   * @return true if courseStudent has all CourseModules assessed
+   */
+  public boolean isAllCourseModulesAssessed(CourseStudent courseStudent) {
+    for (CourseModule courseModule : courseStudent.getCourse().getCourseModules()) {
+      if (findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE) == null) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
   private String courseCode(CourseAssessment courseAssessment) {
     StringBuilder str = new StringBuilder();
     if (courseAssessment.getSubject() != null) {
