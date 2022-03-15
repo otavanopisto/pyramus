@@ -225,13 +225,21 @@
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
       var srcVisible = $(this).is(':visible') || name == 'field-line';
-      var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
+      var value = [];
+      if ($(this).is(':checkbox')) {
+        $('input[name="' + name + '"]:checked').each(function() {
+          value.push($(this).val());
+        });
+      }
+      else {
+        value.push($(this).val());
+      }
       $('[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         if (srcVisible) {
           var values = $(this).attr('data-dependent-values').split(',');
           for (var i = 0; i < values.length; i++) {
-            show = values[i] == value;
+            show = $.inArray(values[i], value) > -1;
             if (show) {
               break;
             }

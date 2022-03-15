@@ -782,7 +782,6 @@ public class ApplicationUtils {
     // Attach email
     
     String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
-    logger.info(String.format("Attaching primary email %s", email));
     emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email);
     
     // Attach address
@@ -812,9 +811,16 @@ public class ApplicationUtils {
       
       // Attach email
       
-      logger.info(String.format("Attaching guardian email %s", email));
       contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
       emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
+      if (!StringUtils.isBlank(email)) {
+        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      }
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
+      if (!StringUtils.isBlank(email)) {
+        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      }
 
       // Attach address
       
@@ -827,6 +833,28 @@ public class ApplicationUtils {
           getFormValue(formData, "field-underage-city"),
           getFormValue(formData, "field-underage-country"),
           Boolean.FALSE);
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-2"))) {
+        addressDAO.create(
+            student.getContactInfo(),
+            contactType,
+            String.format("%s %s", getFormValue(formData, "field-underage-first-name-2"), getFormValue(formData, "field-underage-last-name-2")),
+            getFormValue(formData, "field-underage-street-address-2"),
+            getFormValue(formData, "field-underage-zip-code-2"),
+            getFormValue(formData, "field-underage-city-2"),
+            getFormValue(formData, "field-underage-country-2"),
+            Boolean.FALSE);
+      }
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-3"))) {
+        addressDAO.create(
+            student.getContactInfo(),
+            contactType,
+            String.format("%s %s", getFormValue(formData, "field-underage-first-name-3"), getFormValue(formData, "field-underage-last-name-3")),
+            getFormValue(formData, "field-underage-street-address-3"),
+            getFormValue(formData, "field-underage-zip-code-3"),
+            getFormValue(formData, "field-underage-city-3"),
+            getFormValue(formData, "field-underage-country-3"),
+            Boolean.FALSE);
+      }
 
       // Attach phone
       
@@ -835,6 +863,20 @@ public class ApplicationUtils {
           contactType,
           Boolean.FALSE,
           getFormValue(formData, "field-underage-phone"));
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-2"))) {
+        phoneNumberDAO.create(
+            student.getContactInfo(),
+            contactType,
+            Boolean.FALSE,
+            getFormValue(formData, "field-underage-phone-2"));
+      }
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-3"))) {
+        phoneNumberDAO.create(
+            student.getContactInfo(),
+            contactType,
+            Boolean.FALSE,
+            getFormValue(formData, "field-underage-phone-3"));
+      }
     }
     
     // Contract school (Internetix students)

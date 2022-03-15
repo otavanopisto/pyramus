@@ -153,9 +153,6 @@ public class ViewApplicationViewController extends PyramusViewController {
               "Puh: " + getFormValue(formData, "field-underage-phone-3"),
               "Sähköposti: " + StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")))));
         }
-        if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-contact"))) {
-          fields.put("Ensisijainen yhteyshenkilö", getFormValue(formData, "field-underage-contact"));
-        }
       }
       
       // Aineopiskelijan koulutusaste ja oppilaitos

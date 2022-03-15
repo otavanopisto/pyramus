@@ -114,7 +114,7 @@
       
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-previous-studies-nettilukio-muu" name="field-previous-studies-nettilukio" value="muu" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+          <input type="checkbox" id="field-previous-studies-nettilukio-muu" name="field-previous-studies-nettilukio" value="muu" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"  data-dependencies="true"/>
         </div>
         <div class="field-row-label">
           <label for="field-previous-studies-nettilukio-muu">Muu</label>
@@ -123,7 +123,7 @@
       <div id="field-previous-studies-nettilukio-errors"></div>
     </div>
 
-    <div class="form-section__field-container field-previous-studies-nettilukio-other dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+    <div class="form-section__field-container field-previous-studies-nettilukio-other dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="muu" style="display:none;">
       <label for="field-previous-studies-nettilukio-other" class="required">Kerro tarkemmin</label>
       <input id="field-previous-studies-nettilukio-other" type="text" name="field-previous-studies-nettilukio-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>

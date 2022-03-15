@@ -7,15 +7,16 @@
 
     <div class="application-line"></div>
 
-    <h2 class="form-section__header">Huoltajan tiedot</h2>
-    <p>Merkitse alaikäisen hakijan kaikkien virallisten huoltajien tiedot.</p>
-
     <div class="form-section__field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,aikuislukio,bandilinja,laakislinja" style="display:none;">  
       <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label> 
       <textarea id="field-underage-grounds" name="field-underage-grounds" rows="5" cols="40"></textarea>  
     </div>
 
-    <h2 class="form-section__header">Huoltaja 1</h2>
+    <h2 class="form-section__header">Huoltajan tiedot</h2>
+
+    <p>Merkitse alaikäisen hakijan kaikkien virallisten huoltajien tiedot. Merkitse ensisijainen yhteyshenkilö ensimmäiseksi.</p>
+
+    <h2 class="form-section__subheader">Huoltaja 1</h2>
     
     <div class="form-section__field-container field-underage-last-name">
       <label for="field-underage-last-name" class="required">Sukunimi</label>
@@ -57,7 +58,7 @@
       <input id="field-underage-country" type="text" name="field-underage-country" value="Suomi" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
     </div>
     
-    <h2 class="form-section__header">Huoltaja 2</h2>
+    <h2 class="form-section__subheader">Huoltaja 2</h2>
     
     <div class="form-section__field-container field-underage-last-name-2">
       <label for="field-underage-last-name-2">Sukunimi</label>
@@ -99,7 +100,7 @@
       <input id="field-underage-country-2" type="text" name="field-underage-country-2" value="Suomi"/>
     </div>
     
-    <h2 class="form-section__header">Huoltaja 3</h2>
+    <h2 class="form-section__subheader">Huoltaja 3</h2>
     
     <div class="form-section__field-container field-underage-last-name-3">
       <label for="field-underage-last-name-3">Sukunimi</label>
@@ -139,11 +140,6 @@
     <div class="form-section__field-container field-underage-country-3">
       <label for="field-underage-country-3">Maa</label>
       <input id="field-underage-country-3" type="text" name="field-underage-country-3" value="Suomi"/>
-    </div>
-
-    <div class="form-section__field-container field-underage-contact">
-      <label for="field-underage-contact">Jos huoltajia on useampi, kehen ollaan ensisijaisesti yhteydessä nuoren opiskeluasioissa?</label>
-      <input id="field-underage-contact" type="text" name="field-underage-contact"/>
     </div>
     
   </section>
