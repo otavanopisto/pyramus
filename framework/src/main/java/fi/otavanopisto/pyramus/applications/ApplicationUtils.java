@@ -311,7 +311,7 @@ public class ApplicationUtils {
       return studentExaminationTypeDAO.findById(6L); // Oppisopimuskoulutus
     case "peruskoulu":
       return studentExaminationTypeDAO.findById(7L); // Peruskoulun oppimäärä
-    case "ylempi-kk":
+    case "ylempi-kk":  // #1349: Tämä valinta poistunut lomakkeelta
       return studentExaminationTypeDAO.findById(8L); // Ylempi korkeakoulututkinto
     default:
       return null;
