@@ -80,6 +80,7 @@ import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -682,6 +683,14 @@ public class ObjectFactory {
           public Object map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
             return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, entity.getArchived());
+          }
+        },
+        
+        new Mapper<StudentContactLogEntryComment>() {
+          @Override
+          public Object map(StudentContactLogEntryComment entity) {
+            Long entryId = entity.getEntry() != null ? entity.getEntry().getId() : null;
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel(entity.getId(), entity.getText(), entity.getCreatorName(), entity.getCommentDate(), entryId);
           }
         },
         

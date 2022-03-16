@@ -65,6 +65,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
@@ -92,6 +93,7 @@ import fi.otavanopisto.pyramus.rest.controller.NationalityController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
 import fi.otavanopisto.pyramus.rest.controller.StudentActivityTypeController;
+import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryCommentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentEducationalLevelController;
@@ -119,6 +121,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
@@ -192,6 +195,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudentContactLogEntryController studentContactLogEntryController;
+
+  @Inject
+  private StudentContactLogEntryCommentController studentContactLogEntryCommentController;
 
   @Inject
   private SchoolController schoolController;
@@ -1789,7 +1795,8 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
-
+  
+  
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
   @PUT
   @RESTPermit(StudentContactLogEntryPermissions.UPDATE_STUDENTCONTACTLOGENTRY)
@@ -1850,6 +1857,120 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntry/{ID:[0-9]*}/entryComments")
+  @GET
+  @RESTPermit(StudentContactLogEntryPermissions.FIND_STUDENTCONTACTLOGENTRY)
+  public Response listStudentContactLogEntryCommentsById(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
+    if (contactLogEntry == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (contactLogEntry.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    List<StudentContactLogEntryComment> entryComments = studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(contactLogEntry);
+    return Response.ok(objectFactory.createModel(entryComments)).build();
+
+  }
+  
+  @Path("/students/{ID:[0-9]*}/contactLogEntry/entryComments")
+  @POST
+  @RESTPermit(StudentContactLogEntryPermissions.CREATE_STUDENTCONTACTLOGENTRY)
+  public Response createStudentContactLogEntryComment(@PathParam("ID") Long id, StudentContactLogEntryCommentRestModel entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(entity.getEntry());
+    Student student = studentController.findStudentById(id);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.createContactLogEntryComment(contactLogEntry, entity.getText(), entity.getCommentDate(), entity.getCreatorName());
+    return Response.ok(objectFactory.createModel(contactLogEntryComment)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/entryComments/{COMMENTID:[0-9]*}")
+  @PUT
+  @RESTPermit(StudentContactLogEntryPermissions.UPDATE_STUDENTCONTACTLOGENTRY)
+  public Response updateStudentContactLogEntryComment(@PathParam("STUDENTID") Long studentId, @PathParam("COMMENTID") Long commentId,
+      fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.findContactLogEntryCommentById(commentId);
+    if (contactLogEntryComment == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    StudentContactLogEntry contactLogEntry = contactLogEntryComment.getEntry();
+
+    if (contactLogEntry == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (contactLogEntry.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    studentContactLogEntryCommentController.updateContactLogEntryComment(contactLogEntryComment, entity.getText(), entity.getCommentDate(), entity.getCreatorName());
+    return Response.ok(objectFactory.createModel(contactLogEntryComment)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/entryComments/{COMMENTID:[0-9]*}")
+  @DELETE
+  @RESTPermit(StudentContactLogEntryPermissions.DELETE_STUDENTCONTACTLOGENTRY)
+  public Response deleteStudentContactLogEntryComment(@PathParam("STUDENTID") Long studentId, 
+      @PathParam("COMMENTID") Long commentId,
+      @DefaultValue("false") @QueryParam("permanent") Boolean permanent) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.findContactLogEntryCommentById(commentId);
+    if (contactLogEntryComment == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    StudentContactLogEntry contactLogEntry = contactLogEntryComment.getEntry();
+    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (permanent) {
+      studentContactLogEntryCommentController.deleteStudentContactLogEntryComment(contactLogEntryComment);
+    } else {
+      studentContactLogEntryCommentController.archiveStudentContactLogEntryComment(contactLogEntryComment, sessionController.getUser());
+    }
+
+    return Response.noContent().build();
+  }
+
 
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @POST
