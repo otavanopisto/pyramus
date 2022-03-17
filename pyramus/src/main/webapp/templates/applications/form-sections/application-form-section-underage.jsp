@@ -7,6 +7,8 @@
 
     <div class="application-line"></div>
 
+    <h2 class="form-section__header">Alaikäisen hakijan lisätiedot</h2>
+
     <div class="form-section__field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,aikuislukio,bandilinja,laakislinja" style="display:none;">  
       <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label> 
       <textarea id="field-underage-grounds" name="field-underage-grounds" rows="5" cols="40"></textarea>  
