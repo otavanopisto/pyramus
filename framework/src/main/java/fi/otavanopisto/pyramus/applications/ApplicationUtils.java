@@ -296,9 +296,8 @@ public class ApplicationUtils {
   public static StudentExaminationType resolveStudentExaminationType(String examinationType) {
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     switch (examinationType) {
-    case "muu": // #1349: Tämä valinta poistunut lomakkeelta
-    case "tuva": // TODO Tälle ei ole tutkintotyyppiä
-      return studentExaminationTypeDAO.findById(1L); // Muu tutkinto
+    case "muu":
+      return studentExaminationTypeDAO.findById(1L); // Muu tutkinto (#1349: poistunut lomakkeelta)
     case "ammatillinen-perus":
       return studentExaminationTypeDAO.findById(2L); // Ammatillinen perustutkinto
     case "korkeakoulu":
@@ -311,8 +310,10 @@ public class ApplicationUtils {
       return studentExaminationTypeDAO.findById(6L); // Oppisopimuskoulutus
     case "peruskoulu":
       return studentExaminationTypeDAO.findById(7L); // Peruskoulun oppimäärä
-    case "ylempi-kk":  // #1349: Tämä valinta poistunut lomakkeelta
-      return studentExaminationTypeDAO.findById(8L); // Ylempi korkeakoulututkinto
+    case "ylempi-kk":
+      return studentExaminationTypeDAO.findById(8L); // Ylempi korkeakoulututkinto (#1349: poistunut lomakkeelta)
+    case "tuva":
+      return studentExaminationTypeDAO.findById(9L); // TUVA-koulutus
     default:
       return null;
     }
