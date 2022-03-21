@@ -34,6 +34,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
@@ -62,6 +63,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -212,7 +214,11 @@ public class ApplicationUtils {
       case "lukio":
         return "Lukio (keskeytynyt)";
       case "ammatillinen":
-        return "Ammatillinen 2. aste";
+        return "Ammatillinen 2. aste"; // #1349: Tämä poistunut lomakkeelta
+      case "ammatillinen-kesken":
+        return "Ammatilliset 2. asteen opinnot (keskeytynyt)";
+      case "ammatillinen-valmis":
+        return "Ammatilliset 2. asteen opinnot (valmis tutkinto)";
       case "korkea":
         return "Korkeakoulu";
       case "muu":
@@ -271,6 +277,18 @@ public class ApplicationUtils {
     }
   }
   
+  public static Curriculum resolveCurriculum(String curriculumValue) {
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    switch (curriculumValue) {
+    case "ops2016":
+      return curriculumDAO.findById(1L); // OPS 2016
+    case "ops2021":
+      return curriculumDAO.findById(4L); // OPS 2021
+    default:
+      return null;
+    }
+  }
+  
   public static Sex resolveGender(String genderValue) {
     return StringUtils.equals("mies",  genderValue) ? Sex.MALE : StringUtils.equals("nainen",  genderValue) ? Sex.FEMALE : Sex.OTHER;
   }
@@ -279,7 +297,7 @@ public class ApplicationUtils {
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     switch (examinationType) {
     case "muu":
-      return studentExaminationTypeDAO.findById(1L); // Muu tutkinto
+      return studentExaminationTypeDAO.findById(1L); // Muu tutkinto (#1349: poistunut lomakkeelta)
     case "ammatillinen-perus":
       return studentExaminationTypeDAO.findById(2L); // Ammatillinen perustutkinto
     case "korkeakoulu":
@@ -293,7 +311,9 @@ public class ApplicationUtils {
     case "peruskoulu":
       return studentExaminationTypeDAO.findById(7L); // Peruskoulun oppimäärä
     case "ylempi-kk":
-      return studentExaminationTypeDAO.findById(8L); // Ylempi korkeakoulututkinto
+      return studentExaminationTypeDAO.findById(8L); // Ylempi korkeakoulututkinto (#1349: poistunut lomakkeelta)
+    case "tuva":
+      return studentExaminationTypeDAO.findById(9L); // TUVA-koulutus
     default:
       return null;
     }
@@ -317,20 +337,23 @@ public class ApplicationUtils {
     }
   }
   
-  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, AlternativeLine nettilukioAlternative) {
+  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, String internetixLine, AlternativeLine nettilukioAlternative) {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
-      return studyProgrammeDAO.findById(13L); // Internetix/lukio
+      if (StringUtils.equals(internetixLine, "pk")) {
+        return studyProgrammeDAO.findById(12L); // Aineopiskelu/peruskoulu
+      }
+      else {
+        return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
+      }
     case "nettilukio": {
       if (nettilukioAlternative == AlternativeLine.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
       }
-      
       if (nettilukioAlternative == AlternativeLine.YO) {
         return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
       }
-      
       return studyProgrammeDAO.findById(6L); // Nettilukio
     }
     case "nettipk":
@@ -645,10 +668,20 @@ public class ApplicationUtils {
     StudyProgramme studyProgramme = ApplicationUtils.resolveStudyProgramme(
         getFormValue(formData, "field-line"),
         getFormValue(formData, "field-foreign-line"),
+        getFormValue(formData, "field-internetix-line"),
         EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines")));
     if (studyProgramme == null) {
       logger.severe(String.format("Unable to resolve study programme of application entity %d", application.getId()));
       return null;
+    }
+    
+    // Curriculum (for Internetix students in high school)
+    
+    Curriculum curriculum = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      if (StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")) {
+        curriculum = resolveCurriculum(getFormValue(formData, "field-internetix-curriculum"));
+      }
     }
     
     // Study time end plus one year (for Internetix students)  
@@ -695,7 +728,7 @@ public class ApplicationUtils {
         ApplicationUtils.resolveLanguage(getFormValue(formData, "field-language")),
         ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school")),
         studyProgramme,
-        null, // curriculum (TODO can this be resolved?)
+        curriculum,
         null, // previous studies (double)
         studyStartDate, // study start date
         null, // study end date
@@ -750,7 +783,6 @@ public class ApplicationUtils {
     // Attach email
     
     String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
-    logger.info(String.format("Attaching primary email %s", email));
     emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email);
     
     // Attach address
@@ -780,9 +812,16 @@ public class ApplicationUtils {
       
       // Attach email
       
-      logger.info(String.format("Attaching guardian email %s", email));
       contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
       emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
+      if (!StringUtils.isBlank(email)) {
+        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      }
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
+      if (!StringUtils.isBlank(email)) {
+        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      }
 
       // Attach address
       
@@ -795,6 +834,28 @@ public class ApplicationUtils {
           getFormValue(formData, "field-underage-city"),
           getFormValue(formData, "field-underage-country"),
           Boolean.FALSE);
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-2"))) {
+        addressDAO.create(
+            student.getContactInfo(),
+            contactType,
+            String.format("%s %s", getFormValue(formData, "field-underage-first-name-2"), getFormValue(formData, "field-underage-last-name-2")),
+            getFormValue(formData, "field-underage-street-address-2"),
+            getFormValue(formData, "field-underage-zip-code-2"),
+            getFormValue(formData, "field-underage-city-2"),
+            getFormValue(formData, "field-underage-country-2"),
+            Boolean.FALSE);
+      }
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-3"))) {
+        addressDAO.create(
+            student.getContactInfo(),
+            contactType,
+            String.format("%s %s", getFormValue(formData, "field-underage-first-name-3"), getFormValue(formData, "field-underage-last-name-3")),
+            getFormValue(formData, "field-underage-street-address-3"),
+            getFormValue(formData, "field-underage-zip-code-3"),
+            getFormValue(formData, "field-underage-city-3"),
+            getFormValue(formData, "field-underage-country-3"),
+            Boolean.FALSE);
+      }
 
       // Attach phone
       
@@ -803,6 +864,20 @@ public class ApplicationUtils {
           contactType,
           Boolean.FALSE,
           getFormValue(formData, "field-underage-phone"));
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-2"))) {
+        phoneNumberDAO.create(
+            student.getContactInfo(),
+            contactType,
+            Boolean.FALSE,
+            getFormValue(formData, "field-underage-phone-2"));
+      }
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-3"))) {
+        phoneNumberDAO.create(
+            student.getContactInfo(),
+            contactType,
+            Boolean.FALSE,
+            getFormValue(formData, "field-underage-phone-3"));
+      }
     }
     
     // Contract school (Internetix students)

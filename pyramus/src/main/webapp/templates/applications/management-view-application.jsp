@@ -23,6 +23,17 @@
         <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
         
+          <c:if test="${contractSchoolConflict}">
+            <div class="compulsory-contract-school-container">
+              <div class="compulsory-contract-school-description">
+                <div class="compulsory-contract-school-description-piggy"></div>
+                <div class="compulsory-contract-school-actions">
+                  <span>Oppivelvollinen ei opiskele sopimusoppilaitoksessa</span> 
+                </div>
+              </div>
+            </div>
+          </c:if>
+
           <div class="user-exists-container" style="display:none;">
             <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
             <div class="user-exists-description">
