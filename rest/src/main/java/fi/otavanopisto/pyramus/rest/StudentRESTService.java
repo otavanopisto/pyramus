@@ -1766,7 +1766,7 @@ public class StudentRESTService extends AbstractRESTService {
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
     if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
+      return Response.status(studentStatus).build(); 
 
     return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudent(student))).build();
   }
