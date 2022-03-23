@@ -68,9 +68,10 @@ public class AssessmentController {
     courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
     // ...and mark respective course assessment requests as handled if all CourseModules are assessed
     if (isAllCourseModulesAssessed(courseAssessment.getCourseStudent())) {
-      List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(
-          courseAssessment.getCourseStudent(), Boolean.FALSE, Boolean.FALSE);
+      List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchivedBefore(
+          courseAssessment.getCourseStudent(), Boolean.FALSE, Boolean.FALSE, assessmentDate);
       for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        // update only the ones that precede the credit
         courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
       }
     }
