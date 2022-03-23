@@ -56,7 +56,7 @@
               </div>
             </div>
             <div class="selection-box__description">
-              Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.
+              Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 17-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.
             </div>
             <div class="selection-box__link-container">
               <a class="selection-box__link" href="/applications/create.page?line=nettipk">Hae Nettiperuskouluun</a>
