@@ -143,6 +143,9 @@ public abstract class RequestContext {
   }
   
   public String getReferer(boolean returnAnchor) {
+    if (StringUtils.isEmpty(servletRequest.getHeader("Referer"))) {
+      return null;
+    }
     StringBuilder refererBuilder = new StringBuilder(servletRequest.getHeader("Referer"));
     
     if (returnAnchor) {
