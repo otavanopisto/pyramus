@@ -291,7 +291,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Vapaamuotoinen esittely", getFormValue(formData, "field-info"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-info-nettilukio"))) {
-        fields.put("Vapaamuotoinen esittely", getFormValue(formData, "field-info-nettilukio"));
+        fields.put("Taustatiedot ohjaajalle", getFormValue(formData, "field-info-nettilukio"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging"))) {
         fields.put("Asunto kampukselta", simpleBooleanUiValue(getFormValue(formData, "field-lodging")));
