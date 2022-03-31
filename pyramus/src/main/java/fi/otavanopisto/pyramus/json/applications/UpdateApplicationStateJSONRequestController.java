@@ -196,11 +196,14 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             studentDAO.archive(student);
           }
           // #4226: Applications of rejected Internetix students are removed immediately
+          // #1355: No they are not (helpdesk ticket #740155). Like others, they will be removed after a year (via RemoveOldApplicationsScheduler)
+          /*
           if (StringUtils.equals("aineopiskelu", application.getLine())) {
             ApplicationUtils.deleteApplication(application);
             requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/applications/browse.page");
             return;
           }
+          */
         }
         else if (applicationState == ApplicationState.PROCESSING) {
           // #1216: If a signed application is returned to Processing state, remove the
