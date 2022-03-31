@@ -41,7 +41,7 @@
       }
 
       function addLodgingPeriodTableRow(lodgingPeriodTable) {
-        lodgingPeriodTable.addRow([-1, '', '', '', '']);
+        lodgingPeriodTable.addRow([-1, '', '', '']);
       }
 
       function addStudyPeriodTableRow(studyPeriodTable) {
@@ -312,6 +312,48 @@
             paramName: 'name'
           }, {
             left : 30 + 8 + 250 + 8,
+            width : 30,
+            dataType: 'button',
+            imgsrc: GLOBAL_contextPath + '/gfx/overwrite-column-values.png',
+            paramName: 'presetsButton',
+            hidden: true,
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var rowIndex = event.row;
+              var valueColumn = table.getNamedColumnIndex('value');
+
+              var variableKey = table.getCellValue(event.row, table.getNamedColumnIndex('key'));
+
+              var dialog = new IxDialog({
+                id : 'selectUserVariablePresetDialog',
+                contentURL : GLOBAL_contextPath + '/students/selectuservariablepresetdialog.page?variableKey=' + variableKey,
+                centered : true,
+                showOk : false,
+                showCancel : true,
+                title: '<fmt:message key="students.editStudent.selectUserVariablePresetDialog.title"/>',
+                cancelLabel: '<fmt:message key="generic.dialog.cancel"/>'
+              });
+
+              dialog.addDialogListener(function(event) {
+                var dlg = event.dialog;
+                switch (event.name) {
+                  case 'okClick':
+                    event.preventDefault(true);
+
+                    table.setCellEditable(rowIndex, valueColumn, true);
+                    table.setCellValue(rowIndex, valueColumn, event.results);
+                    table.setCellValue(rowIndex, table.getNamedColumnIndex('edited'), "1");
+            
+                    dlg.close();
+                  break;
+                }
+              });
+              
+              dialog.setSize("600px", "300px");
+              dialog.open();
+            }
+          }, {
+            left : 30 + 8 + 250 + 8 + 30 + 8,
             width : 350,
             dataType: 'text',
             editable: false,
@@ -390,47 +432,17 @@
             dataType: 'date',
             editable: true,
             paramName: 'end'
-          },{
-            width: 30,
-            left: 8 + 160 + 8 + 160 + 8,
-            dataType: 'button',
-            paramName: 'addButton',
-            hidden: true,
-            imgsrc: GLOBAL_contextPath + '/gfx/list-add.png',
-            tooltip: '<fmt:message key="students.editStudent.lodgingPeriodsTable.addTooltip"/>',
-            onclick: function (event) {
-              addLodgingPeriodTableRow(event.tableComponent);
-            }
           }, {
             width: 30,
             left: 8 + 160 + 8 + 160 + 8,
             dataType: 'button',
             paramName: 'removeButton',
-            hidden: true,
             imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
             tooltip: '<fmt:message key="students.editStudent.lodgingPeriodsTable.removeTooltip"/>',
             onclick: function (event) {
               event.tableComponent.deleteRow(event.row);
-              
-              if (event.tableComponent.getRowCount() == 0) {
-                $('noLodgingPeriodsAddedMessageContainer.' + studentId).setStyle({
-                  display : ''
-                });
-              }
             }
           }]
-        });
-
-        lodgingPeriodsTable.addListener("rowAdd", function (event) {
-          var table = event.tableComponent; 
-          var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
-          lodgingPeriodsTable.showCell(event.row, table.getNamedColumnIndex(enabledButton));
-
-          if (table.getRowCount() > 0) {
-       	    $('noLodgingPeriodsAddedMessageContainer.' + studentId).setStyle({
-       	      display : 'none'
-       	    });
-       	  }
         });
 
         return lodgingPeriodsTable;
@@ -491,6 +503,22 @@
           }]
         });
 
+        studentStudyPeriodsTable.addListener("cellValueChange", function (event) {
+          var table = event.tableComponent;
+          var typeColumnIndex = table.getNamedColumnIndex('type');
+          if (event.column == typeColumnIndex) {
+            for (var i = 0, l = studentStudyPeriodTypes.length; i < l; i++) {
+              if (studentStudyPeriodTypes[i].id == event.value) {
+                var endDateColumnIndex = table.getNamedColumnIndex('end');
+
+                studentStudyPeriodTypes[i].beginOnly == true 
+                    ? table.hideCell(event.row, endDateColumnIndex)
+                    : table.showCell(event.row, endDateColumnIndex);
+              }
+            }
+          }
+        });
+          
         return studentStudyPeriodsTable;
       }
         
@@ -641,32 +669,46 @@
 
       function setupStudent(studentId, data) {
         var variables = JSDATA["variables." + studentId].evalJSON();
+        var variablePresets = JSDATA["userVariablePresets"].evalJSON();
+
         if (variables && variables.length > 0) {
           // Student variables
           var variablesTable = initStudentVariableTable(studentId);
+          var valueColumn = variablesTable.getNamedColumnIndex('value');
 
+          
           for (var i = 0, l = variables.length; i < l; i++) {
             var rowNumber = variablesTable.addRow([
               '',
               variables[i].key,
               variables[i].name,
+              '',
               variables[i].value,
               '0'
             ]);
 
             switch (variables[i].type) {
               case 'NUMBER':
-                variablesTable.setCellDataType(rowNumber, 3, 'text');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'text');
               break;
               case 'DATE':
-                variablesTable.setCellDataType(rowNumber, 3, 'date');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'date');
               break;
               case 'BOOLEAN':
-                variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'checkbox');
               break;
               default:
-                variablesTable.setCellDataType(rowNumber, 3, 'text');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'text');
               break;
+            }
+
+            if (variablePresets[variables[i].key]) {
+              var presets = variablePresets[variables[i].key];
+              if (presets.presets) {
+                if (presets.presets.length > 0) {
+                  variablesTable.showCell(rowNumber, variablesTable.getNamedColumnIndex('presetsButton'));
+                }
+              }
             }
           }
         }
@@ -681,7 +723,6 @@
               lodgingPeriods[i].id,
               lodgingPeriods[i].begin,
               lodgingPeriods[i].end,
-              '',
               ''
             ]);
           }
@@ -1425,10 +1466,10 @@
                   <jsp:param name="helpLocale" value="students.editStudent.lodgingHelp"/>
                 </jsp:include>
 
-                <div id="noLodgingPeriodsAddedMessageContainer.${student.id}" class="genericTableNotAddedMessageContainer">
-                  <span><fmt:message key="students.editStudent.noLodgingPeriodsAddedPreFix"/> <span onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable.${student.id}'));" class="genericTableAddRowLink"><fmt:message key="students.editStudent.noLodgingPeriodsAddedClickHereLink"/></span></span>
+                <div class="genericTableAddRowContainer">
+                  <span class="genericTableAddRowLinkContainer" onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable.${student.id}'));"><fmt:message key="students.editStudent.addLodgingPeriodLink"/></span>
                 </div>
-                
+
                 <div id="lodgingPeriodsTableContainer.${student.id}"></div>
               </div>
   

@@ -12,8 +12,8 @@ import java.util.Objects;
 
 import org.junit.Test;
 
-import fi.otavanopisto.pyramus.views.students.tor.TORCredit;
-import fi.otavanopisto.pyramus.views.students.tor.TORCreditType;
+import fi.otavanopisto.pyramus.tor.TORCredit;
+import fi.otavanopisto.pyramus.tor.TORCreditType;
 
 public class TORCreditTests {
 

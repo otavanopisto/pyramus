@@ -113,6 +113,7 @@
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createmailtemplate.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createMailTemplate"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listmailtemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageMailTemplates"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createemailsignature.page" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createEmailSignature"/></a></li>
+          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/changehandler.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.changeHandler"/></a></li>
           <ix:extensionHook name="generic.navigation.applicationsMenu"/>
         </ul>
       </li>
@@ -136,8 +137,9 @@
         <fmt:message key="generic.navigation.worklist"/>
         <ul id="GUI_MENU_worklistItemContainer" class="GUI_MENU_itemContainer">
           <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/manageworklisttemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageWorklistTemplates"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/listworklistitems.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listWorklistItems"/></a></li>
+          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/manageworklisttemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageWorklistTemplates"/></a></li>
+          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/billingsettings.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.editBillingSettings"/></a></li>
           <ix:extensionHook name="generic.navigation.worklistMenu"/>
         </ul>
       </li>

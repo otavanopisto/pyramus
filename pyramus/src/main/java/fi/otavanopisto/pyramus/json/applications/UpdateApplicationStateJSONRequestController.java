@@ -202,6 +202,15 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             return;
           }
         }
+        else if (applicationState == ApplicationState.PROCESSING) {
+          // #1216: If a signed application is returned to Processing state, remove the
+          // previous signatures so that the proper processing order can once again be followed
+          ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
+          ApplicationSignatures applicationSignatures = applicationSignaturesDAO.findByApplication(application);
+          if (applicationSignatures != null) {
+            applicationSignaturesDAO.delete(applicationSignatures);
+          }
+        }
         
         // Update the actual application state
         

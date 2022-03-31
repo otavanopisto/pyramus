@@ -1,0 +1,214 @@
+{
+  "$schema": "https://www.ylioppilastutkinto.fi/schemas/registration-2022",
+  "type": "object",
+  "properties": {
+    "tutkintokerta": {
+      "type": "string"
+    },
+    "koulunumero": {
+      "type": "integer"
+    },
+    "kokelaat": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "hetu": {
+                "type": "string"
+              },
+              "oppijanumero": {
+                "type": "string"
+              },
+              "etunimet": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sukunimi": {
+                "type": "string"
+              },
+              "koulutustyyppi": {
+                "type": "string",
+                "enum": [
+                  "lukio",
+                  "ammatillinen",
+                  "lukioJaAmmatillinen",
+                  "tuntematon"
+                ]
+              },
+              "tutkintotyyppi": {
+                "type": "string",
+                "enum": [
+                  "yoTutkinto",
+                  "korottaja",
+                  "erillinenKoe"
+                ]
+              },
+              "uudelleenaloittaja": {
+                "type": "boolean"
+              },
+              "kokelasnumero": {
+                "type": "integer"
+              },
+              "kokeet": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "koodi": {
+                      "type": "string"
+                    },
+                    "maksuton": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "koodi",
+                    "maksuton"
+                  ]
+                }
+              },
+              "suoritetutKurssit": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "aine": {
+                      "type": "string"
+                    },
+                    "oppimäärä": {
+                      "type": "string"
+                    },
+                    "kursseja": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "aine",
+                    "oppimäärä",
+                    "kursseja"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "hetu",
+              "oppijanumero",
+              "etunimet",
+              "sukunimi",
+              "koulutustyyppi",
+              "tutkintotyyppi",
+              "uudelleenaloittaja",
+              "kokelasnumero",
+              "kokeet"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "hetu": {
+                "type": "string"
+              },
+              "oppijanumero": {
+                "type": "string"
+              },
+              "etunimet": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sukunimi": {
+                "type": "string"
+              },
+              "koulutustyyppi": {
+                "type": "string",
+                "enum": [
+                  "lukio",
+                  "ammatillinen",
+                  "lukioJaAmmatillinen",
+                  "tuntematon"
+                ]
+              },
+              "tutkintotyyppi": {
+                "type": "string",
+                "enum": [
+                  "yoTutkinto",
+                  "korottaja",
+                  "erillinenKoe"
+                ]
+              },
+              "uudelleenaloittaja": {
+                "type": "boolean"
+              },
+              "kokelasnumero": {
+                "type": "integer"
+              },
+              "äidinkielenKoe": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pakollisetKokeet": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ylimääräisetKokeet": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "suoritetutKurssit": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "aine": {
+                      "type": "string"
+                    },
+                    "oppimäärä": {
+                      "type": "string"
+                    },
+                    "kursseja": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "aine",
+                    "oppimäärä",
+                    "kursseja"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "hetu",
+              "oppijanumero",
+              "etunimet",
+              "sukunimi",
+              "koulutustyyppi",
+              "tutkintotyyppi",
+              "uudelleenaloittaja",
+              "kokelasnumero",
+              "äidinkielenKoe",
+              "pakollisetKokeet",
+              "ylimääräisetKokeet"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "tutkintokerta",
+    "koulunumero",
+    "kokelaat"
+  ]
+}

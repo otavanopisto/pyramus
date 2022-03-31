@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +37,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
@@ -44,11 +46,15 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.BinaryRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.views.students.tor.StudentTOR;
-import fi.otavanopisto.pyramus.views.students.tor.StudentTORController;
-import fi.otavanopisto.pyramus.views.students.tor.TORSubject;
+import fi.otavanopisto.pyramus.tor.StudentTOR;
+import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.TORSubject;
+import fi.otavanopisto.pyramus.ytl.AbstractKokelas;
 import fi.otavanopisto.pyramus.ytl.Kokelas;
+import fi.otavanopisto.pyramus.ytl.Kokelas2022;
+import fi.otavanopisto.pyramus.ytl.Kokelas2022Koe;
 import fi.otavanopisto.pyramus.ytl.Koulutustyyppi;
 import fi.otavanopisto.pyramus.ytl.SuoritettuKurssi;
 import fi.otavanopisto.pyramus.ytl.Tutkintotyyppi;
@@ -56,6 +62,9 @@ import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
 import fi.otavanopisto.pyramus.ytl.YTLAineKoodiSuoritettuKurssi;
 import fi.otavanopisto.pyramus.ytl.YTLSiirtotiedosto;
 
+/**
+ * https://github.com/digabi/ilmoittautuminen/wiki/Ilmoittautumistiedot
+ */
 public class YTLReportBinaryRequestController extends BinaryRequestController {
 
   private static final Logger logger = Logger.getLogger(YTLReportBinaryRequestController.class.getName());
@@ -82,7 +91,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     ObjectMapper objectMapper = new ObjectMapper();
     
     try {
-      String value = objectMapper.writeValueAsString(ytl);
+      String value = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ytl);
       binaryRequestContext.setFileName("ytl_" + tutkintokerta + ".json");
       binaryRequestContext.setResponseContent(value.getBytes("UTF-8"), "application/json;charset=UTF-8");
     } catch (Exception e) {
@@ -116,7 +125,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     return enrollments;
   }
 
-  private Kokelas enrollmentToKokelas(MatriculationExamEnrollment enrollment, List<YTLAineKoodi> mapping) {
+  private AbstractKokelas enrollmentToKokelas(MatriculationExamEnrollment enrollment, List<YTLAineKoodi> mapping) {
     MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     
@@ -150,6 +159,63 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     Tutkintotyyppi tutkintotyyppi = degreeTypeToTutkintoTyyppi(enrollment.getDegreeType());
     boolean uudelleenaloittaja = enrollment.isRestartExam();
     
+    AbstractKokelas kokelas;
+    
+    switch (enrollment.getDegreeStructure()) {
+      case PRE2022:
+        kokelas = vanhaKokelas(student, attendances, mapping);
+      break;
+      
+      case POST2022:
+        kokelas = uusiKokelas(student, attendances, mapping);
+      break;
+      
+      default:
+        throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Invalid degree structure.");
+    }
+
+    kokelas.getEtunimet().addAll(etunimet);
+    kokelas.setSukunimi(student.getLastName());
+    kokelas.setHetu(hetu);
+    kokelas.setKokelasnumero(kokelasnumero);
+    kokelas.setOppijanumero(oppijanumero);
+    kokelas.setKoulutustyyppi(koulutustyyppi);
+    kokelas.setTutkintotyyppi(tutkintotyyppi);
+    kokelas.setUudelleenaloittaja(uudelleenaloittaja);
+    
+    return kokelas;
+  }
+
+  /**
+   * Muodostaa kokelas-tietueen 2022 keväällä tai sen jälkeen tutkinnon aloittaneille.
+   */
+  private Kokelas2022 uusiKokelas(Student student, List<MatriculationExamAttendance> attendances,
+      List<YTLAineKoodi> mapping) {
+    Kokelas2022 kokelas = new Kokelas2022();
+    
+    final EnumSet<MatriculationExamAttendanceFunding> MAKSUTTOMAT = EnumSet.of(
+        MatriculationExamAttendanceFunding.COMPULSORYEDUCATION_FREE, 
+        MatriculationExamAttendanceFunding.COMPULSORYEDUCATION_FREE_RETRY);
+    
+    attendances.forEach(attendance -> {
+      MatriculationExamSubject examSubject = attendance.getSubject();
+      YTLAineKoodi ytlAineKoodi = examSubjectToYTLAineKoodi(examSubject, mapping);
+
+      String aineKoodi = ytlAineKoodi.getYhdistettyAineKoodi();
+      boolean maksuton = MAKSUTTOMAT.contains(attendance.getFunding());
+      kokelas.addKoe(new Kokelas2022Koe(aineKoodi, maksuton));
+    });
+    
+    return kokelas;
+  }
+
+  /**
+   * Muodostaa vanhantyylisen kokelas-tietueen. Käytetään opiskelijoille,
+   * jotka ovat aloittaneet tutkinnon ennen kevättä 2022.
+   */
+  private Kokelas vanhaKokelas(Student student, List<MatriculationExamAttendance> attendances, List<YTLAineKoodi> mapping) {
+    Kokelas kokelas = new Kokelas();
+
     MatriculationExamAttendance äidinkieli = attendances.stream()
         .filter(attendance -> isÄidinkieli(attendance))
         .findAny()
@@ -164,16 +230,6 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         logger.warning(String.format("No äidinkieli mapping found for %s", äidinkieli.getSubject()));
       }
     }
-    
-    Kokelas kokelas = new Kokelas();
-    kokelas.getEtunimet().addAll(etunimet);
-    kokelas.setSukunimi(student.getLastName());
-    kokelas.setHetu(hetu);
-    kokelas.setKokelasnumero(kokelasnumero);
-    kokelas.setOppijanumero(oppijanumero);
-    kokelas.setKoulutustyyppi(koulutustyyppi);
-    kokelas.setTutkintotyyppi(tutkintotyyppi);
-    kokelas.setUudelleenaloittaja(uudelleenaloittaja);
     
     kokelas.setÄidinkielenKoe(äidinkielenKoe);
 

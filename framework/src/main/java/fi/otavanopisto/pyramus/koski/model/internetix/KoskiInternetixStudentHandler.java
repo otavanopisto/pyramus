@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -13,7 +14,9 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
+import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.KoskiInternetixLukioStudentHandler2019;
 
 public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
 
@@ -26,26 +29,63 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
   @Inject
   private KoskiInternetixLukioStudentHandler lukioHandler;
   
+  @Inject
+  private KoskiInternetixLukioStudentHandler2019 lukio2019Handler;
+  
   public List<Opiskeluoikeus> studentToModel(Student student, String academyIdentifier) {
     List<Opiskeluoikeus> oos = new ArrayList<>();
+    OpiskelijanOPS opiskelijanOPS = settings.resolveOPS(student);
     
-    Opiskeluoikeus pk = pkHandler.studentToModel(student, academyIdentifier);
+    OpiskeluoikeusInternetix pk = pkHandler.studentToModel(student, academyIdentifier);
+    boolean pkSuorituksia = pk != null ? !pk.isEiSuorituksia() : false;
     
-    Opiskeluoikeus lukio = lukioHandler.studentToModel(student, academyIdentifier);
+    OpiskeluoikeusInternetix lukio = opiskelijanOPS == OpiskelijanOPS.ops2019
+        ? lukio2019Handler.oppiaineidenOppimaaranOpiskeluoikeus(student, academyIdentifier)
+        : lukioHandler.studentToModel(student, academyIdentifier);
+    boolean lukioSuorituksia = lukio != null ? !lukio.isEiSuorituksia() : false;
+    
+    if (!pkSuorituksia && !lukioSuorituksia) {
+      // Kummassakaan ei suorituksia -> käytetään linjan mukaista oletusarvona
+      
+      KoskiStudyProgrammeHandler studyProgrammeHandlerType = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
 
-    if (pk != null) {
-      oos.add(pk);
+      switch (studyProgrammeHandlerType) {
+        case aineopiskelulukio:
+          if (lukio != null && lukio.getOpiskeluoikeus() != null) {
+            oos.add(lukio.getOpiskeluoikeus());
+          }
+        break;
+        
+        case aineopiskeluperusopetus:
+          if (pk != null && pk.getOpiskeluoikeus() != null) {
+            oos.add(pk.getOpiskeluoikeus());
+          }
+        break;
+        
+        default:
+          logger.log(Level.SEVERE, String.format("Handler Type %s didn't match the supported types for student %d", studyProgrammeHandlerType, student.getId()));
+        break;
+      }
+    } else {
+      if (pkSuorituksia && pk != null && pk.getOpiskeluoikeus() != null) {
+        oos.add(pk.getOpiskeluoikeus());
+      }
+      
+      if (lukioSuorituksia && lukio != null && lukio.getOpiskeluoikeus() != null) {
+        oos.add(lukio.getOpiskeluoikeus());
+      }
     }
     
-    if (lukio != null) {
-      oos.add(lukio);
-    }
-
     // Log a warning if non-archived student couldn't be translated to a model
     if (oos.isEmpty() && Boolean.FALSE.equals(student.getArchived())) {
       koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
     }
     
+    // Varoitus, jos aineopiskelijalla on sekä pk:n että lukion opiskeluoikeudet
+    if (oos.size() > 1) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.INTERNETIX_BOTH_LINES, new Date());
+    }
+
     return oos;
   }
 

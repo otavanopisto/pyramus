@@ -42,7 +42,6 @@
             <select name="templateType" class="required">
               <option value="DEFAULT" <c:if test="${worklistTemplate.templateType eq 'DEFAULT'}">selected="selected"</c:if>><fmt:message key="worklist.editWorklistTemplate.defaultType"/></option>
               <option value="COURSE_ASSESSMENT" <c:if test="${worklistTemplate.templateType eq 'COURSE_ASSESSMENT'}">selected="selected"</c:if>><fmt:message key="worklist.editWorklistTemplate.assessmentType"/></option>
-              <option value="GRADE_RAISE" <c:if test="${worklistTemplate.templateType eq 'GRADE_RAISE'}">selected="selected"</c:if>><fmt:message key="worklist.editWorklistTemplate.gradeType"/></option>
             </select>
           </div>
 
@@ -69,12 +68,20 @@
 
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="worklist.editWorklistTemplate.billingNumberTitle"/>
+            </jsp:include> 
+            <input type="text" name="billingNumber" class="required" size="40" value="${fn:escapeXml(worklistTemplate.billingNumber)}"/>
+          </div>
+
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="worklist.editWorklistTemplate.rightsTitle"/>
             </jsp:include> 
             <input type="checkbox" name="dateEditable" value="1" <c:if test="${dateEditable}">checked="checked"</c:if>/><fmt:message key="worklist.editWorklistTemplate.dateEditable"/><br/>
             <input type="checkbox" name="descriptionEditable" value="1" <c:if test="${descriptionEditable}">checked="checked"</c:if>/><fmt:message key="worklist.editWorklistTemplate.descriptionEditable"/><br/>
             <input type="checkbox" name="priceEditable" value="1" <c:if test="${priceEditable}">checked="checked"</c:if>/><fmt:message key="worklist.editWorklistTemplate.priceEditable"/><br/>
             <input type="checkbox" name="factorEditable" value="1" <c:if test="${factorEditable}">checked="checked"</c:if>/><fmt:message key="worklist.editWorklistTemplate.factorEditable"/><br/>
+            <input type="checkbox" name="billingNumberEditable" value="1" <c:if test="${billingNumberEditable}">checked="checked"</c:if>/><fmt:message key="worklist.editWorklistTemplate.billingNumberEditable"/><br/>
             <input type="checkbox" name="removable" value="1" <c:if test="${worklistTemplate.removable}">checked="checked"</c:if>/><fmt:message key="worklist.editWorklistTemplate.removable"/><br/>
           </div>
         

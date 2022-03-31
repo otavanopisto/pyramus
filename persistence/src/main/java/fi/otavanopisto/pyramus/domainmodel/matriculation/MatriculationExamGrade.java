@@ -8,5 +8,6 @@ public enum MatriculationExamGrade {
   MAGNA_CUM_LAUDE_APPROBATUR,
   EXIMIA_CUM_LAUDE_APPROBATUR,
   LAUDATUR,
-  UNKNOWN
+  UNKNOWN,
+  K
 }

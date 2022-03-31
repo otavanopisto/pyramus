@@ -1,5 +1,6 @@
 <meta content="width=device-width, initial-scale=1.0, minimum-scale=1" name="viewport" />
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=latin,latin-ext,cyrillic-ext,cyrillic,greek,greek-ext' rel='stylesheet' type='text/css'/>
+<link href='https://fonts.googleapis.com/css?family=Exo+2:200,300,400,600,900' rel='stylesheet' type='text/css'/>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'/>
 
 <@include_page path="/templates/generic/head_generic.jsp"/>
 <@include_page path="/templates/generic/jsonrequest_support.jsp"/>
@@ -8,194 +9,196 @@
 <@include_page path="/templates/generic/message_adapter_support.jsp"/>
 
 <style type="text/css">
-  body {
-    background: url("//cdn.muikkuverkko.fi/assets/muikku/main-background.png") no-repeat scroll center top, #f6fcff url("//cdn.muikkuverkko.fi/assets/muikku/main-background-slice.png") repeat-x scroll left top;
-    color: #2c2c2c;
-    font-family: "Open Sans",Verdana,sans-serif;
-    font-size: 14px;
-    line-height: 1.5em;
-    margin: 0;
-    padding: 0 0 30px;
-  }   
-  
-  h1, h2, h3, h4, h5 {
-    color: #2c2c2c;
-    margin: 0 0 1em;
-    text-transform: uppercase;
-  }
-  
-  .formLabel, label {
-    display: block;
-    padding: 5px 5px 5px 0;
-  }
-  
-  .clear {
-    clear: both;
-    display: block;
-    height: 0;
-    overflow: hidden;
-    visibility: hidden;
-    width: 0;
-  }
-  .dialogGlassPane {
-    z-index:1998;
-    opacity:0.4;
-    background:#000;
-  }
-  .IxDialog {
-    z-index:1999;
-    font-size:16px;
-    text-transform:uppercase;
-    background:#fff;
-    border-radius:0;
-    border:0px;
-    box-shadow:0 0 100px rgba(0,0,0,0.3);
-  }
-  .IxDialog .IxDialogTitleBar {
-    margin:0 0 10px 0;
-  }
-  .IxDialog .IxDialogTitleBar .IxDialogTitle {
-    background:#7391a7;
-    padding:10px;
-  }
-  .IxDialog .IxDialogButtonsContainer {
-    margin:10px 5px 5px 5px;
-  }
-  .IxDialog .IxDialogButton {
-    font-size:16px;
-    text-transform:uppercase;
-    border-radius:2px;
-    padding:4px 8px;
-    background:#7391a7;
-  }
-  .muikku-login-overlay {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 998;
-    background: rgba(0, 37, 105, 0.14);
-    background: -moz-linear-gradient(top, rgba(0, 37, 105, 0.14) 0%, rgba(0, 27, 76, 0.5) 28%, black 100%);
-    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0, 37, 105, 0.14)), color-stop(28%, rgba(0, 27, 76, 0.5)), color-stop(100%, black));
-    background: -webkit-linear-gradient(top, rgba(0, 37, 105, 0.14) 0%, rgba(0, 27, 76, 0.5) 28%, black 100%);
-    background: -o-linear-gradient(top, rgba(0, 37, 105, 0.14) 0%, rgba(0, 27, 76, 0.5) 28%, black 100%);
-    background: -ms-linear-gradient(top, rgba(0, 37, 105, 0.14) 0%, rgba(0, 27, 76, 0.5) 28%, black 100%);
-    background: linear-gradient(to bottom, rgba(0, 37, 105, 0.14) 0%, rgba(0, 27, 76, 0.5) 28%, black 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#002569', endColorstr='#000000', GradientType=0 );
-  }
-  .muikku-login-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -240px 0 0 -270px;
-    width:500px;
-    z-index: 999;
-  }
-  .muikku-login-wrapper .muikku-logo {
-    background-image: url('//cdn.muikkuverkko.fi/assets/muikku/muikku-header-text-small.png');
-    background-position:left top;
-    background-repeat: no-repeat;
-    height: 90px;
-    width: 500px;
-    position: relative;
-    z-index: 999;
-  }
-  .muikku-login-wrapper .muikku-login-container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 100px rgba(0, 0, 0, 0.7);
-  }
-  .muikku-login-wrapper .muikku-login-container h1 {
-    font-weight: 300;
-    font-size: 26px;
-  }
-  .muikku-login-wrapper .muikku-login-container .formElementRow {
-    margin: 10px 0 0 0;
-  }
-  .muikku-login-wrapper .muikku-login-container .formElementRow label {
-    font-weight: 300;
-    text-transform: uppercase;
-    font-size: 16px;
-    margin-right: 10px;
-    display: block;
-  }
-  
-  .muikku-login-wrapper .muikku-login-container .formElementRow input[type="text"],
-  .muikku-login-wrapper .muikku-login-container .formElementRow input[type="password"] {
-    font-size: 18px;
-    font-weight: 300;
-    padding: 8px 16px;
-    border-radius: 3px;
-    line-height: 2em;
-    box-sizing: border-box;
-    width: 100%;
-    background-color: #fff;
-    border: 1px solid #dadada;
-    color: #606060;
-    height: auto;
-  }
-  
-  .muikku-login-wrapper .muikku-login-container .formElementRow input[type=submit].login-button {
-    background: #27b91c none repeat scroll 0 0;
-    border: 0 none;
-    border-radius: 3px;
-    color: #fff;
-    float: right;
-    font-size: 18px;
-    font-weight: 300;
-    line-height: 2em;
-    margin: 10px 0 0 10px;
-    padding: 8px 16px;
-    cursor: pointer;
-    display: inline-block;
-    text-transform: uppercase;
-  }
-  .muikku-login-wrapper .muikku-login-container .formElementRow a.external-login-button {
-    font-size: 18px;
-    font-weight: 300;
-    padding: 16px 16px;
-    border-radius: 3px;
-    border: 0;
-    background: #7391a7;
-    color: #fff;
-    line-height: 2em;
-    text-decoration: none;
-    text-transform: uppercase;
-    display: inline-block;
-    float: left;
-    margin-top: 20px;
-  }    
-  
-  .muikku-login-wrapper .muikku-login-container .formElementRow a.Google-oauth-button {
-    background: rgba(0, 0, 0, 0) url("../gfx/icons/32x32/google-auth-icon.png") no-repeat scroll 0 0;
-  }
-  
-  @media screen and (max-width: 767px) {
-    .muikku-login-wrapper {
-      height:430px;
-      left:10px;
-      margin:-230px auto 0;
-      max-width:500px;
-      min-width:300px;
-      position:absolute;
-      right:10px;
-      top:50%;
-      width:auto;
-      z-index:999;
-    }
-    .muikku-login-wrapper .muikku-logo {
-      background-image: url('//cdn.muikkuverkko.fi/assets/muikku/muikku-header-text-small.png');
-      background-position:left top;
-      background-repeat: no-repeat;
-      height: 90px;
-      max-width:500px;
-      min-width:300px;
-      width:auto;
-      position: relative;
-      z-index: 999;
-    }
 
+  body {
+    background: #f5f5f5;
+    color: #2c2c2c;
+    font-family: "Open Sans", Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.375rem;
+    margin: 0;
+    padding: 0;
   }
+  
+  body * {
+    box-sizing: border-box;
+  }
+  
+  form {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .muikku-login-card-wrapper {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+  }
+  
+  .muikku-login-card {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin: 10px;
+    max-width: 500px;
+    width: calc(100% + 20px);
+  }
+  
+  .muikku-logo-container {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 1.1rem;
+  }
+  
+  .muikku-logo {
+    height: 50px;
+    width: auto;
+  }
+  
+  .muikku-logo-text {
+    color: #009fe3;
+    font-family: "Exo 2", Arial, sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 2rem;
+    padding: 0 1rem; 
+  }
+  
+  .muikku-login-container {
+    background: #fff;
+    border: solid 1px #e2e2e2;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    flex-grow: 1;
+    font-weight: 400;
+    line-height: 1.375rem;
+    padding: 1.1rem;
+    position: relative;
+    text-align: left;
+    width: 100%;
+  }
+  
+  .muikku-login-title {
+    color: #009fe3;
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1;
+    margin: 0;
+    overflow: hidden;
+    padding-bottom: 1.1rem;
+    text-overflow: ellipsis;
+  }
+  
+  .muikku-login-container-row {
+    align-items: flex-start;
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 10px 0;
+  }
+  
+  .muikku-login-label {
+    display: block;
+    font-weight: 400;
+    padding: 0 0 4px;
+    width: 100%;
+  }
+  
+  input[type="text"].muikku-login-input,
+  input[type="password"].muikku-login-input {
+    border: 1px solid #dadada;
+    border-radius: 3px;
+    color: #2c2c2c;
+    font-family: "Open Sans", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    height: auto;
+    outline: none;
+    padding: 0.5rem;
+    width: 100%;
+  }
+  input[type="text"].muikku-login-input:focus,
+  input[type="password"].muikku-login-input:focus {
+    border: 1px solid #c4c4c4;
+    box-shadow: 0 0 0 5px #f5f5f5;
+  }
+  
+  .muikku-login-footer {
+    align-items: center;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: 1.6rem 0 0;
+  }
+  
+  .external-login-button,
+  input[type="submit"].muikku-login-button {
+    align-items: center;
+    background-color: #009fe3;
+    border: 0;
+    border-radius: 20px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    font-family: "Open Sans", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    justify-content: center;
+    margin: 0;
+    overflow: hidden;
+    padding: 5px 15px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  
+  .Google-oauth-login-button {
+    background: url("../gfx/icons/32x32/google-auth-icon.png") no-repeat center center;
+    background-size: 2.5rem;
+    border-radius: 100%;
+    height: 2.5rem;
+    width: 2.5rem;
+    padding: 0;
+  }
+  
+  @media screen and (min-width: 48em) {
+  
+    .muikku-login-card {
+      width: 400px;
+    }
+  
+    .muikku-login-title {
+      font-size: 1.625rem;
+    }
+  
+    .muikku-logo-container {
+      padding: 1.6rem;
+    }
+    
+    .muikku-login-container {
+      padding: 1.6rem;
+    }
+  
+    .muikku-logo {
+      height: 60px;
+    }
+    
+    .muikku-login-footer {
+      padding: 1.6rem 0 0;
+    }
+  }
+ 
+
 </style>

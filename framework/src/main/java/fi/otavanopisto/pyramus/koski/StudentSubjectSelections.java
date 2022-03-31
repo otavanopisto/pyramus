@@ -3,11 +3,33 @@ package fi.otavanopisto.pyramus.koski;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
+
 public class StudentSubjectSelections {
 
   public StudentSubjectSelections() {
   }
 
+  public KoskiOppiaineetYleissivistava koskiKoodi(OpiskelijanOPS ops, String languageCode) {
+    if (ops == OpiskelijanOPS.ops2019) {
+      return
+          isALanguage(languageCode) ? KoskiOppiaineetYleissivistava.A :
+            isA1Language(languageCode) ? KoskiOppiaineetYleissivistava.A :
+              isA2Language(languageCode) ? KoskiOppiaineetYleissivistava.A :
+                isB1Language(languageCode) ? KoskiOppiaineetYleissivistava.B1 :
+                  isB2Language(languageCode) ? KoskiOppiaineetYleissivistava.B2 :
+                    isB3Language(languageCode) ? KoskiOppiaineetYleissivistava.B3 : null;
+    } else {
+      return
+          isALanguage(languageCode) ? KoskiOppiaineetYleissivistava.A1 :
+            isA1Language(languageCode) ? KoskiOppiaineetYleissivistava.A1 :
+              isA2Language(languageCode) ? KoskiOppiaineetYleissivistava.A2 :
+                isB1Language(languageCode) ? KoskiOppiaineetYleissivistava.B1 :
+                  isB2Language(languageCode) ? KoskiOppiaineetYleissivistava.B2 :
+                    isB3Language(languageCode) ? KoskiOppiaineetYleissivistava.B3 : null;
+    }
+  }
+  
   public boolean isALanguage(String languageCode) {
     return ArrayUtils.contains(split(getALanguages()), languageCode);
   }
@@ -26,11 +48,13 @@ public class StudentSubjectSelections {
   public boolean isB3Language(String languageCode) {
     return ArrayUtils.contains(split(getB3Languages()), languageCode);
   }
+  
   public boolean isAdditionalLanguage(String languageCode) {
     return 
         isALanguage(languageCode) || isA1Language(languageCode) || isA2Language(languageCode) || 
         isB1Language(languageCode) || isB2Language(languageCode) || isB3Language(languageCode);
   }
+  
   public boolean isAccomplishment(Long subjectId) {
     return subjectId != null ? ArrayUtils.contains(split(accomplishments), String.valueOf(subjectId)) : false;
   }

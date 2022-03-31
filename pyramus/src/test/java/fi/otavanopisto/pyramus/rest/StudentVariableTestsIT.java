@@ -40,7 +40,7 @@ public class StudentVariableTestsIT extends AbstractRESTServiceTest {
       .get("/students/variables")
       .then()
       .statusCode(200)
-      .body("id.size()", is(3))
+      .body("id.size()", is(19))
       .body("key[0]", is("TV1"))
       .body("name[0]", is("Test Variable #1 - text"))
       .body("type[0]", is("TEXT"))

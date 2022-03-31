@@ -42,7 +42,7 @@ public class LukioOppimaaraData extends AbstractKoskiData {
     oppija.addOpiskeluoikeus(opiskeluoikeus);
     
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(new Date(), OpiskeluoikeudenTila.lasna);
-    opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso );
+    opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
     LukionSuoritus suoritus = new LukionOppimaaranSuoritus(LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);

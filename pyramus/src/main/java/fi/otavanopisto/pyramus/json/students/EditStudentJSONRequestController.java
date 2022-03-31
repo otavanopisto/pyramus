@@ -373,9 +373,11 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           String colPrefix = "studentStudyPeriodsTable." + student.getId() + "." + i;
           
           Long id = requestContext.getLong(colPrefix + ".id");
-          Date begin = requestContext.getDate(colPrefix + ".begin");
-          Date end = requestContext.getDate(colPrefix + ".end");
           StudentStudyPeriodType periodType = (StudentStudyPeriodType) requestContext.getEnum(colPrefix + ".type", StudentStudyPeriodType.class);
+
+          Date begin = requestContext.getDate(colPrefix + ".begin");
+          // Null out the end date when period type allows only begin dates
+          Date end = !StudentStudyPeriodType.BEGINDATE_ONLY.contains(periodType) ? requestContext.getDate(colPrefix + ".end") : null;
           
           if (id == -1 && begin != null) {
             StudentStudyPeriod studyPeriod = studentStudyPeriodDAO.create(student, begin, end, periodType);

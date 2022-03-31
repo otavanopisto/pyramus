@@ -31,7 +31,7 @@ import fi.otavanopisto.pyramus.persistence.events.TrackedEntityUtils;
 import fi.otavanopisto.pyramus.util.ReflectionApiUtils;
 
 //@MessageDriven(activationConfig = { @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue") }, mappedName = "java:/jms/JPAEvents")
-public class ChangeLogJPAEventsListener implements MessageListener {
+public class ChangeLogJPAEventsListener { // implements MessageListener {
 
   public void onMessage(Message message) {
     try {

@@ -28,7 +28,7 @@ public class ManageWorklistTemplatesViewController extends PyramusViewController
     WorklistItemTemplateDAO worklistItemTemplateDAO = DAOFactory.getInstance().getWorklistItemTemplateDAO();
     List<WorklistItemTemplate> templates = worklistItemTemplateDAO.listUnarchived();
     templates.sort(Comparator.comparing(WorklistItemTemplate::getDescription));
-    String jsonTemplates = new JSONArrayExtractor("id", "description", "price", "factor").extractString(templates);
+    String jsonTemplates = new JSONArrayExtractor("id", "description", "price", "factor", "billingNumber").extractString(templates);
     this.setJsDataVariable(pageRequestContext, "templates", jsonTemplates);
     pageRequestContext.setIncludeJSP("/templates/worklist/manageworklisttemplates.jsp");
   }

@@ -69,7 +69,7 @@ public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {
       return userVariable == null ? null : userVariable.getValue();
     }
     else {
-      throw new PersistenceException("Unknown VariableKey");
+      throw new PersistenceException(String.format("Unknown VariableKey %s", key));
     }
   }
 

@@ -31,6 +31,14 @@ function onLoad(event) {
           paramName : 'factor'
         },
         {
+          header : getLocale().getText("worklist.manageWorklistTemplates.billingNumber"),
+          left : 8 + 300 + 8 + 50 + 8 + 50 + 8,
+          width : 150,
+          dataType : 'text',
+          editable : false,
+          paramName : 'billingNumber'
+        },
+        {
           right : 30,
           width : 30,
           dataType : 'button',
@@ -94,7 +102,7 @@ function onLoad(event) {
 
   var rows = new Array();
   for (var i = 0, l = templates.length; i < l; i++) {
-    rows.push([templates[i].description, templates[i].price, templates[i].factor, null, null, templates[i].id]);
+    rows.push([templates[i].description, templates[i].price, templates[i].factor, templates[i].billingNumber, null, null, templates[i].id]);
   }
   worklistTemplatesTable.addRows(rows);
 };

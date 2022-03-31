@@ -102,6 +102,14 @@ public class MatriculationExamAttendance {
     this.projectAssessment = projectAssessment;
   }
 
+  public MatriculationExamAttendanceFunding getFunding() {
+    return funding;
+  }
+
+  public void setFunding(MatriculationExamAttendanceFunding funding) {
+    this.funding = funding;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamAttendance")  
   @TableGenerator(name="MatriculationExamAttendance", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -132,6 +140,10 @@ public class MatriculationExamAttendance {
   @Enumerated(EnumType.STRING)
   private MatriculationExamAttendanceStatus status;
 
+  @Column
+  @Enumerated(EnumType.STRING)
+  private MatriculationExamAttendanceFunding funding;
+  
   @Column
   @Enumerated(EnumType.STRING)
   private MatriculationExamGrade grade;

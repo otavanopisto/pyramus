@@ -3,32 +3,33 @@
   <head>
     <#include "muikkuloginhead.ftl">
   </head>
-  <body class="index">
-    <div class="muikku-login-overlay"></div>
-    <div class="muikku-login-wrapper">
-    <div class="muikku-logo"></div>
-    <div class="muikku-login-container">
-    <h1>Muikku login</h1>
-    <form action="login.json" method="post" ix:jsonform="true">
-      <div class="formElementRow">
-        <label class="formLabel" for="username">Username</label>
-        <input type="text" required="required" name="username" id="username">
-      </div>
-      
-      <div class="formElementRow">
-        <label class="formLabel" for="password">Password</label>
-        <input type="password" required="required" name="password" id="password">
-      </div>
-      
-      <div class="formElementRow">
-        <#list externalProviders as externalProvider>
-          <a class="${externalProvider.name}-button external-login-button" href="?external=${externalProvider.name}"></a>
-        </#list>
-        <input type="submit" class="login-button" value="Login">
-      </div>
-    </form>
-      <div class="clear"></div>
+  <body class="muikku-login-body">
+    <div class="muikku-login-card-wrapper">
+      <form action="login.json" method="post" ix:jsonform="true">
+        <section class="muikku-login-card">
+		  <header class="muikku-logo-container">
+		    <img class="muikku-logo" src="//cdn.muikkuverkko.fi/assets/muikku/oo-branded-site-logo.png" role="presentation"/>
+  		  <span class="muikku-logo-text">Muikku</span>
+		  </header>
+		  <main class="muikku-login-container">
+		    <h1 class="muikku-login-title">Login</h1>
+		    <div class="muikku-login-container-row">
+		      <label class="muikku-login-label" for="username">Username</label>
+		      <input class="muikku-login-input" type="text" required="required" name="username" id="username">
+  		    </div>
+		    <div class="muikku-login-container-row">
+		      <label class="muikku-login-label" for="password">Password</label>
+  		    <input class="muikku-login-input" type="password" required="required" name="password" id="password">
+		    </div>
+		    <div class="muikku-login-footer">
+	          <input type="submit" class="muikku-login-button" value="Login">
+	          <#list externalProviders as externalProvider>
+  	            <a class="${externalProvider.name}-login-button external-login-button" href="?external=${externalProvider.name}"></a>
+              </#list>
+            </div>
+	      </main>
+	    </section>
+	  </form>
     </div>
-  </div>
-</body>
+  </body>
 </html>

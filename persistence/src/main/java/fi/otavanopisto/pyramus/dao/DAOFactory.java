@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationMailTemplateDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
+import fi.otavanopisto.pyramus.dao.auditlog.AuditLogDAO;
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
@@ -155,6 +156,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.webhooks.WebhookDAO;
+import fi.otavanopisto.pyramus.dao.worklist.WorklistBillingSettingsDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
 
@@ -588,6 +590,10 @@ public class DAOFactory {
 
   /* Base */
   
+  public AuditLogDAO getAuditLogDAO() {
+    return (AuditLogDAO) findByClass(AuditLogDAO.class);
+  }
+
   public AcademicTermDAO getAcademicTermDAO() {
     return (AcademicTermDAO) findByClass(AcademicTermDAO.class);
   }
@@ -823,6 +829,10 @@ public class DAOFactory {
 
   public WorklistItemTemplateDAO getWorklistItemTemplateDAO() {
     return (WorklistItemTemplateDAO) findByClass(WorklistItemTemplateDAO.class);
+  }
+
+  public WorklistBillingSettingsDAO getWorklistBillingSettingsDAO() {
+    return (WorklistBillingSettingsDAO) findByClass(WorklistBillingSettingsDAO.class);
   }
 
   private String getAppName() throws NamingException {

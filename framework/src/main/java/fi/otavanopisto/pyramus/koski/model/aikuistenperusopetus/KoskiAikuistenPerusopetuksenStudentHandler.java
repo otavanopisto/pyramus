@@ -3,13 +3,11 @@ package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,10 +24,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
-import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
@@ -43,18 +39,16 @@ import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
-import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
-import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
-public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHandler {
+public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuistenPerusopetuksenHandler {
 
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aikuistenperusopetus;
   
@@ -110,7 +104,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
         studentSubjects, laskeKeskiarvot);
 
     AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
+        suoritusTapa(student), Kieli.FI, toimipiste);
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (sisällytäVahvistus) {
@@ -123,31 +117,6 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     return opiskeluoikeus;
   }
   
-  private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
-    AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot = new AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot();
-    
-    lisatiedot.setVuosiluokkiinSitoutumatonOpetus(true);
-    
-    List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
-    for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
-      lisatiedot.addSisaoppilaitosmainenMajoitus(new Majoitusjakso(lodgingPeriod.getBegin(), lodgingPeriod.getEnd()));
-    }
-    
-    if (!lodgingPeriods.isEmpty()) {
-      Date minBeginDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getBegin).filter(Objects::nonNull)
-          .min(Comparator.nullsLast(Date::compareTo)).orElse(null);
-      
-      if (minBeginDate != null) {
-        Date maxEndDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getEnd).filter(Objects::nonNull)
-            .max(Comparator.nullsLast(Date::compareTo)).orElse(null);
-        
-        lisatiedot.setOikeusMaksuttomaanAsuntolapaikkaan(new Majoitusjakso(minBeginDate, maxEndDate));
-      }
-    }
-    
-    return lisatiedot;
-  }
-
   private StudentSubjectSelections getDefaultSubjectSelections() {
     StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
     studentSubjects.setPrimaryLanguage("äi");
@@ -231,7 +200,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
         
         AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli(
             aine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -252,7 +221,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
           
           AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli(
               valinta, kieli, isPakollinenOppiaine(student, valinta));
-          return mapSubject(subject, subjectCode, tunniste, map);
+          return mapSubject(subject, subjectCode, false, tunniste, map);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -272,7 +241,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
             kansallinenAine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.KT));
-        return mapSubject(subject, "KT", tunniste, map);
+        return mapSubject(subject, "KT", false, tunniste, map);
       } else
         return null;
     }
@@ -283,7 +252,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
           kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, false, tunniste, map);
     } else {
       // Other local subject
       // TODO Skipped subjects ?? (MUU)
@@ -291,14 +260,14 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen(
           paikallinenKoodi, false, kuvaus(subject.getName()));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, true, tunniste, map);
     }
   }
 
   private OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> mapSubject(
-      Subject subject, String subjectCode, AikuistenPerusopetuksenOppiaineenTunniste tunniste,
+      Subject subject, String subjectCode, boolean paikallinenOppiaine, AikuistenPerusopetuksenOppiaineenTunniste tunniste,
       Map<String, OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus>> map) {
-    OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
+    OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, paikallinenOppiaine, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
     map.put(subjectCode, os);
     return os;
   }

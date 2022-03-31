@@ -110,7 +110,7 @@ public class CompositeRESTService {
         String[] courseStudentIdArray = courseStudentIds.split(",");
         for (int i = 0; i < courseStudentIdArray.length; i++) {
           CourseStudent courseStudent = courseController.findCourseStudentById(new Long(courseStudentIdArray[i]));
-          if (courseStudent != null) {
+          if (courseStudent != null && !courseStudent.getArchived() && !courseStudent.getStudent().getArchived()) {
             courseStudents.add(courseStudent);
           }
         }
@@ -130,7 +130,7 @@ public class CompositeRESTService {
           if (staffMember == null || !studentController.isStudentGuider(staffMember, courseStudent.getStudent()))
           continue;
         }
-        CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestByCourseStudent(courseStudent);
+        CourseAssessmentRequest courseAssessmentRequest = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
         CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setCourseStudentId(courseStudent.getId());

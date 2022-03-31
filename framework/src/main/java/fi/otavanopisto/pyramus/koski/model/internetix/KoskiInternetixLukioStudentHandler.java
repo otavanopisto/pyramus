@@ -20,7 +20,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -29,13 +28,9 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
-import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
@@ -52,21 +47,20 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
-import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
-import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
+import fi.otavanopisto.pyramus.koski.model.lukio.AbstractKoskiLukioStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunniste;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnistePaikallinen;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2004;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusEiTiedossa;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMatematiikka;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMuuValtakunnallinen;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusPaikallinen;
@@ -75,17 +69,12 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
-public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
+public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
 
-  public static final String USERVARIABLE_UNDER18START = "lukioAlle18v";
-  public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskelulukio;
 
   @Inject
   private Logger logger;
-  
-  @Inject
-  private StudentStudyPeriodDAO studentStudyPeriodDAO;
   
   @Override
   protected boolean isPakollinenOppiaine(Student student, KoskiOppiaineetYleissivistava oppiaine) {
@@ -93,7 +82,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     return handlerParams.isPakollinenOppiaine(oppiaine);
   }
   
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
+  public OpiskeluoikeusInternetix studentToModel(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = resolveInternetixOid(student, HANDLER_TYPE);
     
@@ -124,6 +113,8 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
     boolean laskeKeskiarvot = lopetusSyy != null ? lopetusSyy.getLaskeAinekeskiarvot() : false;
     boolean sisällytäVahvistus = lopetusSyy != null ? lopetusSyy.getSisällytäVahvistaja() : false;
+    boolean lukionOppimääräSuoritettu = lopetusSyy != null ? lopetusSyy.isLukionOppimääräSuoritettu() : false;
+    opiskeluoikeus.setOppimaaraSuoritettu(lukionOppimääräSuoritettu || sisällytäVahvistus);
 
     KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
 
@@ -135,15 +126,18 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
 
     // Aineopiskelija
     
-    if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-      if (StringUtils.isNotEmpty(studyOid)) {
-        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.EXISTING_INTERNETIX_STUDYPERMIT_WITHOUT_CREDITS, new Date(), studyOid);
-      }
+    boolean eiSuorituksia = CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset());
+    
+    if (eiSuorituksia) {
+      LukionOppiaineenTunniste oppiaineenTunniste = new LukionOppiaineenSuoritusEiTiedossa();
+      LukionOppiaineenSuoritus oppiaineenSuoritus = new LukionOppiaineenSuoritus(oppiaineenTunniste);
       
-      return null;
+      LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = LukionOppiaineenOppimaaranSuoritus.from(
+          oppiaineenSuoritus, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
+      opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     
-    return opiskeluoikeus;
+    return new OpiskeluoikeusInternetix(opiskeluoikeus, eiSuorituksia);
   }
   
   private StudentSubjectSelections getDefaultSubjectSelections() {
@@ -152,31 +146,6 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     studentSubjects.setPrimaryLanguage("ÄI");
     studentSubjects.setReligion("UE");
     return studentSubjects;
-  }
-
-  private LukionOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
-    List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
-    boolean pidennettyPaattymispaiva = studyPeriods.stream().anyMatch(studyPeriod -> studyPeriod.getPeriodType() == StudentStudyPeriodType.PROLONGED_STUDYENDDATE);
-    boolean ulkomainenVaihtoopiskelija = false;
-    boolean yksityisopiskelija = settings.isYksityisopiskelija(student.getStudyProgramme().getId());
-    boolean oikeusMaksuttomaanAsuntolapaikkaan = settings.isFreeLodging(student.getStudyProgramme().getId());
-    LukionOpiskeluoikeudenLisatiedot lisatiedot = new LukionOpiskeluoikeudenLisatiedot(
-        pidennettyPaattymispaiva, ulkomainenVaihtoopiskelija, yksityisopiskelija, oikeusMaksuttomaanAsuntolapaikkaan);
-
-    if (StringUtils.equals(userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18START), "1")) {
-      String under18startReason = userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18STARTREASON);
-      if (StringUtils.isNotBlank(under18startReason)) {
-        lisatiedot.setAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy(kuvaus(under18startReason));
-      }
-    }
-    
-    List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
-    for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
-      Majoitusjakso jakso = new Majoitusjakso(lodgingPeriod.getBegin(), lodgingPeriod.getEnd());
-      lisatiedot.addSisaoppilaitosmainenMajoitus(jakso);
-    }
-    
-    return lisatiedot;
   }
 
   private void assessmentsToModel(LukionOpiskeluoikeus opiskeluoikeus, 

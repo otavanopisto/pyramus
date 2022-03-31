@@ -636,7 +636,19 @@
 
           if (studentSubjectCreditsData) {
             var container = $('subjectCreditsTable.' + studentId);
-  
+
+            for (var i = 0, l = studentSubjectCreditsData.problems.length; i < l; i++) {
+              var problem = studentSubjectCreditsData.problems[i];
+
+              var problemElement = container.appendChild(new Element("div", {className: "studentSubjectCreditsProblem"}));
+              var exclMark = problemElement.appendChild(new Element("div", {className: "studentSubjectCreditsProblemIcon"}));
+              var problemText = problemElement.appendChild(new Element("div", {className: "studentSubjectCreditsProblemText"}));
+
+              var reason = getLocale().getText("student.tor.problems." + problem.type);
+              var details = problem.additionalInfo ? " (" + problem.additionalInfo + ")" : "";
+              problemText.update(reason + details);
+            }
+            
             for (var i = 0, l = studentSubjectCreditsData.subjects.length; i < l; i++) {
               var subject = studentSubjectCreditsData.subjects[i];
               var subjectElement = container.appendChild(new Element("div", {className: "studentSubjectCreditsSubject"}));
@@ -2445,6 +2457,63 @@
                     </c:when>
                   </c:choose>
 
+                  <c:choose>
+                    <c:when test="${!empty studentMatriculationEnrollments[student.id]}">
+                      <div class="genericFormSection">
+                        <jsp:include
+                          page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale"
+                            value="students.viewStudent.matriculationExamEnrollmentsTitle" />
+                          <jsp:param name="helpLocale"
+                            value="students.viewStudent.matriculationExamEnrollmentsHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">
+                          <c:forEach var="enrollment" items="${studentMatriculationEnrollments[student.id]}">
+                            <c:choose>
+                              <c:when test="${enrollment.exam.examTerm == 'SPRING'}">
+                                <c:set var="matriculationExamEnrollmentTerm">
+                                  <fmt:message key="terms.seasons.spring"/>
+                                </c:set>
+                              </c:when>
+                              <c:when test="${enrollment.exam.examTerm == 'AUTUMN'}">
+                                <c:set var="matriculationExamEnrollmentTerm">
+                                  <fmt:message key="terms.seasons.autumn"/>
+                                </c:set>
+                              </c:when>
+                              <c:otherwise>
+                                <c:set var="matriculationExamEnrollmentTerm">???</c:set>
+                              </c:otherwise>
+                            </c:choose>
+                          
+                            <c:choose>
+                              <c:when test="${enrollment.state == 'PENDING'}">
+                                <c:set var="matriculationExamEnrollmentState">
+                                  <fmt:message key="terms.pending"/>
+                                </c:set>
+                              </c:when>
+                              <c:when test="${enrollment.state == 'APPROVED'}">
+                                <c:set var="matriculationExamEnrollmentState">
+                                  <fmt:message key="terms.approved"/>
+                                </c:set>
+                              </c:when>
+                              <c:when test="${enrollment.state == 'REJECTED'}">
+                                <c:set var="matriculationExamEnrollmentState">
+                                  <fmt:message key="terms.rejected"/>
+                                </c:set>
+                              </c:when>
+                              <c:otherwise>
+                                <c:set var="matriculationExamEnrollmentState"></c:set>
+                              </c:otherwise>
+                            </c:choose>
+                          
+                            <div>
+                              <a href="${pageContext.request.contextPath}/matriculation/edit.page?enrollment=${enrollment.id}">${matriculationExamEnrollmentTerm} ${enrollment.exam.examYear} (<fmt:formatDate value="${enrollment.enrollmentDate}"/>)</a> [${matriculationExamEnrollmentState}]
+                            </div>
+                          </c:forEach>
+                        </div>
+                      </div>
+                    </c:when>
+                  </c:choose>
                 </div>
 
                 <!--  Student Education Info Ends -->

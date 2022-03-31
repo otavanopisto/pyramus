@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -12,13 +14,27 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
+import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme_;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.events.StudyProgrammeArchivedEvent;
+import fi.otavanopisto.pyramus.events.StudyProgrammeCreatedEvent;
+import fi.otavanopisto.pyramus.events.StudyProgrammeUpdatedEvent;
 
 @Stateless
 public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
+
+  @Inject
+  private Event<StudyProgrammeCreatedEvent> studyProgrammeCreatedEvent;
+  
+  @Inject
+  private Event<StudyProgrammeUpdatedEvent> studyProgrammeUpdatedEvent;
+  
+  @Inject
+  private Event<StudyProgrammeArchivedEvent> studyProgrammeRemovedEvent;
 
   public StudyProgramme create(Organization organization, String name, StudyProgrammeCategory category, String code, boolean hasEvaluationFees) {
     EntityManager entityManager = getEntityManager();
@@ -30,6 +46,8 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     studyProgramme.setCode(code);
     studyProgramme.setHasEvaluationFees(hasEvaluationFees);
     entityManager.persist(studyProgramme);
+    
+    studyProgrammeCreatedEvent.fire(new StudyProgrammeCreatedEvent(studyProgramme.getId()));
 
     return studyProgramme;
   }
@@ -91,7 +109,19 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);
     studyProgramme.setHasEvaluationFees(hasEvaluationFees);
+    
+    studyProgrammeUpdatedEvent.fire(new StudyProgrammeUpdatedEvent(studyProgramme.getId()));
+    
     return persist(studyProgramme);
+  }
+
+  @Override
+  public void archive(ArchivableEntity entity, User modifier) {
+    super.archive(entity, modifier);
+    if (entity instanceof StudyProgramme) {
+      StudyProgramme studyProgramme = (StudyProgramme) entity;
+      studyProgrammeRemovedEvent.fire(new StudyProgrammeArchivedEvent(studyProgramme.getId()));
+    }
   }
   
 }

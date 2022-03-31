@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.students.tor;
+package fi.otavanopisto.pyramus.tor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,16 +6,16 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import fi.otavanopisto.pyramus.rest.model.Subject;
-
 public class TORCourse {
 
   public TORCourse() {
   }
 
-  public TORCourse(Subject subject, Integer courseNumber) {
+  public TORCourse(Subject subject, Integer courseNumber, Double courseLength, TORCourseLengthUnit lengthUnit) {
     this.subject = subject;
     this.courseNumber = courseNumber;
+    this.courseLength = courseLength;
+    this.lengthUnit = lengthUnit;
   }
   
   public Subject getSubject() {
@@ -46,20 +46,38 @@ public class TORCourse {
     this.credits = credits;
   }
 
-  public void sort() {
-    Collections.sort(credits, Collections.reverseOrder());
-  }
-
   public boolean isPassed() {
     return credits.stream().anyMatch(credit -> Boolean.TRUE.equals(credit.getPassingGrade()));
   }
   
   public TORCredit getLatestCredit() {
-    this.sort();
+    this.postProcess();
     return CollectionUtils.isNotEmpty(credits) ? credits.get(0) : null;
   }
   
+  public Double getCourseLength() {
+    return courseLength;
+  }
+
+  public void setCourseLength(Double courseLength) {
+    this.courseLength = courseLength;
+  }
+
+  public TORCourseLengthUnit getLengthUnit() {
+    return lengthUnit;
+  }
+
+  public void setLengthUnit(TORCourseLengthUnit lengthUnit) {
+    this.lengthUnit = lengthUnit;
+  }
+
+  protected void postProcess() {
+    Collections.sort(credits, Collections.reverseOrder());
+  }
+
   private Integer courseNumber;
   private Subject subject;
+  private Double courseLength;
+  private TORCourseLengthUnit lengthUnit;
   private List<TORCredit> credits = new ArrayList<>();
 }

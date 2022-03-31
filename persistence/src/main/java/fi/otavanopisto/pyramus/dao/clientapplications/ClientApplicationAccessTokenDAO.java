@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.dao.clientapplications;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -55,6 +57,20 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
         );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public List<ClientApplicationAccessToken> listByExpired(long threshold, int maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ClientApplicationAccessToken> criteria = criteriaBuilder.createQuery(ClientApplicationAccessToken.class);
+    Root<ClientApplicationAccessToken> root = criteria.from(ClientApplicationAccessToken.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.lessThan(root.get(ClientApplicationAccessToken_.expires), threshold)
+    );
+    
+    return entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
   }
   
   public ClientApplicationAccessToken findByAuthCode(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode){

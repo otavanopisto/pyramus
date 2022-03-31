@@ -90,7 +90,15 @@ public class ViewReportParametersViewController extends PyramusViewController im
           if (courseId != null)
             urlBuilder.append("&courseId=").append(courseId);
         break;
+        
+        case Common:
+        break;
       }
+    }
+    
+    Long staffMemberId = pageRequestContext.getLong("staffMemberId");
+    if (staffMemberId != null) {
+      urlBuilder.append("&staffMemberId=").append(staffMemberId);
     }
     
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,8 +30,10 @@ import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
@@ -100,6 +103,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
       enrollmentState,
+      MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
       pageRequestContext.getBoolean("approvedByGuider")
     );
     
@@ -113,11 +117,11 @@ public class EditEnrollmentViewController extends PyramusViewController {
       
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("enrolledAttendances." + i + ".subject"));
-      boolean mandatory =
-        "MANDATORY".equals(pageRequestContext.getString("enrolledAttendances." + i + ".mandatority"));
+      Boolean mandatory = parseMandatory(pageRequestContext.getString("enrolledAttendances." + i + ".mandatority"));
       boolean repeat =
         "REPEAT".equals(pageRequestContext.getString("enrolledAttendances." + i + ".repeat"));
-      
+      MatriculationExamAttendanceFunding funding = parseFunding(pageRequestContext.getString("enrolledAttendances." + i + ".funding"));      
+
       MatriculationExamAttendance examAttendance;
       if (NEW_ROW_ID.equals(attendanceId)) {
         // NOTE: new ENROLLED attendances are tied to the year and term defined in the exam properties
@@ -126,11 +130,11 @@ public class EditEnrollmentViewController extends PyramusViewController {
         MatriculationExamTerm term = matriculationExam.getExamTerm();
         
         examAttendance = attendanceDAO.create(enrollment, subject, mandatory, repeat,
-            year, term, MatriculationExamAttendanceStatus.ENROLLED, null);
+            year, term, MatriculationExamAttendanceStatus.ENROLLED, funding, null);
       } else {
         examAttendance = attendanceDAO.findById(attendanceId);
         examAttendance = attendanceDAO.update(examAttendance, enrollment, subject, mandatory, repeat,
-            examAttendance.getYear(), examAttendance.getTerm(), examAttendance.getStatus(), examAttendance.getGrade());
+            examAttendance.getYear(), examAttendance.getTerm(), examAttendance.getStatus(), funding, examAttendance.getGrade());
       }
       
       if (enrollmentState == MatriculationExamEnrollmentState.APPROVED) {
@@ -151,18 +155,18 @@ public class EditEnrollmentViewController extends PyramusViewController {
       int year = Integer.parseInt(termString.substring(6));
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("finishedAttendances." + i + ".subject"));
-      boolean mandatory =
-        "MANDATORY".equals(pageRequestContext.getString("finishedAttendances." + i + ".mandatority"));
+      Boolean mandatory = parseMandatory(pageRequestContext.getString("finishedAttendances." + i + ".mandatority"));
       MatriculationExamGrade grade =
         MatriculationExamGrade.valueOf(pageRequestContext.getString("finishedAttendances." + i + ".grade"));
+      MatriculationExamAttendanceFunding funding = parseFunding(pageRequestContext.getString("finishedAttendances." + i + ".funding"));      
       
       if (NEW_ROW_ID.equals(attendanceId)) {
         attendanceDAO.create(enrollment, subject, mandatory, null, year, term,
-          MatriculationExamAttendanceStatus.FINISHED, grade);
+          MatriculationExamAttendanceStatus.FINISHED, funding, grade);
       } else {
         MatriculationExamAttendance examAttendance = attendanceDAO.findById(attendanceId);
         attendanceDAO.update(examAttendance, enrollment, subject, mandatory, null, year, term,
-            MatriculationExamAttendanceStatus.FINISHED, grade);
+            MatriculationExamAttendanceStatus.FINISHED, funding, grade);
       }
     }
     
@@ -179,21 +183,36 @@ public class EditEnrollmentViewController extends PyramusViewController {
       int year = Integer.parseInt(termString.substring(6));
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("plannedAttendances." + i + ".subject"));
-      boolean mandatory =
-        "MANDATORY".equals(pageRequestContext.getString("plannedAttendances." + i + ".mandatority"));
+      Boolean mandatory = parseMandatory(pageRequestContext.getString("plannedAttendances." + i + ".mandatority"));
+      MatriculationExamAttendanceFunding funding = parseFunding(pageRequestContext.getString("plannedAttendances." + i + ".funding"));      
+
       if (NEW_ROW_ID.equals(attendanceId)) {
         attendanceDAO.create(enrollment, subject, mandatory, null, year, term,
-          MatriculationExamAttendanceStatus.PLANNED, null);
+          MatriculationExamAttendanceStatus.PLANNED, funding, null);
       } else {
         MatriculationExamAttendance examAttendance = attendanceDAO.findById(attendanceId);
         attendanceDAO.update(examAttendance, enrollment, subject, mandatory, null, year, term,
-            MatriculationExamAttendanceStatus.PLANNED, null);
+            MatriculationExamAttendanceStatus.PLANNED, funding, null);
       }
     }
     
     pageRequestContext.setRedirectURL(pageRequestContext.getRequest().getRequestURI() + "?enrollment=" + id);
   }
 
+  private MatriculationExamAttendanceFunding parseFunding(String value) {
+    return StringUtils.isNotBlank(value) ? MatriculationExamAttendanceFunding.valueOf(value) : null;
+  }
+  
+  private Boolean parseMandatory(String value) {
+    return "MANDATORY".equals(value) ? Boolean.TRUE : 
+      "OPTIONAL".equals(value) ? Boolean.FALSE : null;
+  }
+  
+  private String mandatoryToString(Boolean mandatory) {
+    return Boolean.TRUE.equals(mandatory) ? "MANDATORY" :
+      Boolean.FALSE.equals(mandatory) ? "OPTIONAL" : null;
+  }
+  
   private void createOrUpdateStudentProject(MatriculationExamAttendance examAttendance, Student student, MatriculationExamSubject subject, boolean mandatory, StaffMember loggedUser) {
     ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
@@ -303,6 +322,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("message", enrollment.getMessage());
     pageRequestContext.getRequest().setAttribute("canPublishName", enrollment.isCanPublishName());
     pageRequestContext.getRequest().setAttribute("state", enrollment.getState().name());
+    pageRequestContext.getRequest().setAttribute("degreeStructure", enrollment.getDegreeStructure().name());
+    pageRequestContext.getRequest().setAttribute("enrollmentDate", enrollment.getEnrollmentDate());
     
     List<MatriculationExamAttendance> attendances = attendanceDAO.listByEnrollment(enrollment);
     
@@ -318,8 +339,9 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getId(),
                 attendance.getTerm().name() + attendance.getYear(),
                 attendance.getSubject().name(),
-                attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
+                mandatoryToString(attendance.isMandatory()),
                 attendance.isRetry() ? "REPEAT" : "FIRST_TIME",
+                attendance.getFunding() != null ? attendance.getFunding().toString() : "",
                 (attendance.getProjectAssessment() != null && attendance.getProjectAssessment().getDate() != null) ? 
                     attendance.getProjectAssessment().getDate().getTime() : null,
                 ""));
@@ -330,7 +352,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getId(),
                 attendance.getTerm().name() + attendance.getYear(),
                 attendance.getSubject().name(),
-                attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
+                mandatoryToString(attendance.isMandatory()),
+                attendance.getFunding() != null ? attendance.getFunding().toString() : "",
                 attendance.getGrade().name(),
                 ""));
         break;
@@ -340,7 +363,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getId(),
                 attendance.getTerm().name() + attendance.getYear(),
                 attendance.getSubject().name(),
-                attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
+                mandatoryToString(attendance.isMandatory()),
                 ""));
         break;
       default:

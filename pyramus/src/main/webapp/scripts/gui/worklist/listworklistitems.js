@@ -17,8 +17,10 @@ function doList() {
           '', // edit button
           worklistItems[i].entryDate,
           worklistItems[i].description,
-          worklistItems[i].price,
+          worklistItems[i].price.toFixed(2),
           worklistItems[i].factor,
+          worklistItems[i].billingNumber,
+          worklistItems[i].state,
           '', // assessment button
           '', // remove button
         ]);
@@ -30,13 +32,87 @@ function doList() {
       $('worklistItemsWrapper').setStyle({
         display : ''
       });
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('action')) {
+        $('stateChangeDropdown').value = urlParams.get('action');
+      }
     }
   });
+}
+
+function createNew() {
+  var userId = $("staffMember").value;
+  var templateId = $("worklistTemplate").value;
+  JSONRequest.request("worklist/createworklistitem.json", {
+    parameters : {
+      userId : userId,
+      templateId : templateId
+    },
+    onSuccess : function(jsonResponse) {
+      var table = getIxTableById('worklistItemsTable');
+      var worklistItem = jsonResponse.worklistItem;
+      table.addRow([
+        worklistItem.id,
+        '', // edit button
+        worklistItem.entryDate,
+        worklistItem.description,
+        worklistItem.price,
+        worklistItem.factor,
+        worklistItem.billingNumber,
+        worklistItem.state,
+        '', // assessment button
+        '', // remove button
+      ]);
+      if (!worklistItem.hasAssessment) {
+        table.hideCell(table.getRowCount() - 1, table.getNamedColumnIndex("assessmentButton"));
+      }
+      var row = table.getRowCount() - 1;
+      for (var i = 0; i < table.getColumnCount(); i++) {
+        table.setCellEditable(row, i, table.isCellEditable(row, i) == false);
+      }
+    }
+  });
+}
+
+function changeState() {
+  var table = getIxTableById('worklistItemsTable');
+  var newState = $("stateChangeDropdown").value;
+  for (var i = 0; i < table.getRowCount(); i++) {
+    var itemId = table.getCellValue(i, table.getNamedColumnIndex('worklistItemId'));
+    var entryDate = table.getCellValue(i, table.getNamedColumnIndex('entryDate'));
+    var description = table.getCellValue(i, table.getNamedColumnIndex('description'));
+    var price = table.getCellValue(i, table.getNamedColumnIndex('price'));
+    var factor = table.getCellValue(i, table.getNamedColumnIndex('factor'));
+    var billingNumber = table.getCellValue(i, table.getNamedColumnIndex('billingNumber'));
+    JSONRequest.request("worklist/editworklistitem.json", {
+      parameters : {
+        itemId : itemId,
+        entryDate : entryDate,
+        description : description,
+        price : price,
+        factor : factor,
+        billingNumber: billingNumber,
+        state: newState
+      }
+    });
+    table.setCellValue(i, table.getNamedColumnIndex('state'), newState);
+  }
 }
 
 function onListWorklistItems(event) {
   Event.stop(event);
   doList();
+}
+
+function showWorklistReport(event) {
+  var filterForm = $("filterForm");
+  var staffMemberId = filterForm.staffMember.value;
+  var beginDate = filterForm.beginDate.value;
+  var endDate = filterForm.endDate.value;
+  
+  var parameters = "&staffMemberId=" + staffMemberId + "&startDate=" + beginDate + "&endDate=" + endDate;
+  
+  window.open("/reports/viewreport.page?reportId=87" + parameters, "worklist_report");
 }
 
 function onLoad(event) {
@@ -66,13 +142,17 @@ function onLoad(event) {
             var description = table.getCellValue(event.row, table.getNamedColumnIndex('description'));
             var price = table.getCellValue(event.row, table.getNamedColumnIndex('price'));
             var factor = table.getCellValue(event.row, table.getNamedColumnIndex('factor'));
+            var billingNumber = table.getCellValue(event.row, table.getNamedColumnIndex('billingNumber'));
+            var state = table.getCellValue(event.row, table.getNamedColumnIndex('state'));
             JSONRequest.request("worklist/editworklistitem.json", {
               parameters : {
                 itemId : itemId,
                 entryDate : entryDate,
                 description : description,
                 price : price,
-                factor : factor
+                factor : factor,
+                billingNumber: billingNumber,
+                state: state
               }
             });
           }
@@ -90,7 +170,7 @@ function onLoad(event) {
       {
         header : getLocale().getText("worklist.listWorklistItems.description"),
         left : 8 + 30 + 150 + 8,
-        width : 300,
+        width : 800,
         dataType : 'text',
         editable : false,
         paramName : 'description',
@@ -98,7 +178,7 @@ function onLoad(event) {
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.price"),
-        left : 8 + 30 + 150 + 8 + 300 + 8,
+        right : 8 + 30 + 30 + 150 + 8 + 150 + 8 + 50 + 8,
         width : 50,
         dataType : 'text',
         editable : false,
@@ -107,12 +187,50 @@ function onLoad(event) {
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.factor"),
-        left : 8 + 30 + 150 + 8 + 300 + 8 + 50 + 8,
+        right : 8 + 30 + 30 + 150 + 8 + 150 + 8,
         width : 50,
         dataType : 'text',
         editable : false,
         paramName : 'factor',
         required : true
+      },
+      {
+        header : getLocale().getText("worklist.listWorklistItems.billingNumber"),
+        right: 8 + 30 + 30 + 150 + 8,
+        width : 150,
+        dataType : 'text',
+        editable : false,
+        paramName : 'billingNumber',
+        required : true
+      },
+      {
+        header : getLocale().getText("worklist.listWorklistItems.state"),
+        right: 8 + 30 + 30,
+        width : 150,
+        dataType : 'select',
+        editable : false,
+        paramName : 'state',
+        required : true,
+        options : (function() {
+          var result = [];
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.entered"),
+            value : 'ENTERED'
+          });
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.proposed"),
+            value : 'PROPOSED'
+          });
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.approved"),
+            value : 'APPROVED'
+          });
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.paid"),
+            value : 'PAID'
+          });
+          return result;
+        })()
       },
       {
         right : 8 + 30,
@@ -146,8 +264,9 @@ function onLoad(event) {
         tooltip : getLocale().getText("worklist.listWorklistItems.delete"),
         onclick : function(event) {
           var table = event.tableComponent;
-          var description = table.getCellValue(event.row, table.getNamedColumnIndex('description'));
-          var itemId = table.getCellValue(event.row, table.getNamedColumnIndex('worklistItemId'));
+          var rowIndex = event.row;
+          var description = table.getCellValue(rowIndex, table.getNamedColumnIndex('description'));
+          var itemId = table.getCellValue(rowIndex, table.getNamedColumnIndex('worklistItemId'));
           var url = GLOBAL_contextPath + "/simpledialog.page?localeId=worklist.listWorklistItems.archiveConfirmDialogContent&localeParams="
               + encodeURIComponent(description);
 
@@ -173,7 +292,7 @@ function onLoad(event) {
                     itemId : itemId
                   },
                   onSuccess : function(jsonResponse) {
-                    table.deleteRow(event.row);
+                    table.deleteRow(rowIndex);
                   }
                 });
               break;
@@ -186,4 +305,15 @@ function onLoad(event) {
       }
     ]
   });
+  
+  // Presearch with query parameters
+  
+  var urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('user') && urlParams.has('begin') && urlParams.has('end')) {
+    filterForm.staffMember.value = urlParams.get('user');
+    getIxDateField('beginDate').setTimestamp(new Date(urlParams.get('begin')).getTime());
+    getIxDateField('endDate').setTimestamp(new Date(urlParams.get('end')).getTime());
+    doList();
+  }
+  
 };

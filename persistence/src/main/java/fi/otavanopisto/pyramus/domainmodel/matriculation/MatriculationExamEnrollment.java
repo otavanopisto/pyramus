@@ -211,6 +211,14 @@ public class MatriculationExamEnrollment {
     this.exam = exam;
   }
 
+  public MatriculationExamEnrollmentDegreeStructure getDegreeStructure() {
+    return degreeStructure;
+  }
+
+  public void setDegreeStructure(MatriculationExamEnrollmentDegreeStructure degreeStructure) {
+    this.degreeStructure = degreeStructure;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -284,6 +292,10 @@ public class MatriculationExamEnrollment {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private MatriculationExamEnrollmentState state;
+  
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private MatriculationExamEnrollmentDegreeStructure degreeStructure;
   
   @Column
   private Date enrollmentDate;

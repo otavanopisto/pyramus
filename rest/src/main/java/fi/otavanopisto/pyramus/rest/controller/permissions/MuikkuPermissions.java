@@ -7,6 +7,7 @@ import fi.otavanopisto.pyramus.security.impl.CourseRoleArchetype;
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
+import fi.otavanopisto.pyramus.security.impl.PyramusPermissionFeatures;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
 
@@ -55,6 +56,11 @@ public class MuikkuPermissions extends AbstractPyramusPermissionCollection imple
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ TRUSTED_SYSTEM })
   public static final String MUIKKU_RESET_CREDENTIALS = "MUIKKU_RESET_CREDENTIALS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
+  public static final String GET_STUDENT_COURSE_ACTIVITY = "GET_STUDENT_COURSE_ACTIVITY";
    
   @Override
   public List<String> listPermissions() {

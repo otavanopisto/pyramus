@@ -50,10 +50,19 @@ public class MatriculationExam {
     this.enrollmentDate = enrollmentDate;
   }
 
+  public boolean isCompulsoryEducationEligible() {
+    return compulsoryEducationEligible;
+  }
+
+  public void setCompulsoryEducationEligible(boolean compulsoryEducationEligible) {
+    this.compulsoryEducationEligible = compulsoryEducationEligible;
+  }
+
   private Long id;
   private Long starts;
   private Long ends;
   private boolean eligible;
+  private boolean compulsoryEducationEligible;
   private boolean enrolled;
   private Long enrollmentDate;
 }

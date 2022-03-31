@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.students.tor;
+package fi.otavanopisto.pyramus.tor;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,6 +12,8 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentSubjectGradeDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
@@ -20,7 +22,6 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
-import fi.otavanopisto.pyramus.rest.model.Grade;
 
 public class StudentTORController {
 
@@ -35,13 +36,19 @@ public class StudentTORController {
     List<CreditLink> linkedTransferCreditsByStudent = creditLinkDAO.listByStudentAndType(student, CreditType.TransferCredit);
 
     StudentTOR tor = new StudentTOR();
+    TORProblems problems = tor.getProblems();
 
     for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
       if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
         Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
         Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
         Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums);
+        
+        EducationalLength courseEducationalLength = courseAssessment.getCourseStudent().getCourse().getCourseLength();
+        Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
+        TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
+        
+        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
       }
     }
     
@@ -50,7 +57,11 @@ public class StudentTORController {
       Integer courseNumber = transferCredit.getCourseNumber();
       Set<Curriculum> creditCurriculums = transferCredit.getCurriculum() != null ? 
           new HashSet<>(Arrays.asList(transferCredit.getCurriculum())) : Collections.emptySet();
-      addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums);
+
+      EducationalLength courseEducationalLength = transferCredit.getCourseLength();
+      Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
+      TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
+      addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
     }
     
     for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
@@ -59,7 +70,11 @@ public class StudentTORController {
         Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
         Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
         Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums);
+
+        EducationalLength courseEducationalLength = courseAssessment.getCourseStudent().getCourse().getCourseLength();
+        Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
+        TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
+        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
       }
     }
     
@@ -70,15 +85,29 @@ public class StudentTORController {
         Integer courseNumber = transferCredit.getCourseNumber();
         Set<Curriculum> creditCurriculums = transferCredit.getCurriculum() != null ? 
             new HashSet<>(Arrays.asList(transferCredit.getCurriculum())) : Collections.emptySet();
-        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums);
+        
+        EducationalLength courseEducationalLength = transferCredit.getCourseLength();
+        Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
+        TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
+        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
       }
     }
 
-    tor.sort();
+    tor.postProcess();
     return tor;
   }
   
-  private static void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums) {
+  private static TORCourseLengthUnit getCourseLengthUnit(EducationalTimeUnit unit, TORProblems problems) {
+    TORCourseLengthUnit lengthUnit = TORCourseLengthUnit.valueOf(unit.getSymbol());
+    
+    if (lengthUnit == null) {
+      problems.add(new TORProblem(TORProblemType.UNRESOLVABLE_LENGTHUNIT, String.format("%s (%s)", unit.getSymbol(), unit.getName())));
+    }
+    
+    return lengthUnit;
+  }
+
+  private static void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums, Double courseLength, TORCourseLengthUnit courseLengthUnit, TORProblems problems) {
     if (credit.getGrade() == null) {
       return;
     }
@@ -99,7 +128,7 @@ public class StudentTORController {
     }
     
     Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
-    fi.otavanopisto.pyramus.rest.model.Subject subjectModel = new fi.otavanopisto.pyramus.rest.model.Subject(
+    fi.otavanopisto.pyramus.tor.Subject subjectModel = new fi.otavanopisto.pyramus.tor.Subject(
         subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived());
     
     TORSubject torSubject = tor.findSubject(subject.getId());
@@ -116,11 +145,17 @@ public class StudentTORController {
         torSubject.setMeanGrade(gradeModel);
       }
     }
-    
+
     TORCourse torCourse = torSubject.findCourse(courseNumber);
     if (torCourse == null) {
-      torCourse = new TORCourse(subjectModel, courseNumber);
+      torCourse = new TORCourse(subjectModel, courseNumber, courseLength, courseLengthUnit);
       torSubject.addCourse(torCourse);
+    } else {
+      // Validate the lengthUnit matches
+      
+      if (torCourse.getLengthUnit() != courseLengthUnit) {
+        problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_LENGTHUNITS, String.format("%s%d", subjectModel.getCode(), courseNumber)));
+      }
     }
     
     String gradeName = credit.getGrade().getName();

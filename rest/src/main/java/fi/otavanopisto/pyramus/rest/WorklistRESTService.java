@@ -2,10 +2,8 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -14,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
@@ -36,22 +35,31 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemEditableFields;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
+import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.WorklistPermissions;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistApproverRestModel;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemBilledPriceRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemCourseAssessmentRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemRestModel;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemStateChangeRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemTemplateRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistSummaryItemRestModel;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -64,10 +72,16 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 public class WorklistRESTService {
 
   @Inject
+  private Logger logger;
+
+  @Inject
   private SessionController sessionController;
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private CourseController courseController;
 
   @Inject
   private AssessmentController assessmentController;
@@ -125,6 +139,9 @@ public class WorklistRESTService {
     Double factor = template.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
         ? payload.getFactor()
         : template.getFactor();
+    String billingNumber = template.getEditableFields().contains(WorklistItemEditableFields.BILLING_NUMBER)
+        ? payload.getBillingNumber()
+        : template.getBillingNumber();
     
     // Create a worklist item based on the template
     
@@ -135,6 +152,7 @@ public class WorklistRESTService {
         description,
         price,
         factor,
+        billingNumber,
         null,
         sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
@@ -162,8 +180,8 @@ public class WorklistRESTService {
     if (worklistItem.getTemplate().getTemplateType() != WorklistItemTemplateType.DEFAULT) { 
       return Response.status(Status.FORBIDDEN).entity("Item is based on a non-editable template").build();
     }
-    if (worklistItem.getLocked()) {
-      return Response.status(Status.FORBIDDEN).entity("Item is locked").build();
+    if (worklistItem.getState() == WorklistItemState.APPROVED || worklistItem.getState() == WorklistItemState.PAID) {
+      return Response.status(Status.FORBIDDEN).entity("Item is already approved or paid").build();
     }
     
     // Get values from item or payload, depending on editability
@@ -180,6 +198,9 @@ public class WorklistRESTService {
     Double factor = worklistItem.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
         ? payload.getFactor()
         : worklistItem.getFactor();
+    String billingNumber = worklistItem.getEditableFields().contains(WorklistItemEditableFields.BILLING_NUMBER)
+        ? payload.getBillingNumber()
+        : worklistItem.getBillingNumber();
         
     // Update the worklist item
     
@@ -189,6 +210,8 @@ public class WorklistRESTService {
         description,
         price,
         factor,
+        billingNumber,
+        WorklistItemState.ENTERED,
         sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
   }
@@ -215,8 +238,8 @@ public class WorklistRESTService {
     if (!worklistItem.getTemplate().getRemovable()) { 
       return Response.status(Status.FORBIDDEN).entity("Item is based on a non-removable template").build();
     }
-    if (worklistItem.getLocked()) {
-      return Response.status(Status.FORBIDDEN).entity("Item is locked").build();
+    if (worklistItem.getState() == WorklistItemState.APPROVED || worklistItem.getState() == WorklistItemState.PAID) {
+      return Response.status(Status.FORBIDDEN).entity("Item is already approved or paid").build();
     }
     worklistController.remove(worklistItem, false);
     return Response.noContent().build();
@@ -264,8 +287,7 @@ public class WorklistRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Invalid time").build();
     }
 
-    List<WorklistItem> worklistItems;
-    worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, begin, end);
+    List<WorklistItem> worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, begin, end);
     
     List<WorklistItemRestModel> restItems = new ArrayList<>();
     for (WorklistItem worklistItem : worklistItems) {
@@ -331,6 +353,121 @@ public class WorklistRESTService {
     
     return Response.ok(monthlyItems).build();
   }
+
+  /*
+   * Batch updates the state of all worklist items belonging to the specified user and timeframe.
+   * Only updates items that follow the proper change state flow. 
+   */
+  @Path("/changeItemsState")
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateWorklistItemsState(WorklistItemStateChangeRestModel stateChange) {
+    
+    Long ownerId = new Long(stateChange.getUserIdentifier());
+    
+    // Access check; suitable permission or updating your own items
+    
+    if (!sessionController.hasEnvironmentPermission(WorklistPermissions.UPDATE_WORKLISTITEM)) {
+      if (!Objects.equals(sessionController.getUser().getId(), ownerId)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    // Payload validation
+    
+    User user = userController.findUserById(ownerId);
+    if (user ==  null) {
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+    Date beginDate = java.sql.Timestamp.valueOf(stateChange.getBeginDate().atStartOfDay());
+    Date endDate = java.sql.Timestamp.valueOf(stateChange.getEndDate().atTime(23, 59, 59));
+    WorklistItemState state = WorklistItemState.valueOf(stateChange.getState());
+    
+    // Update the items that follow the proper state change flow of ENTERED -> PROPOSED -> APPROVED -> PAID
+    
+    List<WorklistItem> worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, beginDate, endDate);
+    worklistController.updateState(worklistItems, state, true);
+    return Response.noContent().build();    
+  }
+  
+  @Path("/approvers")
+  @GET
+  @RESTPermit (WorklistPermissions.LIST_WORKLISTAPPROVERS)
+  public Response listWorklistApprovers() {
+    List<WorklistApproverRestModel> approvers = new ArrayList<>();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    List<StaffMember> staffMembers = staffMemberDAO.listByProperty(StaffMemberProperties.WORKLIST_APPROVER.getKey(), "1");
+    for (StaffMember staffMember : staffMembers) {
+      approvers.add(createRestModel(staffMember));
+    }
+    return Response.ok(approvers).build();
+  }
+  
+  @Path("/basePrice")
+  @GET
+  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
+  public Response getCourseBasePrice(@QueryParam("course") Long courseId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    else {
+      Double basePrice = worklistController.getCourseBasePrice(course);
+      return basePrice == null ? Response.status(Status.NOT_FOUND).build() : Response.ok(basePrice).build();
+    }
+  }
+
+  @Path("/billedPrice")
+  @GET
+  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
+  public Response getCourseBilledPrice(@QueryParam("courseAssessment") Long courseAssessmentId) {
+    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(courseAssessmentId);
+    if (courseAssessment != null) {
+      List<WorklistItem> items = worklistController.listByCourseAssessment(courseAssessment);
+      if (items.size() > 1) {
+        logger.severe(String.format("Course assessment %d is associated with multiple worklist items", courseAssessmentId));
+      }
+      else if (items.size() == 1) {
+        WorklistItem item = items.get(0);
+        WorklistItemBilledPriceRestModel billedPrice = new WorklistItemBilledPriceRestModel();
+        billedPrice.setAssessmentIdentifier(courseAssessment.getId().toString());
+        billedPrice.setPrice(item.getPrice());
+        billedPrice.setEditable(item.getState() == WorklistItemState.ENTERED || item.getState() == WorklistItemState.PROPOSED);
+        return Response.ok(billedPrice).build();
+      }
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+
+  @Path("/billedPrice")
+  @PUT
+  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
+  public Response updateCourseBilledPrice(WorklistItemBilledPriceRestModel payload) {
+    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(new Long(payload.getAssessmentIdentifier()));
+    if (courseAssessment != null) {
+      List<WorklistItem> items = worklistController.listByCourseAssessment(courseAssessment);
+      if (items.size() > 1) {
+        logger.severe(String.format("Course assessment %s is associated with multiple worklist items", payload.getAssessmentIdentifier()));
+      }
+      else if (items.size() == 1) {
+        WorklistItem item = items.get(0);
+        if (item.getState() == WorklistItemState.APPROVED || item.getState() == WorklistItemState.PAID) {
+          logger.warning(String.format("Attempted to update price of worklist item %d that is already approved or paid", item.getId()));
+          return Response.status(Status.BAD_REQUEST).build();
+        }
+        worklistController.updateBilledPrice(item, payload.getPrice());
+        return Response.ok(payload).build(); 
+      }
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+
+  private WorklistApproverRestModel createRestModel(StaffMember staffMember) {
+    WorklistApproverRestModel restModel = new WorklistApproverRestModel();
+    restModel.setName(staffMember.getFullName());
+    restModel.setEmail(staffMember.getPrimaryEmail() == null ? null : staffMember.getPrimaryEmail().getAddress());
+    return restModel;
+  }
   
   private WorklistItemTemplateRestModel createRestModel(WorklistItemTemplate template) {
     WorklistItemTemplateRestModel restModel = new WorklistItemTemplateRestModel();
@@ -338,6 +475,7 @@ public class WorklistRESTService {
     restModel.setDescription(template.getDescription());
     restModel.setPrice(template.getPrice());
     restModel.setFactor(template.getFactor());
+    restModel.setBillingNumber(template.getBillingNumber());
     restModel.setEditableFields(template.getEditableFields().stream().map(Object::toString).collect(Collectors.toSet()));
     return restModel;
   }
@@ -346,14 +484,16 @@ public class WorklistRESTService {
     WorklistItemRestModel restModel = new WorklistItemRestModel();
     restModel.setId(worklistItem.getId());
     restModel.setTemplateId(worklistItem.getTemplate().getId());
+    restModel.setState(worklistItem.getState().toString());
     restModel.setEntryDate(new Date(worklistItem.getEntryDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     restModel.setDescription(worklistItem.getDescription());
     restModel.setPrice(worklistItem.getPrice());
     restModel.setFactor(worklistItem.getFactor());
+    restModel.setBillingNumber(worklistItem.getBillingNumber());
     if (worklistItem.getCourseAssessment() != null) {
       restModel.setCourseAssessment(createRestModel(worklistItem.getCourseAssessment()));
     }
-    if (worklistItem.getLocked()) {
+    if (worklistItem.getState() == WorklistItemState.APPROVED || worklistItem.getState() == WorklistItemState.PAID) {
       restModel.setEditableFields(Collections.emptySet());
       restModel.setRemovable(Boolean.FALSE);
     }

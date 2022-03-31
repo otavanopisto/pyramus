@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusEiTiedossa;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusMuu;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli;
@@ -35,6 +36,8 @@ public class APOOppiaineenTunnisteDeserializer extends JsonDeserializer<Aikuiste
         KoskiOppiaineetYleissivistava subject = KoskiOppiaineetYleissivistava.valueOf(subjectStr);
         
         switch (subject) {
+          case XX:
+            return codec.treeToValue(tree, AikuistenPerusopetuksenOppiaineenSuoritusEiTiedossa.class);
           case AI:
             return codec.treeToValue(tree, AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli.class);
           case A1:

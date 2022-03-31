@@ -18,7 +18,7 @@ function addAddressTableRow(values) {
 };
 
 function addLodgingPeriodTableRow(lodgingPeriodTable) {
-  lodgingPeriodTable.addRow([-1, '', '', '', '']);
+  lodgingPeriodTable.addRow([-1, '', '', '']);
 }
 
 function setupTags() {
@@ -53,47 +53,17 @@ function initStudentLodgingPeriodsTable() {
       dataType: 'date',
       editable: true,
       paramName: 'end'
-    },{
-      width: 30,
-      left: 8 + 160 + 8 + 160 + 8,
-      dataType: 'button',
-      paramName: 'addButton',
-      hidden: true,
-      imgsrc: GLOBAL_contextPath + '/gfx/list-add.png',
-      tooltip: getLocale().getText("students.createStudent.lodgingPeriodsTable.addTooltip"),
-      onclick: function (event) {
-        addLodgingPeriodTableRow(event.tableComponent);
-      }
     }, {
       width: 30,
       left: 8 + 160 + 8 + 160 + 8,
       dataType: 'button',
       paramName: 'removeButton',
-      hidden: true,
       imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
       tooltip: getLocale().getText("students.createStudent.lodgingPeriodsTable.removeTooltip"),
       onclick: function (event) {
         event.tableComponent.deleteRow(event.row);
-        
-        if (event.tableComponent.getRowCount() == 0) {
-          $('noLodgingPeriodsAddedMessageContainer').setStyle({
-            display : ''
-          });
-        }
       }
     }]
-  });
-  
-  lodgingPeriodsTable.addListener("rowAdd", function (event) {
-    var table = event.tableComponent; 
-    var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
-    lodgingPeriodsTable.showCell(event.row, table.getNamedColumnIndex(enabledButton));
-  
-    if (table.getRowCount() > 0) {
-      $('noLodgingPeriodsAddedMessageContainer').setStyle({
-        display : 'none'
-      });
-    }
   });
   
   return lodgingPeriodsTable;

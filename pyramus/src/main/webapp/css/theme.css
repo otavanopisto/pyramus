@@ -185,6 +185,10 @@ h1.genericPageHeader{
 
 /* ixTable styling */
 
+.ixTableCellPointer .ixTableCell {
+  cursor: pointer;
+}
+
 .ixTableRowHoverEffect .ixTableRow:hover {
   background:#D7E3F9;
   color:#2351B1;

@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.koski;
 import java.io.StringWriter;
 import java.net.ConnectException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -37,17 +36,14 @@ import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
-import fi.otavanopisto.pyramus.domainmodel.base.PersonStudentComparator;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.koski.exception.NoLatestStudentException;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.model.Henkilo;
-import fi.otavanopisto.pyramus.koski.model.HenkiloTiedotJaOID;
-import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
@@ -61,10 +57,7 @@ import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 @ApplicationScoped
 public class KoskiClient {
 
-  private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
-  
-  private static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
-  private static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";
+  private static final String KOSKI_HENKILO_OID = KoskiConsts.VariableNames.KOSKI_HENKILO_OID;
   
   @Inject
   private Logger logger;
@@ -91,11 +84,7 @@ public class KoskiClient {
   private KoskiController koskiController;
   
   private String getBaseUrl() {
-    return getSetting(KOSKI_SETTINGKEY_BASEURL);
-  }
-  
-  private String getAuth() {
-    return getSetting(KOSKI_SETTINGKEY_AUTH);
+    return getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_BASEURL);
   }
   
   private String getSetting(String settingName) {
@@ -116,12 +105,7 @@ public class KoskiClient {
   public OppijaReturnVal findPersonByOid(String personOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), personOid);
     
-    Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(uri);
-    Builder request = target
-        .request(MediaType.APPLICATION_JSON_TYPE)
-        .header("Authorization", "Basic " + getAuth());
-
+    Builder request = getClientBuilder(uri);
     return request.get(OppijaReturnVal.class);
   }
 
@@ -131,12 +115,7 @@ public class KoskiClient {
   public Oppija findOppijaByOid(String oppijaOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), oppijaOid);
     
-    Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(uri);
-    Builder request = target
-        .request(MediaType.APPLICATION_JSON_TYPE)
-        .header("Authorization", "Basic " + getAuth());
-
+    Builder request = getClientBuilder(uri);
     return request.get(Oppija.class);
   }
 
@@ -253,37 +232,8 @@ public class KoskiClient {
         koskiPersonLogDAO.create(person, KoskiPersonState.NO_UNIQUE_ID, new Date());
         return;
       }
-      
-      Student latestStudent = resolveLatestStudent(person);
-      
-      if (latestStudent == null) {
-        logger.severe(String.format("Could not resolve latest student for person %d.", person.getId()));
-        koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date());
-        return;
-      }
-      
-      Henkilo henkilo;
-      if (StringUtils.isNotBlank(personOid))
-        henkilo = new HenkiloTiedotJaOID(personOid, person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
-      else
-        henkilo = new HenkiloUusi(person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
-  
-      Oppija oppija = new Oppija();
-      oppija.setHenkilo(henkilo);
-      
-      List<Student> reportedStudents = new ArrayList<>();
-      
-      for (Student s : person.getStudents()) {
-        if (settings.isReportedStudent(s)) {
-          List<Opiskeluoikeus> opiskeluoikeudet = koskiController.studentToOpiskeluoikeus(s);
-          for (Opiskeluoikeus o : opiskeluoikeudet) {
-            if (o != null) {
-              oppija.addOpiskeluoikeus(o);
-              reportedStudents.add(s);
-            }
-          }
-        }
-      }
+            
+      Oppija oppija = koskiController.personToOppija(person);
       
       if (oppija.getOpiskeluoikeudet().size() == 0) {
         logger.info(String.format("Updating person %d was skipped due to no updateable study permits.", person.getId()));
@@ -291,41 +241,17 @@ public class KoskiClient {
       }
       
       updatePersonToKoski(oppija, person, personOid);
+    } catch (NoLatestStudentException nlse) {
+      logger.severe(String.format("Could not resolve latest student for person %d.", person.getId()));
+      koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date());
     } catch (Exception ex) {
       logger.log(Level.SEVERE, String.format("Unknown error while processing person %d", person != null ? person.getId() : null), ex);
       koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), ex.getMessage());
     }
   }
   
-  private Student resolveLatestStudent(Person person) {
-    Student student = person.getLatestStudent();
-    if (student != null) {
-      return student;
-    } else {
-      List<Student> students = person.getStudents();
-      if (CollectionUtils.isNotEmpty(students)) {
-        return students.stream()
-          .sorted(new PersonStudentComparator())
-          .findFirst()
-          .orElse(null);
-      } else {
-        logger.log(Level.WARNING, String.format("Could not resolve latest student for person %d", person != null ? person.getId() : null));
-        return null;
-      }
-    }
-  }
-
   private boolean updatePersonToKoski(Oppija oppija, Person person, String personOid) {
     try {
-      String uri = String.format("%s/oppija", getBaseUrl());
-      
-      Client client = ClientBuilder.newClient();
-      WebTarget target = client.target(uri);
-      Builder request = target
-          .request(MediaType.APPLICATION_JSON_TYPE)
-          .header("Authorization", "Basic " + getAuth());
-
-      
       ObjectMapper mapper = new ObjectMapper();
       StringWriter writer = new StringWriter();
       mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
@@ -333,6 +259,8 @@ public class KoskiClient {
       
       String requestStr = writer.toString();
 
+      String uri = String.format("%s/oppija", getBaseUrl());
+      Builder request = getClientBuilder(uri);
       Response response = request.put(Entity.json(requestStr));
       if (response.getStatus() == 200) {
         String ret = response.readEntity(String.class);
@@ -480,20 +408,6 @@ public class KoskiClient {
     entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
   }
 
-  private String getCallname(Student student) {
-    if (StringUtils.isNotBlank(student.getNickname()) && (StringUtils.containsIgnoreCase(student.getFirstName(), student.getNickname())))
-      return student.getNickname();
-    else {
-      if (StringUtils.isNotBlank(student.getFirstName())) {
-        String[] split = StringUtils.split(StringUtils.trim(student.getFirstName()), ' ');
-        if (split != null && split.length > 0)
-          return split[0];
-      }
-    }
-    
-    return null;
-  }
-
   public boolean invalidateAllStudentOIDs(Student student) throws Exception {
     if (settings.isEnabledStudyProgramme(student.getStudyProgramme())) {
       Set<String> studentOIDs = koskiController.listStudentOIDs(student);
@@ -502,5 +416,23 @@ public class KoskiClient {
       return false;
     }
   }
-  
+
+  private Builder getClientBuilder(String uri) {
+    String auth = getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_AUTH);
+    Client client = ClientBuilder.newClient();
+    WebTarget target = client.target(uri);
+    Builder request = target
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .header("Authorization", "Basic " + auth);
+    
+    String csrf = getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_CSRF);
+    if (StringUtils.isNotBlank(csrf)) {
+      request
+        .header("CSRF", csrf)
+        .cookie("CSRF", csrf);
+    }
+    
+    return request;
+  }
+
 }

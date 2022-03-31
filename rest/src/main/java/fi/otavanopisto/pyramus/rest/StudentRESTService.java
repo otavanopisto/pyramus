@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -34,6 +36,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
@@ -115,12 +118,18 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentStudyEndReason
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.CourseActivity;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
+import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
+import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
+import fi.otavanopisto.pyramus.tor.StudentTOR;
+import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -130,6 +139,9 @@ import fi.otavanopisto.security.LoggedIn;
 @RequestScoped
 public class StudentRESTService extends AbstractRESTService {
 
+  @Inject
+  private Logger logger;
+  
   @Inject
   private RESTSecurity restSecurity;
 
@@ -1914,17 +1926,71 @@ public class StudentRESTService extends AbstractRESTService {
     
     // #1198: Create a worklist entry for this assessment, if applicable
     
-    WorklistItemTemplate template = worklistController.getTemplateForCourseAssessment(assessmentController.isRaisedGrade(courseAssessment));
+    boolean isRaisedGrade = assessmentController.isRaisedGrade(courseAssessment);
+    WorklistItemTemplate template = worklistController.getTemplateForCourseAssessment();
     if (template != null) {
-      worklistController.create(
-          assessor,
-          template,
-          new Date(),
-          template.getDescription(),
-          template.getPrice(),
-          template.getFactor(),
-          courseAssessment,
-          sessionController.getUser());
+      
+      // #1228: Use billing settings together with the template to create a proper billing row
+
+      CourseBillingRestModel courseBillingRestModel = worklistController.getCourseBillingRestModel();
+      if (courseBillingRestModel != null) {
+        
+        // Determine billing number from student's study programme
+        // (high school if applicable, elementary as fallback)
+        
+        String code = student.getStudyProgramme() != null &&
+            student.getStudyProgramme().getCategory() !=  null &&
+            student.getStudyProgramme().getCategory().getEducationType() != null &&
+            student.getStudyProgramme().getCategory().getEducationType().getCode() != null
+            ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
+        boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+        String billingNumber = isHighSchoolStudent
+            ? courseBillingRestModel.getHighSchoolBillingNumber()
+            : courseBillingRestModel.getElementaryBillingNumber();
+        
+        // Description part 1: type (not localized because manual worklist items do not support localization, either) 
+        
+        String description = isRaisedGrade ? "Arvosanan korotus" : "Kurssiarviointi";
+
+        // Description part 2: student display name
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(student.getFirstName());
+        if (!StringUtils.isEmpty(student.getNickname())) {
+          sb.append(String.format(" \"%s\"", student.getNickname()));
+        }
+        if (!StringUtils.isEmpty(student.getLastName())) {
+          sb.append(String.format(" %s", student.getLastName()));
+        }
+        if (student.getStudyProgramme() != null) {
+          sb.append(String.format(" (%s)", student.getStudyProgramme().getName()));
+        }
+        String studentDisplayName = sb.toString();
+
+        // Description part 3: course display name
+
+        sb = new StringBuilder();
+        sb.append(course.getName());
+        if (!StringUtils.isEmpty(course.getNameExtension())) {
+          sb.append(String.format(" (%s)", course.getNameExtension()));
+        }
+        String courseDisplayName = sb.toString();
+        
+        // Price
+        
+        Double price = worklistController.getCourseBasePrice(course);
+
+        worklistController.create(
+            assessor,
+            template,
+            new Date(),
+            String.format("%s - %s - %s", description, studentDisplayName, courseDisplayName),
+            price,
+            template.getFactor(),
+            billingNumber,
+            courseAssessment,
+            sessionController.getUser());
+      }
     }
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
@@ -2795,6 +2861,92 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/courseActivity")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentStudyActivity(
+      @PathParam("STUDENTID") Long studentId,
+      @QueryParam("courseIds") String courseIds,
+      @QueryParam("includeTransferCredits") boolean includeTransferCredits) {
+    
+    // Access check
+
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    // Get courses of the student (all or those specified with courseIds)
+    
+    List<CourseStudent> courseStudents;
+    if (StringUtils.isEmpty(courseIds)) {
+      courseStudents = courseController.listByStudent(student);
+    }
+    else {
+      courseStudents = new ArrayList<>();
+      String[] courseIdArray = courseIds.split(",");
+      for (int i = 0; i < courseIdArray.length; i++) {
+        Course course = courseController.findCourseById(new Long(courseIdArray[i]));
+        if (course != null) {
+          CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
+          if (courseStudent != null) {
+            courseStudents.add(courseStudent);
+          }
+          else {
+            logger.warning(String.format("Course student not found asking activity for student %d in course %d", student.getId(), course.getId()));
+          }
+        }
+      }
+    }
+    
+    // Serve data
+    
+    List<CourseActivity> courseActivities = studentController.listCourseActivities(courseStudents, includeTransferCredits);
+    return Response.ok(courseActivities).build();
+  }
+  
+  @Path("/students/{ID:[0-9]*}/increaseStudyTime")
+  @POST
+  @RESTPermit(StudentPermissions.INCREASE_STUDY_TIME)
+  public Response increaseStudyTime(@PathParam("ID") Long id, @QueryParam("months") Integer months) {
+    logger.info(String.format("Increasing student %d study time for %d months", id, months));
+
+    // Validation
+
+    if (months == null || months <= 0) {
+      logger.severe("Invalid months");
+      return Response.status(Status.BAD_REQUEST).entity("Invalid months").build();
+    }
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      logger.severe("Student not found");
+      return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
+    }
+
+    // Update study time end
+
+    Date studyTimeEnd = student.getStudyTimeEnd();
+    if (studyTimeEnd == null) {
+      logger.warning("Student has no study time end set. Defaulting to now");
+      studyTimeEnd = new Date();
+    }
+    studyTimeEnd = DateUtils.addMonths(studyTimeEnd, months);
+    student = studentController.updateStudyTimeEnd(student, studyTimeEnd);
+    logger.info(String.format("Student %d study time end updated to %tF", id, studyTimeEnd));
+
+    // return student
+    
+    return Response.ok(objectFactory.createModel(student)).build();    
+  }
+
   @Path("/students/{STUDENTID:[0-9]*}/courseStats")
   @GET
   @RESTPermit(handling = Handling.INLINE)
@@ -2825,6 +2977,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Education subtype does not exist").build();
     }
     
+    // TODO StudentTOR might be able to solve this more elegantly
+    
     int numCompletedCourses = assessmentController.getAcceptedCourseCount(
         student,
         null,
@@ -2838,7 +2992,17 @@ public class StudentRESTService extends AbstractRESTService {
         true,
         student.getCurriculum());
 
+    double numCreditPoints = 0;
+    try {
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student);
+      numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op);
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
+    }
+    
     response.setNumberCompletedCourses(numCompletedCourses);
+    response.setNumberCreditPoints(numCreditPoints);
+    
     return Response.ok(response).build();
   }
 
@@ -2859,4 +3023,5 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Status.OK;
   }
+
 }

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
+import fi.otavanopisto.pyramus.koski.model.lukio.Maksuttomuus;
+import fi.otavanopisto.pyramus.koski.model.lukio.OikeuttaMaksuttomuuteenPidennetty;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
@@ -23,32 +25,8 @@ public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
     return sisaoppilaitosmainenMajoitus;
   }
 
-  public List<Majoitusjakso> getUlkomailla() {
-    return ulkomailla;
-  }
-
-  public Boolean getVuosiluokkiinSitoutumatonOpetus() {
-    return vuosiluokkiinSitoutumatonOpetus;
-  }
-
-  public void setVuosiluokkiinSitoutumatonOpetus(Boolean vuosiluokkiinSitoutumatonOpetus) {
-    this.vuosiluokkiinSitoutumatonOpetus = vuosiluokkiinSitoutumatonOpetus;
-  }
-
-  public Boolean getVammainen() {
-    return vammainen;
-  }
-
-  public void setVammainen(Boolean vammainen) {
-    this.vammainen = vammainen;
-  }
-
-  public Boolean getVaikeastiVammainen() {
-    return vaikeastiVammainen;
-  }
-
-  public void setVaikeastiVammainen(Boolean vaikeastiVammainen) {
-    this.vaikeastiVammainen = vaikeastiVammainen;
+  public List<Majoitusjakso> getUlkomaanjaksot() {
+    return ulkomaanjaksot;
   }
 
   public Majoitusjakso getMajoitusetu() {
@@ -59,19 +37,33 @@ public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
     this.majoitusetu = majoitusetu;
   }
 
-  public Majoitusjakso getOikeusMaksuttomaanAsuntolapaikkaan() {
-    return oikeusMaksuttomaanAsuntolapaikkaan;
+  public void addOikeuttaMaksuttomuuteenPidennetty(OikeuttaMaksuttomuuteenPidennetty oikeuttaMaksuttomuuteenPidennetty) {
+    this.oikeuttaMaksuttomuuteenPidennetty.add(oikeuttaMaksuttomuuteenPidennetty);
   }
 
-  public void setOikeusMaksuttomaanAsuntolapaikkaan(Majoitusjakso oikeusMaksuttomaanAsuntolapaikkaan) {
-    this.oikeusMaksuttomaanAsuntolapaikkaan = oikeusMaksuttomaanAsuntolapaikkaan;
+  public List<OikeuttaMaksuttomuuteenPidennetty> getOikeuttaMaksuttomuuteenPidennetty() {
+    return oikeuttaMaksuttomuuteenPidennetty;
   }
 
-  private Boolean vuosiluokkiinSitoutumatonOpetus;
-  private Boolean vammainen;
-  private Boolean vaikeastiVammainen;
-  private final List<Majoitusjakso> ulkomailla = new ArrayList<>();
+  public void setOikeuttaMaksuttomuuteenPidennetty(List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty) {
+    this.oikeuttaMaksuttomuuteenPidennetty = oikeuttaMaksuttomuuteenPidennetty;
+  }
+
+  public void addMaksuttomuus(Maksuttomuus maksuttomuus) {
+    this.maksuttomuus.add(maksuttomuus);
+  }
+
+  public List<Maksuttomuus> getMaksuttomuus() {
+    return maksuttomuus;
+  }
+
+  public void setMaksuttomuus(List<Maksuttomuus> maksuttomuus) {
+    this.maksuttomuus = maksuttomuus;
+  }
+
+  private final List<Majoitusjakso> ulkomaanjaksot = new ArrayList<>();
   private Majoitusjakso majoitusetu;
-  private Majoitusjakso oikeusMaksuttomaanAsuntolapaikkaan;
   private final List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
+  private List<Maksuttomuus> maksuttomuus = new ArrayList<>();
+  private List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty = new ArrayList<>();
 }

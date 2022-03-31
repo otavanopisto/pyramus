@@ -21,13 +21,13 @@
     </div>
 
     <div class="form-section__field-container field-nettilukio-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
-      <p>Huom! Onnistuneesti lähetetystä hakemuksesta saat sähköpostiviestin. Viestissä olevan linkin ja tunnuksen avulla voit muokata hakemusta siihen asti kunnes se otetaan käsittelyyn. Voit myös lisätä liitteitä.</p>
+      <p>Huom! Onnistuneesti lähetetystä hakemuksesta saat sähköpostiviestin. Viestissä olevan linkin ja tunnuksen avulla voit muokata hakemusta ja lisätä liitteitä.</p>
       <p>Voit toimittaa todistusjäljennökset myös postitse (Mikkelin kaupungin liikelaitos Otavia / Nettilukio, Otavantie 2 B, 50670 Otava)</p>
     </div>
 
     <div class="form-section__field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
-      <p>Huom! Onnistuneesti lähetetystä hakemuksesta saat sähköpostiviestin. Viestissä olevan linkin ja tunnuksen avulla voit muokata hakemusta siihen asti kunnes se otetaan käsittelyyn. Voit myös lisätä liitteitä.</p>
-      <p>Voit toimittaa todistusjäljennökset myös postitse (Mikkelin kaupungin liikelaitos Otavia / Nettiperuskoulu, Otavantie 2 B, 50670 Otava)</p>
+      <p>Huom! Onnistuneesti lähetetystä hakemuksesta saat sähköpostiviestin. Viestissä olevan linkin ja tunnuksen avulla voit muokata hakemusta. Voit myös lisätä liitteitä.</p>
+      <p>Voit toimittaa todistusjäljennökset myös salatulla sähköpostilla (saat tiedot hakemuksen käsittelijältä).</p>
     </div>
 
     <div class="form-section__field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">

@@ -128,7 +128,7 @@
     
     // Custom validators
     
-    Parsley.addValidator('birthdayFormat', {
+    Parsley.addValidator('dateFormat', {
       requirementType: 'string',
       validateString: function(value) {
         var dateRegExp = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
@@ -225,13 +225,21 @@
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
       var srcVisible = $(this).is(':visible') || name == 'field-line';
-      var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
+      var value = [];
+      if ($(this).is(':checkbox')) {
+        $('input[name="' + name + '"]:checked').each(function() {
+          value.push($(this).val());
+        });
+      }
+      else {
+        value.push($(this).val());
+      }
       $('[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         if (srcVisible) {
           var values = $(this).attr('data-dependent-values').split(',');
           for (var i = 0; i < values.length; i++) {
-            show = values[i] == value;
+            show = $.inArray(values[i], value) > -1;
             if (show) {
               break;
             }
@@ -288,16 +296,7 @@
     });
     
     $('.button-next-section').click(function() {
-      var valid = false;
-      if ($('.form-section.current').hasClass('section-source')) {
-        valid = $('input[name="field-source"]:checked').val();
-        if (!valid) {
-          $('#field-source-mandatory').show();
-        }
-      }
-      else {
-        valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
-      }
+      var valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       if (valid) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {

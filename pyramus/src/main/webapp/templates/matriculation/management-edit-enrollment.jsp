@@ -76,6 +76,7 @@
           {value:"MAB", text:"Matematiikka, lyhyt"}
         ];
         var mandatorityOptions = [
+          {value: "", text: ""},
           {value: "MANDATORY", text: "Pakollinen"},
           {value: "OPTIONAL", text: "Valinnainen"}
         ];
@@ -92,6 +93,13 @@
           {value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "Eximia cum laude approbatur"},
           {value: "LAUDATUR", text: "Laudatur"},
           {value: "UNKNOWN", text: "Ei tiedossa"},
+          {value: "K", text: "Keskeytynyt"}
+        ];
+        var fundingOptions = [
+          {value: "", text: ""},
+          {value: "SELF_FUNDED", text: "Omarahoitteinen"},
+          {value: "COMPULSORYEDUCATION_FREE", text: "Oppivelvollinen, maksuton"},
+          {value: "COMPULSORYEDUCATION_FREE_RETRY", text: "Oppivelvollinen, maksuton uusinta"}
         ];
         var tabControl = new IxProtoTabs($('tabs'));
 
@@ -133,9 +141,17 @@
             paramName: 'repeat',
             options: repeatOptions
           }, {
-            header : 'Koepäivämäärä',
+            header : 'Rahoitus',
             width: 200,
             left: 0 + 150 + 8 + 300 + 8 + 300 + 8 + 200 + 8,
+            dataType : 'select',
+            editable: true,
+            paramName: 'funding',
+            options: fundingOptions
+          }, {
+            header : 'Koepäivämäärä',
+            width: 200,
+            left: 0 + 150 + 8 + 300 + 8 + 300 + 8 + 200 + 8 + 200 + 8,
             dataType : 'date',
             editable: false,
             paramName: 'examDate'
@@ -150,7 +166,7 @@
         });
         enrolledAttendances.addRows(JSON.parse(JSDATA["enrolledAttendances"]));
         document.getElementById("addEnrolledTableRow").addEventListener('click', function() {
-          var rowIndex = enrolledAttendances.addRow([-1, '', 'ENA', 'MANDATORY', 'FIRST_TIME', '', '']);
+          var rowIndex = enrolledAttendances.addRow([-1, '', 'ENA', 'MANDATORY', 'FIRST_TIME', '', '', '']);
           var subjectColumn = enrolledAttendances.getNamedColumnIndex('subject');
           enrolledAttendances.setCellEditable(rowIndex, subjectColumn, true);
         });
@@ -185,9 +201,17 @@
             paramName: 'mandatority',
             options: mandatorityOptions
           }, {
-            header : 'Arvosana',
+            header : 'Rahoitus',
             width: 200,
             left: 0 + 150 + 8 + 300 + 8 + 200 + 8,
+            dataType : 'select',
+            editable: true,
+            paramName: 'funding',
+            options: fundingOptions
+          }, {
+            header : 'Arvosana',
+            width: 200,
+            left: 0 + 150 + 8 + 300 + 8 + 200 + 8 + 200 + 8,
             dataType : 'select',
             editable: true,
             paramName: 'grade',
@@ -203,7 +227,7 @@
         });
         finishedAttendances.addRows(JSON.parse(JSDATA["finishedAttendances"]));
         document.getElementById("addFinishedTableRow").addEventListener('click', function() {
-          finishedAttendances.addRow([-1, 'SPRING2019', 'ENA', 'MANDATORY', 'IMPROBATUR', '']);
+          finishedAttendances.addRow([-1, 'SPRING2019', 'ENA', 'MANDATORY', 'IMPROBATUR', '', '']);
         });
 
         var plannedAttendances = new IxTable($('plannedAttendancesTableContainer'), {
@@ -307,6 +331,14 @@
             <div class="genericViewInfoWapper">
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollmentDate"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollmentDate.help"/>
+                </jsp:include>
+                <div><fmt:formatDate type="date" value="${enrollmentDate}"/></div>
+              </div>
+
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.name"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.name.help"/>
                 </jsp:include>            
@@ -363,6 +395,18 @@
             </div>
 
             <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.degreeStructure"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.degreeStructure.help"/>
+                </jsp:include>            
+                <select class="required" name="degreeStructure">
+                  <option></option>
+                  <option ${degreeStructure=='PRE2022' ? 'selected="selected"' : ''} value="PRE2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.PRE2022"/></option>
+                  <option ${degreeStructure=='POST2022' ? 'selected="selected"' : ''} value="POST2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.POST2022"/></option>
+                </select>
+              </div>
+
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>

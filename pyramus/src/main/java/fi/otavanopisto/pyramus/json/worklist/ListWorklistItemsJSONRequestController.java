@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.json.worklist;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -24,8 +25,12 @@ public class ListWorklistItemsJSONRequestController extends JSONRequestControlle
 
     Long staffMemberId = requestContext.getLong("staffMemberId");
     StaffMember staffMember = staffMemberDAO.findById(staffMemberId);
-    Date beginDate = requestContext.getDate("beginDate");
-    Date endDate = requestContext.getDate("endDate");
+    Date beginDate = requestContext.getDate("beginDate") == null
+        ? null
+        : java.sql.Timestamp.valueOf(requestContext.getDate("beginDate").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay());
+    Date endDate  = requestContext.getDate("endDate") == null
+        ? null
+        : java.sql.Timestamp.valueOf(requestContext.getDate("endDate").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(23, 59, 59));
     
     List<WorklistItem> worklistItems = worklistItemDAO.listByOwnerAndTimeframeAndArchived(staffMember, beginDate, endDate, Boolean.FALSE);
     worklistItems.sort(Comparator.comparing(WorklistItem::getEntryDate));
@@ -38,6 +43,8 @@ public class ListWorklistItemsJSONRequestController extends JSONRequestControlle
       item.put("description",  worklistItem.getDescription());
       item.put("price", worklistItem.getPrice());
       item.put("factor", worklistItem.getFactor());
+      item.put("billingNumber", worklistItem.getBillingNumber());
+      item.put("state",  worklistItem.getState());
       if (worklistItem.getCourseAssessment() != null) {
         item.put("hasAssessment", true);
       }

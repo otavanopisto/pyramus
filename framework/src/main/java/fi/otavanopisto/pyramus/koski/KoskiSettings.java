@@ -23,6 +23,7 @@ import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -33,6 +34,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
+import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.settings.KoskiIntegrationSettingsWrapper;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 import net.sf.json.JSONObject;
@@ -46,7 +48,7 @@ public class KoskiSettings {
   private static final String KOSKI_SETTINGKEY_TESTENVIRONMENT = "koski.testEnvironment";
 
   // Skipped from integration
-  private static final String KOSKI_SKIPPED_STUDENT = "koski.skippedStudent";
+  private static final String KOSKI_SKIPPED_STUDENT = KoskiConsts.VariableNames.KOSKI_SKIPPED_STUDENT;
 
   @Inject
   private Logger logger;
@@ -94,6 +96,12 @@ public class KoskiSettings {
       this.courseTypeMapping.put(courseSubTypeId, courseTypeMapping.getString(courseSubTypeId.toString()));
     }
   
+    JSONObject courseTypeMapping2019 = koskiSettings.getJSONObject("courseTypeMapping2019");
+    for (Object courseTypeMappingKey : courseTypeMapping2019.keySet()) {
+      Long courseSubTypeId = Long.parseLong(courseTypeMappingKey.toString());
+      this.courseTypeMapping2019.put(courseSubTypeId, courseTypeMapping2019.getString(courseSubTypeId.toString()));
+    }
+  
     JSONObject subjectToLanguageMapping = koskiSettings.getJSONObject("subjectToLanguageMapping");
     for (Object key : subjectToLanguageMapping.keySet()) {
       String keyStr = (String) key;
@@ -130,6 +138,16 @@ public class KoskiSettings {
           OpintojenRahoitus or = OpintojenRahoitus.reverseLookup(opintojenRahoitusStr);
           if (or != null) {
             opintojenRahoitus.put(studyProgrammeId, or);
+          }
+        }
+      }
+      
+      if (studyProgramme.has("perusopetuksenSuoritusTapa")) {
+        String pstString = studyProgramme.getString("perusopetuksenSuoritusTapa");
+        if (EnumUtils.isValidEnum(PerusopetuksenSuoritusTapa.class, pstString)) {
+          PerusopetuksenSuoritusTapa pst = EnumUtils.getEnum(PerusopetuksenSuoritusTapa.class, pstString);
+          if (pst != null) {
+            perusopetuksenSuoritusTapa.put(studyProgrammeId, pst);
           }
         }
       }
@@ -180,10 +198,48 @@ public class KoskiSettings {
     return enabledStudyProgrammes.contains(studyProgramme.getId());
   }
   
+  public OpiskelijanOPS resolveOPS(Student student) {
+    Curriculum curriculum = student.getCurriculum();
+    if (curriculum != null) {
+      return resolveOPS(curriculum.getId().intValue());
+    }
+    return null;
+  }
+  
+  public OpiskelijanOPS resolveOPS(Long curriculumId) {
+    return resolveOPS(curriculumId.intValue());
+  }
+  
+  public OpiskelijanOPS resolveOPS(Curriculum curriculum) {
+    if (curriculum != null) {
+      return resolveOPS(curriculum.getId().intValue());
+    } else {
+      return null;
+    }
+  }
+  
+  public OpiskelijanOPS resolveOPS(int curriculumId) {
+    switch (curriculumId) {
+      case 1:
+        return OpiskelijanOPS.ops2016;
+      case 2:
+        return OpiskelijanOPS.ops2005;
+      case 3:
+        return OpiskelijanOPS.ops2018;
+      case 4:
+        return OpiskelijanOPS.ops2019;
+    }
+    
+    logger.log(Level.WARNING, String.format("Unknown ops with id %d", curriculumId));
+    return null;
+  }
+
+  @Deprecated
   public boolean isFreeLodging(Long studyProgrammeId) {
     return freeLodgingStudyProgrammes.contains(studyProgrammeId);
   }
   
+  @Deprecated
   public boolean isYksityisopiskelija(Long studyProgrammeId) {
     return yksityisopiskelijaStudyProgrammes.contains(studyProgrammeId);
   }
@@ -251,6 +307,10 @@ public class KoskiSettings {
     return courseTypeMapping.get(educationSubTypeId);
   }
   
+  public String getCourseTypeMapping2019(Long educationSubTypeId) {
+    return courseTypeMapping2019.get(educationSubTypeId);
+  }
+  
   public String getSubjectToLanguageMapping(String subjectCode) {
     return subjectToLanguageMapping.get(subjectCode);
   }
@@ -276,16 +336,23 @@ public class KoskiSettings {
     return studyEndReason != null ? getSettings().getKoski().getStudyEndReasonMapping(studyEndReason.getId()) : null;
   }
 
+  public PerusopetuksenSuoritusTapa getSuoritusTapa(Long studyProgrammeId, PerusopetuksenSuoritusTapa defaultValue) {
+    return perusopetuksenSuoritusTapa.containsKey(studyProgrammeId) 
+        ? perusopetuksenSuoritusTapa.get(studyProgrammeId) : defaultValue;
+  }
+  
   private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
-  private Set<Long> yksityisopiskelijaStudyProgrammes = new HashSet<Long>();
+  @Deprecated private Set<Long> yksityisopiskelijaStudyProgrammes = new HashSet<Long>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, OpintojenRahoitus> opintojenRahoitus = new HashMap<>();
+  private Map<Long, PerusopetuksenSuoritusTapa> perusopetuksenSuoritusTapa = new HashMap<>();
   private Map<Long, String> toimipisteOIDt = new HashMap<>();
   private Map<String, String> diaarinumerot = new HashMap<>();
   private Map<Long, String> courseTypeMapping = new HashMap<>();
+  private Map<Long, String> courseTypeMapping2019 = new HashMap<>();
   private Map<String, String> subjectToLanguageMapping = new HashMap<>();
   private Map<Long, Set<KoskiOppiaineetYleissivistava>> pakollisetOppiaineet = new HashMap<>();
 }
