@@ -577,11 +577,8 @@ public class ApplicationUtils {
   }
   
   public static void deleteApplication(Application application) {
-    logger.info(String.format("Removing application %d of %s %s (%s) to line %s created at %tF)",
+    logger.info(String.format("Removing application %d to line %s created at %tF)",
         application.getId(),
-        application.getFirstName(),
-        application.getLastName(),
-        application.getEmail(),
         application.getLine(),
         application.getCreated()));
     // Delete signatures
