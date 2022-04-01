@@ -19,7 +19,7 @@ public class StudentContactLogEntryCommentDAO extends PyramusEntityDAO<StudentCo
 
   public StudentContactLogEntryComment create(
       StudentContactLogEntry entry, String commentText, Date commentDate,
-      String commentCreatorName) {
+      String commentCreatorName, Long commentCreatorId) {
     EntityManager entityManager = getEntityManager(); 
 
     StudentContactLogEntryComment comment = new StudentContactLogEntryComment();
@@ -27,17 +27,17 @@ public class StudentContactLogEntryCommentDAO extends PyramusEntityDAO<StudentCo
     comment.setCreatorName(commentCreatorName);
     comment.setCommentDate(commentDate);
     comment.setText(commentText);
+    comment.setCreatorId(commentCreatorId);
 
     entityManager.persist(comment);
     return comment;
   }
   
   public StudentContactLogEntryComment update(StudentContactLogEntryComment comment, 
-      String commentText, Date commentDate, String commentCreatorName) {
+      String commentText, Date commentDate) {
     EntityManager entityManager = getEntityManager(); 
     comment.setText(commentText);
     comment.setCommentDate(commentDate);
-    comment.setCreatorName(commentCreatorName);
     entityManager.persist(comment);
     return comment;
   }

@@ -18,8 +18,8 @@ public class StudentContactLogEntryCommentController {
   @Inject
   private StudentContactLogEntryCommentDAO contactLogEntryCommentDAO;
 
-  public StudentContactLogEntryComment createContactLogEntryComment(StudentContactLogEntry entry, String commentText, Date commentDate, String commentCreatorName) {
-    StudentContactLogEntryComment contactLogEntryComment = contactLogEntryCommentDAO.create(entry, commentText, commentDate, commentCreatorName);
+  public StudentContactLogEntryComment createContactLogEntryComment(StudentContactLogEntry entry, String commentText, Date commentDate, String commentCreatorName, Long creatorId) {
+    StudentContactLogEntryComment contactLogEntryComment = contactLogEntryCommentDAO.create(entry, commentText, commentDate, commentCreatorName, creatorId);
     return contactLogEntryComment;
   }
   
@@ -32,8 +32,8 @@ public class StudentContactLogEntryCommentController {
     return contactLogEntryComments;
   }
 
-  public StudentContactLogEntryComment updateContactLogEntryComment(StudentContactLogEntryComment comment, String commentText, Date commentDate, String commentCreatorName) {
-    StudentContactLogEntryComment updated = contactLogEntryCommentDAO.update(comment, commentText, commentDate, commentCreatorName);
+  public StudentContactLogEntryComment updateContactLogEntryComment(StudentContactLogEntryComment comment, String commentText, Date commentDate) {
+    StudentContactLogEntryComment updated = contactLogEntryCommentDAO.update(comment, commentText, commentDate);
     return updated;
   }
 

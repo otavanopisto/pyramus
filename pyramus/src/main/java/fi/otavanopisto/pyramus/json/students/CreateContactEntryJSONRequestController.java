@@ -55,14 +55,16 @@ public class CreateContactEntryJSONRequestController extends JSONRequestControll
       
       String entryText = jsonRequestContext.getRequest().getParameter("entryText");
       String entryCreator = jsonRequestContext.getRequest().getParameter("entryCreatorName");
+      Long entryCreatorId = NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("entryCreatorId"));
       Date entryDate = new Date(NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("entryDate"))); 
       StudentContactLogEntryType entryType = StudentContactLogEntryType.valueOf(jsonRequestContext.getString("entryType"));
       
-      StudentContactLogEntry entry = contactLogEntryDAO.create(student, entryType, entryText, entryDate, entryCreator);
+      StudentContactLogEntry entry = contactLogEntryDAO.create(student, entryType, entryText, entryDate, entryCreator, entryCreatorId);
 
       Map<String, Object> info = new HashMap<>();
       info.put("id", entry.getId());
       info.put("creatorName", entry.getCreatorName());
+      info.put("creatorId", entry.getCreatorId());
       info.put("timestamp", entry.getEntryDate().getTime());
       info.put("text", entry.getText());
       info.put("type", entry.getType());
@@ -75,7 +77,7 @@ public class CreateContactEntryJSONRequestController extends JSONRequestControll
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR, UserRole.TEACHER };
   }
 
 }

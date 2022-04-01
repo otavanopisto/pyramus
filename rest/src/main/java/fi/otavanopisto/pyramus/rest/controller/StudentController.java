@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -62,6 +63,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
@@ -128,6 +130,9 @@ public class StudentController {
 
   @Inject
   private KoskiClient koskiClient;
+  
+  @Inject
+  private StudentGroupDAO studentGroupDAO;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -537,6 +542,33 @@ public class StudentController {
 
     return result;
   }
+  
+  /* Checks if logged user is guidance counselor of specific student */
+  public boolean amIGuidanceCouncelor(Long studentId, StaffMember staffMember) {
+    
+    Student student = findStudentById(studentId);
+    // List of student's user groups
+    List<StudentGroup> studentGroups = studentGroupDAO.listByStudent(student, 0, 50, false);
+    
+    for (StudentGroup studentGroup : studentGroups) {
+      Set<StudentGroupUser> studentGroupUsers = studentGroup.getUsers();
+      
+      if (!studentGroupUsers.isEmpty()) {
+        if (staffMember == null) {
+          return false;
+        }
+        // Check if logged user contains studentGroupUsers
+        for (StudentGroupUser studentGroupUser : studentGroupUsers) {
+          if(studentGroupUser.getStaffMember().equals(staffMember)) {
+            return true;
+          }
+        }
+      }
+    }
+    
+    return false;
+  }
+  
 
 }
 

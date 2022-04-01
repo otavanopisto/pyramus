@@ -49,14 +49,14 @@ public class EditContactEntryCommentJSONRequestController extends JSONRequestCon
       StudentContactLogEntryComment comment = entryCommentDAO.findById(commentId);
       
       String commentText = jsonRequestContext.getRequest().getParameter("commentText");
-      String commentCreatorName = jsonRequestContext.getRequest().getParameter("commentCreatorName");
       Date commentDate = new Date(NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("commentDate")));
       
-      entryCommentDAO.update(comment, commentText, commentDate, commentCreatorName);
+      entryCommentDAO.update(comment, commentText, commentDate);
 
       Map<String, Object> info = new HashMap<>();
       info.put("id", comment.getId());
       info.put("creatorName", comment.getCreatorName());
+      info.put("creatorId", comment.getCreatorId());
       info.put("timestamp", comment.getCommentDate().getTime());
       info.put("text", comment.getText());
       info.put("entryId", comment.getEntry().getId());
@@ -68,7 +68,7 @@ public class EditContactEntryCommentJSONRequestController extends JSONRequestCon
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR, UserRole.TEACHER };
   }
 
 }

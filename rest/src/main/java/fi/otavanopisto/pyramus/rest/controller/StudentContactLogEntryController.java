@@ -19,8 +19,8 @@ public class StudentContactLogEntryController {
   @Inject
   private StudentContactLogEntryDAO contactLogEntryDAO;
 
-  public StudentContactLogEntry createContactLogEntry(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creator) {
-    StudentContactLogEntry contactLogEntry = contactLogEntryDAO.create(student, type, text, entryDate, creator);
+  public StudentContactLogEntry createContactLogEntry(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creator, Long creatorId) {
+    StudentContactLogEntry contactLogEntry = contactLogEntryDAO.create(student, type, text, entryDate, creator, creatorId);
     return contactLogEntry;
   }
   
@@ -33,8 +33,8 @@ public class StudentContactLogEntryController {
     return contactLogEntries;
   }
 
-  public StudentContactLogEntry updateContactLogEntry(StudentContactLogEntry entry, StudentContactLogEntryType type, String text, Date entryDate, String creator) {
-    StudentContactLogEntry updated = contactLogEntryDAO.update(entry, type, text, entryDate, creator);
+  public StudentContactLogEntry updateContactLogEntry(StudentContactLogEntry entry, StudentContactLogEntryType type, String text, Date entryDate) {
+    StudentContactLogEntry updated = contactLogEntryDAO.update(entry, type, text, entryDate);
     return updated;
   }
 

@@ -33,7 +33,7 @@ public class StudentContactLogEntryDAO extends PyramusEntityDAO<StudentContactLo
    *          Creator for the new entry
    * @return The new entry
    */
-  public StudentContactLogEntry create(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creator) {
+  public StudentContactLogEntry create(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creator, Long creatorId) {
     EntityManager entityManager = getEntityManager(); 
 
     StudentContactLogEntry entry = new StudentContactLogEntry();
@@ -42,19 +42,19 @@ public class StudentContactLogEntryDAO extends PyramusEntityDAO<StudentContactLo
     entry.setEntryDate(entryDate);
     entry.setText(text);
     entry.setType(type);
+    entry.setCreatorId(creatorId);
 
     entityManager.persist(entry);
     return entry;
   }
 
   public StudentContactLogEntry update(StudentContactLogEntry entry, StudentContactLogEntryType type, 
-      String text, Date entryDate, String creator) {
+      String text, Date entryDate) {
     EntityManager entityManager = getEntityManager(); 
 
     entry.setType(type);
     entry.setText(text);
     entry.setEntryDate(entryDate);
-    entry.setCreatorName(creator);
 
     entityManager.persist(entry);
     return entry;

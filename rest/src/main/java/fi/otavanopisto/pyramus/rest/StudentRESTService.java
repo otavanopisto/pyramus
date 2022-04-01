@@ -73,6 +73,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
@@ -1752,9 +1753,11 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
+    User loggedUser = sessionController.getUser();
+    
     StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
     StudentContactLogEntry contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
-        toDate(entity.getEntryDate()), entity.getCreatorName());
+        toDate(entity.getEntryDate()), loggedUser.getFirstName() + " " + loggedUser.getLastName(), loggedUser.getId());
 
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
@@ -1767,7 +1770,32 @@ public class StudentRESTService extends AbstractRESTService {
     Status studentStatus = checkStudent(student);
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build(); 
+    
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    Boolean amIGuidanceCounselor = studentController.amIGuidanceCouncelor(studentId, staffMember);
 
+    if (!loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      if (!amIGuidanceCounselor) {
+      // If logged user is teacher, return only their own entries
+        if (loggedUser.getRole().equals(Role.TEACHER)) {
+          List<StudentContactLogEntry> ownEntries = new ArrayList<>();
+          List<StudentContactLogEntry> entries = studentContactLogEntryController.listContactLogEntriesByStudent(student);
+          
+          for (StudentContactLogEntry entry : entries) {
+            if (entry.getCreatorId() != null) {
+              if (entry.getCreatorId().equals(loggedUser.getId())){
+                ownEntries.add(entry);
+              } 
+            }
+          }
+          
+          return Response.ok(objectFactory.createModel(ownEntries)).build();
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
+    }
     return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudent(student))).build();
   }
 
@@ -1823,9 +1851,23 @@ public class StudentRESTService extends AbstractRESTService {
     if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
+    
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    Boolean amIGuidanceCounselor = studentController.amIGuidanceCouncelor(studentId, staffMember);
+    
+    if (!loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      if (!amIGuidanceCounselor) {
+        if (contactLogEntry.getCreatorId() != null) {
+          if (!contactLogEntry.getCreatorId().equals(sessionController.getUser().getId())) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        }
+      }
+    }
 
     StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
-    studentContactLogEntryController.updateContactLogEntry(contactLogEntry, type, entity.getText(), toDate(entity.getEntryDate()), entity.getCreatorName());
+    studentContactLogEntryController.updateContactLogEntry(contactLogEntry, type, entity.getText(), toDate(entity.getEntryDate()));
 
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
@@ -1847,6 +1889,20 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    Boolean amIGuidanceCounselor = studentController.amIGuidanceCouncelor(studentId, staffMember);
+    
+    if (!loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      if (!amIGuidanceCounselor) {
+        if (contactLogEntry.getCreatorId() != null) {
+          if (!contactLogEntry.getCreatorId().equals(sessionController.getUser().getId())) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        }
+      }
     }
 
     if (permanent) {
@@ -1879,8 +1935,32 @@ public class StudentRESTService extends AbstractRESTService {
     if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    List<StudentContactLogEntryComment> entryComments = studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(contactLogEntry);
-    return Response.ok(objectFactory.createModel(entryComments)).build();
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    Boolean amIGuidanceCounselor = studentController.amIGuidanceCouncelor(studentId, staffMember);
+
+    if (!loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      if (!amIGuidanceCounselor) {
+      // If logged user is teacher, return only their own entries and comments under
+        if (loggedUser.getRole().equals(Role.TEACHER)) {
+          List<StudentContactLogEntryComment> ownEntries = new ArrayList<>();
+          List<StudentContactLogEntryComment> entryComments = studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(contactLogEntry);
+          
+          for (StudentContactLogEntryComment entry : entryComments) {
+            if (entry.getEntry().getCreatorId() != null) {
+              if (entry.getEntry().getCreatorId().equals(loggedUser.getId())){
+                ownEntries.add(entry);
+              } 
+            }
+          }
+          
+          return Response.ok(objectFactory.createModel(ownEntries)).build();
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
+    }
+    return Response.ok(objectFactory.createModel(studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(contactLogEntry))).build();
 
   }
   
@@ -1900,8 +1980,21 @@ public class StudentRESTService extends AbstractRESTService {
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    Boolean amIGuidanceCounselor = studentController.amIGuidanceCouncelor(id, staffMember);
     
-    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.createContactLogEntryComment(contactLogEntry, entity.getText(), entity.getCommentDate(), entity.getCreatorName());
+    if (!loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      if (!amIGuidanceCounselor) {
+        if (contactLogEntry.getCreatorId() != null) {
+          if (!contactLogEntry.getCreatorId().equals(sessionController.getUser().getId())) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        }
+      }
+    }
+    
+    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.createContactLogEntryComment(contactLogEntry, entity.getText(), entity.getCommentDate(), loggedUser.getFirstName() + " " + loggedUser.getLastName(), loggedUser.getId());
     return Response.ok(objectFactory.createModel(contactLogEntryComment)).build();
   }
   
@@ -1937,8 +2030,22 @@ public class StudentRESTService extends AbstractRESTService {
     if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
+    
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    Boolean amIGuidanceCounselor = studentController.amIGuidanceCouncelor(studentId, staffMember);
+    
+    if (!loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      if (!amIGuidanceCounselor) {
+        if (contactLogEntryComment.getCreatorId() != null) {
+          if (!contactLogEntryComment.getCreatorId().equals(sessionController.getUser().getId())) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        }
+      }
+    }
 
-    studentContactLogEntryCommentController.updateContactLogEntryComment(contactLogEntryComment, entity.getText(), entity.getCommentDate(), entity.getCreatorName());
+    studentContactLogEntryCommentController.updateContactLogEntryComment(contactLogEntryComment, entity.getText(), entity.getCommentDate());
     return Response.ok(objectFactory.createModel(contactLogEntryComment)).build();
   }
 
@@ -1960,6 +2067,14 @@ public class StudentRESTService extends AbstractRESTService {
     StudentContactLogEntry contactLogEntry = contactLogEntryComment.getEntry();
     if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!sessionController.getUser().getRole().equals(Role.ADMINISTRATOR)) {
+      if (contactLogEntryComment.getCreatorId() != null) {
+        if (!contactLogEntryComment.getCreatorId().equals(sessionController.getUser().getId())) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
     }
 
     if (permanent) {

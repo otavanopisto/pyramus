@@ -108,6 +108,14 @@ public class StudentContactLogEntryComment implements ArchivableEntity {
   public String getCreatorName() {
     return creatorName;
   }
+  
+  public Long getCreatorId() {
+    return creatorId;
+  }
+
+  public void setCreatorId(Long creatorId) {
+    this.creatorId = creatorId;
+  }
 
   public Boolean getArchived() {
     return archived;
@@ -148,6 +156,9 @@ public class StudentContactLogEntryComment implements ArchivableEntity {
   private String text;
   
   private String creatorName;
+  
+  @Column
+  private Long creatorId;
 
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date commentDate;
