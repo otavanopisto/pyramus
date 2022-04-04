@@ -246,12 +246,14 @@
           }
         }
         $(this).toggle(show);
-        if (!show) {
-          // Reset values and validation status of all fields that go into hiding
-          $(this).find("input,select,textarea").each(function() {
-            $(this).val('').parsley().reset();
-          });
-        }
+        $(this).find("input,select,textarea").each(function() {
+          // Reset value of all fields that go into hiding
+          if (!show) {
+            $(this).val('');
+          }
+          // Reset validation of all fields that toggle
+          $(this).parsley().reset();
+        });
         $(this).find('[data-dependencies]').trigger('change');
       });
     });
