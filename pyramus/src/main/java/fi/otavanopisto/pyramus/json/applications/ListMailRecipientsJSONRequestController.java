@@ -49,13 +49,27 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       recipientInfo.put("mail", application.getEmail());
       results.add(recipientInfo);
       
-      // Guardian
+      // Guardians
       
       if (StringUtils.isNotBlank(applicationData.getString("field-underage-email"))) {
         recipientInfo = new HashMap<>();
         recipientInfo.put("type", "to");
         recipientInfo.put("name", String.format("%s %s", applicationData.getString("field-underage-first-name"), applicationData.getString("field-underage-last-name")));
         recipientInfo.put("mail", applicationData.getString("field-underage-email"));
+        results.add(recipientInfo);
+      }
+      if (StringUtils.isNotBlank(applicationData.getString("field-underage-email-2"))) {
+        recipientInfo = new HashMap<>();
+        recipientInfo.put("type", "to");
+        recipientInfo.put("name", String.format("%s %s", applicationData.getString("field-underage-first-name-2"), applicationData.getString("field-underage-last-name-2")));
+        recipientInfo.put("mail", applicationData.getString("field-underage-email-2"));
+        results.add(recipientInfo);
+      }
+      if (StringUtils.isNotBlank(applicationData.getString("field-underage-email-3"))) {
+        recipientInfo = new HashMap<>();
+        recipientInfo.put("type", "to");
+        recipientInfo.put("name", String.format("%s %s", applicationData.getString("field-underage-first-name-3"), applicationData.getString("field-underage-last-name-3")));
+        recipientInfo.put("mail", applicationData.getString("field-underage-email-3"));
         results.add(recipientInfo);
       }
       
