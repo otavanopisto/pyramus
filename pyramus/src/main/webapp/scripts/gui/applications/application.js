@@ -247,7 +247,10 @@
         }
         $(this).toggle(show);
         if (!show) {
-          $(this).find("input,select,textarea").val('');
+          // Reset values and validation status of all fields that go into hiding
+          $(this).find("input,select,textarea").each(function() {
+            $(this).val('').parsley().reset();
+          });
         }
         $(this).find('[data-dependencies]').trigger('change');
       });
