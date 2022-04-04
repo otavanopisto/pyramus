@@ -879,24 +879,27 @@ public class ApplicationUtils {
     
     // Contract school (Internetix students)
     
-    String schoolId = getFormValue(formData, "field-internetix-contract-school");
-    if (!NumberUtils.isNumber(schoolId)) {
-      String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
-      if (!StringUtils.isBlank(customSchool)) {
-        List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
-        School school = schools.isEmpty() ? null : schools.get(0);
-        if (school != null) {
-          studentDAO.updateSchool(student, school);
-          processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
-        }
-        else {
-          String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
-          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-          applicationLogDAO.create(
-              application,
-              ApplicationLogType.HTML,
-              notification,
-              null);
+    String otherSchool = getFormValue(formData, "field-internetix-school");
+    if (StringUtils.equals(otherSchool, "kylla")) {
+      String schoolId = getFormValue(formData, "field-internetix-contract-school");
+      if (!NumberUtils.isNumber(schoolId)) {
+        String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
+        if (!StringUtils.isBlank(customSchool)) {
+          List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
+          School school = schools.isEmpty() ? null : schools.get(0);
+          if (school != null) {
+            studentDAO.updateSchool(student, school);
+            processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
+          }
+          else {
+            String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
+            ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+            applicationLogDAO.create(
+                application,
+                ApplicationLogType.HTML,
+                notification,
+                null);
+          }
         }
       }
     }

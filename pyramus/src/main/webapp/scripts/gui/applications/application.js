@@ -246,6 +246,9 @@
           }
         }
         $(this).toggle(show);
+        if (!show) {
+          $(this).find("input,select,textarea").val('');
+        }
         $(this).find('[data-dependencies]').trigger('change');
       });
     });
