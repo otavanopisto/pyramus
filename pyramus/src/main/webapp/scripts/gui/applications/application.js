@@ -246,14 +246,8 @@
           }
         }
         $(this).toggle(show);
-        $(this).find("input,select,textarea").each(function() {
-          // Reset value of all fields that go into hiding
-          if (!show) {
-            $(this).val('');
-          }
-          // Reset validation of all fields that toggle
-          $(this).parsley().reset();
-        });
+        // #1359: Disable hidden form fields to prevent their serialization when submitting
+        $(this).find("input,select,textarea").prop('disabled', !show);
         $(this).find('[data-dependencies]').trigger('change');
       });
     });
