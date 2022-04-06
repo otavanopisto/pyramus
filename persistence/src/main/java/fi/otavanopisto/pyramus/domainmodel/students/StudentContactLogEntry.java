@@ -190,7 +190,6 @@ public class StudentContactLogEntry implements ArchivableEntity {
   @Column (updatable = false)
   private String creatorName;
 
-  @ManyToOne (optional = false) 
   @JoinColumn (name = "creator", updatable = false) 
   private StaffMember creator;
 
