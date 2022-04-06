@@ -56,7 +56,7 @@ public class EditContactEntryCommentJSONRequestController extends JSONRequestCon
       Map<String, Object> info = new HashMap<>();
       info.put("id", comment.getId());
       info.put("creatorName", comment.getCreatorName());
-      info.put("creatorId", comment.getCreatorId());
+      info.put("creatorId", comment.getCreator());
       info.put("timestamp", comment.getCommentDate().getTime());
       info.put("text", comment.getText());
       info.put("entryId", comment.getEntry().getId());
@@ -68,7 +68,7 @@ public class EditContactEntryCommentJSONRequestController extends JSONRequestCon
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR, UserRole.TEACHER };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
 }

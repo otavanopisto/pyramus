@@ -60,7 +60,7 @@ public class EditContactEntryJSONRequestController extends JSONRequestController
       info.put("id", entry.getId());
       info.put("timestamp", entry.getEntryDate().getTime());
       info.put("creatorName", entry.getCreatorName());
-      info.put("creatorId", entry.getCreatorId());
+      info.put("creatorId", entry.getCreator());
       info.put("text", entry.getText());
       info.put("type", entry.getType());
       info.put("studentId", entry.getStudent().getId());
@@ -72,7 +72,7 @@ public class EditContactEntryJSONRequestController extends JSONRequestController
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR, UserRole.TEACHER };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
 }

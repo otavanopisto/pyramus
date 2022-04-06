@@ -63,11 +63,12 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
+import fi.otavanopisto.pyramus.domainmodel.users.ContactLogAccess;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
@@ -75,6 +76,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Dependent
 @Stateless
@@ -133,6 +135,12 @@ public class StudentController {
   
   @Inject
   private StudentGroupDAO studentGroupDAO;
+  
+  @Inject
+  private SessionController sessionController;
+  
+  @Inject
+  private UserController userController;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -544,31 +552,42 @@ public class StudentController {
   }
   
   /* Checks if logged user is guidance counselor of specific student */
-  public boolean amIGuidanceCouncelor(Long studentId, StaffMember staffMember) {
+  public boolean amIGuidanceCounselor(Long studentId, StaffMember staffMember) {
+    
+    if (staffMember == null) {
+      return false;
+    }
     
     Student student = findStudentById(studentId);
     // List of student's user groups
-    List<StudentGroup> studentGroups = studentGroupDAO.listByStudent(student, 0, 50, false);
+    List<StudentGroup> studentGroups = studentGroupDAO.listByStudentAndUserAndGuidanceGroupAndArchived(student, staffMember, true, false);
     
-    for (StudentGroup studentGroup : studentGroups) {
-      Set<StudentGroupUser> studentGroupUsers = studentGroup.getUsers();
-      
-      if (!studentGroupUsers.isEmpty()) {
-        if (staffMember == null) {
-          return false;
-        }
-        // Check if logged user contains studentGroupUsers
-        for (StudentGroupUser studentGroupUser : studentGroupUsers) {
-          if(studentGroupUser.getStaffMember().equals(staffMember)) {
-            return true;
-          }
-        }
-      }
-    }
-    
-    return false;
+    return !studentGroups.isEmpty();
   }
   
-
+  public ContactLogAccess resolveContactLogAccess(Student student) {
+    User loggedUser = sessionController.getUser();
+    
+    if (loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      return ContactLogAccess.ALL;
+    } 
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      return ContactLogAccess.NONE;
+    } 
+    
+    Boolean amIGuidanceCounselor = amIGuidanceCounselor(student.getId(), staffMember);
+    
+    if (amIGuidanceCounselor) {
+      return ContactLogAccess.ALL;
+    } else {
+      if (!staffMember.getRole().equals(Role.CLOSED)) {
+        return ContactLogAccess.OWN;
+      } else {
+        return ContactLogAccess.NONE;
+      }
+    }
+  }
 }
 

@@ -93,6 +93,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
+import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryCommentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.model.AcademicTerm;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
@@ -125,6 +126,9 @@ public class ObjectFactory {
   
   @Inject
   private OrganizationContactPersonDAO organizationContactPersonDAO;
+  
+  @Inject
+  private StudentContactLogEntryCommentController studentContactLogEntryCommentController;
 
   @PostConstruct
   public void init() {
@@ -682,7 +686,9 @@ public class ObjectFactory {
           @Override
           public Object map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
-            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, entity.getArchived());
+            
+            Object comments = createModel(studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(entity));
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, comments, entity.getArchived());
           }
         },
         

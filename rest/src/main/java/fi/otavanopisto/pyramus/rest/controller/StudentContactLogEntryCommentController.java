@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -18,8 +19,8 @@ public class StudentContactLogEntryCommentController {
   @Inject
   private StudentContactLogEntryCommentDAO contactLogEntryCommentDAO;
 
-  public StudentContactLogEntryComment createContactLogEntryComment(StudentContactLogEntry entry, String commentText, Date commentDate, String commentCreatorName, Long creatorId) {
-    StudentContactLogEntryComment contactLogEntryComment = contactLogEntryCommentDAO.create(entry, commentText, commentDate, commentCreatorName, creatorId);
+  public StudentContactLogEntryComment createContactLogEntryComment(StudentContactLogEntry entry, String commentText, Date commentDate, String commentCreatorName, StaffMember creator) {
+    StudentContactLogEntryComment contactLogEntryComment = contactLogEntryCommentDAO.create(entry, commentText, commentDate, commentCreatorName, creator);
     return contactLogEntryComment;
   }
   

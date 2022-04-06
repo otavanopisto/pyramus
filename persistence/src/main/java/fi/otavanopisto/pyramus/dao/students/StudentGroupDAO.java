@@ -159,7 +159,7 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     Join<StudentGroupStudent, StudentGroup> studentGroup = root.join(StudentGroupStudent_.studentGroup);
     
     Subquery<StudentGroup> staffMemberGroupsQuery = criteria.subquery(StudentGroup.class);
-    Root<StudentGroupUser> staffMemberRoot = criteria.from(StudentGroupUser.class);
+    Root<StudentGroupUser> staffMemberRoot = staffMemberGroupsQuery.from(StudentGroupUser.class);
     staffMemberGroupsQuery.select(staffMemberRoot.get(StudentGroupUser_.studentGroup));
     staffMemberGroupsQuery.where(criteriaBuilder.equal(staffMemberRoot.get(StudentGroupUser_.staffMember), staffMember));
 
