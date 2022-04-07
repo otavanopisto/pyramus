@@ -9,8 +9,6 @@ import fi.otavanopisto.pyramus.ui.AbstractUITest;
 public class IndexPageTestsBase extends AbstractUITest {
   
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testTitle() {
     testTitle("/", "Pyramus 2010");
   }

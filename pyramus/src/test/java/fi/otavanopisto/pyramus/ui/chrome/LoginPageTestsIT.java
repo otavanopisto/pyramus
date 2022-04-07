@@ -10,7 +10,7 @@ public class LoginPageTestsIT extends LoginPageTestsBase {
   
   @Before
   public void setUp() {
-    setWebDriver(new ChromeDriver());
+    setWebDriver(createLocalDriver());
   }
   
   @After
