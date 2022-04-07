@@ -18,7 +18,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateStudentContactLogEntry() {
-    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", "creator name", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
+    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", null, getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
@@ -28,7 +28,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("creatorName", is(studentContactLogEntry.getCreatorName()))
       .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
@@ -88,7 +87,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("creatorName", is(studentContactLogEntry.getCreatorName()))
       .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
@@ -105,7 +103,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
         .statusCode(200)
         .body("id", is(updateContactLogEntry.getId().intValue() ))
         .body("text", is(updateContactLogEntry.getText()))
-        .body("creatorName", is(updateContactLogEntry.getCreatorName()))
         .body("entryDate", is(updateContactLogEntry.getEntryDate().toString()))
         .body("type", is(updateContactLogEntry.getType().toString()))
         .body("archived", is( updateContactLogEntry.getArchived() ));
@@ -130,7 +127,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("creatorName", is(studentContactLogEntry.getCreatorName()))
       .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
