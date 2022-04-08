@@ -1703,7 +1703,29 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
-  
+
+  @Path("/students/{ID:[0-9]*}/educationalLevel")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentEducationalLevelByStudent(@PathParam("ID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Not found").build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    StudentEducationalLevel educationalLevel = student.getEducationalLevel();
+    
+    if (educationalLevel == null) {
+      return Response.noContent().entity("Could not find educational level").build();
+    }
+    return Response.ok(educationalLevel.getName()).build();
+  }
+
   @Path("/students/{ID:[0-9]*}/matriculationEligibility")
   @GET
   @RESTPermit(handling = Handling.INLINE)
