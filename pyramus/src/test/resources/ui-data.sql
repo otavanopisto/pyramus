@@ -1,8 +1,7 @@
 insert into 
   SettingKey (id, name)
 values 
-  (1, 'system.environment'),
-  (2, 'authentication.enabledStrategies');
+  (1, 'system.environment');
   
 insert into 
   Setting (id, settingKey, value)

@@ -10,6 +10,9 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -32,42 +35,47 @@ public class AbstractUITest extends AbstractIntegrationTest {
     options.addArguments("--lang=en_US");
     options.addArguments("--start-maximized");
     options.setAcceptInsecureCerts(true);
-    ChromeDriver chromeDriver = new ChromeDriver(options);
-    return chromeDriver;
-  }
-  
-  protected WebDriver createHeadlessChromeDriver() {
-    ChromeOptions chromeOptions = new ChromeOptions();
-    chromeOptions.addArguments("--headless");
-    chromeOptions.addArguments("--disable-gpu");
-    chromeOptions.setAcceptInsecureCerts(true);
-    WebDriver driver = new ChromeDriver(chromeOptions);
-    driver.manage().window().setSize(new Dimension(1920, 1080));
     
-    return driver;
+    if(System.getProperty("it.headless").equals("true") ) {
+      options.addArguments("--headless");
+      options.addArguments("--disable-gpu");
+      ChromeDriver driver = new ChromeDriver(options);
+      driver.manage().window().setSize(new Dimension(1920, 1080));
+      return driver;
+    }else {
+      return new ChromeDriver(options);      
+    }
+  }
+
+  protected WebDriver createFirefoxDriver() {
+    FirefoxProfile firefoxProfile = new FirefoxProfile();
+    FirefoxOptions firefoxOptions = new FirefoxOptions();
+    firefoxOptions.setAcceptInsecureCerts(true);
+    firefoxOptions.setProfile(firefoxProfile);
+    firefoxProfile.setPreference("intl.accept_languages", "en");
+    
+    if(System.getProperty("it.headless").equals("true")) {
+      firefoxOptions.setHeadless(true);
+    }
+    
+    FirefoxDriver firefoxDriver = new FirefoxDriver(firefoxOptions);
+    
+    firefoxDriver.manage().window().setSize(new Dimension(1920, 1080));
+    
+    return firefoxDriver;
   }
   
   protected WebDriver createLocalDriver() {
     switch (getBrowser()) {
       case "chrome":
         return createChromeDriver();
-      case "chrome_headless":
-        return createHeadlessChromeDriver();
-//      case "firefox":
-//        return createFirefoxDriver();
+      case "firefox":
+        return createFirefoxDriver();
     }
     
     throw new RuntimeException(String.format("Unknown browser %s", getBrowser()));
   }
-  
-  protected String getBrowser() {
-    String browser = System.getProperty("it.browser");
-    if (browser != null) {
-      return browser;
-    }
-    return "";
-  }
-  
+    
   protected void testTitle(String path, String expected) {
     getWebDriver().get(getAppUrl(true) + path);
     assertEquals(expected, getWebDriver().getTitle());

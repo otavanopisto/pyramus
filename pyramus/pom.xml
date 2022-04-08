@@ -857,7 +857,8 @@
         <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
         <it.wildfly.cli-batch>true</it.wildfly.cli-batch>
         <it.skipserverstop>false</it.skipserverstop>
-        <it.browser>chrome_headless</it.browser>
+        <it.browser>chrome</it.browser>
+        <it.headless>true</it.headless>
       </properties>
 
       <dependencies>
@@ -901,6 +902,7 @@
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
                 <it.skipserverstop>${it.skipserverstop}</it.skipserverstop>
                 <it.browser>${it.browser}</it.browser>
+                <it.headless>${it.headless}</it.headless>
               </systemPropertyVariables>
             </configuration>
             <executions>
