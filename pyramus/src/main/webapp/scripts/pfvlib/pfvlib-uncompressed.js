@@ -564,7 +564,7 @@ fi.internetix.validation.validator.EmailFieldValidator = Class.create(fi.interne
   */
   initialize : function($super) {
     $super();
-    this._validEmailMask = /^([A-Za-zåäö0-9_\-\.])+\@([A-Za-zåäö0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+    this._validEmailMask = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
   },
   validate: function ($super, field) {
     var value = this._getFieldValue(field);
