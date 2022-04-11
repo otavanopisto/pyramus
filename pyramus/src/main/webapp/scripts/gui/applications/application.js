@@ -246,6 +246,8 @@
           }
         }
         $(this).toggle(show);
+        // #1359: Disable hidden form fields to prevent their serialization when submitting
+        $(this).find("input,select,textarea").prop('disabled', !show);
         $(this).find('[data-dependencies]').trigger('change');
       });
     });

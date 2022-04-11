@@ -672,28 +672,28 @@ public class ApplicationUtils {
       return null;
     }
     
-    // Curriculum (for Internetix students in high school)
+    // Various fields for Internetix students only
     
     Curriculum curriculum = null;
-    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+    Date studyTimeEnd = null;
+    String additionalInfo = null;
+    boolean isInternetixStudent = StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu"); 
+    if (isInternetixStudent) {
+      
+      // Curriculum for Internetix students in high school
+      
       if (StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")) {
         curriculum = resolveCurriculum(getFormValue(formData, "field-internetix-curriculum"));
       }
-    }
-    
-    // Study time end plus one year (for Internetix students)  
-    
-    Date studyTimeEnd = null;
-    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      
+      // Study time end plus one year
+
       Calendar c = Calendar.getInstance();
       c.add(Calendar.YEAR, 1);
       studyTimeEnd = c.getTime();
-    }
-    
-    // #868: Non-contract school information (for Internetix students, if exists)
-    
-    String additionalInfo = null;
-    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+
+      // #868: Non-contract school information (if exists)
+
       String contractSchoolName = getFormValue(formData, "field-internetix-contract-school-name");
       String contractSchoolMunicipality = getFormValue(formData, "field-internetix-contract-school-municipality");
       String contractSchoolContact = getFormValue(formData, "field-internetix-contract-school-contact");
@@ -705,10 +705,9 @@ public class ApplicationUtils {
       }
     }
     
-    Date studyStartDate = new Date();
-    
     // Create student
     
+    Date studyStartDate = new Date();
     Student student = studentDAO.create(
         person,
         getFormValue(formData, "field-first-names"),
@@ -760,16 +759,18 @@ public class ApplicationUtils {
     
     // #1079: Aineopiskelu; yleissivistävä koulutustausta
     
-    String internetixStudies = getFormValue(formData, "field-previous-studies-aineopiskelu");
-    if (StringUtils.isNotBlank(internetixStudies)) {
-      if (StringUtils.equals(internetixStudies, "perus")) {
-        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: peruskoulu");
-      }
-      else if (StringUtils.equals(internetixStudies, "lukio")) {
-        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: lukio");
-      }
-      else if (StringUtils.equals(internetixStudies, "ei")) {
-        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: ei mitään");
+    if (isInternetixStudent) {
+      String internetixStudies = getFormValue(formData, "field-previous-studies-aineopiskelu");
+      if (StringUtils.isNotBlank(internetixStudies)) {
+        if (StringUtils.equals(internetixStudies, "perus")) {
+          student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: peruskoulu");
+        }
+        else if (StringUtils.equals(internetixStudies, "lukio")) {
+          student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: lukio");
+        }
+        else if (StringUtils.equals(internetixStudies, "ei")) {
+          student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: ei mitään");
+        }
       }
     }
     
@@ -879,24 +880,29 @@ public class ApplicationUtils {
     
     // Contract school (Internetix students)
     
-    String schoolId = getFormValue(formData, "field-internetix-contract-school");
-    if (!NumberUtils.isNumber(schoolId)) {
-      String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
-      if (!StringUtils.isBlank(customSchool)) {
-        List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
-        School school = schools.isEmpty() ? null : schools.get(0);
-        if (school != null) {
-          studentDAO.updateSchool(student, school);
-          processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
-        }
-        else {
-          String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
-          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-          applicationLogDAO.create(
-              application,
-              ApplicationLogType.HTML,
-              notification,
-              null);
+    if (isInternetixStudent) {
+      String otherSchool = getFormValue(formData, "field-internetix-school");
+      if (StringUtils.equals(otherSchool, "kylla")) {
+        String schoolId = getFormValue(formData, "field-internetix-contract-school");
+        if (!NumberUtils.isNumber(schoolId)) {
+          String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
+          if (!StringUtils.isBlank(customSchool)) {
+            List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
+            School school = schools.isEmpty() ? null : schools.get(0);
+            if (school != null) {
+              studentDAO.updateSchool(student, school);
+              processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
+            }
+            else {
+              String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
+              ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+              applicationLogDAO.create(
+                  application,
+                  ApplicationLogType.HTML,
+                  notification,
+                  null);
+            }
+          }
         }
       }
     }
