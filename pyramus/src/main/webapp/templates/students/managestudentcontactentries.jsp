@@ -252,7 +252,6 @@
         JSONRequest.request("students/createcontactentry.json", {
           parameters: {
             entryType: entryForm.entryType.value,
-            entryCreatorName: entryForm.entryCreatorName.value,
             entryDate: entryForm["entryDate." + studentId].value,
             entryText: CKEDITOR.instances["entryText." + studentId].getData(),
             studentId: entryForm.studentId.value
@@ -270,7 +269,6 @@
         JSONRequest.request("students/editcontactentry.json", {
           parameters: {
             entryType: entryForm.entryType.value,
-            entryCreatorName: entryForm.entryCreatorName.value,
             entryId: entryForm.entryId.value,
             entryDate: entryForm["entryDate." + studentId].value,
             entryText: CKEDITOR.instances["entryText." + studentId].getData()
@@ -350,7 +348,6 @@
         var entryForm = Event.element(event);
         JSONRequest.request("students/createcontactentrycomment.json", {
           parameters: {
-            commentCreatorName: entryForm.commentCreatorName.value,
             commentDate: entryForm["commentDate." + studentId].value,
             commentText: CKEDITOR.instances["commentText." + studentId].getData(),
             entryId: entryForm.entryId.value
@@ -368,7 +365,6 @@
         JSONRequest.request("students/editcontactentrycomment.json", {
           parameters: {
             commentId: entryForm.commentId.value,
-            commentCreatorName: entryForm.commentCreatorName.value,
             commentDate: entryForm["commentDate." + studentId].value,
             commentText: CKEDITOR.instances["commentText." + studentId].getData()
           },
@@ -617,7 +613,7 @@
                           <jsp:param name="titleLocale" value="students.manageStudentContactEntries.contactEntry.fromTitle"/>
                           <jsp:param name="helpLocale" value="students.manageStudentContactEntries.contactEntry.fromHelp"/>
                         </jsp:include> 
-                        <input type="text" name="entryCreatorName"/>
+                        <input type="text" name="entryCreatorName" disabled/>
                       </div> 
                       <div class="genericFormSection">                            
                         <jsp:include page="/templates/generic/fragments/formtitle.jsp">

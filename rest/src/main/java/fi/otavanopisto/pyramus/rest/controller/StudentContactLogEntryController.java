@@ -26,8 +26,7 @@ public class StudentContactLogEntryController {
   private StudentContactLogEntryCommentDAO contactLogEntryCommentDAO;
 
   public StudentContactLogEntry createContactLogEntry(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creatorName, StaffMember creator) {
-    StudentContactLogEntry contactLogEntry = contactLogEntryDAO.create(student, type, text, entryDate, creatorName, creator);
-    return contactLogEntry;
+    return contactLogEntryDAO.create(student, type, text, entryDate, creatorName, creator);
   }
   
   public StudentContactLogEntry findContactLogEntryById(Long id) {
@@ -35,18 +34,15 @@ public class StudentContactLogEntryController {
   }
 
   public List<StudentContactLogEntry> listContactLogEntriesByStudent(Student student) {
-    List<StudentContactLogEntry> contactLogEntries = contactLogEntryDAO.listByStudent(student);
-    return contactLogEntries;
+    return contactLogEntryDAO.listByStudent(student);
   }
   
   public List<StudentContactLogEntry> listContactLogEntriesByStudentAndCreator(Student student, StaffMember creator) {
-    List<StudentContactLogEntry> contactLogEntries = contactLogEntryDAO.listByStudentAndCreator(student, creator);
-    return contactLogEntries;
+    return contactLogEntryDAO.listByStudentAndCreator(student, creator);
   }
 
   public StudentContactLogEntry updateContactLogEntry(StudentContactLogEntry entry, StudentContactLogEntryType type, String text, Date entryDate) {
-    StudentContactLogEntry updated = contactLogEntryDAO.update(entry, type, text, entryDate);
-    return updated;
+    return contactLogEntryDAO.update(entry, type, text, entryDate);
   }
 
   public void archiveStudentContactLogEntry(StudentContactLogEntry contactLogEntry, User loggedUser) {

@@ -60,7 +60,7 @@ public class EditContactEntryJSONRequestController extends JSONRequestController
       info.put("id", entry.getId());
       info.put("timestamp", entry.getEntryDate().getTime());
       info.put("creatorName", entry.getCreatorName());
-      info.put("creatorId", entry.getCreator());
+      info.put("creatorId", entry.getCreator().getId());
       info.put("text", entry.getText());
       info.put("type", entry.getType());
       info.put("studentId", entry.getStudent().getId());

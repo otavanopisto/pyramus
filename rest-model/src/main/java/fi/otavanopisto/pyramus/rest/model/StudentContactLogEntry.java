@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public class StudentContactLogEntry {
 
@@ -8,7 +9,7 @@ public class StudentContactLogEntry {
     super();
   }
 
-  public StudentContactLogEntry(Long id, String text, String creatorName, OffsetDateTime entryDate, StudentContactLogEntryType type, Object comments, Boolean archived) {
+  public StudentContactLogEntry(Long id, String text, String creatorName, OffsetDateTime entryDate, StudentContactLogEntryType type, List<StudentContactLogEntryCommentRestModel> comments, Boolean archived) {
     super();
     this.id = id;
     this.text = text;
@@ -59,11 +60,11 @@ public class StudentContactLogEntry {
     this.type = type;
   }
 
-  public Object getComments() {
+  public List<StudentContactLogEntryCommentRestModel> getComments() {
     return comments;
   }
 
-  public void setComments(Object comments) {
+  public void setComments(List<StudentContactLogEntryCommentRestModel> comments) {
     this.comments = comments;
   }
 
@@ -80,6 +81,6 @@ public class StudentContactLogEntry {
   private String creatorName;
   private OffsetDateTime entryDate;
   private StudentContactLogEntryType type;
-  private Object comments; 
+  private List<StudentContactLogEntryCommentRestModel> comments; 
   private Boolean archived;
 }

@@ -56,7 +56,7 @@ public class EditContactEntryCommentJSONRequestController extends JSONRequestCon
       Map<String, Object> info = new HashMap<>();
       info.put("id", comment.getId());
       info.put("creatorName", comment.getCreatorName());
-      info.put("creatorId", comment.getCreator());
+      info.put("creatorId", comment.getCreator().getId());
       info.put("timestamp", comment.getCommentDate().getTime());
       info.put("text", comment.getText());
       info.put("entryId", comment.getEntry().getId());

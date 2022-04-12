@@ -101,6 +101,7 @@ import fi.otavanopisto.pyramus.rest.model.Curriculum;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
+import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.rest.model.UserRole;
 import fi.otavanopisto.pyramus.rest.model.VariableType;
@@ -687,7 +688,8 @@ public class ObjectFactory {
           public Object map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
             
-            Object comments = createModel(studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(entity));
+            @SuppressWarnings("unchecked")
+            List<StudentContactLogEntryCommentRestModel> comments = (List<StudentContactLogEntryCommentRestModel>) createModel(studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(entity));
             return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, comments, entity.getArchived());
           }
         },

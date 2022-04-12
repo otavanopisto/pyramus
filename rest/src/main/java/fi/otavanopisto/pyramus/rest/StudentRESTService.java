@@ -1860,7 +1860,7 @@ public class StudentRESTService extends AbstractRESTService {
     
     if (access.equals(ContactLogAccess.OWN)) {
       if (contactLogEntry.getCreator() != null) {
-        if (!contactLogEntry.getCreator().equals(staffMember)) {
+        if (!contactLogEntry.getCreator().getId().equals(staffMember.getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
       }
@@ -1892,12 +1892,6 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    User loggedUser = sessionController.getUser();
-    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
-    if (staffMember == null) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-    
     ContactLogAccess access = studentController.resolveContactLogAccess(student);
     
     if (access.equals(ContactLogAccess.NONE)) {
@@ -1906,7 +1900,7 @@ public class StudentRESTService extends AbstractRESTService {
     
     if (access.equals(ContactLogAccess.OWN)) {
       if (contactLogEntry.getCreator() != null) {
-        if (!contactLogEntry.getCreator().equals(staffMember)) {
+        if (!contactLogEntry.getCreator().getId().equals(sessionController.getUser().getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
       }
@@ -1948,7 +1942,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (!access.equals(ContactLogAccess.ALL)) {
       if (access.equals(ContactLogAccess.OWN)) {
         if (contactLogEntry.getCreator() != null) {
-          if (!contactLogEntry.getCreator().equals(staffMember)) {
+          if (!contactLogEntry.getCreator().getId().equals(staffMember.getId())) {
             return Response.status(Status.FORBIDDEN).build();
           }
         }
@@ -2002,7 +1996,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.ok(objectFactory.createModel(studentContactLogEntryCommentController.updateContactLogEntryComment(contactLogEntryComment, entity.getText(), entity.getCommentDate()))).build();
     } else if (access.equals(ContactLogAccess.OWN)) {
       if (contactLogEntryComment.getCreator() != null) {
-        if (contactLogEntryComment.getCreator().equals(staffMember)) {
+        if (contactLogEntryComment.getCreator().getId().equals(staffMember.getId())) {
           return Response.ok(objectFactory.createModel(studentContactLogEntryCommentController.updateContactLogEntryComment(contactLogEntryComment, entity.getText(), entity.getCommentDate()))).build();
         }
       }
@@ -2030,12 +2024,10 @@ public class StudentRESTService extends AbstractRESTService {
     if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    
-    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
 
     if (!sessionController.getUser().getRole().equals(Role.ADMINISTRATOR)) {
       if (contactLogEntryComment.getCreator() != null) {
-        if (!contactLogEntryComment.getCreator().equals(staffMember)) {
+        if (!contactLogEntryComment.getCreator().getId().equals(sessionController.getUser().getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
       }

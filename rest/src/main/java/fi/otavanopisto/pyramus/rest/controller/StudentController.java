@@ -575,18 +575,18 @@ public class StudentController {
     
     if (staffMember == null) {
       return ContactLogAccess.NONE;
-    } 
+    } else {
+      if (staffMember.getRole().equals(Role.CLOSED)) {
+        return ContactLogAccess.NONE;
+      }
+    }
     
     Boolean amIGuidanceCounselor = amIGuidanceCounselor(student.getId(), staffMember);
     
     if (amIGuidanceCounselor) {
       return ContactLogAccess.ALL;
     } else {
-      if (!staffMember.getRole().equals(Role.CLOSED)) {
-        return ContactLogAccess.OWN;
-      } else {
-        return ContactLogAccess.NONE;
-      }
+      return ContactLogAccess.OWN;
     }
   }
 }
