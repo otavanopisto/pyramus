@@ -206,7 +206,7 @@
         return true;
       },
       messages: {
-        fi: 'Sähköpostiosoite puuttuu tai on virheellinen'
+        fi: 'Sähköpostiosoite puuttuu tai on virheellinen. Valitettavasti vain kirjaimet (a-z), numerot (0-9) ja pisteet (.) ovat sallittuja.'
       }
     });
 
