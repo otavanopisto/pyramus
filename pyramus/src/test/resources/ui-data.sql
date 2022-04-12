@@ -405,6 +405,15 @@ insert into Defaults
 values
   (1, 1, 1, 1, 1, 1, 1, 1, 1);
 
+INSERT INTO 
+  MagicKey (created, name, id, version, scope) 
+VALUES ('2014-09-08 12:33:50', '0793c5ee-3283-4628-b3b9-746da4e96d5f', 4, 0, 'APPLICATION');
+
+INSERT INTO
+  PluginRepository (id, url, repositoryId)
+VALUES 
+  (1, 'https://nexus.muikkuverkko.fi/repository/otavanopisto-snapshots/', '');
+
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'InternalAuth', max(id) + 1 from InternalAuth;  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
@@ -456,3 +465,5 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'PluginRepository', max(id) + 1 from PluginRepository;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'MagicKey', max(id) + 1 from MagicKey;
