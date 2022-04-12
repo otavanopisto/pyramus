@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.ui;
 
-import static java.lang.Math.toIntExact;
 import static org.junit.Assert.assertEquals;
 
 import java.time.Duration;
