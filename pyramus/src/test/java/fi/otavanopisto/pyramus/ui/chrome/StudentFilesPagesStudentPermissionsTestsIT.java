@@ -10,7 +10,7 @@ public class StudentFilesPagesStudentPermissionsTestsIT extends StudentsPagesStu
   
   @Before
   public void setUp() {
-    setWebDriver(new ChromeDriver());
+    setWebDriver(createLocalDriver());
   }
   
   @After

@@ -105,6 +105,11 @@ public class AbstractUITest extends AbstractIntegrationTest {
     waitForElementToBeClickable(By.name("login"));
     getWebDriver().findElement(By.name("login")).click();
     waitForUrlNotMatches(".*/login.*");
+    waitForPresent("#GUI_headerLoggedInAs");
+  }
+
+  protected void waitForPresent(String cssSelector) {
+    new WebDriverWait(getWebDriver(), Duration.ofSeconds(30)).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(cssSelector)));   
   }
 
   protected void waitForElementToBeClickable(By locator) {
@@ -154,12 +159,24 @@ public class AbstractUITest extends AbstractIntegrationTest {
     getWebDriver().get(getAppUrl(true) + page);
     waitForUrlNotMatches(".*/" + page);
     String cUrl = getWebDriver().getCurrentUrl();
-    assertEquals(true, cUrl.endsWith("accessdenied.page"));
+    assertEquals(true, cUrl.contains("accessdenied.page"));
   }
   
   protected void assertStudentAllowed(String page) {
     login(STUDENT_USERNAME, STUDENT_PASSWORD);
     getWebDriver().get(getAppUrl(true) + page);
+    String cUrl = getWebDriver().getCurrentUrl();
+    assertEquals(true, cUrl.endsWith(page));
+  }
+  
+  /** 
+   * @param page String page to goto
+   * @param cssSelector String cssSelector for element to wait
+   */
+  protected void assertStudentAllowed(String page, String cssSelector) {
+    login(STUDENT_USERNAME, STUDENT_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + page);
+    waitForPresent(cssSelector);
     String cUrl = getWebDriver().getCurrentUrl();
     assertEquals(true, cUrl.endsWith(page));
   }

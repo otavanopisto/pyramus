@@ -10,7 +10,7 @@ public class SettingsPagesStudentPermissionsTestsIT extends SettingsPagesStudent
   
   @Before
   public void setUp() {
-    setWebDriver(new ChromeDriver());
+    setWebDriver(createLocalDriver());
   }
   
   @After

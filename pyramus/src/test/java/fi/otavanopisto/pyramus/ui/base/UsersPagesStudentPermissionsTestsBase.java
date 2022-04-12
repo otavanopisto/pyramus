@@ -9,8 +9,6 @@ import fi.otavanopisto.pyramus.ui.AbstractUITest;
 public class UsersPagesStudentPermissionsTestsBase extends AbstractUITest {
 
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testLoginPagePermission() throws InterruptedException{
     getWebDriver().get(getAppUrl(true) + "/users/login.page");
     testPageElementsByName("username");
@@ -33,15 +31,11 @@ public class UsersPagesStudentPermissionsTestsBase extends AbstractUITest {
 //  }
   
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testCreateUserPagePermission() throws InterruptedException{
     assertStudentDenied("/users/createuser.page");
   }
 
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testEditUserPagePermission() throws InterruptedException{
     assertStudentDenied("/users/edituser.page");
   }
@@ -54,22 +48,16 @@ public class UsersPagesStudentPermissionsTestsBase extends AbstractUITest {
 //  }
   
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testSearchUsersPagePermission() throws InterruptedException{
     assertStudentDenied("/users/searchusers.page");
   }
   
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testSearchUserDialogPagePermission() throws InterruptedException{
     assertStudentDenied("/users/searchuserdialog.page");
   }
   
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testSearchUsersDialogPagePermission() throws InterruptedException{
     assertStudentDenied("/users/searchusersdialog.page");
   }

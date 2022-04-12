@@ -10,7 +10,7 @@ public class GenericPagesStudentPermissionsTestsIT extends GenericPagesStudentPe
   
   @Before
   public void setUp() {
-    setWebDriver(new ChromeDriver());
+    setWebDriver(createLocalDriver());
   }
   
   @After

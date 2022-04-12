@@ -9,17 +9,8 @@ import fi.otavanopisto.pyramus.ui.AbstractUITest;
 public class HelpPagesStudentPermissionsTestsBase extends AbstractUITest {
 
   @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testViewHelpPagePermission() throws InterruptedException{
-    assertStudentDenied("/help/viewhelp.page");
+    assertStudentAllowed("/help/viewhelp.page", "#viewHelpNavigationContainer");
   }
   
-  @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
-  public void testViewHelpPagePagePermission() throws InterruptedException{
-    assertStudentDenied("/help/viewhelppage.page");
-  }
-
 }
