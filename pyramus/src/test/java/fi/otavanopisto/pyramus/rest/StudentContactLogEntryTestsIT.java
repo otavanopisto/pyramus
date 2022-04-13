@@ -18,7 +18,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateStudentContactLogEntry() {
-    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", null, getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
+    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", null, "creator", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
@@ -77,7 +77,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateStudentContactLogEntry() {
-    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "not updated text", "not updated creater", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
+    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "not updated text", null, "not updated creater", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
@@ -93,7 +93,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      StudentContactLogEntry updateContactLogEntry = new StudentContactLogEntry(id, "updated text", "updated creater", getDate(2013, 3, 5), StudentContactLogEntryType.FACE2FACE, null, Boolean.FALSE);
+      StudentContactLogEntry updateContactLogEntry = new StudentContactLogEntry(id, "updated text", id, "updated creater", getDate(2013, 3, 5), StudentContactLogEntryType.FACE2FACE, null, Boolean.FALSE);
       
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -117,7 +117,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteStudentContactLogEntry() {
-    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", "creator name", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
+    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", null, "creator name", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
