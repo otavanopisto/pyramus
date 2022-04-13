@@ -687,10 +687,10 @@ public class ObjectFactory {
           @Override
           public Object map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
-            
+            Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
             @SuppressWarnings("unchecked")
             List<StudentContactLogEntryCommentRestModel> comments = (List<StudentContactLogEntryCommentRestModel>) createModel(studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(entity));
-            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, comments, entity.getArchived());
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), creatorId, entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, comments, entity.getArchived());
           }
         },
         
@@ -698,7 +698,9 @@ public class ObjectFactory {
           @Override
           public Object map(StudentContactLogEntryComment entity) {
             Long entryId = entity.getEntry() != null ? entity.getEntry().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel(entity.getId(), entity.getText(), entity.getCreatorName(), entity.getCommentDate(), entryId);
+            Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
+
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel(entity.getId(), entity.getText(), creatorId, entity.getCreatorName(), entity.getCommentDate(), entryId);
           }
         },
         

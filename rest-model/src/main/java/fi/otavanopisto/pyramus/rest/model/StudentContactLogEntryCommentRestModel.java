@@ -8,10 +8,11 @@ public class StudentContactLogEntryCommentRestModel{
     super();
   }
 
-  public StudentContactLogEntryCommentRestModel(Long id, String text, String creatorName, Date commentDate, Long entryId) {
+  public StudentContactLogEntryCommentRestModel(Long id, String text, Long creatorId, String creatorName, Date commentDate, Long entryId) {
     super();
     this.id = id;
     this.text = text;
+    this.setCreatorId(creatorId);
     this.creatorName = creatorName;
     this.commentDate = commentDate;
     this.entryId = entryId;
@@ -27,6 +28,14 @@ public class StudentContactLogEntryCommentRestModel{
   
   public String getText() {
     return text;
+  }
+
+  public Long getCreatorId() {
+    return creatorId;
+  }
+
+  public void setCreatorId(Long creatorId) {
+    this.creatorId = creatorId;
   }
 
   public void setCommentDate(Date commentDate) {
@@ -56,6 +65,7 @@ public class StudentContactLogEntryCommentRestModel{
   private Long id;
   private Long entryId;
   private String text;
+  private Long creatorId;
   private String creatorName;
   private Date commentDate;
 }
