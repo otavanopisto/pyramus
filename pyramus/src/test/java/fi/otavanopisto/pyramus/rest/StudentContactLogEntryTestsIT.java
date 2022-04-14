@@ -125,10 +125,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(204);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
-      .then()
-      .statusCode(404);
-    
     given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", TEST_STUDENT_ID, id)
       .then()
