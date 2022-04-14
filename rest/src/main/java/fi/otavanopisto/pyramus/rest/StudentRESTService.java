@@ -1870,7 +1870,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+    if (!studentId.equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
