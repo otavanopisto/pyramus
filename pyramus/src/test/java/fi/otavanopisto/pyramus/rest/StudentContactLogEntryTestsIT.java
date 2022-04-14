@@ -120,10 +120,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
-      .then()
-      .statusCode(200);
-    
     given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
       .then()
