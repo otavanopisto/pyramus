@@ -62,20 +62,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testFindStudentContactLogEntry() {
-    given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, 1l)
-      .then()
-      .statusCode(200)
-      .body("id", is(1) )
-      .body("text", is("Test text #1"))
-      .body("creatorName", is("Tester #1"))
-      .body("entryDate", is(getDate(2010, 1, 1).toString()))
-      .body("type", is("LETTER"))
-      .body("archived", is( Boolean.FALSE ));
-  }
-  
-  @Test
   public void testUpdateStudentContactLogEntry() {
     StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "not updated text", null, "not updated creater", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
