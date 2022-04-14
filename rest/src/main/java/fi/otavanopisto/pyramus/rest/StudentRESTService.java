@@ -1753,6 +1753,12 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if(!access.equals(ContactLogAccess.ALL) && !access.equals(ContactLogAccess.OWN)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     User loggedUser = sessionController.getUser();
     StaffMember creator = userController.findStaffMemberById(loggedUser.getId());
     
@@ -1790,32 +1796,6 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
   }
-
-  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
-  @GET
-  @RESTPermit(handling = Handling.INLINE)
-  public Response findStudentContactLogEntryById(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
-    Student student = studentController.findStudentById(studentId);
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
-    if (contactLogEntry == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (contactLogEntry.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    return Response.ok(objectFactory.createModel(contactLogEntry)).build();
-  }
-  
   
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
   @PUT
@@ -1903,6 +1883,8 @@ public class StudentRESTService extends AbstractRESTService {
         if (!contactLogEntry.getCreator().getId().equals(sessionController.getUser().getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
+      } else { 
+        return Response.status(Status.FORBIDDEN).build(); 
       }
     }
     if (permanent) {
@@ -1983,7 +1965,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+    if (!studentId.equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -2021,7 +2003,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     StudentContactLogEntry contactLogEntry = contactLogEntryComment.getEntry();
-    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+    if (!studentId.equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
@@ -2030,6 +2012,8 @@ public class StudentRESTService extends AbstractRESTService {
         if (!contactLogEntryComment.getCreator().getId().equals(sessionController.getUser().getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
+      } else { 
+        return Response.status(Status.FORBIDDEN).build(); 
       }
     }
 
