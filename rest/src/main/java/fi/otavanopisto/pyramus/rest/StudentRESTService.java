@@ -1843,6 +1843,8 @@ public class StudentRESTService extends AbstractRESTService {
         if (!contactLogEntry.getCreator().getId().equals(staffMember.getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
+      } else {
+        return Response.status(Status.FORBIDDEN).build();
       }
     }
     
