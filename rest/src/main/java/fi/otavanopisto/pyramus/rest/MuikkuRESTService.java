@@ -244,6 +244,7 @@ public class MuikkuRESTService {
         item.setDate(courseStudent.getEnrolmentTime());
         item.setStatus(StudyActivityItemStatus.ONGOING);
         item.setSubject(course.getSubject().getCode());
+        item.setSubjectName(course.getSubject().getName());
         items.put(key, item);
       }
     }
@@ -981,6 +982,7 @@ public class MuikkuRESTService {
     }
     item.setStatus(StudyActivityItemStatus.GRADED);
     item.setSubject(course.getSubject().getCode());
+    item.setSubjectName(course.getSubject().getName());
     return item;
   }
 
@@ -996,6 +998,7 @@ public class MuikkuRESTService {
     }
     item.setStatus(StudyActivityItemStatus.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
+    item.setSubjectName(transferCredit.getSubject().getName());
     return item;
   }
 

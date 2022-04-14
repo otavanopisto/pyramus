@@ -60,7 +60,16 @@ public class StudyActivityItemRestModel {
     this.courseId = courseId;
   }
 
+  public String getSubjectName() {
+    return subjectName;
+  }
+
+  public void setSubjectName(String subjectName) {
+    this.subjectName = subjectName;
+  }
+
   private String subject;
+  private String subjectName;
   private Long courseId;
   private Integer courseNumber;
   private String courseName;
