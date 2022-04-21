@@ -68,6 +68,14 @@ public class StudyActivityItemRestModel {
     this.subjectName = subjectName;
   }
 
+  public Boolean getTransferCreditMandatory() {
+    return transferCreditMandatory;
+  }
+
+  public void setTransferCreditMandatory(Boolean transferCreditMandatory) {
+    this.transferCreditMandatory = transferCreditMandatory;
+  }
+
   private String subject;
   private String subjectName;
   private Long courseId;
@@ -76,4 +84,5 @@ public class StudyActivityItemRestModel {
   private String grade;
   private StudyActivityItemStatus status;
   private Date date;
+  private Boolean transferCreditMandatory;
 }
