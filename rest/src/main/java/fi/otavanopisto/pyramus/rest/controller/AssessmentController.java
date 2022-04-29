@@ -109,13 +109,12 @@ public class AssessmentController {
   }
 
   public boolean isRaisedGrade(CourseAssessment courseAssessment) {
-    Course course = courseAssessment.getCourseStudent().getCourse();
+    CourseModule courseModule = courseAssessment.getCourseModule();
     Student student = courseAssessment.getStudent();
-    List<CourseAssessment> assessments = listByCourseAndStudent(course, student);
+    List<CourseAssessment> assessments = courseAssessmentDAO.listByStudentAndCourseModule(student, courseModule);
     assessments.sort(Comparator.comparing(CourseAssessment::getDate));
     return assessments.size() > 1 && !Objects.equals(courseAssessment.getId(), assessments.get(0).getId());
   }
-  
   
   public void archiveCourseAssessment(CourseAssessment courseAssessment) {
     courseAssessmentDAO.archive(courseAssessment);
