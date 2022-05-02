@@ -14,6 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry_;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 
 @Stateless
 public class StudentContactLogEntryDAO extends PyramusEntityDAO<StudentContactLogEntry> {
@@ -33,28 +34,28 @@ public class StudentContactLogEntryDAO extends PyramusEntityDAO<StudentContactLo
    *          Creator for the new entry
    * @return The new entry
    */
-  public StudentContactLogEntry create(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creator) {
+  public StudentContactLogEntry create(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creatorName, StaffMember creator) {
     EntityManager entityManager = getEntityManager(); 
 
     StudentContactLogEntry entry = new StudentContactLogEntry();
     entry.setStudent(student);
-    entry.setCreatorName(creator);
+    entry.setCreatorName(creatorName);
     entry.setEntryDate(entryDate);
     entry.setText(text);
     entry.setType(type);
+    entry.setCreator(creator);
 
     entityManager.persist(entry);
     return entry;
   }
 
   public StudentContactLogEntry update(StudentContactLogEntry entry, StudentContactLogEntryType type, 
-      String text, Date entryDate, String creator) {
+      String text, Date entryDate) {
     EntityManager entityManager = getEntityManager(); 
 
     entry.setType(type);
     entry.setText(text);
     entry.setEntryDate(entryDate);
-    entry.setCreatorName(creator);
 
     entityManager.persist(entry);
     return entry;
@@ -78,6 +79,23 @@ public class StudentContactLogEntryDAO extends PyramusEntityDAO<StudentContactLo
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(StudentContactLogEntry_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(StudentContactLogEntry_.student), student)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
+  public List<StudentContactLogEntry> listByStudentAndCreator(Student student, StaffMember staffMember) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentContactLogEntry> criteria = criteriaBuilder.createQuery(StudentContactLogEntry.class);
+    Root<StudentContactLogEntry> root = criteria.from(StudentContactLogEntry.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(StudentContactLogEntry_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(StudentContactLogEntry_.student), student),
+            criteriaBuilder.equal(root.get(StudentContactLogEntry_.creator), staffMember)
         ));
     
     return entityManager.createQuery(criteria).getResultList();
