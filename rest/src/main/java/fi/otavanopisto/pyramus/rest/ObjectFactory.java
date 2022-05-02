@@ -91,11 +91,13 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
+import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.model.AcademicTerm;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
 import fi.otavanopisto.pyramus.rest.model.Curriculum;
+import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
@@ -124,6 +126,9 @@ public class ObjectFactory {
   
   @Inject
   private OrganizationContactPersonDAO organizationContactPersonDAO;
+  
+  @Inject
+  private MatriculationEligibilityController matriculationEligibilityController;
 
   @PostConstruct
   public void init() {
@@ -655,8 +660,9 @@ public class ObjectFactory {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             };
             
-            String additionalContectInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
+            MatriculationEligibilities eligibility = new MatriculationEligibilities(matriculationEligibilityController.hasGroupEligibility(entity));
             
+            String additionalContectInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
             // TODO Remove this from the rest model
             boolean lodging = false;
             
@@ -665,7 +671,7 @@ public class ObjectFactory {
                 languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
                 toOffsetDateTime(entity.getStudyTimeEnd()), studyProgrammeId, curriculumId, entity.getPreviousStudies(), entity.getEducation(), 
                 lodging, toOffsetDateTime(entity.getStudyStartDate()), toOffsetDateTime(entity.getStudyEndDate()), studyEndReasonId, 
-                entity.getStudyEndText(), variables, tags, entity.getArchived());
+                entity.getStudyEndText(), variables, tags, entity.getArchived(), eligibility);
           }
         },
         

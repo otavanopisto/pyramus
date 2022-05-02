@@ -89,7 +89,8 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       "Testing...", // studyEndText, 
       variables, // variables
       Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
 
     Response response = given().headers(getAuthHeaders())
@@ -191,7 +192,8 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       "not updated studyEndText", // studyEndText, 
       variables, // variables
       Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
       
     Response response = given().headers(getAdminAuthHeaders())
@@ -231,7 +233,8 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
         "updated studyEndText", // studyEndText, 
         updateVariables, // variables
         Arrays.asList("tag2", "tag3"),  // tags, 
-        Boolean.FALSE //archived
+        Boolean.FALSE, //archived
+        null // matriculation eligibility
       );
       
       response = given().headers(getAuthHeaders())
@@ -288,7 +291,8 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
         "updated studyEndText", // studyEndText, 
         updateVariables, // variables
         Arrays.asList("tag2", "tag3"),  // tags, 
-        Boolean.FALSE //archived
+        Boolean.FALSE, //archived
+        null // matriculation eligibility
       );
       
       response = given().headers(getAuthHeaders())
@@ -339,7 +343,8 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       "to be deleted", // studyEndText, 
       variables, // variables
       Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
     
     Response response = given().headers(getAdminAuthHeaders())
