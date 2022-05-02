@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.json.applications;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -76,6 +78,20 @@ public class OnnistuuClient {
       logger.severe(String.format("Onnistuu response %d: %s", status, reason));
       throw new OnnistuuClientException(String.format("Dokumentin luonti epäonnistui (%d: %s)", status, reason));
     }
+  }
+  
+  public byte[] getDocument(String documentId) throws OnnistuuClientException {
+    Response response = doGet(String.format("/api/v1/document/%s/files/0", documentId));
+    if (response.getStatus() == 200) {
+      InputStream is = response.readEntity(InputStream.class);
+      try {
+        return IOUtils.toByteArray(is);
+      }
+      catch (IOException e) {
+        throw new OnnistuuClientException(String.format("Dokumentin lataus epäonnistui (%s)", e.getMessage()));
+      }
+    }
+    throw new OnnistuuClientException("Dokumentin lataus epäonnistui (404)");
   }
   
   public String getSignatureUrl(String invitationId, String returnUrl, String ssn, String authService) throws OnnistuuClientException {
