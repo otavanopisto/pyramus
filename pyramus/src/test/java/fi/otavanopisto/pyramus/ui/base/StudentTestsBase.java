@@ -18,7 +18,7 @@ public class StudentTestsBase extends AbstractUITest {
     getWebDriver().get(getAppUrl(true) + "/students/createstudent.page");
     waitForUrlNotMatches(".*/index.*");
     getWebDriver().findElement(By.id("birthday-text")).sendKeys("09/29/1985");
-    getWebDriver().findElement(By.name("ssecId")).sendKeys("29091985-1234");
+    getWebDriver().findElement(By.name("ssecId")).sendKeys("290985-1234");
 //    TODO: No usable name, class or id for this element.
     getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();
     waitForElementToBeClickable(By.name("studyProgramme"));
@@ -28,6 +28,7 @@ public class StudentTestsBase extends AbstractUITest {
     getWebDriver().findElement(By.name("lastName")).sendKeys("Student");
     getWebDriver().findElement(By.name("emailTable.0.email")).sendKeys("teststudent@notmail.test");
 //    TODO: Create Student button name is "login"...
+    scrollToElement(By.name("login"));
     waitForElementToBeClickable(By.name("login"));
     getWebDriver().findElement(By.name("login")).click();
     waitForUrlMatches(".*#at-basic.*");

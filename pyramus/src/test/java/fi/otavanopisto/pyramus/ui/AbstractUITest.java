@@ -6,12 +6,15 @@ import java.time.Duration;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -107,6 +110,29 @@ public class AbstractUITest extends AbstractIntegrationTest {
     waitForPresent("#GUI_headerLoggedInAs");
   }
 
+  protected void scrollTo(String selector, int offset) {
+    waitForPresent(selector);
+    ((JavascriptExecutor) getWebDriver()).executeScript(String.format(""
+        + "var elPos = document.querySelectorAll('%s').item(0).getBoundingClientRect().top;"
+        + "var offsetPosition = elPos - %d;"
+        + "window.scrollTo({ top: offsetPosition});"
+        , selector, offset));
+  }
+  
+  protected void scrollToElement(By locator) {
+    waitForElementToBePresent(locator);
+    WebElement element = getWebDriver().findElement(locator);
+    Actions actions = new Actions(getWebDriver());
+    actions.moveToElement(element);
+  }
+  
+  protected void scrollToElement(String selector) {
+    waitForPresent(selector);
+    WebElement element = getWebDriver().findElement(By.cssSelector(selector));
+    Actions actions = new Actions(getWebDriver());
+    actions.moveToElement(element);
+  }
+  
   protected void waitForPresent(String cssSelector) {
     new WebDriverWait(getWebDriver(), Duration.ofSeconds(30)).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(cssSelector)));   
   }
