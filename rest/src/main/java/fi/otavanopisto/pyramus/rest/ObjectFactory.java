@@ -80,6 +80,7 @@ import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -92,6 +93,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
+import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryCommentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.model.AcademicTerm;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
@@ -99,6 +101,7 @@ import fi.otavanopisto.pyramus.rest.model.Curriculum;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
+import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.rest.model.UserRole;
 import fi.otavanopisto.pyramus.rest.model.VariableType;
@@ -124,6 +127,9 @@ public class ObjectFactory {
   
   @Inject
   private OrganizationContactPersonDAO organizationContactPersonDAO;
+  
+  @Inject
+  private StudentContactLogEntryCommentController studentContactLogEntryCommentController;
 
   @PostConstruct
   public void init() {
@@ -681,7 +687,20 @@ public class ObjectFactory {
           @Override
           public Object map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
-            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, entity.getArchived());
+            Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
+            @SuppressWarnings("unchecked")
+            List<StudentContactLogEntryCommentRestModel> comments = (List<StudentContactLogEntryCommentRestModel>) createModel(studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(entity));
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), creatorId, entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, comments, entity.getArchived());
+          }
+        },
+        
+        new Mapper<StudentContactLogEntryComment>() {
+          @Override
+          public Object map(StudentContactLogEntryComment entity) {
+            Long entryId = entity.getEntry() != null ? entity.getEntry().getId() : null;
+            Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
+
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel(entity.getId(), entity.getText(), creatorId, entity.getCreatorName(), entity.getCommentDate(), entryId);
           }
         },
         

@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -66,6 +67,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
+import fi.otavanopisto.pyramus.domainmodel.users.ContactLogAccess;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
@@ -73,6 +76,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Dependent
 @Stateless
@@ -128,6 +132,15 @@ public class StudentController {
 
   @Inject
   private KoskiClient koskiClient;
+  
+  @Inject
+  private StudentGroupDAO studentGroupDAO;
+  
+  @Inject
+  private SessionController sessionController;
+  
+  @Inject
+  private UserController userController;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -537,6 +550,44 @@ public class StudentController {
 
     return result;
   }
-
+  
+  /* Checks if logged user is guidance counselor of specific student */
+  public boolean amIGuidanceCounselor(Long studentId, StaffMember staffMember) {
+    
+    if (staffMember == null) {
+      return false;
+    }
+    
+    Student student = findStudentById(studentId);
+    // List of student's user groups
+    List<StudentGroup> studentGroups = studentGroupDAO.listByStudentAndUserAndGuidanceGroupAndArchived(student, staffMember, true, false);
+    
+    return !studentGroups.isEmpty();
+  }
+  
+  public ContactLogAccess resolveContactLogAccess(Student student) {
+    User loggedUser = sessionController.getUser();
+    
+    if (loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      return ContactLogAccess.ALL;
+    } 
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      return ContactLogAccess.NONE;
+    } else {
+      if (staffMember.getRole().equals(Role.CLOSED)) {
+        return ContactLogAccess.NONE;
+      }
+    }
+    
+    Boolean amIGuidanceCounselor = amIGuidanceCounselor(student.getId(), staffMember);
+    
+    if (amIGuidanceCounselor) {
+      return ContactLogAccess.ALL;
+    } else {
+      return ContactLogAccess.OWN;
+    }
+  }
 }
 

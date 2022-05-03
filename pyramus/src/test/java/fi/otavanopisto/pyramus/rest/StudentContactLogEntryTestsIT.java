@@ -18,7 +18,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateStudentContactLogEntry() {
-    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", "creator name", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, Boolean.FALSE);
+    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", null, "creator", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
@@ -28,7 +28,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("creatorName", is(studentContactLogEntry.getCreatorName()))
       .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
@@ -63,22 +62,8 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testFindStudentContactLogEntry() {
-    given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, 1l)
-      .then()
-      .statusCode(200)
-      .body("id", is(1) )
-      .body("text", is("Test text #1"))
-      .body("creatorName", is("Tester #1"))
-      .body("entryDate", is(getDate(2010, 1, 1).toString()))
-      .body("type", is("LETTER"))
-      .body("archived", is( Boolean.FALSE ));
-  }
-  
-  @Test
   public void testUpdateStudentContactLogEntry() {
-    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "not updated text", "not updated creater", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, Boolean.FALSE);
+    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "not updated text", null, "not updated creater", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
@@ -88,14 +73,13 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("creatorName", is(studentContactLogEntry.getCreatorName()))
       .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      StudentContactLogEntry updateContactLogEntry = new StudentContactLogEntry(id, "updated text", "updated creater", getDate(2013, 3, 5), StudentContactLogEntryType.FACE2FACE, Boolean.FALSE);
+      StudentContactLogEntry updateContactLogEntry = new StudentContactLogEntry(id, "updated text", id, "updated creater", getDate(2013, 3, 5), StudentContactLogEntryType.FACE2FACE, null, Boolean.FALSE);
       
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -105,7 +89,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
         .statusCode(200)
         .body("id", is(updateContactLogEntry.getId().intValue() ))
         .body("text", is(updateContactLogEntry.getText()))
-        .body("creatorName", is(updateContactLogEntry.getCreatorName()))
         .body("entryDate", is(updateContactLogEntry.getEntryDate().toString()))
         .body("type", is(updateContactLogEntry.getType().toString()))
         .body("archived", is( updateContactLogEntry.getArchived() ));
@@ -120,7 +103,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteStudentContactLogEntry() {
-    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", "creator name", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, Boolean.FALSE);
+    StudentContactLogEntry studentContactLogEntry = new StudentContactLogEntry(null, "create text", null, "creator name", getDate(2010, 3, 5), StudentContactLogEntryType.CHATLOG, null, Boolean.FALSE);
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
@@ -130,7 +113,6 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("creatorName", is(studentContactLogEntry.getCreatorName()))
       .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
@@ -138,26 +120,14 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
-      .then()
-      .statusCode(200);
-    
     given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
-      .then()
-      .statusCode(404);
-    
     given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
-    
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
-      .then()
-      .statusCode(404);
   }
 }
