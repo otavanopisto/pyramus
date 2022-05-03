@@ -3115,10 +3115,32 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{ID:[0-9]*}/increaseStudyTime")
   @POST
-  @RESTPermit(StudentPermissions.INCREASE_STUDY_TIME)
+  @RESTPermit(handling = Handling.INLINE)
   public Response increaseStudyTime(@PathParam("ID") Long id, @QueryParam("months") Integer months) {
     logger.info(String.format("Increasing student %d study time for %d months", id, months));
 
+    // Permissions
+    
+    User loggedUser = sessionController.getUser();
+    
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      logger.severe("Staff member not found");
+      return Response.status(Status.BAD_REQUEST).entity("Staff member not found").build();
+    }
+    
+    if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
+      if (!staffMember.getRole().equals(Role.ADMINISTRATOR)) {
+        if (!staffMember.getRole().equals(Role.STUDY_PROGRAMME_LEADER)) {
+          boolean amICounselor = studentController.amIGuidanceCounselor(id, staffMember);
+          if (!amICounselor) {
+            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
+          }
+        }
+      }
+    }
+    
     // Validation
 
     if (months == null || months <= 0) {
