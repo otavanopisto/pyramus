@@ -21,6 +21,7 @@ import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 /**
@@ -108,6 +109,14 @@ public class StudentContactLogEntryComment implements ArchivableEntity {
   public String getCreatorName() {
     return creatorName;
   }
+  
+  public StaffMember getCreator() {
+    return creator;
+  }
+
+  public void setCreator(StaffMember creator) {
+    this.creator = creator;
+  }
 
   public Boolean getArchived() {
     return archived;
@@ -147,7 +156,12 @@ public class StudentContactLogEntryComment implements ArchivableEntity {
   @Column
   private String text;
   
+  @Column (updatable = false)
   private String creatorName;
+  
+  @ManyToOne (optional = false) 
+  @JoinColumn (name = "creator", updatable = false) 
+  private StaffMember creator;
 
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date commentDate;

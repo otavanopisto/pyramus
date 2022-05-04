@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public class StudentContactLogEntry {
 
@@ -8,13 +9,15 @@ public class StudentContactLogEntry {
     super();
   }
 
-  public StudentContactLogEntry(Long id, String text, String creatorName, OffsetDateTime entryDate, StudentContactLogEntryType type, Boolean archived) {
+  public StudentContactLogEntry(Long id, String text, Long creatorId, String creatorName, OffsetDateTime entryDate, StudentContactLogEntryType type, List<StudentContactLogEntryCommentRestModel> comments, Boolean archived) {
     super();
     this.id = id;
     this.text = text;
+    this.creatorId = creatorId;
     this.creatorName = creatorName;
     this.entryDate = entryDate;
     this.type = type;
+    this.comments = comments;
     this.archived = archived;
   }
 
@@ -32,6 +35,14 @@ public class StudentContactLogEntry {
 
   public void setText(String text) {
     this.text = text;
+  }
+
+  public Long getCreatorId() {
+    return creatorId;
+  }
+
+  public void setCreatorId(Long creatorId) {
+    this.creatorId = creatorId;
   }
 
   public String getCreatorName() {
@@ -58,6 +69,14 @@ public class StudentContactLogEntry {
     this.type = type;
   }
 
+  public List<StudentContactLogEntryCommentRestModel> getComments() {
+    return comments;
+  }
+
+  public void setComments(List<StudentContactLogEntryCommentRestModel> comments) {
+    this.comments = comments;
+  }
+
   public Boolean getArchived() {
     return archived;
   }
@@ -68,8 +87,10 @@ public class StudentContactLogEntry {
 
   private Long id;
   private String text;
+  private Long creatorId;
   private String creatorName;
   private OffsetDateTime entryDate;
   private StudentContactLogEntryType type;
+  private List<StudentContactLogEntryCommentRestModel> comments; 
   private Boolean archived;
 }
