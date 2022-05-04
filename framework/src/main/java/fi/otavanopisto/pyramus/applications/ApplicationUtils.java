@@ -294,6 +294,9 @@ public class ApplicationUtils {
   }
   
   public static StudentExaminationType resolveStudentExaminationType(String examinationType) {
+    if (StringUtils.isEmpty(examinationType)) {
+      return null;
+    }
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     switch (examinationType) {
     case "muu":
@@ -320,6 +323,9 @@ public class ApplicationUtils {
   }
   
   public static StudentActivityType resolveStudentActivityType(String activityType) {
+    if (StringUtils.isEmpty(activityType)) {
+      return null;
+    }
     StudentActivityTypeDAO studentActivityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     switch (activityType) {
     case "tyollinen":
@@ -338,6 +344,9 @@ public class ApplicationUtils {
   }
   
   public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, String internetixLine, AlternativeLine nettilukioAlternative) {
+    if (StringUtils.isEmpty(line)) {
+      return null;
+    }
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
@@ -367,6 +376,9 @@ public class ApplicationUtils {
     case "laakislinja":
       return studyProgrammeDAO.findById(31L); // Lääketieteen opintoihin valmentava koulutus
     case "mk":
+      if (StringUtils.isEmpty(foreignLine)) {
+        return null;
+      }
       switch (foreignLine) {
       case "apa":
         return studyProgrammeDAO.findById(29L); // Aikuisten perusopetuksen alkuvaiheen opetus
