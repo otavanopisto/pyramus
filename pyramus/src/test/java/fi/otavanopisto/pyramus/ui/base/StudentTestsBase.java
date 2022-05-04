@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
-import fi.otavanopisto.pyramus.SqlAfter;
-import fi.otavanopisto.pyramus.SqlBefore;
 import fi.otavanopisto.pyramus.ui.AbstractUITest;
 
 public class StudentTestsBase extends AbstractUITest {
@@ -28,7 +26,7 @@ public class StudentTestsBase extends AbstractUITest {
     getWebDriver().findElement(By.name("lastName")).sendKeys("Student");
     getWebDriver().findElement(By.name("emailTable.0.email")).sendKeys("teststudent@notmail.test");
 //    TODO: Create Student button name is "login"...
-    scrollToElement(By.name("login"));
+    scrollTo(".genericFormSubmitSectionOffTab", 20);
     waitForElementToBeClickable(By.name("login"));
     getWebDriver().findElement(By.name("login")).click();
     waitForUrlMatches(".*#at-basic.*");
