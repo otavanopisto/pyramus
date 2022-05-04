@@ -67,6 +67,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
@@ -74,6 +75,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.users.ContactLogAccess;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
@@ -94,6 +97,7 @@ import fi.otavanopisto.pyramus.rest.controller.NationalityController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
 import fi.otavanopisto.pyramus.rest.controller.StudentActivityTypeController;
+import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryCommentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentEducationalLevelController;
@@ -111,7 +115,6 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.MunicipalityPermissio
 import fi.otavanopisto.pyramus.rest.controller.permissions.NationalityPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentActivityTypePermissions;
-import fi.otavanopisto.pyramus.rest.controller.permissions.StudentContactLogEntryPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentEducationalLevelPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentExaminationTypePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentGroupPermissions;
@@ -121,6 +124,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
@@ -194,6 +198,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudentContactLogEntryController studentContactLogEntryController;
+
+  @Inject
+  private StudentContactLogEntryCommentController studentContactLogEntryCommentController;
 
   @Inject
   private SchoolController schoolController;
@@ -1708,7 +1715,29 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
-  
+
+  @Path("/students/{ID:[0-9]*}/educationalLevel")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentEducationalLevelByStudent(@PathParam("ID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Not found").build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    StudentEducationalLevel educationalLevel = student.getEducationalLevel();
+    
+    if (educationalLevel == null) {
+      return Response.noContent().entity("Could not find educational level").build();
+    }
+    return Response.ok(educationalLevel.getName()).build();
+  }
+
   @Path("/students/{ID:[0-9]*}/matriculationEligibility")
   @GET
   @RESTPermit(handling = Handling.INLINE)
@@ -1736,7 +1765,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{ID:[0-9]*}/contactLogEntries")
   @POST
-  @RESTPermit(StudentContactLogEntryPermissions.CREATE_STUDENTCONTACTLOGENTRY)
+  @RESTPermit(handling = Handling.INLINE)
   public Response createStudentContactLogEntry(@PathParam("ID") Long id, fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1751,53 +1780,53 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if(!access.equals(ContactLogAccess.ALL) && !access.equals(ContactLogAccess.OWN)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    User loggedUser = sessionController.getUser();
+    StaffMember creator = userController.findStaffMemberById(loggedUser.getId());
+    
     StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
     StudentContactLogEntry contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
-        toDate(entity.getEntryDate()), entity.getCreatorName());
+        toDate(entity.getEntryDate()), loggedUser.getFirstName() + " " + loggedUser.getLastName(), creator);
 
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries")
   @GET
-  @RESTPermit(StudentContactLogEntryPermissions.LIST_STUDENTCONTACTLOGENTRIES)
+  @RESTPermit(handling = Handling.INLINE)
   public Response listStudentContactLogEntriesByStudent(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
     if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudent(student))).build();
+      return Response.status(studentStatus).build(); 
+    
+    User loggedUser = sessionController.getUser();
+    
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if (access.equals(ContactLogAccess.ALL)) {
+      return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudent(student))).build();
+    } else if (access.equals(ContactLogAccess.OWN)) {
+      return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudentAndCreator(student, staffMember))).build();
+    } else {
+      return Response.status(Status.FORBIDDEN).build();
+    }
   }
-
-  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
-  @GET
-  @RESTPermit(StudentContactLogEntryPermissions.FIND_STUDENTCONTACTLOGENTRY)
-  public Response findStudentContactLogEntryById(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
-    Student student = studentController.findStudentById(studentId);
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
-    if (contactLogEntry == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (contactLogEntry.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    return Response.ok(objectFactory.createModel(contactLogEntry)).build();
-  }
-
+  
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
   @PUT
-  @RESTPermit(StudentContactLogEntryPermissions.UPDATE_STUDENTCONTACTLOGENTRY)
+  @RESTPermit(handling = Handling.INLINE)
   public Response updateStudentContactLogEntry(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id,
       fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry entity) {
     if (entity == null) {
@@ -1818,19 +1847,44 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+    if (!studentId.equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
+    
+    User loggedUser = sessionController.getUser();
+    
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if (access.equals(ContactLogAccess.NONE)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    if (access.equals(ContactLogAccess.OWN)) {
+      if (contactLogEntry.getCreator() != null) {
+        if (!contactLogEntry.getCreator().getId().equals(staffMember.getId())) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      } else {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
 
     StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
-    studentContactLogEntryController.updateContactLogEntry(contactLogEntry, type, entity.getText(), toDate(entity.getEntryDate()), entity.getCreatorName());
+    studentContactLogEntryController.updateContactLogEntry(contactLogEntry, type, entity.getText(), toDate(entity.getEntryDate()));
 
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
   @DELETE
-  @RESTPermit(StudentContactLogEntryPermissions.DELETE_STUDENTCONTACTLOGENTRY)
+  @RESTPermit(handling = Handling.INLINE)
   public Response deleteStudentContactLogEntry(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id,
       @DefaultValue("false") @QueryParam("permanent") Boolean permanent) {
     Student student = studentController.findStudentById(studentId);
@@ -1843,10 +1897,25 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+    if (!studentId.equals(contactLogEntry.getStudent().getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
-
+    
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if (access.equals(ContactLogAccess.NONE)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    if (access.equals(ContactLogAccess.OWN)) {
+      if (contactLogEntry.getCreator() != null) {
+        if (!contactLogEntry.getCreator().getId().equals(sessionController.getUser().getId())) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      } else { 
+        return Response.status(Status.FORBIDDEN).build(); 
+      }
+    }
     if (permanent) {
       studentContactLogEntryController.deleteStudentContactLogEntry(contactLogEntry);
     } else {
@@ -1855,6 +1924,137 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ENTRYID:[0-9]*}/comments")
+  @POST
+  @RESTPermit(handling = Handling.INLINE)
+  public Response createStudentContactLogEntryComment(@PathParam("STUDENTID") Long studentId, @PathParam("ENTRYID") Long entryId, StudentContactLogEntryCommentRestModel entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(entryId);
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if (!access.equals(ContactLogAccess.ALL)) {
+      if (access.equals(ContactLogAccess.OWN)) {
+        if (contactLogEntry.getCreator() != null) {
+          if (!contactLogEntry.getCreator().getId().equals(staffMember.getId())) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        }
+      } else {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.createContactLogEntryComment(contactLogEntry, entity.getText(), entity.getCommentDate(), loggedUser.getFirstName() + " " + loggedUser.getLastName(), staffMember);
+    return Response.ok(objectFactory.createModel(contactLogEntryComment)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ENTRYID:[0-9]*}/comments/{COMMENTID:[0-9]*}")
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateStudentContactLogEntryComment(@PathParam("STUDENTID") Long studentId, @PathParam("ENTRYID") Long entryId, @PathParam("COMMENTID") Long commentId,
+      fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.findContactLogEntryCommentById(commentId);
+    if (contactLogEntryComment == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    StudentContactLogEntry contactLogEntry = contactLogEntryComment.getEntry();
+
+    if (contactLogEntry == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (contactLogEntry.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!studentId.equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if (access.equals(ContactLogAccess.ALL)) {
+      return Response.ok(objectFactory.createModel(studentContactLogEntryCommentController.updateContactLogEntryComment(contactLogEntryComment, entity.getText(), entity.getCommentDate()))).build();
+    } else if (access.equals(ContactLogAccess.OWN)) {
+      if (contactLogEntryComment.getCreator() != null) {
+        if (contactLogEntryComment.getCreator().getId().equals(staffMember.getId())) {
+          return Response.ok(objectFactory.createModel(studentContactLogEntryCommentController.updateContactLogEntryComment(contactLogEntryComment, entity.getText(), entity.getCommentDate()))).build();
+        }
+      }
+    } 
+    
+    return Response.status(Status.FORBIDDEN).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/entryComments/{COMMENTID:[0-9]*}")
+  @DELETE
+  @RESTPermit(handling = Handling.INLINE)
+  public Response deleteStudentContactLogEntryComment(@PathParam("STUDENTID") Long studentId, 
+      @PathParam("COMMENTID") Long commentId,
+      @DefaultValue("false") @QueryParam("permanent") Boolean permanent) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    StudentContactLogEntryComment contactLogEntryComment = studentContactLogEntryCommentController.findContactLogEntryCommentById(commentId);
+    if (contactLogEntryComment == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    StudentContactLogEntry contactLogEntry = contactLogEntryComment.getEntry();
+    if (!studentId.equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!sessionController.getUser().getRole().equals(Role.ADMINISTRATOR)) {
+      if (contactLogEntryComment.getCreator() != null) {
+        if (!contactLogEntryComment.getCreator().getId().equals(sessionController.getUser().getId())) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      } else { 
+        return Response.status(Status.FORBIDDEN).build(); 
+      }
+    }
+
+    if (permanent) {
+      studentContactLogEntryCommentController.deleteStudentContactLogEntryComment(contactLogEntryComment);
+    } else {
+      studentContactLogEntryCommentController.archiveStudentContactLogEntryComment(contactLogEntryComment, sessionController.getUser());
+    }
+
+    return Response.noContent().build();
+  }
+
 
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @POST
@@ -2930,10 +3130,32 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{ID:[0-9]*}/increaseStudyTime")
   @POST
-  @RESTPermit(StudentPermissions.INCREASE_STUDY_TIME)
+  @RESTPermit(handling = Handling.INLINE)
   public Response increaseStudyTime(@PathParam("ID") Long id, @QueryParam("months") Integer months) {
     logger.info(String.format("Increasing student %d study time for %d months", id, months));
 
+    // Permissions
+    
+    User loggedUser = sessionController.getUser();
+    
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      logger.severe("Staff member not found");
+      return Response.status(Status.BAD_REQUEST).entity("Staff member not found").build();
+    }
+    
+    if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
+      if (!staffMember.getRole().equals(Role.ADMINISTRATOR)) {
+        if (!staffMember.getRole().equals(Role.STUDY_PROGRAMME_LEADER)) {
+          boolean amICounselor = studentController.amIGuidanceCounselor(id, staffMember);
+          if (!amICounselor) {
+            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
+          }
+        }
+      }
+    }
+    
     // Validation
 
     if (months == null || months <= 0) {

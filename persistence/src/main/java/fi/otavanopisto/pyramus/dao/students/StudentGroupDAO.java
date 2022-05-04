@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -146,6 +147,35 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
       query.setMaxResults(maxResults);
     }
   
+    return query.getResultList();
+  }
+  
+  public List<StudentGroup> listByStudentAndUserAndGuidanceGroupAndArchived(Student student, StaffMember staffMember, Boolean guidanceGroup, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentGroup> criteria = criteriaBuilder.createQuery(StudentGroup.class);
+    Root<StudentGroupStudent> root = criteria.from(StudentGroupStudent.class);
+    Join<StudentGroupStudent, StudentGroup> studentGroup = root.join(StudentGroupStudent_.studentGroup);
+    
+    Subquery<StudentGroup> staffMemberGroupsQuery = criteria.subquery(StudentGroup.class);
+    Root<StudentGroupUser> staffMemberRoot = staffMemberGroupsQuery.from(StudentGroupUser.class);
+    staffMemberGroupsQuery.select(staffMemberRoot.get(StudentGroupUser_.studentGroup));
+    staffMemberGroupsQuery.where(criteriaBuilder.equal(staffMemberRoot.get(StudentGroupUser_.staffMember), staffMember));
+
+    List<Predicate> predicates = new ArrayList<Predicate>();
+    predicates.add(criteriaBuilder.equal(root.get(StudentGroupStudent_.student), student));
+    predicates.add(criteriaBuilder.equal(studentGroup.get(StudentGroup_.guidanceGroup), guidanceGroup));
+    
+    if (archived != null)
+      predicates.add(criteriaBuilder.equal(studentGroup.get(StudentGroup_.archived), archived));
+    
+    predicates.add(root.get(StudentGroupStudent_.studentGroup).in(staffMemberGroupsQuery));
+    
+    criteria.select(root.get(StudentGroupStudent_.studentGroup));
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    TypedQuery<StudentGroup> query = entityManager.createQuery(criteria);
     return query.getResultList();
   }
 

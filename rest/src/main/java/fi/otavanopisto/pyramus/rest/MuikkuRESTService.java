@@ -49,6 +49,7 @@ import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -249,6 +250,7 @@ public class MuikkuRESTService {
           item.setDate(courseStudent.getEnrolmentTime());
           item.setStatus(StudyActivityItemStatus.ONGOING);
           item.setSubject(courseModule.getSubject().getCode());
+          item.setSubjectName(courseModule.getSubject().getName());
           items.put(key, item);
         }
       }
@@ -987,6 +989,7 @@ public class MuikkuRESTService {
     }
     item.setStatus(StudyActivityItemStatus.GRADED);
     item.setSubject(courseAssessment.getSubject().getCode());
+    item.setSubjectName(courseAssessment.getSubject().getName());
     return item;
   }
 
@@ -1002,6 +1005,9 @@ public class MuikkuRESTService {
     }
     item.setStatus(StudyActivityItemStatus.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
+    item.setSubjectName(transferCredit.getSubject().getName());
+    item.setTransferCreditMandatory(transferCredit.getOptionality() == CourseOptionality.MANDATORY
+        ? true : transferCredit.getOptionality() == CourseOptionality.OPTIONAL ? false : null);
     return item;
   }
 

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -11,10 +13,14 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.rest.controller.UserController;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 /**
  * JSON request controller for creating new contact entry.
@@ -42,7 +48,9 @@ public class CreateContactEntryCommentJSONRequestController extends JSONRequestC
    * 
    * @param jsonRequestContext JSON request context
    */
+  
   public void process(JSONRequestContext jsonRequestContext) {
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentContactLogEntryDAO logEntryDAO = DAOFactory.getInstance().getStudentContactLogEntryDAO();
     StudentContactLogEntryCommentDAO entryCommentDAO = DAOFactory.getInstance().getStudentContactLogEntryCommentDAO();
 
@@ -51,14 +59,15 @@ public class CreateContactEntryCommentJSONRequestController extends JSONRequestC
       StudentContactLogEntry entry = logEntryDAO.findById(entryId);
 
       String commentText = jsonRequestContext.getRequest().getParameter("commentText");
-      String commentCreatorName = jsonRequestContext.getRequest().getParameter("commentCreatorName");
+      StaffMember commentCreator = staffMemberDAO.findById(jsonRequestContext.getLoggedUserId());
       Date commentDate = new Date(NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("commentDate"))); 
       
-      StudentContactLogEntryComment comment = entryCommentDAO.create(entry, commentText, commentDate, commentCreatorName);
+      StudentContactLogEntryComment comment = entryCommentDAO.create(entry, commentText, commentDate, commentCreator.getFirstName() + ' ' + commentCreator.getLastName(), commentCreator);
 
       Map<String, Object> info = new HashMap<>();
       info.put("id", comment.getId());
       info.put("creatorName", comment.getCreatorName());
+      info.put("creatorId", comment.getCreator().getId());
       info.put("timestamp", comment.getCommentDate().getTime());
       info.put("text", comment.getText());
       info.put("entryId", entryId);
