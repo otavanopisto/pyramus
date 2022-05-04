@@ -123,7 +123,7 @@ public class AbstractUITest extends AbstractIntegrationTest {
     waitForElementToBePresent(locator);
     WebElement element = getWebDriver().findElement(locator);
     Actions actions = new Actions(getWebDriver());
-    actions.moveToElement(element).build();
+    actions.moveToElement(element).perform();
   }
   
   protected void scrollToElement(String selector) {
