@@ -254,7 +254,8 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       "Testing...", // studyEndText, 
       variables, // variables
       new ArrayList<String>(),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
       
     response = given().headers(getAuthHeaders())

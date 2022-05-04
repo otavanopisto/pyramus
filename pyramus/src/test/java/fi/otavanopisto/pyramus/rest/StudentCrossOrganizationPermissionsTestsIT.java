@@ -86,7 +86,8 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
       "Testing...", // studyEndText, 
       variables, // variables
       Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
 
     Response response = given().headers(getAuthHeaders(role))
@@ -208,7 +209,8 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
         "updated studyEndText", // studyEndText, 
         updateVariables, // variables
         Arrays.asList("tag2", "tag3"),  // tags, 
-        Boolean.FALSE //archived
+        Boolean.FALSE, //archived
+        null // matriculation eligibility
       );
       
       Response response = given().headers(getAuthHeaders(role))
