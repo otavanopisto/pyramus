@@ -265,19 +265,25 @@ public class ApplicationUtils {
   }
   
   public static String genderUiValue(String value) {
-    switch (value) {
-    case "mies":
-      return "Mies";
-    case "nainen":
-      return "Nainen";
-    case "muu":
-      return "Muu";
-    default:
-      return null;
+    if (value != null) {
+      switch (value) {
+      case "mies":
+        return "Mies";
+      case "nainen":
+        return "Nainen";
+      case "muu":
+        return "Muu";
+      default:
+        return null;
+      }
     }
+    return null;
   }
   
   public static Curriculum resolveCurriculum(String curriculumValue) {
+    if (StringUtils.isEmpty(curriculumValue)) {
+      return null;
+    }
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     switch (curriculumValue) {
     case "ops2016":
@@ -294,6 +300,9 @@ public class ApplicationUtils {
   }
   
   public static StudentExaminationType resolveStudentExaminationType(String examinationType) {
+    if (StringUtils.isEmpty(examinationType)) {
+      return null;
+    }
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     switch (examinationType) {
     case "muu":
@@ -320,6 +329,9 @@ public class ApplicationUtils {
   }
   
   public static StudentActivityType resolveStudentActivityType(String activityType) {
+    if (StringUtils.isEmpty(activityType)) {
+      return null;
+    }
     StudentActivityTypeDAO studentActivityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     switch (activityType) {
     case "tyollinen":
@@ -338,6 +350,9 @@ public class ApplicationUtils {
   }
   
   public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, String internetixLine, AlternativeLine nettilukioAlternative) {
+    if (StringUtils.isEmpty(line)) {
+      return null;
+    }
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
@@ -367,6 +382,9 @@ public class ApplicationUtils {
     case "laakislinja":
       return studyProgrammeDAO.findById(31L); // Lääketieteen opintoihin valmentava koulutus
     case "mk":
+      if (StringUtils.isEmpty(foreignLine)) {
+        return null;
+      }
       switch (foreignLine) {
       case "apa":
         return studyProgrammeDAO.findById(29L); // Aikuisten perusopetuksen alkuvaiheen opetus
@@ -1106,38 +1124,41 @@ public class ApplicationUtils {
   }
 
   public static String sourceUiValue(String value) {
-    switch (value) {
-    case "tuttu":
-      return "Ennestään tuttu";
-    case "google":
-      return "Google";
-    case "facebook":
-      return "Facebook";
-    case "instagram":
-      return "Instagram";
-    case "sanomalehti":
-      return "Sanomalehti";
-    case "tienvarsimainos":
-      return "Tienvarsimainos";
-    case "valotaulumainos":
-      return "Valotaulumainos";
-    case "elokuva":
-      return "Elokuva- tai TV-mainos";
-    case "tuttava":
-      return "Kuulin kaverilta, tuttavalta, tms.";
-    case "opot":
-      return "Opot";
-    case "messut":
-      return "Messut";
-    case "te-toimisto":
-      return "TE-toimisto";
-    case "nuorisotyo":
-      return "Nuorisotyö";
-    case "muu":
-      return "Muu";
-    default:
-      return null;
+    if (value != null) {
+      switch (value) {
+      case "tuttu":
+        return "Ennestään tuttu";
+      case "google":
+        return "Google";
+      case "facebook":
+        return "Facebook";
+      case "instagram":
+        return "Instagram";
+      case "sanomalehti":
+        return "Sanomalehti";
+      case "tienvarsimainos":
+        return "Tienvarsimainos";
+      case "valotaulumainos":
+        return "Valotaulumainos";
+      case "elokuva":
+        return "Elokuva- tai TV-mainos";
+      case "tuttava":
+        return "Kuulin kaverilta, tuttavalta, tms.";
+      case "opot":
+        return "Opot";
+      case "messut":
+        return "Messut";
+      case "te-toimisto":
+        return "TE-toimisto";
+      case "nuorisotyo":
+        return "Nuorisotyö";
+      case "muu":
+        return "Muu";
+      default:
+        return null;
+      }
     }
+    return null;
   }
   
   /**
