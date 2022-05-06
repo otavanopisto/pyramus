@@ -206,6 +206,30 @@ public class AbstractUITest extends AbstractIntegrationTest {
     assertEquals(true, cUrl.endsWith(page));
   }
 
+  /** 
+   * @param secure boolean ssl connection or not
+   * @param path String path to goto including / at the beginning
+   */
+  protected void navigate(boolean secure, String path) {
+    getWebDriver().get(getAppUrl(secure) + path);
+  }
+
+  /** 
+   * Find {@link WebElement} by css selector and click it.
+   * Waits for the element to be present before attempting to click it.
+   * @param selector String selector css selector to locate the element to click
+   * @return nothing
+   */
+  protected void findAndClick(String selector) {
+    waitForPresent(selector);
+    getWebDriver().findElement(By.cssSelector(selector)).click();
+  }
+  
+  protected WebElement findElement(By by) {
+    waitForElementToBePresent(by);
+    return getWebDriver().findElement(by);
+  }
+  
   private WebDriver webDriver;
   protected static final String ADMIN_USERNAME = "devadmin";
   protected static final String ADMIN_PASSWORD = "passi";

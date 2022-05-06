@@ -375,7 +375,8 @@ insert into
     additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
     examinationType, education, curriculum_id)
 values 
-  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', null);
+  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', null),
+  (3, 1, 'Tankky', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test test', 1, 1, 1, 1, 1, 1, 1, 'Education', null);
 
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
