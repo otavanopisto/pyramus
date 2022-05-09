@@ -49,8 +49,8 @@
     </dependency>
 
     <dependency>
-      <groupId>jakarta.enterprise.concurrent</groupId>
-      <artifactId>jakarta.enterprise.concurrent-api</artifactId>
+      <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
+      <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
 

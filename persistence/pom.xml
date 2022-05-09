@@ -11,16 +11,10 @@
   </parent>
   
   <properties>
-    <hibernate-jpamodelgen.version>5.3.20.Final</hibernate-jpamodelgen.version>
+    <hibernate-jpamodelgen.version>5.3.24.Final</hibernate-jpamodelgen.version>
   </properties>
   
   <dependencies>
-  
-    <dependency>
-      <groupId>jakarta.annotation</groupId>
-      <artifactId>jakarta.annotation-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
   
     <dependency>
       <groupId>jakarta.enterprise</groupId>
@@ -65,11 +59,19 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.dom4j</groupId>
+          <artifactId>dom4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search-orm</artifactId>
+      <scope>provided</scope>
     </dependency>
   
     <dependency>
@@ -106,8 +108,9 @@
     <!-- JMS -->
     
     <dependency>
-      <groupId>jakarta.jms</groupId>
-      <artifactId>jakarta.jms-api</artifactId>
+      <groupId>org.jboss.spec.javax.jms</groupId>
+      <artifactId>jboss-jms-api_2.0_spec</artifactId>
+      <scope>provided</scope>
     </dependency>
     
     <!-- Pyramus -->
@@ -126,31 +129,50 @@
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.bsc.maven</groupId>
-        <artifactId>maven-processor-plugin</artifactId>
-        <version>4.5</version>
-        <executions>
-          <execution>
-            <id>process</id>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <processors>
-                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-              </processors>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>${hibernate-jpamodelgen.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+          <annotationProcessors>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</annotationProcessors>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate-jpamodelgen</artifactId>
+              <version>${hibernate-jpamodelgen.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>    
+    
+<!--       <plugin> -->
+<!--         <groupId>org.bsc.maven</groupId> -->
+<!--         <artifactId>maven-processor-plugin</artifactId> -->
+<!--         <version>4.5</version> -->
+<!--         <executions> -->
+<!--           <execution> -->
+<!--             <id>process</id> -->
+<!--             <goals> -->
+<!--               <goal>process</goal> -->
+<!--             </goals> -->
+<!--             <phase>generate-sources</phase> -->
+<!--             <configuration> -->
+<!-- <releaseVersion>11</releaseVersion>             -->
+<!--               <processors> -->
+<!--                 <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor> -->
+<!--               </processors> -->
+<!--             </configuration> -->
+<!--           </execution> -->
+<!--         </executions> -->
+<!--         <dependencies> -->
+<!--           <dependency> -->
+<!--             <groupId>org.hibernate.orm</groupId> -->
+<!--             <artifactId>hibernate-jpamodelgen</artifactId> -->
+<!--             <version>${hibernate-jpamodelgen.version}</version> -->
+<!--           </dependency> -->
+<!--         </dependencies> -->
+<!--       </plugin> -->
     </plugins>
   </build>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
   <context-root></context-root>
-  <security-domain>WebServices</security-domain>
+<!--   <security-domain>WebServices</security-domain> -->
   <virtual-host>pyramus</virtual-host>
 </jboss-web>

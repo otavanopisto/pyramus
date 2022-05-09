@@ -18,13 +18,15 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -172,9 +174,23 @@ public class ImportReportViewController extends PyramusFormViewController {
         }
   
         dataStream = new ByteArrayOutputStream();
+        
+        try {
+          DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();    
+          DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("XML 3.0 LS 3.0");
   
-        XMLSerializer xmlSerializer = new XMLSerializer(dataStream, new OutputFormat(reportDocument));
-        xmlSerializer.serialize(reportDocument);
+          LSSerializer serializer = impl.createLSSerializer();
+          LSOutput output = impl.createLSOutput();
+  
+          output.setEncoding("UTF-8");
+          output.setByteStream(dataStream);
+          serializer.write(reportDocument, output);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+        
+//        XMLSerializer xmlSerializer = new XMLSerializer(dataStream, new OutputFormat(reportDocument));
+//        xmlSerializer.serialize(reportDocument);
       }
       
       User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
