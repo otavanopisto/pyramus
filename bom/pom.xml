@@ -36,7 +36,7 @@
     <!-- WildFly -->
     <!-- See https://repo1.maven.org/maven2/org/wildfly/bom/wildfly-jakartaee8/26.1.0.Beta1/wildfly-jakartaee8-26.1.0.Beta1.pom -->
 
-    <wildfly.version>26.1.0.Beta1</wildfly.version>
+    <wildfly.version>26.1.0.Final</wildfly.version>
 
     <!-- JUnit4 -->
     <junit4.version>4.13.1</junit4.version>
