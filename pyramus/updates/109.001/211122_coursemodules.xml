@@ -44,5 +44,13 @@
   
   <sql>alter table CourseAssessment modify column courseModule bigint not null;</sql>
   <sql>alter table CourseAssessment modify column courseStudent bigint not null;</sql>
+  
+  <sql>alter table CourseBase drop foreign key FKB40B1AC977F310A;</sql>
+  <sql>alter table CourseBase drop column subject;</sql>
+  
+  <sql>alter table CourseBase drop foreign key FKB40B1AC2054118C;</sql>
+  <sql>alter table CourseBase drop column courseLength;</sql>
+
+  <sql>alter table CourseBase drop column courseNumber;</sql>
 
 </update>
