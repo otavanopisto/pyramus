@@ -246,8 +246,7 @@
                   <div class="genericViewFormDataText">
                     <c:forEach var="courseModule" items="${module.courseModules}">
                       <div>
-                        <c:out value="${courseModule.subject.code}"/>
-                        <c:out value="${courseModule.courseNumber}"/>
+                        <c:out value="${courseModule.subject.code}${courseModule.courseNumber}"/>
                         <c:out value="${courseModule.courseLength.units}"/>
                         <c:out value="${courseModule.courseLength.unit.symbol}"/>
                       </div>
