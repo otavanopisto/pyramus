@@ -6,8 +6,6 @@ import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryDAO;
-import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryPathDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomTypeDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
@@ -796,16 +794,6 @@ public class DAOFactory {
     return (ClientApplicationAccessTokenDAO) findByClass(ClientApplicationAccessTokenDAO.class);
   }
   
-  /* AccessLog */
-  
-  public AccessLogEntryDAO getAccessLogEntryDAO() {
-    return (AccessLogEntryDAO) findByClass(AccessLogEntryDAO.class);
-  }
-  
-  public AccessLogEntryPathDAO getAccessLogEntryPathDAO() {
-    return (AccessLogEntryPathDAO) findByClass(AccessLogEntryPathDAO.class);
-  }
-
   public LoginLogDAO getLoginLogDAO() {
     return (LoginLogDAO) findByClass(LoginLogDAO.class);
   }
