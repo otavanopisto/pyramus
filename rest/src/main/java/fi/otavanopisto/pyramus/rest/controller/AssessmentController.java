@@ -82,16 +82,6 @@ public class AssessmentController {
     return courseAssessmentDAO.findById(id);
   }
 
-  /**
-   * This is deprecated because CourseAssessment is tied to both CourseStudent and CourseModule and
-   * fetching with only CourseStudent can give misleading results. In some cases though it is enough 
-   * information and as such should only be refactored later.
-   */
-  @Deprecated
-  public CourseAssessment findLatestCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
-    return courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, archived);
-  }
-  
   public CourseAssessment findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(CourseStudent courseStudent, CourseModule courseModule, Boolean archived) {
     return courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, archived);
   }
