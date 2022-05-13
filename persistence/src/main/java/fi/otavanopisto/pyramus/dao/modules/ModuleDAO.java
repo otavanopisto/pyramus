@@ -78,8 +78,9 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
     Root<Module> root = criteria.from(Module.class);
     
-    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
     Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
     courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
     
     criteria.select(root);
@@ -97,8 +98,9 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
     Root<Module> root = criteria.from(Module.class);
 
-    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
     Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
     courseModuleSubquery.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject),

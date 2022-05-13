@@ -19,6 +19,7 @@ import javax.persistence.criteria.Subquery;
 
 import fi.otavanopisto.pyramus.dao.Predicates;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -111,8 +112,9 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
     Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
     
-    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
     Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
     courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
 
     criteria.select(root);
@@ -144,8 +146,9 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
         .add(criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE));
     
     if (subject != null) {
-      Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+      Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
       Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+      courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
       courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
       
       predicates.add(courseJoin.in(courseModuleSubquery));

@@ -529,9 +529,9 @@ public abstract class KoskiStudentHandler {
             CourseAssessment ca = (CourseAssessment) credit;
             Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
   
-            subject = course != null ? ca.getSubject() : null;
+            subject = ca.getSubject();
             courseNumber = ca.getCourseNumber();
-            courseName = course.getName();
+            courseName = course != null ? course.getName() : null;
             laajuus = kurssinLaajuus(ca.getCourseLength());
 
             creditOPS = resolveSingleOPSFromCredit(ca, orderedOPSs, defaultOPS);

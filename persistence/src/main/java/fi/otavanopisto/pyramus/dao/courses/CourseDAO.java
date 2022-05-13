@@ -31,6 +31,7 @@ import org.hibernate.search.jpa.Search;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable_;
@@ -289,8 +290,9 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
     Root<Course> courseRoot = criteria.from(Course.class);
     
-    Subquery<CourseModule> courseModuleSubquery = criteria.subquery(CourseModule.class);
+    Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
     Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
     courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
     
     criteria.select(courseRoot);
