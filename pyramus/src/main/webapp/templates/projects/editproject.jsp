@@ -118,20 +118,45 @@
          <!--  Modules tab -->
           
           <div id="modules" class="tabContentixTableFormattedData">
-            <div class="genericTableAddRowContainer">
-              <span class="genericTableAddRowLinkContainer" onclick="openSearchModulesDialog();"><fmt:message key="projects.editProject.addModuleLink"/></span>
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="projects.editProject.modulesTitle"/>
+                <jsp:param name="helpLocale" value="projects.editProject.modulesHelp"/>
+              </jsp:include>
+              <div class="genericTableAddRowContainer">
+                <span class="genericTableAddRowLinkContainer" onclick="openSearchModulesDialog();"><fmt:message key="projects.editProject.addModuleLink"/></span>
+              </div>
+              
+              <div id="noModulesAddedMessageContainer" class="genericTableNotAddedMessageContainer">
+                <span><fmt:message key="projects.editProject.noModulesAddedPreFix"/> <span onclick="openSearchModulesDialog();" class="genericTableAddRowLink"><fmt:message key="projects.editProject.noModulesAddedClickHereLink"/></span>.</span>
+              </div>
+              
+              <div id="modulesContainer">
+                <div id="modulesTableContainer"></div>
+              </div>
+  
+              <div id="editProjectModulesTotalContainer">
+                <fmt:message key="projects.editProject.modulesTotal"/> <span id="editProjectModulesTotalValue"></span>
+              </div>
             </div>
             
-            <div id="noModulesAddedMessageContainer" class="genericTableNotAddedMessageContainer">
-              <span><fmt:message key="projects.editProject.noModulesAddedPreFix"/> <span onclick="openSearchModulesDialog();" class="genericTableAddRowLink"><fmt:message key="projects.editProject.noModulesAddedClickHereLink"/></span>.</span>
-            </div>
-            
-            <div id="modulesContainer">
-              <div id="modulesTableContainer"></div>
-            </div>
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="projects.editProject.subjectCoursesTitle"/>
+                <jsp:param name="helpLocale" value="projects.editProject.subjectCoursesHelp"/>
+              </jsp:include>
 
-            <div id="editProjectModulesTotalContainer">
-              <fmt:message key="projects.editProject.modulesTotal"/> <span id="editProjectModulesTotalValue"></span>
+              <div class="genericTableAddRowContainer">
+                <span class="genericTableAddRowLinkContainer" onclick="addSubjectCourseTableRow();"><fmt:message key="projects.editProject.addSubjectCourseLink"/></span>
+              </div>
+
+              <div id="subjectCoursesContainer">
+                <div id="subjectCoursesTableContainer"></div>
+              </div>
+  
+              <div id="createProjectSubjectCoursesTotalContainer" style="display:none;">
+                <fmt:message key="projects.createProject.modulesTotal"/> <span id="createProjectSubjectCoursesTotalValue"></span>
+              </div>
             </div>
 
           </div>

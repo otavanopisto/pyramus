@@ -79,8 +79,8 @@
         }
       }
 
-      function openEditVerbalAssessmentDialog(row) {
-        var table = getIxTableById("studentsTable"); 
+      function openEditVerbalAssessmentDialog(moduleId, row) {
+        var table = getIxTableById("courseModule." + moduleId + ".studentsTable"); 
         var assessmentId = table.getCellValue(row, table.getNamedColumnIndex('assessmentId'));
         
         var dialog = new IxDialog({
@@ -102,7 +102,7 @@
               var verbalAssessment = event.results.verbalAssessment.escapeHTML();
               var verbalShort = event.results.verbalAssessment.stripTags().trim().truncate(17);
               
-              var table = getIxTableById("studentsTable"); 
+              var table = getIxTableById("courseModule." + moduleId + ".studentsTable"); 
               var verbalModCol = table.getNamedColumnIndex('verbalModified');
               var verbalAssessmentCol = table.getNamedColumnIndex('verbalAssessment');
               var verbalShortCol = table.getNamedColumnIndex('verbalAssessmentShort');
@@ -120,9 +120,9 @@
         dialog.open();
       }
       
-      function setupStudentsTable() {
-        var studentsTable = new IxTable($('studentsTable'), {
-          id : "studentsTable",
+      function setupStudentsTable(moduleId) {
+        var studentsTable = new IxTable($('studentsTableContainer.' + moduleId), {
+          id : "courseModule." + moduleId + ".studentsTable",
           columns : [{
             width: 22,
             left: 8,
@@ -391,7 +391,7 @@
             imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
             tooltip: '<fmt:message key="courses.manageCourseAssessments.studentsTableEditVerbalAssessmentTooltip"/>',
             onclick: function (event) {
-              openEditVerbalAssessmentDialog(event.row);
+              openEditVerbalAssessmentDialog(moduleId, event.row);
             }
           }, {
             dataType: 'hidden', 
@@ -423,45 +423,43 @@
         var userColumnIndex = studentsTable.getNamedColumnIndex('assessingUserId');
         
         studentsTable.detachFromDom();
-        <c:forEach var="courseStudent" items="${courseStudents}" varStatus="status">
-          <c:choose>
-            <c:when test="${courseStudent.student.studyProgramme ne null}">
-              <c:set var="studyProgrammeName">${fn:escapeXml(courseStudent.student.studyProgramme.name)}</c:set>
-            </c:when>
-            <c:otherwise>
-              <c:set var="studyProgrammeName"><fmt:message key="courses.manageCourseAssessments.studentsTableNoStudyProgrammeLabel"/></c:set>
-            </c:otherwise>
-          </c:choose>
+
+        var rows = new Array();
+
+        var allCourseModuleCourseStudents = JSDATA["courseModuleCourseStudents"].evalJSON();
+        var courseModuleCourseStudents = allCourseModuleCourseStudents[moduleId];
+
+        for (var i = 0, l = courseModuleCourseStudents.length; i < l; i++) {
+          var courseModuleCourseStudent = courseModuleCourseStudents[i];
+          var verbalAssessment = courseModuleCourseStudent.verbalAssessment;
+          if (verbalAssessment && verbalAssessment.length > 14) {
+            verbalAssessment = verbalAssessment.substring(0, 14) + "...";
+          }
           
-          <c:choose>
-            <c:when test="${fn:length(verbalAssessments[assessments[courseStudent.id].id]) gt 14}">
-              <c:set var="verbalAssessment">${fn:substring(verbalAssessments[assessments[courseStudent.id].id], 0, 14)}...</c:set>
-            </c:when>
-            <c:otherwise>
-              <c:set var="verbalAssessment">${verbalAssessments[assessments[courseStudent.id].id]}</c:set>
-            </c:otherwise>
-          </c:choose>
-          
-          rowIndex = studentsTable.addRow([
+          var rowIndex = studentsTable.addRow([
             '',
             '',
-            "${fn:escapeXml(courseStudent.student.lastName)}, ${fn:escapeXml(courseStudent.student.firstName)}", 
-            "${studyProgrammeName}", 
-            '${assessments[courseStudent.id].grade.id}',
-            '${courseStudent.participationType.id}',
-            '${assessments[courseStudent.id].assessor.id}',
-            '${assessments[courseStudent.id].date.time}',
-            '${verbalAssessment}',
+            courseModuleCourseStudent.fullName,
+            courseModuleCourseStudent.studyProgrammeName,
+            courseModuleCourseStudent.gradeId,
+            courseModuleCourseStudent.participationTypeId,
+            courseModuleCourseStudent.assessorId,
+            courseModuleCourseStudent.assessmentDate,
+            verbalAssessment,
             '',
-            '${courseStudent.id}',
-            '${assessments[courseStudent.id].id}',
-            '${courseStudent.student.person.id}',
+            courseModuleCourseStudent.courseStudentId,
+            courseModuleCourseStudent.assessmentId,
+            courseModuleCourseStudent.personId,
             0,
             '',
-            0]);
-          IxTableControllers.getController('autoCompleteSelect').setDisplayValue(studentsTable.getCellEditor(rowIndex, userColumnIndex), '${fn:escapeXml(assessments[courseStudent.id].assessor.fullName)}');
-        </c:forEach>
+            0
+          ]);
+
+          IxTableControllers.getController('autoCompleteSelect').setDisplayValue(studentsTable.getCellEditor(rowIndex, userColumnIndex), courseModuleCourseStudent.assessorName);
+        }
+
         studentsTable.reattachToDom();
+        
         if (studentsTable.getRowCount() > 0) {
           $('manageCourseAssessmentsStudentsTotalValue').innerHTML = studentsTable.getRowCount();
         }
@@ -496,7 +494,10 @@
       function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
         setupRelatedCommands();
-        setupStudentsTable();
+
+        <c:forEach var="courseModule" items="${course.courseModules}">
+          setupStudentsTable(${courseModule.id});
+        </c:forEach>
       }
 
     </script>
@@ -513,33 +514,37 @@
     <div id="manageCourseAssessmentsEditFormContainer">
       <div class="genericFormContainer">
         <form action="savecourseassessments.json" method="post" ix:jsonform="true" ix:useglasspane="true">
-          <input type="hidden" name="course" value="${course.id}"/>
+          <input type="hidden" name="courseId" value="${course.id}"/>
           <input type="hidden" name="version" value="${course.version}"/>
 
           <div class="tabLabelsContainer" id="tabs">
-            <a class="tabLabel" href="#students"><fmt:message key="courses.manageCourseAssessments.studentsTabTitle" /></a>
+            <c:forEach var="courseModule" items="${course.courseModules}">
+              <a class="tabLabel" href="#cm-${courseModule.id}">${courseModule.subject.name} ${courseModule.courseNumber}</a>
+            </c:forEach>
           </div>
   
-          <div id="students" class="tabContent">
-            <div id="relatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
-
-            <div id="manageCourseAssessmentsStudentsTableContainer">
-              <c:if test="${fn:length(courseStudents) eq 0}">
-                <div id="noStudentsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
-                  <span><fmt:message key="courses.manageCourseAssessments.noStudentsAddedMessage"/></span>
-                </div>
-              </c:if>
-            
-              <div id="studentsTable"> </div>
-
-              <c:if test="${fn:length(courseStudents) gt 0}">
-                <div id="manageCourseAssessmentsStudentsTotalContainer">
-                  <fmt:message key="courses.manageCourseAssessments.studentsTotal"/> <span id="manageCourseAssessmentsStudentsTotalValue"></span>
-                </div>
-              </c:if>
-
+          <c:forEach var="courseModule" items="${course.courseModules}">
+            <div id="cm-${courseModule.id}" class="tabContent">
+              <div id="relatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
+  
+              <div id="manageCourseAssessmentsStudentsTableContainer">
+                <c:if test="${fn:length(courseStudents) eq 0}">
+                  <div id="noStudentsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
+                    <span><fmt:message key="courses.manageCourseAssessments.noStudentsAddedMessage"/></span>
+                  </div>
+                </c:if>
+              
+                <div id="studentsTableContainer.${courseModule.id}"> </div>
+  
+                <c:if test="${fn:length(courseStudents) gt 0}">
+                  <div id="manageCourseAssessmentsStudentsTotalContainer">
+                    <fmt:message key="courses.manageCourseAssessments.studentsTotal"/> <span id="manageCourseAssessmentsStudentsTotalValue"></span>
+                  </div>
+                </c:if>
+  
+              </div>
             </div>
-          </div>
+          </c:forEach>
       
           <div class="genericFormSubmitSectionOffTab">
             <input type="submit" class="formvalid" value="<fmt:message key="courses.manageCourseAssessments.saveButton"/>">

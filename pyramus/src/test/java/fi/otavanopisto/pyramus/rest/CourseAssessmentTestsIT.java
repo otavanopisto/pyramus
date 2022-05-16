@@ -21,7 +21,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testCreateCourseAssessment() {
-    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, 1l,TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
+    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, 1000l, TEST_GRADEID, 1l,TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -32,6 +32,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("courseStudentId", is(courseAssessment.getCourseStudentId().intValue()))
+      .body("courseModuleId", is(courseAssessment.getCourseModuleId().intValue()))
       .body("gradeId", is( courseAssessment.getGradeId().intValue() ))
       .body("assessorId", is( courseAssessment.getAssessorId().intValue() ))
       .body("date", is( courseAssessment.getDate().toString() ))
@@ -118,7 +119,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateCourseAssessment() {
-    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
+    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, 1000l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -128,6 +129,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
     response.then()
       .body("id", not(is((Long) null)))
       .body("courseStudentId", is(courseAssessment.getCourseStudentId().intValue()))
+      .body("courseModuleId", is(courseAssessment.getCourseModuleId().intValue()))
       .body("gradeId", is( courseAssessment.getGradeId().intValue() ))
       .body("assessorId", is( courseAssessment.getAssessorId().intValue() ))
       .body("date", is( courseAssessment.getDate().toString() ))
@@ -135,7 +137,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
+      CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, 1000l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -145,6 +147,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
         .statusCode(200)
         .body("id", not(is((Long) null)))
         .body("courseStudentId", is(updatedCourseAssessment.getCourseStudentId().intValue()))
+        .body("courseModuleId", is(updatedCourseAssessment.getCourseModuleId().intValue()))
         .body("gradeId", is( updatedCourseAssessment.getGradeId().intValue() ))
         .body("assessorId", is( updatedCourseAssessment.getAssessorId().intValue() ))
         .body("date", is( updatedCourseAssessment.getDate().toString() ))

@@ -10,22 +10,22 @@ public class Course {
   public Course() {
   }
   
-  public Course(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+  public Course(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, 
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate, Long primaryEducationTypeId, Long primaryEducationSubtypeId) {
-    this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
+      Long lastModifierId, Set<Long> curriculumIds, Long moduleId, Long stateId, Long typeId, 
+      Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate, Long primaryEducationTypeId, Long primaryEducationSubtypeId, Set<CourseModule> courseModules) {
+    this(null, name, created, lastModified, description, archived, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags, organizationId, courseTemplate,
-        primaryEducationTypeId, primaryEducationSubtypeId);
+        creatorId, lastModifierId, curriculumIds, moduleId, stateId, typeId, variables, tags, organizationId, courseTemplate,
+        primaryEducationTypeId, primaryEducationSubtypeId, courseModules);
   }
 
-  public Course(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+  public Course(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, 
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate, Long primaryEducationTypeId, Long primaryEducationSubtypeId) {
+      Long lastModifierId, Set<Long> curriculumIds, Long moduleId, Long stateId, Long typeId, 
+      Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate, Long primaryEducationTypeId, Long primaryEducationSubtypeId, Set<CourseModule> courseModules) {
     super();
     this.id = id;
     this.organizationId = organizationId;
@@ -34,7 +34,6 @@ public class Course {
     this.lastModified = lastModified;
     this.description = description;
     this.archived = archived;
-    this.courseNumber = courseNumber;
     this.maxParticipantCount = maxParticipantCount;
     this.beginDate = beginDate;
     this.endDate = endDate;
@@ -49,10 +48,7 @@ public class Course {
     this.enrolmentTimeEnd = enrolmentTimeEnd;
     this.creatorId = creatorId;
     this.lastModifierId = lastModifierId;
-    this.subjectId = subjectId;
     this.curriculumIds = curriculumIds;
-    this.length = length;
-    this.lengthUnitId = lengthUnitId;
     this.moduleId = moduleId;
     this.stateId = stateId;
     this.typeId = typeId;
@@ -61,6 +57,7 @@ public class Course {
     this.courseTemplate = courseTemplate;
     this.primaryEducationTypeId = primaryEducationTypeId;
     this.primaryEducationSubtypeId = primaryEducationSubtypeId;
+    this.courseModules = courseModules;
   }
 
   public Long getId() {
@@ -109,14 +106,6 @@ public class Course {
 
   public void setArchived(Boolean archived) {
     this.archived = archived;
-  }
-
-  public Integer getCourseNumber() {
-    return courseNumber;
-  }
-
-  public void setCourseNumber(Integer courseNumber) {
-    this.courseNumber = courseNumber;
   }
 
   public Long getMaxParticipantCount() {
@@ -215,30 +204,6 @@ public class Course {
     this.lastModifierId = lastModifierId;
   }
 
-  public Long getSubjectId() {
-    return subjectId;
-  }
-  
-  public void setSubjectId(Long subjectId) {
-    this.subjectId = subjectId;
-  }
-  
-  public Double getLength() {
-    return length;
-  }
-  
-  public void setLength(Double length) {
-    this.length = length;
-  }
-  
-  public Long getLengthUnitId() {
-    return lengthUnitId;
-  }
-  
-  public void setLengthUnitId(Long lengthUnitId) {
-    this.lengthUnitId = lengthUnitId;
-  }
-
   public Long getModuleId() {
     return moduleId;
   }
@@ -327,6 +292,14 @@ public class Course {
     this.primaryEducationSubtypeId = primaryEducationSubtypeId;
   }
 
+  public Set<CourseModule> getCourseModules() {
+    return courseModules;
+  }
+
+  public void setCourseModules(Set<CourseModule> courseModules) {
+    this.courseModules = courseModules;
+  }
+
   private Long id;
   private Long organizationId;
   private String name;
@@ -334,7 +307,6 @@ public class Course {
   private OffsetDateTime lastModified;
   private String description;
   private Boolean archived;
-  private Integer courseNumber;
   private Long maxParticipantCount;
   private OffsetDateTime beginDate;
   private OffsetDateTime endDate;
@@ -348,9 +320,6 @@ public class Course {
   private OffsetDateTime enrolmentTimeEnd;
   private Long creatorId;
   private Long lastModifierId;
-  private Long subjectId;
-  private Double length;
-  private Long lengthUnitId;
   private Long moduleId;
   private Long stateId;
   private Long typeId;
@@ -360,4 +329,5 @@ public class Course {
   private boolean courseTemplate;
   private Long primaryEducationTypeId;
   private Long primaryEducationSubtypeId;
+  private Set<CourseModule> courseModules;
 }

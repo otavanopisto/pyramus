@@ -14,17 +14,21 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.ProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModuleOptionality;
+import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -110,9 +114,45 @@ public class EditProjectJSONRequestController extends JSONRequestController {
         projectModuleDAO.delete(projectModule);
       }
     }
+
+    handleSubjectCourses(jsonRequestContext, project);
+    
     jsonRequestContext.setRedirectURL(jsonRequestContext.getReferer(true));
   }
 
+  private void handleSubjectCourses(JSONRequestContext jsonRequestContext, Project project) {
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    ProjectSubjectCourseDAO projectSubjectCourseDAO = DAOFactory.getInstance().getProjectSubjectCourseDAO();
+
+    Set<Long> existingIds = new HashSet<>();
+    int rowCount = jsonRequestContext.getInteger("subjectCoursesTable.rowCount").intValue();
+    for (int i = 0; i < rowCount; i++) {
+      String colPrefix = "subjectCoursesTable." + i;
+      int optionality = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
+          .intValue();
+      Long projectSubjectCourseId = jsonRequestContext.getLong(colPrefix + ".projectSubjectCourseId");
+      if (projectSubjectCourseId == -1) {
+        Long subjectId = jsonRequestContext.getLong(colPrefix + ".subjectId");
+        Subject subject = subjectDAO.findById(subjectId);
+        Integer courseNumber = jsonRequestContext.getInteger(colPrefix + ".courseNumber");
+        projectSubjectCourseId = projectSubjectCourseDAO.create(project, subject, courseNumber,
+            ProjectModuleOptionality.getOptionality(optionality)).getId();
+      }
+      else {
+        projectSubjectCourseDAO.update(projectSubjectCourseDAO.findById(projectSubjectCourseId), ProjectModuleOptionality
+            .getOptionality(optionality));
+      }
+      existingIds.add(projectSubjectCourseId);
+    }
+    
+    List<ProjectSubjectCourse> projectSubjectCourses = projectSubjectCourseDAO.listByProject(project);
+    for (ProjectSubjectCourse projectSubjectCourse : projectSubjectCourses) {
+      if (!existingIds.contains(projectSubjectCourse.getId())) {
+        projectSubjectCourseDAO.delete(projectSubjectCourse);
+      }
+    }
+  }
+  
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }

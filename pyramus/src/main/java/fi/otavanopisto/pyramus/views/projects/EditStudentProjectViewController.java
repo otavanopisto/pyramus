@@ -17,6 +17,7 @@ import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
@@ -29,6 +30,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -39,6 +41,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -70,6 +73,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
 
     Long studentProjectId = pageRequestContext.getLong("studentproject");
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
@@ -83,6 +87,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     List<CreditLink> allStudentCreditLinks = creditLinkDAO.listByStudent(studentProject.getStudent());
     
     JSONArray studentProjectModulesJSON = new JSONArray();
+    JSONArray studentProjectSubjectCoursesJSON = new JSONArray();
     JSONArray courseStudentsJSON = new JSONArray();
 
     for (CreditLink creditLink : allStudentCreditLinks) {
@@ -93,6 +98,9 @@ public class EditStudentProjectViewController extends PyramusViewController impl
 
         case TransferCredit:
           allStudentTransferCredits.add((TransferCredit) creditLink.getCredit());
+        break;
+        
+        case ProjectAssessment:
         break;
       }
     }
@@ -132,11 +140,47 @@ public class EditStudentProjectViewController extends PyramusViewController impl
           }
         }
       }
+
+      JSONObject obj = new JSONObject();
       
-      if ((studentProjectModule.getModule().getCourseNumber() != null) && (studentProjectModule.getModule().getCourseNumber() != -1) && (studentProjectModule.getModule().getSubject() != null)) {
+      obj.put("projectModuleId", studentProjectModule.getId().toString());
+      obj.put("projectModuleOptionality", studentProjectModule.getOptionality().toString());
+      obj.put("projectModuleAcademicTermId", studentProjectModule.getAcademicTerm() != null ? studentProjectModule.getAcademicTerm().getId().toString() : "");
+      obj.put("projectModuleHasPassingGrade", hasPassingGrade ? "1" : "0");
+      obj.put("moduleId", studentProjectModule.getModule().getId());
+      obj.put("moduleName", studentProjectModule.getModule().getName());
+      
+      obj.put("moduleCourseStudents", moduleCourseStudents);
+      obj.put("moduleCredits", moduleCredits);
+      
+      studentProjectModulesJSON.add(obj);
+    }
+
+    for (StudentProjectSubjectCourse studentProjectSubjectCourse : studentProject.getStudentProjectSubjectCourses()) {
+      JSONArray moduleCredits = new JSONArray();
+      boolean hasPassingGrade = false;
+
+      if ((studentProjectSubjectCourse.getCourseNumber() != null) && (studentProjectSubjectCourse.getCourseNumber() != -1) && (studentProjectSubjectCourse.getSubject() != null)) {
+        for (CourseAssessment assessment : allStudentCourseAssessments) {
+          if ((assessment.getCourseNumber() != null) && (assessment.getCourseNumber() != -1) && (assessment.getSubject() != null)) {
+            if (assessment.getCourseNumber().equals(studentProjectSubjectCourse.getCourseNumber()) && assessment.getSubject().equals(studentProjectSubjectCourse.getSubject())) {
+              if (assessment.getGrade() != null) {
+                JSONObject courseAssessment = new JSONObject();
+    
+                courseAssessment.put("creditType", assessment.getCreditType().toString());
+                courseAssessment.put("courseName", assessment.getCourseStudent().getCourse().getName());
+                courseAssessment.put("gradeName", assessment.getGrade().getName());
+    
+                moduleCredits.add(courseAssessment);
+                hasPassingGrade = hasPassingGrade || assessment.getGrade().getPassingGrade();
+              }
+            }
+          }
+        }
+      
         for (TransferCredit tc : allStudentTransferCredits) {
           if ((tc.getCourseNumber() != null) && (tc.getCourseNumber() != -1) && (tc.getSubject() != null)) {
-            if (tc.getCourseNumber().equals(studentProjectModule.getModule().getCourseNumber()) && tc.getSubject().equals(studentProjectModule.getModule().getSubject())) {
+            if (tc.getCourseNumber().equals(studentProjectSubjectCourse.getCourseNumber()) && tc.getSubject().equals(studentProjectSubjectCourse.getSubject())) {
               if (tc.getGrade() != null) {
                 JSONObject transferCredit = new JSONObject();
                 
@@ -155,19 +199,18 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       
       JSONObject obj = new JSONObject();
       
-      obj.put("projectModuleId", studentProjectModule.getId().toString());
-      obj.put("projectModuleOptionality", studentProjectModule.getOptionality().toString());
-      obj.put("projectModuleAcademicTermId", studentProjectModule.getAcademicTerm() != null ? studentProjectModule.getAcademicTerm().getId().toString() : "");
+      obj.put("id", studentProjectSubjectCourse.getId());
+      obj.put("subjectId", studentProjectSubjectCourse.getSubject().getId());
+      obj.put("courseNumber", studentProjectSubjectCourse.getCourseNumber());
+      obj.put("optionality", studentProjectSubjectCourse.getOptionality().getValue());
+      obj.put("projectModuleAcademicTermId", studentProjectSubjectCourse.getAcademicTerm() != null ? studentProjectSubjectCourse.getAcademicTerm().getId().toString() : "");
       obj.put("projectModuleHasPassingGrade", hasPassingGrade ? "1" : "0");
-      obj.put("moduleId", studentProjectModule.getModule().getId());
-      obj.put("moduleName", studentProjectModule.getModule().getName());
-      
-      obj.put("moduleCourseStudents", moduleCourseStudents);
+
       obj.put("moduleCredits", moduleCredits);
       
-      studentProjectModulesJSON.add(obj);
+      studentProjectSubjectCoursesJSON.add(obj);
     }
-
+    
     List<Student> students = studentDAO.listByPerson(studentProject.getStudent().getPerson());
     Collections.sort(students, new Comparator<Student>() {
       @Override
@@ -275,6 +318,20 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       }
     }
 
+    List<Subject> subjects = subjectDAO.listUnarchived();
+    JSONArray subjectsJSON = new JSONArray();
+    for (Subject subject : subjects) {
+      JSONObject subjectJSON = new JSONObject();
+      subjectJSON.put("id", subject.getId());
+      subjectJSON.put("name", subject.getName());
+      subjectJSON.put("code", subject.getCode());
+      subjectJSON.put("educationTypeId", subject.getEducationType() != null ? subject.getEducationType().getId() : null);
+      subjectJSON.put("educationTypeCode", subject.getEducationType() != null ? subject.getEducationType().getCode() : null);
+      subjectJSON.put("educationTypeName", subject.getEducationType() != null ? subject.getEducationType().getName() : null);
+      subjectsJSON.add(subjectJSON);
+    }
+    setJsDataVariable(pageRequestContext, "subjects", subjectsJSON.toString());
+    
     /* Tags */
     
     StringBuilder tagsBuilder = new StringBuilder();
@@ -297,6 +354,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
 
     setJsDataVariable(pageRequestContext, "studentProjectModules", studentProjectModulesJSON.toString());
+    setJsDataVariable(pageRequestContext, "studentProjectSubjectCourses", studentProjectSubjectCoursesJSON.toString());
     setJsDataVariable(pageRequestContext, "courseStudents", courseStudentsJSON.toString());
     
     pageRequestContext.setIncludeJSP("/templates/projects/editstudentproject.jsp");

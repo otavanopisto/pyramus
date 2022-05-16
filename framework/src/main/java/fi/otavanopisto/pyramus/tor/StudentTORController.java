@@ -40,11 +40,11 @@ public class StudentTORController {
 
     for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
       if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
-        Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-        Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
+        Subject subject = courseAssessment.getSubject();
+        Integer courseNumber = courseAssessment.getCourseNumber();
         Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
         
-        EducationalLength courseEducationalLength = courseAssessment.getCourseStudent().getCourse().getCourseLength();
+        EducationalLength courseEducationalLength = courseAssessment.getCourseLength();
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         
@@ -67,11 +67,11 @@ public class StudentTORController {
     for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
       CourseAssessment courseAssessment = (CourseAssessment) linkedCourseAssessment.getCredit();
       if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
-        Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-        Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
+        Subject subject = courseAssessment.getSubject();
+        Integer courseNumber = courseAssessment.getCourseNumber();
         Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
 
-        EducationalLength courseEducationalLength = courseAssessment.getCourseStudent().getCourse().getCourseLength();
+        EducationalLength courseEducationalLength = courseAssessment.getCourseLength();
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);

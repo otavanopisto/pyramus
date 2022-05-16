@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -196,8 +197,7 @@ public class MuikkuRESTService {
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
     courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
     for (CourseAssessment courseAssessment : courseAssessments) {
-      Course course = courseAssessment.getCourseStudent().getCourse();
-      String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
+      String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
       StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
       if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
         items.put(key, item);
@@ -211,8 +211,7 @@ public class MuikkuRESTService {
       Credit credit = creditLink.getCredit();
       if (credit.getCreditType() == CreditType.CourseAssessment) {
         CourseAssessment courseAssessment = (CourseAssessment) credit;
-        Course course = courseAssessment.getCourseStudent().getCourse();
-        String key = getActivityItemKey(course.getSubject(), course.getCourseNumber());
+        String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
         StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
         if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
           items.put(key, item);
@@ -234,19 +233,26 @@ public class MuikkuRESTService {
     List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
     for (CourseStudent courseStudent : courseStudents) {
       Course course = courseStudent.getCourse();
-      String key = getActivityItemKey(course.getSubject(),  course.getCourseNumber());
-      if (!items.containsKey(key)) {
-        StudyActivityItemRestModel item = new StudyActivityItemRestModel();
-        item.setCourseId(course.getId());
-        item.setCourseName(course.getName());
-        if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
-          item.setCourseNumber(course.getCourseNumber());
+      
+      /**
+       * Courses get split potentially into multiple ActivityItemKeys if they have
+       * more than one CourseModules.
+       */
+      for (CourseModule courseModule : course.getCourseModules()) {
+        String key = getActivityItemKey(courseModule.getSubject(),  courseModule.getCourseNumber());
+        if (!items.containsKey(key)) {
+          StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+          item.setCourseId(course.getId());
+          item.setCourseName(course.getName());
+          if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
+            item.setCourseNumber(courseModule.getCourseNumber());
+          }
+          item.setDate(courseStudent.getEnrolmentTime());
+          item.setStatus(StudyActivityItemStatus.ONGOING);
+          item.setSubject(courseModule.getSubject().getCode());
+          item.setSubjectName(courseModule.getSubject().getName());
+          items.put(key, item);
         }
-        item.setDate(courseStudent.getEnrolmentTime());
-        item.setStatus(StudyActivityItemStatus.ONGOING);
-        item.setSubject(course.getSubject().getCode());
-        item.setSubjectName(course.getSubject().getName());
-        items.put(key, item);
       }
     }
 
@@ -974,16 +980,16 @@ public class MuikkuRESTService {
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseId(course.getId());
     item.setCourseName(course.getName());
-    if (course.getCourseNumber() != null && course.getCourseNumber() > 0) {
-      item.setCourseNumber(course.getCourseNumber());
+    if (courseAssessment.getCourseNumber() != null && courseAssessment.getCourseNumber() > 0) {
+      item.setCourseNumber(courseAssessment.getCourseNumber());
     }
     item.setDate(courseAssessment.getDate());
     if (courseAssessment.getGrade() != null) {
       item.setGrade(courseAssessment.getGrade().getName());
     }
     item.setStatus(StudyActivityItemStatus.GRADED);
-    item.setSubject(course.getSubject().getCode());
-    item.setSubjectName(course.getSubject().getName());
+    item.setSubject(courseAssessment.getSubject().getCode());
+    item.setSubjectName(courseAssessment.getSubject().getName());
     return item;
   }
 
