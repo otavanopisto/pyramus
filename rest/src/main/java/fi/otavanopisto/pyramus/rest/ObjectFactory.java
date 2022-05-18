@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -265,8 +266,9 @@ public class ObjectFactory {
                     ? courseModule.getSubject().getEducationType().getId() : null;
               })
               .collect(Collectors.toSet());
+            boolean allNull = courseModuleEducationTypeIds.stream().allMatch(Objects::isNull);
             
-            if (CollectionUtils.isNotEmpty(courseModuleEducationTypeIds) && courseModuleEducationTypeIds.size() == 1) {
+            if (CollectionUtils.isNotEmpty(courseModuleEducationTypeIds) && courseModuleEducationTypeIds.size() == 1 && !allNull) {
               educationType = entity.getCourseModules().get(0).getSubject().getEducationType();
             }
             else if (entity.getCourseEducationTypes().size() == 1) {
