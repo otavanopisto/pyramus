@@ -85,6 +85,14 @@ public class StudentContactLogEntry {
     this.archived = archived;
   }
 
+  public Boolean getHasImage() {
+    return hasImage;
+  }
+
+  public void setHasImage(Boolean hasImage) {
+    this.hasImage = hasImage;
+  }
+
   private Long id;
   private String text;
   private Long creatorId;
@@ -93,4 +101,5 @@ public class StudentContactLogEntry {
   private StudentContactLogEntryType type;
   private List<StudentContactLogEntryCommentRestModel> comments; 
   private Boolean archived;
+  private Boolean hasImage;
 }
