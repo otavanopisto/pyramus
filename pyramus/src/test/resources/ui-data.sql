@@ -8,6 +8,11 @@ insert into
 values 
   (1, 1, 'it');
 
+insert into
+  Organization (id, name, archived)
+values
+  (1, 'Common Test Organization', false);
+  
 insert into 
   GradingScale (id, archived, name, description, version)
 values  
@@ -55,16 +60,19 @@ values
   (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false, 8);
   
 insert into
-  User (id, person_id, firstName, lastName, contactInfo, version)
+  User (id, person_id, firstName, lastName, contactInfo, version, archived)
 values 
-  (1, 1, 'Test Guest', 'User #1', 5, 1),
-  (2, 2, 'Test Guest', 'User #2', 6, 1),
-  (3, 3, 'Tanya', 'Test #1', 3, 1),
-  (4, 4, 'David', 'Test #2', 4, 1),
-  (5, 5, 'Test User', 'User #3', 7, 1),
-  (6, 6, 'Test Manager', 'User #4', 8, 1),
-  (7, 7, 'Test Administrator', 'User #5', 9, 1),
-  (8, 8, 'Tony', 'Tester', 10, 1);
+  (1, 1, 'Test Guest', 'User #1', 5, 1, false),
+  (2, 2, 'Test Guest', 'User #2', 6, 1, false),
+  (3, 3, 'Tanya', 'Test #1', 3, 1, false),
+  (4, 4, 'David', 'Test #2', 4, 1, false),
+  (5, 5, 'Test User', 'User #3', 7, 1, false),
+  (6, 6, 'Test Manager', 'User #4', 8, 1, false),
+  (7, 7, 'Test Administrator', 'User #5', 9, 1, false),
+  (8, 8, 'Tony', 'Tester', 10, 1, false);
+
+update Person p
+set p.defaultUser_id = p.id;
 
 SET foreign_key_checks = 1;
 
@@ -131,10 +139,10 @@ values
   (2, 'Passed', 1, 1, false);
  
 insert into 
-  EducationalTimeUnit (id, archived, baseUnits, name, version)
+  EducationalTimeUnit (id, archived, baseUnits, name, symbol, version)
 values 
-  (1, false, 1, 'Hour', 1),
-  (2, false, 40, 'Week', 1);
+  (1, false, 1, 'Hour', 'h', 1),
+  (2, false, 40, 'Week', 'p', 1);
 
 insert into
   EducationalLength (id, units, unit, version)
@@ -223,9 +231,9 @@ values
   (2, 'Field #2', false);
 
 insert into 
-  ContactType (id, name, version, archived)
+  ContactType (id, name, version, nonUnique, archived)
 values 
-  (1, 'Home', 1, false);
+  (1, 'Home', 1, false, false);
 
 insert into 
   Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)
@@ -295,6 +303,14 @@ values
   (2, 'TST2', 'Language #2', 1, false);  
 
 insert into 
+  Curriculum (id, name, archived)
+values 
+  (1, 'Curriculum #1', false),
+  (2, 'Curriculum #2', false),
+  (3, 'Curriculum #3', false),
+  (4, 'Curriculum #4', false);
+
+insert into 
   Municipality (id, code, name, version, archived)
 values 
   (1, '1', 'Municipality #1', 1, false),
@@ -325,10 +341,10 @@ values
   (2, 'StudyProgrammeCategory #2', 2, 1, false);   
    
 insert into 
-  StudyProgramme (id, code, name, category, version, archived)
+  StudyProgramme (id, organization, code, name, category, version, hasEvaluationFees, archived)
 values 
-  (1, 'TST1', 'StudyProgramme #1', 1, 1, false),
-  (2, 'TST2', 'StudyProgramme #2', 2, 1, false);     
+  (1, 1, 'TST1', 'StudyProgramme #1', 1, 1, false, false),
+  (2, 1, 'TST2', 'StudyProgramme #2', 2, 1, false, false);    
    
 insert into 
   StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived, guidanceGroup)
@@ -355,13 +371,12 @@ values
   (2, 'dev.suikku.fi', '567765cf-1114-4b17-b63c-awbe89535f8d' ,'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhasAS5', 1);
 
 insert into 
-  Student (id, language, studyStartDate, studyEndReason, previousStudies, additionalInfo, municipality, 
-  studyTimeEnd, studyProgramme, educationalLevel, studyEndDate, archived, nationality, 
-  examinationType, studyEndText, education, school, activityType, nickname)
-values
-  (8, null, PARSEDATETIME('1 1 2010', 'd M yyyy'), null, null, null, null, 
-  null, 1, null, null, 0, null, 
-  null, null, null, null, null, null);
+  Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 
+    additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
+    examinationType, education, curriculum_id)
+values 
+  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', null),
+  (3, 1, 'Tankky', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test test', 1, 1, 1, 1, 1, 1, 1, 'Education', null);
 
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
@@ -385,6 +400,20 @@ insert into
 values
   (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 8, 1, false),
   (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 8, 1, false);
+
+insert into Defaults 
+  (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization, studentDefaultContactType, userDefaultContactType)
+values
+  (1, 1, 1, 1, 1, 1, 1, 1, 1);
+
+INSERT INTO 
+  MagicKey (created, name, id, version, scope) 
+VALUES ('2014-09-08 12:33:50', '0793c5ee-3283-4628-b3b9-746da4e96d5f', 4, 0, 'APPLICATION');
+
+INSERT INTO
+  PluginRepository (id, url, repositoryId)
+VALUES 
+  (1, 'https://nexus.muikkuverkko.fi/repository/otavanopisto-snapshots/', '');
 
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'InternalAuth', max(id) + 1 from InternalAuth;  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
@@ -437,4 +466,5 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'PluginRepository', max(id) + 1 from PluginRepository;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'MagicKey', max(id) + 1 from MagicKey;
