@@ -200,13 +200,20 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     int expectedStatusCode = !isCurrentRole(Role.EVERYONE) && roleIsAllowed(getRole(), permissionCollection, permission) 
         ? successStatusCode : 403;
 
-    assertPermission(permission, expectedStatusCode, response.statusCode());
+    assertPermission(permission, expectedStatusCode, response.statusCode(), response.body().asString());
   }
 
   public void assertPermission(String permission, int expectedStatusCode, int statusCode) throws NoSuchFieldException {
     assertThat(
         String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
             statusCode, expectedStatusCode, getRole(), permission),
+        statusCode, is(expectedStatusCode));
+  }
+  
+  public void assertPermission(String permission, int expectedStatusCode, int statusCode, String message) throws NoSuchFieldException {
+    assertThat(
+        String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s, Message = %s",
+            statusCode, expectedStatusCode, getRole(), permission, message),
         statusCode, is(expectedStatusCode));
   }
   

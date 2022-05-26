@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
@@ -80,6 +81,8 @@ import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 
 /** A JSON request controller responsible for creating courses.
  *
@@ -258,6 +261,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();
 
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
     Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
@@ -275,15 +279,10 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     CourseType courseType = courseTypeId != null ? courseTypeDAO.findById(courseTypeId) : null;
     String description = requestContext.getString("description");
     Module module = moduleDAO.findById(requestContext.getLong("module"));
-    Subject subject = subjectDAO.findById(requestContext.getLong("subject"));
-    Integer courseNumber = requestContext.getInteger("courseNumber");
     Date beginDate = requestContext.getDate("beginDate");
     Date endDate = requestContext.getDate("endDate");
     Date enrolmentTimeEnd = requestContext.getDate("enrolmentTimeEnd");
-    Double courseLength = requestContext.getDouble("courseLength");
-    Long courseLengthTimeUnitId = requestContext.getLong("courseLengthTimeUnit");
     Long maxParticipantCount = requestContext.getLong("maxParticipantCount");
-    EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseLengthTimeUnitId);
     Double distanceTeachingDays = requestContext.getDouble("distanceTeachingDays");
     Double localTeachingDays = requestContext.getDouble("localTeachingDays");
     Double teachingHours = requestContext.getDouble("teachingHours");
@@ -316,9 +315,19 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       }
     }
     
-    Course course = courseDAO.create(module, organization, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
-        courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, 
+    Course course = courseDAO.create(module, organization, name, nameExtension, courseState, courseType, beginDate, endDate,
+        distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, 
         assessingHours, description, maxParticipantCount, courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
+
+    PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");
+    for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
+      Subject subject = subjectDAO.findById(courseModulesTableRow.getLong("subject"));
+      Integer courseNumber = courseModulesTableRow.getInteger("courseNumber");
+      Double courseLength = courseModulesTableRow.getDouble("courseLength");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
+
+      courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
+    }
 
     // Curriculums
     

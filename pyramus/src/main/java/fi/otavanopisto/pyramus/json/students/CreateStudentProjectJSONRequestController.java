@@ -9,12 +9,14 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.StudentProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -29,6 +31,7 @@ public class CreateStudentProjectJSONRequestController extends JSONRequestContro
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
     StudentProjectModuleDAO studentProjectModuleDAO = DAOFactory.getInstance().getStudentProjectModuleDAO();
+    StudentProjectSubjectCourseDAO studentProjectSubjectCourseDAO = DAOFactory.getInstance().getStudentProjectSubjectCourseDAO();
 
     User loggedUser = userDAO.findById(jsonRequestContext.getLoggedUserId());
 
@@ -52,6 +55,12 @@ public class CreateStudentProjectJSONRequestController extends JSONRequestContro
     for (ProjectModule projectModule : projectModules) {
       studentProjectModuleDAO.create(studentProject, projectModule.getModule(), null,
           CourseOptionality.getOptionality(projectModule.getOptionality().getValue()));
+    }
+
+    List<ProjectSubjectCourse> projectSubjectCourses = project.getProjectSubjectCourses();
+    for (ProjectSubjectCourse projectSubjectCourse : projectSubjectCourses) {
+      studentProjectSubjectCourseDAO.create(studentProject, projectSubjectCourse.getSubject(), projectSubjectCourse.getCourseNumber(), null,
+          CourseOptionality.getOptionality(projectSubjectCourse.getOptionality().getValue()));
     }
   }
 

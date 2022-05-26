@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
@@ -50,12 +51,14 @@ public class AssessmentController {
   @Inject
   private TransferCreditDAO transferCreditDAO;
   
-  public CourseAssessment createCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
-    CourseAssessment courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
-    // Mark respective course assessment requests as handled
-    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(courseStudent, Boolean.FALSE, Boolean.FALSE);
-    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+  public CourseAssessment createCourseAssessment(CourseStudent courseStudent, CourseModule courseModule, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
+    CourseAssessment courseAssessment = courseAssessmentDAO.create(courseStudent, courseModule, assessingUser, grade, date, verbalAssessment);
+    // Mark respective course assessment requests as handled if all CourseModules are assessed
+    if (isAllCourseModulesAssessed(courseStudent)) {
+      List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(courseStudent, Boolean.FALSE, Boolean.FALSE);
+      for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+      }
     }
     return courseAssessment;
   }
@@ -63,11 +66,14 @@ public class AssessmentController {
   public CourseAssessment updateCourseAssessment(CourseAssessment courseAssessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment){
     // Update course assessment...
     courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
-    // ...and mark respective course assessment requests as handled
-    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(
-        courseAssessment.getCourseStudent(), Boolean.FALSE, Boolean.FALSE);
-    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+    // ...and mark respective course assessment requests as handled if all CourseModules are assessed
+    if (isAllCourseModulesAssessed(courseAssessment.getCourseStudent())) {
+      List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchivedBefore(
+          courseAssessment.getCourseStudent(), Boolean.FALSE, Boolean.FALSE, assessmentDate);
+      for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        // update only the ones that precede the credit
+        courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+      }
     }
     return courseAssessment;
   }
@@ -76,8 +82,8 @@ public class AssessmentController {
     return courseAssessmentDAO.findById(id);
   }
 
-  public CourseAssessment findLatestCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
-    return courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, archived);
+  public CourseAssessment findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(CourseStudent courseStudent, CourseModule courseModule, Boolean archived) {
+    return courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, archived);
   }
   
   public List<CourseAssessment> listByStudent(Student student){
@@ -93,13 +99,12 @@ public class AssessmentController {
   }
 
   public boolean isRaisedGrade(CourseAssessment courseAssessment) {
-    Course course = courseAssessment.getCourseStudent().getCourse();
+    CourseModule courseModule = courseAssessment.getCourseModule();
     Student student = courseAssessment.getStudent();
-    List<CourseAssessment> assessments = listByCourseAndStudent(course, student);
+    List<CourseAssessment> assessments = courseAssessmentDAO.listByStudentAndCourseModule(student, courseModule);
     assessments.sort(Comparator.comparing(CourseAssessment::getDate));
     return assessments.size() > 1 && !Objects.equals(courseAssessment.getId(), assessments.get(0).getId());
   }
-  
   
   public void archiveCourseAssessment(CourseAssessment courseAssessment) {
     courseAssessmentDAO.archive(courseAssessment);
@@ -198,11 +203,11 @@ public class AssessmentController {
     
     acceptedCourses.stream()
       .filter(courseAssessment -> courseAssessment.getGrade().getPassingGrade())
-      .forEach(courseAssessment -> courseCodes.add(courseCode(courseAssessment.getCourseStudent().getCourse())));
+      .forEach(courseAssessment -> courseCodes.add(courseCode(courseAssessment)));
       
     acceptedLinkedCourses.stream()
       .filter(courseAssessment -> courseAssessment.getGrade().getPassingGrade())
-      .forEach(courseAssessment -> courseCodes.add(courseCode(courseAssessment.getCourseStudent().getCourse())));
+      .forEach(courseAssessment -> courseCodes.add(courseCode(courseAssessment)));
     
     return courseCodes.size();
   }
@@ -313,13 +318,29 @@ public class AssessmentController {
      return true;
   }
 
-  private String courseCode(Course course) {
+  /**
+   * Returns true if courseStudent has all CourseModules assessed.
+   * 
+   * @param courseStudent CourseStudent for who the assessments are checked
+   * @return true if courseStudent has all CourseModules assessed
+   */
+  public boolean isAllCourseModulesAssessed(CourseStudent courseStudent) {
+    for (CourseModule courseModule : courseStudent.getCourse().getCourseModules()) {
+      if (findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE) == null) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  private String courseCode(CourseAssessment courseAssessment) {
     StringBuilder str = new StringBuilder();
-    if (course.getSubject() != null) {
-      str.append(course.getSubject().getCode());
+    if (courseAssessment.getSubject() != null) {
+      str.append(courseAssessment.getSubject().getCode());
       
-      if (course.getCourseNumber() != null) {
-        str.append(course.getCourseNumber());
+      if (courseAssessment.getCourseNumber() != null) {
+        str.append(courseAssessment.getCourseNumber());
       }
     }
     return str.length() > 0 ? str.toString() : null;

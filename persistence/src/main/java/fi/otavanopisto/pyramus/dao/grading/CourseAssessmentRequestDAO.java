@@ -14,11 +14,10 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
-import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
-import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest_;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Stateless
 public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmentRequest> {
@@ -66,6 +65,25 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     return entityManager.createQuery(criteria).getResultList();
   }  
 
+  public List<CourseAssessmentRequest> listByCourseStudentAndHandledAndArchivedBefore(CourseStudent courseStudent, Boolean handled, Boolean archived, Date beforeDate) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessmentRequest> criteria = criteriaBuilder.createQuery(CourseAssessmentRequest.class);
+    Root<CourseAssessmentRequest> root = criteria.from(CourseAssessmentRequest.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(CourseAssessmentRequest_.courseStudent), courseStudent),
+            criteriaBuilder.lessThanOrEqualTo(root.get(CourseAssessmentRequest_.created), beforeDate),
+            criteriaBuilder.equal(root.get(CourseAssessmentRequest_.handled), handled),
+            criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), archived)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }  
+  
   public List<CourseAssessmentRequest> listByCourseStudentAndHandledAndArchived(CourseStudent courseStudent, Boolean handled, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
     

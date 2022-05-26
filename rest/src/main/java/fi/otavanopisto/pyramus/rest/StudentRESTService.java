@@ -39,9 +39,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -223,6 +225,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private OrganizationDAO organizationDAO;
+  
+  @Inject
+  private CourseModuleDAO courseModuleDAO;
   
   @Path("/languages")
   @POST
@@ -2110,19 +2115,29 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match student").build();
     }
     
+    if(!courseStudent.getCourse().getId().equals(course.getId())){
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match course").build();
+    }
+    
     StaffMember assessor = userController.findStaffMemberById(entity.getAssessorId());
     
-    if(assessor == null){
+    if (assessor == null) {
       return Response.status(Status.BAD_REQUEST).entity("Could not find assessor").build();
     }
     
     Grade grade = commonController.findGradeByIdId(entity.getGradeId());
     
-    if(grade == null){
+    if (grade == null) {
       return Response.status(Status.BAD_REQUEST).entity("Could not find grade").build();
     }
     
-    CourseAssessment courseAssessment = assessmentController.createCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
+    CourseModule courseModule = entity.getCourseModuleId() != null ? courseModuleDAO.findById(entity.getCourseModuleId()) : null;
+    
+    if ((courseModule == null) || !courseModule.getCourse().getId().equals(course.getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Invalid course module").build();
+    }
+    
+    CourseAssessment courseAssessment = assessmentController.createCourseAssessment(courseStudent, courseModule, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
     
     // #1198: Create a worklist entry for this assessment, if applicable
     
@@ -2178,7 +2193,7 @@ public class StudentRESTService extends AbstractRESTService {
         
         // Price
         
-        Double price = worklistController.getCourseBasePrice(course);
+        Double price = worklistController.getCourseModuleBasePrice(courseModule);
 
         worklistController.create(
             assessor,
@@ -3115,10 +3130,32 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{ID:[0-9]*}/increaseStudyTime")
   @POST
-  @RESTPermit(StudentPermissions.INCREASE_STUDY_TIME)
+  @RESTPermit(handling = Handling.INLINE)
   public Response increaseStudyTime(@PathParam("ID") Long id, @QueryParam("months") Integer months) {
     logger.info(String.format("Increasing student %d study time for %d months", id, months));
 
+    // Permissions
+    
+    User loggedUser = sessionController.getUser();
+    
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      logger.severe("Staff member not found");
+      return Response.status(Status.BAD_REQUEST).entity("Staff member not found").build();
+    }
+    
+    if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
+      if (!staffMember.getRole().equals(Role.ADMINISTRATOR)) {
+        if (!staffMember.getRole().equals(Role.STUDY_PROGRAMME_LEADER)) {
+          boolean amICounselor = studentController.amIGuidanceCounselor(id, staffMember);
+          if (!amICounselor) {
+            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
+          }
+        }
+      }
+    }
+    
     // Validation
 
     if (months == null || months <= 0) {

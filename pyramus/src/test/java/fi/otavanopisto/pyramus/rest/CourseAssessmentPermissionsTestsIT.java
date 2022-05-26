@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermi
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.Course;
 import fi.otavanopisto.pyramus.rest.model.CourseAssessment;
+import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
 import io.restassured.response.Response;
@@ -34,6 +35,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   private static final long STUDYGUIDER_TEST_STUDENTID = 13L;
   private static final long STUDYGUIDER_TEST_COURSESTUDENTID = 7L;
   private static final long STUDYGUIDER_TEST_COURSEID = 1001;
+  private static final long STUDYGUIDER_TEST_COURSEMODULEID = 1001;
 
   private CourseAssessmentPermissions assessmentPermissions = new CourseAssessmentPermissions();
   private StudentPermissions studentPermissions = new StudentPermissions();
@@ -49,10 +51,12 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   
   private Course testCOURSE = null;
   private CourseStudent testCOURSESTUDENT = null;
+  private CourseModule testCOURSEMODULE = null;
   
   @Before
   public void setup() {
     testCOURSE = tools().createCourse("CourseAssessmentPermissionsTestsIT", 1l);
+    testCOURSEMODULE = testCOURSE.getCourseModules().iterator().next();
     testCOURSESTUDENT = tools().createCourseStudent(testCOURSE.getId(), TEST_STUDENTID);
   }
   
@@ -64,7 +68,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   
   @Test
   public void testCreateCourseAssessment() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, testCOURSESTUDENT.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
+    CourseAssessment courseAssessment = new CourseAssessment(null, testCOURSESTUDENT.getId(), testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -91,7 +95,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   @Test
   public void testCreateCourseAssessmentAsStudent() throws NoSuchFieldException {
     if (isCurrentRole(Role.STUDENT)) {
-      CourseAssessment courseAssessment = new CourseAssessment(null, testCOURSESTUDENT.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
+      CourseAssessment courseAssessment = new CourseAssessment(null, testCOURSESTUDENT.getId(), testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
       
       Response response = given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -113,7 +117,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   
   @Test
   public void testCreateCourseAssessmentAsStudyGuider() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
+    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -142,7 +146,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
       CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLEID);
 
       try {
-        CourseAssessment courseAssessment = new CourseAssessment(null, testCOURSESTUDENT.getId(), TEST_GRADEID, 1l, getUserIdForRole(getRole()), getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
+        CourseAssessment courseAssessment = new CourseAssessment(null, testCOURSESTUDENT.getId(), testCOURSEMODULE.getId(), TEST_GRADEID, 1l, getUserIdForRole(getRole()), getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
         
         Response response = given().headers(getAuthHeaders())
           .contentType("application/json")
@@ -167,7 +171,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   
   @Test
   public void testFindCourseAssessment() throws NoSuchFieldException {
-    CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
+    CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
     try {
       Response response = given().headers(getAuthHeaders())
         .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", testCOURSESTUDENT.getStudentId(), testCOURSE.getId(), testASSESSMENT.getId());
@@ -185,7 +189,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
 
   @Test
   public void testFindCourseAssessmentAsStudyGuider() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
+    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -213,7 +217,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   @Test
   public void testFindCourseAssessmentAsCourseTeacher() throws NoSuchFieldException {
     if (StringUtils.equals(Role.TEACHER.toString(), getRole()) || StringUtils.equals(Role.STUDY_GUIDER.toString(), getRole())) {
-      CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
+      CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
       try {
         // Add the current test user to the course so they have access to the course assessments
         CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLEID);
@@ -287,7 +291,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
 
   @Test
   public void testUpdateCourseAssessment() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
+    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -297,7 +301,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
     if (response.statusCode() == 200) {
       Long id = new Long(response.body().jsonPath().getInt("id"));
       try {
-        CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
+        CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
   
         response = given().headers(getAuthHeaders())
           .contentType("application/json")
@@ -321,7 +325,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
 
   @Test
   public void testUpdateCourseAssessmentStudyGuider() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
+    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -331,7 +335,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
     if (response.statusCode() == 200) {
       Long id = new Long(response.body().jsonPath().getInt("id"));
       try {
-        CourseAssessment updatedCourseAssessment = new CourseAssessment(id, STUDYGUIDER_TEST_COURSESTUDENTID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
+        CourseAssessment updatedCourseAssessment = new CourseAssessment(id, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
   
         response = given().headers(getAuthHeaders())
           .contentType("application/json")
@@ -352,7 +356,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   public void testUpdateCourseAssessmentAsStudent() throws NoSuchFieldException {
     if (isCurrentRole(Role.STUDENT)) {
       long studentId = getUserIdForRole(Role.STUDENT.toString());
-      CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
+      CourseAssessment courseAssessment = new CourseAssessment(null, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
       
       Response response = given().headers(getAdminAuthHeaders())
         .contentType("application/json")
@@ -362,7 +366,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
       if (response.statusCode() == 200) {
         Long id = new Long(response.body().jsonPath().getInt("id"));
         try {
-          CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
+          CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
     
           response = given().headers(getAuthHeaders())
             .contentType("application/json")
@@ -396,7 +400,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
         int tempCourseTeacherId = response.body().jsonPath().getInt("id");
         
         try {
-          CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
+          CourseAssessment courseAssessment = new CourseAssessment(null, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
           
           response = given().headers(getAdminAuthHeaders())
             .contentType("application/json")
@@ -406,7 +410,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
           if (response.statusCode() == 200) {
             Long id = new Long(response.body().jsonPath().getInt("id"));
             try {
-              CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
+              CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
         
               response = given().headers(getAuthHeaders())
                 .contentType("application/json")

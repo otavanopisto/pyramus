@@ -1090,7 +1090,7 @@
         return courseAssessmentsTable;
       }
 
-      function setupStudentProjectTable(studentId, projectId) {
+      function setupStudentProjectModuleTable(studentId, projectId) {
         var studentProjectModulesTable = new IxTable($('studentProjectModulesTable.' + studentId + '.' + projectId), {
           id: 'studentProjectModulesTable.' + studentId + '.' + projectId,
           rowHoverEffect: true,
@@ -1110,6 +1110,61 @@
                 sortAction: IxTable_ROWSTRINGSORT
               }
             }
+          }, {
+            header : '<fmt:message key="students.viewStudent.projectTableOptionalityHeader"/>',
+            right :  8 + 120 + 8 + 120 + 8,
+            width: 140,
+            dataType : 'select',
+            editable: false,
+            options: [
+              {text: '', value: ''},
+              {text: '<fmt:message key="students.viewStudent.projectTableOptionalityMandatory"/>', value: 'MANDATORY'},
+              {text: '<fmt:message key="students.viewStudent.projectTableOptionalityOptional"/>', value: 'OPTIONAL'}
+            ]
+          }, {
+            header : '<fmt:message key="students.viewStudent.projectTableCourseGradeHeader"/>',
+            right: 8 + 120 + 8, 
+            width: 120,
+            dataType: 'text',
+            editable: false
+          }, {
+            header : '<fmt:message key="students.viewStudent.projectTableTransferCreditGradeHeader"/>',
+            right: 8, 
+            width: 120,
+            dataType: 'text',
+            editable: false
+          }]
+        });
+  
+        return studentProjectModulesTable;
+      }
+
+      function setupStudentProjectSubjectCourseTable(studentId, projectId) {
+        var studentProjectModulesTable = new IxTable($('studentProjectSubjectCourseTable.' + studentId + '.' + projectId), {
+          id: 'studentProjectSubjectCourseTable.' + studentId + '.' + projectId,
+          rowHoverEffect: true,
+          columns : [{
+            header : '<fmt:message key="students.viewStudent.projectSubjectCourseTable.subject"/>',
+            left: 8,
+            width: 200,
+            dataType: 'text',
+            editable: false,
+            sortAttributes: {
+              sortAscending: {
+                toolTip: '<fmt:message key="generic.sort.ascending"/>',
+                sortAction: IxTable_ROWSTRINGSORT 
+              },
+              sortDescending: {
+                toolTip: '<fmt:message key="generic.sort.descending"/>',
+                sortAction: IxTable_ROWSTRINGSORT
+              }
+            }
+          }, {
+            header : '<fmt:message key="students.viewStudent.projectSubjectCourseTable.courseNumber"/>',
+            left :  8 + 200 + 8,
+            right: 8 + 120 + 8 + 120 + 8 + 140 + 8, 
+            dataType : 'text',
+            editable: false
           }, {
             header : '<fmt:message key="students.viewStudent.projectTableOptionalityHeader"/>',
             right :  8 + 120 + 8 + 120 + 8,
@@ -1463,7 +1518,7 @@
           var projectTable;
           <c:forEach var="sp" items="${studentProjects[student.id]}">
             rows.clear();
-            projectTable = setupStudentProjectTable(${student.id}, ${sp.studentProject.id});
+            projectTable = setupStudentProjectModuleTable(${student.id}, ${sp.studentProject.id});
           
             <c:forEach var="spm" items="${studentProjectModules[sp.studentProject.id]}">
               <c:set var="moduleName" value="${spm.studentProjectModule.module.name}"/>
@@ -1495,6 +1550,74 @@
               
               rows.push([
                   '${moduleName}', 
+                  '${moduleOptionality}', 
+                  '${moduleCourseGrades}', 
+                  '${moduleTransferCreditGrades}']
+              );
+            </c:forEach>
+            projectTable.addRows(rows);
+            
+            rows.clear();
+            projectTable = setupStudentProjectSubjectCourseTable(${student.id}, ${sp.studentProject.id});
+          
+            <c:forEach var="spm" items="${studentProjectSubjectCourses[sp.studentProject.id]}">
+              <c:set var="subject" value="${spm.studentProjectModule.subject}"/>
+              <c:set var="courseNumber" value="${spm.studentProjectModule.courseNumber}"/>
+              <c:set var="subjectText">
+                <c:choose>
+                  <c:when test="${subject.educationType ne null and not empty subject.code}">
+                    <fmt:message key="generic.subjectFormatterWithEducationType">
+                      <fmt:param value="${subject.code}"/>
+                      <fmt:param value="${subject.name}"/>
+                      <fmt:param value="${subject.educationType.name}"/>
+                    </fmt:message>
+                  </c:when>
+                  <c:when test="${subject.educationType ne null and empty subject.code}">
+                    <fmt:message key="generic.subjectFormatterNoSubjectCode">
+                      <fmt:param value="${subject.name}"/>
+                      <fmt:param value="${subject.educationType.name}"/>
+                    </fmt:message>
+                  </c:when>
+                  <c:when test="${subject.educationType eq null and not empty subject.code}">
+                    <fmt:message key="generic.subjectFormatterNoEducationType">
+                      <fmt:param value="${subject.code}"/>
+                      <fmt:param value="${subject.name}"/>
+                    </fmt:message>
+                  </c:when>
+                  <c:otherwise>
+                    ${studentTransferCredit.subject.name}
+                  </c:otherwise>
+                </c:choose>
+              </c:set>
+              <c:set var="moduleOptionality" value="${spm.studentProjectModule.optionality}"/>
+              <c:set var="moduleCourseGrades" value=""/>
+              <c:set var="moduleTransferCreditGrades" value=""/>
+  
+              <c:forEach var="cs" items="${spm.courseStudents}">
+                <c:set var="grade" value="${courseAssessmentsByCourseStudent[cs.id].grade.name}"/>
+                
+                <c:if test="${not empty grade}">
+                  <c:if test="${not empty moduleCourseGrades}">
+                    <c:set var="moduleCourseGrades" value="${moduleCourseGrades}, "/>
+                  </c:if>
+                  <c:set var="moduleCourseGrades" value="${moduleCourseGrades}${grade}"/>
+                </c:if>
+              </c:forEach>
+                  
+              <c:forEach var="tc" items="${spm.transferCredits}">
+                <c:set var="grade" value="${tc.grade.name}"/>
+                
+                <c:if test="${not empty grade}">
+                  <c:if test="${not empty moduleTransferCreditGrades}">
+                    <c:set var="moduleTransferCreditGrades" value="${moduleTransferCreditGrades}, "/>
+                  </c:if>
+                  <c:set var="moduleTransferCreditGrades" value="${moduleTransferCreditGrades}${grade}"/>
+                </c:if>
+              </c:forEach>
+              
+              rows.push([
+                  '${subjectText}', 
+                  '${courseNumber}', 
                   '${moduleOptionality}', 
                   '${moduleCourseGrades}', 
                   '${moduleTransferCreditGrades}']
@@ -2947,6 +3070,8 @@
                       style="display: none;">
                       <div
                         id="studentProjectModulesTable.${student.id}.${sp.studentProject.id}"></div>
+                      <div
+                        id="studentProjectSubjectCourseTable.${student.id}.${sp.studentProject.id}"></div>
                     </div>
                   </div>
                 </c:forEach>

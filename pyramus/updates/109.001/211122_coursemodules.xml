@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table CourseModule (
+      id bigint not null auto_increment, 
+      courseNumber integer, 
+      course bigint not null, 
+      courseLength bigint, 
+      subject bigint, 
+      primary key (id)
+    );
+  </sql>
+  
+  <sql>alter table CourseModule add constraint FKqbamliiubym6e3x71t0bn5dn0 foreign key (course) references CourseBase (id);</sql>
+  <sql>alter table CourseModule add constraint FK7webkvnrmum5gi4c6arqym0s2 foreign key (courseLength) references EducationalLength (id);</sql>
+  <sql>alter table CourseModule add constraint FKe146x10mwmycchi71884gebiv foreign key (subject) references Subject (id);</sql>
+  
+  <sql>
+    insert into CourseModule 
+      (course, subject, courseNumber, courseLength)
+    select 
+      id, subject, courseNumber, courseLength
+    from 
+      CourseBase
+    where 
+      id not in (select course from CourseModule);
+  </sql>
+  
+  <sql>alter table CourseAssessment add column courseModule bigint;</sql>
+  <sql>alter table CourseAssessment add constraint FKn1s84cc2pt0v04uvnyakahu2x foreign key (courseModule) references CourseModule (id);</sql>
+
+  <sql>
+    update CourseAssessment ca, CourseStudent cs, CourseUser cu, Course co, CourseModule cm
+    set 
+      ca.courseModule = cm.id
+    where
+      ca.courseStudent = cs.id and
+      cu.id = cs.id and
+      cu.course = co.id and
+      cm.course = co.id and
+      ca.courseModule is null;
+  </sql>
+  
+  <sql>alter table CourseAssessment modify column courseModule bigint not null;</sql>
+  <sql>alter table CourseAssessment modify column courseStudent bigint not null;</sql>
+  
+  <sql>alter table CourseBase drop foreign key FKB40B1AC977F310A;</sql>
+  <sql>alter table CourseBase drop column subject;</sql>
+  
+  <sql>alter table CourseBase drop foreign key FKB40B1AC2054118C;</sql>
+  <sql>alter table CourseBase drop column courseLength;</sql>
+
+  <sql>alter table CourseBase drop column courseNumber;</sql>
+
+</update>

@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -27,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
@@ -130,14 +133,29 @@ public class CompositeRESTService {
           if (staffMember == null || !studentController.isStudentGuider(staffMember, courseStudent.getStudent()))
           continue;
         }
+        
+        boolean passing = course.getCourseModules().size() > 0;
+        Date evaluationDate = null;
+        
+        for (CourseModule courseModule : course.getCourseModules()) {
+          CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE);
+          if (courseAssessment != null) {
+            passing = passing && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade();
+            evaluationDate = DateUtils.max(evaluationDate, courseAssessment.getDate());
+          } else {
+            passing = false;
+            evaluationDate = null;
+            break;
+          }
+        }
+        
         CourseAssessmentRequest courseAssessmentRequest = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
-        CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setCourseStudentId(courseStudent.getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest == null ? null : courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseStudent.getEnrolmentTime());
-        assessmentRequest.setEvaluationDate(courseAssessment == null ? null : courseAssessment.getDate());
-        assessmentRequest.setPassing(courseAssessment != null && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade());
+        assessmentRequest.setEvaluationDate(evaluationDate);
+        assessmentRequest.setPassing(passing);
         assessmentRequest.setCourseId(course.getId());
         assessmentRequest.setCourseName(course.getName());
         assessmentRequest.setCourseNameExtension(course.getNameExtension());
@@ -189,13 +207,27 @@ public class CompositeRESTService {
     for (Course course : courses) {
       List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndHandled(course, Boolean.FALSE);
       for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-        CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndArchived(courseAssessmentRequest.getCourseStudent(), Boolean.FALSE);
+        boolean passing = course.getCourseModules().size() > 0;
+        Date evaluationDate = null;
+        
+        for (CourseModule courseModule : course.getCourseModules()) {
+          CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(courseAssessmentRequest.getCourseStudent(), courseModule, Boolean.FALSE);
+          if (courseAssessment != null) {
+            passing = passing && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade();
+            evaluationDate = DateUtils.max(evaluationDate, courseAssessment.getDate());
+          } else {
+            passing = false;
+            evaluationDate = null;
+            break;
+          }
+        }
+        
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setCourseStudentId(courseAssessmentRequest.getCourseStudent().getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseAssessmentRequest.getCourseStudent().getEnrolmentTime());
-        assessmentRequest.setEvaluationDate(courseAssessment == null ? null : courseAssessment.getDate());
-        assessmentRequest.setPassing(courseAssessment != null && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade());
+        assessmentRequest.setEvaluationDate(evaluationDate);
+        assessmentRequest.setPassing(passing);
         assessmentRequest.setCourseId(course.getId());
         assessmentRequest.setCourseName(course.getName());
         assessmentRequest.setCourseNameExtension(course.getNameExtension());

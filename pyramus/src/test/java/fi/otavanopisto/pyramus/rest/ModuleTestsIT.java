@@ -6,31 +6,40 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 
 import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.rest.model.CourseLength;
+import fi.otavanopisto.pyramus.rest.model.CourseModule;
+import fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.rest.model.Module;
+import fi.otavanopisto.pyramus.rest.model.Subject;
 
 public class ModuleTestsIT extends AbstractRESTServiceTest {
 
+  /**
+   * TODO coursemodule tests for module and course
+   */
+  
   @Test
   public void testCreateModule() {
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "Create test", 
         null, 
         null, 
         "Course for testing course creation", 
         Boolean.FALSE, 
-        111, 
         222l,
         null,
         null,
-        1l,
         null,
-        1d, 
-        1l, 
-        null);
+        null,
+        courseModules);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -40,15 +49,16 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
     response.then()
       .body("id", not(is((Long) null)))
       .body("name", is(module.getName()))
-      .body("courseNumber", is( module.getCourseNumber()))
       .body("description", is( module.getDescription() ))
-      .body("length", is( module.getLength().floatValue() ))
-      .body("lengthUnitId", is( module.getLengthUnitId().intValue() ))
       .body("creatorId", not(is((Long) null )))
       .body("lastModifierId", not(is((Long) null )))
       .body("created", not(is((String) null )))
       .body("lastModified", not(is((String) null )))
-      .body("subjectId", is( module.getSubjectId().intValue() ))
+      .body("courseModules.size()", is(1))
+      .body("courseModules[0].subject.id", is(firstCourseModule(module).getSubject().getId().intValue()))
+      .body("courseModules[0].courseNumber", is(firstCourseModule(module).getCourseNumber()))
+      .body("courseModules[0].courseLength.units", is(firstCourseModule(module).getCourseLength().getUnits().floatValue()))
+      .body("courseModules[0].courseLength.unit.id", is(firstCourseModule(module).getCourseLength().getUnit().getId().intValue()))
       .body("maxParticipantCount", is( module.getMaxParticipantCount().intValue() ))
       .body("archived", is( module.getArchived() ));
       
@@ -83,32 +93,33 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .body("name", is("Test Module #1" ))
       .body("description", is("Module #1 for testing"))
       .body("archived", is( false ))
-      .body("courseNumber", is(1) )
       .body("created", is( getDate(2010, 1, 1).toString() ) )
       .body("lastModified", is( getDate(2010, 1, 1).toString() ) )
       .body("creatorId", is(1) )
       .body("lastModifierId", is(1) )
-      .body("subjectId", is(1) )
+      .body("courseModules.size()", is( 1 ))
+      .body("courseModules[0].subject.id", is( 1 ))
+      .body("courseModules[0].courseNumber", is( 1 ))
+      .body("courseModules[0].courseLength.units", is( 1.0f ))
+      .body("courseModules[0].courseLength.unit.id", is( 1 ))
       .body("maxParticipantCount", is(100) );
   }
   
   @Test
   public void testUpdateModule() {
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "not updated", 
         null, 
         null, 
         "not updated module", 
         Boolean.FALSE, 
-        111, 
         222l,
         null,
         null,
-        1l,
         null,
-        1d, 
-        1l, 
-        null);
+        null,
+        courseModules);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -120,29 +131,31 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .body("name", is(module.getName()))
       .body("description", is(module.getDescription()))
       .body("archived", is( module.getArchived() ))
-      .body("courseNumber", is(module.getCourseNumber()) )
-      .body("subjectId", is(module.getSubjectId().intValue()) )
+      .body("courseModules.size()", is(1))
+      .body("courseModules[0].courseNumber", is(firstCourseModule(module).getCourseNumber()))
+      .body("courseModules[0].subject.id", is(firstCourseModule(module).getSubject().getId().intValue()))
       .body("maxParticipantCount", is(module.getMaxParticipantCount().intValue() ) );
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
+    Long courseModuleId = new Long(response.body().jsonPath().getInt("courseModules[0].id"));
+    assertNotNull(id);
+    
     try {
+      courseModules = new HashSet<>(Arrays.asList(createCourseModule(courseModuleId, 2l, 222, 2d, 2l)));
       Module updateModule = new Module(id,
           "updated", 
           null, 
           null, 
           "updated module", 
           Boolean.FALSE, 
-          222, 
           333l,
           null,
           null,
-          2l,
           null,
-          2d, 
-          2l, 
-          null);
+          null,
+          courseModules);
       
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -154,8 +167,9 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         .body("name", is(updateModule.getName()))
         .body("description", is(updateModule.getDescription()))
         .body("archived", is( updateModule.getArchived() ))
-        .body("courseNumber", is(updateModule.getCourseNumber()) )
-        .body("subjectId", is(updateModule.getSubjectId().intValue()) )
+        .body("courseModules.size()", is(1))
+        .body("courseModules[0].courseNumber", is(firstCourseModule(updateModule).getCourseNumber()))
+        .body("courseModules[0].subject.id", is(firstCourseModule(updateModule).getSubject().getId().intValue()))
         .body("maxParticipantCount", is(updateModule.getMaxParticipantCount().intValue() ) );
 
     } finally {
@@ -168,21 +182,19 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteModule() {
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "not updated", 
         OffsetDateTime.now(), 
         OffsetDateTime.now(), 
         "not updated module", 
         Boolean.FALSE, 
-        111, 
         222l,
         1l,
         1l,
-        1l,
         null,
-        1d, 
-        1l, 
-        null);
+        null,
+        courseModules );
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -194,8 +206,9 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .body("name", is(module.getName()))
       .body("description", is(module.getDescription()))
       .body("archived", is( module.getArchived() ))
-      .body("courseNumber", is(module.getCourseNumber()) )
-      .body("subjectId", is(module.getSubjectId().intValue()) )
+      .body("courseModules.size()", is(1))
+      .body("courseModules[0].courseNumber", is(firstCourseModule(module).getCourseNumber()))
+      .body("courseModules[0].subject.id", is(firstCourseModule(module).getSubject().getId().intValue()))
       .body("maxParticipantCount", is(module.getMaxParticipantCount().intValue() ) );
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
@@ -223,33 +236,37 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(404);
   }
-  
+
   @Test
   public void testListCourses() {
-    given().headers(getAuthHeaders())
-      .get("/modules/modules/{MODULEID}/courses", 1l)
+    Response response = given().headers(getAuthHeaders())
+      .get("/modules/modules/{MODULEID}/courses", 1l);
+    
+    response
       .then()
       .body("id.size()", is(2))
       .body("id[0]", is(1000) )
       .body("name[0]", is("Test Course #1" ))
-      .body("courseNumber[0]", is( 1 ))
       .body("description[0]", is( "Course #1 for testing" ))
-      .body("length[0]", is( 1.0f ))
-      .body("lengthUnitId[0]", is( 1 ))
       .body("creatorId[0]", is( 1 ))
       .body("lastModifierId[0]", is( 1 ))
-      .body("subjectId[0]", is( 1 ))
+      .body("courseModules[0].size()", is( 1 ))
+      .body("courseModules[0][0].subject.id", is( 1 ))
+      .body("courseModules[0][0].courseNumber", is( 1 ))
+      .body("courseModules[0][0].courseLength.units", is( 1.0f ))
+      .body("courseModules[0][0].courseLength.unit.id", is( 1 ))
       .body("maxParticipantCount[0]", is( 100 ))
       .body("archived[0]", is( false ))
       .body("id[1]", is(1001) )
       .body("name[1]", is("Test Course #2" ))
-      .body("courseNumber[1]", is( 2 ))
       .body("description[1]", is( "Course #2 for testing" ))
-      .body("length[1]", is( 1.0f ))
-      .body("lengthUnitId[1]", is( 1 ))
       .body("creatorId[1]", is( 1 ))
       .body("lastModifierId[1]", is( 1 ))
-      .body("subjectId[1]", is( 1 ))
+      .body("courseModules[1].size()", is( 1 ))
+      .body("courseModules[1][0].subject.id", is( 1 ))
+      .body("courseModules[1][0].courseNumber", is( 2 ))
+      .body("courseModules[1][0].courseLength.units", is( 1.0f ))
+      .body("courseModules[1][0].courseLength.unit.id", is( 1 ))
       .body("maxParticipantCount[1]", is( 200 ))
       .body("archived[1]", is( false ));
   }
@@ -279,5 +296,20 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .body("lastModifierId[1]", is(1))
       .body("optionalStudiesLength[1]", is(910f))
       .body("optionalStudiesLengthUnitId[1]", is(1));
+  }
+
+  private CourseModule createCourseModule(long subjectId, int courseNumber, double courseLengthUnits, long courseLengthUnitId) {
+    return createCourseModule(null, subjectId, courseNumber, courseLengthUnits, courseLengthUnitId);
+  }
+
+  private CourseModule createCourseModule(Long courseModuleId, long subjectId, int courseNumber, double courseLengthUnits, long courseLengthUnitId) {
+    EducationalTimeUnit courseLengthUnit = new EducationalTimeUnit(courseLengthUnitId, null, null, null, false);
+    CourseLength courseLength = new CourseLength(null, null, courseLengthUnits, courseLengthUnit);
+    Subject subject = new Subject(subjectId, null, null, null, false);
+    return new CourseModule(courseModuleId, subject, courseNumber, courseLength);
+  }
+
+  private CourseModule firstCourseModule(Module module) {
+    return module.getCourseModules().iterator().next();
   }
 }

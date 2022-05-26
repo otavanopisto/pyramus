@@ -21,8 +21,9 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistBillingSettingsDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistBillingSettings;
@@ -102,18 +103,19 @@ public class WorklistController {
     return null;
   }
   
-  public Double getCourseBasePrice(Course course) {
-    
+  public Double getCourseModuleBasePrice(CourseModule courseModule) {
     // Determine base price based on curriculum and course length
     
     CourseBillingRestModel courseBillingRestModel = getCourseBillingRestModel();
     if (courseBillingRestModel != null) {
+      CourseBase course = courseModule.getCourse();
+      
       Set<Curriculum> curriculums = course.getCurriculums();
       if (curriculums != null) {
         boolean is2021Course = curriculums.stream().anyMatch(curriculum -> StringUtils.equalsIgnoreCase(curriculum.getName(), PyramusConsts.OPS_2021));
         if (is2021Course) {
           Double price = courseBillingRestModel.getDefault2021Price();
-          Double length = course.getCourseLength().getUnits();
+          Double length = courseModule.getCourseLength().getUnits();
           if (length > 1) {
             price += courseBillingRestModel.getDefault2021PointPrice() * (length - 1); 
           }
