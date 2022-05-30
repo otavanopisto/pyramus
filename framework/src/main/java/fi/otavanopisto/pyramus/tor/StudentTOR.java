@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,11 +35,18 @@ public class StudentTOR {
     return problems;
   }
 
-  public double getTotalCourseLengths(TORCourseLengthUnit lengthUnit) {
-    return subjects.stream()
+  public double getTotalCourseLengths(TORCourseLengthUnit lengthUnit, Boolean mandatory) {
+    Stream<TORCourse> stream = subjects.stream()
       .flatMap(torSubject -> torSubject.getCourses().stream())
       .filter(torCourse -> torCourse.isPassed())
-      .filter(torCourse -> torCourse.getLengthUnit() == lengthUnit)
+      .filter(torCourse -> torCourse.getLengthUnit() == lengthUnit);
+
+    if (mandatory != null) {
+      stream = stream
+        .filter(torCourse -> torCourse.isMandatory() == mandatory);
+    }
+    
+    return stream
       .mapToDouble(torCourse -> torCourse.getCourseLength())
       .filter(Objects::nonNull)
       .sum();
