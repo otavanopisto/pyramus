@@ -3232,7 +3232,7 @@ public class StudentRESTService extends AbstractRESTService {
     double numCreditPoints = 0;
     try {
       StudentTOR studentTOR = StudentTORController.constructStudentTOR(student);
-      numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op);
+      numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op, true);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
     }

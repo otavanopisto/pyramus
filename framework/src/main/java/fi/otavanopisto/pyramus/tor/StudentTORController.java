@@ -6,11 +6,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentSubjectGradeDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -47,8 +51,8 @@ public class StudentTORController {
         EducationalLength courseEducationalLength = courseAssessment.getCourseLength();
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
-        
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
+        boolean mandatory = isMandatory(courseAssessment);
+        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
       }
     }
     
@@ -61,7 +65,8 @@ public class StudentTORController {
       EducationalLength courseEducationalLength = transferCredit.getCourseLength();
       Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
       TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
-      addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
+      boolean mandatory = transferCredit.getOptionality() == CourseOptionality.MANDATORY;
+      addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
     }
     
     for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
@@ -74,7 +79,8 @@ public class StudentTORController {
         EducationalLength courseEducationalLength = courseAssessment.getCourseLength();
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
+        boolean mandatory = isMandatory(courseAssessment);
+        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
       }
     }
     
@@ -89,7 +95,8 @@ public class StudentTORController {
         EducationalLength courseEducationalLength = transferCredit.getCourseLength();
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
-        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, courseLength, courseLengthUnit, problems);
+        boolean mandatory = transferCredit.getOptionality() == CourseOptionality.MANDATORY;
+        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
       }
     }
 
@@ -97,6 +104,18 @@ public class StudentTORController {
     return tor;
   }
   
+  /**
+   * This is based on a hard-coded assumption that there is an EducationSubtype with a
+   * specific code that can be interpreted as mandatory. In ideal situation this would
+   * be a configurable setting or it should come from students' own curriculum choices.
+   */
+  private static boolean isMandatory(CourseAssessment courseAssessment) {
+    return courseAssessment.getCourseModule().getCourse().getCourseEducationTypes().stream()
+      .flatMap(courseEducationType -> courseEducationType.getCourseEducationSubtypes().stream())
+      .map(CourseEducationSubtype::getEducationSubtype)
+      .anyMatch(educationSubType -> StringUtils.equals(educationSubType.getCode(), "pakollinen"));
+  }
+
   private static TORCourseLengthUnit getCourseLengthUnit(EducationalTimeUnit unit, TORProblems problems) {
     TORCourseLengthUnit lengthUnit = TORCourseLengthUnit.valueOf(unit.getSymbol());
     
@@ -107,7 +126,7 @@ public class StudentTORController {
     return lengthUnit;
   }
 
-  private static void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums, Double courseLength, TORCourseLengthUnit courseLengthUnit, TORProblems problems) {
+  private static void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums, boolean mandatory, Double courseLength, TORCourseLengthUnit courseLengthUnit, TORProblems problems) {
     if (credit.getGrade() == null) {
       return;
     }
@@ -148,13 +167,19 @@ public class StudentTORController {
 
     TORCourse torCourse = torSubject.findCourse(courseNumber);
     if (torCourse == null) {
-      torCourse = new TORCourse(subjectModel, courseNumber, courseLength, courseLengthUnit);
+      torCourse = new TORCourse(subjectModel, courseNumber, mandatory, courseLength, courseLengthUnit);
       torSubject.addCourse(torCourse);
     } else {
       // Validate the lengthUnit matches
       
       if (torCourse.getLengthUnit() != courseLengthUnit) {
         problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_LENGTHUNITS, String.format("%s%d", subjectModel.getCode(), courseNumber)));
+      }
+      
+      // Validate the mandatority matches
+      
+      if (torCourse.isMandatory() != mandatory) {
+        problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_MANDATORITIES, String.format("%s%d", subjectModel.getCode(), courseNumber)));
       }
     }
     
