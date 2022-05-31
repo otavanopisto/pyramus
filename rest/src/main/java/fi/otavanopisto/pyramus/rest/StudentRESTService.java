@@ -83,6 +83,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -124,6 +125,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
@@ -1799,7 +1801,8 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response listStudentContactLogEntriesByStudent(@PathParam("STUDENTID") Long studentId) {
+  public Response listStudentContactLogEntriesByStudent(@PathParam("STUDENTID") Long studentId, 
+      @QueryParam("resultsPerPage") Integer resultsPerPage, @QueryParam("page") Integer page) {
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
     if (studentStatus != Status.OK)
@@ -1816,9 +1819,22 @@ public class StudentRESTService extends AbstractRESTService {
     ContactLogAccess access = studentController.resolveContactLogAccess(student);
     
     if (access.equals(ContactLogAccess.ALL)) {
-      return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudent(student))).build();
+      SearchResult<StudentContactLogEntry> searchResult = studentContactLogEntryController.listContactLogEntriesByStudent(student, resultsPerPage, page);
+      
+      @SuppressWarnings("unchecked")
+      List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry> contactLogEntryRestModels = (List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry>) objectFactory.createModel(searchResult.getResults());
+      
+      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount());
+      return Response.ok(responseEntries).build();
     } else if (access.equals(ContactLogAccess.OWN)) {
-      return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudentAndCreator(student, staffMember))).build();
+      
+      SearchResult<StudentContactLogEntry> searchResult = studentContactLogEntryController.listContactLogEntriesByStudentAndCreator(student, staffMember, resultsPerPage, page);
+      
+      @SuppressWarnings("unchecked")
+      List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry> contactLogEntryRestModels = (List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry>) objectFactory.createModel(searchResult.getResults());
+      
+      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount());
+      return Response.ok(responseEntries).build();
     } else {
       return Response.status(Status.FORBIDDEN).build();
     }

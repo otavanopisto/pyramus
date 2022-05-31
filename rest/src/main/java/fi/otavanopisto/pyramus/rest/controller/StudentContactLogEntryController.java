@@ -15,6 +15,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryCommen
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 @Dependent
 @Stateless
@@ -33,12 +34,12 @@ public class StudentContactLogEntryController {
     return contactLogEntryDAO.findById(id);
   }
 
-  public List<StudentContactLogEntry> listContactLogEntriesByStudent(Student student) {
-    return contactLogEntryDAO.listByStudent(student);
+  public SearchResult<StudentContactLogEntry> listContactLogEntriesByStudent(Student student, Integer firstResult, Integer maxResults) {
+    return contactLogEntryDAO.listByStudent(student, firstResult, maxResults);
   }
   
-  public List<StudentContactLogEntry> listContactLogEntriesByStudentAndCreator(Student student, StaffMember creator) {
-    return contactLogEntryDAO.listByStudentAndCreator(student, creator);
+  public SearchResult<StudentContactLogEntry> listContactLogEntriesByStudentAndCreator(Student student, StaffMember creator,Integer firstResult, Integer maxResults) {
+    return contactLogEntryDAO.listByStudentAndCreator(student, creator, firstResult, maxResults);
   }
 
   public StudentContactLogEntry updateContactLogEntry(StudentContactLogEntry entry, StudentContactLogEntryType type, String text, Date entryDate) {
