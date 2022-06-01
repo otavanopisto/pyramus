@@ -47,18 +47,18 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(200)
       .body("results.id.size()", is(2))
-      .body("results.id[0]", is(1) )
-      .body("results.text[0]", is("Test text #1"))
-      .body("results.creatorName[0]", is("Tester #1"))
-      .body("results.entryDate[0]", is(getDate(2010, 1, 1).toString()))
-      .body("results.type[0]", is("LETTER"))
-      .body("results.archived[0]", is( Boolean.FALSE ))
-      .body("results.id[1]", is(2) )
-      .body("results.text[1]", is("Test text #2"))
-      .body("results.creatorName[1]", is("Tester #2"))
-      .body("results.entryDate[1]", is(getDate(2011, 1, 1).toString()))
-      .body("results.type[1]", is("PHONE"))
-      .body("results.archived[1]", is( Boolean.FALSE ));
+      .body("results.id[1]", is(1) )
+      .body("results.text[1]", is("Test text #1"))
+      .body("results.creatorName[1]", is("Tester #1"))
+      .body("results.entryDate[1]", is(getDate(2010, 1, 1).toString()))
+      .body("results.type[1]", is("LETTER"))
+      .body("results.archived[1]", is( Boolean.FALSE ))
+      .body("results.id[0]", is(2) )
+      .body("results.text[0]", is("Test text #2"))
+      .body("results.creatorName[0]", is("Tester #2"))
+      .body("results.entryDate[0]", is(getDate(2011, 1, 1).toString()))
+      .body("results.type[0]", is("PHONE"))
+      .body("results.archived[0]", is( Boolean.FALSE ));
   }
   
   @Test
