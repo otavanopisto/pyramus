@@ -43,7 +43,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudentContactLogEntries() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{ID}/contactLogEntries", TEST_STUDENT_ID)
+      .get("/students/students/{ID}/contactLogEntries?resultsPerPage=10&page=0", TEST_STUDENT_ID)
       .then()
       .statusCode(200)
       .body("results.id.size()", is(2))
