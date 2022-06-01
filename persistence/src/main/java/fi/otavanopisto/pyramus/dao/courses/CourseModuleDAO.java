@@ -74,6 +74,23 @@ public class CourseModuleDAO extends PyramusEntityDAO<CourseModule> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public List<CourseModule> listByCourseAndSubject(CourseBase courseBase, Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseModule> criteria = criteriaBuilder.createQuery(CourseModule.class);
+    Root<CourseModule> root = criteria.from(CourseModule.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(CourseModule_.course), courseBase),
+            criteriaBuilder.equal(root.get(CourseModule_.subject), subject)
+        )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   @Override
   public void delete(CourseModule courseModule) {
     if (courseModule.getCourse() != null) {

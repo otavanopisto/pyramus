@@ -10,6 +10,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
@@ -34,6 +35,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
 import fi.otavanopisto.pyramus.events.types.Created;
 import fi.otavanopisto.pyramus.events.types.Removed;
@@ -209,6 +211,29 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     return entityManager.createQuery(criteria).getResultList();
   }
   
+  public List<CourseAssessment> listByUserAndCourseModules(User user, List<CourseModule> courseModules) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+
+    In<CourseModule> inClause = criteriaBuilder.in(root.get(CourseAssessment_.courseModule));
+    for (CourseModule courseModule : courseModules) {
+      inClause.value(courseModule);
+    }
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            inClause,
+            criteriaBuilder.equal(root.get(CourseAssessment_.assessor), user),
+            criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   /**
    * This is deprecated because CourseAssessment is tied to both CourseStudent and CourseModule and
    * fetching with only CourseStudent can give misleading results. In some cases though it is enough 

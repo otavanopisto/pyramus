@@ -2193,7 +2193,7 @@ public class StudentRESTService extends AbstractRESTService {
         
         // Price
         
-        Double price = worklistController.getCourseModuleBasePrice(courseModule);
+        Double price = worklistController.getCourseModuleBasePrice(courseModule, sessionController.getUser());
 
         worklistController.create(
             assessor,
