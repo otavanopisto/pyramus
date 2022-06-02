@@ -119,6 +119,14 @@ public class StudyProgramme implements ArchivableEntity {
     this.hasEvaluationFees = hasEvaluationFees;
   }
 
+  public String getOfficialEducationType() {
+    return officialEducationType;
+  }
+
+  public void setOfficialEducationType(String officialEducationType) {
+    this.officialEducationType = officialEducationType;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudyProgramme")  
   @TableGenerator(name="StudyProgramme", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -138,6 +146,9 @@ public class StudyProgramme implements ArchivableEntity {
   @Field
   private String code;
 
+  @Field
+  private String officialEducationType;
+  
   @ManyToOne
   @JoinColumn (name = "category")
   private StudyProgrammeCategory category;

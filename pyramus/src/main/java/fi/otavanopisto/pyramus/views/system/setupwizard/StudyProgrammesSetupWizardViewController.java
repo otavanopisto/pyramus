@@ -65,7 +65,7 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
       }
       
       if (studyProgrammeId == -1) {
-        studyProgrammeDAO.create(defaults.getOrganization(), name, category, code, hasEvaluationFees); 
+        studyProgrammeDAO.create(defaults.getOrganization(), name, category, code, null, hasEvaluationFees); 
       }
     }
   }

@@ -22,8 +22,8 @@ public class StudyProgrammeController {
   @Inject
   private StudyProgrammeDAO studyProgrammeDAO;
   
-  public StudyProgramme createStudyProgramme(Organization organization, String name, String code, StudyProgrammeCategory category, boolean hasEvaluationFees) {
-    StudyProgramme studyProgramme = studyProgrammeDAO.create(organization, name, category, code, hasEvaluationFees);
+  public StudyProgramme createStudyProgramme(Organization organization, String name, String code, String officialEducationType, StudyProgrammeCategory category, boolean hasEvaluationFees) {
+    StudyProgramme studyProgramme = studyProgrammeDAO.create(organization, name, category, code, officialEducationType, hasEvaluationFees);
     return studyProgramme;
   }
   
@@ -65,8 +65,8 @@ public class StudyProgrammeController {
     return studyProgrammes;
   }
 
-  public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, Organization organization, String name, String code, StudyProgrammeCategory category, boolean hasEvaluationFees) {
-    return studyProgrammeDAO.update(studyProgramme, organization, name, category, code, hasEvaluationFees);
+  public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, Organization organization, String name, String code, String officialEducationType, StudyProgrammeCategory category, boolean hasEvaluationFees) {
+    return studyProgrammeDAO.update(studyProgramme, organization, name, category, code, officialEducationType, hasEvaluationFees);
   }
 
   public StudyProgramme archiveStudyProgramme(StudyProgramme studyProgramme, User user) {
