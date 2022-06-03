@@ -407,7 +407,7 @@ public class WorklistRESTService {
   
   @Path("/basePrice")
   @GET
-  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
+  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_PRICING)
   public Response getCourseBasePrice(@QueryParam("course") Long courseId) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -416,7 +416,7 @@ public class WorklistRESTService {
     else {
       WorklistBasePriceRestModel basePrices = new WorklistBasePriceRestModel();
       for (CourseModule courseModule : course.getCourseModules()) {
-        Double basePrice = worklistController.getCourseModuleBasePrice(courseModule);
+        Double basePrice = worklistController.getCourseModuleBasePrice(courseModule, sessionController.getUser());
         if (basePrice != null) {
           basePrices.put(courseModule.getId(), basePrice);
         }
