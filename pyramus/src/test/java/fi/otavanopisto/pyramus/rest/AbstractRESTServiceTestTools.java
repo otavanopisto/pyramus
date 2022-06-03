@@ -237,7 +237,7 @@ public class AbstractRESTServiceTestTools {
   }
 
   public StudyProgramme createStudyProgramme(Long organizationId, String code, String name, Long categoryId) {
-    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, code, name, categoryId, false, false);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, code, name, categoryId, null, false, false);
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(studyProgramme)

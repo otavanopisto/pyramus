@@ -872,6 +872,7 @@ public class StudentRESTService extends AbstractRESTService {
   public Response createStudyProgramme(fi.otavanopisto.pyramus.rest.model.StudyProgramme entity) {
     String name = entity.getName();
     String code = entity.getCode();
+    String officialEducationType = entity.getOfficialEducationType();
     Long categoryId = entity.getCategoryId();
     Long organizationId = entity.getOrganizationId();
     boolean hasEvaluationFees = entity.getHasEvaluationFees() != null ? entity.getHasEvaluationFees().booleanValue() : false;
@@ -891,7 +892,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, studyProgrammeCategory, hasEvaluationFees);
+    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, officialEducationType, studyProgrammeCategory, hasEvaluationFees);
     return Response.ok(objectFactory.createModel(studyProgramme)).build();
   }
 
@@ -944,6 +945,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     String name = entity.getName();
     String code = entity.getCode();
+    String officialEducationType = entity.getOfficialEducationType();
     Long categoryId = entity.getCategoryId();
     Long organizationId = entity.getOrganizationId();
     boolean hasEvaluationFees = entity.getHasEvaluationFees() != null ? entity.getHasEvaluationFees().booleanValue() : false;
@@ -968,7 +970,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory, hasEvaluationFees);
+    studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, officialEducationType, programmeCategory, hasEvaluationFees);
     
     return Response.ok().entity(objectFactory.createModel(studyProgramme))
         .build();

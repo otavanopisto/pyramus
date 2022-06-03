@@ -37,6 +37,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
         Long studyProgrammeId = jsonRequestContext.getLong(colPrefix + ".studyProgrammeId");
         String name = jsonRequestContext.getString(colPrefix + ".name");
         String code = jsonRequestContext.getString(colPrefix + ".code");
+        String officialEducationType = jsonRequestContext.getString(colPrefix + ".officialEducationType");
         Long categoryId = jsonRequestContext.getLong(colPrefix + ".category");
         Long organizationId = jsonRequestContext.getLong(colPrefix + ".organization");
         boolean hasEvaluationFees = StringUtils.equals("1", jsonRequestContext.getString(colPrefix + ".hasEvaluationFees"));
@@ -57,7 +58,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
         }
         
         if (studyProgrammeId == -1) {
-          studyProgrammeDAO.create(organization, name, category, code, hasEvaluationFees); 
+          studyProgrammeDAO.create(organization, name, category, code, officialEducationType, hasEvaluationFees); 
         }
         else {
           StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
@@ -66,7 +67,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
             throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Can not access study programme from another organization.");
           }
           
-          studyProgrammeDAO.update(studyProgramme, organization, name, category, code, hasEvaluationFees);
+          studyProgrammeDAO.update(studyProgramme, organization, name, category, code, officialEducationType, hasEvaluationFees);
         }
       }
     }
