@@ -43,22 +43,22 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudentContactLogEntries() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{ID}/contactLogEntries", TEST_STUDENT_ID)
+      .get("/students/students/{ID}/contactLogEntries?resultsPerPage=10&page=0", TEST_STUDENT_ID)
       .then()
       .statusCode(200)
-      .body("id.size()", is(2))
-      .body("id[0]", is(1) )
-      .body("text[0]", is("Test text #1"))
-      .body("creatorName[0]", is("Tester #1"))
-      .body("entryDate[0]", is(getDate(2010, 1, 1).toString()))
-      .body("type[0]", is("LETTER"))
-      .body("archived[0]", is( Boolean.FALSE ))
-      .body("id[1]", is(2) )
-      .body("text[1]", is("Test text #2"))
-      .body("creatorName[1]", is("Tester #2"))
-      .body("entryDate[1]", is(getDate(2011, 1, 1).toString()))
-      .body("type[1]", is("PHONE"))
-      .body("archived[1]", is( Boolean.FALSE ));
+      .body("results.id.size()", is(2))
+      .body("results.id[1]", is(1) )
+      .body("results.text[1]", is("Test text #1"))
+      .body("results.creatorName[1]", is("Tester #1"))
+      .body("results.entryDate[1]", is(getDate(2010, 1, 1).toString()))
+      .body("results.type[1]", is("LETTER"))
+      .body("results.archived[1]", is( Boolean.FALSE ))
+      .body("results.id[0]", is(2) )
+      .body("results.text[0]", is("Test text #2"))
+      .body("results.creatorName[0]", is("Tester #2"))
+      .body("results.entryDate[0]", is(getDate(2011, 1, 1).toString()))
+      .body("results.type[0]", is("PHONE"))
+      .body("results.archived[0]", is( Boolean.FALSE ));
   }
   
   @Test

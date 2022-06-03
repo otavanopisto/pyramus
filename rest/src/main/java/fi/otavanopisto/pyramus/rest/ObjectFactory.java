@@ -728,7 +728,7 @@ public class ObjectFactory {
         
         new Mapper<StudentContactLogEntry>() {
           @Override
-          public Object map(StudentContactLogEntry entity) {
+          public fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
             Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
             @SuppressWarnings("unchecked")
