@@ -651,6 +651,7 @@
 
                 table.setCellEditable(event.row, table.getNamedColumnIndex('date'), true);
                 table.setCellEditable(event.row, table.getNamedColumnIndex('grade'), true);
+                table.setCellEditable(event.row, table.getNamedColumnIndex('examinationType'), true);
                 table.setCellValue(event.row, table.getNamedColumnIndex('modified'), 1);
                 table.showCell(event.row, table.getNamedColumnIndex('editVerbalAssessmentButton'));
               }
@@ -702,7 +703,28 @@
                 openEditVerbalAssessmentDialog(event.row);
               }
             }, {
+              header: 'Kokelaslaji',
               left: 8 + 22 + 8 + 150 + 8 + 150 + 8 + 150 + 8 + 22 + 8,
+              width: 300,
+              editable: false,
+              dataType: 'select',
+              paramName: 'examinationType',
+              options: [
+                {text: "-", value: ""},
+                {text: "01 - Varsinainen kokelas", value: "01"},
+                {text: "02 - Kokelas, joka aloittaa tutkinnon suorittamisen alusta", value: "02"},
+                {text: "02X - Kokelas, joka aloittaa tutkinnon suorittamisen alusta, ensimmäinen hajautuskerta", value: "02X"},
+                {text: "03 - Ammatillisen tutkinnon tai ammatilliset opinnot suorittava kokelas", value: "03"},
+                {text: "04 - Hylätyn pakollisen kokeen uusija", value: "04"},
+                {text: "05 - Hyväksytyn kokeen uusija", value: "05"},
+                {text: "06 - Tutkinnon täydentäjä", value: "06"},
+                {text: "07 - Hylätyn pakollisen kokeen uusija, kun koe on tullut kompensoiduksi", value: "07"},
+                {text: "08 - Hylätyn ylimääräisen kokeen uusija", value: "08"},
+                {text: "09 - Erillisen kokeen suorittaja (kokelas ei suorita tutkintoa)", value: "09"},
+                {text: "10 - Lukion oppimäärää ja ammatillista tutkintoa suorittava kokelas", value: "10"}
+               ]
+            }, {
+              left: 8 + 22 + 8 + 150 + 8 + 150 + 8 + 150 + 8 + 22 + 8 + 300 + 8,
               dataType: 'button',
               paramName: 'removeButton',
               imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
@@ -777,6 +799,7 @@
             '${assessment.grade.id}',
             '${verbalAssessment}',
             '',
+            '${assessmentExaminationTypes[assessment.id]}',
             '',
             ${assessment.id},
             0,

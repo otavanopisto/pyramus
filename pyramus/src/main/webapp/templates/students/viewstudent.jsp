@@ -122,6 +122,12 @@
           }  
         }));
         </c:if>      
+
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: 'Todistuksen ainevalinnat ja S-merkinnät',
+          link: GLOBAL_contextPath + '/lukio/subjectchoices.page?studentId=' + studentId  
+        }));
         
         var extensionHoverMenuLinks = $$('#extensionHoverMenuLinks a');
         for (var i=0, l=extensionHoverMenuLinks.length; i<l; i++) {

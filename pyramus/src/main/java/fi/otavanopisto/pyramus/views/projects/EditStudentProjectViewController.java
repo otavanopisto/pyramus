@@ -21,6 +21,8 @@ import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditVariableDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
@@ -35,6 +37,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
@@ -343,6 +346,27 @@ public class EditStudentProjectViewController extends PyramusViewController impl
         tagsBuilder.append(' ');
     }
 
+
+    /* Lukio-plugin */
+    
+    List<ProjectAssessment> projectAssessments = projectAssessmentDAO.listByProjectAndArchived(studentProject, false);
+    
+    CreditVariableDAO creditVariableDAO = DAOFactory.getInstance().getCreditVariableDAO();
+    CreditVariableKeyDAO creditVariableKeyDAO = DAOFactory.getInstance().getCreditVariableKeyDAO();
+
+    Map<Long, String> assessmentExaminationTypes = new HashMap<>();
+    
+    CreditVariableKey creditVariableKey = creditVariableKeyDAO.findByKey("lukioKokelaslaji");
+    if (creditVariableKey != null) {
+      for (ProjectAssessment projectAssessment : projectAssessments) {
+        String creditVariable = creditVariableDAO.findByCreditAndKey(projectAssessment, "lukioKokelaslaji");
+        if (creditVariable != null) {
+          assessmentExaminationTypes.put(projectAssessment.getId(), creditVariable);
+        }
+      }
+    }
+    
+    pageRequestContext.getRequest().setAttribute("assessmentExaminationTypes", assessmentExaminationTypes);
     pageRequestContext.getRequest().setAttribute("projectAssessments", assessments);
     pageRequestContext.getRequest().setAttribute("verbalAssessments", verbalAssessments);
     pageRequestContext.getRequest().setAttribute("studentProject", studentProject);
