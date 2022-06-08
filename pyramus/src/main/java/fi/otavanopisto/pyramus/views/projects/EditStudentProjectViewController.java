@@ -77,6 +77,8 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    CreditVariableDAO creditVariableDAO = DAOFactory.getInstance().getCreditVariableDAO();
+    CreditVariableKeyDAO creditVariableKeyDAO = DAOFactory.getInstance().getCreditVariableKeyDAO();
 
     Long studentProjectId = pageRequestContext.getLong("studentproject");
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
@@ -267,6 +269,20 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       }
     });
 
+    /* Lukio-plugin */
+    
+    Map<Long, String> assessmentExaminationTypes = new HashMap<>();
+    
+    CreditVariableKey creditVariableKey = creditVariableKeyDAO.findByKey("lukioKokelaslaji");
+    if (creditVariableKey != null) {
+      for (ProjectAssessment projectAssessment : assessments) {
+        String creditVariable = creditVariableDAO.findByCreditAndKey(projectAssessment, "lukioKokelaslaji");
+        if (creditVariable != null) {
+          assessmentExaminationTypes.put(projectAssessment.getId(), creditVariable);
+        }
+      }
+    }
+    
     Collections.sort(courseStudents, new Comparator<CourseStudent>() {
       @Override
       public int compare(CourseStudent o1, CourseStudent o2) {
@@ -346,26 +362,6 @@ public class EditStudentProjectViewController extends PyramusViewController impl
         tagsBuilder.append(' ');
     }
 
-
-    /* Lukio-plugin */
-    
-    List<ProjectAssessment> projectAssessments = projectAssessmentDAO.listByProjectAndArchived(studentProject, false);
-    
-    CreditVariableDAO creditVariableDAO = DAOFactory.getInstance().getCreditVariableDAO();
-    CreditVariableKeyDAO creditVariableKeyDAO = DAOFactory.getInstance().getCreditVariableKeyDAO();
-
-    Map<Long, String> assessmentExaminationTypes = new HashMap<>();
-    
-    CreditVariableKey creditVariableKey = creditVariableKeyDAO.findByKey("lukioKokelaslaji");
-    if (creditVariableKey != null) {
-      for (ProjectAssessment projectAssessment : projectAssessments) {
-        String creditVariable = creditVariableDAO.findByCreditAndKey(projectAssessment, "lukioKokelaslaji");
-        if (creditVariable != null) {
-          assessmentExaminationTypes.put(projectAssessment.getId(), creditVariable);
-        }
-      }
-    }
-    
     pageRequestContext.getRequest().setAttribute("assessmentExaminationTypes", assessmentExaminationTypes);
     pageRequestContext.getRequest().setAttribute("projectAssessments", assessments);
     pageRequestContext.getRequest().setAttribute("verbalAssessments", verbalAssessments);
