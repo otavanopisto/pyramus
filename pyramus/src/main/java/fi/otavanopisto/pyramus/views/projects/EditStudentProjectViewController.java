@@ -21,6 +21,8 @@ import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditVariableDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
@@ -35,6 +37,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
@@ -74,6 +77,8 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    CreditVariableDAO creditVariableDAO = DAOFactory.getInstance().getCreditVariableDAO();
+    CreditVariableKeyDAO creditVariableKeyDAO = DAOFactory.getInstance().getCreditVariableKeyDAO();
 
     Long studentProjectId = pageRequestContext.getLong("studentproject");
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
@@ -264,6 +269,20 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       }
     });
 
+    /* Lukio-plugin */
+    
+    Map<Long, String> assessmentExaminationTypes = new HashMap<>();
+    
+    CreditVariableKey creditVariableKey = creditVariableKeyDAO.findByKey("lukioKokelaslaji");
+    if (creditVariableKey != null) {
+      for (ProjectAssessment projectAssessment : assessments) {
+        String creditVariable = creditVariableDAO.findByCreditAndKey(projectAssessment, "lukioKokelaslaji");
+        if (creditVariable != null) {
+          assessmentExaminationTypes.put(projectAssessment.getId(), creditVariable);
+        }
+      }
+    }
+    
     Collections.sort(courseStudents, new Comparator<CourseStudent>() {
       @Override
       public int compare(CourseStudent o1, CourseStudent o2) {
@@ -343,6 +362,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
         tagsBuilder.append(' ');
     }
 
+    pageRequestContext.getRequest().setAttribute("assessmentExaminationTypes", assessmentExaminationTypes);
     pageRequestContext.getRequest().setAttribute("projectAssessments", assessments);
     pageRequestContext.getRequest().setAttribute("verbalAssessments", verbalAssessments);
     pageRequestContext.getRequest().setAttribute("studentProject", studentProject);

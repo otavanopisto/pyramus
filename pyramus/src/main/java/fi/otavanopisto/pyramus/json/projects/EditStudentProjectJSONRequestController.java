@@ -23,6 +23,8 @@ import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditVariableDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradeDAO;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
@@ -38,10 +40,12 @@ import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
@@ -125,6 +129,12 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
     studentProjectDAO.updateTags(studentProject, tagEntities);
 
     // ProjectAssessments
+    CreditVariableKeyDAO creditVariableKeyDAO = DAOFactory.getInstance().getCreditVariableKeyDAO();
+    CreditVariableKey creditVariableKey = creditVariableKeyDAO.findByKey("lukioKokelaslaji");
+    if (creditVariableKey == null) {
+      creditVariableKey = creditVariableKeyDAO.create(false, "lukioKokelaslaji", "Ylioppilaskokeen kokelaslaji", VariableType.TEXT);
+    }
+    CreditVariableDAO creditVariableDAO = DAOFactory.getInstance().getCreditVariableDAO();
     
     int rowCount = jsonRequestContext.getInteger("assessmentsTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
@@ -136,12 +146,15 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         Long assessmentId = jsonRequestContext.getLong(colPrefix + ".assessmentId");
         ProjectAssessment projectAssessment = ((assessmentId != null) && (assessmentId.intValue() != -1)) ? projectAssessmentDAO.findById(assessmentId) : null;
         Long assessmentArchived = jsonRequestContext.getLong(colPrefix + ".deleted");
+        String examinationType = jsonRequestContext.getString(colPrefix + ".examinationType");
 
         if ((assessmentArchived != null) && (assessmentArchived.intValue() == 1)) {
-          if (projectAssessment != null)
+          if (projectAssessment != null) {
             projectAssessmentDAO.archive(projectAssessment);
-          else
+            creditVariableDAO.setCreditVariable(projectAssessment, "lukioKokelaslaji", "");
+          } else {
             throw new SmvcRuntimeException(PyramusStatusCode.OK, "Assessment marked for delete does not exist.");
+          }
         } else {
           Date assessmentDate = jsonRequestContext.getDate(colPrefix + ".date");
           Long assessmentGradeId = jsonRequestContext.getLong(colPrefix + ".grade");
@@ -153,10 +166,11 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
             verbalAssessment = jsonRequestContext.getString(colPrefix + ".verbalAssessment");
           
           if (projectAssessment == null) {
-            projectAssessmentDAO.create(studentProject, staffMember, grade, assessmentDate, verbalAssessment);
+            projectAssessment = projectAssessmentDAO.create(studentProject, staffMember, grade, assessmentDate, verbalAssessment);
           } else {
-            projectAssessmentDAO.update(projectAssessment, staffMember, grade, assessmentDate, verbalAssessment);
+            projectAssessment = projectAssessmentDAO.update(projectAssessment, staffMember, grade, assessmentDate, verbalAssessment);
           }
+          creditVariableDAO.setCreditVariable(projectAssessment, "lukioKokelaslaji", examinationType);
         }
       }
     }
