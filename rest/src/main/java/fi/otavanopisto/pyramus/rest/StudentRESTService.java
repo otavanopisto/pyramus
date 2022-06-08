@@ -3260,6 +3260,27 @@ public class StudentRESTService extends AbstractRESTService {
     
     return Response.ok(response).build();
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/amICounselor")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response amICounselor(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
+    
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).entity("Staff member not found").build();
+    }
+    
+    Boolean amICounselor = studentController.amIGuidanceCounselor(student.getId(), staffMember);
+    
+    return Response.ok(amICounselor).build();
+  }
 
   /**
    * Checks for student to be non-null, not archived and find_student permission.
