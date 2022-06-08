@@ -883,9 +883,10 @@
       
       function addAssessmentRow() {
         var table = getIxTableById('assessmentsTable');
-        var rowIndex = table.addRow(['', new Date().getTime(), '', '', '', '', -1, 1, 0, '', 0]);
+        var rowIndex = table.addRow(['', new Date().getTime(), '', '', '', '', '', -1, 1, 0, '', 0]);
         table.setCellEditable(rowIndex, table.getNamedColumnIndex('date'), true);
         table.setCellEditable(rowIndex, table.getNamedColumnIndex('grade'), true);
+        table.setCellEditable(rowIndex, table.getNamedColumnIndex('examinationType'), true);
         table.showCell(rowIndex, table.getNamedColumnIndex('editVerbalAssessmentButton'));
       }
       
