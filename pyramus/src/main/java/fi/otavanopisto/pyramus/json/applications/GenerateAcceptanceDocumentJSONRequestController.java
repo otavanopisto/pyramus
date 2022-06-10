@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
-import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
@@ -20,6 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import net.sf.json.JSONObject;
 
 public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequestController {
 
@@ -78,7 +78,7 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
 
     // Gather required dynamic data for the PDF document
 
-    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"),
         getFormValue(formData, "field-last-name"));
     String line = application.getLine();

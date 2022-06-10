@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -11,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
-import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
@@ -25,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import net.sf.json.util.JSONUtils;
 
 public class SaveApplicationJSONRequestController extends JSONRequestController {
@@ -49,7 +51,7 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       
       // Form validation
       
-      ApplicationFormData formData = ApplicationFormData.fromJSONObject(formDataStr);
+      JSONObject formData = JSONObject.fromObject(formDataStr);
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
         logger.log(Level.WARNING, "Refusing application due to missing applicationId");
@@ -62,19 +64,19 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      String firstName = formData.getString("field-first-names");
+      String firstName = getFormValue(formData, "field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing first name");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      String lastName = formData.getString("field-last-name");
+      String lastName = getFormValue(formData, "field-last-name");
       if (lastName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing last name");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      String email = StringUtils.lowerCase(StringUtils.trim(formData.getString("field-email")));
+      String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
       if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -101,8 +103,8 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
           }
         }
         else {
-          String name = formData.getString("attachment-name");
-          String description = formData.getString("attachment-description");
+          String name = getFormValue(formData, "attachment-name");
+          String description = getFormValue(formData, "attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));

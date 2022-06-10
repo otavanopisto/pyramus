@@ -10,7 +10,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
-import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -29,6 +28,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.mailer.Mailer;
+import net.sf.json.JSONObject;
 
 public class UpdateApplicationStateJSONRequestController extends JSONRequestController {
 
@@ -71,7 +71,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Gather required dynamic data from the application form
           
-          ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+          JSONObject formData = JSONObject.fromObject(application.getFormData());
           String line = ApplicationUtils.applicationLineUiValue(application.getLine());
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
           String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
@@ -85,7 +85,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String phone = getFormValue(formData, "field-phone");
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
-          String guardianMail = getFormValue(formData, "field-underage-email");
+          String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
 
           // Make sure we have application signatures and school approval
           

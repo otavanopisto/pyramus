@@ -417,12 +417,12 @@ public class ApplicationUtils {
 
     // Mail to the applicant
 
-    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = formData.getString("field-line");
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = formData.getString("field-underage-email");
+    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 
@@ -556,7 +556,7 @@ public class ApplicationUtils {
     if (application == null) {
       return null;
     }
-    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     return constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
   }
 
@@ -647,7 +647,7 @@ public class ApplicationUtils {
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     
-    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     
     // Validate that the compulsory end date is in correct format to avoid all database operations in case it isn't
 
@@ -981,7 +981,7 @@ public class ApplicationUtils {
     try {
       // Application form 
       
-      ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+      JSONObject formData = JSONObject.fromObject(application.getFormData());
       
       // Determine the need for credentials
       
@@ -1026,7 +1026,9 @@ public class ApplicationUtils {
         
       // Send mail to applicant (and possible guardian)
       
-      if (StringUtils.isBlank(getFormValue(formData, "field-underage-email"))) {
+      String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+      
+      if (StringUtils.isBlank(guardianMail)) {
         Mailer.sendMail(
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
@@ -1041,7 +1043,7 @@ public class ApplicationUtils {
             Mailer.HTML,
             null,
             application.getEmail(),
-            getFormValue(formData, "field-underage-email"),
+            guardianMail,
             subject,
             content);
       }
@@ -1064,7 +1066,7 @@ public class ApplicationUtils {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    ApplicationFormData applicationData = ApplicationFormData.fromJSONObject(application.getFormData());
+    JSONObject applicationData = JSONObject.fromObject(application.getFormData());
 
     // Person by social security number
     
@@ -1212,10 +1214,6 @@ public class ApplicationUtils {
 
   public static String getFormValue(JSONObject object, String key) {
     return object.has(key) ? StringUtils.trim(object.getString(key)) : null;
-  }
-
-  public static String getFormValue(ApplicationFormData object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
 
 }

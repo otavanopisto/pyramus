@@ -44,7 +44,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
-import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -322,7 +321,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    ApplicationFormData formData = ApplicationFormData.fromJSONObject(object);
+    JSONObject formData = JSONObject.fromObject(object);
     try {
       String lastName = formData.getString("field-last-name");
       if (lastName == null) {
@@ -394,7 +393,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     // Validate key parts of form data
     
     try {
-      ApplicationFormData formData = ApplicationFormData.fromJSONObject(object);
+      JSONObject formData = JSONObject.fromObject(object);
 
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
@@ -406,17 +405,17 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application due to missing line");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String firstName = formData.getString("field-first-names");
+      String firstName = getFormValue(formData, "field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing first name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String lastName = formData.getString("field-last-name");
+      String lastName = getFormValue(formData, "field-last-name");
       if (lastName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing last name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String email = StringUtils.lowerCase(StringUtils.trim(formData.getString("field-email")));
+      String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
       if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
@@ -459,7 +458,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             lastName,
             email,
             referenceCode,
-            formData.getFormData(),
+            formData.toString(),
             !StringUtils.equals(line, "aineopiskelu"), // applicantEditable (#769: Internetix applicants may not edit submitted data)
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
@@ -576,8 +575,8 @@ public class ApplicationRESTService extends AbstractRESTService {
           }
         }
         else {
-          String name = formData.getString("attachment-name");
-          String description = formData.getString("attachment-description");
+          String name = getFormValue(formData, "attachment-name");
+          String description = getFormValue(formData, "attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
@@ -775,12 +774,12 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     // Mail to the applicant
 
-    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = formData.getString("field-line");
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = formData.getString("field-underage-email");
+    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 

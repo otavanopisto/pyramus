@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.applications.AlternativeLine;
-import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -30,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class ViewApplicationViewController extends PyramusViewController {
 
@@ -59,7 +59,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
       ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
       
-      ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
+      JSONObject formData = JSONObject.fromObject(application.getFormData());
 
       Map<String, Map<String, String>> sections = new LinkedHashMap<>();
       
