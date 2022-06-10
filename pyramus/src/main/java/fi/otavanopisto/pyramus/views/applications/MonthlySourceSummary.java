@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.views.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -148,10 +150,6 @@ public class MonthlySourceSummary {
     return sources;
   }
 
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
-  }
-  
   private class SummaryItem {
     public SummaryItem() {
       count = 0;

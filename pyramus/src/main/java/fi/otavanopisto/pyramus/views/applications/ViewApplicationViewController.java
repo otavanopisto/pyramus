@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.views.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -361,10 +363,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       logger.log(Level.SEVERE, "Unable to serve error response", e);
       return;
     }
-  }
-  
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
   
   private String foreignLineUiValue(String value) {

@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -83,7 +85,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String phone = getFormValue(formData, "field-phone");
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
-          String guardianMail = getFormValue(formData, "field-underage-email");
+          String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
 
           // Make sure we have application signatures and school approval
           
@@ -260,8 +262,4 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
     requestContext.addResponseParameter("reason", reason);
   }
 
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
-  }
-  
 }

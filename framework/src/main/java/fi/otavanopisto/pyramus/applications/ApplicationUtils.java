@@ -422,7 +422,7 @@ public class ApplicationUtils {
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = formData.getString("field-underage-email");
+    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 
@@ -1026,7 +1026,9 @@ public class ApplicationUtils {
         
       // Send mail to applicant (and possible guardian)
       
-      if (StringUtils.isBlank(getFormValue(formData, "field-underage-email"))) {
+      String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+      
+      if (StringUtils.isBlank(guardianMail)) {
         Mailer.sendMail(
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
@@ -1041,7 +1043,7 @@ public class ApplicationUtils {
             Mailer.HTML,
             null,
             application.getEmail(),
-            getFormValue(formData, "field-underage-email"),
+            guardianMail,
             subject,
             content);
       }
@@ -1065,7 +1067,7 @@ public class ApplicationUtils {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     JSONObject applicationData = JSONObject.fromObject(application.getFormData());
-    
+
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
@@ -1210,8 +1212,8 @@ public class ApplicationUtils {
     
   }
 
-  private static String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
+  public static String getFormValue(JSONObject object, String key) {
+    return object.has(key) ? StringUtils.trim(object.getString(key)) : null;
   }
 
 }

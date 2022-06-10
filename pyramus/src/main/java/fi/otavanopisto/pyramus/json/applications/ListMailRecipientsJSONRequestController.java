@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,22 +56,22 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       if (applicationData.has("field-underage-email") && StringUtils.isNotBlank(applicationData.getString("field-underage-email"))) {
         recipientInfo = new HashMap<>();
         recipientInfo.put("type", "to");
-        recipientInfo.put("name", String.format("%s %s", applicationData.getString("field-underage-first-name"), applicationData.getString("field-underage-last-name")));
-        recipientInfo.put("mail", applicationData.getString("field-underage-email"));
+        recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name"), getFormValue(applicationData, "field-underage-last-name")));
+        recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email"))));
         results.add(recipientInfo);
       }
       if (applicationData.has("field-underage-email-2") && StringUtils.isNotBlank(applicationData.getString("field-underage-email-2"))) {
         recipientInfo = new HashMap<>();
         recipientInfo.put("type", "to");
-        recipientInfo.put("name", String.format("%s %s", applicationData.getString("field-underage-first-name-2"), applicationData.getString("field-underage-last-name-2")));
-        recipientInfo.put("mail", applicationData.getString("field-underage-email-2"));
+        recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name-2"), getFormValue(applicationData, "field-underage-last-name-2")));
+        recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email-2"))));
         results.add(recipientInfo);
       }
       if (applicationData.has("field-underage-email-3") && StringUtils.isNotBlank(applicationData.getString("field-underage-email-3"))) {
         recipientInfo = new HashMap<>();
         recipientInfo.put("type", "to");
-        recipientInfo.put("name", String.format("%s %s", applicationData.getString("field-underage-first-name-3"), applicationData.getString("field-underage-last-name-3")));
-        recipientInfo.put("mail", applicationData.getString("field-underage-email-3"));
+        recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name-3"), getFormValue(applicationData, "field-underage-last-name-3")));
+        recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email-3"))));
         results.add(recipientInfo);
       }
       
