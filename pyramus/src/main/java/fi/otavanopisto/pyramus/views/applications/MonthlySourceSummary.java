@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.views.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,12 +18,12 @@ import javax.ejb.Stateless;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.mailer.Mailer;
-import net.sf.json.JSONObject;
 
 @Stateless
 public class MonthlySourceSummary {
@@ -81,7 +83,7 @@ public class MonthlySourceSummary {
           continue; 
         }
         lineApplicationCounts.put(line, appCount + 1);
-        JSONObject formData = JSONObject.fromObject(application.getFormData());
+        ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
         String source = getFormValue(formData, "field-source");
         String explanation = getFormValue(formData, "field-source-other");
         SummaryItem summaryItem = sources.get(source);
@@ -148,10 +150,6 @@ public class MonthlySourceSummary {
     return sources;
   }
 
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
-  }
-  
   private class SummaryItem {
     public SummaryItem() {
       count = 0;

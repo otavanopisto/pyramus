@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -19,7 +20,6 @@ import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import net.sf.json.JSONObject;
 
 public class ListMailRecipientsJSONRequestController extends JSONRequestController {
 
@@ -37,7 +37,7 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
       StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
       
-      JSONObject applicationData = JSONObject.fromObject(application.getFormData());
+      ApplicationFormData applicationData = ApplicationFormData.fromJSONObject(application.getFormData());
 
       List<Map<String, Object>> results = new ArrayList<>();
       

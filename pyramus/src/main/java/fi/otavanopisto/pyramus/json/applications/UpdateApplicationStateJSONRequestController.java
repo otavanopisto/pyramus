@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,6 +10,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -26,7 +29,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.mailer.Mailer;
-import net.sf.json.JSONObject;
 
 public class UpdateApplicationStateJSONRequestController extends JSONRequestController {
 
@@ -69,7 +71,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Gather required dynamic data from the application form
           
-          JSONObject formData = JSONObject.fromObject(application.getFormData());
+          ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
           String line = ApplicationUtils.applicationLineUiValue(application.getLine());
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
           String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
@@ -260,8 +262,4 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
     requestContext.addResponseParameter("reason", reason);
   }
 
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
-  }
-  
 }

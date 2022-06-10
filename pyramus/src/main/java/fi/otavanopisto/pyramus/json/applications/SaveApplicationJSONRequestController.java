@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
@@ -24,7 +25,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import net.sf.json.util.JSONUtils;
 
 public class SaveApplicationJSONRequestController extends JSONRequestController {
@@ -49,7 +49,7 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       
       // Form validation
       
-      JSONObject formData = JSONObject.fromObject(formDataStr);
+      ApplicationFormData formData = ApplicationFormData.fromJSONObject(formDataStr);
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
         logger.log(Level.WARNING, "Refusing application due to missing applicationId");

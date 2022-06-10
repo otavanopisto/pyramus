@@ -1,10 +1,13 @@
 package fi.otavanopisto.pyramus.views.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -15,7 +18,6 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import net.sf.json.JSONObject;
 
 public class AcceptApplicationViewController extends PyramusViewController {
   
@@ -69,7 +71,7 @@ public class AcceptApplicationViewController extends PyramusViewController {
     
     // Add application details to page request
     
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
     String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
     String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
     String line = ApplicationUtils.applicationLineUiValue(application.getLine());
@@ -87,10 +89,6 @@ public class AcceptApplicationViewController extends PyramusViewController {
 
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.EVERYONE };
-  }
-
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
 
 }

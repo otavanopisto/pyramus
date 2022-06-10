@@ -417,7 +417,7 @@ public class ApplicationUtils {
 
     // Mail to the applicant
 
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
     String line = formData.getString("field-line");
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
@@ -556,7 +556,7 @@ public class ApplicationUtils {
     if (application == null) {
       return null;
     }
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
     return constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
   }
 
@@ -647,7 +647,7 @@ public class ApplicationUtils {
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
     
     // Validate that the compulsory end date is in correct format to avoid all database operations in case it isn't
 
@@ -981,7 +981,7 @@ public class ApplicationUtils {
     try {
       // Application form 
       
-      JSONObject formData = JSONObject.fromObject(application.getFormData());
+      ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
       
       // Determine the need for credentials
       
@@ -1064,8 +1064,8 @@ public class ApplicationUtils {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    JSONObject applicationData = JSONObject.fromObject(application.getFormData());
-    
+    ApplicationFormData applicationData = ApplicationFormData.fromJSONObject(application.getFormData());
+
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
@@ -1210,7 +1210,11 @@ public class ApplicationUtils {
     
   }
 
-  private static String getFormValue(JSONObject object, String key) {
+  public static String getFormValue(JSONObject object, String key) {
+    return object.has(key) ? StringUtils.trim(object.getString(key)) : null;
+  }
+
+  public static String getFormValue(ApplicationFormData object, String key) {
     return object.has(key) ? object.getString(key) : null;
   }
 

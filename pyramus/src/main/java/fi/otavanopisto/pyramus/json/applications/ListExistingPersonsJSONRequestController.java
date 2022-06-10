@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -24,7 +25,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import net.sf.json.JSONObject;
 
 public class ListExistingPersonsJSONRequestController extends JSONRequestController {
 
@@ -40,7 +40,7 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
         return;
       }
       
-      JSONObject applicationData = JSONObject.fromObject(application.getFormData());      
+      ApplicationFormData applicationData = ApplicationFormData.fromJSONObject(application.getFormData());
       
       String ssn = ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
       String emailAddress = StringUtils.lowerCase(StringUtils.trim(applicationData.getString("field-email")));

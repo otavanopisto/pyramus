@@ -1,11 +1,14 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
@@ -17,7 +20,6 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import net.sf.json.JSONObject;
 
 public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequestController {
 
@@ -76,7 +78,7 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
 
     // Gather required dynamic data for the PDF document
 
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
     String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"),
         getFormValue(formData, "field-last-name"));
     String line = application.getLine();
@@ -136,10 +138,6 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
   private void fail(JSONRequestContext requestContext, String reason) {
     requestContext.addResponseParameter("status", "FAIL");
     requestContext.addResponseParameter("reason", reason);
-  }
-
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
 
 }

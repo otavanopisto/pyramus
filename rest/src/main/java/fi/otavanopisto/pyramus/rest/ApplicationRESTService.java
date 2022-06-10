@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -319,7 +322,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    JSONObject formData = JSONObject.fromObject(object);
+    ApplicationFormData formData = ApplicationFormData.fromJSONObject(object);
     try {
       String lastName = formData.getString("field-last-name");
       if (lastName == null) {
@@ -391,7 +394,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     // Validate key parts of form data
     
     try {
-      JSONObject formData = JSONObject.fromObject(object);
+      ApplicationFormData formData = ApplicationFormData.fromJSONObject(object);
 
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
@@ -456,7 +459,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             lastName,
             email,
             referenceCode,
-            formData.toString(),
+            formData.getFormData(),
             !StringUtils.equals(line, "aineopiskelu"), // applicantEditable (#769: Internetix applicants may not edit submitted data)
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
@@ -772,7 +775,7 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     // Mail to the applicant
 
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
     String line = formData.getString("field-line");
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
@@ -861,10 +864,6 @@ public class ApplicationRESTService extends AbstractRESTService {
       Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, application.getEmail(),
           application.getHandler().getPrimaryEmail().getAddress(), subject, content);
     }
-  }
-
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
 
 }

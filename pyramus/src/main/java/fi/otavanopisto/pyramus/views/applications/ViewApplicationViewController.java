@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.views.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.applications.AlternativeLine;
+import fi.otavanopisto.pyramus.applications.ApplicationFormData;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -27,7 +30,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 public class ViewApplicationViewController extends PyramusViewController {
 
@@ -57,7 +59,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
       ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
       
-      JSONObject formData = JSONObject.fromObject(application.getFormData());
+      ApplicationFormData formData = ApplicationFormData.fromJSONObject(application.getFormData());
 
       Map<String, Map<String, String>> sections = new LinkedHashMap<>();
       
@@ -361,10 +363,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       logger.log(Level.SEVERE, "Unable to serve error response", e);
       return;
     }
-  }
-  
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
   
   private String foreignLineUiValue(String value) {
