@@ -453,7 +453,7 @@ public abstract class KoskiStudentHandler {
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
     courseAssessments.stream().filter(filter).filter(credit -> !isFilteredGrade(credit, filteredGrades)).forEach(ca -> {
       Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
-      Subject subject = course != null ? course.getSubject() : null;
+      Subject subject = ca.getSubject();
       OpiskelijanOPS creditOPS = resolveSingleOPSFromCredit(ca, orderedOPSs, defaultOPS);
       
       if (creditOPS != null) {
@@ -462,16 +462,16 @@ public abstract class KoskiStudentHandler {
           map.put(creditOPS, stubs = new HashMap<>());
         }
         
-        String courseCode = courseCode(subject, course.getCourseNumber(), ca.getId());
+        String courseCode = courseCode(subject, ca.getCourseNumber(), ca.getId());
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
-          stub = new CreditStub(courseCode, course.getCourseNumber(), course.getName(), subject);
+          stub = new CreditStub(courseCode, ca.getCourseNumber(), course.getName(), subject);
           stubs.put(courseCode, stub);
         } else {
           stub = stubs.get(courseCode);
         }
         
-        Laajuus laajuus = kurssinLaajuus(course);
+        Laajuus laajuus = kurssinLaajuus(ca.getCourseLength());
         
         stub.addCredit(new CreditStubCredit(ca, Type.CREDIT, 
             laajuus != null ? laajuus.getArvo() : 0,
@@ -529,10 +529,10 @@ public abstract class KoskiStudentHandler {
             CourseAssessment ca = (CourseAssessment) credit;
             Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
   
-            subject = course != null ? course.getSubject() : null;
-            courseNumber = course.getCourseNumber();
-            courseName = course.getName();
-            laajuus = kurssinLaajuus(course);
+            subject = ca.getSubject();
+            courseNumber = ca.getCourseNumber();
+            courseName = course != null ? course.getName() : null;
+            laajuus = kurssinLaajuus(ca.getCourseLength());
 
             creditOPS = resolveSingleOPSFromCredit(ca, orderedOPSs, defaultOPS);
           break;
@@ -583,10 +583,6 @@ public abstract class KoskiStudentHandler {
     }
     
     return result;
-  }
-
-  protected Laajuus kurssinLaajuus(Course course) {
-    return kurssinLaajuus(course.getCourseLength());
   }
 
   protected Laajuus kurssinLaajuus(TransferCredit transferCredit) {
@@ -640,11 +636,9 @@ public abstract class KoskiStudentHandler {
   protected boolean matchingEducationTypeFilter(Credit credit, List<Long> educationTypes) {
     if (credit instanceof CourseAssessment) {
       CourseAssessment courseAssessment = (CourseAssessment) credit;
-      if (courseAssessment.getCourseStudent() != null && 
-          courseAssessment.getCourseStudent().getCourse() != null && 
-          courseAssessment.getCourseStudent().getCourse().getSubject() != null &&
-          courseAssessment.getCourseStudent().getCourse().getSubject().getEducationType() != null) {
-        return educationTypes.contains(courseAssessment.getCourseStudent().getCourse().getSubject().getEducationType().getId());
+      if (courseAssessment.getSubject() != null &&
+          courseAssessment.getSubject().getEducationType() != null) {
+        return educationTypes.contains(courseAssessment.getSubject().getEducationType().getId());
       }
     } else if (credit instanceof TransferCredit) {
       TransferCredit transferCredit = (TransferCredit) credit;

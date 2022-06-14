@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.174-SNAPSHOT</version>
+    <version>0.7.179-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
@@ -393,8 +393,6 @@
       <scope>test</scope>
     </dependency>
     
-    <!-- Guava is required by selenium -->
-
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
@@ -819,7 +817,6 @@
       </build>
     </profile>
 
-
     <profile>
       <id>ui-it</id>
       <activation>
@@ -839,7 +836,10 @@
         <it.keystore.alias>pyrit</it.keystore.alias>
         <it.keystore.pass>storepass</it.keystore.pass>
         <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
-        <it.skipserverstop>${it.skipserverstop}</it.skipserverstop>
+        <it.wildfly.cli-batch>true</it.wildfly.cli-batch>
+        <it.skipserverstop>false</it.skipserverstop>
+        <it.browser>chrome</it.browser>
+        <it.headless>true</it.headless>
       </properties>
 
       <dependencies>
@@ -866,7 +866,7 @@
             <version>3.0.0-M3</version>
             <configuration>
               <includes>
-                <include>fi/pyramus/ui/**/*IT.java</include>
+                <include>fi/otavanopisto/pyramus/ui/**/*IT.java</include>
               </includes>
               <systemPropertyVariables>
                 <it.project.version>${project.version}</it.project.version>
@@ -882,6 +882,8 @@
                 <it.keystore.alias>${it.keystore.alias}</it.keystore.alias>
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
                 <it.skipserverstop>${it.skipserverstop}</it.skipserverstop>
+                <it.browser>${it.browser}</it.browser>
+                <it.headless>${it.headless}</it.headless>
               </systemPropertyVariables>
             </configuration>
             <executions>
@@ -974,7 +976,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>keytool-maven-plugin</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <executions>
               <execution>
                 <phase>generate-resources</phase>
@@ -1065,22 +1067,18 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx2048m -XX:-UseSplitVerifier</cargo.jvmargs>
-                  <cargo.datasource.datasource.pyrit>
+                  <cargo.jvmargs>-Xms64m -Xmx2G -XX:MaxMetaspaceSize=2G</cargo.jvmargs>
+                  <cargo.datasource.datasource.pyramus>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
                     cargo.datasource.jndi=${it.jdbc.jndi}|
                     cargo.datasource.username=${it.jdbc.username}|
                     cargo.datasource.password=${it.jdbc.password}|
                     cargo.datasource.transactionsupport=LOCAL_TRANSACTION
-                  </cargo.datasource.datasource.pyrit>
+                  </cargo.datasource.datasource.pyramus>
                 </properties>
               </configuration>
-
-              <deployables>
-                <dependency />
-              </deployables>
-
+              <deployer />
             </configuration>
             <executions>
               <execution>
@@ -1096,6 +1094,9 @@
                 <goals>
                   <goal>stop</goal>
                 </goals>
+                <configuration>
+                  <skip>${it.skipserverstop}</skip>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -1103,19 +1104,19 @@
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>1.1.0.Alpha11</version>
+            <version>1.2.0.Final</version>
             <executions>
               <execution>
-                <id>configure-wildfly</id>
+                <id>deploy</id>
                 <phase>pre-integration-test</phase>
                 <goals>
-                  <goal>execute-commands</goal>
+                  <goal>deploy</goal>
                 </goals>
                 <configuration>
-                  <execute-commands>
+                  <before-deployment>
                     <batch>true</batch>
-                    <timeout>180</timeout>
                     <commands>
+                      <command>/system-property=pyramus.workspace:add(value="${basedir}/..")</command>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
                       <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
                       <command>/core-service=management/security-realm=ssl-realm:add()</command>
@@ -1126,23 +1127,10 @@
                       <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=default-web-module,value=ROOT.war)</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
+                      <command>/subsystem=logging/logger=javax.ws.rs.NotFoundException:add(level=SEVERE)</command>
                     </commands>
-                  </execute-commands>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>reload-wildfly</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>execute-commands</goal>
-                </goals>
-                <configuration>
-                  <execute-commands>
-                    <commands>
-                      <command>:reload</command>
-                    </commands>
-                  </execute-commands>
+                  </before-deployment>
+                  <filename>./pyramus-${project.version}.war</filename>
                 </configuration>
               </execution>
             </executions>
@@ -1154,7 +1142,7 @@
             <version>1.0</version>
             <executions>
               <execution>
-                <id>wait-webapp</id>
+                <id>wait</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>wait</goal>
@@ -1163,16 +1151,16 @@
                   <protocol>http</protocol>
                   <host>${it.host}</host>
                   <port>${it.port.http}</port>
-                  <file>/</file>
-                  <maxcount>10</maxcount>
+                  <file>/1/system/ping</file>
+                  <maxcount>20</maxcount>
                   <timeout>10000</timeout>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-
         </plugins>
       </build>
     </profile>
+
   </profiles>
 </project>

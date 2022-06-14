@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -136,10 +138,6 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
   private void fail(JSONRequestContext requestContext, String reason) {
     requestContext.addResponseParameter("status", "FAIL");
     requestContext.addResponseParameter("reason", reason);
-  }
-
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
 
 }

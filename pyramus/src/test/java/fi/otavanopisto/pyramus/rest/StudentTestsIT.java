@@ -53,7 +53,8 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       "Testing...", // studyEndText, 
       variables, // variables
       Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
     
     Response response = given().headers(getAuthHeaders())
@@ -251,7 +252,8 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       "not updated studyEndText", // studyEndText, 
       variables, // variables
       Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
       
     Response response = given().headers(getAuthHeaders())
@@ -318,7 +320,8 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
         "updated studyEndText", // studyEndText, 
         updateVariables, // variables
         Arrays.asList("tag2", "tag3"),  // tags, 
-        Boolean.FALSE //archived
+        Boolean.FALSE, //archived
+        null // matriculation eligibility
       );
       
       given().headers(getAuthHeaders())
@@ -392,7 +395,8 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       "to be deleted", // studyEndText, 
       variables, // variables
       Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
+      Boolean.FALSE, //archived
+      null // matriculation eligibility
     );
     
     Response response = given().headers(getAuthHeaders())

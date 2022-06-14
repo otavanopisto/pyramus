@@ -11,12 +11,15 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.ProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
@@ -32,8 +35,10 @@ public class CreateProjectJSONRequestController extends JSONRequestController {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
     ProjectModuleDAO projectModuleDAO = DAOFactory.getInstance().getProjectModuleDAO();
+    ProjectSubjectCourseDAO projectSubjectCourseDAO = DAOFactory.getInstance().getProjectSubjectCourseDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
 
     // Project
 
@@ -78,6 +83,20 @@ public class CreateProjectJSONRequestController extends JSONRequestController {
       int optionality = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
           .intValue();
       projectModuleDAO.create(project, module, ProjectModuleOptionality.getOptionality(optionality));
+    }
+    
+    // Project subject courses
+
+    rowCount = NumberUtils.createInteger(
+        jsonRequestContext.getRequest().getParameter("subjectCoursesTable.rowCount")).intValue();
+    for (int i = 0; i < rowCount; i++) {
+      String colPrefix = "subjectCoursesTable." + i;
+      Long subjectId = jsonRequestContext.getLong(colPrefix + ".subjectId");
+      Subject subject = subjectDAO.findById(subjectId);
+      Integer courseNumber = jsonRequestContext.getInteger(colPrefix + ".courseNumber");
+      int optionality = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
+          .intValue();
+      projectSubjectCourseDAO.create(project, subject, courseNumber, ProjectModuleOptionality.getOptionality(optionality));
     }
     
     String redirectURL = jsonRequestContext.getRequest().getContextPath() + "/projects/editproject.page?project=" + project.getId();

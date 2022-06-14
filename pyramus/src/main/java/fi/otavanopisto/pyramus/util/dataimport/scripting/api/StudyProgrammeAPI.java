@@ -33,7 +33,7 @@ public class StudyProgrammeAPI {
       throw new InvalidScriptException("Organization not found.");
     }
     
-    return (DAOFactory.getInstance().getStudyProgrammeDAO().create(organization, name, category, code, hasEvaluationFees).getId());
+    return (DAOFactory.getInstance().getStudyProgrammeDAO().create(organization, name, category, code, null, hasEvaluationFees).getId());
   }
   
   public Long findIdByCode(String code) {

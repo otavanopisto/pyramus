@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
@@ -34,6 +36,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -64,6 +67,9 @@ public class CourseController {
   
   @Inject
   private CourseDAO courseDAO;
+  
+  @Inject
+  private CourseModuleDAO courseModuleDAO;
   
   @Inject
   private CourseStateDAO courseStateDAO;
@@ -110,12 +116,12 @@ public class CourseController {
   @Inject
   private DefaultsDAO defaultsDAO;
   
-  public Course createCourse(Module module, Organization organization, String name, String nameExtension, CourseState state, CourseType type, Subject subject, Integer courseNumber, Date beginDate,
-      Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours,
+  public Course createCourse(Module module, Organization organization, String name, String nameExtension, CourseState state, CourseType type, Date beginDate,
+      Date endDate, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, BigDecimal courseFee, Currency courseFeeCurrency, Date enrolmentTimeEnd, User creatingUser) {
     
     Course course = courseDAO
-        .create(module, organization, name, nameExtension, state, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays,
+        .create(module, organization, name, nameExtension, state, type, beginDate, endDate, distanceTeachingDays,
             localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, courseFee, courseFeeCurrency, 
             enrolmentTimeEnd, creatingUser);
 
@@ -327,11 +333,11 @@ public class CourseController {
     return courseParticipationType;
   }
   
-  public Course updateCourse(Course course, Organization organization, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject, Integer courseNumber, Date beginDate,
-      Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours,
+  public Course updateCourse(Course course, Organization organization, String name, String nameExtension, CourseState courseState, CourseType type, Date beginDate,
+      Date endDate, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
     
-    courseDAO.update(course, organization, name, nameExtension, courseState, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit,
+    courseDAO.update(course, organization, name, nameExtension, courseState, type, beginDate, endDate,
         distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, user);
     
     return course;
@@ -371,6 +377,11 @@ public class CourseController {
     Set<Tag> tags = new HashSet<>(course.getTags());
     for (Tag tag : tags) {
       removeCourseTag(course, tag);
+    }
+    
+    List<CourseModule> courseModules = new ArrayList<>(course.getCourseModules());
+    if (courseModules != null) {
+      courseModules.forEach(courseModule -> courseModuleDAO.delete(courseModule));
     }
     
     courseDAO.delete(course);
@@ -489,29 +500,6 @@ public class CourseController {
     return courseStudentDAO.listByCourse(course);
   }
   
-  /**
-   * Lists course students by student and course subject
-   * 
-   * @param student student
-   * @param subject course subject
-   * @return list of course students
-   */
-  public List<CourseStudent> listByStudentAndCourseSubject(Student student, Subject subject) {
-    return courseStudentDAO.listByStudentAndCourseSubject(student, subject);
-  }
-  
-  /**
-   * Lists course students by student, course subject and course curriculum
-   * 
-   * @param student student
-   * @param subject course subject
-   * @param curriculum course curriculum
-   * @return list of course students
-   */
-  public List<CourseStudent> listByStudentAndCourseSubjectAndCourseCurriculum(Student student, Subject subject, Curriculum curriculum) {
-    return courseStudentDAO.listByStudentAndCourseSubjectAndCourseCurriculum(student, subject, curriculum);
-  }
-
   public List<CourseStudent> listByStudentAndCourseCurriculum(Student student, Curriculum curriculum) {
     return courseStudentDAO.listByStudentAndCourseCurriculum(student, curriculum);
   }
@@ -677,6 +665,21 @@ public class CourseController {
 
   public boolean isCourseStaffMember(Course course, StaffMember staffMember) {
     return courseStaffMemberDAO.findByCourseAndStaffMember(course, staffMember) != null;
+  }
+
+  /* Course Modules */
+  
+  public CourseModule createCourseModule(CourseBase course, Subject subject, Integer courseNumber, Double courseLength, EducationalTimeUnit courseLengthTimeUnit) {
+    return courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
+  }
+
+  public CourseModule updateCourseModule(CourseModule courseModule, Subject subject, Integer courseNumber,
+      Double courseLength, EducationalTimeUnit courseLengthTimeUnit) {
+    return courseModuleDAO.update(courseModule, subject, courseNumber, courseLength, courseLengthTimeUnit);
+  }
+
+  public void removeCourseModule(CourseModule courseModule) {
+    courseModuleDAO.delete(courseModule);
   }
 
 }

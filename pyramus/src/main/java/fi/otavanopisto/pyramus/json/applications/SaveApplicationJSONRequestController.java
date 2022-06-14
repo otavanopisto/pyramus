@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -62,19 +64,19 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      String firstName = formData.getString("field-first-names");
+      String firstName = getFormValue(formData, "field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing first name");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      String lastName = formData.getString("field-last-name");
+      String lastName = getFormValue(formData, "field-last-name");
       if (lastName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing last name");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      String email = StringUtils.lowerCase(StringUtils.trim(formData.getString("field-email")));
+      String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
       if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -101,8 +103,8 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
           }
         }
         else {
-          String name = formData.getString("attachment-name");
-          String description = formData.getString("attachment-description");
+          String name = getFormValue(formData, "attachment-name");
+          String description = getFormValue(formData, "attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));

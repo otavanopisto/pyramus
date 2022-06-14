@@ -1,0 +1,39 @@
+name: UI tests
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Commit to test.'
+        required: true
+jobs:
+  testing:
+    env:
+      OOM2_USER: ${{secrets.OOM2_USER}}
+      OOM2_PASSWORD: ${{secrets.OOM2_PASSWORD}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.commit }}
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      - name: Prepare maven settings
+        run: python prepare-maven.py
+      - name: Build with Maven
+        run: mvn install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+      - name: Set Pyramus host
+        run: echo "127.0.0.1 dev.pyramus.fi" | sudo tee -a /etc/hosts
+      - name: Test REST
+        run: |
+            pushd .
+            cd pyramus
+            mvn clean verify --settings ~/.m2/mySettings.xml -Pui-it
+            popd
+             

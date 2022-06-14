@@ -6,8 +6,6 @@ import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryDAO;
-import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryPathDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomTypeDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
@@ -70,6 +68,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudyProgrammeDAO;
@@ -116,8 +115,10 @@ import fi.otavanopisto.pyramus.dao.plugins.PluginDAO;
 import fi.otavanopisto.pyramus.dao.plugins.PluginRepositoryDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.ProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.StudentProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportCategoryDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportContextDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
@@ -316,6 +317,10 @@ public class DAOFactory {
     return (CourseDAO) findByClass(fi.otavanopisto.pyramus.dao.courses.CourseDAO.class);
   }
   
+  public fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO getCourseModuleDAO() {
+    return (CourseModuleDAO) findByClass(fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO.class);
+  }
+  
   public CourseDescriptionCategoryDAO getCourseDescriptionCategoryDAO() {
     return (CourseDescriptionCategoryDAO) findByClass(CourseDescriptionCategoryDAO.class);
   }
@@ -508,12 +513,20 @@ public class DAOFactory {
     return (ProjectModuleDAO) findByClass(ProjectModuleDAO.class);
   }
   
+  public ProjectSubjectCourseDAO getProjectSubjectCourseDAO() {
+    return (ProjectSubjectCourseDAO) findByClass(ProjectSubjectCourseDAO.class);
+  }
+  
   public StudentProjectDAO getStudentProjectDAO() {
     return (StudentProjectDAO) findByClass(StudentProjectDAO.class);
   }
   
   public StudentProjectModuleDAO getStudentProjectModuleDAO() {
     return (StudentProjectModuleDAO) findByClass(StudentProjectModuleDAO.class);
+  }
+
+  public StudentProjectSubjectCourseDAO getStudentProjectSubjectCourseDAO() {
+    return (StudentProjectSubjectCourseDAO) findByClass(StudentProjectSubjectCourseDAO.class);
   }
 
   /* Help */
@@ -781,16 +794,6 @@ public class DAOFactory {
     return (ClientApplicationAccessTokenDAO) findByClass(ClientApplicationAccessTokenDAO.class);
   }
   
-  /* AccessLog */
-  
-  public AccessLogEntryDAO getAccessLogEntryDAO() {
-    return (AccessLogEntryDAO) findByClass(AccessLogEntryDAO.class);
-  }
-  
-  public AccessLogEntryPathDAO getAccessLogEntryPathDAO() {
-    return (AccessLogEntryPathDAO) findByClass(AccessLogEntryPathDAO.class);
-  }
-
   public LoginLogDAO getLoginLogDAO() {
     return (LoginLogDAO) findByClass(LoginLogDAO.class);
   }

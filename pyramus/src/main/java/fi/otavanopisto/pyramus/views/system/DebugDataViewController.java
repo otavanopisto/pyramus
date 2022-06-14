@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
@@ -20,7 +21,9 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
+import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceCategory;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -41,6 +44,7 @@ public class DebugDataViewController extends PyramusViewController {
     MaterialResourceDAO materialResourceDAO = DAOFactory.getInstance().getMaterialResourceDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();
 
     String type = requestContext.getRequest().getParameter("type");
     int count = Integer.parseInt(requestContext.getRequest().getParameter("count"));
@@ -55,7 +59,8 @@ public class DebugDataViewController extends PyramusViewController {
     if ("module".equals(type)) {
       for (int i = start; i < (start + count); i++) {
         EducationalTimeUnit etu = educationalTimeUnitDAO.findById(new Long(1));
-        moduleDAO.create("Moduli " + i, null, null, new Double(10), etu, "Kuvaustekstiä modulille " + i, null, user);
+        Module module = moduleDAO.create("Moduli " + i, "Kuvaustekstiä modulille " + i, null, user);
+        courseModuleDAO.create(module, null, null, new Double(10), etu);
       }
     }
     else if ("course".equals(type)) {
@@ -63,7 +68,8 @@ public class DebugDataViewController extends PyramusViewController {
         EducationalTimeUnit etu = educationalTimeUnitDAO.findById(new Long(1));
         CourseState courseState = courseStateDAO.findById(new Long(1));
         Organization organization = organizationDAO.findById(1L);
-        courseDAO.create(moduleDAO.findById(new Long(1)), organization, "Kurssi " + i, "", courseState, null, null, null, null, null, new Double(10), etu, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, null, null, user);
+        Course course = courseDAO.create(moduleDAO.findById(new Long(1)), organization, "Kurssi " + i, "", courseState, null, null, null, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, null, null, user);
+        courseModuleDAO.create(course, null, null, new Double(10), etu);
       }
     }
     else if ("resource".equals(type)) {

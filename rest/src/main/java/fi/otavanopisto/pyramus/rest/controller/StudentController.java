@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -39,6 +40,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
@@ -66,6 +68,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
+import fi.otavanopisto.pyramus.domainmodel.users.ContactLogAccess;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
@@ -73,6 +77,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Dependent
 @Stateless
@@ -128,6 +133,15 @@ public class StudentController {
 
   @Inject
   private KoskiClient koskiClient;
+  
+  @Inject
+  private StudentGroupDAO studentGroupDAO;
+  
+  @Inject
+  private SessionController sessionController;
+  
+  @Inject
+  private UserController userController;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -405,57 +419,60 @@ public class StudentController {
     
     for (CourseStudent courseStudent : courseStudents) {
       Course course = courseStudent.getCourse();
-      
-      // Construct course base information and assume it's ongoing
-      
-      CourseActivity courseActivity = new CourseActivity();
-      courseActivity.setCourseId(course.getId());
-      courseActivity.setCurriculumIds(course.getCurriculums().stream().map(Curriculum::getId).collect(Collectors.toList()));
-      String courseName = course.getName();
-      if (!StringUtils.isEmpty(course.getNameExtension())) {
-        courseName = String.format("%s (%s)", courseName, course.getNameExtension());
-      }
-      courseActivity.setCourseName(courseName);
-      courseActivity.setActivityDate(courseStudent.getEnrolmentTime());
-      courseActivity.setState(CourseActivityState.ONGOING);
-      
-      // Status override if course has been graded
-      
-      CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE); 
-      if (courseAssessment != null && courseAssessment.getGrade() != null) {
-        courseActivity.setText(courseAssessment.getVerbalAssessment());
-        courseActivity.setGrade(courseAssessment.getGrade().getName());
-        courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
-        courseActivity.setActivityDate(courseAssessment.getDate());
-        courseActivity.setGradeDate(courseAssessment.getDate());
-        courseActivity.setState(CourseActivityState.GRADED);
-      }
-      
-      // Status override if course has been graded as linked credit
-      
-      CreditLink linkedAssessment = linkedAssessments.stream()
-          .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
-          .findAny()
-          .orElse(null);
-      if (linkedAssessment != null) {
-        courseActivity.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
-        courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
-        courseActivity.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
-        courseActivity.setActivityDate(linkedAssessment.getCreated());
-        courseActivity.setGradeDate(linkedAssessment.getCreated());
-        courseActivity.setState(CourseActivityState.GRADED);
-      }
-      
-      // Status override if student has requested the course to be assessed
-      
       CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
-      if (request != null && !request.getHandled() && request.getCreated().after(courseActivity.getActivityDate())) {
-        courseActivity.setText(request.getRequestText());
-        courseActivity.setActivityDate(request.getCreated());
-        courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
-      }
       
-      courseActivities.add(courseActivity);
+      for (CourseModule courseModule : course.getCourseModules()) {
+        // Construct course base information and assume it's ongoing
+        
+        CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCourseId(course.getId());
+        courseActivity.setCourseModuleId(courseModule.getId());
+        courseActivity.setCurriculumIds(course.getCurriculums().stream().map(Curriculum::getId).collect(Collectors.toList()));
+        String courseName = course.getName();
+        if (!StringUtils.isEmpty(course.getNameExtension())) {
+          courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+        }
+        courseActivity.setCourseName(courseName);
+        courseActivity.setActivityDate(courseStudent.getEnrolmentTime());
+        courseActivity.setState(CourseActivityState.ONGOING);
+        
+        // Status override if course has been graded
+        
+        CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE); 
+        if (courseAssessment != null && courseAssessment.getGrade() != null) {
+          courseActivity.setText(courseAssessment.getVerbalAssessment());
+          courseActivity.setGrade(courseAssessment.getGrade().getName());
+          courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
+          courseActivity.setActivityDate(courseAssessment.getDate());
+          courseActivity.setGradeDate(courseAssessment.getDate());
+          courseActivity.setState(CourseActivityState.GRADED);
+        }
+        
+        // Status override if course has been graded as linked credit
+        
+        CreditLink linkedAssessment = linkedAssessments.stream()
+            .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
+            .findAny()
+            .orElse(null);
+        if (linkedAssessment != null) {
+          courseActivity.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
+          courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
+          courseActivity.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
+          courseActivity.setActivityDate(linkedAssessment.getCreated());
+          courseActivity.setGradeDate(linkedAssessment.getCreated());
+          courseActivity.setState(CourseActivityState.GRADED);
+        }
+        
+        // Status override if student has requested the course to be assessed
+        
+        if (request != null && !request.getHandled() && request.getCreated().after(courseActivity.getActivityDate())) {
+          courseActivity.setText(request.getRequestText());
+          courseActivity.setActivityDate(request.getCreated());
+          courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
+        }
+        
+        courseActivities.add(courseActivity);
+      }
     }    
 
     // Optionally include transfer credits as well
@@ -537,6 +554,44 @@ public class StudentController {
 
     return result;
   }
-
+  
+  /* Checks if logged user is guidance counselor of specific student */
+  public boolean amIGuidanceCounselor(Long studentId, StaffMember staffMember) {
+    
+    if (staffMember == null) {
+      return false;
+    }
+    
+    Student student = findStudentById(studentId);
+    // List of student's user groups
+    List<StudentGroup> studentGroups = studentGroupDAO.listByStudentAndUserAndGuidanceGroupAndArchived(student, staffMember, true, false);
+    
+    return !studentGroups.isEmpty();
+  }
+  
+  public ContactLogAccess resolveContactLogAccess(Student student) {
+    User loggedUser = sessionController.getUser();
+    
+    if (loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+      return ContactLogAccess.ALL;
+    } 
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    
+    if (staffMember == null) {
+      return ContactLogAccess.NONE;
+    } else {
+      if (staffMember.getRole().equals(Role.CLOSED)) {
+        return ContactLogAccess.NONE;
+      }
+    }
+    
+    Boolean amIGuidanceCounselor = amIGuidanceCounselor(student.getId(), staffMember);
+    
+    if (amIGuidanceCounselor) {
+      return ContactLogAccess.ALL;
+    } else {
+      return ContactLogAccess.OWN;
+    }
+  }
 }
 

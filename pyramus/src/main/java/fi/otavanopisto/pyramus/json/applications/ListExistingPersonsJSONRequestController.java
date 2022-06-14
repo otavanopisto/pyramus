@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +42,10 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
         return;
       }
       
-      JSONObject applicationData = JSONObject.fromObject(application.getFormData());      
+      JSONObject applicationData = JSONObject.fromObject(application.getFormData());
       
-      String ssn = ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
-      String emailAddress = StringUtils.lowerCase(StringUtils.trim(applicationData.getString("field-email")));
+      String ssn = ApplicationUtils.constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+      String emailAddress = StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-email")));
   
       EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
       PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();

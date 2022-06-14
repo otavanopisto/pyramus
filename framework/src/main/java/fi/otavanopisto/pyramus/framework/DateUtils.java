@@ -40,5 +40,13 @@ public class DateUtils {
     
     return date1.after(date2) ? date1 : date2;
   }
+
+  /**
+   * Returns true if date (first parameter) is after earlierCandidate (second parameter)
+   * or if second parameter is null. Throws NPE if date is null.
+   */
+  public static boolean isAfterOrNull(Date date, Date earlierCandidate) {
+    return earlierCandidate != null ? date.after(earlierCandidate) : true;
+  }
   
 }

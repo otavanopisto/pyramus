@@ -39,6 +39,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudyProgrammeDAO;
@@ -58,6 +59,7 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
@@ -98,6 +100,8 @@ import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
+import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 
 /**
  * The controller responsible of modifying an existing course. 
@@ -280,6 +284,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();
     
     Locale locale = requestContext.getRequest().getLocale();
     StaffMember loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
@@ -301,13 +306,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     CourseState courseState = courseStateId == null ? course.getState() : courseStateDAO.findById(courseStateId);
     CourseType courseType = courseTypeId != null ? courseTypeDAO.findById(courseTypeId) : null; 
     String description = requestContext.getString("description");
-    Subject subject = subjectDAO.findById(requestContext.getLong("subject"));
-    Integer courseNumber = requestContext.getInteger("courseNumber");
     Date beginDate = requestContext.getDate("beginDate");
     Date endDate = requestContext.getDate("endDate");
-    Double courseLength = requestContext.getDouble("courseLength");
-    EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(requestContext
-        .getLong("courseLengthTimeUnit"));
     Double distanceTeachingDays = requestContext.getDouble("distanceTeachingDays");
     Double localTeachingDays = requestContext.getDouble("localTeachingDays");
     Double teachingHours = requestContext.getDouble("teachingHours");
@@ -345,9 +345,39 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     StaffMember staffMember = userDAO.findById(requestContext.getLoggedUserId());
 
-    courseDAO.update(course, organization, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
-        courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
+    courseDAO.update(course, organization, name, nameExtension, courseState, courseType, beginDate, endDate,
+        distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
+
+
+    Set<Long> existingCourseModuleIds = new HashSet<>();
+
+    // Store the list of courseModules separate from course.getCourseModules() as the latter may change inside the loop
+    List<CourseModule> courseModules = courseModuleDAO.listByCourse(course);
+    
+    PyramusIxTableFacade courseModulesTable = PyramusIxTableFacade.from(requestContext, "courseModulesTable");
+    for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
+      Long courseModuleId = courseModulesTableRow.getLong("courseModuleId");
+    
+      Subject subject = subjectDAO.findById(courseModulesTableRow.getLong("subject"));
+      Integer courseNumber = courseModulesTableRow.getInteger("courseNumber");
+      Double courseLength = courseModulesTableRow.getDouble("courseLength");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
+
+      if (courseModuleId == -1) {
+        courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
+      } else {
+        CourseModule existing = courseModuleDAO.findById(courseModuleId);
+        courseModuleDAO.update(existing, subject, courseNumber, courseLength, courseLengthTimeUnit);
+        existingCourseModuleIds.add(existing.getId());
+      }
+    }
+    
+    for (CourseModule courseModule : courseModules) {
+      if (!existingCourseModuleIds.contains(courseModule.getId())) {
+        courseModuleDAO.delete(courseModule);
+      }
+    }
     
     courseDAO.updateCurriculums(course, curriculums);
 

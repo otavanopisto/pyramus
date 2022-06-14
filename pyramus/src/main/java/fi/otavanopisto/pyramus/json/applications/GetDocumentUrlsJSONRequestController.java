@@ -23,15 +23,19 @@ public class GetDocumentUrlsJSONRequestController extends JSONRequestController 
         ApplicationSignatures applicationSignatures = applicationSignaturesDAO.findByApplication(application);
         if (applicationSignatures != null) {
           if (StringUtils.isNotBlank(applicationSignatures.getStaffInvitationId())) {
-            String staffDocumentUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
-                applicationSignatures.getStaffInvitationId(),
-                applicationSignatures.getStaffInvitationToken());
+            String staffDocumentUrl = String.format("/applications/getdocument.binary?documentId=%s&filename=%s",
+                applicationSignatures.getStaffDocumentId(),
+                sanitizeFilename(String.format("%s-%s-oppilaitos.pdf",
+                    applicationSignatures.getApplication().getFirstName(),
+                    applicationSignatures.getApplication().getLastName())));
             requestContext.addResponseParameter("staffDocumentUrl", staffDocumentUrl);
           }
           if (StringUtils.isNotBlank(applicationSignatures.getApplicantInvitationId())) {
-            String applicantDocumentUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
-                applicationSignatures.getApplicantInvitationId(),
-                applicationSignatures.getApplicantInvitationToken());
+            String applicantDocumentUrl = String.format("/applications/getdocument.binary?documentId=%s&filename=%s",
+                applicationSignatures.getApplicantDocumentId(),
+                sanitizeFilename(String.format("%s-%s-hakija.pdf",
+                    applicationSignatures.getApplication().getFirstName(),
+                    applicationSignatures.getApplication().getLastName())));
             requestContext.addResponseParameter("applicantDocumentUrl", applicantDocumentUrl);
           }
         }
@@ -41,6 +45,14 @@ public class GetDocumentUrlsJSONRequestController extends JSONRequestController 
 
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
+  }
+
+  private String sanitizeFilename(String filename) {
+    filename = StringUtils.trim(filename);
+    if (StringUtils.isEmpty(filename)) {
+      return filename;
+    }
+    return StringUtils.replace(StringUtils.lowerCase(StringUtils.strip(StringUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), ".")), " ", "-");
   }
 
 }
