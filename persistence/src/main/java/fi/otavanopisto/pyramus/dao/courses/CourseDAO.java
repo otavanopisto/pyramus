@@ -257,12 +257,16 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
-    Root<CourseStaffMember> root = criteria.from(CourseStaffMember.class);
+    Root<CourseStaffMember> staffRoot = criteria.from(CourseStaffMember.class);
+    Root<Course> courseRoot = criteria.from(Course.class);
     
-    criteria.select(root.get(CourseStaffMember_.course));
+    criteria.select(courseRoot);
     criteria.where(
-      criteriaBuilder.equal(root.get(CourseStaffMember_.staffMember), staffMember)
-    );
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseRoot, staffRoot.get(CourseStaffMember_.course)),
+            criteriaBuilder.equal(courseRoot.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(staffRoot.get(CourseStaffMember_.staffMember), staffMember)
+        ));
     
     return entityManager.createQuery(criteria).getResultList();
   }
@@ -435,6 +439,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
             timeframeS).append("] AND ").append("endDate:[").append(timeframeE).append(" TO ").append(
                 getSearchDateInfinityHigh()).append("]").append(")").append(")");
         break;
+      default:
+        break;
       }
     }
     else if (timeframeS != null) {
@@ -450,6 +456,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
             getSearchDateInfinityHigh()).append("]").append("endDate:[").append(timeframeS).append(" TO ").append(
                 getSearchDateInfinityHigh()).append("]").append(")");
         break;
+      default:
+        break;
       }
     }
     else if (timeframeE != null) {
@@ -464,6 +472,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
         queryBuilder.append(" +(").append("beginDate:[").append(getSearchDateInfinityLow()).append(" TO ").append(
             timeframeE).append("] ").append("endDate:[").append(getSearchDateInfinityLow()).append(" TO ").append(
             timeframeE).append("]").append(")");
+        break;
+      default:
         break;
       }
     }
