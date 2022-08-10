@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
@@ -258,13 +259,12 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
     Root<CourseStaffMember> staffRoot = criteria.from(CourseStaffMember.class);
-    Root<Course> courseRoot = criteria.from(Course.class);
+    Join<CourseStaffMember, Course> courseJoin = staffRoot.join(CourseStaffMember_.course);
     
-    criteria.select(courseRoot);
+    criteria.select(staffRoot.get(CourseStaffMember_.course));
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.equal(courseRoot, staffRoot.get(CourseStaffMember_.course)),
-            criteriaBuilder.equal(courseRoot.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
             criteriaBuilder.equal(staffRoot.get(CourseStaffMember_.staffMember), staffMember)
         ));
     
