@@ -11,9 +11,10 @@ public class TORCourse {
   public TORCourse() {
   }
 
-  public TORCourse(Subject subject, Integer courseNumber, Double courseLength, TORCourseLengthUnit lengthUnit) {
+  public TORCourse(Subject subject, Integer courseNumber, boolean mandatory, Double courseLength, TORCourseLengthUnit lengthUnit) {
     this.subject = subject;
     this.courseNumber = courseNumber;
+    this.mandatory = mandatory;
     this.courseLength = courseLength;
     this.lengthUnit = lengthUnit;
   }
@@ -75,8 +76,17 @@ public class TORCourse {
     Collections.sort(credits, Collections.reverseOrder());
   }
 
+  public boolean isMandatory() {
+    return mandatory;
+  }
+
+  public void setMandatory(boolean mandatory) {
+    this.mandatory = mandatory;
+  }
+
   private Integer courseNumber;
   private Subject subject;
+  private boolean mandatory;
   private Double courseLength;
   private TORCourseLengthUnit lengthUnit;
   private List<TORCredit> credits = new ArrayList<>();

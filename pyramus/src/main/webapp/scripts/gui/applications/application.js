@@ -206,7 +206,7 @@
         return true;
       },
       messages: {
-        fi: 'Sähköpostiosoite puuttuu tai on virheellinen'
+        fi: 'Sähköpostiosoite puuttuu tai on virheellinen. Valitettavasti vain kirjaimet (a-z), numerot (0-9) ja pisteet (.) ovat sallittuja.'
       }
     });
 
@@ -246,6 +246,8 @@
           }
         }
         $(this).toggle(show);
+        // #1359: Disable hidden form fields to prevent their serialization when submitting
+        $(this).find("input,select,textarea").prop('disabled', !show);
         $(this).find('[data-dependencies]').trigger('change');
       });
     });

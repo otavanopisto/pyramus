@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.views.grading;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -10,6 +12,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
@@ -35,12 +38,16 @@ public class CourseAssessmentViewController extends PyramusViewController implem
     
     CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
     
-    CourseAssessment assessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+    Map<Long, CourseAssessment> latestModuleAssessments = new HashMap<>();
+    
+    for (CourseModule courseModule : courseStudent.getCourse().getCourseModules()) {
+      latestModuleAssessments.put(courseModule.getId(), courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE));
+    }
     
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
 
     pageRequestContext.getRequest().setAttribute("courseStudent", courseStudent);
-    pageRequestContext.getRequest().setAttribute("assessment", assessment);
+    pageRequestContext.getRequest().setAttribute("assessments", latestModuleAssessments);
     pageRequestContext.getRequest().setAttribute("gradingScales", gradingScales);
     
     pageRequestContext.setIncludeJSP("/templates/grading/courseassessment.jsp");

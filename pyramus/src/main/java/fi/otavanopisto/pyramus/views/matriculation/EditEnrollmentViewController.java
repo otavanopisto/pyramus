@@ -22,6 +22,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.StudentProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -42,6 +43,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -217,6 +219,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
     StudentProjectModuleDAO studentProjectModuleDAO = DAOFactory.getInstance().getStudentProjectModuleDAO();
+    StudentProjectSubjectCourseDAO studentProjectSubjectCourseDAO = DAOFactory.getInstance().getStudentProjectSubjectCourseDAO();
     MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
     MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
 
@@ -273,6 +276,12 @@ public class EditEnrollmentViewController extends PyramusViewController {
       for (ProjectModule projectModule : projectModules) {
         studentProjectModuleDAO.create(studentProject, projectModule.getModule(), null,
             CourseOptionality.getOptionality(projectModule.getOptionality().getValue()));
+      }
+
+      List<ProjectSubjectCourse> projectSubjectCourses = project.getProjectSubjectCourses();
+      for (ProjectSubjectCourse projectSubjectCourse : projectSubjectCourses) {
+        studentProjectSubjectCourseDAO.create(studentProject, projectSubjectCourse.getSubject(), projectSubjectCourse.getCourseNumber(), null,
+            CourseOptionality.getOptionality(projectSubjectCourse.getOptionality().getValue()));
       }
     } else {
       studentProject = studentProjectDAO.updateOptionality(studentProject, projectOptionality);

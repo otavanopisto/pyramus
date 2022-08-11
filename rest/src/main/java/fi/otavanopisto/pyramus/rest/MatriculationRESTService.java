@@ -23,15 +23,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
@@ -46,14 +43,13 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjec
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
-import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
+import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MatriculationPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
@@ -70,7 +66,6 @@ import fi.otavanopisto.security.LoggedIn;
 @RequestScoped
 public class MatriculationRESTService extends AbstractRESTService {
 
-  private static final String SETTING_ELIGIBLE_GROUPS = "matriculation.eligibleGroups";
   private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
 
   @Inject
@@ -107,10 +102,7 @@ public class MatriculationRESTService extends AbstractRESTService {
   private StudentController studentController;
 
   @Inject
-  private StudentGroupDAO studentGroupDAO;
-
-  @Inject
-  private StudentGroupStudentDAO studentGroupStudentDAO;
+  private MatriculationEligibilityController matriculationEligibilityController;
 
   @Path("/eligibility")
   @GET
@@ -124,7 +116,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     if (loggedUser instanceof Student) {
       Student loggedStudent = (Student) loggedUser;
 
-      upperSecondarySchoolCurriculum = hasGroupEligibility(loggedStudent);
+      upperSecondarySchoolCurriculum = matriculationEligibilityController.hasGroupEligibility(loggedStudent);
     }
 
     return Response.ok(new MatriculationEligibilities(upperSecondarySchoolCurriculum)).build();
@@ -320,43 +312,10 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   private boolean isEligible(Student student, MatriculationExam matriculationExam) {
     return student == null ? false :
-      isVisible(matriculationExam, student) && hasGroupEligibility(student);
+      isVisible(matriculationExam, student) && matriculationEligibilityController.hasGroupEligibility(student);
   }
 
-  /**
-   * Returns true if student is in one of the groups mentioned in the setting.
-   * 
-   * @param student
-   * @return
-   */
-  private boolean hasGroupEligibility(Student student) {
-    if (student != null) {
-      String eligibleGroupsStr = SettingUtils.getSettingValue(SETTING_ELIGIBLE_GROUPS);
-
-      if (StringUtils.isNotBlank(eligibleGroupsStr)) {
-        String[] split = StringUtils.split(eligibleGroupsStr, ",");
-
-        for (String groupIdentifier : split) {
-          if (groupIdentifier.startsWith("STUDYPROGRAMME:")) {
-            Long studyProgrammeId = Long.parseLong(groupIdentifier.substring(15));
-            if (student.getStudyProgramme() != null && Objects.equals(student.getStudyProgramme().getId(), studyProgrammeId)) {
-              return true;
-            }
-          } else if (groupIdentifier.startsWith("STUDENTGROUP:")) {
-            Long studentGroupId = Long.parseLong(groupIdentifier.substring(13));
-            StudentGroup studentGroup = studentGroupDAO.findById(studentGroupId);
-
-            if (studentGroupStudentDAO.findByStudentGroupAndStudent(studentGroup, student) != null) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-
-    return false;
-  }
-
+  
   private fi.otavanopisto.pyramus.rest.model.MatriculationExam restModel(MatriculationExam exam, Student student) {
     fi.otavanopisto.pyramus.rest.model.MatriculationExam result = new fi.otavanopisto.pyramus.rest.model.MatriculationExam();
     result.setId(exam.getId());

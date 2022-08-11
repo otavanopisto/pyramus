@@ -35,7 +35,7 @@ public class StudyProgrammesViewController extends PyramusViewController impleme
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     
     List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
-    JSONArray jsonStudyProgrammes = new JSONArrayExtractor("name", "code", "id", "hasEvaluationFees").extract(studyProgrammes);
+    JSONArray jsonStudyProgrammes = new JSONArrayExtractor("name", "code", "officialEducationType", "id", "hasEvaluationFees").extract(studyProgrammes);
     for (int i=0; i<jsonStudyProgrammes.size(); i++) {
       JSONObject jsonStudyProgrammeCategory = jsonStudyProgrammes.getJSONObject(i);
       if (studyProgrammes.get(i).getOrganization() != null) {

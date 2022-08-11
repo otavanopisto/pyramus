@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -33,11 +34,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase_;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType_;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
-import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
-import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
@@ -50,22 +51,14 @@ import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 @Stateless
 public class ModuleDAO extends PyramusEntityDAO<Module> {
 
-  public Module create(String name, Subject subject, Integer courseNumber, Double moduleLength, 
-      EducationalTimeUnit moduleLengthTimeUnit, String description, Long maxParticipantCount, User creatingUser) {
+  public Module create(String name, String description, Long maxParticipantCount, User creatingUser) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
 
-    EducationalLength educationalLength = new EducationalLength();
-    educationalLength.setUnit(moduleLengthTimeUnit);
-    educationalLength.setUnits(moduleLength);
-
     Module module = new Module();
     module.setName(name);
     module.setDescription(description);
-    module.setSubject(subject);
-    module.setCourseNumber(courseNumber);
-    module.setCourseLength(educationalLength);
     module.setMaxParticipantCount(maxParticipantCount);
 
     module.setCreator(creatingUser);
@@ -84,9 +77,15 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
     Root<Module> root = criteria.from(Module.class);
+    
+    Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
+    Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
+    courseModuleSubquery.where(criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject));
+    
     criteria.select(root);
     criteria.where(
-      criteriaBuilder.equal(root.get(Module_.subject), subject)
+        root.in(courseModuleSubquery)
     );
     
     return entityManager.createQuery(criteria).getResultList();
@@ -98,11 +97,21 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
     Root<Module> root = criteria.from(Module.class);
+
+    Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
+    Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
+    courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
+    courseModuleSubquery.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject),
+            criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.courseNumber), courseNumber)
+        )
+    );
+    
     criteria.select(root);
     criteria.where(
       criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(Module_.subject), subject),
-        criteriaBuilder.equal(root.get(Module_.courseNumber), courseNumber)
+          root.in(courseModuleSubquery)
       )
     );
     
@@ -129,24 +138,13 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     return module;
   }
 
-  public Module update(Module module, String name, Subject subject, Integer courseNumber, Double length, 
-      EducationalTimeUnit lengthTimeUnit, String description, Long maxParticipantCount, User user) {
+  public Module update(Module module, String name, String description, Long maxParticipantCount, User user) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
 
-    EducationalLength educationalLength = module.getCourseLength();
-    if (educationalLength == null) {
-      educationalLength = new EducationalLength();
-    }
-    educationalLength.setUnit(lengthTimeUnit);
-    educationalLength.setUnits(length);
-
     module.setName(name);
     module.setDescription(description);
-    module.setSubject(subject);
-    module.setCourseNumber(courseNumber);
-    module.setCourseLength(educationalLength);
     module.setLastModifier(user);
     module.setLastModified(now);
     module.setMaxParticipantCount(maxParticipantCount);

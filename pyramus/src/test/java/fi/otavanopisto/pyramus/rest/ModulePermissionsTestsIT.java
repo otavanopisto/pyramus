@@ -2,8 +2,10 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import java.time.OffsetDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +15,11 @@ import org.junit.runners.Parameterized.Parameters;
 import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.controller.permissions.ModulePermissions;
+import fi.otavanopisto.pyramus.rest.model.CourseLength;
+import fi.otavanopisto.pyramus.rest.model.CourseModule;
+import fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.rest.model.Module;
+import fi.otavanopisto.pyramus.rest.model.Subject;
 
 @RunWith(Parameterized.class)
 public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
@@ -31,21 +37,19 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testCreateModule() throws NoSuchFieldException {
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "Create test", 
         null, 
         null, 
         "Course for testing course creation", 
         Boolean.FALSE, 
-        111, 
         222l,
         null,
         null,
-        1l,
         null,
-        1d, 
-        1l, 
-        null);
+        null,
+        courseModules);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -80,21 +84,19 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsUpdateModule() throws NoSuchFieldException {
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "not updated", 
         null, 
         null, 
         "not updated module", 
         Boolean.FALSE, 
-        111, 
         222l,
         null,
         null,
-        1l,
         null,
-        1d, 
-        1l, 
-        null);
+        null,
+        courseModules);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -102,23 +104,22 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .post("/modules/modules");
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long courseModuleId = new Long(response.body().jsonPath().getInt("courseModules[0].id"));
    
     try {
+      courseModules = new HashSet<>(Arrays.asList(createCourseModule(courseModuleId, 2l, 222, 2d, 2l)));
       Module updateModule = new Module(id,
           "updated", 
           null, 
           null, 
           "updated module", 
           Boolean.FALSE, 
-          222, 
           333l,
           null,
           null,
-          2l,
           null,
-          2d, 
-          2l, 
-          null);
+          null,
+          courseModules);
       
       Response updateResponse = given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -133,21 +134,19 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsDeleteModule() throws NoSuchFieldException {
+    Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "not updated", 
         OffsetDateTime.now(), 
         OffsetDateTime.now(), 
         "not updated module", 
         Boolean.FALSE, 
-        111, 
         222l,
         1l,
         1l,
-        1l,
         null,
-        1d, 
-        1l, 
-        null);
+        null,
+        courseModules);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -176,4 +175,16 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .get("/modules/modules/{MODULEID}/projects", 1l);
     assertOk(response, modulePermissions, ModulePermissions.LIST_PROJECTSBYMODULE, 200);
   }
+
+  private CourseModule createCourseModule(long subjectId, int courseNumber, double courseLengthUnits, long courseLengthUnitId) {
+    return createCourseModule(null, subjectId, courseNumber, courseLengthUnits, courseLengthUnitId);
+  }
+
+  private CourseModule createCourseModule(Long courseModuleId, long subjectId, int courseNumber, double courseLengthUnits, long courseLengthUnitId) {
+    EducationalTimeUnit courseLengthUnit = new EducationalTimeUnit(courseLengthUnitId, null, null, null, false);
+    CourseLength courseLength = new CourseLength(null, null, courseLengthUnits, courseLengthUnit);
+    Subject subject = new Subject(subjectId, null, null, null, false);
+    return new CourseModule(courseModuleId, subject, courseNumber, courseLength);
+  }
+
 }

@@ -10,7 +10,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.apache.commons.lang.math.NumberUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -35,6 +40,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -55,6 +61,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.rest.ObjectFactory;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 /**
@@ -200,6 +207,8 @@ public class EditCourseViewController extends PyramusViewController implements B
     Collections.sort(organizations, new StringAttributeComparator("getName"));
     pageRequestContext.getRequest().setAttribute("organizations", organizations);
 
+    prepareCourseModuleViewOptions(pageRequestContext, course);
+    
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("states", courseStateDAO.listUnarchived());
@@ -220,6 +229,33 @@ public class EditCourseViewController extends PyramusViewController implements B
     pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     
     pageRequestContext.setIncludeJSP("/templates/courses/editcourse.jsp");
+  }
+
+  private void prepareCourseModuleViewOptions(PageRequestContext pageRequestContext, CourseBase courseBase) {
+    ObjectFactory objectFactory = CDI.current().select(ObjectFactory.class).get();
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    
+    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
+    Collections.sort(educationalTimeUnits, new StringAttributeComparator("getName"));
+
+    List<Subject> subjects = subjectDAO.listUnarchived();
+    Collections.sort(subjects, new StringAttributeComparator("getName"));
+
+    List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
+    Collections.sort(educationTypes, new StringAttributeComparator("getName"));
+
+    try {
+      setJsDataVariable(pageRequestContext, "courseModules", objectMapper.writeValueAsString(objectFactory.createModel(courseBase.getCourseModules())));
+      setJsDataVariable(pageRequestContext, "educationalTimeUnits", objectMapper.writeValueAsString(objectFactory.createModel(educationalTimeUnits)));
+      setJsDataVariable(pageRequestContext, "educationTypes", objectMapper.writeValueAsString(objectFactory.createModel(educationTypes)));
+      setJsDataVariable(pageRequestContext, "subjects", objectMapper.writeValueAsString(objectFactory.createModel(subjects)));
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

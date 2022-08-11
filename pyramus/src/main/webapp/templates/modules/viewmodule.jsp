@@ -236,39 +236,26 @@
               </c:when>
             </c:choose>
     
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="modules.viewModule.subjectTitle" />
-                <jsp:param name="helpLocale" value="modules.viewModule.subjectHelp" />
-              </jsp:include>
-              <div class="genericViewFormDataText">
-                <c:choose>
-                  <c:when test="${module.subject.educationType ne null and not empty module.subject.code}">
-                    <fmt:message key="generic.subjectFormatterWithEducationType">
-                      <fmt:param value="${module.subject.code}"/>
-                      <fmt:param value="${module.subject.name}"/>
-                      <fmt:param value="${module.subject.educationType.name}"/>
-                    </fmt:message>
-                  </c:when>
-                  <c:when test="${module.subject.educationType ne null and empty module.subject.code}">
-                    <fmt:message key="generic.subjectFormatterNoSubjectCode">
-                      <fmt:param value="${module.subject.name}"/>
-                      <fmt:param value="${module.subject.educationType.name}"/>
-                    </fmt:message>
-                  </c:when>
-                  <c:when test="${course.subject.educationType eq null and not empty course.subject.code}">
-                    <fmt:message key="generic.subjectFormatterNoEducationType">
-                      <fmt:param value="${module.subject.code}"/>
-                      <fmt:param value="${module.subject.name}"/>
-                    </fmt:message>
-                  </c:when>
-                  <c:otherwise>
-                    ${module.subject.name}
-                  </c:otherwise>
-                </c:choose>
-              </div>
-            </div>
-
+            <c:choose>
+              <c:when test="${not empty module.courseModules}">
+                <div class="genericFormSection">
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="courses.generic.courseModules.label" />
+                    <jsp:param name="helpLocale" value="courses.generic.courseModules.labelHelp" />
+                  </jsp:include>
+                  <div class="genericViewFormDataText">
+                    <c:forEach var="courseModule" items="${module.courseModules}">
+                      <div>
+                        <c:out value="${courseModule.subject.code}${courseModule.courseNumber}"/>
+                        <c:out value="${courseModule.courseLength.units}"/>
+                        <c:out value="${courseModule.courseLength.unit.symbol}"/>
+                      </div>
+                    </c:forEach>
+                  </div>
+                </div>
+              </c:when>
+            </c:choose> 
+    
             <c:choose>
               <c:when test="${not empty module.curriculums}">
                 <div class="genericFormSection">
@@ -285,30 +272,6 @@
               </c:when>
             </c:choose> 
     
-            <c:choose>
-              <c:when test="${module.courseNumber ne null}">
-                <div class="genericFormSection">
-                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                    <jsp:param name="titleLocale" value="modules.viewModule.courseNumberTitle" />
-                    <jsp:param name="helpLocale" value="modules.viewModule.courseNumberHelp" />
-                  </jsp:include>
-                  <div class="genericViewFormDataText">${module.courseNumber}</div>
-                </div>
-              </c:when>
-            </c:choose> 
-            
-            <c:choose>
-              <c:when test="${module.courseLength ne null}">
-                <div class="genericFormSection">
-                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                    <jsp:param name="titleLocale" value="modules.viewModule.lengthTitle" />
-                    <jsp:param name="helpLocale" value="modules.viewModule.lengthHelp" />
-                  </jsp:include>
-                  <div class="genericViewFormDataText">${module.courseLength.units} ${module.courseLength.unit.name}</div>
-                </div>
-              </c:when>
-            </c:choose> 
-  
         </div>
 
         <!--  Module Detailed Info Ends -->

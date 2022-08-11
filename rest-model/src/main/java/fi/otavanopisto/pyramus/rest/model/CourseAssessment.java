@@ -8,10 +8,11 @@ public class CourseAssessment {
     super();
   }
 
-  public CourseAssessment(Long id, Long courseStudentId, Long gradeId, Long gradingScaleId, Long assessorId, OffsetDateTime date, String verbalAssessment, Boolean passing) {
+  public CourseAssessment(Long id, Long courseStudentId, Long courseModuleId, Long gradeId, Long gradingScaleId, Long assessorId, OffsetDateTime date, String verbalAssessment, Boolean passing) {
     super();
     this.id = id;
     this.courseStudentId = courseStudentId;
+    this.courseModuleId = courseModuleId;
     this.gradeId = gradeId;
     this.gradingScaleId = gradingScaleId;
     this.assessorId = assessorId;
@@ -84,8 +85,17 @@ public class CourseAssessment {
     this.passing = passing;
   }
 
+  public Long getCourseModuleId() {
+    return courseModuleId;
+  }
+
+  public void setCourseModuleId(Long courseModuleId) {
+    this.courseModuleId = courseModuleId;
+  }
+
   private Long id;
   private Long courseStudentId;
+  private Long courseModuleId;
   private Long gradeId;
   private Long gradingScaleId;
   private Long assessorId;

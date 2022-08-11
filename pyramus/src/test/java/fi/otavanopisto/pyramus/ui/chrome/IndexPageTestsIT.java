@@ -10,7 +10,7 @@ public class IndexPageTestsIT extends IndexPageTestsBase {
   
   @Before
   public void setUp() {
-    setWebDriver(new ChromeDriver());
+    setWebDriver(createLocalDriver());
   }
   
   @After

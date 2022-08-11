@@ -651,6 +651,7 @@
 
                 table.setCellEditable(event.row, table.getNamedColumnIndex('date'), true);
                 table.setCellEditable(event.row, table.getNamedColumnIndex('grade'), true);
+                table.setCellEditable(event.row, table.getNamedColumnIndex('examinationType'), true);
                 table.setCellValue(event.row, table.getNamedColumnIndex('modified'), 1);
                 table.showCell(event.row, table.getNamedColumnIndex('editVerbalAssessmentButton'));
               }
@@ -702,7 +703,28 @@
                 openEditVerbalAssessmentDialog(event.row);
               }
             }, {
+              header: 'Kokelaslaji',
               left: 8 + 22 + 8 + 150 + 8 + 150 + 8 + 150 + 8 + 22 + 8,
+              width: 300,
+              editable: false,
+              dataType: 'select',
+              paramName: 'examinationType',
+              options: [
+                {text: "-", value: ""},
+                {text: "01 - Varsinainen kokelas", value: "01"},
+                {text: "02 - Kokelas, joka aloittaa tutkinnon suorittamisen alusta", value: "02"},
+                {text: "02X - Kokelas, joka aloittaa tutkinnon suorittamisen alusta, ensimmäinen hajautuskerta", value: "02X"},
+                {text: "03 - Ammatillisen tutkinnon tai ammatilliset opinnot suorittava kokelas", value: "03"},
+                {text: "04 - Hylätyn pakollisen kokeen uusija", value: "04"},
+                {text: "05 - Hyväksytyn kokeen uusija", value: "05"},
+                {text: "06 - Tutkinnon täydentäjä", value: "06"},
+                {text: "07 - Hylätyn pakollisen kokeen uusija, kun koe on tullut kompensoiduksi", value: "07"},
+                {text: "08 - Hylätyn ylimääräisen kokeen uusija", value: "08"},
+                {text: "09 - Erillisen kokeen suorittaja (kokelas ei suorita tutkintoa)", value: "09"},
+                {text: "10 - Lukion oppimäärää ja ammatillista tutkintoa suorittava kokelas", value: "10"}
+               ]
+            }, {
+              left: 8 + 22 + 8 + 150 + 8 + 150 + 8 + 150 + 8 + 22 + 8 + 300 + 8,
               dataType: 'button',
               paramName: 'removeButton',
               imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
@@ -777,6 +799,7 @@
             '${assessment.grade.id}',
             '${verbalAssessment}',
             '',
+            '${assessmentExaminationTypes[assessment.id]}',
             '',
             ${assessment.id},
             0,
@@ -822,7 +845,19 @@
           }
         }
 
-        
+        var subjectCoursesTable = setupSubjectCoursesTable();
+
+        var studentSubjectCourses = JSDATA['studentProjectSubjectCourses'].evalJSON();
+        rows = new Array();
+        for (var i = 0; i < studentSubjectCourses.length; i++) {
+          rows.push([
+              studentSubjectCourses[i].subjectId,
+              studentSubjectCourses[i].courseNumber,
+              studentSubjectCourses[i].optionality,
+              '',
+              studentSubjectCourses[i].id]);
+        }
+        subjectCoursesTable.addRows(rows);
         
         var moduleFilter = $('moduleFilter');
         
@@ -848,9 +883,10 @@
       
       function addAssessmentRow() {
         var table = getIxTableById('assessmentsTable');
-        var rowIndex = table.addRow(['', new Date().getTime(), '', '', '', '', -1, 1, 0, '', 0]);
+        var rowIndex = table.addRow(['', new Date().getTime(), '', '', '', '', '', -1, 1, 0, '', 0]);
         table.setCellEditable(rowIndex, table.getNamedColumnIndex('date'), true);
         table.setCellEditable(rowIndex, table.getNamedColumnIndex('grade'), true);
+        table.setCellEditable(rowIndex, table.getNamedColumnIndex('examinationType'), true);
         table.showCell(rowIndex, table.getNamedColumnIndex('editVerbalAssessmentButton'));
       }
       
@@ -893,7 +929,125 @@
           dialog._modifiedVerbalAssessment = table.getCellValue(row, table.getNamedColumnIndex('verbalAssessment'));
         dialog.open();
       }
-      
+
+
+      function addSubjectCourseTableRow() {
+        var table = getIxTableById("subjectCoursesTable");
+        var row = table.addRow(['', '', '', '', -1]);
+        table.setCellEditable(row, table.getNamedColumnIndex('subjectId'), true);
+        table.setCellEditable(row, table.getNamedColumnIndex('courseNumber'), true);
+      }
+
+      function setupSubjectCoursesTable() {
+        var subjects = JSDATA["subjects"].evalJSON();
+        var subjectGroups = { "null": { subjects: [] } };
+        var subjectGroupsIds = [ "null" ];
+        
+        // Group subjects under education types
+        for (var i = 0, l = subjects.length; i < l; i++) {
+          var educationTypeId = subjects[i].educationTypeId ? subjects[i].educationTypeId : "null";
+          if (!subjectGroups[educationTypeId]) {
+            subjectGroups[educationTypeId] = { name: subjects[i].educationTypeName, subjects: [] };
+            subjectGroupsIds.push(educationTypeId);
+          }
+          subjectGroups[educationTypeId].subjects.push(subjects[i]);
+        }
+        
+        var subjectOptions = [];
+        for (var i = 0, l = subjectGroupsIds.length; i < l; i++) {
+          var subjectGroupId = subjectGroupsIds[i];
+          var subjectGroup = subjectGroups[subjectGroupId];
+          if (subjectGroup && subjectGroup.subjects && subjectGroup.subjects.length > 0) {
+            if (subjectGroupId != "null" && subjectGroup.name) {
+              var subjectOptGroup = { optionGroup: true, text: subjectGroup.name, options: [] };
+              
+              for (var j = 0; j < subjectGroup.subjects.length; j++) {
+                var option = subjectGroup.subjects[j];
+                subjectOptGroup.options.push({
+                  value: option.id,
+                  text: getLocale().getText("generic.subjectFormatterNoEducationType", option.code, option.name)
+                });
+              }
+              subjectOptions.push(subjectOptGroup);
+            } else {
+              // No opt group
+              
+              for (var j = 0; j < subjectGroup.subjects.length; j++) {
+                var option = subjectGroup.subjects[j];
+                subjectOptions.push({
+                  value: option.id,
+                  text: getLocale().getText("generic.subjectFormatterNoEducationType", option.code, option.name)
+                });
+              }
+            }
+          }
+        }
+        
+        var subjectCoursesTable = new IxTable($('subjectCoursesTableContainer'), {
+          id : "subjectCoursesTable",
+          columns : [ {
+            header : getLocale().getText("projects.generic.subjectCourseTable.subjectHeader"),
+            left : 8,
+            width : 200,
+            dataType : 'select',
+            editable : false,
+            required: true,
+            paramName : 'subjectId',
+            options: subjectOptions
+          }, {
+            header : getLocale().getText("projects.generic.subjectCourseTable.courseNumberHeader"),
+            left : 8 + 200 + 8,
+            width : 100,
+            dataType : 'number',
+            editable : false,
+            required: true,
+            paramName : 'courseNumber'
+          }, {
+            header : getLocale().getText("projects.generic.table.optionalityHeader"),
+            width : 150,
+            right : 40,
+            dataType : 'select',
+            editable : true,
+            required: true,
+            paramName : 'optionality',
+            options : [ {
+              text : getLocale().getText("projects.generic.table.optionalityMandatory"),
+              value : 0
+            }, {
+              text : getLocale().getText("projects.generic.table.optionalityOptional"),
+              value : 1
+            } ],
+            sortAttributes : {
+              sortAscending : {
+                toolTip : getLocale().getText("generic.sort.ascending"),
+                sortAction : IxTable_ROWSELECTSORT
+              },
+              sortDescending : {
+                toolTip : getLocale().getText("generic.sort.descending"),
+                sortAction : IxTable_ROWSELECTSORT
+              }
+            },
+            contextMenu : [ {
+              text : getLocale().getText("generic.action.copyValues"),
+              onclick : new IxTable_COPYVALUESTOCOLUMNACTION(true)
+            } ]
+          }, {
+            width : 30,
+            right : 0,
+            dataType : 'button',
+            imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
+            tooltip : getLocale().getText("projects.generic.table.removeButtonTooltip"),
+            onclick : function(event) {
+              event.tableComponent.deleteRow(event.row);
+            }
+          }, {
+            dataType : 'hidden',
+            paramName : 'projectSubjectCourseId'
+          } ]
+        });
+        
+        return subjectCoursesTable;
+      }
     </script>
     <ix:extensionHook name="projects.editStudentProject.head" />
   </head>
@@ -1097,6 +1251,25 @@
             <div id="editStudentProjectModulesTotalContainer">
               <fmt:message key="projects.editStudentProject.modulesTotal"/> <span id="editStudentProjectModulesTotalValue"></span>
             </div>
+
+
+  
+            <div class="genericFormSection editStudentProjectCourseListTitle">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="projects.editStudentProject.subjectCoursesTitle"/>
+                <jsp:param name="helpLocale" value="projects.editStudentProject.subjectCoursesHelp"/>
+              </jsp:include>
+            </div> 
+            
+            <div class="genericTableAddRowContainer">
+              <span class="genericTableAddRowLinkContainer" onclick="addSubjectCourseTableRow();"><fmt:message key="projects.editStudentProject.addCourseLink"/></span>
+            </div>
+  
+            <div id="subjectCoursesContainer">
+              <div id="subjectCoursesTableContainer"></div>
+            </div>
+
+
   
             <div class="genericFormSection editStudentProjectCourseListTitle">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">

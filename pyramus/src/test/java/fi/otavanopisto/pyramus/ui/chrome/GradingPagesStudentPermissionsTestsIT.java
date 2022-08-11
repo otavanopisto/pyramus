@@ -10,7 +10,7 @@ public class GradingPagesStudentPermissionsTestsIT extends GradingPagesStudentPe
   
   @Before
   public void setUp() {
-    setWebDriver(new ChromeDriver());
+    setWebDriver(createLocalDriver());
   }
   
   @After

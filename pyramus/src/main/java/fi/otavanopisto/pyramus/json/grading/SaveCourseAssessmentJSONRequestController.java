@@ -8,6 +8,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradeDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
@@ -24,23 +25,28 @@ public class SaveCourseAssessmentJSONRequestController extends JSONRequestContro
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     
     Long courseStudentId = jsonRequestContext.getLong("courseStudentId");
-    Date assessmentDate = jsonRequestContext.getDate("assessmentDate");
-    Long assessingUserId = jsonRequestContext.getLong("assessingUserId");
-    Long gradeId = jsonRequestContext.getLong("gradeId");
-    String verbalAssessment = jsonRequestContext.getString("verbalAssessment");
-    
     CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
-    StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
-    Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
-
-    CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
-    if (courseAssessment == null) {
-      courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, assessmentDate, verbalAssessment);
-    }
-    else {
-      courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
-    }
     
+    for (CourseModule courseModule : courseStudent.getCourse().getCourseModules()) {
+      Long courseModuleId = courseModule.getId();
+      Date assessmentDate = jsonRequestContext.getDate("assessmentDate." + courseModuleId);
+      Long assessingUserId = jsonRequestContext.getLong("assessingUserId." + courseModuleId);
+      Long gradeId = jsonRequestContext.getLong("gradeId." + courseModuleId);
+      String verbalAssessment = jsonRequestContext.getString("verbalAssessment." + courseModuleId);
+      
+      StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
+      Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
+
+      if (grade != null && assessmentDate != null && assessingUser != null) {
+        CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE);
+        if (courseAssessment == null) {
+          courseAssessment = courseAssessmentDAO.create(courseStudent, courseModule, assessingUser, grade, assessmentDate, verbalAssessment);
+        }
+        else {
+          courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
+        }
+      }
+    }
     jsonRequestContext.setRedirectURL(jsonRequestContext.getReferer(true));
   }
 

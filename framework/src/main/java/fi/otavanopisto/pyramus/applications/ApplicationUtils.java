@@ -265,19 +265,25 @@ public class ApplicationUtils {
   }
   
   public static String genderUiValue(String value) {
-    switch (value) {
-    case "mies":
-      return "Mies";
-    case "nainen":
-      return "Nainen";
-    case "muu":
-      return "Muu";
-    default:
-      return null;
+    if (value != null) {
+      switch (value) {
+      case "mies":
+        return "Mies";
+      case "nainen":
+        return "Nainen";
+      case "muu":
+        return "Muu";
+      default:
+        return null;
+      }
     }
+    return null;
   }
   
   public static Curriculum resolveCurriculum(String curriculumValue) {
+    if (StringUtils.isEmpty(curriculumValue)) {
+      return null;
+    }
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     switch (curriculumValue) {
     case "ops2016":
@@ -294,6 +300,9 @@ public class ApplicationUtils {
   }
   
   public static StudentExaminationType resolveStudentExaminationType(String examinationType) {
+    if (StringUtils.isEmpty(examinationType)) {
+      return null;
+    }
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     switch (examinationType) {
     case "muu":
@@ -320,6 +329,9 @@ public class ApplicationUtils {
   }
   
   public static StudentActivityType resolveStudentActivityType(String activityType) {
+    if (StringUtils.isEmpty(activityType)) {
+      return null;
+    }
     StudentActivityTypeDAO studentActivityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     switch (activityType) {
     case "tyollinen":
@@ -338,6 +350,9 @@ public class ApplicationUtils {
   }
   
   public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, String internetixLine, AlternativeLine nettilukioAlternative) {
+    if (StringUtils.isEmpty(line)) {
+      return null;
+    }
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
@@ -367,6 +382,9 @@ public class ApplicationUtils {
     case "laakislinja":
       return studyProgrammeDAO.findById(31L); // Lääketieteen opintoihin valmentava koulutus
     case "mk":
+      if (StringUtils.isEmpty(foreignLine)) {
+        return null;
+      }
       switch (foreignLine) {
       case "apa":
         return studyProgrammeDAO.findById(29L); // Aikuisten perusopetuksen alkuvaiheen opetus
@@ -404,7 +422,7 @@ public class ApplicationUtils {
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = formData.getString("field-underage-email");
+    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 
@@ -577,11 +595,8 @@ public class ApplicationUtils {
   }
   
   public static void deleteApplication(Application application) {
-    logger.info(String.format("Removing application %d of %s %s (%s) to line %s created at %tF)",
+    logger.info(String.format("Removing application %d to line %s created at %tF)",
         application.getId(),
-        application.getFirstName(),
-        application.getLastName(),
-        application.getEmail(),
         application.getLine(),
         application.getCreated()));
     // Delete signatures
@@ -675,28 +690,28 @@ public class ApplicationUtils {
       return null;
     }
     
-    // Curriculum (for Internetix students in high school)
+    // Various fields for Internetix students only
     
     Curriculum curriculum = null;
-    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+    Date studyTimeEnd = null;
+    String additionalInfo = null;
+    boolean isInternetixStudent = StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu"); 
+    if (isInternetixStudent) {
+      
+      // Curriculum for Internetix students in high school
+      
       if (StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")) {
         curriculum = resolveCurriculum(getFormValue(formData, "field-internetix-curriculum"));
       }
-    }
-    
-    // Study time end plus one year (for Internetix students)  
-    
-    Date studyTimeEnd = null;
-    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      
+      // Study time end plus one year
+
       Calendar c = Calendar.getInstance();
       c.add(Calendar.YEAR, 1);
       studyTimeEnd = c.getTime();
-    }
-    
-    // #868: Non-contract school information (for Internetix students, if exists)
-    
-    String additionalInfo = null;
-    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+
+      // #868: Non-contract school information (if exists)
+
       String contractSchoolName = getFormValue(formData, "field-internetix-contract-school-name");
       String contractSchoolMunicipality = getFormValue(formData, "field-internetix-contract-school-municipality");
       String contractSchoolContact = getFormValue(formData, "field-internetix-contract-school-contact");
@@ -708,10 +723,9 @@ public class ApplicationUtils {
       }
     }
     
-    Date studyStartDate = new Date();
-    
     // Create student
     
+    Date studyStartDate = new Date();
     Student student = studentDAO.create(
         person,
         getFormValue(formData, "field-first-names"),
@@ -763,16 +777,18 @@ public class ApplicationUtils {
     
     // #1079: Aineopiskelu; yleissivistävä koulutustausta
     
-    String internetixStudies = getFormValue(formData, "field-previous-studies-aineopiskelu");
-    if (StringUtils.isNotBlank(internetixStudies)) {
-      if (StringUtils.equals(internetixStudies, "perus")) {
-        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: peruskoulu");
-      }
-      else if (StringUtils.equals(internetixStudies, "lukio")) {
-        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: lukio");
-      }
-      else if (StringUtils.equals(internetixStudies, "ei")) {
-        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: ei mitään");
+    if (isInternetixStudent) {
+      String internetixStudies = getFormValue(formData, "field-previous-studies-aineopiskelu");
+      if (StringUtils.isNotBlank(internetixStudies)) {
+        if (StringUtils.equals(internetixStudies, "perus")) {
+          student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: peruskoulu");
+        }
+        else if (StringUtils.equals(internetixStudies, "lukio")) {
+          student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: lukio");
+        }
+        else if (StringUtils.equals(internetixStudies, "ei")) {
+          student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: ei mitään");
+        }
       }
     }
     
@@ -882,24 +898,29 @@ public class ApplicationUtils {
     
     // Contract school (Internetix students)
     
-    String schoolId = getFormValue(formData, "field-internetix-contract-school");
-    if (!NumberUtils.isNumber(schoolId)) {
-      String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
-      if (!StringUtils.isBlank(customSchool)) {
-        List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
-        School school = schools.isEmpty() ? null : schools.get(0);
-        if (school != null) {
-          studentDAO.updateSchool(student, school);
-          processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
-        }
-        else {
-          String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
-          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-          applicationLogDAO.create(
-              application,
-              ApplicationLogType.HTML,
-              notification,
-              null);
+    if (isInternetixStudent) {
+      String otherSchool = getFormValue(formData, "field-internetix-school");
+      if (StringUtils.equals(otherSchool, "kylla")) {
+        String schoolId = getFormValue(formData, "field-internetix-contract-school");
+        if (!NumberUtils.isNumber(schoolId)) {
+          String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
+          if (!StringUtils.isBlank(customSchool)) {
+            List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
+            School school = schools.isEmpty() ? null : schools.get(0);
+            if (school != null) {
+              studentDAO.updateSchool(student, school);
+              processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
+            }
+            else {
+              String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
+              ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+              applicationLogDAO.create(
+                  application,
+                  ApplicationLogType.HTML,
+                  notification,
+                  null);
+            }
+          }
         }
       }
     }
@@ -1005,7 +1026,9 @@ public class ApplicationUtils {
         
       // Send mail to applicant (and possible guardian)
       
-      if (StringUtils.isBlank(getFormValue(formData, "field-underage-email"))) {
+      String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+      
+      if (StringUtils.isBlank(guardianMail)) {
         Mailer.sendMail(
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
@@ -1020,7 +1043,7 @@ public class ApplicationUtils {
             Mailer.HTML,
             null,
             application.getEmail(),
-            getFormValue(formData, "field-underage-email"),
+            guardianMail,
             subject,
             content);
       }
@@ -1044,7 +1067,7 @@ public class ApplicationUtils {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     JSONObject applicationData = JSONObject.fromObject(application.getFormData());
-    
+
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
@@ -1103,38 +1126,41 @@ public class ApplicationUtils {
   }
 
   public static String sourceUiValue(String value) {
-    switch (value) {
-    case "tuttu":
-      return "Ennestään tuttu";
-    case "google":
-      return "Google";
-    case "facebook":
-      return "Facebook";
-    case "instagram":
-      return "Instagram";
-    case "sanomalehti":
-      return "Sanomalehti";
-    case "tienvarsimainos":
-      return "Tienvarsimainos";
-    case "valotaulumainos":
-      return "Valotaulumainos";
-    case "elokuva":
-      return "Elokuva- tai TV-mainos";
-    case "tuttava":
-      return "Kuulin kaverilta, tuttavalta, tms.";
-    case "opot":
-      return "Opot";
-    case "messut":
-      return "Messut";
-    case "te-toimisto":
-      return "TE-toimisto";
-    case "nuorisotyo":
-      return "Nuorisotyö";
-    case "muu":
-      return "Muu";
-    default:
-      return null;
+    if (value != null) {
+      switch (value) {
+      case "tuttu":
+        return "Ennestään tuttu";
+      case "google":
+        return "Google";
+      case "facebook":
+        return "Facebook";
+      case "instagram":
+        return "Instagram";
+      case "sanomalehti":
+        return "Sanomalehti";
+      case "tienvarsimainos":
+        return "Tienvarsimainos";
+      case "valotaulumainos":
+        return "Valotaulumainos";
+      case "elokuva":
+        return "Elokuva- tai TV-mainos";
+      case "tuttava":
+        return "Kuulin kaverilta, tuttavalta, tms.";
+      case "opot":
+        return "Opot";
+      case "messut":
+        return "Messut";
+      case "te-toimisto":
+        return "TE-toimisto";
+      case "nuorisotyo":
+        return "Nuorisotyö";
+      case "muu":
+        return "Muu";
+      default:
+        return null;
+      }
     }
+    return null;
   }
   
   /**
@@ -1186,8 +1212,8 @@ public class ApplicationUtils {
     
   }
 
-  private static String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
+  public static String getFormValue(JSONObject object, String key) {
+    return object.has(key) ? StringUtils.trim(object.getString(key)) : null;
   }
 
 }

@@ -174,6 +174,14 @@ public abstract class AbstractIntegrationTest {
     return System.getProperty("it.keystore.storepass");
   }
 
+  protected String getBrowser() {
+    String browser = System.getProperty("it.browser");
+    if (browser != null) {
+      return browser;
+    }
+    return "";
+  }
+  
   protected OffsetDateTime getDateToOffsetDateTime(int year, int monthOfYear, int dayOfMonth) {
     LocalDateTime localDateTime = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0);
     ZoneId systemId = ZoneId.systemDefault();

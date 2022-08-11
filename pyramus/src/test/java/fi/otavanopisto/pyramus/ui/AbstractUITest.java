@@ -5,7 +5,16 @@ import static org.junit.Assert.assertEquals;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -15,14 +24,60 @@ import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 
 public class AbstractUITest extends AbstractIntegrationTest {
 
-  protected void setWebDriver(RemoteWebDriver webDriver) {
+  protected void setWebDriver(WebDriver webDriver) {
     this.webDriver = webDriver;
   }
 
-  protected RemoteWebDriver getWebDriver() {
+  protected WebDriver getWebDriver() {
     return webDriver;
   }
 
+  protected RemoteWebDriver createChromeDriver() {
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--lang=en_US");
+    options.addArguments("--start-maximized");
+    options.setAcceptInsecureCerts(true);
+    
+    if(System.getProperty("it.headless").equals("true") ) {
+      options.addArguments("--headless");
+      options.addArguments("--disable-gpu");
+      ChromeDriver driver = new ChromeDriver(options);
+      driver.manage().window().setSize(new Dimension(1920, 1080));
+      return driver;
+    }else {
+      return new ChromeDriver(options);      
+    }
+  }
+
+  protected WebDriver createFirefoxDriver() {
+    FirefoxProfile firefoxProfile = new FirefoxProfile();
+    FirefoxOptions firefoxOptions = new FirefoxOptions();
+    firefoxOptions.setAcceptInsecureCerts(true);
+    firefoxOptions.setProfile(firefoxProfile);
+    firefoxProfile.setPreference("intl.accept_languages", "en");
+    
+    if(System.getProperty("it.headless").equals("true")) {
+      firefoxOptions.setHeadless(true);
+    }
+    
+    FirefoxDriver firefoxDriver = new FirefoxDriver(firefoxOptions);
+    
+    firefoxDriver.manage().window().setSize(new Dimension(1920, 1080));
+    
+    return firefoxDriver;
+  }
+  
+  protected WebDriver createLocalDriver() {
+    switch (getBrowser()) {
+      case "chrome":
+        return createChromeDriver();
+      case "firefox":
+        return createFirefoxDriver();
+    }
+    
+    throw new RuntimeException(String.format("Unknown browser %s", getBrowser()));
+  }
+    
   protected void testTitle(String path, String expected) {
     getWebDriver().get(getAppUrl(true) + path);
     assertEquals(expected, getWebDriver().getTitle());
@@ -52,6 +107,34 @@ public class AbstractUITest extends AbstractIntegrationTest {
     waitForElementToBeClickable(By.name("login"));
     getWebDriver().findElement(By.name("login")).click();
     waitForUrlNotMatches(".*/login.*");
+    waitForPresent("#GUI_headerLoggedInAs");
+  }
+
+  protected void scrollTo(String selector, int offset) {
+    waitForPresent(selector);
+    ((JavascriptExecutor) getWebDriver()).executeScript(String.format(""
+        + "var elPos = document.querySelectorAll('%s').item(0).getBoundingClientRect().top;"
+        + "var offsetPosition = elPos - %d;"
+        + "window.scrollTo({ top: offsetPosition});"
+        , selector, offset));
+  }
+  
+  protected void scrollToElement(By locator) {
+    waitForElementToBePresent(locator);
+    WebElement element = getWebDriver().findElement(locator);
+    Actions actions = new Actions(getWebDriver());
+    actions.moveToElement(element).perform();
+  }
+  
+  protected void scrollToElement(String selector) {
+    waitForPresent(selector);
+    WebElement element = getWebDriver().findElement(By.cssSelector(selector));
+    Actions actions = new Actions(getWebDriver());
+    actions.moveToElement(element);
+  }
+  
+  protected void waitForPresent(String cssSelector) {
+    new WebDriverWait(getWebDriver(), Duration.ofSeconds(30)).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(cssSelector)));   
   }
 
   protected void waitForElementToBeClickable(By locator) {
@@ -101,7 +184,7 @@ public class AbstractUITest extends AbstractIntegrationTest {
     getWebDriver().get(getAppUrl(true) + page);
     waitForUrlNotMatches(".*/" + page);
     String cUrl = getWebDriver().getCurrentUrl();
-    assertEquals(true, cUrl.endsWith("accessdenied.page"));
+    assertEquals(true, cUrl.contains("accessdenied.page"));
   }
   
   protected void assertStudentAllowed(String page) {
@@ -110,8 +193,44 @@ public class AbstractUITest extends AbstractIntegrationTest {
     String cUrl = getWebDriver().getCurrentUrl();
     assertEquals(true, cUrl.endsWith(page));
   }
+  
+  /** 
+   * @param page String page to goto
+   * @param cssSelector String cssSelector for element to wait
+   */
+  protected void assertStudentAllowed(String page, String cssSelector) {
+    login(STUDENT_USERNAME, STUDENT_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + page);
+    waitForPresent(cssSelector);
+    String cUrl = getWebDriver().getCurrentUrl();
+    assertEquals(true, cUrl.endsWith(page));
+  }
 
-  private RemoteWebDriver webDriver;
+  /** 
+   * @param secure boolean ssl connection or not
+   * @param path String path to goto including / at the beginning
+   */
+  protected void navigate(boolean secure, String path) {
+    getWebDriver().get(getAppUrl(secure) + path);
+  }
+
+  /** 
+   * Find {@link WebElement} by css selector and click it.
+   * Waits for the element to be present before attempting to click it.
+   * @param selector String selector css selector to locate the element to click
+   * @return nothing
+   */
+  protected void findAndClick(String selector) {
+    waitForPresent(selector);
+    getWebDriver().findElement(By.cssSelector(selector)).click();
+  }
+  
+  protected WebElement findElement(By by) {
+    waitForElementToBePresent(by);
+    return getWebDriver().findElement(by);
+  }
+  
+  private WebDriver webDriver;
   protected static final String ADMIN_USERNAME = "devadmin";
   protected static final String ADMIN_PASSWORD = "passi";
   protected static final String STUDENT_USERNAME = "tonyt";

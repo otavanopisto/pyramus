@@ -18,11 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
+import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistBillingSettingsDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistBillingSettings;
@@ -102,18 +105,21 @@ public class WorklistController {
     return null;
   }
   
-  public Double getCourseBasePrice(Course course) {
-    
+  public Double getCourseModuleBasePrice(CourseModule courseModule, User user) {
     // Determine base price based on curriculum and course length
     
     CourseBillingRestModel courseBillingRestModel = getCourseBillingRestModel();
     if (courseBillingRestModel != null) {
+      CourseBase course = courseModule.getCourse();
+      
       Set<Curriculum> curriculums = course.getCurriculums();
       if (curriculums != null) {
         boolean is2021Course = curriculums.stream().anyMatch(curriculum -> StringUtils.equalsIgnoreCase(curriculum.getName(), PyramusConsts.OPS_2021));
         if (is2021Course) {
-          Double price = courseBillingRestModel.getDefault2021Price();
-          Double length = course.getCourseLength().getUnits();
+          Double price = isEarliestCourseModuleOfSubjectAssessedByUser(courseModule, user)
+              ? courseBillingRestModel.getDefault2021Price()
+              : courseBillingRestModel.getDefault2021PointPrice(); 
+          Double length = courseModule.getCourseLength().getUnits();
           if (length > 1) {
             price += courseBillingRestModel.getDefault2021PointPrice() * (length - 1); 
           }
@@ -180,6 +186,34 @@ public class WorklistController {
     List<WorklistItem> worklistItems = worklistItemDAO.listByOwnerAndTimeframeAndArchived(owner, beginDate, endDate, false);
     worklistItems.sort(Comparator.comparing(WorklistItem::getEntryDate));
     return worklistItems;
+  }
+  
+  private boolean isEarliestCourseModuleOfSubjectAssessedByUser(CourseModule courseModule, User user) {
+    CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();
+    CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
+    
+    List<CourseModule> courseModules = courseModuleDAO.listByCourseAndSubject(courseModule.getCourse(), courseModule.getSubject());
+    
+    // Check if course has multiple modules with the same subject as the given module
+    
+    if (courseModules.size() <= 1) {
+      return true;
+    }
+    
+    // Check if modules sharing the same subject have multiple assessments by the given user
+    
+    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByUserAndCourseModules(user, courseModules);
+    if (courseAssessments.size() == 0) {
+      return true;
+    }
+    else if (courseAssessments.size() == 1) {
+      return courseAssessments.get(0).getCourseModule().getId().equals(courseModule.getId());
+    }
+
+    // Check if the given module is the first one assessed by the given user
+    
+    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate));
+    return courseAssessments.get(0).getCourseModule().getId().equals(courseModule.getId());
   }
 
   private WorklistBillingSettings getBillingSettings() {

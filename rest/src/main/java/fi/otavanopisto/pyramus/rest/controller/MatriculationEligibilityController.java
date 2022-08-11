@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,11 +14,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityCurriculumMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilitySubjectMapping;
@@ -30,7 +35,7 @@ import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilitySubjec
  */
 @ApplicationScoped
 public class MatriculationEligibilityController {
-  
+  private static final String SETTING_ELIGIBLE_GROUPS = "matriculation.eligibleGroups";
   private static final String ANY_CURRICULUM = "any";
   
   @Inject
@@ -43,6 +48,12 @@ public class MatriculationEligibilityController {
   private AssessmentController assessmentController;
   
   private MatriculationEligibilityMapping matriculationEligibilityMapping; 
+  
+  @Inject
+  private StudentGroupDAO studentGroupDAO;
+  
+  @Inject
+  private StudentGroupStudentDAO studentGroupStudentDAO;
   
   /**
    * Post construct method. 
@@ -173,6 +184,41 @@ public class MatriculationEligibilityController {
   private MatriculationEligibilityMapping getMatriculationEligibilityMapping() {
     return matriculationEligibilityMapping;
   }
+  
+  /**
+   * Returns true if student is in one of the groups mentioned in the setting.
+   * 
+   * @param student
+   * @return
+   */
+  public boolean hasGroupEligibility(Student student) {
+    if (student != null) {
+      String eligibleGroupsStr = SettingUtils.getSettingValue(SETTING_ELIGIBLE_GROUPS);
+
+      if (StringUtils.isNotBlank(eligibleGroupsStr)) {
+        String[] split = StringUtils.split(eligibleGroupsStr, ",");
+
+        for (String groupIdentifier : split) {
+          if (groupIdentifier.startsWith("STUDYPROGRAMME:")) {
+            Long studyProgrammeId = Long.parseLong(groupIdentifier.substring(15));
+            if (student.getStudyProgramme() != null && Objects.equals(student.getStudyProgramme().getId(), studyProgrammeId)) {
+              return true;
+            }
+          } else if (groupIdentifier.startsWith("STUDENTGROUP:")) {
+            Long studentGroupId = Long.parseLong(groupIdentifier.substring(13));
+            StudentGroup studentGroup = studentGroupDAO.findById(studentGroupId);
+
+            if (studentGroupStudentDAO.findByStudentGroupAndStudent(studentGroup, student) != null) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
   
 }
 

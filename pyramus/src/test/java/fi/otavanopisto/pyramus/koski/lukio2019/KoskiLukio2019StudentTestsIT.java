@@ -41,7 +41,7 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     Student student = tools().createStudent(person.getId(), 1l);
     Course course = tools().createCourse(getClass().getSimpleName(), ORGANIZATIONID, 4l, 1);
     CourseStudent courseStudent = tools().createCourseStudent(course.getId(), student.getId());
-    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), student.getId(), courseStudent.getId(), 7l);
+    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 7l);
     try {
       Response response = given().headers(getAuthHeaders())
         .get("/persons/persons/{ID}/oppija", person.getId());
@@ -116,8 +116,8 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     Student student = tools().createStudent(person.getId(), 1l);
     Course course = tools().createCourse(getClass().getSimpleName(), ORGANIZATIONID, 4l, 1);
     CourseStudent courseStudent = tools().createCourseStudent(course.getId(), student.getId());
-    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), student.getId(), courseStudent.getId(), 7l, firstAssessmentDate);
-    CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), student.getId(), courseStudent.getId(), 8l, secondAssessmentDate);
+    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 7l, firstAssessmentDate);
+    CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 8l, secondAssessmentDate);
     try {
       Response response = given().headers(getAuthHeaders())
         .get("/persons/persons/{ID}/oppija", person.getId());
@@ -192,8 +192,8 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     Student student = tools().createStudent(person.getId(), 1l);
     Course course = tools().createCourse(getClass().getSimpleName(), ORGANIZATIONID, 4l, 1);
     CourseStudent courseStudent = tools().createCourseStudent(course.getId(), student.getId());
-    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), student.getId(), courseStudent.getId(), 7l, firstAssessmentDate);
-    CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), student.getId(), courseStudent.getId(), 8l, secondAssessmentDate);
+    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 7l, firstAssessmentDate);
+    CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 8l, secondAssessmentDate);
     try {
       Response response = given().headers(getAuthHeaders())
         .get("/persons/persons/{ID}/oppija", person.getId());
@@ -269,8 +269,8 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     Student student = tools().createStudent(person.getId(), 1l);
     Course course = tools().createCourse(getClass().getSimpleName(), ORGANIZATIONID, 4l, 1);
     CourseStudent courseStudent = tools().createCourseStudent(course.getId(), student.getId());
-    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), student.getId(), courseStudent.getId(), 6l, newerAssessmentDate);
-    CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), student.getId(), courseStudent.getId(), 8l, olderAssessmentDate);
+    CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 6l, newerAssessmentDate);
+    CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 8l, olderAssessmentDate);
     try {
       Response response = given().headers(getAuthHeaders())
         .get("/persons/persons/{ID}/oppija", person.getId());
@@ -339,5 +339,8 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
       tools().deletePerson(person);
     }
   }
-  
+
+  private Long firstCourseModuleId(Course course) {
+    return course.getCourseModules().iterator().next().getId();    
+  }
 }

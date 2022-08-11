@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -35,10 +36,13 @@ import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
+import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.ModuleController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ModulePermissions;
+import fi.otavanopisto.pyramus.rest.model.CourseLength;
+import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/modules")
@@ -50,6 +54,9 @@ public class ModuleRESTService extends AbstractRESTService{
 
   @Inject
   private ModuleController moduleController;
+  
+  @Inject
+  private CourseController courseController;
   
   @Inject
   private CommonController commonController;
@@ -76,13 +83,39 @@ public class ModuleRESTService extends AbstractRESTService{
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    Subject subject = entity.getSubjectId() != null ? commonController.findSubjectById(entity.getSubjectId()) : null;
-    Integer courseNumber = entity.getCourseNumber();
-    EducationalTimeUnit lengthUnit = entity.getLengthUnitId() != null ? commonController.findEducationalTimeUnitById(entity.getLengthUnitId()) : null;
-    Double length = entity.getLength();
     String description = entity.getDescription();
     Long maxParticipantCount = entity.getMaxParticipantCount();
-    Module module = moduleController.createModule(name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
+    Module module = moduleController.createModule(name, description, maxParticipantCount, sessionController.getUser());
+    
+    if (CollectionUtils.isNotEmpty(entity.getCourseModules())) {
+      for (CourseModule courseModuleEntity : entity.getCourseModules()) {
+        Subject subject = null;
+        if (courseModuleEntity.getSubject() != null) {
+          subject = commonController.findSubjectById(courseModuleEntity.getSubject().getId());
+          if (subject == null) {
+            return Response.status(Status.NOT_FOUND).entity("specified subject does not exist").build();
+          }
+        }
+        
+        Integer courseNumber = courseModuleEntity.getCourseNumber();
+        
+        CourseLength courseLength = courseModuleEntity.getCourseLength();
+        Double courseLengthUnits = courseLength != null ? courseLength.getUnits() : null;
+        EducationalTimeUnit courseLengthTimeUnit = null;
+        if (courseLength != null) {
+          if (courseLength.getUnit() == null) {
+            return Response.status(Status.BAD_REQUEST).entity("length unit is missing").build();
+          }
+          
+          courseLengthTimeUnit = commonController.findEducationalTimeUnitById(courseLength.getUnit().getId());
+          if (courseLengthTimeUnit == null) {
+            return Response.status(Status.BAD_REQUEST).entity("length unit is invalid").build();
+          }
+        }
+        
+        courseController.createCourseModule(module, subject, courseNumber, courseLengthUnits, courseLengthTimeUnit);
+      }
+    }
     
     if (entity.getTags() != null) {
       for (String tag : entity.getTags()) {
@@ -155,16 +188,71 @@ public class ModuleRESTService extends AbstractRESTService{
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    Subject subject = entity.getSubjectId() != null ? commonController.findSubjectById(entity.getSubjectId()) : null;
-    Integer courseNumber = entity.getCourseNumber();
-    EducationalTimeUnit lengthUnit = entity.getLengthUnitId() != null ? commonController.findEducationalTimeUnitById(entity.getLengthUnitId()) : null;
-    Double length = entity.getLength();
+    Set<Long> existingCourseModuleIds = module.getCourseModules().stream()
+        .map(fi.otavanopisto.pyramus.domainmodel.base.CourseModule::getId)
+        .collect(Collectors.toSet());
+    
+    if (entity.getCourseModules() == null) {
+      return Response.status(Status.BAD_REQUEST).entity("courseModules is required").build();
+    } else {
+      for (CourseModule courseModuleEntity : entity.getCourseModules()) {
+        // null or -1 are considered as new
+        if ((courseModuleEntity.getId() != null) && (courseModuleEntity.getId().intValue() != -1) && !existingCourseModuleIds.contains(courseModuleEntity.getId())) {
+          return Response.status(Status.BAD_REQUEST).entity("no such course module in this course").build();
+        }
+      }
+    }
+    
     String description = entity.getDescription();
     Long maxParticipantCount = entity.getMaxParticipantCount();
     
     module = moduleController.updateModuleTags(module, entity.getTags() == null ? new ArrayList<String>() : entity.getTags());
-    module = moduleController.updateModule(module, name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
+    module = moduleController.updateModule(module, name, description, maxParticipantCount, sessionController.getUser());
     module = moduleController.updateModuleCurriculums(module, getCurriculumsFromIds(entity.getCurriculumIds()));
+    
+    for (CourseModule courseModuleEntity : entity.getCourseModules()) {
+      Subject subject = null;
+      if (courseModuleEntity.getSubject() != null) {
+        subject = commonController.findSubjectById(courseModuleEntity.getSubject().getId());
+        if (subject == null) {
+          return Response.status(Status.NOT_FOUND).entity("specified subject does not exist").build();
+        }
+      }
+      
+      Integer courseNumber = courseModuleEntity.getCourseNumber();
+      
+      CourseLength courseLength = courseModuleEntity.getCourseLength();
+      Double courseLengthUnits = courseLength != null ? courseLength.getUnits() : null;
+      EducationalTimeUnit courseLengthTimeUnit = null;
+      if (courseLength != null) {
+        if (courseLength.getUnit() == null) {
+          return Response.status(Status.BAD_REQUEST).entity("length unit is missing").build();
+        }
+        
+        courseLengthTimeUnit = commonController.findEducationalTimeUnitById(courseLength.getUnit().getId());
+        if (courseLengthTimeUnit == null) {
+          return Response.status(Status.BAD_REQUEST).entity("length unit is invalid").build();
+        }
+      }
+      
+      if (courseModuleEntity.getId() == null || courseModuleEntity.getId().intValue() == -1) {
+        courseController.createCourseModule(module, subject, courseNumber, courseLengthUnits, courseLengthTimeUnit);
+      } else {
+        // id is set, update
+        fi.otavanopisto.pyramus.domainmodel.base.CourseModule courseModule = module.getCourseModules().stream()
+            .filter(courseModuleInner -> courseModuleInner.getId().equals(courseModuleEntity.getId()))
+            .findFirst()
+            .orElse(null);
+        existingCourseModuleIds.remove(courseModule.getId());
+        
+        courseController.updateCourseModule(courseModule, subject, courseNumber, courseLengthUnits, courseLengthTimeUnit);
+      }
+    }
+    
+    // Remove courseModules that weren't updated
+    module.getCourseModules().stream()
+      .filter(courseModule -> existingCourseModuleIds.contains(courseModule.getId()))
+      .forEach(courseModule -> courseController.removeCourseModule(courseModule));
     
     return Response.ok(objectFactory.createModel(module)).build();
   }

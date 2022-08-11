@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -403,17 +405,17 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application due to missing line");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String firstName = formData.getString("field-first-names");
+      String firstName = getFormValue(formData, "field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing first name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String lastName = formData.getString("field-last-name");
+      String lastName = getFormValue(formData, "field-last-name");
       if (lastName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing last name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String email = StringUtils.lowerCase(StringUtils.trim(formData.getString("field-email")));
+      String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
       if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
@@ -573,8 +575,8 @@ public class ApplicationRESTService extends AbstractRESTService {
           }
         }
         else {
-          String name = formData.getString("attachment-name");
-          String description = formData.getString("attachment-description");
+          String name = getFormValue(formData, "attachment-name");
+          String description = getFormValue(formData, "attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
@@ -777,7 +779,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = formData.getString("field-underage-email");
+    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 
@@ -861,10 +863,6 @@ public class ApplicationRESTService extends AbstractRESTService {
       Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, application.getEmail(),
           application.getHandler().getPrimaryEmail().getAddress(), subject, content);
     }
-  }
-
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
 
 }

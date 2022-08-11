@@ -7,7 +7,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.apache.commons.lang.math.NumberUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -22,6 +27,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -34,6 +40,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.rest.ObjectFactory;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 /**
@@ -62,10 +69,8 @@ public class EditModuleViewController extends PyramusViewController implements B
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     ModuleComponentDAO moduleComponentDAO = DAOFactory.getInstance().getModuleComponentDAO();
-    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
     EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
-    EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Long moduleId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("module"));
@@ -93,19 +98,6 @@ public class EditModuleViewController extends PyramusViewController implements B
       }
     }
     
-    // Subjects
-    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<>();
-    List<Subject> subjectsByNoEducationType = subjectDAO.listByEducationType(null);
-    Collections.sort(subjectsByNoEducationType, new StringAttributeComparator("getName"));
-    
-    for (EducationType educationType : educationTypes) {
-      List<Subject> subjectsOfType = subjectDAO.listByEducationType(educationType);
-      if (subjectsOfType != null && !subjectsOfType.isEmpty()) {
-        Collections.sort(subjectsOfType, new StringAttributeComparator("getName"));
-        subjectsByEducationType.put(educationType.getId(), subjectsOfType);
-      }
-    }
-    
     Map<Long, List<EducationSubtype>> educationSubtypes = new HashMap<>();
     
     for (EducationType educationType : educationTypes) {
@@ -114,24 +106,48 @@ public class EditModuleViewController extends PyramusViewController implements B
       educationSubtypes.put(educationType.getId(), subtypes);
     }
 
-    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
-    Collections.sort(educationalTimeUnits, new StringAttributeComparator("getName"));
-
+    prepareCourseModuleViewOptions(pageRequestContext, module);
+    
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
     Collections.sort(curriculums, new StringAttributeComparator("getName"));
 
+    
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("module", module);
-    pageRequestContext.getRequest().setAttribute("subjectsByNoEducationType", subjectsByNoEducationType);
-    pageRequestContext.getRequest().setAttribute("subjectsByEducationType", subjectsByEducationType);
-    pageRequestContext.getRequest().setAttribute("moduleLengthTimeUnits", educationalTimeUnits);
     pageRequestContext.getRequest().setAttribute("moduleComponents", moduleComponentDAO.listByModule(module));
     pageRequestContext.getRequest().setAttribute("enabledEducationTypes", enabledEducationTypes);
     pageRequestContext.getRequest().setAttribute("courseDescriptions", descriptionDAO.listByCourseBase(module));
     pageRequestContext.getRequest().setAttribute("courseDescriptionCategories", descriptionCategoryDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     pageRequestContext.setIncludeJSP("/templates/modules/editmodule.jsp");
+  }
+
+  private void prepareCourseModuleViewOptions(PageRequestContext pageRequestContext, CourseBase courseBase) {
+    ObjectFactory objectFactory = CDI.current().select(ObjectFactory.class).get();
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    
+    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
+    Collections.sort(educationalTimeUnits, new StringAttributeComparator("getName"));
+
+    List<Subject> subjects = subjectDAO.listUnarchived();
+    Collections.sort(subjects, new StringAttributeComparator("getName"));
+
+    List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
+    Collections.sort(educationTypes, new StringAttributeComparator("getName"));
+
+    try {
+      setJsDataVariable(pageRequestContext, "courseModules", objectMapper.writeValueAsString(objectFactory.createModel(courseBase.getCourseModules())));
+      setJsDataVariable(pageRequestContext, "educationalTimeUnits", objectMapper.writeValueAsString(objectFactory.createModel(educationalTimeUnits)));
+      setJsDataVariable(pageRequestContext, "educationTypes", objectMapper.writeValueAsString(objectFactory.createModel(educationTypes)));
+      setJsDataVariable(pageRequestContext, "subjects", objectMapper.writeValueAsString(objectFactory.createModel(subjects)));
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

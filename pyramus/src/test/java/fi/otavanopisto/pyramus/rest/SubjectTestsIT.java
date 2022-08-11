@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
+import java.time.OffsetDateTime;
+
 import org.junit.Test;
 
 import io.restassured.response.Response;
@@ -59,6 +61,60 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
       .body("code[2]", is("TST3"))
       .body("educationTypeId[2]", is(2))
       .body("archived[2]", is( false ));
+  }
+  
+  @Test
+  public void testListSubjectCourses() {
+    OffsetDateTime created1 = getDate(2010, 1, 1);
+    OffsetDateTime modified1 = getDate(2010, 1, 1);
+    OffsetDateTime beginDate1 = getDateToOffsetDateTime(2010, 2, 2);
+    OffsetDateTime endDate1 = getDateToOffsetDateTime(2010, 3, 3);
+    OffsetDateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
+    
+    OffsetDateTime created2 = getDate(2011, 1, 1);
+    OffsetDateTime modified2 = getDate(2011, 1, 1);
+    OffsetDateTime beginDate2 = getDateToOffsetDateTime(2011, 2, 2);
+    OffsetDateTime endDate2 = getDateToOffsetDateTime(2011, 3, 3);
+    OffsetDateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
+
+    given().headers(getAuthHeaders())
+      .get("/common/subjects/{ID}/courses", 1)
+      .then()
+      .body("id.size()", is(2))
+      .body("id[0]", is(1000) )
+      .body("name[0]", is("Test Course #1" ))
+      .body("created[0]", is( created1.toString() ))
+      .body("lastModified[0]", is( modified1.toString() ))
+      .body("beginDate[0]", is( beginDate1.toString() ))
+      .body("endDate[0]", is( endDate1.toString() ))
+      .body("enrolmentTimeEnd[0]", is( enrolmentTimeEnd1.toString() ))
+      .body("description[0]", is( "Course #1 for testing" ))
+      .body("creatorId[0]", is( 1 ))
+      .body("lastModifierId[0]", is( 1 ))
+      .body("courseModules[0].size()", is( 1 ))
+      .body("courseModules[0][0].courseNumber", is( 1 ))
+      .body("courseModules[0][0].courseLength.units", is( 1.0f ))
+      .body("courseModules[0][0].courseLength.unit.id", is( 1 ))
+      .body("courseModules[0][0].subject.id", is( 1 ))
+      .body("maxParticipantCount[0]", is( 100 ))
+      .body("archived[0]", is( false ))
+      .body("id[1]", is(1001) )
+      .body("name[1]", is("Test Course #2" ))
+      .body("created[1]", is( created2.toString() ))
+      .body("lastModified[1]", is( modified2.toString() ))
+      .body("beginDate[1]", is( beginDate2.toString() ))
+      .body("endDate[1]", is( endDate2.toString() ))
+      .body("enrolmentTimeEnd[1]", is( enrolmentTimeEnd2.toString() ))
+      .body("description[1]", is( "Course #2 for testing" ))
+      .body("creatorId[1]", is( 1 ))
+      .body("lastModifierId[1]", is( 1 ))
+      .body("courseModules[1].size()", is( 1 ))
+      .body("courseModules[1][0].courseNumber", is( 2 ))
+      .body("courseModules[1][0].courseLength.units", is( 1.0f ))
+      .body("courseModules[1][0].courseLength.unit.id", is( 1 ))
+      .body("courseModules[1][0].subject.id", is( 1 ))
+      .body("maxParticipantCount[1]", is( 200 ))
+      .body("archived[1]", is( false ));
   }
   
   @Test

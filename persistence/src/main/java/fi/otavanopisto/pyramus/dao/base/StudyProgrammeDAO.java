@@ -36,7 +36,7 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
   @Inject
   private Event<StudyProgrammeArchivedEvent> studyProgrammeRemovedEvent;
 
-  public StudyProgramme create(Organization organization, String name, StudyProgrammeCategory category, String code, boolean hasEvaluationFees) {
+  public StudyProgramme create(Organization organization, String name, StudyProgrammeCategory category, String code, String officialEducationType, boolean hasEvaluationFees) {
     EntityManager entityManager = getEntityManager();
 
     StudyProgramme studyProgramme = new StudyProgramme();
@@ -44,6 +44,7 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     studyProgramme.setName(name);
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);
+    studyProgramme.setOfficialEducationType(officialEducationType);
     studyProgramme.setHasEvaluationFees(hasEvaluationFees);
     entityManager.persist(studyProgramme);
     
@@ -103,11 +104,12 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
   }
 
   public StudyProgramme update(StudyProgramme studyProgramme, Organization organization, String name, 
-      StudyProgrammeCategory category, String code, boolean hasEvaluationFees) {
+      StudyProgrammeCategory category, String code, String officialEducationType, boolean hasEvaluationFees) {
     studyProgramme.setOrganization(organization);
     studyProgramme.setName(name);
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);
+    studyProgramme.setOfficialEducationType(officialEducationType);
     studyProgramme.setHasEvaluationFees(hasEvaluationFees);
     
     studyProgrammeUpdatedEvent.fire(new StudyProgrammeUpdatedEvent(studyProgramme.getId()));

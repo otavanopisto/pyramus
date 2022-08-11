@@ -9,12 +9,16 @@ import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * The controller responsible of the Create Project view of the application.
@@ -29,10 +33,25 @@ public class CreateProjectViewController extends PyramusViewController implement
   public void process(PageRequestContext pageRequestContext) {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
 
     List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
     Collections.sort(educationalTimeUnits, new StringAttributeComparator("getName"));
 
+    List<Subject> subjects = subjectDAO.listUnarchived();
+    JSONArray subjectsJSON = new JSONArray();
+    for (Subject subject : subjects) {
+      JSONObject subjectJSON = new JSONObject();
+      subjectJSON.put("id", subject.getId());
+      subjectJSON.put("name", subject.getName());
+      subjectJSON.put("code", subject.getCode());
+      subjectJSON.put("educationTypeId", subject.getEducationType() != null ? subject.getEducationType().getId() : null);
+      subjectJSON.put("educationTypeCode", subject.getEducationType() != null ? subject.getEducationType().getCode() : null);
+      subjectJSON.put("educationTypeName", subject.getEducationType() != null ? subject.getEducationType().getName() : null);
+      subjectsJSON.add(subjectJSON);
+    }
+    setJsDataVariable(pageRequestContext, "subjects", subjectsJSON.toString());
+    
     pageRequestContext.getRequest().setAttribute("users", userDAO.listAll());
     pageRequestContext.getRequest().setAttribute("optionalStudiesLengthTimeUnits", educationalTimeUnits);
     pageRequestContext.setIncludeJSP("/templates/projects/createproject.jsp");

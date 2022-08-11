@@ -13,13 +13,14 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment_;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 
 @Stateless
 public class StudentContactLogEntryCommentDAO extends PyramusEntityDAO<StudentContactLogEntryComment> {
 
   public StudentContactLogEntryComment create(
       StudentContactLogEntry entry, String commentText, Date commentDate,
-      String commentCreatorName) {
+      String commentCreatorName, StaffMember commentCreator) {
     EntityManager entityManager = getEntityManager(); 
 
     StudentContactLogEntryComment comment = new StudentContactLogEntryComment();
@@ -27,17 +28,17 @@ public class StudentContactLogEntryCommentDAO extends PyramusEntityDAO<StudentCo
     comment.setCreatorName(commentCreatorName);
     comment.setCommentDate(commentDate);
     comment.setText(commentText);
+    comment.setCreator(commentCreator);
 
     entityManager.persist(comment);
     return comment;
   }
   
   public StudentContactLogEntryComment update(StudentContactLogEntryComment comment, 
-      String commentText, Date commentDate, String commentCreatorName) {
+      String commentText, Date commentDate) {
     EntityManager entityManager = getEntityManager(); 
     comment.setText(commentText);
     comment.setCommentDate(commentDate);
-    comment.setCreatorName(commentCreatorName);
     entityManager.persist(comment);
     return comment;
   }

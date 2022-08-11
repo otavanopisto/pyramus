@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.views.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -87,10 +89,6 @@ public class AcceptApplicationViewController extends PyramusViewController {
 
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.EVERYONE };
-  }
-
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
   }
 
 }

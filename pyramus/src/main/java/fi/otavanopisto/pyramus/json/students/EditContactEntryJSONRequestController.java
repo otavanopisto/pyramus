@@ -51,16 +51,16 @@ public class EditContactEntryJSONRequestController extends JSONRequestController
       StudentContactLogEntry entry = logEntryDAO.findById(entryId);
       
       String entryText = jsonRequestContext.getRequest().getParameter("entryText");
-      String entryCreator = jsonRequestContext.getRequest().getParameter("entryCreatorName");
       Date entryDate = new Date(NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("entryDate"))); 
       StudentContactLogEntryType entryType = StudentContactLogEntryType.valueOf(jsonRequestContext.getString("entryType"));
       
-      logEntryDAO.update(entry, entryType, entryText, entryDate, entryCreator);
+      logEntryDAO.update(entry, entryType, entryText, entryDate);
 
       Map<String, Object> info = new HashMap<>();
       info.put("id", entry.getId());
-      info.put("creatorName", entry.getCreatorName());
       info.put("timestamp", entry.getEntryDate().getTime());
+      info.put("creatorName", entry.getCreatorName());
+      info.put("creatorId", entry.getCreator().getId());
       info.put("text", entry.getText());
       info.put("type", entry.getType());
       info.put("studentId", entry.getStudent().getId());

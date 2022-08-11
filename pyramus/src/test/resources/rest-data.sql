@@ -1,12 +1,14 @@
 insert into 
   SettingKey (id, name)
 values 
-  (1, 'system.environment');
+  (1, 'system.environment'),
+  (2, 'authentication.enabledStrategies');
   
 insert into 
   Setting (id, settingKey, value)
 values 
-  (1, 1, 'it');
+  (1, 1, 'it'),
+  (2, 2, 'TestAuth');
 
 insert into
   Organization (id, name, archived)
@@ -18,6 +20,11 @@ insert into
 values 
   (1, 'Home', 1, false, false);
 
+insert into
+  Plugin (id, artifactId, enabled, groupId, version)
+values
+  (1, 'testauth-plugin', true, 'fi.otavanopisto.pyramus', '0.7.50-SNAPSHOT');
+  
 insert into 
   GradingScale (id, archived, name, description, version)
 values  
@@ -234,7 +241,7 @@ insert into
 values
   (1000, 'Test Course #1', false, 1, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Course #1 for testing', 1, 1, 1, 1, 1, 100),
   (1001, 'Test Course #2', false, 2, STR_TO_DATE('1 1 2011', '%d %m %Y'), STR_TO_DATE('1 1 2011', '%d %m %Y'), 'Course #2 for testing', 1, 1, 1, 1, 1, 200);
-  
+
 insert into 
   Course (id, beginDate, endDate, localTeachingDays, nameExtension, module, state, teachingHours, distanceTeachingDays, planningHours, assessingHours, enrolmentTimeEnd, courseTemplate)
 values 
@@ -463,27 +470,27 @@ values
 /**   
 Old. Needed anymore?
 **/
-    (1, 'ff81d5b8500c773e7a1776a7963801e3', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 1, 1),
+    (1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1),
 /** GUEST ROLE**/
-    (2, 'ff81d5b8500c773e7a1776a7963801e4', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 2, 1),
+    (2, 'ff81d5b8500c773e7a1776a7963801e4', 'https://localhost:8443/oauth2ClientTest/success', 2, 1),
 /** USER ROLE**/    
-    (3, 'ff81d5b8500c773e7a1776a7963801e5', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 5, 1),
+    (3, 'ff81d5b8500c773e7a1776a7963801e5', 'https://localhost:8443/oauth2ClientTest/success', 5, 1),
 /** MANAGER ROLE**/
-    (4, 'ff81d5b8500c773e7a1776a7963801e6', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 6, 1),
+    (4, 'ff81d5b8500c773e7a1776a7963801e6', 'https://localhost:8443/oauth2ClientTest/success', 6, 1),
 /** ADMINISTRATOER ROLE**/
-    (5, 'ff81d5b8500c773e7a1776a7963801e7', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 7, 1),
+    (5, 'ff81d5b8500c773e7a1776a7963801e7', 'https://localhost:8443/oauth2ClientTest/success', 7, 1),
 /** STUDENT ROLE**/
-    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 8, 1),
+    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1),
 /** TRUSTED_SYSTEM ROLE**/
-    (7, 'ff81d5b8500c773e7a1776a7963801e9', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 9, 1),
+    (7, 'ff81d5b8500c773e7a1776a7963801e9', 'https://localhost:8443/oauth2ClientTest/success', 9, 1),
 /** STUDY_GUIDER ROLE**/
-    (8, 'ff81d5b8500c773e7a1776a7963801e0', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 10, 1),
+    (8, 'ff81d5b8500c773e7a1776a7963801e0', 'https://localhost:8443/oauth2ClientTest/success', 10, 1),
 /** TEACHER ROLE**/
-    (9, 'ff81d5b8500c773e7a1776a7963801e1', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 11, 1),
+    (9, 'ff81d5b8500c773e7a1776a7963801e1', 'https://localhost:8443/oauth2ClientTest/success', 11, 1),
 /** STUDY_PROGRAMME_LEADER ROLE**/
-    (10, 'ff81d5b8500c773e7a1776a7963801e2', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 12, 1),
+    (10, 'ff81d5b8500c773e7a1776a7963801e2', 'https://localhost:8443/oauth2ClientTest/success', 12, 1),
 /** CLOSED ROLE**/
-    (11, 'ff81d5b8500c773e7a1776a796380166', 'http://dev.pyramus.fi:8081/oauth2ClientTest/success', 14, 1);    
+    (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1);    
     
 insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
     
@@ -527,7 +534,7 @@ insert into Defaults
   (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization, studentDefaultContactType, userDefaultContactType)
 values
   (1, 1, 1, 1, 1, 1, 1, 1, 1);
-
+  
 DELETE FROM hibernate_sequences WHERE sequence_name = 'SettingKey';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'SettingKey', COALESCE(MAX(id) + 1, 1) FROM SettingKey;

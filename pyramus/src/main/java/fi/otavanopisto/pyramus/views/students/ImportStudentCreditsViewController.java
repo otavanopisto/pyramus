@@ -107,6 +107,9 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         case TransferCredit:
           linkedTransferCreditIds.add(creditLink.getCredit().getId());
         break;
+        
+        case ProjectAssessment:
+        break;
       }
     }
     
@@ -166,7 +169,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         if ((linkedCourseAssessmentIds.contains(courseAssessment.getId())) && (!student.getId().equals(baseStudent.getId())))
           continue;
 
-        String subjectName = getSubjectText(courseAssessment.getCourseStudent().getCourse().getSubject(), pageRequestContext.getRequest().getLocale());
+        String subjectName = getSubjectText(courseAssessment.getSubject(), pageRequestContext.getRequest().getLocale());
         
         JSONObject obj = new JSONObject();
         obj.put("courseStudentId", courseAssessment.getCourseStudent().getId().toString());
@@ -175,8 +178,8 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         obj.put("courseName", courseAssessment.getCourseStudent().getCourse().getName());
         obj.put("subjectName", subjectName);
         obj.put("creditDate", courseAssessment.getDate().getTime());
-        obj.put("courseLength", courseAssessment.getCourseStudent().getCourse().getCourseLength().getUnits().toString());
-        obj.put("courseLengthUnitName", courseAssessment.getCourseStudent().getCourse().getCourseLength().getUnit().getName());
+        obj.put("courseLength", courseAssessment.getCourseLength().getUnits().toString());
+        obj.put("courseLengthUnitName", courseAssessment.getCourseLength().getUnit().getName());
         
         obj.put("gradeName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
@@ -248,7 +251,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         if ((linkedCourseAssessmentIds.contains(courseAssessment.getId())) && (!student.getId().equals(baseStudent.getId())))
           continue;
         
-        String subjectName = getSubjectText(courseAssessment.getCourseStudent().getCourse().getSubject(), pageRequestContext.getRequest().getLocale());
+        String subjectName = getSubjectText(courseAssessment.getSubject(), pageRequestContext.getRequest().getLocale());
         
         JSONObject obj = new JSONObject();
         obj.put("creditLinkId", linkedCourseAssessment.getId().toString());
@@ -258,8 +261,8 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         obj.put("courseName", courseAssessment.getCourseStudent().getCourse().getName());
         obj.put("subjectName", subjectName);
         obj.put("creditDate", courseAssessment.getDate().getTime());
-        obj.put("courseLength", courseAssessment.getCourseStudent().getCourse().getCourseLength().getUnits().toString());
-        obj.put("courseLengthUnitName", courseAssessment.getCourseStudent().getCourse().getCourseLength().getUnit().getName());
+        obj.put("courseLength", courseAssessment.getCourseLength().getUnits().toString());
+        obj.put("courseLengthUnitName", courseAssessment.getCourseLength().getUnit().getName());
         
         obj.put("gradeName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);

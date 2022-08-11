@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -83,7 +85,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String phone = getFormValue(formData, "field-phone");
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
-          String guardianMail = getFormValue(formData, "field-underage-email");
+          String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
 
           // Make sure we have application signatures and school approval
           
@@ -196,11 +198,14 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             studentDAO.archive(student);
           }
           // #4226: Applications of rejected Internetix students are removed immediately
+          // #1355: No they are not (helpdesk ticket #740155). Like others, they will be removed after a year (via RemoveOldApplicationsScheduler)
+          /*
           if (StringUtils.equals("aineopiskelu", application.getLine())) {
             ApplicationUtils.deleteApplication(application);
             requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/applications/browse.page");
             return;
           }
+          */
         }
         else if (applicationState == ApplicationState.PROCESSING) {
           // #1216: If a signed application is returned to Processing state, remove the
@@ -257,8 +262,4 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
     requestContext.addResponseParameter("reason", reason);
   }
 
-  private String getFormValue(JSONObject object, String key) {
-    return object.has(key) ? object.getString(key) : null;
-  }
-  
 }
