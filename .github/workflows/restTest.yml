@@ -1,7 +1,9 @@
 name: REST tests
 on: 
   pull_request:
-    branches: [develop, j11-testing]
+    branches: [develop]
+  push:
+    branches: [j11-testing]
 jobs:
   testing:
     env:
