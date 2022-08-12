@@ -528,8 +528,8 @@
               <verbose>true</verbose>
               <images>
                 <image>
-                  <alias>mariadb</alias>
-                  <name>mariadb:latest</name>
+                  <alias>mysql</alias>
+                  <name>mysql:5.6</name>
                   <run>
                     <env>
                       <MYSQL_USER>sa</MYSQL_USER>
@@ -538,8 +538,8 @@
                       <MYSQL_DATABASE>testpyramusdb</MYSQL_DATABASE>
                     </env>
                     <wait>
-<!--                       <log>Started MariaDB</log> -->
-                      <time>15000</time>
+                      <log>MySQL init process done. Ready for start up.</log>
+                      <time>25000</time>
                     </wait>
                     <ports>
                       <port>5555:3306</port>
@@ -588,6 +588,25 @@
                   </rules>
                   <fail>true</fail>
                 </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <configuration>
+              <tasks>
+                  <sleep seconds="5" />
+              </tasks>
+            </configuration>
+            <executions>
+              <execution>
+                <id>Ensure MySQL startup</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
