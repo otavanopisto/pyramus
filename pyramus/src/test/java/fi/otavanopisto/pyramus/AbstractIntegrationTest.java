@@ -9,11 +9,14 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -191,6 +194,11 @@ public abstract class AbstractIntegrationTest {
   
   public OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
     return getDateToOffsetDateTime(year, monthOfYear, dayOfMonth);
+  }
+
+  public String getDateString(int year, int monthOfYear, int dayOfMonth) {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+    return getDateToOffsetDateTime(year, monthOfYear, dayOfMonth).format(dateFormatter);
   }
   
   public LocalDate toLocalDate(Date date) {

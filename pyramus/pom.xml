@@ -421,7 +421,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Dependencies>org.apache.commons.codec</Dependencies>
+              <Dependencies>org.apache.commons.codec,org.apache.commons.io</Dependencies>
 <!--               <Dependencies>org.hibernate,org.hibernate.search.orm services,org.hibernate.validator,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.apache.xalan,org.slf4j,org.slf4j.impl,org.jboss.resteasy.resteasy-jackson2-provider, org.yaml.snakeyaml, org.apache.commons.codec</Dependencies> -->
             </manifestEntries>
           </archive>
@@ -528,8 +528,8 @@
               <verbose>true</verbose>
               <images>
                 <image>
-                  <alias>mysql</alias>
-                  <name>mysql:5.6</name>
+                  <alias>mariadb</alias>
+                  <name>mariadb:latest</name>
                   <run>
                     <env>
                       <MYSQL_USER>sa</MYSQL_USER>
@@ -538,8 +538,8 @@
                       <MYSQL_DATABASE>testpyramusdb</MYSQL_DATABASE>
                     </env>
                     <wait>
-                      <log>MySQL init process done. Ready for start up.</log>
-                      <time>80000</time>
+<!--                       <log>Started MariaDB</log> -->
+                      <time>15000</time>
                     </wait>
                     <ports>
                       <port>5555:3306</port>
@@ -562,6 +562,32 @@
                 <goals>
                   <goal>stop</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>enforce-files-exist</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireFilesExist>
+                      <files>
+                       <file>src/test/resources/sql/createDatabase.sql</file>
+                       <file>src/test/resources/rest-data.sql</file>
+                      </files>
+                    </requireFilesExist>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -614,7 +640,7 @@
               </execution>
             </executions>
           </plugin>
-
+<!-- TODO: Creates working database, but puts hibernate inserts too early (causing errors), so commented and create file edited a bit and saved for use. -->
 <!--           <plugin>
             <groupId>de.jpdigital</groupId>
             <artifactId>hibernate53-ddl-maven-plugin</artifactId>
@@ -651,7 +677,7 @@
             </executions>
           </plugin> -->
 
-<!--          <plugin>
+          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>keytool-maven-plugin</artifactId>
             <version>1.6</version>
@@ -710,7 +736,7 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin> -->
+          </plugin>
           
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -742,7 +768,6 @@
                   <autocommit>true</autocommit>
                   <srcFiles>
                     <srcFile>src/test/resources/sql/createDatabase.sql</srcFile>
-                    <!-- <srcFile>src/test/resources/ui-data.sql</srcFile> -->
                     <srcFile>src/test/resources/rest-data.sql</srcFile>
                   </srcFiles>
                 </configuration>
@@ -761,7 +786,7 @@
                 <log>${project.basedir}/target/cargo.log</log>
                 <output>${project.basedir}/target/jboss.log</output>
                 <zipUrlInstaller>
-                  <url>https://github.com/wildfly/wildfly/releases/download/26.1.0.Final/wildfly-26.1.0.Final.zip</url>
+                  <url>https://github.com/wildfly/wildfly/releases/download/26.1.1.Final/wildfly-26.1.1.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
@@ -796,13 +821,6 @@
                   </cargo.datasource.datasource.pyramus>
                 </properties>
               </configuration>
-<!--               <deployables>
-                <deployable>
-                  <groupId>fi.otavanopisto.pyramus</groupId>
-                  <artifactId>pyramus</artifactId>
-                  <type>war</type>
-                </deployable>
-              </deployables> -->
             </configuration>
             <executions>
               <execution>
@@ -855,32 +873,12 @@
           </plugin>
 
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <configuration>
-              <tasks>
-                  <sleep seconds="10" />
-              </tasks>
-            </configuration>
-            <executions>
-              <execution>
-                <id>sleep-for-a-while</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-
-<!--           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>wait-maven-plugin</artifactId>
             <version>1.0</version>
             <executions>
               <execution>
-                <id>wait</id>
+                <id>wait-webapp</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>wait</goal>
@@ -889,18 +887,19 @@
                   <protocol>http</protocol>
                   <host>${it.host}</host>
                   <port>${it.port.http}</port>
-                  <file>/1/system/ping</file>
-                  <maxcount>20</maxcount>
-                  <timeout>100000</timeout>
+                  <file>/</file>
+                  <maxcount>10</maxcount>
+                  <timeout>10000</timeout>
                 </configuration>
               </execution>
             </executions>
-          </plugin> -->
+          </plugin>
         </plugins>
       </build>
     </profile>
 
-    <profile>
+
+<!--     <profile>
       <id>ui-it</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -1198,7 +1197,6 @@
                   <before-deployment>
                     <batch>true</batch>
                     <commands>
-                      <command>/system-property=pyramus.workspace:add(value="${basedir}/..")</command>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
                       <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
                       <command>/core-service=management/security-realm=ssl-realm:add()</command>
@@ -1209,7 +1207,6 @@
                       <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=default-web-module,value=ROOT.war)</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
-                      <command>/subsystem=logging/logger=javax.ws.rs.NotFoundException:add(level=SEVERE)</command>
                     </commands>
                   </before-deployment>
                   <filename>./pyramus-${project.version}.war</filename>
@@ -1224,7 +1221,7 @@
             <version>1.0</version>
             <executions>
               <execution>
-                <id>wait</id>
+                <id>wait-webapp</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>wait</goal>
@@ -1233,16 +1230,16 @@
                   <protocol>http</protocol>
                   <host>${it.host}</host>
                   <port>${it.port.http}</port>
-                  <file>/1/system/ping</file>
-                  <maxcount>20</maxcount>
+                  <file>/</file>
+                  <maxcount>10</maxcount>
                   <timeout>10000</timeout>
                 </configuration>
               </execution>
             </executions>
           </plugin>
+
         </plugins>
       </build>
-    </profile>
-
+    </profile> -->
   </profiles>
 </project>

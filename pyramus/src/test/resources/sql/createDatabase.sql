@@ -75,23 +75,6 @@
         primary key (id)
     ) engine=InnoDB;
 
-    create table AccessLogEntry (
-       id bigint not null,
-        date datetime not null,
-        ip varchar(255) not null,
-        parameters longtext,
-        path bigint,
-        user bigint,
-        primary key (id)
-    ) engine=InnoDB;
-
-    create table AccessLogEntryPath (
-       id bigint not null,
-        active bit not null,
-        path longtext not null,
-        primary key (id)
-    ) engine=InnoDB;
-
     create table Address (
        id bigint not null,
         city varchar(255),
@@ -365,7 +348,8 @@
 
     create table CourseAssessment (
        id bigint not null,
-        courseStudent bigint,
+        courseModule bigint not null,
+        courseStudent bigint not null,
         primary key (id)
     ) engine=InnoDB;
 
@@ -382,17 +366,14 @@
     create table CourseBase (
        id bigint not null,
         archived bit not null,
-        courseNumber integer,
         created datetime not null,
         description longtext,
         lastModified datetime not null,
         maxParticipantCount bigint,
         name varchar(255) not null,
         version bigint not null,
-        courseLength bigint,
         creator bigint,
         lastModifier bigint,
-        subject bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -465,6 +446,15 @@
        id bigint not null,
         name varchar(255) not null,
         version bigint not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table CourseModule (
+       id bigint not null auto_increment,
+        courseNumber integer,
+        course bigint not null,
+        courseLength bigint,
+        subject bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -1095,6 +1085,16 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table ProjectSubjectCourse (
+       id bigint not null auto_increment,
+        courseNumber integer,
+        optionality varchar(255) not null,
+        version bigint not null,
+        project bigint,
+        subject bigint,
+        primary key (id)
+    ) engine=InnoDB;
+
     create table Report (
        id bigint not null,
         archived bit not null,
@@ -1270,6 +1270,7 @@
         text longtext,
         type varchar(255),
         version bigint not null,
+        creator bigint,
         student bigint not null,
         primary key (id)
     ) engine=InnoDB;
@@ -1281,6 +1282,7 @@
         creatorName varchar(255),
         text longtext,
         version bigint not null,
+        creator bigint not null,
         entry bigint,
         primary key (id)
     ) engine=InnoDB;
@@ -1419,6 +1421,17 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table StudentProjectSubjectCourse (
+       id bigint not null auto_increment,
+        courseNumber integer,
+        optionality varchar(255) not null,
+        version bigint not null,
+        academicTerm bigint,
+        studentProject bigint,
+        subject bigint,
+        primary key (id)
+    ) engine=InnoDB;
+
     create table StudentStudyEndReason (
        id bigint not null,
         name varchar(255),
@@ -1461,6 +1474,7 @@
         code varchar(255),
         hasEvaluationFees bit not null,
         name varchar(255) not null,
+        officialEducationType varchar(255),
         version bigint not null,
         category bigint,
         organization bigint,
@@ -1804,16 +1818,6 @@
        foreign key (user) 
        references User (id);
 
-    alter table AccessLogEntry 
-       add constraint FKa6jjcasuh1sr2ugfocnnnxgbh 
-       foreign key (path) 
-       references AccessLogEntryPath (id);
-
-    alter table AccessLogEntry 
-       add constraint FK4k1w14h82rgy6812868ea3p3f 
-       foreign key (user) 
-       references User (id);
-
     alter table Address 
        add constraint FKkiddtym4763wa0sh35g35xqph 
        foreign key (contactInfo) 
@@ -1955,6 +1959,11 @@
        references CourseBase (id);
 
     alter table CourseAssessment 
+       add constraint FKn1s84cc2pt0v04uvnyakahu2x 
+       foreign key (courseModule) 
+       references CourseModule (id);
+
+    alter table CourseAssessment 
        add constraint FK36trbdwac7x0lh4qxiaqo4sri 
        foreign key (courseStudent) 
        references CourseStudent (id);
@@ -1970,11 +1979,6 @@
        references CourseStudent (id);
 
     alter table CourseBase 
-       add constraint FKp44u27sminfuier5bcw86jep6 
-       foreign key (courseLength) 
-       references EducationalLength (id);
-
-    alter table CourseBase 
        add constraint FKmkt8t06ingoy3c5rf6p3lfk9w 
        foreign key (creator) 
        references User (id);
@@ -1983,11 +1987,6 @@
        add constraint FKgiabnk7ggbvtjfir6d3quhoee 
        foreign key (lastModifier) 
        references User (id);
-
-    alter table CourseBase 
-       add constraint FKo9d38wne4pdv3ija957h47j56 
-       foreign key (subject) 
-       references Subject (id);
 
     alter table CourseBaseVariable 
        add constraint FK8td9hjoro2ti745qjk4b1vy8r 
@@ -2048,6 +2047,21 @@
        add constraint FK1q89k87rh4ee5ecmhyd0h1hqe 
        foreign key (educationType) 
        references EducationType (id);
+
+    alter table CourseModule 
+       add constraint FKqbamliiubym6e3x71t0bn5dn0 
+       foreign key (course) 
+       references CourseBase (id);
+
+    alter table CourseModule 
+       add constraint FK7webkvnrmum5gi4c6arqym0s2 
+       foreign key (courseLength) 
+       references EducationalLength (id);
+
+    alter table CourseModule 
+       add constraint FKe146x10mwmycchi71884gebiv 
+       foreign key (subject) 
+       references Subject (id);
 
     alter table CourseSignupStudentGroup 
        add constraint FKkx75wvsff8sn3diro4bxxrgmk 
@@ -2479,6 +2493,16 @@
        foreign key (project) 
        references Project (id);
 
+    alter table ProjectSubjectCourse 
+       add constraint FK37aapnc03r4s9pdtxcvka66j5 
+       foreign key (project) 
+       references Project (id);
+
+    alter table ProjectSubjectCourse 
+       add constraint FKevo9j1k44j4yk4lcgsbi8iyf3 
+       foreign key (subject) 
+       references Subject (id);
+
     alter table Report 
        add constraint FK5n8rp8h1bnhbxfavy2itxm96i 
        foreign key (category) 
@@ -2620,9 +2644,19 @@
        references User (id);
 
     alter table StudentContactLogEntry 
+       add constraint FK613vlypw37t7e94d003aa3kpw 
+       foreign key (creator) 
+       references StaffMember (id);
+
+    alter table StudentContactLogEntry 
        add constraint FK6sl7koe2eub7r7ayjp3qcog5k 
        foreign key (student) 
        references Student (id);
+
+    alter table StudentContactLogEntryComment 
+       add constraint FKpywjxqjs8s9ysuvn4x9krlpsq 
+       foreign key (creator) 
+       references StaffMember (id);
 
     alter table StudentContactLogEntryComment 
        add constraint FK3f3gjfv92t75apb78kwe2ba08 
@@ -2743,6 +2777,21 @@
        add constraint FK4pewglcj9f0yyiclodk8a77ao 
        foreign key (studentProject) 
        references StudentProject (id);
+
+    alter table StudentProjectSubjectCourse 
+       add constraint FKa1xwyf0or70j13b6j6bw7hsge 
+       foreign key (academicTerm) 
+       references AcademicTerm (id);
+
+    alter table StudentProjectSubjectCourse 
+       add constraint FK66cgj0s5l8epp4tdymd6624m5 
+       foreign key (studentProject) 
+       references StudentProject (id);
+
+    alter table StudentProjectSubjectCourse 
+       add constraint FKbgh7anm28yggn3a1i51jpkj73 
+       foreign key (subject) 
+       references Subject (id);
 
     alter table StudentStudyEndReason 
        add constraint FK8duxuxnxjwknnu7rqqm5odgu7 
@@ -2913,32 +2962,32 @@
        add constraint FKrr2s3aj6rw577670ygl88gpbp 
        foreign key (id) 
        references Resource (id);
-       
+
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ClientApplicationAuthorizationCode',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('School',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ComponentBase',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseBase',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Plugin',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ComponentBase',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('BasicCourseResource',0);
-
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('GradeCourseResource',0);
-
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudyProgrammeCategory',0);
-
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentContactLogEntryComment',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ContactURLType',0);
 
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudyProgrammeCategory',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('GradeCourseResource',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentContactLogEntryComment',0);
+
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CreditVariableKey',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ProjectModule',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentGroupContactLogEntryComment',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ProjectModule',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Tag',0);
 
@@ -2980,11 +3029,11 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ApplicationMailTemplate',0);
 
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ApplicationAttachment',0);
+
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseState',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseStaffMemberRole',0);
-
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ApplicationAttachment',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ContactType',0);
 
@@ -2996,9 +3045,9 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CreditLink',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Credit',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentCourseResource',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Credit',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('HelpPageContent',0);
 
@@ -3028,17 +3077,17 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('RoomType',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Room',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseAssessmentRequest',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Room',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentEducationalLevel',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseEnrolmentType',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudyProgramme',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('FileType',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudyProgramme',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Subject',0);
 
@@ -3048,9 +3097,9 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseUser',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ClientApplication',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentStudyEndReason',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ClientApplication',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('TransferCreditTemplate',0);
 
@@ -3058,9 +3107,9 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('OtherCost',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('FormDraft',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CreditVariable',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('FormDraft',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('SettingKey',0);
 
@@ -3076,9 +3125,9 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseBaseVariable',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ResourceCategory',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ChangeLogEntryEntity',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ResourceCategory',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Permission',0);
 
@@ -3094,9 +3143,9 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseParticipationType',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('MagicKey',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('BillingDetails',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('MagicKey',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Address',0);
 
@@ -3108,15 +3157,11 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ContactInfo',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('AccessLogEntryPath',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseDescription',0);
-
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('PasswordResetRequest',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ReportCategory',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('AccessLogEntry',0);
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('PasswordResetRequest',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('EducationSubtype',0);
 
@@ -3138,9 +3183,9 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Project',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseStudentVariable',0);
-
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('UserIdentification',0);
+
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseStudentVariable',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('MatriculationExam',0);
 
@@ -3148,13 +3193,12 @@
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('CourseComponentResource',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentGroup',0);
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ChangeLogEntry',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('Nationality',0);
 
-    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('ChangeLogEntry',0);
+    insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('StudentGroup',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('PhoneNumber',0);
 
     insert into hibernate_sequences(sequence_name, sequence_next_hi_value) values ('SchoolVariable',0);
-    

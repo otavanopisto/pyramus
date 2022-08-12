@@ -28,7 +28,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
     response.then()
       .statusCode(200)
       .body("id", not(is((Long) null)))
-      .body("enrolmentTime", is(entity.getEnrolmentTime().toString() ))
+      .body("enrolmentTime", is(getDateString(entity.getEnrolmentTime().getYear(), entity.getEnrolmentTime().getMonth().getValue(), entity.getEnrolmentTime().getDayOfMonth()) ))
       .body("archived", is(false))
       .body("participationTypeId", is(entity.getParticipationTypeId().intValue() ))
       .body("enrolmentTypeId", is(entity.getEnrolmentTypeId().intValue() ))
@@ -36,11 +36,10 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
       .body("optionality", is(entity.getOptionality().toString()));
     
     int id = response.body().jsonPath().getInt("id");
-
     given().headers(getAuthHeaders())
-      .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
-      .then()
-      .statusCode(204);
+    .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
+    .then()
+    .statusCode(204);  
   }
 
   @Test
@@ -55,7 +54,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
     response.then()
       .statusCode(200)
       .body("id", not(is((Long) null)))
-      .body("enrolmentTime", is(entity.getEnrolmentTime().toString() ))
+      .body("enrolmentTime", is(getDateString(entity.getEnrolmentTime().getYear(), entity.getEnrolmentTime().getMonth().getValue(), entity.getEnrolmentTime().getDayOfMonth()) ))
       .body("archived", is(false))
       .body("participationTypeId", is(entity.getParticipationTypeId().intValue() ))
       .body("enrolmentTypeId", is(entity.getEnrolmentTypeId().intValue() ))
@@ -88,14 +87,14 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
       .body("id.size()", is(2))
       .body("id[0]", is(5))
       .body("archived[0]", is(false))
-      .body("enrolmentTime[0]", is(getDate(2010, 1, 1).toString()))
+      .body("enrolmentTime[0]", is(getDateString(2010, 1, 1)))
       .body("participationTypeId[0]", is(1))
       .body("enrolmentTypeId[0]", is(1))
       .body("lodging[0]", is(false))
       .body("optionality[0]", is("OPTIONAL"))
       .body("id[1]", is(6))
       .body("archived[1]", is(false))
-      .body("enrolmentTime[1]", is(getDate(2011, 1, 1).toString()))
+      .body("enrolmentTime[1]", is(getDateString(2011, 1, 1)))
       .body("participationTypeId[1]", is(2))
       .body("enrolmentTypeId[1]", is(2))
       .body("lodging[1]", is(true))
@@ -110,7 +109,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
     .statusCode(200)
       .body("id", is(5))
       .body("archived", is(false))
-      .body("enrolmentTime", is(getDate(2010, 1, 1).toString()))
+      .body("enrolmentTime", is(getDateString(2010, 1, 1)))
       .body("participationTypeId", is(1))
       .body("enrolmentTypeId", is(1))
       .body("lodging", is(false))
@@ -129,7 +128,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
     response.then()
       .statusCode(200)
       .body("id", not(is((Long) null)))
-      .body("enrolmentTime", is(entity.getEnrolmentTime().toString() ))
+      .body("enrolmentTime", is(getDateString(entity.getEnrolmentTime().getYear(), entity.getEnrolmentTime().getMonth().getValue(), entity.getEnrolmentTime().getDayOfMonth()) ))
       .body("archived", is(false))
       .body("participationTypeId", is(entity.getParticipationTypeId().intValue() ))
       .body("enrolmentTypeId", is(entity.getEnrolmentTypeId().intValue() ))
@@ -146,7 +145,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
       .put("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, updateEntity.getId())
       .then()
       .statusCode(200)
-      .body("enrolmentTime", is(updateEntity.getEnrolmentTime().toString() ))
+      .body("enrolmentTime", is(getDateString(updateEntity.getEnrolmentTime().getYear(), updateEntity.getEnrolmentTime().getMonth().getValue(), updateEntity.getEnrolmentTime().getDayOfMonth()) ))
       .body("archived", is(updateEntity.getArchived()))
       .body("participationTypeId", is(updateEntity.getParticipationTypeId().intValue() ))
       .body("enrolmentTypeId", is(updateEntity.getEnrolmentTypeId().intValue() ))
@@ -171,7 +170,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
     response.then()
       .statusCode(200)
       .body("id", not(is((Long) null)))
-      .body("enrolmentTime", is(entity.getEnrolmentTime().toString() ))
+      .body("enrolmentTime", is(getDateString(entity.getEnrolmentTime().getYear(), entity.getEnrolmentTime().getMonth().getValue(), entity.getEnrolmentTime().getDayOfMonth()) ))
       .body("archived", is(false))
       .body("participationTypeId", is(entity.getParticipationTypeId().intValue() ))
       .body("enrolmentTypeId", is(entity.getEnrolmentTypeId().intValue() ))

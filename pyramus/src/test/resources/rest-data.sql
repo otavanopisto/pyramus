@@ -7,8 +7,7 @@ values
 insert into 
   Setting (id, settingKey, value)
 values 
-  (1, 1, 'it'),
-  (2, 2, 'TestAuth');
+  (1, 1, 'it');
 
 insert into
   Organization (id, name, archived)
@@ -215,9 +214,16 @@ values
   (2, 'Special', false);
   
 insert into 
-  CourseBase (id, name, archived, courseNumber, created, lastModified, description, courseLength, creator, lastModifier, subject, version, maxParticipantCount)
+  CourseBase (id, name, archived, created, lastModified, description, maxParticipantCount, version, creator, lastModifier)
 values
-  (1, 'Test Module #1', false, 1, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Module #1 for testing', 1, 1, 1, 1, 1, 100);
+  (1, 'Test Module #1', false, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Module #1 for testing', 100, 1, 1, 1),
+  (1000, 'Test Course #1', false, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Course #1 for testing', 100, 1, 1, 1),
+  (1001, 'Test Course #2', false, STR_TO_DATE('1 1 2011', '%d %m %Y'), STR_TO_DATE('1 1 2011', '%d %m %Y'), 'Course #2 for testing', 200, 1, 1, 1);
+
+insert into
+  CourseModule (course, subject, courseNumber, courseLength)
+values
+  (1, 1, 1, 1);
 
 insert into
   Module (id)
@@ -235,12 +241,12 @@ insert into
 values 
   (1, 1, 0),
   (2, 1, 1);
-
-insert into 
-  CourseBase (id, name, archived, courseNumber, created, lastModified, description, courseLength, creator, lastModifier, subject, version, maxParticipantCount)
+  
+insert into
+  CourseModule (id, course, subject, courseNumber, courseLength)
 values
-  (1000, 'Test Course #1', false, 1, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Course #1 for testing', 1, 1, 1, 1, 1, 100),
-  (1001, 'Test Course #2', false, 2, STR_TO_DATE('1 1 2011', '%d %m %Y'), STR_TO_DATE('1 1 2011', '%d %m %Y'), 'Course #2 for testing', 1, 1, 1, 1, 1, 200);
+  (1000, 1000, 1, 1, 1),
+  (1001, 1001, 1, 2, 1);
 
 insert into 
   Course (id, beginDate, endDate, localTeachingDays, nameExtension, module, state, teachingHours, distanceTeachingDays, planningHours, assessingHours, enrolmentTimeEnd, courseTemplate)
@@ -526,15 +532,18 @@ values
   (1, false, 'TEST ASSESSMENT', STR_TO_DATE('1 1 2011', '%d %m %Y'), 'CourseAssessment', 1, 6, 2);
   
 insert into
-  CourseAssessment (id, courseStudent)
+  CourseAssessment (id, courseStudent, courseModule)
 values
-  (1, 5);
+  (1, 5, 1);
 
 insert into Defaults 
   (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization, studentDefaultContactType, userDefaultContactType)
 values
   (1, 1, 1, 1, 1, 1, 1, 1, 1);
-  
+
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseModule';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseModule', COALESCE(MAX(id) + 1, 1) FROM CourseModule;  
 DELETE FROM hibernate_sequences WHERE sequence_name = 'SettingKey';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'SettingKey', COALESCE(MAX(id) + 1, 1) FROM SettingKey;

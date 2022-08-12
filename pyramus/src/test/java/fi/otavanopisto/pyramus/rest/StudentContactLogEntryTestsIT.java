@@ -28,7 +28,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
+      .body("entryDate", is(getDateString(studentContactLogEntry.getEntryDate().getYear(), studentContactLogEntry.getEntryDate().getMonth().getValue(), studentContactLogEntry.getEntryDate().getDayOfMonth()) ))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
       
@@ -50,13 +50,13 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .body("results.id[1]", is(1) )
       .body("results.text[1]", is("Test text #1"))
       .body("results.creatorName[1]", is("Tester #1"))
-      .body("results.entryDate[1]", is(getDate(2010, 1, 1).toString()))
+      .body("results.entryDate[1]", is(getDateString(2010, 1, 1) ))
       .body("results.type[1]", is("LETTER"))
       .body("results.archived[1]", is( Boolean.FALSE ))
       .body("results.id[0]", is(2) )
       .body("results.text[0]", is("Test text #2"))
       .body("results.creatorName[0]", is("Tester #2"))
-      .body("results.entryDate[0]", is(getDate(2011, 1, 1).toString()))
+      .body("results.entryDate[0]", is(getDateString(2011, 1, 1) ))
       .body("results.type[0]", is("PHONE"))
       .body("results.archived[0]", is( Boolean.FALSE ));
   }
@@ -73,7 +73,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
+      .body("entryDate", is(getDateString(studentContactLogEntry.getEntryDate().getYear(), studentContactLogEntry.getEntryDate().getMonth().getValue(), studentContactLogEntry.getEntryDate().getDayOfMonth()) ))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
       
@@ -89,7 +89,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
         .statusCode(200)
         .body("id", is(updateContactLogEntry.getId().intValue() ))
         .body("text", is(updateContactLogEntry.getText()))
-        .body("entryDate", is(updateContactLogEntry.getEntryDate().toString()))
+        .body("entryDate", is(getDateString(updateContactLogEntry.getEntryDate().getYear(), updateContactLogEntry.getEntryDate().getMonth().getValue(), updateContactLogEntry.getEntryDate().getDayOfMonth()) ))
         .body("type", is(updateContactLogEntry.getType().toString()))
         .body("archived", is( updateContactLogEntry.getArchived() ));
 
@@ -113,7 +113,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("text", is(studentContactLogEntry.getText()))
-      .body("entryDate", is(studentContactLogEntry.getEntryDate().toString()))
+      .body("entryDate", is(getDateString(studentContactLogEntry.getEntryDate().getYear(), studentContactLogEntry.getEntryDate().getMonth().getValue(), studentContactLogEntry.getEntryDate().getDayOfMonth()) ))
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
       
