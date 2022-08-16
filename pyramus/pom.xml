@@ -581,7 +581,6 @@
                   <rules>
                     <requireFilesExist>
                       <files>
-                       <file>src/test/resources/sql/createDatabase.sql</file>
                        <file>src/test/resources/rest-data.sql</file>
                       </files>
                     </requireFilesExist>
