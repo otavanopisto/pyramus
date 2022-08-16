@@ -660,7 +660,7 @@
             </executions>
           </plugin>
 <!-- TODO: Creates working database, but puts hibernate inserts too early (causing errors), so commented and create file edited a bit and saved for use. -->
-<!--           <plugin>
+          <plugin>
             <groupId>de.jpdigital</groupId>
             <artifactId>hibernate53-ddl-maven-plugin</artifactId>
             <version>2.5.0</version>
@@ -694,7 +694,7 @@
                 </goals>
               </execution>
             </executions>
-          </plugin> -->
+          </plugin>
 
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -786,7 +786,7 @@
                 <configuration>
                   <autocommit>true</autocommit>
                   <srcFiles>
-                    <srcFile>src/test/resources/sql/createDatabase.sql</srcFile>
+                    <srcFile>${basedir}/target/sql/ddl/createDatabase.sql</srcFile>
                     <srcFile>src/test/resources/rest-data.sql</srcFile>
                   </srcFiles>
                 </configuration>
