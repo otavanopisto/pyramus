@@ -146,7 +146,6 @@ public class PyramusServletContextListener implements ServletContextListener {
       }
       
       if ("it".equals(System.getProperties().getProperty("system.environment"))) {
-        trustSelfSignedCerts();
         reindexHibernateEntities();
       }
       

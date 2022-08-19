@@ -1,8 +1,7 @@
 insert into 
   SettingKey (id, name)
 values 
-  (1, 'system.environment'),
-  (2, 'authentication.enabledStrategies');
+  (1, 'system.environment');
   
 insert into 
   Setting (id, settingKey, value)
@@ -19,11 +18,6 @@ insert into
 values 
   (1, 'Home', 1, false, false);
 
-insert into
-  Plugin (id, artifactId, enabled, groupId, version)
-values
-  (1, 'testauth-plugin', true, 'fi.otavanopisto.pyramus', '0.7.50-SNAPSHOT');
-  
 insert into 
   GradingScale (id, archived, name, description, version)
 values  
@@ -543,7 +537,7 @@ values
 
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseModule';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
-  SELECT 'CourseModule', COALESCE(MAX(id) + 1, 1) FROM CourseModule;  
+  SELECT 'CourseModule', COALESCE(MAX(id) + 1, 1) FROM CourseModule;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'SettingKey';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'SettingKey', COALESCE(MAX(id) + 1, 1) FROM SettingKey;

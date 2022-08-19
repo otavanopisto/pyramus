@@ -1,3 +1,5 @@
+SET foreign_key_checks = 0;
+
 insert into 
   SettingKey (id, name)
 values 
@@ -45,8 +47,6 @@ values
   (9, 'Test Administrator #1', 1),
   (10, 'Test Student #1', 1);
 
-SET foreign_key_checks = 0;
-
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo, defaultUser_id)
 values 
@@ -81,7 +81,6 @@ insert into
 values
   (1, '1', 'internal', 7),
   (2, '2', 'internal', 8);
-  
 
 insert into
   StaffMember (id, role, title)
@@ -163,9 +162,16 @@ values
   (2, 'Special', false);
   
 insert into 
-  CourseBase (id, name, archived, courseNumber, created, lastModified, description, courseLength, creator, lastModifier, subject, version, maxParticipantCount)
+  CourseBase (id, name, archived, created, lastModified, description, maxParticipantCount, version, creator, lastModifier)
 values
-  (1, 'Test Module #1', false, 1, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Module #1 for testing', 1, 1, 1, 1, 1, 100);
+  (1, 'Test Module #1', false, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Module #1 for testing', 100, 1, 1, 1),
+  (1000, 'Test Course #1', false, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Course #1 for testing', 100, 1, 1, 1),
+  (1001, 'Test Course #2', false, STR_TO_DATE('1 1 2011', '%d %m %Y'), STR_TO_DATE('1 1 2011', '%d %m %Y'), 'Course #2 for testing', 200, 1, 1, 1);
+
+insert into
+  CourseModule (course, subject, courseNumber, courseLength)
+values
+  (1, 1, 1, 1);
 
 insert into
   Module (id)
@@ -184,17 +190,27 @@ values
   (1, 1, 0),
   (2, 1, 1);
 
-insert into 
-  CourseBase (id, name, archived, courseNumber, created, lastModified, description, courseLength, creator, lastModifier, subject, version, maxParticipantCount)
+insert into
+  CourseModule (id, course, subject, courseNumber, courseLength)
 values
-  (1000, 'Test Course #1', false, 1, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Course #1 for testing', 1, 1, 1, 1, 1, 100),
-  (1001, 'Test Course #2', false, 2, STR_TO_DATE('1 1 2011', '%d %m %Y'), STR_TO_DATE('1 1 2011', '%d %m %Y'), 'Course #2 for testing', 1, 1, 1, 1, 1, 200);
-  
+  (1000, 1000, 1, 1, 1),
+  (1001, 1001, 1, 2, 1);
+
 insert into 
   Course (id, beginDate, endDate, localTeachingDays, nameExtension, module, state, teachingHours, distanceTeachingDays, planningHours, assessingHours, enrolmentTimeEnd, courseTemplate)
 values 
   (1000, STR_TO_DATE('2 2 2010', '%d %m %Y'), STR_TO_DATE('3 3 2010', '%d %m %Y'), 10, 'Ext', 1, 1, 40, 30, 20, 10, STR_TO_DATE('1 1 2010', '%d %m %Y'), false),
   (1001, STR_TO_DATE('2 2 2011', '%d %m %Y'), STR_TO_DATE('3 3 2011', '%d %m %Y'), 20, 'ABC', 1, 2, 15, 17, 20, 10, STR_TO_DATE('1 1 2011', '%d %m %Y'), false);
+
+insert into
+  CourseEducationType (id, courseBase, educationType, version)
+values
+  (1000, 1001, 1, 1);
+
+insert into
+  CourseEducationSubtype (id, courseEducationType, educationSubtype, version)
+values
+  (1000, 1000, 1, 1);
 
 insert into 
   ComponentBase (id, name, description, length, archived, version) 
@@ -415,6 +431,9 @@ INSERT INTO
 VALUES 
   (1, 'https://nexus.muikkuverkko.fi/repository/otavanopisto-snapshots/', '');
 
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseModule';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseModule', COALESCE(MAX(id) + 1, 1) FROM CourseModule;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'SettingKey';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'SettingKey', COALESCE(MAX(id) + 1, 1) FROM SettingKey;
@@ -481,9 +500,6 @@ INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseDescriptionCategory';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'CourseDescriptionCategory', COALESCE(MAX(id) + 1, 1) FROM CourseDescriptionCategory;
-DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseBase';
-INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
-  SELECT 'CourseBase', COALESCE(MAX(id) + 1, 1) FROM CourseBase;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'Module';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'Module', COALESCE(MAX(id) + 1, 1) FROM Module;
@@ -505,9 +521,6 @@ INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseEducationSubtype';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'CourseEducationSubtype', COALESCE(MAX(id) + 1, 1) FROM CourseEducationSubtype;
-DELETE FROM hibernate_sequences WHERE sequence_name = 'ComponentBase';
-INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
-  SELECT 'ComponentBase', COALESCE(MAX(id) + 1, 1) FROM ComponentBase;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseComponent';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'CourseComponent', COALESCE(MAX(id) + 1, 1) FROM CourseComponent;
@@ -616,12 +629,16 @@ INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)
 DELETE FROM hibernate_sequences WHERE sequence_name = 'Defaults';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'Defaults', COALESCE(MAX(id) + 1, 1) FROM Defaults;
-DELETE FROM hibernate_sequences WHERE sequence_name = 'Defaults';
-INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
-  SELECT 'Defaults', COALESCE(MAX(id) + 1, 1) FROM Defaults;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'MagicKey';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'MagicKey', COALESCE(MAX(id) + 1, 1) FROM MagicKey;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'PluginRepository';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'PluginRepository', COALESCE(MAX(id) + 1, 1) FROM PluginRepository;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'InternalAuth';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)  
+  SELECT 'InternalAuth', COALESCE(MAX(id) + 1, 1) FROM InternalAuth;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'UserIdentification';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'UserIdentification', COALESCE(MAX(id) + 1, 1) FROM UserIdentification;
+

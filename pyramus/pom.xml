@@ -658,7 +658,7 @@
               </execution>
             </executions>
           </plugin>
-<!-- TODO: Creates working database, but puts hibernate inserts too early (causing errors), so commented and create file edited a bit and saved for use. -->
+          
           <plugin>
             <groupId>de.jpdigital</groupId>
             <artifactId>hibernate53-ddl-maven-plugin</artifactId>
@@ -917,7 +917,7 @@
     </profile>
 
 
-<!--     <profile>
+    <profile>
       <id>ui-it</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -926,33 +926,133 @@
         <it.port.http>8080</it.port.http>
         <it.port.https>8443</it.port.https>
         <it.host>dev.pyramus.fi</it.host>
-        <it.jdbc.driver>org.h2.Driver</it.jdbc.driver>
-        <it.jdbc.url>jdbc:h2:file:${project.build.directory}${file.separator}h2;AUTO_SERVER=TRUE</it.jdbc.url>
+        <it.database.name>testpyramusdb</it.database.name>
+        <it.jdbc.driver>com.mysql.jdbc.Driver</it.jdbc.driver>
+        <it.jdbc.url>jdbc:mysql://127.0.0.1:5555/testpyramusdb</it.jdbc.url>
         <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
         <it.jdbc.password>sa</it.jdbc.password>
-        <it.hibernate.dialect>org.hibernate.dialect.H2Dialect</it.hibernate.dialect>
+        <it.hibernate.dialect>MYSQL5_INNODB</it.hibernate.dialect>
         <it.keystore.alias>pyrit</it.keystore.alias>
         <it.keystore.pass>storepass</it.keystore.pass>
         <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
         <it.wildfly.cli-batch>true</it.wildfly.cli-batch>
         <it.skipserverstop>false</it.skipserverstop>
+        <it.cargo.stop.timeout>240000</it.cargo.stop.timeout>
         <it.browser>chrome</it.browser>
         <it.headless>true</it.headless>
       </properties>
 
       <dependencies>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
-          <groupId>com.h2database</groupId>
-          <artifactId>h2</artifactId>
-          <version>${h2.version}</version>
-          <scope>test</scope>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql-connector-java.version}</version>
         </dependency>
       </dependencies>
       <build>
 
         <plugins>
-
+        
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.39.1</version>
+            <configuration>
+              <machine>
+                <autoCreate>true</autoCreate>
+                <createOptions>
+                  <virtualbox-memory>10000</virtualbox-memory>
+                  <virtualbox-no-share></virtualbox-no-share>
+                </createOptions>
+              </machine>
+              <dockerHost>unix:///var/run/docker.sock</dockerHost>
+              <verbose>true</verbose>
+              <images>
+                <image>
+                  <alias>mysql</alias>
+                  <name>mysql:5.6</name>
+                  <run>
+                    <env>
+                      <MYSQL_USER>sa</MYSQL_USER>
+                      <MYSQL_PASSWORD>sa</MYSQL_PASSWORD>
+                      <MYSQL_ROOT_PASSWORD>test</MYSQL_ROOT_PASSWORD>
+                      <MYSQL_DATABASE>testpyramusdb</MYSQL_DATABASE>
+                    </env>
+                    <wait>
+                      <log>MySQL init process done. Ready for start up.</log>
+                      <time>25000</time>
+                    </wait>
+                    <ports>
+                      <port>5555:3306</port>
+                    </ports>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+            <executions>
+              <execution>
+                <id>docker-start</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>docker-stop</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>enforce-files-exist</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireFilesExist>
+                      <files>
+                       <file>src/test/resources/ui-data.sql</file>
+                      </files>
+                    </requireFilesExist>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <configuration>
+              <tasks>
+                  <sleep seconds="5" />
+              </tasks>
+            </configuration>
+            <executions>
+              <execution>
+                <id>Ensure MySQL startup</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -1000,82 +1100,47 @@
               </execution>
             </executions>
           </plugin>
-
+          
           <plugin>
-            <groupId>de.juplo</groupId>
-            <artifactId>hibernate-maven-plugin</artifactId>
-            <version>2.0.0</version>
+            <groupId>de.jpdigital</groupId>
+            <artifactId>hibernate53-ddl-maven-plugin</artifactId>
+            <version>2.5.0</version>
             <dependencies>
               <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
               </dependency>
             </dependencies>
             <configuration>
-              <driver>${it.jdbc.driver}</driver>
-              <dialect>${it.hibernate.dialect}</dialect>
-              <url><![CDATA[${it.jdbc.url}]]></url>
-              <username>${it.jdbc.username}</username>
-              <password>${it.jdbc.password}</password>
+              <dialects>
+                <param>${it.hibernate.dialect}</param>
+              </dialects>
+              <outputDirectory>${basedir}/target/sql/ddl</outputDirectory>
+              <persistenceXml>${basedir}/src/test/resources/persistence_for_generation.xml</persistenceXml>
+              <createDropStatements>false</createDropStatements>
+              <omitDialectFromFileName>true</omitDialectFromFileName>
+              <outputFileNamePrefix></outputFileNamePrefix>
+              <outputFileNameSuffix>createDatabase</outputFileNameSuffix>
+              <packages>
+                <param>fi.otavanopisto.pyramus.domainmodel</param>
+              </packages>
             </configuration>
             <executions>
               <execution>
-                <id>create-schema</id>
-                <phase>pre-integration-test</phase>
+                <id>generate-ddl</id>
+                <phase>process-classes</phase>
                 <goals>
-                  <goal>create</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>drop-db-after-test</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>drop</goal>
+                  <goal>gen-ddl</goal>
                 </goals>
               </execution>
             </executions>
           </plugin>
-
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>sql-maven-plugin</artifactId>
-            <version>1.5</version>
-            <dependencies>
-              <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
-              </dependency>
-            </dependencies>
-
-            <configuration>
-              <driver>${it.jdbc.driver}</driver>
-              <url>${it.jdbc.url}</url>
-              <username>${it.jdbc.username}</username>
-              <password>${it.jdbc.password}</password>
-            </configuration>
-            <executions>
-              <execution>
-                <id>create-schema</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>execute</goal>
-                </goals>
-                <configuration>
-                  <autocommit>true</autocommit>
-                  <srcFiles>
-                    <srcFile>src/test/resources/ui-data.sql</srcFile>
-                  </srcFiles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
+          
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>keytool-maven-plugin</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <executions>
               <execution>
                 <phase>generate-resources</phase>
@@ -1132,28 +1197,67 @@
               </execution>
             </executions>
           </plugin>
+          
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>sql-maven-plugin</artifactId>
+            <version>1.5</version>
+            <dependencies>
+              <!-- specify the dependent jdbc driver here -->
+              <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+              </dependency>
+            </dependencies>
+
+            <configuration>
+              <driver>${it.jdbc.driver}</driver>
+              <url>${it.jdbc.url}</url>
+              <username>${it.jdbc.username}</username>
+              <password>${it.jdbc.password}</password>
+            </configuration>
+            <executions>
+              <execution>
+                <id>create-schema</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <autocommit>true</autocommit>
+                  <srcFiles>
+                    <srcFile>${basedir}/target/sql/ddl/createDatabase.sql</srcFile>
+                    <srcFile>src/test/resources/ui-data.sql</srcFile>
+                  </srcFiles>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-maven2-plugin</artifactId>
-            <version>1.6.4</version>
+            <artifactId>cargo-maven3-plugin</artifactId>
+            <version>1.9.11</version>
             <configuration>
+              <!-- Container configs -->
               <container>
-                <containerId>wildfly10x</containerId>
+                <containerId>wildfly26x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
-                <output>${project.basedir}/target/wildfly-ui-tests.log</output>
+                <output>${project.basedir}/target/jboss.log</output>
                 <zipUrlInstaller>
-                  <url>https://download.jboss.org/wildfly/10.0.0.Final/wildfly-10.0.0.Final.zip</url>
+                  <url>https://github.com/wildfly/wildfly/releases/download/26.1.1.Final/wildfly-26.1.1.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
                 <dependencies>
                   <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
                   </dependency>
                 </dependencies>
               </container>
+              <!-- Configuration to use with the container or the deployer -->
               <configuration>
                 <files>
                   <copy>
@@ -1166,7 +1270,7 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx2G -XX:MaxMetaspaceSize=2G</cargo.jvmargs>
+                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxMetaspaceSize=512m</cargo.jvmargs>
                   <cargo.datasource.datasource.pyramus>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
@@ -1177,7 +1281,6 @@
                   </cargo.datasource.datasource.pyramus>
                 </properties>
               </configuration>
-              <deployer />
             </configuration>
             <executions>
               <execution>
@@ -1194,7 +1297,7 @@
                   <goal>stop</goal>
                 </goals>
                 <configuration>
-                  <skip>${it.skipserverstop}</skip>
+                  <timeout>${it.cargo.stop.timeout}</timeout>
                 </configuration>
               </execution>
             </executions>
@@ -1203,31 +1306,26 @@
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>1.2.0.Final</version>
+            <version>3.0.0.Final</version>
             <executions>
               <execution>
-                <id>deploy</id>
+                <id>configure-wildfly</id>
                 <phase>pre-integration-test</phase>
                 <goals>
-                  <goal>deploy</goal>
+                  <goal>execute-commands</goal>
                 </goals>
                 <configuration>
-                  <before-deployment>
-                    <batch>true</batch>
                     <commands>
-                      <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
-                      <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
-                      <command>/core-service=management/security-realm=ssl-realm:add()</command>
-                      <command>/core-service=management/security-realm=ssl-realm/server-identity=ssl:add(keystore-path="${it.keystore.file}",keystore-password="${it.keystore.pass}",alias="${it.keystore.alias}")</command>
-                      <command>/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding="https",security-realm="ssl-realm")</command>
-                      <command>/subsystem=undertow/server=default-server/host=pyramus:add()</command>
-                      <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=alias,value=["dev.pyramus.fi"])</command>
-                      <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=default-web-module,value=ROOT.war)</command>
-                      <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
-                      <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
+                    <command>/system-property=pyramus.workspace:add(value="${basedir}/..")</command>
+                    <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.http}")</command>
+                    <command>/subsystem=undertow/server=default-server/host=pyramus:add()</command>
+                    <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=alias,value=["${it.host}"])</command>
+                    <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=default-web-module,value=pyramus-ROOT.war)</command>
+                    <command>/subsystem=undertow:write-attribute(name=default-virtual-host,value="pyramus")</command>
+                    <command>/subsystem=undertow/server=default-server/host=default-host:remove()</command>
+                    <command>/subsystem=undertow/configuration=handler/file=welcome-content:remove</command>
+                    <command>:reload</command>                  
                     </commands>
-                  </before-deployment>
-                  <filename>./pyramus-${project.version}.war</filename>
                 </configuration>
               </execution>
             </executions>
@@ -1258,6 +1356,6 @@
 
         </plugins>
       </build>
-    </profile> -->
+    </profile>
   </profiles>
 </project>
