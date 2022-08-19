@@ -1,7 +1,12 @@
 package fi.otavanopisto.pyramus.json.students;
 
-import org.apache.commons.fileupload.FileItem;
+import java.io.IOException;
 
+import javax.servlet.http.Part;
+
+import org.apache.commons.io.IOUtils;
+
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -30,20 +35,24 @@ public class EditStudentImageJSONRequestController extends JSONRequestController
 
     String deleteImage = requestContext.getString("deleteImage");
     Long studentId = requestContext.getLong("studentId");
-    FileItem studentImage = requestContext.getFile("studentImage");
+    Part studentImage = requestContext.getFile("studentImage");
 
     Student student = studentDAO.findById(studentId);
     StudentImage oldImage = imageDAO.findByStudent(student);
     
     if (deleteImage == null) {
       if (studentImage != null) {
-        String contentType = studentImage.getContentType();
-        byte[] data = studentImage.get();
-        
-        if (oldImage != null) {
-          imageDAO.update(oldImage, contentType, data);
-        } else {
-          imageDAO.create(student, contentType, data);
+        try {
+          String contentType = studentImage.getContentType();
+          byte[] data = IOUtils.toByteArray(studentImage.getInputStream());
+          
+          if (oldImage != null) {
+            imageDAO.update(oldImage, contentType, data);
+          } else {
+            imageDAO.create(student, contentType, data);
+          }
+        } catch (IOException ioe) {
+          throw new SmvcRuntimeException(ioe);
         }
       }
     } else {

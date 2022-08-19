@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.fileupload.FileItem;
+import javax.servlet.http.Part;
 
+import org.apache.commons.io.IOUtils;
+
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.file.FileTypeDAO;
@@ -46,28 +49,32 @@ public class UploadStudentFileJSONRequestController extends JSONRequestControlle
     Long studentId = requestContext.getLong("studentId");
     String name = requestContext.getString("fileName");
     Long fileTypeId = requestContext.getLong("fileType");
-    FileItem fileItem = requestContext.getFile("file");
+    Part fileItem = requestContext.getFile("file");
 
     Student student = studentDAO.findById(studentId);
     FileType fileType = fileTypeId != null ? fileTypeDAO.findById(fileTypeId) : null;
     
     if (fileItem != null) {
-      String fileId = null;
-      byte[] data = fileItem.get();
-      
-      if (PyramusFileUtils.isFileSystemStorageEnabled()) {
-        try {
-          fileId = PyramusFileUtils.generateFileId();
-          PyramusFileUtils.storeFile(student, fileId, data);
-          data = null;
+      try {
+        String fileId = null;
+        byte[] data = IOUtils.toByteArray(fileItem.getInputStream());
+        
+        if (PyramusFileUtils.isFileSystemStorageEnabled()) {
+          try {
+            fileId = PyramusFileUtils.generateFileId();
+            PyramusFileUtils.storeFile(student, fileId, data);
+            data = null;
+          }
+          catch (IOException e) {
+            fileId = null;
+            logger.log(Level.SEVERE, "Store user file to file system failed", e);
+          }
         }
-        catch (IOException e) {
-          fileId = null;
-          logger.log(Level.SEVERE, "Store user file to file system failed", e);
-        }
+        
+        studentFileDAO.create(student, name, fileItem.getName(), fileId, fileType, fileItem.getContentType(), data, loggedUser);
+      } catch (IOException ioe) {
+        throw new SmvcRuntimeException(ioe);
       }
-      
-      studentFileDAO.create(student, name, fileItem.getName(), fileId, fileType, fileItem.getContentType(), data, loggedUser);
     }
   }
 
