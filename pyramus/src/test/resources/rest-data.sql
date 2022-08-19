@@ -1,14 +1,12 @@
 insert into 
   SettingKey (id, name)
 values 
-  (1, 'system.environment'),
-  (2, 'authentication.enabledStrategies');
+  (1, 'system.environment');
   
 insert into 
   Setting (id, settingKey, value)
 values 
-  (1, 1, 'it'),
-  (2, 2, 'TestAuth');
+  (1, 1, 'it');
 
 insert into
   Organization (id, name, archived)
@@ -20,11 +18,6 @@ insert into
 values 
   (1, 'Home', 1, false, false);
 
-insert into
-  Plugin (id, artifactId, enabled, groupId, version)
-values
-  (1, 'testauth-plugin', true, 'fi.otavanopisto.pyramus', '0.7.50-SNAPSHOT');
-  
 insert into 
   GradingScale (id, archived, name, description, version)
 values  
@@ -86,20 +79,20 @@ values
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
 values 
-  (1, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '123411-7890', 'Test staff #1', false),
-  (2, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '012345535-8901', 'Test staff #2', false),
-  (3, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
-  (4, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false),
-  (5, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121213-7890', 'Test User #1', false),
-  (6, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '131214-8901', 'Test Manager #1', false),
-  (7, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121216-7891', 'Test administrator #1', false),
-  (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false),
-  (9, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000000-0000', 'Trusted System', false),
-  (10, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000100-0000', 'Study Guider', false),
-  (11, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000010-0000', 'Teacher', false),
-  (12, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'SPLeader', false),
-  (13, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'Test Student #2', false),
-  (14, 1, PARSEDATETIME('1 1 1956', 'd M yyyy'), 'MALE', '010100-2000', 'Closed', false);
+  (1, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '123411-7890', 'Test staff #1', false),
+  (2, 1, STR_TO_DATE('1 1 1970', '%d %m %Y'), 'MALE', '012345535-8901', 'Test staff #2', false),
+  (3, 1, STR_TO_DATE('1 1 1990', '%d %m %Y'), 'FEMALE', '123456-7890', 'Test student #1', false),
+  (4, 1, STR_TO_DATE('1 1 1990', '%d %m %Y'), 'MALE', '01234567-8901', 'Test student #2', false),
+  (5, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '121213-7890', 'Test User #1', false),
+  (6, 1, STR_TO_DATE('1 1 1970', '%d %m %Y'), 'MALE', '131214-8901', 'Test Manager #1', false),
+  (7, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '121216-7891', 'Test administrator #1', false),
+  (8, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '121217-7892', 'Test Student #1', false),
+  (9, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '000000-0000', 'Trusted System', false),
+  (10, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '000100-0000', 'Study Guider', false),
+  (11, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '000010-0000', 'Teacher', false),
+  (12, 1, STR_TO_DATE('1 1 1981', '%d %m %Y'), 'FEMALE', '000100-0000', 'SPLeader', false),
+  (13, 1, STR_TO_DATE('1 1 1981', '%d %m %Y'), 'FEMALE', '000100-0000', 'Test Student #2', false),
+  (14, 1, STR_TO_DATE('1 1 1956', '%d %m %Y'), 'MALE', '010100-2000', 'Closed', false);
   
 insert into
   User (id, person_id, firstName, lastName, contactInfo, version, archived)
@@ -139,8 +132,8 @@ values
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
 values 
-  (1, 'fall', PARSEDATETIME('1 8 2014', 'd M yyyy'), PARSEDATETIME('23 12 2014', 'd M yyyy'), false, 0),
-  (2, 'spring', PARSEDATETIME('4 1 2015', 'd M yyyy'), PARSEDATETIME('30 5 2015', 'd M yyyy'), false, 0);
+  (1, 'fall', STR_TO_DATE('1 8 2014', '%d %m %Y'), STR_TO_DATE('23 12 2014', '%d %m %Y'), false, 0),
+  (2, 'spring', STR_TO_DATE('4 1 2015', '%d %m %Y'), STR_TO_DATE('30 5 2015', '%d %m %Y'), false, 0);
   
 insert into
   EducationType (id, archived, code, name, version)
@@ -215,15 +208,17 @@ values
   (2, 'Special', false);
   
 insert into 
-  CourseBase (id, name, archived, created, lastModified, description, creator, lastModifier, version, maxParticipantCount)
+  CourseBase (id, name, archived, created, lastModified, description, maxParticipantCount, version, creator, lastModifier)
 values
-  (1, 'Test Module #1', false, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Module #1 for testing', 1, 1, 1, 100);
+  (1, 'Test Module #1', false, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Module #1 for testing', 100, 1, 1, 1),
+  (1000, 'Test Course #1', false, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Course #1 for testing', 100, 1, 1, 1),
+  (1001, 'Test Course #2', false, STR_TO_DATE('1 1 2011', '%d %m %Y'), STR_TO_DATE('1 1 2011', '%d %m %Y'), 'Course #2 for testing', 200, 1, 1, 1);
 
 insert into
   CourseModule (course, subject, courseNumber, courseLength)
 values
   (1, 1, 1, 1);
-  
+
 insert into
   Module (id)
 values 
@@ -240,13 +235,7 @@ insert into
 values 
   (1, 1, 0),
   (2, 1, 1);
-
-insert into 
-  CourseBase (id, name, archived, created, lastModified, description, creator, lastModifier, version, maxParticipantCount)
-values
-  (1000, 'Test Course #1', false, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Course #1 for testing', 1, 1, 1, 100),
-  (1001, 'Test Course #2', false, PARSEDATETIME('1 1 2011', 'd M yyyy'), PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Course #2 for testing', 1, 1, 1, 200);
-
+  
 insert into
   CourseModule (id, course, subject, courseNumber, courseLength)
 values
@@ -256,8 +245,8 @@ values
 insert into 
   Course (id, beginDate, endDate, localTeachingDays, nameExtension, module, state, teachingHours, distanceTeachingDays, planningHours, assessingHours, enrolmentTimeEnd, courseTemplate)
 values 
-  (1000, PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 10, 'Ext', 1, 1, 40, 30, 20, 10, PARSEDATETIME('1 1 2010', 'd M yyyy'), false),
-  (1001, PARSEDATETIME('2 2 2011', 'd M yyyy'), PARSEDATETIME('3 3 2011', 'd M yyyy'), 20, 'ABC', 1, 2, 15, 17, 20, 10, PARSEDATETIME('1 1 2011', 'd M yyyy'), false);
+  (1000, STR_TO_DATE('2 2 2010', '%d %m %Y'), STR_TO_DATE('3 3 2010', '%d %m %Y'), 10, 'Ext', 1, 1, 40, 30, 20, 10, STR_TO_DATE('1 1 2010', '%d %m %Y'), false),
+  (1001, STR_TO_DATE('2 2 2011', '%d %m %Y'), STR_TO_DATE('3 3 2011', '%d %m %Y'), 20, 'ABC', 1, 2, 15, 17, 20, 10, STR_TO_DATE('1 1 2011', '%d %m %Y'), false);
   
 insert into
   CourseEducationType (id, courseBase, educationType, version)
@@ -288,8 +277,8 @@ values
 insert into 
   Project (id, name, description, optionalStudies, creator, created, lastModified, lastModifier, archived, version)
 values 
-  (1, 'Test Project #1', 'Project for testing', 7, 1, PARSEDATETIME('6 6 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, 1),
-  (2, 'Test Project #2', 'Project for testing', 8, 1, PARSEDATETIME('6 6 2011', 'd M yyyy'), PARSEDATETIME('6 6 2011', 'd M yyyy'), 1, false, 1);
+  (1, 'Test Project #1', 'Project for testing', 7, 1, STR_TO_DATE('6 6 2010', '%d %m %Y'), STR_TO_DATE('6 6 2010', '%d %m %Y'), 1, false, 1),
+  (2, 'Test Project #2', 'Project for testing', 8, 1, STR_TO_DATE('6 6 2011', '%d %m %Y'), STR_TO_DATE('6 6 2011', '%d %m %Y'), 1, false, 1);
   
 insert into 
   ProjectModule (id, optionality, module, project, indexColumn, version)
@@ -425,9 +414,9 @@ values
 insert into 
   StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived, guidanceGroup, organization)
 values 
-  (1, 'StudentGroup #1', 'Group of students #1', 1, 1, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 1, false, false, 1),
-  (2, 'StudentGroup #2', 'Group of students #2', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, false, 1),
-  (3, 'StudentGroup #3', 'Group of students #3', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2012', 'd M yyyy'), PARSEDATETIME('6 6 2012', 'd M yyyy'), 1, false, false, 1);  
+  (1, 'StudentGroup #1', 'Group of students #1', 1, 1, STR_TO_DATE('1 1 2010', '%d %m %Y'), STR_TO_DATE('2 2 2010', '%d %m %Y'), STR_TO_DATE('3 3 2010', '%d %m %Y'), 1, false, false, 1),
+  (2, 'StudentGroup #2', 'Group of students #2', 1, 1, STR_TO_DATE('4 4 2010', '%d %m %Y'), STR_TO_DATE('5 5 2010', '%d %m %Y'), STR_TO_DATE('6 6 2010', '%d %m %Y'), 1, false, false, 1),
+  (3, 'StudentGroup #3', 'Group of students #3', 1, 1, STR_TO_DATE('4 4 2010', '%d %m %Y'), STR_TO_DATE('5 5 2012', '%d %m %Y'), STR_TO_DATE('6 6 2012', '%d %m %Y'), 1, false, false, 1);  
   
 insert into
   StudentActivityType (id, name, version, archived)
@@ -440,10 +429,10 @@ insert into
     additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
     examinationType, education, curriculum_id)
 values 
-  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', 3),
-  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', null),
-  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', null),
-  (13, 1, 'TEST-Student2', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg2', null);
+  (3, 1, 'Tanya-T', 0, STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', 3),
+  (4, 1, 'David-T', 0, STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', null),
+  (8, 1, 'TEST-User', 0, STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', null),
+  (13, 1, 'TEST-Student2', 0, STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg2', null);
 
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
@@ -466,8 +455,8 @@ values
 insert into 
   StudentContactLogEntry (id, creatorName, entryDate, text, type, student, version, archived)
 values
-  (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 3, 1, false),
-  (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 3, 1, false);
+  (1, 'Tester #1', STR_TO_DATE('1 1 2010', '%d %m %Y'), 'Test text #1', 'LETTER', 3, 1, false),
+  (2, 'Tester #2', STR_TO_DATE('1 1 2011', '%d %m %Y'), 'Test text #2', 'PHONE', 3, 1, false);
 
 insert into
    ClientApplication (id, clientName, clientId, clientSecret, skipPrompt)
@@ -527,14 +516,14 @@ values
 insert into 
   CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student)
 values
-  (5, false, PARSEDATETIME('1 1 2010', 'd M yyyy'), false, 'OPTIONAL', null, 1, 1, 3),
-  (6, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4),
-  (7, false, PARSEDATETIME('1 1 2012', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 13);
+  (5, false, STR_TO_DATE('1 1 2010', '%d %m %Y'), false, 'OPTIONAL', null, 1, 1, 3),
+  (6, false, STR_TO_DATE('1 1 2011', '%d %m %Y'), true, 'MANDATORY', null, 2, 2, 4),
+  (7, false, STR_TO_DATE('1 1 2012', '%d %m %Y'), true, 'MANDATORY', null, 2, 2, 13);
 
 insert into
   Credit (id, archived, verbalAssessment, date, creditType, version, assessor_id, grade)
 values
-  (1, false, 'TEST ASSESSMENT', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'CourseAssessment', 1, 6, 2);
+  (1, false, 'TEST ASSESSMENT', STR_TO_DATE('1 1 2011', '%d %m %Y'), 'CourseAssessment', 1, 6, 2);
   
 insert into
   CourseAssessment (id, courseStudent, courseModule)
@@ -545,61 +534,211 @@ insert into Defaults
   (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization, studentDefaultContactType, userDefaultContactType)
 values
   (1, 1, 1, 1, 1, 1, 1, 1, 1);
-  
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Person', max(id) + 1 from Person;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseState', max(id) + 1 from CourseState;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseType', max(id) + 1 from CourseType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseEducationType', max(id) + 1 from CourseEducationType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseEducationSubtype', max(id) + 1 from CourseEducationSubtype;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseEnrolmentType', max(id) + 1 from CourseEnrolmentType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseParticipationType', max(id) + 1 from CourseParticipationType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationalTimeUnit', max(id) + 1 from EducationalTimeUnit;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseBase', max(id) + 1 from CourseBase;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationalLength', max(id) + 1 from EducationalLength;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ComponentBase', max(id) + 1 from ComponentBase;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseDescriptionCategory', max(id) + 1 from CourseDescriptionCategory;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AcademicTerm', max(id) + 1 from AcademicTerm;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SettingKey', max(id) + 1 from SettingKey;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Setting', max(id) + 1 from Setting;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationSubtype', max(id) + 1 from EducationSubtype;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'GradingScale', max(id) + 1 from GradingScale;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Grade', max(id) + 1 from Grade;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Project', max(id) + 1 from Project;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ProjectModule', max(id) + 1 from ProjectModule;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolField', max(id) + 1 from SchoolField;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactInfo', max(id) + 1 from ContactInfo;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactType', max(id) + 1 from ContactType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Address', max(id) + 1 from Address;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Email', max(id) + 1 from Email;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'PhoneNumber', max(id) + 1 from PhoneNumber;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactURLType', max(id) + 1 from ContactURLType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactURL', max(id) + 1 from ContactURL;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'School', max(id) + 1 from School;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolVariableKey', max(id) + 1 from SchoolVariableKey;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolVariable', max(id) + 1 from SchoolVariable;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'UserVariableKey', max(id) + 1 from UserVariableKey;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseBaseVariableKey', max(id) + 1 from CourseBaseVariableKey;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Language', max(id) + 1 from Language;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Municipality', max(id) + 1 from Municipality;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Nationality', max(id) + 1 from Nationality;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentActivityType', max(id) + 1 from StudentActivityType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentEducationalLevel', max(id) + 1 from StudentEducationalLevel;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentExaminationType', max(id) + 1 from StudentExaminationType;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgrammeCategory', max(id) + 1 from StudyProgrammeCategory;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroup', max(id) + 1 from StudentGroup;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroupStudent', max(id) + 1 from StudentGroupStudent;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentStudyEndReason', max(id) + 1 from StudentStudyEndReason;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplication', max(id) + 1 from ClientApplication;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplicationAuthorizationCode', max(id) + 1 from ClientApplicationAuthorizationCode;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStaffMemberRole', max(id) + 1 from CourseStaffMemberRole;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Credit', max(id) + 1 from Credit;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseAssessment', max(id) + 1 from CourseAssessment;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Curriculum', max(id) + 1 from Curriculum;
+
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseModule';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseModule', COALESCE(MAX(id) + 1, 1) FROM CourseModule;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'SettingKey';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'SettingKey', COALESCE(MAX(id) + 1, 1) FROM SettingKey;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Setting';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Setting', COALESCE(MAX(id) + 1, 1) FROM Setting;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Organization';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Organization', COALESCE(MAX(id) + 1, 1) FROM Organization;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ContactType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ContactType', COALESCE(MAX(id) + 1, 1) FROM ContactType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'GradingScale';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'GradingScale', COALESCE(MAX(id) + 1, 1) FROM GradingScale;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Grade';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Grade', COALESCE(MAX(id) + 1, 1) FROM Grade;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ContactInfo';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ContactInfo', COALESCE(MAX(id) + 1, 1) FROM ContactInfo;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Email';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Email', COALESCE(MAX(id) + 1, 1) FROM Email;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Person';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Person', COALESCE(MAX(id) + 1, 1) FROM Person;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'User';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'User', COALESCE(MAX(id) + 1, 1) FROM User;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StaffMember';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StaffMember', COALESCE(MAX(id) + 1, 1) FROM StaffMember;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'AcademicTerm';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'AcademicTerm', COALESCE(MAX(id) + 1, 1) FROM AcademicTerm;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'EducationType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'EducationType', COALESCE(MAX(id) + 1, 1) FROM EducationType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'EducationSubtype';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'EducationSubtype', COALESCE(MAX(id) + 1, 1) FROM EducationSubtype;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Subject';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Subject', COALESCE(MAX(id) + 1, 1) FROM Subject;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseState';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseState', COALESCE(MAX(id) + 1, 1) FROM CourseState;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseType', COALESCE(MAX(id) + 1, 1) FROM CourseType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseEnrolmentType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseEnrolmentType', COALESCE(MAX(id) + 1, 1) FROM CourseEnrolmentType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseParticipationType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseParticipationType', COALESCE(MAX(id) + 1, 1) FROM CourseParticipationType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'EducationalTimeUnit';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'EducationalTimeUnit', COALESCE(MAX(id) + 1, 1) FROM EducationalTimeUnit;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'EducationalLength';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'EducationalLength', COALESCE(MAX(id) + 1, 1) FROM EducationalLength;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseDescriptionCategory';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseDescriptionCategory', COALESCE(MAX(id) + 1, 1) FROM CourseDescriptionCategory;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseBase';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseBase', COALESCE(MAX(id) + 1, 1) FROM CourseBase;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Module';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Module', COALESCE(MAX(id) + 1, 1) FROM Module;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ComponentBase';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ComponentBase', COALESCE(MAX(id) + 1, 1) FROM ComponentBase;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ModuleComponent';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ModuleComponent', COALESCE(MAX(id) + 1, 1) FROM ModuleComponent;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseBase';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseBase', COALESCE(MAX(id) + 1, 1) FROM CourseBase;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Course';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Course', COALESCE(MAX(id) + 1, 1) FROM Course;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseEducationType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseEducationType', COALESCE(MAX(id) + 1, 1) FROM CourseEducationType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseEducationSubtype';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseEducationSubtype', COALESCE(MAX(id) + 1, 1) FROM CourseEducationSubtype;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ComponentBase';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ComponentBase', COALESCE(MAX(id) + 1, 1) FROM ComponentBase;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseComponent';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseComponent', COALESCE(MAX(id) + 1, 1) FROM CourseComponent;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Project';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Project', COALESCE(MAX(id) + 1, 1) FROM Project;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ProjectModule';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ProjectModule', COALESCE(MAX(id) + 1, 1) FROM ProjectModule;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'SchoolField';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'SchoolField', COALESCE(MAX(id) + 1, 1) FROM SchoolField;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Address';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Address', COALESCE(MAX(id) + 1, 1) FROM Address;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'PhoneNumber';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'PhoneNumber', COALESCE(MAX(id) + 1, 1) FROM PhoneNumber;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ContactURLType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ContactURLType', COALESCE(MAX(id) + 1, 1) FROM ContactURLType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ContactURL';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ContactURL', COALESCE(MAX(id) + 1, 1) FROM ContactURL;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'School';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'School', COALESCE(MAX(id) + 1, 1) FROM School;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'SchoolVariableKey';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'SchoolVariableKey', COALESCE(MAX(id) + 1, 1) FROM SchoolVariableKey;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'SchoolVariable';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'SchoolVariable', COALESCE(MAX(id) + 1, 1) FROM SchoolVariable;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'UserVariableKey';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'UserVariableKey', COALESCE(MAX(id) + 1, 1) FROM UserVariableKey;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseBaseVariableKey';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseBaseVariableKey', COALESCE(MAX(id) + 1, 1) FROM CourseBaseVariableKey;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Language';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Language', COALESCE(MAX(id) + 1, 1) FROM Language;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Curriculum';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Curriculum', COALESCE(MAX(id) + 1, 1) FROM Curriculum;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Municipality';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Municipality', COALESCE(MAX(id) + 1, 1) FROM Municipality;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Nationality';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Nationality', COALESCE(MAX(id) + 1, 1) FROM Nationality;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentEducationalLevel';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentEducationalLevel', COALESCE(MAX(id) + 1, 1) FROM StudentEducationalLevel;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentExaminationType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentExaminationType', COALESCE(MAX(id) + 1, 1) FROM StudentExaminationType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudyProgrammeCategory';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudyProgrammeCategory', COALESCE(MAX(id) + 1, 1) FROM StudyProgrammeCategory;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudyProgramme';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudyProgramme', COALESCE(MAX(id) + 1, 1) FROM StudyProgramme;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentGroup';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentGroup', COALESCE(MAX(id) + 1, 1) FROM StudentGroup;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentActivityType';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentActivityType', COALESCE(MAX(id) + 1, 1) FROM StudentActivityType;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Student';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Student', COALESCE(MAX(id) + 1, 1) FROM Student;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentGroupStudent';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentGroupStudent', COALESCE(MAX(id) + 1, 1) FROM StudentGroupStudent;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentGroupUser';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentGroupUser', COALESCE(MAX(id) + 1, 1) FROM StudentGroupUser;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentStudyEndReason';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentStudyEndReason', COALESCE(MAX(id) + 1, 1) FROM StudentStudyEndReason;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'StudentContactLogEntry';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'StudentContactLogEntry', COALESCE(MAX(id) + 1, 1) FROM StudentContactLogEntry;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ClientApplication';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ClientApplication', COALESCE(MAX(id) + 1, 1) FROM ClientApplication;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'ClientApplicationAuthorizationCode';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'ClientApplicationAuthorizationCode', COALESCE(MAX(id) + 1, 1) FROM ClientApplicationAuthorizationCode;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseStaffMemberRole';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseStaffMemberRole', COALESCE(MAX(id) + 1, 1) FROM CourseStaffMemberRole;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseUser';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseUser', COALESCE(MAX(id) + 1, 1) FROM CourseUser;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseStudent';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseStudent', COALESCE(MAX(id) + 1, 1) FROM CourseStudent;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Credit';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Credit', COALESCE(MAX(id) + 1, 1) FROM Credit;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseAssessment';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'CourseAssessment', COALESCE(MAX(id) + 1, 1) FROM CourseAssessment;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Defaults';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Defaults', COALESCE(MAX(id) + 1, 1) FROM Defaults;
+DELETE FROM hibernate_sequences WHERE sequence_name = 'Defaults';
+INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
+  SELECT 'Defaults', COALESCE(MAX(id) + 1, 1) FROM Defaults;

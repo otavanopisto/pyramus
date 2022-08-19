@@ -35,7 +35,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
       .body("courseModuleId", is(courseAssessment.getCourseModuleId().intValue()))
       .body("gradeId", is( courseAssessment.getGradeId().intValue() ))
       .body("assessorId", is( courseAssessment.getAssessorId().intValue() ))
-      .body("date", is( courseAssessment.getDate().toString() ))
+      .body("date", is( getDateString(courseAssessment.getDate().getYear(), courseAssessment.getDate().getMonth().getValue(), courseAssessment.getDate().getDayOfMonth()) ))
       .body("verbalAssessment", is( courseAssessment.getVerbalAssessment() ));
       
     int id = response.body().jsonPath().getInt("id");
@@ -132,7 +132,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
       .body("courseModuleId", is(courseAssessment.getCourseModuleId().intValue()))
       .body("gradeId", is( courseAssessment.getGradeId().intValue() ))
       .body("assessorId", is( courseAssessment.getAssessorId().intValue() ))
-      .body("date", is( courseAssessment.getDate().toString() ))
+      .body("date", is( getDateString(courseAssessment.getDate().getYear(), courseAssessment.getDate().getMonth().getValue(), courseAssessment.getDate().getDayOfMonth()) ))
       .body("verbalAssessment", is( courseAssessment.getVerbalAssessment() ));
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
@@ -150,7 +150,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
         .body("courseModuleId", is(updatedCourseAssessment.getCourseModuleId().intValue()))
         .body("gradeId", is( updatedCourseAssessment.getGradeId().intValue() ))
         .body("assessorId", is( updatedCourseAssessment.getAssessorId().intValue() ))
-        .body("date", is( updatedCourseAssessment.getDate().toString() ))
+        .body("date", is( getDateString(updatedCourseAssessment.getDate().getYear(), updatedCourseAssessment.getDate().getMonth().getValue(), updatedCourseAssessment.getDate().getDayOfMonth()) ))
         .body("verbalAssessment", is( updatedCourseAssessment.getVerbalAssessment() ));
 
     } finally {
