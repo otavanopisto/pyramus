@@ -1,36 +1,28 @@
 package fi.internetix.smvc.controllers;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.SmvcMessage;
-import fi.internetix.smvc.SmvcRuntimeException;
-import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.dispatcher.RequestDispatchContext;
-import fi.internetix.smvc.i18n.Messages;
 
 /**
  * An abstract request context associated with each request made to the application.
@@ -53,31 +45,6 @@ public abstract class RequestContext {
     this.servletResponse = servletResponse;
     this.requestDispatchContext = requestDispatchContext;
     this.servletContext = servletContext;
-    
-    if (ServletFileUpload.isMultipartContent(servletRequest)) {
-      multipartFields = new HashMap<>();
-      
-      ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
-      servletFileUpload.setHeaderEncoding("UTF-8");
-
-      String fileName = null;
-      try {
-        List<FileItem> items = servletFileUpload.parseRequest(servletRequest);
-        Iterator<FileItem> iter = items.iterator();
-        while (iter.hasNext()) {
-          FileItem item = iter.next();
-          fileName = item.getName();
-          String fieldName = item.getFieldName();
-          multipartFields.put(fieldName, item);
-        }
-      }
-      catch (FileUploadException fue) {
-        Messages messages = Messages.getInstance();
-        Locale locale = servletRequest.getLocale();
-        throw new SmvcRuntimeException(StatusCode.FILE_HANDLING_FAILURE, messages.getText(locale, "exception.104.fileHandlingFailure", new String[] {fileName}), fue);
-      }
-    }
-
   }
 
   /**
@@ -271,33 +238,18 @@ public abstract class RequestContext {
   }
 
   public String getString(String paramName, boolean emptyAsNull) {
-    String value = null;
-    if (multipartFields != null) {
-      FileItem fileItem = multipartFields.get(paramName);
-      if (fileItem != null) {
-        try {
-          value = fileItem.getString("UTF-8");
-        }
-        catch (UnsupportedEncodingException uee) {
-        }
-      }
-    }
-    else {
-      value = requestDispatchContext.getParameterHandler().getParameter(paramName);
-    }
+    String value = getRequest().getParameter(paramName);
     return emptyAsNull && StringUtils.isBlank(value) ? null : value;
   }
   
-  public FileItem getFile(String paramName) {
-    FileItem fileItem = null;
-    
-    if (multipartFields != null) {
-      fileItem = multipartFields.get(paramName);
+  public Part getFile(String paramName) {
+    try {
+      return getRequest().getPart(paramName);
+    } catch (IOException | ServletException e) {
+      return null;
     }
-    
-    return fileItem;
-  }
-
+  }  
+  
   /**
    * Once a page request has been processed, the context is responsible of writing it back to the
    * user via this method. This response is written BEFORE committing (or rolling back) the database
@@ -333,8 +285,6 @@ public abstract class RequestContext {
   private HttpServletResponse servletResponse;
 
   private final ServletContext servletContext;
-  
-  private Map<String, FileItem> multipartFields;
   
   /**
    * The redirect URL of this context.

@@ -14,11 +14,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
-//import org.apache.http.client.methods.HttpPost;
-//import org.apache.http.entity.StringEntity;
-//import org.apache.http.impl.client.CloseableHttpClient;
-//import org.apache.http.impl.client.HttpClientBuilder;
-//import org.apache.http.util.EntityUtils;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,25 +57,25 @@ public class Webhooks {
   }
   
   private Boolean notifyWebhook(String url, String signature, String data) {
-//    try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-//      HttpPost httpPost = new HttpPost(url);
-//      try {
-//        StringEntity dataEntity = new StringEntity(data, "UTF-8");
-//        try {
-//          httpPost.addHeader("X-Pyramus-Signature", signature);
-//          httpPost.setEntity(dataEntity);
-//          client.execute(httpPost);
-//          return true;
-//        } finally {
-//          EntityUtils.consume(dataEntity);
-//        }
-//      } finally {
-//        httpPost.releaseConnection();
-//      }
-//    } catch (IOException e) {
-//      logger.log(Level.SEVERE, "Failed to send webhook notification to " + url, e);
-//    }
-//    
+    try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+      HttpPost httpPost = new HttpPost(url);
+      try {
+        StringEntity dataEntity = new StringEntity(data, "UTF-8");
+        try {
+          httpPost.addHeader("X-Pyramus-Signature", signature);
+          httpPost.setEntity(dataEntity);
+          client.execute(httpPost);
+          return true;
+        } finally {
+          EntityUtils.consume(dataEntity);
+        }
+      } finally {
+        httpPost.releaseConnection();
+      }
+    } catch (IOException e) {
+      logger.log(Level.SEVERE, "Failed to send webhook notification to " + url, e);
+    }
+    
     return false;
   }
 
