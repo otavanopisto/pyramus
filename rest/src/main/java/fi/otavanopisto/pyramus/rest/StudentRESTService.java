@@ -2496,7 +2496,7 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
+  public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @DefaultValue("false") @QueryParam("archived") Boolean archived) {
     Student student = studentController.findStudentById(studentId);
 
     Status studentStatus = checkStudent(student);
@@ -2517,8 +2517,13 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    List<CourseAssessmentRequest> assessmentRequests = null;
     
+    if (archived.equals(Boolean.TRUE)) {
+      assessmentRequests = assessmentController.listCourseAssessmentRequestsIncludingArchivedByCourseAndStudent(course, student);
+    } else {
+      assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    }
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
   }
   
@@ -3259,6 +3264,27 @@ public class StudentRESTService extends AbstractRESTService {
     response.setNumberCreditPoints(numCreditPoints);
     
     return Response.ok(response).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/amICounselor")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response amICounselor(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
+    
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).entity("Staff member not found").build();
+    }
+    
+    Boolean amICounselor = studentController.amIGuidanceCounselor(student.getId(), staffMember);
+    
+    return Response.ok(amICounselor).build();
   }
 
   /**
