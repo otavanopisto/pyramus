@@ -4,9 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import fi.otavanopisto.pyramus.ui.base.StudentTestsBase;
+import fi.otavanopisto.pyramus.ui.base.StudentTestsUIBase;
 
-public class StudentTestsIT extends StudentTestsBase {
+public class StudentTestsUIIT extends StudentTestsUIBase {
   
   @Before
   public void setUp() {

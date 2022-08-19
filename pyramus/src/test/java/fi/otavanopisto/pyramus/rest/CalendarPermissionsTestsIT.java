@@ -79,9 +79,6 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
 
     try {
-      response.then().body("id", not(is((Long) null))).body("name", is(academicTerm.getName())).body("startDate", is(academicTerm.getStartDate().toString()))
-          .body("endDate", is(academicTerm.getEndDate().toString())).body("archived", is(academicTerm.getArchived()));
-
       AcademicTerm updateAcademicTerm = new AcademicTerm(id, "updated", getDate(2010, 03, 04), getDate(2010, 07, 13), Boolean.FALSE);
       
       Response updateResponse = given().headers(getAuthHeaders())

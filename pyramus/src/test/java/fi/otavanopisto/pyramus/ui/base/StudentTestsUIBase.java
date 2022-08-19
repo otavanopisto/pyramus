@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import fi.otavanopisto.pyramus.ui.AbstractUITest;
 
-public class StudentTestsBase extends AbstractUITest {
+public class StudentTestsUIBase extends AbstractUITest {
   
   @Test
   public void testCreateStudent(){
