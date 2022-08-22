@@ -16,7 +16,6 @@
         <option value="luku">Aikuisten perusopetuksen lukutaitovaihe</option>
         <option value="apa">Aikuisten perusopetuksen alkuvaihe</option>
         <option value="pk">Aikuisten perusopetuksen päättövaihe (monikulttuurinen peruskoululinja)</option>
-        <option value="luva">Lukioon valmistava koulutus maahanmuuttajille (LUVA)</option>
         <option value="lisaopetus">Lisäopetus</option>
       </select>
     </div>
