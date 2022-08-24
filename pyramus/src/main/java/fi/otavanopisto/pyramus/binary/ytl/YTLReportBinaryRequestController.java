@@ -289,7 +289,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     for (YTLAineKoodiSuoritettuKurssi ytlAKSK : ytlAineKoodi.getSuoritetutKurssit()) {
       EducationType educationType = educationTypeDAO.findById(ytlAKSK.getEducationType());
       if (educationType != null) {
-        Subject subject = subjectDAO.findBy(educationType, ytlAKSK.getSubjectCode());
+        Subject subject = subjectDAO.findByEducationTypeAndCode(educationType, ytlAKSK.getSubjectCode());
         if (subject != null) {
           TORSubject torSubject = tor.findSubject(subject.getCode());
           if (torSubject != null) {
