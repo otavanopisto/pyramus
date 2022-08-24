@@ -69,7 +69,10 @@ public class SubjectDAO extends PyramusEntityDAO<Subject> {
     Root<Subject> root = criteria.from(Subject.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(root.get(Subject_.code), code)
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(Subject_.code), code),
+            criteriaBuilder.equal(root.get(Subject_.archived), Boolean.FALSE)
+        )
     );
     
     List<Subject> subjects = entityManager.createQuery(criteria).getResultList();
@@ -82,7 +85,7 @@ public class SubjectDAO extends PyramusEntityDAO<Subject> {
     return null;
   }
 
-  public Subject findBy(EducationType educationType, String subjectCode) {
+  public Subject findByEducationTypeAndCode(EducationType educationType, String subjectCode) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -92,7 +95,8 @@ public class SubjectDAO extends PyramusEntityDAO<Subject> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Subject_.educationType), educationType),
-            criteriaBuilder.equal(root.get(Subject_.code), subjectCode)
+            criteriaBuilder.equal(root.get(Subject_.code), subjectCode),
+            criteriaBuilder.equal(root.get(Subject_.archived), Boolean.FALSE)
         )
     );
     
