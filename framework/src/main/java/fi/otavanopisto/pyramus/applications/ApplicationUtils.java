@@ -393,7 +393,7 @@ public class ApplicationUtils {
       case "pk":
         return studyProgrammeDAO.findById(11L); // Peruskoululinja
       case "luva":
-        return studyProgrammeDAO.findById(27L); // LUVA
+        return studyProgrammeDAO.findById(27L); // LUVA (#1399: deprecated; backward compatibility only)
       case "lisaopetus":
         return studyProgrammeDAO.findById(15L); // Monikulttuurinen peruskoululinja
       default:

@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
@@ -257,12 +258,15 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
-    Root<CourseStaffMember> root = criteria.from(CourseStaffMember.class);
+    Root<CourseStaffMember> staffRoot = criteria.from(CourseStaffMember.class);
+    Join<CourseStaffMember, Course> courseJoin = staffRoot.join(CourseStaffMember_.course);
     
-    criteria.select(root.get(CourseStaffMember_.course));
+    criteria.select(staffRoot.get(CourseStaffMember_.course));
     criteria.where(
-      criteriaBuilder.equal(root.get(CourseStaffMember_.staffMember), staffMember)
-    );
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(staffRoot.get(CourseStaffMember_.staffMember), staffMember)
+        ));
     
     return entityManager.createQuery(criteria).getResultList();
   }
@@ -435,6 +439,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
             timeframeS).append("] AND ").append("endDate:[").append(timeframeE).append(" TO ").append(
                 getSearchDateInfinityHigh()).append("]").append(")").append(")");
         break;
+      default:
+        break;
       }
     }
     else if (timeframeS != null) {
@@ -450,6 +456,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
             getSearchDateInfinityHigh()).append("]").append("endDate:[").append(timeframeS).append(" TO ").append(
                 getSearchDateInfinityHigh()).append("]").append(")");
         break;
+      default:
+        break;
       }
     }
     else if (timeframeE != null) {
@@ -464,6 +472,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
         queryBuilder.append(" +(").append("beginDate:[").append(getSearchDateInfinityLow()).append(" TO ").append(
             timeframeE).append("] ").append("endDate:[").append(getSearchDateInfinityLow()).append(" TO ").append(
             timeframeE).append("]").append(")");
+        break;
+      default:
         break;
       }
     }
