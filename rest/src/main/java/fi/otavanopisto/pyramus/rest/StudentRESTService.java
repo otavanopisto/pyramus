@@ -1819,14 +1819,14 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     ContactLogAccess access = studentController.resolveContactLogAccess(student);
-    
+    Boolean allPrivileges = false;
     if (access.equals(ContactLogAccess.ALL)) {
       SearchResult<StudentContactLogEntry> searchResult = studentContactLogEntryController.listContactLogEntriesByStudent(student, resultsPerPage, page);
-      
+      allPrivileges = true;
       @SuppressWarnings("unchecked")
       List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry> contactLogEntryRestModels = (List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry>) objectFactory.createModel(searchResult.getResults());
       
-      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount());
+      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount(), allPrivileges);
       return Response.ok(responseEntries).build();
     } else if (access.equals(ContactLogAccess.OWN)) {
       
@@ -1835,7 +1835,7 @@ public class StudentRESTService extends AbstractRESTService {
       @SuppressWarnings("unchecked")
       List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry> contactLogEntryRestModels = (List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry>) objectFactory.createModel(searchResult.getResults());
       
-      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount());
+      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount(), allPrivileges);
       return Response.ok(responseEntries).build();
     } else {
       return Response.status(Status.FORBIDDEN).build();
