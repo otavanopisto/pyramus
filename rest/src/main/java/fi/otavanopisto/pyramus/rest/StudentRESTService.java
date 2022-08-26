@@ -2054,9 +2054,15 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!sessionController.getUser().getRole().equals(Role.ADMINISTRATOR)) {
-      if (contactLogEntryComment.getCreator() != null) {
-        if (!contactLogEntryComment.getCreator().getId().equals(sessionController.getUser().getId())) {
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if (access.equals(ContactLogAccess.NONE)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    if (access.equals(ContactLogAccess.OWN)) {
+      if (contactLogEntry.getCreator() != null) {
+        if (!contactLogEntry.getCreator().getId().equals(sessionController.getUser().getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
       } else { 
