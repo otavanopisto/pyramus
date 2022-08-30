@@ -146,6 +146,10 @@ public class AssessmentController {
     return courseAssessmentRequestDAO.listByCourseAndStudent(course, student);
   }
   
+  public List<CourseAssessmentRequest> listCourseAssessmentRequestsIncludingArchivedByCourseAndStudent(Course course, Student student) {
+    return courseAssessmentRequestDAO.listByCourseAndStudentIncludingArchived(course, student);
+  }
+  
   public Long countCourseAssessments(Student student, Date timeIntervalStartDate, Date timeIntervalEndDate, Boolean passingGrade) {
     return courseAssessmentDAO.countCourseAssessments(student, timeIntervalStartDate, timeIntervalEndDate, passingGrade);
   }

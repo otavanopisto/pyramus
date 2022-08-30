@@ -2502,7 +2502,7 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
+  public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @DefaultValue("false") @QueryParam("archived") Boolean archived) {
     Student student = studentController.findStudentById(studentId);
 
     Status studentStatus = checkStudent(student);
@@ -2523,8 +2523,13 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    List<CourseAssessmentRequest> assessmentRequests = null;
     
+    if (archived.equals(Boolean.TRUE)) {
+      assessmentRequests = assessmentController.listCourseAssessmentRequestsIncludingArchivedByCourseAndStudent(course, student);
+    } else {
+      assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    }
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
   }
   
