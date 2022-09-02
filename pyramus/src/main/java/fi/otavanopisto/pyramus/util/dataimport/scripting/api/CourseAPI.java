@@ -68,6 +68,8 @@ public class CourseAPI {
     CourseState courseState = defaultsDAO.getDefaults().getInitialCourseState(); 
     Date beginDate = null;
     Date endDate = null;
+    Date signupStart = null;
+    Date signupEnd = null;
     Double distanceTeachingDays = null;
     Double localTeachingDays = null;
     Double teachingHours = null;
@@ -78,7 +80,7 @@ public class CourseAPI {
     BigDecimal courseFee = null;
     Currency courseFeeCurrency = null;
     
-    Course course = courseDAO.create(module, organization, name, nameExtension, courseState, type, beginDate, endDate, 
+    Course course = courseDAO.create(module, organization, name, nameExtension, courseState, type, beginDate, endDate, signupStart, signupEnd,
         distanceTeachingDays, localTeachingDays, 
         teachingHours, distanceTeachingHours, planningHours, assessingHours, description, module.getMaxParticipantCount(), 
         courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
