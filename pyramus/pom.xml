@@ -221,14 +221,6 @@
       <artifactId>freemarker</artifactId>
     </dependency>
 
-    <!-- Xerces -->
-
-<!--     <dependency> -->
-<!--       <groupId>xerces</groupId> -->
-<!--       <artifactId>xercesImpl</artifactId> -->
-<!--       <version>2.12.1</version> -->
-<!--     </dependency> -->
-
     <!-- Xalan -->
 
     <dependency>
@@ -242,12 +234,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-<!--     <dependency> -->
-<!--       <groupId>xalan</groupId> -->
-<!--       <artifactId>serializer</artifactId> -->
-<!--       <version>2.7.2</version> -->
-<!--     </dependency> -->
 
      <!-- Oltu -->
 

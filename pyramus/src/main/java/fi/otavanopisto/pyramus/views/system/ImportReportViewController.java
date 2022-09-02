@@ -188,9 +188,6 @@ public class ImportReportViewController extends PyramusFormViewController {
         } catch (Exception ex) {
           ex.printStackTrace();
         }
-        
-//        XMLSerializer xmlSerializer = new XMLSerializer(dataStream, new OutputFormat(reportDocument));
-//        xmlSerializer.serialize(reportDocument);
       }
       
       User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
