@@ -177,7 +177,7 @@ public class CourseRESTService extends AbstractRESTService {
     User loggedUser = sessionController.getUser();
     
     Course course = courseController.createCourse(module, organization, name, nameExtension, state, type,
-        toDate(beginDate), toDate(endDate), distanceTeachingDays, localTeachingDays, 
+        toDate(beginDate), toDate(endDate), null, null, distanceTeachingDays, localTeachingDays, 
         teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, 
         courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
     
@@ -358,7 +358,8 @@ public class CourseRESTService extends AbstractRESTService {
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     User loggedUser = sessionController.getUser();
     
-    Course updatedCourse = courseController.updateCourse(course, organization, name, nameExtension, state, type, toDate(beginDate), toDate(endDate), 
+    Course updatedCourse = courseController.updateCourse(course, organization, name, nameExtension, state, type, toDate(beginDate), toDate(endDate),
+        null, null,
         distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
 
