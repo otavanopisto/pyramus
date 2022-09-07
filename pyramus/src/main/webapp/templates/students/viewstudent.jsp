@@ -1360,7 +1360,9 @@
 
               if (studentAssessment.assessments.length > 1) {
                 gradeTooltip = "";
-                gradeExtraClass = "viewStudentRaisedGrade";
+                gradeExtraClass = studentAssessment.assessments[studentAssessment.assessments.length - 1].passing
+                    ? "viewStudentRaisedGrade"
+                    : "";
                 
                 for (var ai = 0; ai < studentAssessment.assessments.length; ai++) {
                   gradeTooltip = 
@@ -1370,7 +1372,7 @@
                     studentAssessment.assessments[ai].gradeName + 
                     "\n";
 
-                  if (studentAssessment.assessments[ai].timestamp > topAssessment.timestamp) {
+                  if (studentAssessment.assessments[ai].timestamp >= topAssessment.timestamp) {
                     topAssessment = studentAssessment.assessments[ai];
                   }
                 }
