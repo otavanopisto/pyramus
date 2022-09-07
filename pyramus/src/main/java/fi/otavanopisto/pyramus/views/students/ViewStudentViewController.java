@@ -446,6 +446,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
             .collect(Collectors.toList());
           
           if (CollectionUtils.isNotEmpty(courseAssessmentList) && courseModule.getCourse() != null) {
+            courseAssessmentList.sort(Comparator.comparing(CourseAssessment::getDate).thenComparing(CourseAssessment::getId));
             CourseBase course = courseModule.getCourse();
             
             JSONObject obj = new JSONObject();
@@ -477,6 +478,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
               assobj.put("gradeName", ass.getGrade() != null ? ass.getGrade().getName() : null);
               assobj.put("gradingScaleName", (ass.getGrade() != null && ass.getGrade().getGradingScale() != null) ? 
                   ass.getGrade().getGradingScale().getName() : null);
+              assobj.put("passing", ass.getGrade() != null ? ass.getGrade().getPassingGrade() : Boolean.FALSE);
               assobj.put("assessorName", ass.getAssessor() != null ? ass.getAssessor().getFullName() : null);
               jsonCourseAssessments.add(assobj);
             }

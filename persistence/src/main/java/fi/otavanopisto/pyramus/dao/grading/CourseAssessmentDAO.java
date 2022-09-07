@@ -248,7 +248,7 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
   
   public CourseAssessment findLatestByCourseStudentAndCourseModuleAndArchived(CourseStudent courseStudent, CourseModule courseModule, Boolean archived) {
     List<CourseAssessment> courseAssessments = listByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, archived);
-    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).thenComparing(CourseAssessment::getId).reversed());
     return courseAssessments.isEmpty() ? null : courseAssessments.get(0);
   }
   

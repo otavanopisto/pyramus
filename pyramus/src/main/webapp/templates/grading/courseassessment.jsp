@@ -25,9 +25,6 @@
         setupRelatedCommandsBasic();
         
         var entryForm = $("courseAssessmentForm");
-        var dField = getIxDateField("assessmentDate");
-        if ((dField != null) && (entryForm.assessmentDate.value == ""))
-          dField.setTimestamp(new Date().getTime());
       }
 
       function setupRelatedCommandsBasic() {
@@ -153,14 +150,6 @@
                 <span><img src="${pageContext.request.contextPath}/gfx/icons/16x16/actions/search.png" onclick="openSearchUsersDialog(${courseModule.id});"/></span>
               </div>
               
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="grading.courseAssessment.assessmentDateTitle"/>
-                  <jsp:param name="helpLocale" value="grading.courseAssessment.assessmentDateHelp"/>
-                </jsp:include>
-                <input type="text" class="ixDateField" name="assessmentDate.${courseModule.id}" ix:datefieldid="assessmentDate.${courseModule.id}" value="${gradeDate}"/>
-              </div>
-  
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="grading.courseAssessment.gradeTitle"/>
