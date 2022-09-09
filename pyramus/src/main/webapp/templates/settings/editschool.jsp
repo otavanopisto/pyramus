@@ -49,7 +49,10 @@
   <body onload="onLoad(event);" ix:enabledrafting="true">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
   
-    <h1 class="genericPageHeader"><fmt:message key="settings.editSchool.pageTitle" /></h1>
+    <h1 class="genericPageHeader">
+      <fmt:message key="settings.editSchool.pageTitle" />
+      <a href="viewschool.page?school=${school.id}"><img src="${pageContext.request.contextPath}/gfx/eye.png"></a>
+    </h1>
   
     <div class="genericFormContainer"> 
       <div class="tabLabelsContainer" id="tabs">
