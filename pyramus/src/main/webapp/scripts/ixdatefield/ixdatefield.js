@@ -86,6 +86,7 @@ IxDateField = Class.create(
         for (var i = 0, l = components.length; i < l; i++) {
           var component = components[i].toLowerCase();
           switch (component) {
+            case 'y':
             case 'yy':
               component = 'yyyy';
             break;
