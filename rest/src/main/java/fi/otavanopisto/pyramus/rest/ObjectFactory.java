@@ -232,6 +232,8 @@ public class ObjectFactory {
             OffsetDateTime lastModified = toOffsetDateTime(entity.getLastModified());
             OffsetDateTime beginDate = fromDateToOffsetDateTime(entity.getBeginDate());
             OffsetDateTime endDate = fromDateToOffsetDateTime(entity.getEndDate());
+            OffsetDateTime signupStart = fromDateToOffsetDateTime(entity.getSignupStart());
+            OffsetDateTime signupEnd = fromDateToOffsetDateTime(entity.getSignupEnd());
             OffsetDateTime enrolmentTimeEnd = toOffsetDateTime( entity.getEnrolmentTimeEnd());
             Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
@@ -291,7 +293,7 @@ public class ObjectFactory {
               
             return new fi.otavanopisto.pyramus.rest.model.Course(entity.getId(), entity.getName(), created, 
                 lastModified, entity.getDescription(), entity.getArchived(), 
-                entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
+                entity.getMaxParticipantCount(), beginDate, endDate, signupStart, signupEnd, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
                 entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
                 creatorId, lastModifierId, curriculumIds, moduleId, stateId, typeId, variables, tags,
