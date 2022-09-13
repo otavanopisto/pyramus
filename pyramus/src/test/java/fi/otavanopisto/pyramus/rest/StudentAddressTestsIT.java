@@ -142,7 +142,7 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
       .body("contactTypeId", is(address.getContactTypeId().intValue()))
       .body("defaultAddress", is( address.getDefaultAddress()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, id)

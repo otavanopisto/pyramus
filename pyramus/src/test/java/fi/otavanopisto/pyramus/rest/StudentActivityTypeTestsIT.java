@@ -75,7 +75,7 @@ public class StudentActivityTypeTestsIT extends AbstractRESTServiceTest {
       .body("name", is(studentActivityType.getName()))
       .body("archived", is( studentActivityType.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudentActivityType updateStudentActivityType = new StudentActivityType(id, "Updated", Boolean.FALSE);
 
@@ -106,7 +106,7 @@ public class StudentActivityTypeTestsIT extends AbstractRESTServiceTest {
       .body(studentActivityType)
       .post("/students/activityTypes");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/activityTypes/{ID}", id)

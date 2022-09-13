@@ -39,13 +39,11 @@ public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLFIELD, 200);
 
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/schools/schoolFields/{ID}?permanent=true", id);
+          .delete("/schools/schoolFields/{ID}?permanent=true", id);
       }
     }
   }
@@ -71,7 +69,7 @@ public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(schoolField)
       .post("/schools/schoolFields");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       SchoolField updateSchoolField = new SchoolField(id, "updated", Boolean.FALSE);
       
@@ -95,7 +93,7 @@ public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(schoolField)
       .post("/schools/schoolFields");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     assertOk(given().headers(getAuthHeaders())
         .delete("/schools/schoolFields/{ID}", id), schoolPermissions, SchoolPermissions.DELETE_SCHOOLFIELD, 204);

@@ -77,7 +77,7 @@ public class LanguagePermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(language)
       .post("/students/languages");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Language updateLanguage = new Language(id, "Updated", "UPD", Boolean.FALSE);
 
@@ -102,7 +102,7 @@ public class LanguagePermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(language)
       .post("/students/languages");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     response = given().headers(getAuthHeaders())
       .delete("/students/languages/{ID}", id);

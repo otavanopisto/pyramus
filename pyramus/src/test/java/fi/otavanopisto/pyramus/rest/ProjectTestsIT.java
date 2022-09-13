@@ -133,7 +133,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
       .body("archived", is( project.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Project updateProject = new Project(id, 
         "updated", 
@@ -205,7 +205,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
       .body("archived", is( project.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/projects/projects/{ID}", id)

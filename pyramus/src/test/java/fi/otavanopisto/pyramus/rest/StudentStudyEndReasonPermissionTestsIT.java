@@ -75,7 +75,7 @@ public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissi
       .body(endReason)
       .post("/students/studyEndReasons");
           
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudentStudyEndReason updateReason = new StudentStudyEndReason(id, "updated", 1l);
       
@@ -100,7 +100,7 @@ public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissi
       .body(endReason)
       .post("/students/studyEndReasons");
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     response = given().headers(getAuthHeaders())
       .delete("/students/studyEndReasons/{ID}", id);

@@ -39,11 +39,10 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
       .post("/courses/participationTypes");
     
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSEPARTICIPATIONTYPE, 200);
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         deleteParticipationType(id);
       }
     }
@@ -73,7 +72,7 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
       .body(courseParticipationType)
       .post("/courses/participationTypes");
      
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     CourseParticipationType updateType = new CourseParticipationType(
         id,
         "Updated name",
@@ -97,7 +96,7 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
       .body(courseParticipationType)
       .post("/courses/participationTypes");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/courses/participationTypes/{ID}", id);    

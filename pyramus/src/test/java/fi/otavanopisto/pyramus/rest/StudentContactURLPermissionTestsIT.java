@@ -89,7 +89,7 @@ public class StudentContactURLPermissionTestsIT extends AbstractRESTPermissionsT
       .body(contactURL)
       .post("/students/students/{STUDENTID}/contactURLs", TEST_STUDENT_ID);
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     response = given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/contactURLs/{ID}", TEST_STUDENT_ID, id);

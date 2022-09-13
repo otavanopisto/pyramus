@@ -53,11 +53,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSE, 200);
 
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         deleteCourse(id);
       }
     }
@@ -77,11 +75,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSE, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         deleteCourse(id);
       }
     }
@@ -113,11 +109,11 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(course)
       .post("/courses/courses/");
 
-    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setId(response.body().jsonPath().getLong("id"));
     course.setName("Updated name");
     
     course.setDescription("Updated description");
-    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setId(response.body().jsonPath().getLong("courseModules[0].id"));
     firstCourseModule(course).setCourseNumber(999);
     firstCourseModule(course).getCourseLength().setUnits(888d);
     course.setMaxParticipantCount(1234l);
@@ -144,10 +140,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(course)
       .post("/courses/courses/");
       
-    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setId(response.body().jsonPath().getLong("id"));
     course.setName("Updated name");
     course.setDescription("Updated description");
-    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setId(response.body().jsonPath().getLong("courseModules[0].id"));
     firstCourseModule(course).setCourseNumber(999);
     firstCourseModule(course).getCourseLength().setUnits(888d);
     course.setMaxParticipantCount(1234l);
@@ -174,7 +170,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(course)
       .post("/courses/courses/");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/courses/courses/{ID}", id);

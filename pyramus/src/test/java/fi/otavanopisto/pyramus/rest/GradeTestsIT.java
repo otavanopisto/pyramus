@@ -95,7 +95,7 @@ public class GradeTestsIT extends AbstractRESTServiceTest {
       .body("gradingScaleId", is(grade.getGradingScaleId().intValue()))
       .body("archived", is( grade.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     try {
@@ -143,7 +143,7 @@ public class GradeTestsIT extends AbstractRESTServiceTest {
       .body("gradingScaleId", is(grade.getGradingScaleId().intValue()))
       .body("archived", is( grade.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/common/gradingScales/{SCALEID}/grades/{ID}", grade.getGradingScaleId(), id)

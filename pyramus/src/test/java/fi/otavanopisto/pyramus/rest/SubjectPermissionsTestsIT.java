@@ -41,13 +41,11 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
 
     assertOk(response, commonPermissions, CommonPermissions.CREATE_SUBJECT, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/common/subjects/{ID}?permanent=true", id);
+          .delete("/common/subjects/{ID}?permanent=true", id);
       }
     }
 
@@ -83,7 +81,7 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body("educationTypeId", is(subject.getEducationTypeId().intValue()))
       .body("archived", is( subject.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Subject updateSubject = new Subject(id, "UPD", "updated", 2l, Boolean.FALSE);
 
@@ -110,7 +108,7 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(subject)
       .post("/common/subjects");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/common/subjects/{ID}", id);

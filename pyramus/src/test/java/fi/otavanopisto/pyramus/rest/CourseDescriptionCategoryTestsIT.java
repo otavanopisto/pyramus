@@ -80,7 +80,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
       .body(category)
       .post("/courses/descriptionCategories");
      
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     try {
@@ -118,7 +118,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
       .body(category)
       .post("/courses/descriptionCategories");
      
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     assertNotNull(id);
     

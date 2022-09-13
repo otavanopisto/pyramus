@@ -74,7 +74,7 @@ public class OrganizationTestsIT extends AbstractRESTServiceTest {
       .body("name", is(organization.getName()))
       .body("archived", is(organization.getArchived()));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Organization updateOrganization = new Organization(id, "Updated", billingDetails, Boolean.FALSE);
 
@@ -105,7 +105,7 @@ public class OrganizationTestsIT extends AbstractRESTServiceTest {
       .body(organization)
       .post("/organizations");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders())

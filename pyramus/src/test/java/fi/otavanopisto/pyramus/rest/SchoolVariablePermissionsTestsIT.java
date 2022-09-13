@@ -39,10 +39,9 @@ public class SchoolVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
       .post("/schools/variables");
     assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLVARIABLEKEY, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    if(statusCode.toString().equals("200")){
+    if (response.statusCode() == 200) {
       given().headers(getAdminAuthHeaders())
-      .delete("/schools/variables/{KEY}", schoolVariable.getKey());
+        .delete("/schools/variables/{KEY}", schoolVariable.getKey());
     }
   }
 
@@ -95,9 +94,8 @@ public class SchoolVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     
     assertOk(deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLVARIABLEKEY, 204);
     
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204"))
+    if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders())
-      .delete("/schools/variables/{KEY}", schoolVariable.getKey());
+        .delete("/schools/variables/{KEY}", schoolVariable.getKey());
   }
 }

@@ -86,7 +86,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
       .body("baseUnits", is(educationalTimeUnit.getBaseUnits().floatValue() ))
       .body("archived", is( educationalTimeUnit.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       EducationalTimeUnit upOffsetDateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
 
@@ -126,7 +126,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
       .body("baseUnits", is(educationalTimeUnit.getBaseUnits().floatValue() ))
       .body("archived", is( educationalTimeUnit.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/common/educationalTimeUnits/{ID}", id)

@@ -75,7 +75,7 @@ public class CurriculumTestsIT extends AbstractRESTServiceTest {
       .body("name", is(curriculum.getName()))
       .body("archived", is(curriculum.getArchived()));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Curriculum updateCurriculum = new Curriculum(id, "Updated", Boolean.FALSE);
 
@@ -105,7 +105,7 @@ public class CurriculumTestsIT extends AbstractRESTServiceTest {
       .body(curriculum)
       .post("/common/curriculums");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders())

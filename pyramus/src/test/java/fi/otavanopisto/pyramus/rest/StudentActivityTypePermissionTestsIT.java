@@ -77,7 +77,7 @@ public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermission
       .body(studentActivityType)
       .post("/students/activityTypes");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudentActivityType updateStudentActivityType = new StudentActivityType(id, "Updated", Boolean.FALSE);
 
@@ -103,7 +103,7 @@ public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermission
       .body(studentActivityType)
       .post("/students/activityTypes");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/activityTypes/{ID}", id);

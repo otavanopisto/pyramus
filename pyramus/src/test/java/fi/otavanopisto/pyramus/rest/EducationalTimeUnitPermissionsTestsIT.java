@@ -39,11 +39,9 @@ private CommonPermissions commonPermissions = new CommonPermissions();
     
     assertOk(response, commonPermissions, CommonPermissions.CREATE_EDUCATIONALTIMEUNIT, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
         .delete("/common/educationalTimeUnits/{ID}?permanent=true", id);
       }
@@ -75,7 +73,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
       .body(educationalTimeUnit)
       .post("/common/educationalTimeUnits");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       EducationalTimeUnit upOffsetDateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
 
@@ -99,7 +97,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
       .body(educationalTimeUnit)
       .post("/common/educationalTimeUnits");
  
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     
     Response deleteResponse = given().headers(getAuthHeaders())

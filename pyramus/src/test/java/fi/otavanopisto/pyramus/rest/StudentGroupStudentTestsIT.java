@@ -29,7 +29,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("studentId", is(entity.getStudentId().intValue()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       given().headers(getAuthHeaders())
         .get("/students/studentGroups/{ID}/students", 2)
@@ -83,7 +83,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("studentId", is(entity.getStudentId().intValue()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     given().headers(getAuthHeaders())
       .get("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id)

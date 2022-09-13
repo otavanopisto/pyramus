@@ -79,10 +79,10 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
     String accessToken = response.body().jsonPath().getString("access_token");
     setAccessToken(accessToken);
     
-    setUserId(new Long(given().headers(getAuthHeaders())
+    setUserId(given().headers(getAuthHeaders())
         .contentType("application/json")
         .get("/system/whoami")
-        .body().jsonPath().getInt("id")));
+        .body().jsonPath().getLong("id"));
   }
 
   public String getAccessToken() {

@@ -39,13 +39,11 @@ public class SchoolContactURLPermissionsTestsIT extends AbstractRESTPermissionsT
 
     assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLCONTACTURL, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/schools/schools/{SCHOOLID}/contactURLs/{ID}", 1l, id);
+          .delete("/schools/schools/{SCHOOLID}/contactURLs/{ID}", 1l, id);
       }
     }
   }
@@ -71,15 +69,14 @@ public class SchoolContactURLPermissionsTestsIT extends AbstractRESTPermissionsT
       .body(contactURL)
       .post("/schools/schools/{SCHOOLID}/contactURLs", 1l);
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/schools/schools/{SCHOOLID}/contactURLs/{ID}", 1l, id);
     assertOk(deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLCONTACTURL, 204);
     
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204"))
+    if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders())
-      .delete("/schools/schools/{SCHOOLID}/contactURLs/{ID}", 1l, id);
+        .delete("/schools/schools/{SCHOOLID}/contactURLs/{ID}", 1l, id);
   }
 }

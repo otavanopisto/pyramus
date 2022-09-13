@@ -44,7 +44,7 @@ public class StudentGroupStudentPermissionTestsIT extends AbstractRESTPermission
     assertOk(response, studentGroupPermissions, StudentGroupPermissions.CREATE_STUDENTGROUPSTUDENT);
     
     if (response.getStatusCode() == 200) {
-      Long id = new Long(response.body().jsonPath().getInt("id"));
+      Long id = response.body().jsonPath().getLong("id");
       
       given().headers(getAdminAuthHeaders())
         .delete("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id);
@@ -76,7 +76,7 @@ public class StudentGroupStudentPermissionTestsIT extends AbstractRESTPermission
       .body(entity)
       .post("/students/studentGroups/{ID}/students", 2l);
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id);
