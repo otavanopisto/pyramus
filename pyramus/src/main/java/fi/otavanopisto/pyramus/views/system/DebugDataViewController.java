@@ -58,30 +58,30 @@ public class DebugDataViewController extends PyramusViewController {
     
     if ("module".equals(type)) {
       for (int i = start; i < (start + count); i++) {
-        EducationalTimeUnit etu = educationalTimeUnitDAO.findById(new Long(1));
+        EducationalTimeUnit etu = educationalTimeUnitDAO.findById(1L);
         Module module = moduleDAO.create("Moduli " + i, "Kuvaustekstiä modulille " + i, null, user);
-        courseModuleDAO.create(module, null, null, new Double(10), etu);
+        courseModuleDAO.create(module, null, null, 10d, etu);
       }
     }
     else if ("course".equals(type)) {
       for (int i = start; i < (start + count); i++) {
-        EducationalTimeUnit etu = educationalTimeUnitDAO.findById(new Long(1));
-        CourseState courseState = courseStateDAO.findById(new Long(1));
+        EducationalTimeUnit etu = educationalTimeUnitDAO.findById(1L);
+        CourseState courseState = courseStateDAO.findById(1L);
         Organization organization = organizationDAO.findById(1L);
-        Course course = courseDAO.create(moduleDAO.findById(new Long(1)), organization, "Kurssi " + i, "", courseState, null, null, null, null, null, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, null, null, user);
-        courseModuleDAO.create(course, null, null, new Double(10), etu);
+        Course course = courseDAO.create(moduleDAO.findById(1L), organization, "Kurssi " + i, "", courseState, null, null, null, null, null, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, null, null, user);
+        courseModuleDAO.create(course, null, null, 10d, etu);
       }
     }
     else if ("resource".equals(type)) {
       for (int i = start; i < (start + count); i++) {
-        ResourceCategory resourceCategory = resourceCategoryDAO.findById(new Long(1));
-        materialResourceDAO.create("Materiaaliresurssi " + i, resourceCategory, new Double(500));
+        ResourceCategory resourceCategory = resourceCategoryDAO.findById(1L);
+        materialResourceDAO.create("Materiaaliresurssi " + i, resourceCategory, 500d);
       }
     }
     else if ("project".equals(type)) {
       for (int i = start; i < (start + count); i++) {
-        EducationalTimeUnit etu = educationalTimeUnitDAO.findById(new Long(1));
-        projectDAO.create("Projekti " + i, "Kuvaustekstiä projektille " + i, new Double(10), etu, user);
+        EducationalTimeUnit etu = educationalTimeUnitDAO.findById(1L);
+        projectDAO.create("Projekti " + i, "Kuvaustekstiä projektille " + i, 10d, etu, user);
       }
     }
     else if ("student".equals(type)) {

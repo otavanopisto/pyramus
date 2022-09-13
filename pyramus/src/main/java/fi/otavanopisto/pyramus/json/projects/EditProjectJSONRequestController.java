@@ -93,7 +93,7 @@ public class EditProjectJSONRequestController extends JSONRequestController {
     int rowCount = jsonRequestContext.getInteger("modulesTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "modulesTable." + i;
-      int optionality = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
+      int optionality = Integer.valueOf(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
           .intValue();
       Long projectModuleId = jsonRequestContext.getLong(colPrefix + ".projectModuleId");
       if (projectModuleId == -1) {
@@ -128,7 +128,7 @@ public class EditProjectJSONRequestController extends JSONRequestController {
     int rowCount = jsonRequestContext.getInteger("subjectCoursesTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "subjectCoursesTable." + i;
-      int optionality = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
+      int optionality = Integer.valueOf(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
           .intValue();
       Long projectSubjectCourseId = jsonRequestContext.getLong(colPrefix + ".projectSubjectCourseId");
       if (projectSubjectCourseId == -1) {

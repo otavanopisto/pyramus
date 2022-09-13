@@ -24,7 +24,7 @@ public class SaveCurriculumsJSONRequestController extends JSONRequestController 
       Long curriculumId = jsonRequestContext.getLong(colPrefix + ".curriculumId");
       String name = jsonRequestContext.getString(colPrefix + ".name");
       
-      boolean modified = new Integer(1).equals(jsonRequestContext.getInteger(colPrefix + ".modified"));
+      boolean modified = Integer.valueOf(1).equals(jsonRequestContext.getInteger(colPrefix + ".modified"));
       if (curriculumId == -1) {
         curriculumDAO.create(name);
       }

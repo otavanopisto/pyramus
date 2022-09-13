@@ -72,7 +72,7 @@ public class ManagePermissionsViewController extends PyramusFormViewController {
           
           EnvironmentRolePermission rolePermission = environmentRolePermissionDAO.findByUserRoleAndPermission(role, permission);
           
-          boolean isSet = new Integer(1).equals(requestContext.getInteger(paramName));
+          boolean isSet = Integer.valueOf(1).equals(requestContext.getInteger(paramName));
           boolean exists = rolePermission != null;
           
           if (isSet != exists) {

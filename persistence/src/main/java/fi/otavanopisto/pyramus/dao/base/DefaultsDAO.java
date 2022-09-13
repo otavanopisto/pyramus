@@ -19,7 +19,7 @@ public class DefaultsDAO extends PyramusEntityDAO<Defaults> {
   }
 
   public Defaults getDefaults() {
-    return findById(new Long(1));
+    return findById(1L);
   }
 
   public Defaults updateDefaultBaseTimeUnit(EducationalTimeUnit defaultEducationalTimeUnit) {

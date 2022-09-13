@@ -579,7 +579,7 @@ public class Person implements ContextReference {
   public String getStaff() {
     StaffMember staffMember = getStaffMember();
 
-    return new Boolean(staffMember != null).toString();
+    return Boolean.valueOf(staffMember != null).toString();
   }
 
   @Transient

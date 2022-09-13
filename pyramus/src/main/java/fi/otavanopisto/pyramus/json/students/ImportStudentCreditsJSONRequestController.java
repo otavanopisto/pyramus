@@ -40,7 +40,7 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
     
     for (int i = 0; i < rowCount; i++) {
       String paramName = "linkedCourseAssessmentsTable." + baseStudent.getId() + "." + i + ".selected";
-      boolean selected = new Long(1).equals(requestContext.getLong(paramName));
+      boolean selected = Long.valueOf(1).equals(requestContext.getLong(paramName));
       
       if (selected) {
         Long creditLinkId = requestContext.getLong("linkedCourseAssessmentsTable." + baseStudent.getId() + "." + i + ".creditLinkId");
@@ -56,7 +56,7 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
     
     for (int i = 0; i < rowCount; i++) {
       String paramName = "linkedTransferCreditsTable." + baseStudent.getId() + "." + i + ".selected";
-      boolean selected = new Long(1).equals(requestContext.getLong(paramName));
+      boolean selected = Long.valueOf(1).equals(requestContext.getLong(paramName));
       
       if (selected) {
         Long creditLinkId = requestContext.getLong("linkedTransferCreditsTable." + baseStudent.getId() + "." + i + ".creditLinkId");
@@ -73,7 +73,7 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
       
       for (int i = 0; i < rowCount; i++) {
         String paramName = "courseAssessmentsTable." + student.getId() + "." + i + ".selected";
-        boolean selected = new Long(1).equals(requestContext.getLong(paramName));
+        boolean selected = Long.valueOf(1).equals(requestContext.getLong(paramName));
         
         if (selected) {
           Long courseAssessmentId = requestContext.getLong("courseAssessmentsTable." + student.getId() + "." + i + ".courseAssessmentId");
@@ -92,7 +92,7 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
       
       for (int i = 0; i < rowCount; i++) {
         String paramName = "transferCreditsTable." + student.getId() + "." + i + ".selected";
-        boolean selected = new Long(1).equals(requestContext.getLong(paramName));
+        boolean selected = Long.valueOf(1).equals(requestContext.getLong(paramName));
         
         if (selected) {
           Long transferCreditId = requestContext.getLong("transferCreditsTable." + student.getId() + "." + i + ".transferCreditId");
@@ -111,7 +111,7 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
       
       for (int i = 0; i < rowCount; i++) {
         String paramName = "linkedCourseAssessmentsTable." + student.getId() + "." + i + ".selected";
-        boolean selected = new Long(1).equals(requestContext.getLong(paramName));
+        boolean selected = Long.valueOf(1).equals(requestContext.getLong(paramName));
         
         if (selected) {
           Long courseAssessmentId = requestContext.getLong("linkedCourseAssessmentsTable." + student.getId() + "." + i + ".courseAssessmentId");
@@ -130,7 +130,7 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
       
       for (int i = 0; i < rowCount; i++) {
         String paramName = "linkedTransferCreditsTable." + student.getId() + "." + i + ".selected";
-        boolean selected = new Long(1).equals(requestContext.getLong(paramName));
+        boolean selected = Long.valueOf(1).equals(requestContext.getLong(paramName));
         
         if (selected) {
           Long transferCreditId = requestContext.getLong("linkedTransferCreditsTable." + student.getId() + "." + i + ".transferCreditId");

@@ -102,7 +102,7 @@ public class GetStudentStudyProgrammesJSONRequestController extends JSONRequestC
           result.add(studentInfo);
     		} else {
           Map<String, Object> studentInfo = new HashMap<>();
-          studentInfo.put("studyProgrammeId", new Long(-1));
+          studentInfo.put("studyProgrammeId", Long.valueOf(-1));
           if (!student.getArchived())
             studentInfo.put("studyProgrammeName", Messages.getInstance().getText(requestContext.getRequest().getLocale(), "students.editStudent.noStudyProgrammeDropDownItemLabel"));
           else

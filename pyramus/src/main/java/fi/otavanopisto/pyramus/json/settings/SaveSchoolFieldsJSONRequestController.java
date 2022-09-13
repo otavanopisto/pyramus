@@ -19,7 +19,7 @@ public class SaveSchoolFieldsJSONRequestController extends JSONRequestController
       String colPrefix = "schoolFieldsTable." + i;
       Long schoolFieldId = jsonRequestContext.getLong(colPrefix + ".id");
       String name = jsonRequestContext.getString(colPrefix + ".name");
-      boolean modified = new Long(1).equals(jsonRequestContext.getLong(colPrefix + ".modified"));
+      boolean modified = Long.valueOf(1).equals(jsonRequestContext.getLong(colPrefix + ".modified"));
       if (schoolFieldId == -1) {
         schoolFieldDAO.create(name); 
       }

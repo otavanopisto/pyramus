@@ -365,7 +365,7 @@ public class WorklistRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response updateWorklistItemsState(WorklistItemStateChangeRestModel stateChange) {
     
-    Long ownerId = new Long(stateChange.getUserIdentifier());
+    Long ownerId = Long.valueOf(stateChange.getUserIdentifier());
     
     // Access check; suitable permission or updating your own items
     
@@ -451,7 +451,7 @@ public class WorklistRESTService {
   @PUT
   @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
   public Response updateCourseBilledPrice(WorklistItemBilledPriceRestModel payload) {
-    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(new Long(payload.getAssessmentIdentifier()));
+    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(Long.valueOf(payload.getAssessmentIdentifier()));
     if (courseAssessment != null) {
       List<WorklistItem> items = worklistController.listByCourseAssessment(courseAssessment);
       if (items.size() > 1) {
