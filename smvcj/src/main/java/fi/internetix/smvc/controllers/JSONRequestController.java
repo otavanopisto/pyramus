@@ -1,8 +1,5 @@
 package fi.internetix.smvc.controllers;
 
-import fi.internetix.smvc.controllers.JSONRequestContext;
-import fi.internetix.smvc.controllers.RequestController;
-
 /**
  * Interface to define common functionality to all JSON request handlers. 
  * 

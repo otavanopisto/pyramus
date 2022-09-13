@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.StatusCode;
-import fi.otavanopisto.pyramus.util.ReflectionApiUtils;
 import net.sf.json.*;
 
 /** A selective Java collection to <code>JSONArray</code> converter.
