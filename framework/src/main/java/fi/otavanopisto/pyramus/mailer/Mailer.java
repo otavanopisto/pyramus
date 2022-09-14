@@ -36,6 +36,10 @@ public class Mailer {
     sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), subject, content, Collections.emptyList());
   }
 
+  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content, List<MailAttachment> mailAttachments) {
+    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), subject, content, mailAttachments);
+  }
+
   public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailAttachment mailAttachment) {
     sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, Collections.singletonList(mailAttachment));
   }

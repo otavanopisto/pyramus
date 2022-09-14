@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.json.applications;
 
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.mailer.MailAttachment;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import net.sf.json.JSONObject;
 
@@ -74,15 +77,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           JSONObject formData = JSONObject.fromObject(application.getFormData());
           String line = ApplicationUtils.applicationLineUiValue(application.getLine());
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
-          String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
-          String address = String.format("%s, %s %s, %s",
-              getFormValue(formData, "field-street-address"),
-              getFormValue(formData, "field-zip-code"),
-              getFormValue(formData, "field-city"),
-              getFormValue(formData, "field-country"));
-          String municipality = ApplicationUtils.municipalityUiValue(getFormValue(formData, "field-municipality"));
-          String nationality = ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality"));
-          String phone = getFormValue(formData, "field-phone");
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
           String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
@@ -114,9 +108,10 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Create and attach PDF to Onnistuu document (if not done before)
 
+          byte[] applicantDocument = null;
           if (applicationSignatures.getApplicantDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
-            byte[] pdf = onnistuuClient.generateApplicantSignatureDocument(requestContext, line, applicantName, ssn, address, municipality, nationality, phone, email);
-            onnistuuClient.addPdf(documentId, pdf);
+            applicantDocument = onnistuuClient.generateApplicantSignatureDocument(requestContext, application.getId(), line, applicantName, email);
+            onnistuuClient.addPdf(documentId, applicantDocument);
             applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, null, null,
                 ApplicationSignatureState.PDF_UPLOADED);
           }
@@ -131,10 +126,23 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Construct accepted mail template
           
-          String staffDocUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
-              applicationSignatures.getStaffInvitationId(),
-              applicationSignatures.getStaffInvitationToken());
-
+          byte[] staffDocument = null;
+          try {
+            staffDocument = onnistuuClient.getDocument(applicationSignatures.getStaffDocumentId());
+            if (applicantDocument == null) {
+              applicantDocument = onnistuuClient.getDocument(applicationSignatures.getApplicantDocumentId());
+            }
+          }
+          catch (Exception e) {
+            logger.log(Level.SEVERE, String.format("Application %s document fetch failure: %s", application.getApplicationId(), e.getMessage()));
+            fail(requestContext, "Liitetiedostojen lataaminen epäonnistui");
+          }
+          
+          String filename = StringUtils.replaceChars(StringUtils.lowerCase(applicantName), ' ', '-'); 
+          List<MailAttachment> attachments = new ArrayList<MailAttachment>();
+          attachments.add(new MailAttachment(String.format("%s-oppilaitos.pdf", filename), "application/pdf", staffDocument));
+          attachments.add(new MailAttachment(String.format("%s-hakija.pdf", filename), "application/pdf", applicantDocument));
+          
           StringBuilder signUpUrl = new StringBuilder();
           signUpUrl.append(requestContext.getRequest().getScheme());
           signUpUrl.append("://");
@@ -154,9 +162,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
               nickname,
               lineOrganization,
               line.toLowerCase(),
-              staffDocUrl,
-              staffDocUrl,
-              signUpUrl.toString(),
               signUpUrl.toString(),
               staffMember.getFullName(),
               signerOrganization);
@@ -164,10 +169,10 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           // Send mail to applicant (and possible guardian)
           
           if (StringUtils.isBlank(guardianMail)) {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content);
+            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, attachments);
           }
           else {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, guardianMail, subject, content);
+            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, guardianMail, subject, content, attachments);
           }
           
           // Add notification about sent mail
