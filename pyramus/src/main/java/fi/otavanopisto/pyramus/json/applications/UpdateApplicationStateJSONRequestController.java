@@ -136,6 +136,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           catch (Exception e) {
             logger.log(Level.SEVERE, String.format("Application %s document fetch failure: %s", application.getApplicationId(), e.getMessage()));
             fail(requestContext, "Liitetiedostojen lataaminen epäonnistui");
+            return;
           }
           
           String filename = StringUtils.replaceChars(StringUtils.lowerCase(applicantName), ' ', '-'); 
