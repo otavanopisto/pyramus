@@ -170,7 +170,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         // #1108: Existing credential deletion
         if (userIdentification != null && NumberUtils.isNumber(userIdentification.getExternalId())) {
           InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
-          InternalAuth internalAuth = internalAuthDAO.findById(new Long(userIdentification.getExternalId()));
+          InternalAuth internalAuth = internalAuthDAO.findById(Long.valueOf(userIdentification.getExternalId()));
           if (internalAuth != null) {
             internalAuthDAO.delete(internalAuth);
           }
@@ -234,7 +234,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       for (int i = 0; i < personVariableCount; i++) {
         String colPrefix = "personVariablesTable." + i;
         Long edited = requestContext.getLong(colPrefix + ".edited");
-        if (Objects.equals(new Long(1), edited)) {
+        if (Objects.equals(Long.valueOf(1), edited)) {
           String variableKey = requestContext.getString(colPrefix + ".key");
           String variableValue = requestContext.getString(colPrefix + ".value");
           personVariableDAO.setPersonVariable(person, variableKey, variableValue);
@@ -326,7 +326,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         for (int i = 0; i < variableCount; i++) {
           String colPrefix = "variablesTable." + student.getId() + "." + i;
           Long edited = requestContext.getLong(colPrefix + ".edited");
-          if (Objects.equals(new Long(1), edited)) {
+          if (Objects.equals(Long.valueOf(1), edited)) {
             String variableKey = requestContext.getString(colPrefix + ".key");
             String variableValue = requestContext.getString(colPrefix + ".value");
             userVariableDAO.setUserVariable(student, variableKey, variableValue);

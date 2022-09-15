@@ -77,7 +77,7 @@ public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermis
       .body(studentEducationalLevel)
       .post("/students/educationalLevels");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudentEducationalLevel updateStudentEducationalLevel = new StudentEducationalLevel(id, "Updated", Boolean.FALSE);
 
@@ -105,7 +105,7 @@ public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermis
       .body(studentEducationalLevel)
       .post("/students/educationalLevels");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/educationalLevels/{ID}", id);

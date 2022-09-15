@@ -315,12 +315,12 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
       .body("archived", is( course.getArchived() ));
       
-    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setId(response.body().jsonPath().getLong("id"));
     course.setName("Updated name - testUpdateCourse()");
     course.setDescription("Updated description - testUpdateCourse()");
     course.setMaxParticipantCount(1234l);
     
-    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setId(response.body().jsonPath().getLong("courseModules[0].id"));
     firstCourseModule(course).setCourseNumber(999);
     firstCourseModule(course).getCourseLength().setUnits(888d);
 
@@ -404,13 +404,13 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2"), hasItem("tag3")))
       .body("archived", is( course.getArchived() ));
       
-    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setId(response.body().jsonPath().getLong("id"));
     course.setName("Updated name - testUpdateCourseTags()");
     course.setDescription("Updated description - testUpdateCourseTags()");
     course.setMaxParticipantCount(1234l);
     course.setTags(Arrays.asList("tag1", "tag3", "tag4", "tag5"));
 
-    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setId(response.body().jsonPath().getLong("courseModules[0].id"));
     firstCourseModule(course).setCourseNumber(999);
     firstCourseModule(course).getCourseLength().setUnits(888d);
 
@@ -480,7 +480,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body(course)
       .post("/courses/courses/");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/courses/courses/{ID}", id)

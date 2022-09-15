@@ -107,7 +107,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(entity)
       .post("/students/studentGroups");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudentGroup updateEntity = new StudentGroup(id, 
           "updated", 
@@ -154,7 +154,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(entity)
       .post("/students/studentGroups");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/studentGroups/{ID}", id);

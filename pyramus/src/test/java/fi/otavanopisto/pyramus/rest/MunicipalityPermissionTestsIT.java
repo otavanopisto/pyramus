@@ -78,7 +78,7 @@ public class MunicipalityPermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(municipality)
       .post("/students/municipalities");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Municipality updateMunicipality = new Municipality(id, "Updated", "UPD", Boolean.FALSE);
 
@@ -103,7 +103,7 @@ public class MunicipalityPermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(municipality)
       .post("/students/municipalities");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/municipalities/{ID}", id);

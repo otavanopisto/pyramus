@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -20,9 +18,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.rest.controller.UserController;
-import fi.otavanopisto.pyramus.security.impl.SessionController;
-import fi.otavanopisto.security.User;
 
 /**
  * JSON request controller for creating new contact entry.

@@ -215,7 +215,7 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
       String colPrefix = "subjectCoursesTable." + i;
       
       Long studentProjectSubjectCourseId = jsonRequestContext.getLong(colPrefix + ".projectSubjectCourseId");
-      int optionalityInt = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality")).intValue();
+      int optionalityInt = Integer.valueOf(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality")).intValue();
       CourseOptionality optionality = CourseOptionality.getOptionality(optionalityInt);
       Long studyTermId = jsonRequestContext.getLong(colPrefix + ".academicTerm");
       AcademicTerm academicTerm = studyTermId == null ? null : academicTermDAO.findById(studyTermId);

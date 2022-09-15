@@ -17,7 +17,7 @@ public class CourseParticipationTypeDAO extends PyramusEntityDAO<CourseParticipa
     Integer indexColumn = findMaxIndexColumn();
     
     if (indexColumn == null)
-      indexColumn = new Integer(0);
+      indexColumn = 0;
     else
       indexColumn++;
 

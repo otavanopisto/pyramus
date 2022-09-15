@@ -39,11 +39,9 @@ public class CourseEnrolmentTypePermissionsTestsIT extends AbstractRESTPermissio
 
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSEENROLMENTTYPE, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
         .delete("/courses/enrolmentTypes/{ID}", id);
       }
@@ -73,7 +71,7 @@ public class CourseEnrolmentTypePermissionsTestsIT extends AbstractRESTPermissio
       .body(enrolmentType)
       .post("/courses/enrolmentTypes");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     CourseEnrolmentType updateEnrolmentType = new CourseEnrolmentType(id, "Updated name");
 
@@ -97,16 +95,15 @@ public class CourseEnrolmentTypePermissionsTestsIT extends AbstractRESTPermissio
       .body(courseEnrolmentType)
       .post("/courses/enrolmentTypes");
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/courses/enrolmentTypes/{ID}", id);
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSEENROLMENTTYPE, 204);
     
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204")){
+    if (deleteResponse.statusCode() != 204) {
       given().headers(getAdminAuthHeaders())
-      .delete("/courses/enrolmentTypes/{ID}", id);
+        .delete("/courses/enrolmentTypes/{ID}", id);
     }   
   }
 }

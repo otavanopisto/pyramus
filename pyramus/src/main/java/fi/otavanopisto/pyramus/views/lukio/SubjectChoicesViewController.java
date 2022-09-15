@@ -51,7 +51,7 @@ public class SubjectChoicesViewController extends PyramusViewController implemen
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    Long studentId = new Long(0);
+    Long studentId = Long.valueOf(0);
     if (pageRequestContext.getRequest().getParameter("studentId") != null) {
       studentId = Long.parseLong(pageRequestContext.getRequest().getParameter("studentId").toString());
     }

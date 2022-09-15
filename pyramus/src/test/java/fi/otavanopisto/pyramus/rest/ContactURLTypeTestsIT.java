@@ -72,7 +72,7 @@ public class ContactURLTypeTestsIT extends AbstractRESTServiceTest {
       .body("name", is(contactURLType.getName()))
       .body("archived", is( contactURLType.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       ContactURLType updateContactURLType = new ContactURLType(id, "Updated", Boolean.FALSE);
 
@@ -103,7 +103,7 @@ public class ContactURLTypeTestsIT extends AbstractRESTServiceTest {
       .body(contactURLType)
       .post("/common/contactURLTypes");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/common/contactURLTypes/{ID}", id)

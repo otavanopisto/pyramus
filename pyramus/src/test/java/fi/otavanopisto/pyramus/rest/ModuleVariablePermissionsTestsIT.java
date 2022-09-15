@@ -40,10 +40,9 @@ public class ModuleVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     
     assertOk(response, commonPermissions, CommonPermissions.CREATE_COURSEBASEVARIABLEKEY, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    if(statusCode.toString().equals("200")){
+    if (response.statusCode() == 200) {
       given().headers(getAdminAuthHeaders())
-      .delete("/modules/variables/{KEY}", moduleVariable.getKey());
+        .delete("/modules/variables/{KEY}", moduleVariable.getKey());
     }
   }
 
@@ -95,8 +94,7 @@ public class ModuleVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/modules/variables/{KEY}", moduleVariable.getKey());
     assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_COURSEBASEVARIABLEKEY, 204);
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204"))
+    if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders()).delete("/modules/variables/{KEY}", moduleVariable.getKey());
   }
 }

@@ -299,7 +299,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
       .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", 4, testCOURSE.getId());
 
     if (response.statusCode() == 200) {
-      Long id = new Long(response.body().jsonPath().getInt("id"));
+      Long id = response.body().jsonPath().getLong("id");
       try {
         CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
   
@@ -333,7 +333,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
       .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID);
 
     if (response.statusCode() == 200) {
-      Long id = new Long(response.body().jsonPath().getInt("id"));
+      Long id = response.body().jsonPath().getLong("id");
       try {
         CourseAssessment updatedCourseAssessment = new CourseAssessment(id, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
   
@@ -364,7 +364,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
         .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", studentId, testCOURSE.getId());
   
       if (response.statusCode() == 200) {
-        Long id = new Long(response.body().jsonPath().getInt("id"));
+        Long id = response.body().jsonPath().getLong("id");
         try {
           CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
     
@@ -408,7 +408,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
             .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", 4, testCOURSE.getId());
       
           if (response.statusCode() == 200) {
-            Long id = new Long(response.body().jsonPath().getInt("id"));
+            Long id = response.body().jsonPath().getLong("id");
             try {
               CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, testCOURSEMODULE.getId(), TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
         

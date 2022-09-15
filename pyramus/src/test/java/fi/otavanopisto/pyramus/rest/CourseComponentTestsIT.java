@@ -96,7 +96,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
       .body(courseComponent)
       .post("/courses/courses/{COURSEID}/components", courseId);
      
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     try {
       response.then()
@@ -152,7 +152,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
       .body(courseComponent)
       .post("/courses/courses/{COURSEID}/components", courseId);
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)

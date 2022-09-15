@@ -38,11 +38,9 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(courseState)
       .post("/courses/courseStates");
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTATE, 200);
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
         .delete("/courses/courseStates/{ID}?permanent=true", id);
       }
@@ -73,7 +71,7 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(courseState)
       .post("/courses/courseStates");
      
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     CourseState updateState = new CourseState(
       id,
@@ -102,7 +100,7 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(courseState)
       .post("/courses/courseStates");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/courses/courseStates/{ID}", id);

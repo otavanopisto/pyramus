@@ -71,7 +71,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("name", is(enrolmentType.getName()));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     CourseEnrolmentType updateEnrolmentType = new CourseEnrolmentType(id, "Updated name");
 
@@ -103,7 +103,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("name", is(courseEnrolmentType.getName()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/courses/enrolmentTypes/{ID}", id)

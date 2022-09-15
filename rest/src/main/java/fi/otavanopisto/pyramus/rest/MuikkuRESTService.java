@@ -492,7 +492,7 @@ public class MuikkuRESTService {
 
     // Basic payload validation
     
-    Long groupId = new Long(payload.getGroupIdentifier());
+    Long groupId = Long.valueOf(payload.getGroupIdentifier());
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(groupId);
     if (studentGroup == null) {
       return Response.status(Status.BAD_REQUEST).entity(String.format("Student group %d not found", groupId)).build();
@@ -502,7 +502,7 @@ public class MuikkuRESTService {
       return Response.status(Status.BAD_REQUEST).entity("No student group access").build();
     }
     for (String userIdentifier : payload.getUserIdentifiers()) {
-      Long userId = new Long(userIdentifier);
+      Long userId = Long.valueOf(userIdentifier);
       User user = userController.findUserById(userId);
       if (!UserUtils.canAccessOrganization(loggedUser, user.getOrganization())) {
         logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to add user %d to group %d", loggedUser.getId(), userId, groupId));
@@ -513,7 +513,7 @@ public class MuikkuRESTService {
     // Add user group members
     
     for (String userIdentifier : payload.getUserIdentifiers()) {
-      Long userId = new Long(userIdentifier);
+      Long userId = Long.valueOf(userIdentifier);
       User user = userController.findUserById(userId);
       if (user instanceof Student) {
         StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, (Student) user);
@@ -545,7 +545,7 @@ public class MuikkuRESTService {
 
     // Basic payload validation
     
-    Long groupId = new Long(payload.getGroupIdentifier());
+    Long groupId = Long.valueOf(payload.getGroupIdentifier());
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(groupId);
     if (studentGroup == null) {
       return Response.status(Status.BAD_REQUEST).entity(String.format("Student group %d not found", groupId)).build();
@@ -555,7 +555,7 @@ public class MuikkuRESTService {
       return Response.status(Status.BAD_REQUEST).entity("No student group access").build();
     }
     for (String userIdentifier : payload.getUserIdentifiers()) {
-      Long userId = new Long(userIdentifier);
+      Long userId = Long.valueOf(userIdentifier);
       User user = userController.findUserById(userId);
       if (!UserUtils.canAccessOrganization(loggedUser, user.getOrganization())) {
         logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to remove user %d from group %d", loggedUser.getId(), userId, groupId));
@@ -566,7 +566,7 @@ public class MuikkuRESTService {
     // Remove user group members
     
     for (String userIdentifier : payload.getUserIdentifiers()) {
-      Long userId = new Long(userIdentifier);
+      Long userId = Long.valueOf(userIdentifier);
       User user = userController.findUserById(userId);
       if (user instanceof Student) {
         StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, (Student) user);

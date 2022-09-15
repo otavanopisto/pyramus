@@ -80,7 +80,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
       .body("code", is(municipality.getCode()))
       .body("archived", is( municipality.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Municipality updateMunicipality = new Municipality(id, "Updated", "UPD", Boolean.FALSE);
 
@@ -112,7 +112,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
       .body(municipality)
       .post("/students/municipalities");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/municipalities/{ID}", id)

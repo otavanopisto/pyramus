@@ -80,7 +80,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
       .body("code", is(nationality.getCode()))
       .body("archived", is( nationality.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Nationality updateNationality = new Nationality(id, "Updated", "UPD", Boolean.FALSE);
 
@@ -112,7 +112,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
       .body(nationality)
       .post("/students/nationalities");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/nationalities/{ID}", id)

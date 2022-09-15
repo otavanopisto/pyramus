@@ -143,7 +143,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
       .body("archived", is( entity.getArchived()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudentGroup updateEntity = new StudentGroup(id, 
           "updated", 
@@ -215,7 +215,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
       .body("archived", is( entity.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/studentGroups/{ID}", id)

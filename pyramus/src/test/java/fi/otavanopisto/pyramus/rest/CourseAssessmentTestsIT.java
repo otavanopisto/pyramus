@@ -135,7 +135,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
       .body("date", is( courseAssessment.getDate().toString() ))
       .body("verbalAssessment", is( courseAssessment.getVerbalAssessment() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, 1000l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
 

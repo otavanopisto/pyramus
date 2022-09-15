@@ -288,7 +288,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
       .body("archived", is(student.getArchived()));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "abc");
@@ -409,7 +409,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)));
      
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     given().headers(getAuthHeaders()).get("/students/students/{ID}", id)
       .then()

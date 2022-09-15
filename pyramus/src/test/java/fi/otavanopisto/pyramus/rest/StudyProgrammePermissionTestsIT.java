@@ -103,7 +103,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
       .body(studyProgramme)
       .post("/students/studyProgrammes");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudyProgramme updateStudyProgramme = new StudyProgramme(id, TEST_ORGANIZATION_ID, "UPD", "Updated", 2l, null, Boolean.FALSE, Boolean.FALSE);
 
@@ -128,7 +128,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
       .body(studyProgramme)
       .post("/students/studyProgrammes");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/studyProgrammes/{ID}", id);

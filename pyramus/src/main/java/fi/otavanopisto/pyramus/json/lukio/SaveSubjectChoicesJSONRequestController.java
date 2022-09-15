@@ -23,7 +23,7 @@ public class SaveSubjectChoicesJSONRequestController extends JSONRequestControll
   @Override
   public void process(JSONRequestContext jsonRequestContext) {
     Map<Long, List<String> > choices = new HashMap< Long, List<String> >();
-    Long studentId = new Long(-1);
+    Long studentId = Long.valueOf(-1);
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     UserVariableDAO studentVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     UserVariableKeyDAO studentVariableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();

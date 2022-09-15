@@ -145,7 +145,7 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
       .body(address)
       .post("/students/students/{STUDENTID}/addresses", TEST_STUDENT_ID);
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, id);

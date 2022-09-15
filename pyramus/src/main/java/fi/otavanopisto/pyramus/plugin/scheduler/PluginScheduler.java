@@ -8,9 +8,6 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 
 import fi.otavanopisto.pyramus.plugin.PluginManager;
-import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledPluginTask;
-import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledTaskException;
-import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledTaskInterval;
 
 @Singleton
 public class PluginScheduler {

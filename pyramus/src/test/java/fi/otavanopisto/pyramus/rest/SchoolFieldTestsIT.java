@@ -76,7 +76,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
       .body("name", is(schoolField.getName()))
       .body("archived", is(schoolField.getArchived()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       SchoolField updateSchoolField = new SchoolField(id, "updated", Boolean.FALSE);
       
@@ -112,7 +112,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
       .body("name", is(schoolField.getName()))
       .body("archived", is(schoolField.getArchived()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/schools/schoolFields/{ID}", id)

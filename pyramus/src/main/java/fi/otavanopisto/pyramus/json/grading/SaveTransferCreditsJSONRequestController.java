@@ -56,8 +56,8 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
       Date date = jsonRequestContext.getDate(colPrefix + ".date");
       Long userId = jsonRequestContext.getLong(colPrefix + ".user");
       Long curriculumId = jsonRequestContext.getLong(colPrefix + ".curriculum");
-      boolean offCurriculum = new Long(1).equals(jsonRequestContext.getLong(colPrefix + ".offCurriculum"));
-      TransferCreditFunding funding = new Long(1).equals(jsonRequestContext.getLong(colPrefix + ".funding"))
+      boolean offCurriculum = Long.valueOf(1).equals(jsonRequestContext.getLong(colPrefix + ".offCurriculum"));
+      TransferCreditFunding funding = Long.valueOf(1).equals(jsonRequestContext.getLong(colPrefix + ".funding"))
           ? TransferCreditFunding.GOVERNMENT_FUNDING : null;
       
       Grade grade = gradeDAO.findById(gradeId);

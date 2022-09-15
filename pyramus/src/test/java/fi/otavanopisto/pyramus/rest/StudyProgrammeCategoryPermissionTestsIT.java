@@ -77,7 +77,7 @@ public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermiss
       .body(studyProgrammeCategory)
       .post("/students/studyProgrammeCategories");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudyProgrammeCategory updateStudyProgrammeCategory = new StudyProgrammeCategory(id, "Updated", 2l, Boolean.FALSE);
 
@@ -102,7 +102,7 @@ public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermiss
       .body(studyProgrammeCategory)
       .post("/students/studyProgrammeCategories");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/studyProgrammeCategories/{ID}", id);

@@ -3138,7 +3138,7 @@ public class StudentRESTService extends AbstractRESTService {
       courseStudents = new ArrayList<>();
       String[] courseIdArray = courseIds.split(",");
       for (int i = 0; i < courseIdArray.length; i++) {
-        Course course = courseController.findCourseById(new Long(courseIdArray[i]));
+        Course course = courseController.findCourseById(Long.valueOf(courseIdArray[i]));
         if (course != null) {
           CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
           if (courseStudent != null) {

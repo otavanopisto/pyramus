@@ -39,11 +39,9 @@ public class EducationSubtypePermissionsTestsIT extends AbstractRESTPermissionsT
 
     assertOk(response, commonPermissions, CommonPermissions.CREATE_EDUCATIONSUBTYPE, 200);
          
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         deleteEducationSubtype(educationSubtype.getEducationTypeId(), id);
       }
     }
@@ -75,7 +73,7 @@ public class EducationSubtypePermissionsTestsIT extends AbstractRESTPermissionsT
       .body(educationSubtype)
       .post("/common/educationTypes/{EDUCATIONTYPE}/subtypes", educationSubtype.getEducationTypeId());
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     EducationSubtype updateSubtype = new EducationSubtype(id, "Updated", "UPD", updateEducationTypeId, Boolean.FALSE);
 
@@ -102,7 +100,7 @@ public class EducationSubtypePermissionsTestsIT extends AbstractRESTPermissionsT
       .body(educationSubtype)
       .post("/common/educationTypes/{EDUCATIONTYPE}/subtypes", educationSubtype.getEducationTypeId());
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
         
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id);

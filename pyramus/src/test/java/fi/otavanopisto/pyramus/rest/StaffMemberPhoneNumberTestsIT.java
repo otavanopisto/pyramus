@@ -80,7 +80,7 @@ public class StaffMemberPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
       .body("defaultNumber", is( phoneNumber.getDefaultNumber()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/staff/members/{STUDENTID}/phoneNumbers/{ID}", TEST_STAFFMEMBER_ID, id)

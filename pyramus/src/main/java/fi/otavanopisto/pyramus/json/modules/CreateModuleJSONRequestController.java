@@ -153,8 +153,8 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
       name = (String) parameterNames.nextElement();
       if (name.startsWith("educationType.")) {
         String[] nameElements = name.split("\\.");
-        Long educationTypeId = new Long(nameElements[1]);
-        Long educationSubtypeId = new Long(nameElements[2]);
+        Long educationTypeId = Long.valueOf(nameElements[1]);
+        Long educationSubtypeId = Long.valueOf(nameElements[2]);
         Vector<Long> v = chosenEducationTypes.containsKey(educationTypeId) ? chosenEducationTypes.get(educationTypeId)
             : new Vector<Long>();
         v.add(educationSubtypeId);

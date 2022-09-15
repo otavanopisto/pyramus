@@ -112,7 +112,7 @@ public class CompositeRESTService {
       if (StringUtils.isNotBlank(courseStudentIds)) {
         String[] courseStudentIdArray = courseStudentIds.split(",");
         for (int i = 0; i < courseStudentIdArray.length; i++) {
-          CourseStudent courseStudent = courseController.findCourseStudentById(new Long(courseStudentIdArray[i]));
+          CourseStudent courseStudent = courseController.findCourseStudentById(Long.valueOf(courseStudentIdArray[i]));
           if (courseStudent != null && !courseStudent.getArchived() && !courseStudent.getStudent().getArchived()) {
             courseStudents.add(courseStudent);
           }

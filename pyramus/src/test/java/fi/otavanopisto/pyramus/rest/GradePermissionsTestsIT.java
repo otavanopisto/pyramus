@@ -39,13 +39,11 @@ public class GradePermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk(response, commonPermissions, CommonPermissions.CREATE_GRADE, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/common/gradingScales/{SCALEID}/grades/{ID}?permanent=true", grade.getGradingScaleId(), id);
+          .delete("/common/gradingScales/{SCALEID}/grades/{ID}?permanent=true", grade.getGradingScaleId(), id);
       }
     }
   }
@@ -73,7 +71,7 @@ public class GradePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(grade)
       .post("/common/gradingScales/{SCALEID}/grades", grade.getGradingScaleId());;
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     try {
       Grade updateGrade = new Grade(id, "updated", "updated grade", 1l, Boolean.TRUE, "updated qualification", 10d, Boolean.FALSE);
@@ -98,7 +96,7 @@ public class GradePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(grade)
       .post("/common/gradingScales/{SCALEID}/grades", grade.getGradingScaleId());
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/common/gradingScales/{SCALEID}/grades/{ID}", grade.getGradingScaleId(), id);

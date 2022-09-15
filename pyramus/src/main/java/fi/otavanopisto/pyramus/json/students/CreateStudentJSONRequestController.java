@@ -264,7 +264,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
       for (int i = 0; i < variableCount; i++) {
         String colPrefix = "variablesTable." + i;
         Long edited = requestContext.getLong(colPrefix + ".edited");
-        if (Objects.equals(new Long(1), edited)) {
+        if (Objects.equals(Long.valueOf(1), edited)) {
           String variableKey = requestContext.getRequest().getParameter(colPrefix + ".key");
           String variableValue = requestContext.getRequest().getParameter(colPrefix + ".value");
           userVariableDAO.setUserVariable(student, variableKey, variableValue);
