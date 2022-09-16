@@ -112,7 +112,10 @@
       "pidennettyPäättymispäivä" : false,
       "ulkomainenVaihtoopiskelija" : false,
       "yksityisopiskelija" : false,
-      "oikeusMaksuttomaanAsuntolapaikkaan" : false
+      "oikeusMaksuttomaanAsuntolapaikkaan" : false,
+      "maksuttomuus": [
+      	{"alku": "2020-01-01", "maksuton": "false"}
+      ]
     },
     "suoritukset" : [ {
       "koulutusmoduuli" : {
