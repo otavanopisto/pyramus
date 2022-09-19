@@ -405,12 +405,12 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>3.3.2</version>
         <configuration>
-          <archive>
-            <manifestEntries>
-              <Dependencies>org.apache.commons.codec,org.apache.commons.io,org.apache.httpcomponents</Dependencies>
+<!--           <archive> -->
+<!--             <manifestEntries> -->
+<!--               <Dependencies>org.apache.commons.codec,org.apache.commons.io,org.apache.httpcomponents</Dependencies> -->
 <!--               <Dependencies>org.hibernate,org.hibernate.search.orm services,org.hibernate.validator,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.apache.xalan,org.slf4j,org.slf4j.impl,org.jboss.resteasy.resteasy-jackson2-provider, org.yaml.snakeyaml, org.apache.commons.codec</Dependencies> -->
-            </manifestEntries>
-          </archive>
+<!--             </manifestEntries> -->
+<!--           </archive> -->
         </configuration>
       </plugin>
     </plugins>
