@@ -331,6 +331,9 @@
           <a class="tabLabel" href="#createUser">
             <fmt:message key="users.createUser.tabLabelCreateUser"/>
           </a>
+          <a class="tabLabel" href="#studyProgrammes">
+            <fmt:message key="users.createUser.tabLabelStudyProgrammes"/>
+          </a>
         </div>
         
         <form action="createuser.json" method="post" ix:jsonform="true">
@@ -459,9 +462,25 @@
               </c:otherwise>
             </c:choose>
           </div>
+
+          <div id="studyProgrammes" class="tabContent hiddenTab">
+            <div class="genericFormSection">
+              <table>
+                <c:forEach var="studyProgramme" items="${studyProgrammes}">
+                  <tr>
+                    <td>
+                      <input name="studyProgrammes" type="checkbox" value="${studyProgramme.id}"/></td><td>${studyProgramme.name}
+                    </td>
+                  </tr>
+                </c:forEach>
+              </table>
+            </div>
+          </div>
+          
           <div class="genericFormSubmitSectionOffTab">
             <input type="submit" name="login" value="<fmt:message key="users.createUser.submitButton"/>" class="formvalid">
           </div>
+        
         </form>
       </div>
     </div>

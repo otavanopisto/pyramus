@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.views.users;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,11 +13,13 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactURLTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -45,6 +48,7 @@ public class CreateUserViewController extends PyramusViewController implements B
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     
     StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
     
@@ -80,10 +84,14 @@ public class CreateUserViewController extends PyramusViewController implements B
     }
     Collections.sort(organizations, new StringAttributeComparator("getName"));
 
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    Collections.sort(studyProgrammes, Comparator.comparing(StudyProgramme::getName));
+
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
     pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
     pageRequestContext.getRequest().setAttribute("organizations", organizations);
+    pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);
 
     pageRequestContext.setIncludeJSP("/templates/users/createuser.jsp");
   }

@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.google.common.collect.Lists;
+
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -54,6 +56,18 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
       page = 0;
     }
     
+    // #1416: Staff with no study programmes get no results whatsoever
+
+    if (loggedUser.getStudyProgrammes().isEmpty()) {
+      jsonRequestContext.addResponseParameter("results", new ArrayList());
+      jsonRequestContext.addResponseParameter("statusMessage",
+          Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(),
+              "students.searchStudents.searchStatusNoMatches"));
+      jsonRequestContext.addResponseParameter("pages", 0);
+      jsonRequestContext.addResponseParameter("page", 0);
+      return;
+    }
+
     SearchResult<Person> searchResult;
     
     String query = jsonRequestContext.getRequest().getParameter("query");
@@ -69,7 +83,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     if (studentGroupId.intValue() != -1)
       studentGroup = studentGroupDAO.findById(studentGroupId);
 
-    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup, organization);
+    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup, organization, loggedUser.getStudyProgrammes());
     
     List<Map<String, Object>> results = new ArrayList<>();
     List<Person> persons = searchResult.getResults();

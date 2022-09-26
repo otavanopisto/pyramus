@@ -1,15 +1,21 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -23,6 +29,7 @@ import org.hibernate.search.annotations.Store;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 
 @Entity
 @Indexed
@@ -68,6 +75,14 @@ public class StaffMember extends User implements ArchivableEntity {
     this.properties = properties;
   }
 
+  public Set<StudyProgramme> getStudyProgrammes() {
+    return studyProgrammes;
+  }
+
+  public void setStudyProgrammes(Set<StudyProgramme> studyProgrammes) {
+    this.studyProgrammes = studyProgrammes;
+  }
+
   private String title;  
   
   @NotNull
@@ -82,4 +97,9 @@ public class StaffMember extends User implements ArchivableEntity {
   @Column (name = "value", length = 255)
   @CollectionTable (name = "StaffMemberProperties", joinColumns = @JoinColumn(name = "staffMember_id"))
   private Map<String, String> properties = new HashMap<String, String>();
+
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinTable (name = "__StaffMemberStudyProgrammes", joinColumns = @JoinColumn(name = "staffMember"), inverseJoinColumns = @JoinColumn(name = "studyProgramme"))
+  private Set<StudyProgramme> studyProgrammes = new HashSet<>();
+
 }

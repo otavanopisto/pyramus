@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,6 +19,7 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
+import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -24,6 +27,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -50,7 +54,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
@@ -59,6 +63,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
 
     Long personId = requestContext.getLong("personId");
     
@@ -87,7 +92,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     String password2 = requestContext.getString("password2");
     Long organizationId = requestContext.getLong("organizationId");
 
-    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
     Organization organization = organizationId != null ? organizationDAO.findById(organizationId) : null;
 
     if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
@@ -110,12 +115,12 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     // User
 
     Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
-    StaffMember user = userDAO.create(organization, firstName, lastName, role, person, false);
+    StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, role, person, false);
     if (title != null)
-      userDAO.updateTitle(user, title);
+      staffMemberDAO.updateTitle(staffMember, title);
     
     if(person.getDefaultUser() == null){
-      personDAO.updateDefaultUser(person, user);
+      personDAO.updateDefaultUser(person, staffMember);
     }
     
     // Authentication
@@ -147,7 +152,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     }
     
     // Tags
-    userDAO.updateTags(user, tagEntities);
+    staffMemberDAO.updateTags(staffMember, tagEntities);
     
     // Addresses
     
@@ -163,7 +168,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
       String country = requestContext.getString(colPrefix + ".country");
       boolean hasAddress = name != null || street != null || postal != null || city != null || country != null;
       if (hasAddress) {
-        addressDAO.create(user.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
+        addressDAO.create(staffMember.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
       }
     }
     
@@ -177,7 +182,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
       String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
       
       if (StringUtils.isNotBlank(email)) {
-        emailDAO.create(user.getContactInfo(), contactType, defaultAddress, email);
+        emailDAO.create(staffMember.getContactInfo(), contactType, defaultAddress, email);
       }
     }
     
@@ -190,14 +195,32 @@ public class CreateUserJSONRequestController extends JSONRequestController {
       ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String number = requestContext.getString(colPrefix + ".phone");
       if (number != null) {
-        phoneNumberDAO.create(user.getContactInfo(), contactType, defaultNumber, number);
+        phoneNumberDAO.create(staffMember.getContactInfo(), contactType, defaultNumber, number);
       }
     }
+
+    // Study programmes
+    
+    Set<StudyProgramme> studyProgrammes = new HashSet<>();
+    String studyProgrammeStr = requestContext.getString("studyProgrammes");
+    if (!StringUtils.isEmpty(studyProgrammeStr)) {
+      List<Long> studyProgrammeIds = Stream.of(requestContext.getString("studyProgrammes")
+          .split(","))
+          .map(Long::parseLong)
+          .collect(Collectors.toList());
+      for (Long studyProgrammeId : studyProgrammeIds) {
+        StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
+        if (studyProgramme != null) {
+          studyProgrammes.add(studyProgramme);
+        }
+      }
+    }
+    staffMemberDAO.setStudyProgrammes(staffMember, studyProgrammes);
     
     // Redirect to the Edit User view
 
     requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/users/edituser.page?userId="
-        + user.getId());
+        + staffMember.getId());
   }
 
   public UserRole[] getAllowedRoles() {
