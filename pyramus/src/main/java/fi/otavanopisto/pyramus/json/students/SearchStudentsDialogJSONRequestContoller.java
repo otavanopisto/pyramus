@@ -8,8 +8,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
 
-import com.google.common.collect.Lists;
-
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -59,7 +57,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     // #1416: Staff with no study programmes get no results whatsoever
 
     if (loggedUser.getStudyProgrammes().isEmpty()) {
-      jsonRequestContext.addResponseParameter("results", new ArrayList());
+      jsonRequestContext.addResponseParameter("results", new ArrayList<Map<String, Object>>());
       jsonRequestContext.addResponseParameter("statusMessage",
           Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(),
               "students.searchStudents.searchStatusNoMatches"));
