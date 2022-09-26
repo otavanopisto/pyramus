@@ -283,7 +283,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     Set<StudyProgramme> studyProgrammes = new HashSet<>();
     String studyProgrammeStr = requestContext.getString("studyProgrammes");
     if (!StringUtils.isEmpty(studyProgrammeStr)) {
-      List<Long> studyProgrammeIds = Stream.of(requestContext.getString("studyProgrammes")
+      List<Long> studyProgrammeIds = Stream.of(studyProgrammeStr
           .split(","))
           .map(Long::parseLong)
           .collect(Collectors.toList());
