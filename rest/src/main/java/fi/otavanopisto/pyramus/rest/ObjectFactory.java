@@ -875,7 +875,8 @@ public class ObjectFactory {
           Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
           
           return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, organizationId, additionalContactInfo, 
-              entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables);
+              entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables,
+              entity.getStudyProgrammes().stream().map(StudyProgramme::getId).collect(Collectors.toSet()));
         }
       },
       

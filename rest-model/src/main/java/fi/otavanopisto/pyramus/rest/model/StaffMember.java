@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.rest.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fi.otavanopisto.security.ContextReference;
 
@@ -11,7 +12,8 @@ public class StaffMember implements ContextReference {
     super();
   }
 
-  public StaffMember(Long id, Long personId, Long organizationId, String additionalContactInfo, String firstName, String lastName, String title, UserRole role, List<String> tags, Map<String, String> variables) {
+  public StaffMember(Long id, Long personId, Long organizationId, String additionalContactInfo, String firstName, String lastName, String title, UserRole role,
+      List<String> tags, Map<String, String> variables, Set<Long> studyProgrammeIds) {
     super();
     this.id = id;
     this.personId = personId;
@@ -23,6 +25,7 @@ public class StaffMember implements ContextReference {
     this.role = role;
     this.tags = tags;
     this.variables = variables;
+    this.studyProgrammeIds = studyProgrammeIds;
   }
 
   public Long getId() {
@@ -105,6 +108,14 @@ public class StaffMember implements ContextReference {
     this.organizationId = organizationId;
   }
 
+  public Set<Long> getStudyProgrammeIds() {
+    return studyProgrammeIds;
+  }
+
+  public void setStudyProgrammeIds(Set<Long> studyProgrammeIds) {
+    this.studyProgrammeIds = studyProgrammeIds;
+  }
+
   private Long id;
   private Long personId;
   private Long organizationId;
@@ -115,4 +126,5 @@ public class StaffMember implements ContextReference {
   private UserRole role;
   private Map<String, String> variables;
   private List<String> tags;
+  private Set<Long> studyProgrammeIds;
 }
