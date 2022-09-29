@@ -37,7 +37,9 @@ public class KoskiKoodisto {
     registerEnum(LukionKurssinTyyppi.class);
     registerEnum(LukionKurssit.class);
     registerEnum(LukionKurssitOPS2004Aikuiset.class);
+    registerEnum(LukionMuutOpinnot.class);
     registerEnum(LukionOppimaara.class);
+    registerEnum(ModuuliKoodistoLOPS2021.class);
     registerEnum(OpintojenLaajuusYksikko.class);
     registerEnum(OpintojenRahoitus.class);
     registerEnum(OpiskeluoikeudenTila.class);
