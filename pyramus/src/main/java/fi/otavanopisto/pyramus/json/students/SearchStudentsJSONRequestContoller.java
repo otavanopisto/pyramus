@@ -64,18 +64,6 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       page = 0;
     }
     
-    // #1416: Staff with no study programmes get no results whatsoever
-
-    if (loggedUser.getStudyProgrammes().isEmpty()) {
-      jsonRequestContext.addResponseParameter("results", new ArrayList<Map<String, Object>>());
-      jsonRequestContext.addResponseParameter("statusMessage",
-          Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(),
-              "students.searchStudents.searchStatusNoMatches"));
-      jsonRequestContext.addResponseParameter("pages", 0);
-      jsonRequestContext.addResponseParameter("page", 0);
-      return;
-    }
-    
     SearchResult<Person> searchResult;
     
     if ("advanced".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {

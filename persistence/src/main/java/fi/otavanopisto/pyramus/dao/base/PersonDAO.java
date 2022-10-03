@@ -191,6 +191,12 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
   @SuppressWarnings("unchecked")
   public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, PersonFilter studentFilter, StudyProgramme studyProgramme, StudentGroup studentGroup, Organization organization, Set<StudyProgramme> staffStudyProgrammes) {
     int firstResult = page * resultsPerPage;
+    
+    // #1416: Basic security checks that always lead to no results
+    
+    if (organization == null || staffStudyProgrammes == null || staffStudyProgrammes.isEmpty()) {
+      return new SearchResult<>(0, 0, 0, 0, 0, new ArrayList<>()); 
+    }
 
     StringBuilder queryBuilder = new StringBuilder();
     switch (studentFilter) {
@@ -211,8 +217,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           queryBuilder.append(")");
         }
         
-        if (organization != null)
-          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds", "activeOrganizationIds", "staffMemberOrganizations");
+        addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds", "activeOrganizationIds", "staffMemberOrganizations");
+
         if (studyProgramme != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", "activeStudyProgrammeIds", studyProgramme.getId().toString(), true);
 
@@ -243,8 +249,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           queryBuilder.append(")");
         }
 
-        if (organization != null)
-          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds");
+        addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds");
+
         if (studyProgramme != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", studyProgramme.getId().toString(), true);
 
@@ -268,8 +274,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           queryBuilder.append(")");
         }
 
-        if (organization != null)
-          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "activeOrganizationIds");
+        addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "activeOrganizationIds");
+
         if (studyProgramme != null)
           addTokenizedSearchCriteria(queryBuilder, "activeStudyProgrammeIds", studyProgramme.getId().toString(), true);
 
@@ -287,8 +293,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           
           queryBuilder.append(")");
 
-          if (organization != null)
-            addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "staffMemberOrganizations");
+          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "staffMemberOrganizations");
           
           addTokenizedSearchCriteria(queryBuilder, "staff", "true", false, 0f);
         }
@@ -296,13 +301,12 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     }
     
     // #1416 Limit results to study programmes of staff member
-    if (!staffStudyProgrammes.isEmpty()) {
-      queryBuilder.append("+(");
-      for (StudyProgramme staffStudyProgramme : staffStudyProgrammes) {
-        addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", "activeStudyProgrammeIds", staffStudyProgramme.getId().toString(), false);
-      }
-      queryBuilder.append(")");
+
+    queryBuilder.append("+(");
+    for (StudyProgramme staffStudyProgramme : staffStudyProgrammes) {
+      addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", "activeStudyProgrammeIds", staffStudyProgramme.getId().toString(), false);
     }
+    queryBuilder.append(")");
     
     List<Long> studentIds = null;
     
@@ -374,6 +378,12 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
       String phone, StudyProgramme studyProgramme, Language language, Nationality nationality, Municipality municipality,
       String title, PersonFilter personFilter, Organization organization, Set<StudyProgramme> staffStudyProgrammes) {
 
+    // #1416: Basic security checks that always lead to no results
+    
+    if (organization == null || staffStudyProgrammes == null || staffStudyProgrammes.isEmpty()) {
+      return new SearchResult<>(0, 0, 0, 0, 0, new ArrayList<>()); 
+    }
+
     int firstResult = page * resultsPerPage;
 
     StringBuilder queryBuilder = new StringBuilder();
@@ -430,8 +440,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveLanguageIds", "activeLanguageIds", language.getId().toString(), true);
 
-        if (organization != null)
-          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds", "activeOrganizationIds", "staffMemberOrganizations");
+        addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds", "activeOrganizationIds", "staffMemberOrganizations");
       break;
       case INACTIVE_STUDENTS:
 
@@ -474,8 +483,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "inactiveMunicipalityIds", municipality.getId().toString(), true);
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveLanguageIds", language.getId().toString(), true);
-        if (organization != null)
-          addTokenizedSearchCriteria(queryBuilder, "inactiveOrganizationIds", organization.getId().toString(), true);
+        addTokenizedSearchCriteria(queryBuilder, "inactiveOrganizationIds", organization.getId().toString(), true);
       break;
       case ACTIVE_STUDENTS:
         
@@ -517,8 +525,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "activeMunicipalityIds", municipality.getId().toString(), true);
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "activeLanguageIds", language.getId().toString(), true);
-        if (organization != null)
-          addTokenizedSearchCriteria(queryBuilder, "activeOrganizationIds", organization.getId().toString(), true);
+        addTokenizedSearchCriteria(queryBuilder, "activeOrganizationIds", organization.getId().toString(), true);
       break;
       
       case STAFFMEMBERS:
@@ -542,19 +549,17 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, true, addressStreetAddress, "staffMemberStreetAddresses");
         if (!StringUtils.isBlank(phone))
           addTokenizedSearchCriteria(queryBuilder, true, phone, "staffMemberPhones");
-        if (organization != null)
-          addTokenizedSearchCriteria(queryBuilder, true, "staffMemberOrganizations", organization.getId().toString());
+        addTokenizedSearchCriteria(queryBuilder, true, "staffMemberOrganizations", organization.getId().toString());
       break;
     }
 
     // #1416 Limit results to study programmes of staff member
-    if (!staffStudyProgrammes.isEmpty()) {
-      queryBuilder.append("+(");
-      for (StudyProgramme staffStudyProgramme : staffStudyProgrammes) {
-        addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", "activeStudyProgrammeIds", staffStudyProgramme.getId().toString(), false);
-      }
-      queryBuilder.append(")");
+
+    queryBuilder.append("+(");
+    for (StudyProgramme staffStudyProgramme : staffStudyProgrammes) {
+      addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", "activeStudyProgrammeIds", staffStudyProgramme.getId().toString(), false);
     }
+    queryBuilder.append(")");
 
     EntityManager entityManager = getEntityManager();
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);

@@ -99,7 +99,7 @@ public class StaffMember extends User implements ArchivableEntity {
   private Map<String, String> properties = new HashMap<String, String>();
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinTable (name = "__StaffMemberStudyProgrammes", joinColumns = @JoinColumn(name = "staffMember"), inverseJoinColumns = @JoinColumn(name = "studyProgramme"))
+  @JoinTable (name = "StaffMemberStudyProgrammes", joinColumns = @JoinColumn(name = "staffMember"), inverseJoinColumns = @JoinColumn(name = "studyProgramme"))
   private Set<StudyProgramme> studyProgrammes = new HashSet<>();
 
 }
