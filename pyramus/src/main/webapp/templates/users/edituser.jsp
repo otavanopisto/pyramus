@@ -494,6 +494,9 @@
             <a class="tabLabel" href="#basic">
               <fmt:message key="users.editUser.tabLabelEditUser"/>
             </a>
+            <a class="tabLabel" href="#studyProgrammes">
+              <fmt:message key="users.editUser.tabLabelStudyProgrammes"/>
+            </a>
           </div>
     
           <div id="basic" class="tabContent">    
@@ -667,6 +670,33 @@
                 </div>
               </c:when>
             </c:choose>
+          </div>
+          
+          <div id="studyProgrammes" class="tabContent hiddenTab">
+            <div class="genericFormSection">
+              <table>
+                <c:forEach var="studyProgramme" items="${studyProgrammes}">
+                  <c:set var="checked" value="false"/>
+                  <c:forEach var="selectedStudyProgramme" items="${user.studyProgrammes}">
+                    <c:if test="${studyProgramme.id == selectedStudyProgramme.id}">
+                      <c:set var="checked" value="true"/>
+                    </c:if>
+                  </c:forEach>
+                  <tr>
+                    <td>
+                      <c:choose>
+                        <c:when test="${checked == true}">
+                          <input name="studyProgrammes" type="checkbox" value="${studyProgramme.id}" checked="checked"/></td><td>${studyProgramme.name}
+                        </c:when>
+                        <c:otherwise>
+                          <input name="studyProgrammes" type="checkbox" value="${studyProgramme.id}"/></td><td>${studyProgramme.name}
+                        </c:otherwise>
+                      </c:choose>
+                    </td>
+                  </tr>
+                </c:forEach>
+              </table>
+            </div>
           </div>
 
           <div class="genericFormSubmitSectionOffTab">

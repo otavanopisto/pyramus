@@ -146,45 +146,43 @@
       </li>
     </ul>
     
-    <ul id="GUI_MENU_settingsContainer">
-      <li id="GUI_MENU_settingsLink">
-        <fmt:message key="generic.navigation.settings"/>
-        <ul id="GUI_MENU_settingsItemContainer" class="GUI_MENU_itemContainer">
-          <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createuser.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createUser"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/searchusers.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchUsers"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/createschool.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createSchool"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/searchschools.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchSchools"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/creategradingscale.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createGradingScale"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/listgradingscales.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listGradingScales"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationTypes"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationsubtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationSubtypes"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/subjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSubjects"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/academicterms.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageAcademicTerms"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammes"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammecategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammeCategories"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/reportcategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageReportCategories"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/municipalities.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageMunicipalities"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/timeunits.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTimeUnits"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursestates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseStates"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursetypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseTypes"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managetransfercredittemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTransferCreditTemplates"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/courseparticipationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseParticipationTypes"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/manageschoolfields.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSchoolFields"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managechangelog.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageChangeLog"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursedescriptioncategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseDescriptionCategories"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managefiletypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageFileTypes"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyendreasons.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.studyEndReasons"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/curriculums.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCurriculums"/></a></li>
-          <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/courseuserroles.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseUserRoles"/></a></li>
-          </c:if>
-          <ix:extensionHook name="generic.navigation.settingsMenu"/>
-        </ul>
-      </li>
-    </ul>
-    
     <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+      <ul id="GUI_MENU_settingsContainer">
+        <li id="GUI_MENU_settingsLink">
+          <fmt:message key="generic.navigation.settings"/>
+          <ul id="GUI_MENU_settingsItemContainer" class="GUI_MENU_itemContainer">
+            <li class="GUI_MENU_top"></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createuser.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createUser"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/searchusers.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchUsers"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/createschool.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createSchool"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/searchschools.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchSchools"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/creategradingscale.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createGradingScale"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/listgradingscales.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listGradingScales"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationTypes"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationsubtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationSubtypes"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/subjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSubjects"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/academicterms.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageAcademicTerms"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammes"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammecategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammeCategories"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/reportcategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageReportCategories"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/municipalities.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageMunicipalities"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/timeunits.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTimeUnits"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursestates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseStates"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursetypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseTypes"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managetransfercredittemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTransferCreditTemplates"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/courseparticipationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseParticipationTypes"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/manageschoolfields.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSchoolFields"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managechangelog.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageChangeLog"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursedescriptioncategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseDescriptionCategories"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managefiletypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageFileTypes"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyendreasons.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.studyEndReasons"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/curriculums.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCurriculums"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/courseuserroles.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseUserRoles"/></a></li>
+            <ix:extensionHook name="generic.navigation.settingsMenu"/>
+          </ul>
+        </li>
+      </ul>
+    
       <ul id="GUI_MENU_systemContainer">
         <li id="GUI_MENU_systemLink">
           <fmt:message key="generic.navigation.system"/>

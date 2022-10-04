@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -403,6 +404,11 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     super.delete(user);
     
     staffMemberDeletedEvent.fire(new StaffMemberDeletedEvent(id));
+  }
+  
+  public StaffMember setStudyProgrammes(StaffMember staffMember, Set<StudyProgramme> studyProgrammes) {
+    staffMember.setStudyProgrammes(studyProgrammes);
+    return persist(staffMember);
   }
 
 }

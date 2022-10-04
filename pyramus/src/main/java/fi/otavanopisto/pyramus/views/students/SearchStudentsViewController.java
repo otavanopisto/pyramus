@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.views.students;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -11,17 +13,14 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
-import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
@@ -51,17 +50,15 @@ public class SearchStudentsViewController extends PyramusViewController implemen
    * @param pageRequestContext Request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
     LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
-    User loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+    StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
 
-    List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
-        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), Archived.UNARCHIVED);
-    Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
+    List<StudyProgramme> studyProgrammes = new ArrayList<>(loggedUser.getStudyProgrammes());
+    Collections.sort(studyProgrammes, Comparator.comparing(StudyProgramme::getName));
     
     List<Nationality> nationalities = nationalityDAO.listUnarchived();
     Collections.sort(nationalities, new StringAttributeComparator("getName"));
