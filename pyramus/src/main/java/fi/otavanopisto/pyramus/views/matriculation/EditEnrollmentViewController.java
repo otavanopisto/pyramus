@@ -52,7 +52,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 
 public class EditEnrollmentViewController extends PyramusViewController {
   
-  private static final Long NEW_ROW_ID = new Long(-1); 
+  private static final Long NEW_ROW_ID = Long.valueOf(-1); 
   
   public void process(PageRequestContext pageRequestContext) {
     switch (pageRequestContext.getRequest().getMethod()) {

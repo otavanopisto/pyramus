@@ -166,6 +166,12 @@ public class SearchCoursesJSONRequestController extends JSONRequestController {
       if (course.getEndDate() != null) {
         courseInfo.put("endDate", course.getEndDate().getTime());
       }
+      if (course.getSignupStart() != null) {
+        courseInfo.put("signupStart", course.getSignupStart().getTime());
+      }
+      if (course.getSignupEnd() != null) {
+        courseInfo.put("signupEnd", course.getSignupEnd().getTime());
+      }
       results.add(courseInfo);
     }
 

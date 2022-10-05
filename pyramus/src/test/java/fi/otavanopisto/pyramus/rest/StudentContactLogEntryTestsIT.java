@@ -77,7 +77,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudentContactLogEntry updateContactLogEntry = new StudentContactLogEntry(id, "updated text", id, "updated creater", getDate(2013, 3, 5), StudentContactLogEntryType.FACE2FACE, null, Boolean.FALSE);
       
@@ -117,7 +117,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       .body("type", is(studentContactLogEntry.getType().toString()))
       .body("archived", is( studentContactLogEntry.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders())

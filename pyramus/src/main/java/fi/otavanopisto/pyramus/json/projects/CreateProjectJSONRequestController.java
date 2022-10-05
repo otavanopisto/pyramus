@@ -80,7 +80,7 @@ public class CreateProjectJSONRequestController extends JSONRequestController {
       String colPrefix = "modulesTable." + i;
       Long moduleId = NumberUtils.createLong(jsonRequestContext.getRequest().getParameter(colPrefix + ".moduleId"));
       Module module = moduleDAO.findById(moduleId);
-      int optionality = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
+      int optionality = Integer.valueOf(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
           .intValue();
       projectModuleDAO.create(project, module, ProjectModuleOptionality.getOptionality(optionality));
     }
@@ -94,7 +94,7 @@ public class CreateProjectJSONRequestController extends JSONRequestController {
       Long subjectId = jsonRequestContext.getLong(colPrefix + ".subjectId");
       Subject subject = subjectDAO.findById(subjectId);
       Integer courseNumber = jsonRequestContext.getInteger(colPrefix + ".courseNumber");
-      int optionality = new Integer(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
+      int optionality = Integer.valueOf(jsonRequestContext.getRequest().getParameter(colPrefix + ".optionality"))
           .intValue();
       projectSubjectCourseDAO.create(project, subject, courseNumber, ProjectModuleOptionality.getOptionality(optionality));
     }

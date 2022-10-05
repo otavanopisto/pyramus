@@ -72,7 +72,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
       .body("moduleId", is(projectModule.getModuleId().intValue()))
       .body("optionality", is(projectModule.getOptionality().toString() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       ProjectModule updateProjectModule = new ProjectModule(id, 1l, ProjectModuleOptionality.MANDATORY);
       
@@ -108,7 +108,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
       .body("moduleId", is(projectModule.getModuleId().intValue()))
       .body("optionality", is(projectModule.getOptionality().toString() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     given().headers(getAuthHeaders()).get("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
       .then()

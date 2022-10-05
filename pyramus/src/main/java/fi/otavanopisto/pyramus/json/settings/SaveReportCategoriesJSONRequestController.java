@@ -21,7 +21,7 @@ public class SaveReportCategoriesJSONRequestController extends JSONRequestContro
       String name = jsonRequestContext.getString(colPrefix + ".name");
       
       // TODO category index column support
-      boolean modified = new Integer(1).equals(jsonRequestContext.getInteger(colPrefix + ".modified"));
+      boolean modified = Integer.valueOf(1).equals(jsonRequestContext.getInteger(colPrefix + ".modified"));
       if (reportCategoryId == -1) {
         categoryDAO.create(name, null);
       }

@@ -106,7 +106,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       .body("variables", allOf(hasEntry("TV1", "text"), hasEntry("TV2", "123")))
       .body("archived", is( school.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "234");
@@ -157,7 +157,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
       .body("archived", is( school.getArchived() ));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/schools/schools/{ID}", id)

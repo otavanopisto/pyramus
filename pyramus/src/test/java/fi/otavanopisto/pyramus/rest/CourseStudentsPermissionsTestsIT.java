@@ -45,8 +45,8 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTUDENT, 200);
 
     if (response.getStatusCode() == 200) {
-      Long id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
           .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
           .then()
@@ -69,8 +69,8 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
       response.then().statusCode(200);
   
       if (response.getStatusCode() == 200) {
-        Long id = new Long(response.body().jsonPath().getInt("id"));
-        if (!id.equals(null)) {
+        Long id = response.body().jsonPath().getLong("id");
+        if (id != null) {
           given().headers(getAdminAuthHeaders())
             .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
             .then()
@@ -116,7 +116,7 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
         .body(entity)
         .post("/courses/courses/{COURSEID}/students", COURSE_ID);
       
-    Long id = new Long(createResponse.body().jsonPath().getInt("id"));
+    Long id = createResponse.body().jsonPath().getLong("id");
     if (createResponse.getStatusCode() == 200) {
       try {
         Response response = given().headers(getAuthHeaders())

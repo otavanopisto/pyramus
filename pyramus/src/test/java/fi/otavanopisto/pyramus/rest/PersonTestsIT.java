@@ -115,7 +115,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .body("basicInfo", is(person.getBasicInfo() ))
       .body("secureInfo", is(person.getSecureInfo() ))
       .body("sex", is(person.getSex().toString() ));
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated", null);
 

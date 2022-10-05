@@ -201,7 +201,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(student)
       .post("/students/students");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "abc");
@@ -352,7 +352,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(student)
       .post("/students/students");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/students/{ID}", id);

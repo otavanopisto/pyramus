@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,6 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -210,6 +213,19 @@ public class UserUtils {
  
   public static boolean canAccessAllOrganizations(User user) {
     return user != null ? Permissions.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) : false;
+  }
+  
+  public static boolean canAccessStudent(StaffMember staffMember, Person person) {
+    List<Student> students = person.getStudents();
+    Set<Long> studyProgrammeIds = staffMember.getStudyProgrammes().stream().map(StudyProgramme::getId).collect(Collectors.toSet()); 
+    if (!studyProgrammeIds.isEmpty()) {
+      for (Student student : students) {
+        if (studyProgrammeIds.contains(student.getStudyProgramme().getId())) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**

@@ -8,10 +8,11 @@ public class StudentContactLogEntryBatch {
     
   }
 
-  public StudentContactLogEntryBatch(int firstResult, List<StudentContactLogEntry> results, long totalHitCount) {
+  public StudentContactLogEntryBatch(int firstResult, List<StudentContactLogEntry> results, long totalHitCount, Boolean allPrivileges) {
     this.totalHitCount= totalHitCount;
     this.results = results;
     this.firstResult = firstResult;
+    this.allPrivileges = allPrivileges;
   }
 
 
@@ -42,9 +43,17 @@ public class StudentContactLogEntryBatch {
     this.results = results;
   }
 
+  public Boolean getAllPrivileges() {
+    return allPrivileges;
+  }
+
+  public void setAllPrivileges(Boolean allPrivileges) {
+    this.allPrivileges = allPrivileges;
+  }
 
   private long totalHitCount;
   private int firstResult;
   private List<StudentContactLogEntry> results;
+  private Boolean allPrivileges;
 
 }

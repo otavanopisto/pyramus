@@ -80,7 +80,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
       .body("code", is(language.getCode()))
       .body("archived", is( language.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Language updateLanguage = new Language(id, "Updated", "UPD", Boolean.FALSE);
 
@@ -112,7 +112,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
       .body(language)
       .post("/students/languages");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/languages/{ID}", id)

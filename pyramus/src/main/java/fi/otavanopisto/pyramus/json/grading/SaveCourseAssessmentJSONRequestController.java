@@ -29,7 +29,6 @@ public class SaveCourseAssessmentJSONRequestController extends JSONRequestContro
     
     for (CourseModule courseModule : courseStudent.getCourse().getCourseModules()) {
       Long courseModuleId = courseModule.getId();
-      Date assessmentDate = jsonRequestContext.getDate("assessmentDate." + courseModuleId);
       Long assessingUserId = jsonRequestContext.getLong("assessingUserId." + courseModuleId);
       Long gradeId = jsonRequestContext.getLong("gradeId." + courseModuleId);
       String verbalAssessment = jsonRequestContext.getString("verbalAssessment." + courseModuleId);
@@ -37,13 +36,13 @@ public class SaveCourseAssessmentJSONRequestController extends JSONRequestContro
       StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
       Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
 
-      if (grade != null && assessmentDate != null && assessingUser != null) {
+      if (grade != null && assessingUser != null) {
         CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE);
         if (courseAssessment == null) {
-          courseAssessment = courseAssessmentDAO.create(courseStudent, courseModule, assessingUser, grade, assessmentDate, verbalAssessment);
+          courseAssessment = courseAssessmentDAO.create(courseStudent, courseModule, assessingUser, grade, new Date(), verbalAssessment);
         }
         else {
-          courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
+          courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, courseAssessment.getDate(), verbalAssessment);
         }
       }
     }

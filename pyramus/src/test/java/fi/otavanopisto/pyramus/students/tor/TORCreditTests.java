@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.students.tor;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -33,9 +34,9 @@ public class TORCreditTests {
 
     Collections.sort(list);
     
-    assertTrue(new Double(6d).equals(list.get(0).getNumericGrade()));
-    assertTrue(new Double(8d).equals(list.get(1).getNumericGrade()));
-    assertTrue(new Double(10d).equals(list.get(2).getNumericGrade()));
+    assertEquals(Double.valueOf(6d), list.get(0).getNumericGrade());
+    assertEquals(Double.valueOf(8d), list.get(1).getNumericGrade());
+    assertEquals(Double.valueOf(10d), list.get(2).getNumericGrade());
   }
 
   @Test

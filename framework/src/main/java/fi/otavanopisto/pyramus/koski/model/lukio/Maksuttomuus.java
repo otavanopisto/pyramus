@@ -4,6 +4,9 @@ import java.util.Date;
 
 public class Maksuttomuus {
 
+  public Maksuttomuus() {
+  }
+
   public Maksuttomuus(Date alku, boolean maksuton) {
     this.alku = alku;
     this.maksuton = maksuton;

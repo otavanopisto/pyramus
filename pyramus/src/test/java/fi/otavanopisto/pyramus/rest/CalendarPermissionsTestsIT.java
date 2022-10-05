@@ -44,11 +44,9 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk(response, calendarPermissions, CalendarPermissions.CREATE_ACADEMICTERM, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
           .delete("/calendar/academicTerms/{ID}?permanent=true", id);
       }
@@ -76,7 +74,7 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
         .body(academicTerm)
         .post("/calendar/academicTerms");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     try {
       AcademicTerm updateAcademicTerm = new AcademicTerm(id, "updated", getDate(2010, 03, 04), getDate(2010, 07, 13), Boolean.FALSE);
@@ -100,7 +98,7 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
         .body(academicTerm)
         .post("/calendar/academicTerms");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     Response deleteResponse = given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", id);    
     assertOk(deleteResponse, calendarPermissions, CalendarPermissions.DELETE_ACADEMICTERM, 204);
@@ -114,7 +112,7 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAdminAuthHeaders()).contentType("application/json").body(academicTerm)
         .post("/calendar/academicTerms");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     Response courseByTermResponse = given().headers(getAuthHeaders()).get("/calendar/academicTerms/{ID}/courses", id);
     assertOk(courseByTermResponse, calendarPermissions, CalendarPermissions.FIND_COURSESBYACADEMICTERM, 200);

@@ -21,7 +21,7 @@ public class SaveCourseUserRoleJSONRequestController extends JSONRequestControll
       Long courseUserRoleId = jsonRequestContext.getLong(colPrefix + ".courseUserRoleId");
       String name = jsonRequestContext.getString(colPrefix + ".name");
 
-      boolean modified = new Integer(1).equals(jsonRequestContext.getInteger(colPrefix + ".modified"));
+      boolean modified = Integer.valueOf(1).equals(jsonRequestContext.getInteger(colPrefix + ".modified"));
       if (courseUserRoleId == -1) {
         roleDAO.create(name);
       } else if (modified) {

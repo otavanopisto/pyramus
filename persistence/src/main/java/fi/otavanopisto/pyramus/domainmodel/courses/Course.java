@@ -177,6 +177,22 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
     return endDate;
   }
   
+  public void setSignupStart(Date signupStart) {
+    this.signupStart = signupStart;
+  }
+
+  public Date getSignupStart() {
+    return signupStart;
+  }
+  
+  public void setSignupEnd(Date signupEnd) {
+    this.signupEnd = signupEnd;
+  }
+
+  public Date getSignupEnd() {
+    return signupEnd;
+  }
+  
   public String getNameExtension() {
   	return nameExtension;
   }
@@ -341,6 +357,16 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   @Field (analyze = Analyze.NO)
   @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
   private Date endDate;
+  
+  @Temporal (value=TemporalType.DATE)
+  @Field (analyze = Analyze.NO)
+  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
+  private Date signupStart;
+  
+  @Temporal (value=TemporalType.DATE)
+  @Field (analyze = Analyze.NO)
+  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
+  private Date signupEnd;
   
   private Double distanceTeachingDays;
   

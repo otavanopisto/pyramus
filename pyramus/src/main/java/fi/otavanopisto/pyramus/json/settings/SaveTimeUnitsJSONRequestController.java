@@ -31,7 +31,7 @@ public class SaveTimeUnitsJSONRequestController extends JSONRequestController {
       String symbol = jsonRequestContext.getRequest().getParameter(colPrefix + ".symbol");
       
       if (baseUnit) {
-        baseUnits = new Double(1);
+        baseUnits = 1d;
       }
         
       if (timeUnitId == -1) {

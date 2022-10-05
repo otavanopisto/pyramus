@@ -40,8 +40,10 @@ public class LukionOppiaineenTunnisteDeserializer2019 extends JsonDeserializer<L
             return codec.treeToValue(tree, LukionOppiaineenSuoritusMatematiikka2019.class);
           case AI:
             return codec.treeToValue(tree, LukionOppiaineenSuoritusAidinkieli2019.class);
-          case A1:
-          case A2:
+          case A:
+          case A1: // Technically not present in 2019
+          case A2: // Technically not present in 2019
+          case AOM:
           case B1:
           case B2:
           case B3:

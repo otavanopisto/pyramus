@@ -1819,14 +1819,14 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     ContactLogAccess access = studentController.resolveContactLogAccess(student);
-    
+    Boolean allPrivileges = false;
     if (access.equals(ContactLogAccess.ALL)) {
       SearchResult<StudentContactLogEntry> searchResult = studentContactLogEntryController.listContactLogEntriesByStudent(student, resultsPerPage, page);
-      
+      allPrivileges = true;
       @SuppressWarnings("unchecked")
       List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry> contactLogEntryRestModels = (List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry>) objectFactory.createModel(searchResult.getResults());
       
-      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount());
+      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount(), allPrivileges);
       return Response.ok(responseEntries).build();
     } else if (access.equals(ContactLogAccess.OWN)) {
       
@@ -1835,7 +1835,7 @@ public class StudentRESTService extends AbstractRESTService {
       @SuppressWarnings("unchecked")
       List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry> contactLogEntryRestModels = (List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry>) objectFactory.createModel(searchResult.getResults());
       
-      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount());
+      StudentContactLogEntryBatch responseEntries = new StudentContactLogEntryBatch(searchResult.getFirstResult(), contactLogEntryRestModels, searchResult.getTotalHitCount(), allPrivileges);
       return Response.ok(responseEntries).build();
     } else {
       return Response.status(Status.FORBIDDEN).build();
@@ -2054,9 +2054,15 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!sessionController.getUser().getRole().equals(Role.ADMINISTRATOR)) {
-      if (contactLogEntryComment.getCreator() != null) {
-        if (!contactLogEntryComment.getCreator().getId().equals(sessionController.getUser().getId())) {
+    ContactLogAccess access = studentController.resolveContactLogAccess(student);
+    
+    if (access.equals(ContactLogAccess.NONE)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    if (access.equals(ContactLogAccess.OWN)) {
+      if (contactLogEntry.getCreator() != null) {
+        if (!contactLogEntry.getCreator().getId().equals(sessionController.getUser().getId())) {
           return Response.status(Status.FORBIDDEN).build();
         }
       } else { 
@@ -2496,7 +2502,7 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
+  public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @DefaultValue("false") @QueryParam("archived") Boolean archived) {
     Student student = studentController.findStudentById(studentId);
 
     Status studentStatus = checkStudent(student);
@@ -2517,8 +2523,13 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    List<CourseAssessmentRequest> assessmentRequests = null;
     
+    if (archived.equals(Boolean.TRUE)) {
+      assessmentRequests = assessmentController.listCourseAssessmentRequestsIncludingArchivedByCourseAndStudent(course, student);
+    } else {
+      assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    }
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
   }
   
@@ -3127,7 +3138,7 @@ public class StudentRESTService extends AbstractRESTService {
       courseStudents = new ArrayList<>();
       String[] courseIdArray = courseIds.split(",");
       for (int i = 0; i < courseIdArray.length; i++) {
-        Course course = courseController.findCourseById(new Long(courseIdArray[i]));
+        Course course = courseController.findCourseById(Long.valueOf(courseIdArray[i]));
         if (course != null) {
           CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
           if (courseStudent != null) {

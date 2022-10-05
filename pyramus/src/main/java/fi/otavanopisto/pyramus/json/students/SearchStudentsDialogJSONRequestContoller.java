@@ -69,7 +69,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     if (studentGroupId.intValue() != -1)
       studentGroup = studentGroupDAO.findById(studentGroupId);
 
-    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup, organization);
+    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup, organization, loggedUser.getStudyProgrammes());
     
     List<Map<String, Object>> results = new ArrayList<>();
     List<Person> persons = searchResult.getResults();

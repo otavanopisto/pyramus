@@ -144,7 +144,7 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
       .body(phoneNumber)
       .post("/students/students/{STUDENTID}/phoneNumbers", TEST_STUDENT_ID);
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id);

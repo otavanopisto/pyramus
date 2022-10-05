@@ -77,7 +77,7 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(nationality)
       .post("/students/nationalities");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Nationality updateNationality = new Nationality(id, "Updated", "UPD", Boolean.FALSE);
 
@@ -102,7 +102,7 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(nationality)
       .post("/students/nationalities");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     response = given().headers(getAuthHeaders())
       .delete("/students/nationalities/{ID}", id);

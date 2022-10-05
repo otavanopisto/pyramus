@@ -57,13 +57,11 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .post("/modules/modules/");
     assertOk(response, modulePermissions, ModulePermissions.CREATE_MODULE, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/modules/modules/{ID}?permanent=true", id);
+          .delete("/modules/modules/{ID}?permanent=true", id);
       }
     }
   }
@@ -103,8 +101,8 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(module)
       .post("/modules/modules");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
-    Long courseModuleId = new Long(response.body().jsonPath().getInt("courseModules[0].id"));
+    Long id = response.body().jsonPath().getLong("id");
+    Long courseModuleId = response.body().jsonPath().getLong("courseModules[0].id");
    
     try {
       courseModules = new HashSet<>(Arrays.asList(createCourseModule(courseModuleId, 2l, 222, 2d, 2l)));
@@ -152,7 +150,7 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .contentType("application/json")
       .body(module)
       .post("/modules/modules");
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
    
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/modules/modules/{ID}", id);

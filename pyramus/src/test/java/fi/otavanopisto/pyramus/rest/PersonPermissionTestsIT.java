@@ -92,7 +92,7 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
       .body(person)
       .post("/persons/persons");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated", null);
 

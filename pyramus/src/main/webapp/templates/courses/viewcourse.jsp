@@ -571,6 +571,30 @@
             </c:choose> 
             
             <c:choose>
+              <c:when test="${course.signupStart ne null}">
+                <div class="genericFormSection">
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="courses.viewCourse.signupStartTitle" />
+                    <jsp:param name="helpLocale" value="courses.viewCourse.signupStartHelp" />
+                  </jsp:include>
+                  <div class="genericViewFormDataText"><fmt:formatDate value="${course.signupStart}" /></div>
+                </div>
+              </c:when>
+            </c:choose> 
+            
+            <c:choose>
+              <c:when test="${course.signupEnd ne null}">
+                <div class="genericFormSection">
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="courses.viewCourse.signupEndTitle" />
+                    <jsp:param name="helpLocale" value="courses.viewCourse.signupEndHelp" />
+                  </jsp:include>
+                  <div class="genericViewFormDataText"><fmt:formatDate value="${course.signupEnd}" /></div>
+                </div>
+              </c:when>
+            </c:choose> 
+            
+            <c:choose>
               <c:when test="${course.assessingHours gt 0}">
                 <div class="genericFormSection">
                   <jsp:include page="/templates/generic/fragments/formtitle.jsp">

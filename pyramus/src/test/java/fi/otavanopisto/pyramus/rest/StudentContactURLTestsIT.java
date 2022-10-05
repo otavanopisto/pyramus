@@ -76,7 +76,7 @@ public class StudentContactURLTestsIT extends AbstractRESTServiceTest {
       .body("url", is(contactURL.getUrl()))
       .body("contactURLTypeId", is(contactURL.getContactURLTypeId().intValue()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactURLs/{ID}", TEST_STUDENT_ID, id)

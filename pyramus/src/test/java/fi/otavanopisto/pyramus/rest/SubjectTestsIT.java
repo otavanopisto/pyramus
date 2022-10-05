@@ -144,7 +144,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
       .body("educationTypeId", is(subject.getEducationTypeId().intValue()))
       .body("archived", is( subject.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Subject updateSubject = new Subject(id, "UPD", "updated", 2l, Boolean.FALSE);
 
@@ -177,7 +177,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
       .body(subject)
       .post("/common/subjects");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/common/subjects/{ID}", id)

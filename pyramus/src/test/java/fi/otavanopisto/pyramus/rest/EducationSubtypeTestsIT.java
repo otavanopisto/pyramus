@@ -83,7 +83,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
       .body("educationSubtypeId", is(educationSubtype.getId()))
       .body("archived", is( educationSubtype.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       EducationSubtype updateSubtype = new EducationSubtype(id, "Updated", "UPD", updateEducationTypeId, Boolean.FALSE);
 
@@ -116,7 +116,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
       .body(educationSubtype)
       .post("/common/educationTypes/{EDUCATIONTYPE}/subtypes", educationSubtype.getEducationTypeId());
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id)

@@ -1741,6 +1741,28 @@
                   <input type="text" name="endDate" class="ixDateField" value="${course.endDate.time}"/>
                 </td>
               </tr>
+              
+              <tr>
+                <td>
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="courses.editCourse.signupStartTitle"/>
+                  </jsp:include>    
+                </td>
+                <td>
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="courses.editCourse.signupEndTitle"/>
+                  </jsp:include>    
+                </td>
+              </tr>
+              
+              <tr>
+                <td>
+                  <input type="text" name="signupStart" class="ixDateField" value="${course.signupStart.time}"/>
+                </td>
+                <td>
+                  <input type="text" name="signupEnd" class="ixDateField" value="${course.signupEnd.time}"/>
+                </td>
+              </tr>
             </table>
   
             <div class="genericFormSection">  

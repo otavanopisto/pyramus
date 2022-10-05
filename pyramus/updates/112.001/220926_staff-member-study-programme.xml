@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>create table StaffMemberStudyProgrammes (staffMember bigint not null, studyProgramme bigint not null, primary key (staffMember, studyProgramme));</sql>
+  
+  <sql>alter table StaffMemberStudyProgrammes add constraint FKp47fkyk3da8frh1dwrghsuw1l foreign key (studyProgramme) references StudyProgramme (id);</sql>
+  <sql>alter table StaffMemberStudyProgrammes add constraint FKrmddhoutus63320gnats4dp2p foreign key (staffMember) references StaffMember (id);</sql>
+  
+  <sql>insert into StaffMemberStudyProgrammes (staffMember, studyProgramme) select sm.id,sp.id from StaffMember sm, StudyProgramme sp;</sql>
+  
+</update>

@@ -76,7 +76,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
       .body("contactTypeId", is(email.getContactTypeId().intValue()))
       .body("defaultAddress", is( email.getDefaultAddress()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, id)

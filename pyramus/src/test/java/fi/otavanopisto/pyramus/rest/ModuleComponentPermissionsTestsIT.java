@@ -46,11 +46,9 @@ public class ModuleComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
     
     assertOk(response, modulePermissions, ModulePermissions.CREATE_MODULECOMPONENT, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
           .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id);
       }
@@ -87,7 +85,7 @@ public class ModuleComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
       .body(moduleComponent)
       .post("/modules/modules/{MODULEID}/components", moduleId);
      
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     try {
       ModuleComponent updateComponent = new ModuleComponent(
@@ -125,7 +123,7 @@ public class ModuleComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
       .body(moduleComponent)
       .post("/modules/modules/{MODULEID}/components", moduleId);
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id);

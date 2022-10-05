@@ -2,7 +2,6 @@ package fi.internetix.smvc.controllers;
 
 import fi.internetix.smvc.AccessDeniedException;
 import fi.internetix.smvc.LoginRequiredException;
-import fi.internetix.smvc.controllers.PageRequestContext;
 
 /** The base class for all page controllers containing regular (non-JSON) forms.
  * 

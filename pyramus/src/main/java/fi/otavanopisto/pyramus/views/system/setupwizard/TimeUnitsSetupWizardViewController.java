@@ -32,7 +32,7 @@ public class TimeUnitsSetupWizardViewController extends SetupWizardController {
       String symbol = requestContext.getRequest().getParameter(colPrefix + ".symbol");
       
       if (baseUnit) {
-        baseUnits = new Double(1);
+        baseUnits = 1d;
       }
 
       EducationalTimeUnit timeUnit = educationalTimeUnitDAO.create(baseUnits, name, symbol); 

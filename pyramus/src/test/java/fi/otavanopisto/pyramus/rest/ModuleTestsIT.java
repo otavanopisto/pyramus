@@ -136,10 +136,10 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .body("courseModules[0].subject.id", is(firstCourseModule(module).getSubject().getId().intValue()))
       .body("maxParticipantCount", is(module.getMaxParticipantCount().intValue() ) );
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
-    Long courseModuleId = new Long(response.body().jsonPath().getInt("courseModules[0].id"));
+    Long courseModuleId = response.body().jsonPath().getLong("courseModules[0].id");
     assertNotNull(id);
     
     try {
@@ -211,7 +211,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .body("courseModules[0].subject.id", is(firstCourseModule(module).getSubject().getId().intValue()))
       .body("maxParticipantCount", is(module.getMaxParticipantCount().intValue() ) );
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/modules/modules/{ID}", id)

@@ -40,11 +40,9 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
 
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTAFFMEMBER, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
         .delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
       }
@@ -106,8 +104,7 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
     
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTAFFMEMBER, 204);
     
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204"))
+    if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders()).delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
     
   }

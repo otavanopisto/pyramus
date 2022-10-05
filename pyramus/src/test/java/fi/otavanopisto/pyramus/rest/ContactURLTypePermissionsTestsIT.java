@@ -38,13 +38,11 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
       .post("/common/contactURLTypes");
     assertOk(response, commonPermissions, CommonPermissions.CREATE_CONTACTTYPE, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/common/contactURLTypes/{ID}?permanent=true", id);
+          .delete("/common/contactURLTypes/{ID}?permanent=true", id);
       }
     }
   }
@@ -72,7 +70,7 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
       .body(contactURLType)
       .post("/common/contactURLTypes");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       ContactURLType updateContactURLType = new ContactURLType(id, "Updated", Boolean.FALSE);
 
@@ -97,7 +95,7 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
       .body(contactURLType)
       .post("/common/contactURLTypes");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
 
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/common/contactURLTypes/{ID}", id);

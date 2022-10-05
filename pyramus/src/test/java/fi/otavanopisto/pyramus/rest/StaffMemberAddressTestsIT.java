@@ -96,7 +96,7 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
       .body("contactTypeId", is(address.getContactTypeId().intValue()))
       .body("defaultAddress", is( address.getDefaultAddress()));
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/staff/members/{STAFFMEMBERID}/addresses/{ID}", TEST_STAFFMEMBER_ID, id)

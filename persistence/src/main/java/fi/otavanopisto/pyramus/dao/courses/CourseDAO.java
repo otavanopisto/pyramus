@@ -80,6 +80,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * @param courseNumber Course number
    * @param beginDate Course begin date
    * @param endDate Course end date
+   * @param signupStart Course sign up start date
+   * @param signupEnd Course sign up end date 
    * @param courseLength Course length
    * @param description Course description
    * @param creatingUser Course owner
@@ -87,7 +89,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * @return The created course
    */
   public Course create(Module module, Organization organization, String name, String nameExtension, CourseState state, CourseType type, 
-      Date beginDate, Date endDate, 
+      Date beginDate, Date endDate, Date signupStart, Date signupEnd,
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours, Double planningHours, 
       Double assessingHours, String description, Long maxParticipantCount, BigDecimal courseFee, Currency courseFeeCurrency, Date enrolmentTimeEnd, User creatingUser) {
     
@@ -103,6 +105,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setDescription(description);
     course.setBeginDate(beginDate);
     course.setEndDate(endDate);
+    course.setSignupStart(signupStart);
+    course.setSignupEnd(signupEnd);
     course.setLocalTeachingDays(localTeachingDays);
     course.setDistanceTeachingDays(distanceTeachingDays);
     course.setTeachingHours(teachingHours);    
@@ -142,7 +146,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * @param user The user making the update, stored as the last modifier of the course
    */
   public void update(Course course, Organization organization, String name, String nameExtension, CourseState courseState, CourseType type,
-      Date beginDate, Date endDate, 
+      Date beginDate, Date endDate, Date signupStart, Date signupEnd,
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, 
       Double distanceTeachingHours, Double planningHours, Double assessingHours, String description, Long maxParticipantCount, 
       Date enrolmentTimeEnd, User user) {
@@ -158,6 +162,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setDescription(description);
     course.setBeginDate(beginDate);
     course.setEndDate(endDate);
+    course.setSignupStart(signupStart);
+    course.setSignupEnd(signupEnd);
     course.setDistanceTeachingDays(distanceTeachingDays);
     course.setLocalTeachingDays(localTeachingDays);
     course.setTeachingHours(teachingHours);

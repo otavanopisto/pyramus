@@ -44,13 +44,11 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOL, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/schools/schools/{ID}?permanent=true", id);
+          .delete("/schools/schools/{ID}?permanent=true", id);
       }
     }
   }
@@ -78,7 +76,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(school)
       .post("/schools/schools");
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       Map<String, String> updateVariables = new HashMap<>();
 
@@ -104,7 +102,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .body(school)
       .post("/schools/schools");
       
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     
     assertOk(given().headers(getAuthHeaders())
       .delete("/schools/schools/{ID}", id), schoolPermissions, SchoolPermissions.DELETE_SCHOOL, 204);

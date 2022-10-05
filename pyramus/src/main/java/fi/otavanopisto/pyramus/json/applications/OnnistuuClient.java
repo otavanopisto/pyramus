@@ -404,13 +404,9 @@ public class OnnistuuClient {
   
   public byte[] generateApplicantSignatureDocument(
       RequestContext requestContext,
+      Long applicationId,
       String line,
       String applicantName,
-      String ssn,
-      String address,
-      String municipality,
-      String nationality,
-      String phone,
       String email) throws OnnistuuClientException {
     try {
       HttpServletRequest httpRequest = requestContext.getRequest();
@@ -429,13 +425,9 @@ public class OnnistuuClient {
 
       // Replace applicant information
 
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICATION-ID]", applicationId.toString());
       document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", line);
       document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NAME]", applicantName);
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-SSN]", ssn == null ? "-" : ssn);
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-ADDRESS]", address);
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-MUNICIPALITY]", municipality);
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NATIONALITY]", nationality);
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-PHONE]", phone);
       document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-EMAIL]", email);
 
       // Convert to PDF

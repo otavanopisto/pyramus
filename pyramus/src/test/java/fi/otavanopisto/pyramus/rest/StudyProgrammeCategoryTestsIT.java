@@ -80,7 +80,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
       .body("educationTypeId", is( studyProgrammeCategory.getEducationTypeId().intValue() ))
       .body("archived", is( studyProgrammeCategory.getArchived() ));
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       StudyProgrammeCategory updateStudyProgrammeCategory = new StudyProgrammeCategory(id, "Updated", 2l, Boolean.FALSE);
 
@@ -112,7 +112,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
       .body(studyProgrammeCategory)
       .post("/students/studyProgrammeCategories");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/studyProgrammeCategories/{ID}", id)

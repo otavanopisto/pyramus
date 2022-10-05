@@ -11,8 +11,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import fi.otavanopisto.pyramus.util.ThreadSessionContainer;
-
 public class SessionFilter implements Filter {
 
   @Override

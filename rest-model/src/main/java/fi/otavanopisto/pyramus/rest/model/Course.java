@@ -11,18 +11,18 @@ public class Course {
   }
   
   public Course(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, 
-      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, OffsetDateTime signupStart, OffsetDateTime signupEnd, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Set<Long> curriculumIds, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate, Long primaryEducationTypeId, Long primaryEducationSubtypeId, Set<CourseModule> courseModules) {
-    this(null, name, created, lastModified, description, archived, maxParticipantCount, beginDate, endDate, 
+    this(null, name, created, lastModified, description, archived, maxParticipantCount, beginDate, endDate, signupStart, signupEnd,
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
         creatorId, lastModifierId, curriculumIds, moduleId, stateId, typeId, variables, tags, organizationId, courseTemplate,
         primaryEducationTypeId, primaryEducationSubtypeId, courseModules);
   }
 
   public Course(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, 
-      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, OffsetDateTime signupStart, OffsetDateTime signupEnd, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Set<Long> curriculumIds, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate, Long primaryEducationTypeId, Long primaryEducationSubtypeId, Set<CourseModule> courseModules) {
@@ -37,6 +37,8 @@ public class Course {
     this.maxParticipantCount = maxParticipantCount;
     this.beginDate = beginDate;
     this.endDate = endDate;
+    this.signupStart = signupStart;
+    this.signupEnd = signupEnd;
     this.nameExtension = nameExtension;
     this.localTeachingDays = localTeachingDays;
     this.teachingHours = teachingHours;
@@ -130,6 +132,22 @@ public class Course {
 
   public void setEndDate(OffsetDateTime endDate) {
     this.endDate = endDate;
+  }
+
+  public OffsetDateTime getSignupStart() {
+    return signupStart;
+  }
+
+  public void setSignupStart(OffsetDateTime signupStart) {
+    this.signupStart = signupStart;
+  }
+
+  public OffsetDateTime getSignupEnd() {
+    return signupEnd;
+  }
+
+  public void setSignupEnd(OffsetDateTime signupEnd) {
+    this.signupEnd = signupEnd;
   }
 
   public String getNameExtension() {
@@ -310,6 +328,8 @@ public class Course {
   private Long maxParticipantCount;
   private OffsetDateTime beginDate;
   private OffsetDateTime endDate;
+  private OffsetDateTime signupStart;
+  private OffsetDateTime signupEnd;
   private String nameExtension;
   private Double localTeachingDays;
   private Double teachingHours;

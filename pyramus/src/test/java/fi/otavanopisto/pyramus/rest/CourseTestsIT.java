@@ -41,6 +41,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         222l,
         OffsetDateTime.now(),
         OffsetDateTime.now(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -98,6 +100,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         Boolean.FALSE, 
         111, 
         222l,
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         OffsetDateTime.now(),
         OffsetDateTime.now(),
         "Extension",
@@ -270,6 +274,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         222l,
         OffsetDateTime.now(),
         OffsetDateTime.now(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -309,12 +315,12 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
       .body("archived", is( course.getArchived() ));
       
-    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setId(response.body().jsonPath().getLong("id"));
     course.setName("Updated name - testUpdateCourse()");
     course.setDescription("Updated description - testUpdateCourse()");
     course.setMaxParticipantCount(1234l);
     
-    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setId(response.body().jsonPath().getLong("courseModules[0].id"));
     firstCourseModule(course).setCourseNumber(999);
     firstCourseModule(course).getCourseLength().setUnits(888d);
 
@@ -353,6 +359,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         Boolean.FALSE, 
         111, 
         222l,
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         OffsetDateTime.now(),
         OffsetDateTime.now(),
         "Extension",
@@ -396,13 +404,13 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2"), hasItem("tag3")))
       .body("archived", is( course.getArchived() ));
       
-    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setId(response.body().jsonPath().getLong("id"));
     course.setName("Updated name - testUpdateCourseTags()");
     course.setDescription("Updated description - testUpdateCourseTags()");
     course.setMaxParticipantCount(1234l);
     course.setTags(Arrays.asList("tag1", "tag3", "tag4", "tag5"));
 
-    firstCourseModule(course).setId(new Long(response.body().jsonPath().getInt("courseModules[0].id")));
+    firstCourseModule(course).setId(response.body().jsonPath().getLong("courseModules[0].id"));
     firstCourseModule(course).setCourseNumber(999);
     firstCourseModule(course).getCourseLength().setUnits(888d);
 
@@ -445,6 +453,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         222l,
         OffsetDateTime.now(),
         OffsetDateTime.now(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -470,7 +480,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body(course)
       .post("/courses/courses/");
     
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/courses/courses/{ID}", id)
@@ -497,7 +507,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   }
   
   private Course createCourse(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
-      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, OffsetDateTime signupStart, OffsetDateTime signupEnd, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags, Long organizationId) {
@@ -506,7 +516,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
     CourseModule courseModule = new CourseModule(null, new Subject(subjectId, null, null, null, false), courseNumber, courseLength);
     Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(courseModule));
 
-    return new Course(null, name, created, lastModified, description, archived, maxParticipantCount, beginDate, endDate, 
+    return new Course(null, name, created, lastModified, description, archived, maxParticipantCount, beginDate, endDate, signupStart, signupEnd,
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
         creatorId, lastModifierId, null, moduleId, stateId, typeId, variables, tags, organizationId, false, null, null, courseModules);
   }

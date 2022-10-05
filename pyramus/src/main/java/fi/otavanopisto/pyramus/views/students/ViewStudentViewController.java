@@ -50,7 +50,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
@@ -82,7 +81,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
@@ -110,30 +108,33 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
   @Override
   protected boolean checkAccess(RequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     Long loggedUserId = requestContext.getLoggedUserId();
-    User user = userDAO.findById(loggedUserId);
+    StaffMember staffMember = staffMemberDAO.findById(loggedUserId);
 
-    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusViewPermissions.VIEW_STUDENT)) {
+    if (!Permissions.instance().hasEnvironmentPermission(staffMember, PyramusViewPermissions.VIEW_STUDENT)) {
       return false;
-    } else {
-      if (UserUtils.canAccessAllOrganizations(user)) {
-        return true;
-      } else {
-        Long personId = requestContext.getLong("person");
-        Person person = personDAO.findById(personId);
-        
+    }
+    else {
+      Long personId = requestContext.getLong("person");
+      Person person = personDAO.findById(personId);
+
+      // #1416: Staff members may only access students of their specified study programmes
+      if (UserUtils.canAccessStudent(staffMember, person)) {
+        if (UserUtils.canAccessAllOrganizations(staffMember)) {
+          return true;
+        }
         for (Student student : person.getStudents()) {
-          if (UserUtils.isMemberOf(user, student.getOrganization())) {
+          if (UserUtils.isMemberOf(staffMember, student.getOrganization())) {
             // Having one common organization is enough - though the view may not allow editing all
             return true;
           }
         }
-
-        return false;
       }
+
+      return false;
     }
   }
   
@@ -446,6 +447,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
             .collect(Collectors.toList());
           
           if (CollectionUtils.isNotEmpty(courseAssessmentList) && courseModule.getCourse() != null) {
+            courseAssessmentList.sort(Comparator.comparing(CourseAssessment::getDate).thenComparing(CourseAssessment::getId));
             CourseBase course = courseModule.getCourse();
             
             JSONObject obj = new JSONObject();
@@ -477,6 +479,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
               assobj.put("gradeName", ass.getGrade() != null ? ass.getGrade().getName() : null);
               assobj.put("gradingScaleName", (ass.getGrade() != null && ass.getGrade().getGradingScale() != null) ? 
                   ass.getGrade().getGradingScale().getName() : null);
+              assobj.put("passing", ass.getGrade() != null ? ass.getGrade().getPassingGrade() : Boolean.FALSE);
               assobj.put("assessorName", ass.getAssessor() != null ? ass.getAssessor().getFullName() : null);
               jsonCourseAssessments.add(assobj);
             }

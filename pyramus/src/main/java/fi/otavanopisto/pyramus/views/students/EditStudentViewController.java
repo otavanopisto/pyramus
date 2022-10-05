@@ -90,30 +90,33 @@ public class EditStudentViewController extends PyramusViewController2 implements
 
   @Override
   protected boolean checkAccess(RequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     Long loggedUserId = requestContext.getLoggedUserId();
-    User user = userDAO.findById(loggedUserId);
+    StaffMember staffMember = staffMemberDAO.findById(loggedUserId);
 
-    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusViewPermissions.EDIT_STUDENT)) {
+    if (!Permissions.instance().hasEnvironmentPermission(staffMember, PyramusViewPermissions.EDIT_STUDENT)) {
       return false;
-    } else {
-      if (UserUtils.canAccessAllOrganizations(user)) {
-        return true;
-      } else {
-        Long personId = requestContext.getLong("person");
-        Person person = personDAO.findById(personId);
-        
+    }
+    else {
+      Long personId = requestContext.getLong("person");
+      Person person = personDAO.findById(personId);
+
+      // #1416: Staff members may only access students of their specified study programmes
+      if (UserUtils.canAccessStudent(staffMember, person)) {
+        if (UserUtils.canAccessAllOrganizations(staffMember)) {
+          return true;
+        }
         for (Student student : person.getStudents()) {
-          if (UserUtils.isMemberOf(user, student.getOrganization())) {
+          if (UserUtils.isMemberOf(staffMember, student.getOrganization())) {
             // Having one common organization is enough - though the view may not allow editing all
             return true;
           }
         }
-
-        return false;
       }
+
+      return false;
     }
   }
   

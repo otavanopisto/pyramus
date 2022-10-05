@@ -112,15 +112,15 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       
       searchResult = personDAO.searchPersons(resultsPerPage, page, firstName, lastName, nickname,
           tags, education, email, sex, ssn, addressCity, addressCountry, addressPostalCode, addressStreetAddress,
-          phone, studyProgramme, language, nationality, municipality, title, personFilter, organization);
+          phone, studyProgramme, language, nationality, municipality, title, personFilter, organization, loggedUser.getStudyProgrammes());
     }
     else if ("active".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {
       String query = jsonRequestContext.getRequest().getParameter("activesQuery");
-      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ACTIVE_STUDENTS, organization);
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ACTIVE_STUDENTS, organization, loggedUser.getStudyProgrammes());
     }
     else {
       String query = jsonRequestContext.getRequest().getParameter("query");
-      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ALL, organization);
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ALL, organization, loggedUser.getStudyProgrammes());
     }
 
     List<Map<String, Object>> results = new ArrayList<>();

@@ -81,7 +81,7 @@ public class AcademicTermTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders()).contentType("application/json").body(academicTerm)
         .post("/calendar/academicTerms");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
 
     try {
@@ -115,7 +115,7 @@ public class AcademicTermTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders()).contentType("application/json").body(academicTerm)
         .post("/calendar/academicTerms");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
 
     given().headers(getAuthHeaders()).get("/calendar/academicTerms/{ID}", id).then().statusCode(200);
@@ -136,7 +136,7 @@ public class AcademicTermTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders()).contentType("application/json").body(academicTerm)
         .post("/calendar/academicTerms");
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     assertNotNull(id);
 
     given().headers(getAuthHeaders()).get("/calendar/academicTerms/{ID}/courses", id).then().statusCode(200)

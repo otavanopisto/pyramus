@@ -40,13 +40,11 @@ public class ProjectModulePermissionsTestsIT extends AbstractRESTPermissionsTest
     
     assertOk(response, projectPermissions, ProjectPermissions.CREATE_PROJECTMODULE, 200);
     
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
+    if (response.statusCode() == 200) {
+      Long id = response.body().jsonPath().getLong("id");
+      if (id != null) {
         given().headers(getAdminAuthHeaders())
-        .delete("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id);
+          .delete("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id);
       }
     }
   }
@@ -73,7 +71,7 @@ public class ProjectModulePermissionsTestsIT extends AbstractRESTPermissionsTest
       .body(projectModule)
       .post("/projects/projects/{PROJECTID}/modules", 1l);
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     try {
       ProjectModule updateProjectModule = new ProjectModule(id, 1l, ProjectModuleOptionality.MANDATORY);
       
@@ -97,12 +95,11 @@ public class ProjectModulePermissionsTestsIT extends AbstractRESTPermissionsTest
       .body(projectModule)
       .post("/projects/projects/{PROJECTID}/modules", 1l);
 
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Long id = response.body().jsonPath().getLong("id");
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id);
     assertOk(deleteResponse, projectPermissions, ProjectPermissions.DELETE_PROJECTMODULE, 204);
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204"))
+    if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders()).delete("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id);
   }
 }

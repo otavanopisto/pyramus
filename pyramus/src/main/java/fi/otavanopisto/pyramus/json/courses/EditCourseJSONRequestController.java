@@ -132,6 +132,10 @@ public class EditCourseJSONRequestController extends JSONRequestController {
    *   <dd>The beginning date of the course, as a timestamp in ms.</dd>
    *   <dt><code>endDate</code></dt>
    *   <dd>The end date of the course, as a timestamp in ms.</dd>
+   *   <dt><code>signupStart</code></dt>
+   *   <dd>The start date of the course sign up, as a timestamp in ms.</dd>
+   *   <dt><code>signupEnd</code></dt>
+   *   <dd>The end date of the course sign up, as a timestamp in ms.</dd>
    *   <dt><code>enrolmentTimeEnd</code></dt>
    *   <dd>The time when enrollment for the course ends, as a timestamp in ms.</dd>
    *   <dt><code>courseLength</code></dt>
@@ -308,6 +312,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     String description = requestContext.getString("description");
     Date beginDate = requestContext.getDate("beginDate");
     Date endDate = requestContext.getDate("endDate");
+    Date signupStart = requestContext.getDate("signupStart");
+    Date signupEnd = requestContext.getDate("signupEnd");
     Double distanceTeachingDays = requestContext.getDouble("distanceTeachingDays");
     Double localTeachingDays = requestContext.getDouble("localTeachingDays");
     Double teachingHours = requestContext.getDouble("teachingHours");
@@ -345,7 +351,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     StaffMember staffMember = userDAO.findById(requestContext.getLoggedUserId());
 
-    courseDAO.update(course, organization, name, nameExtension, courseState, courseType, beginDate, endDate,
+    courseDAO.update(course, organization, name, nameExtension, courseState, courseType, beginDate, endDate, signupStart, signupEnd,
         distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
 
@@ -407,8 +413,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       name = (String) parameterNames.nextElement();
       if (name.startsWith("educationType.")) {
         String[] nameElements = name.split("\\.");
-        Long educationTypeId = new Long(nameElements[1]);
-        Long educationSubtypeId = new Long(nameElements[2]);
+        Long educationTypeId = Long.valueOf(nameElements[1]);
+        Long educationSubtypeId = Long.valueOf(nameElements[2]);
         Vector<Long> v = chosenEducationTypes.containsKey(educationTypeId) ? chosenEducationTypes.get(educationTypeId)
             : new Vector<Long>();
         v.add(educationSubtypeId);
@@ -735,7 +741,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         }
       }
       else {
-        boolean modified = new Integer(1).equals(requestContext.getInteger(colPrefix + ".modified"));
+        boolean modified = Integer.valueOf(1).equals(requestContext.getInteger(colPrefix + ".modified"));
         if (modified) {
           /* Existing student */
           Student student = studentDAO.findById(studentId);

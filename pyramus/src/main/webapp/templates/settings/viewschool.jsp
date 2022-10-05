@@ -35,7 +35,11 @@
   <body onload="onLoad(event);">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
   
-    <h1 class="genericPageHeader"><fmt:message key="settings.viewSchool.pageTitle" /></h1>
+    <h1 class="genericPageHeader">
+      <fmt:message key="settings.viewSchool.pageTitle" />
+      <a href="editschool.page?school=${school.id}"><img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png"></a>
+    </h1>
+    
   
     <div class="genericFormContainer"> 
       <div class="tabLabelsContainer" id="tabs">
