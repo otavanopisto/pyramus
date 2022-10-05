@@ -1,16 +1,20 @@
 package fi.otavanopisto.pyramus.json.students;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
@@ -39,10 +43,12 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     StaffMember loggedUser = staffMemberDAO.findById(jsonRequestContext.getLoggedUserId());
-    Organization organization = UserUtils.canAccessAllOrganizations(loggedUser) ?
-        null : loggedUser.getOrganization();
+    Set<Organization> organizations = UserUtils.canAccessAllOrganizations(loggedUser)
+        ? new HashSet<>(organizationDAO.listUnarchived())
+        : Collections.singleton(loggedUser.getOrganization());
 
     Integer resultsPerPage = NumberUtils.createInteger(jsonRequestContext.getRequest().getParameter("maxResults"));
     if (resultsPerPage == null) {
@@ -69,7 +75,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     if (studentGroupId.intValue() != -1)
       studentGroup = studentGroupDAO.findById(studentGroupId);
 
-    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup, organization, loggedUser.getStudyProgrammes());
+    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup, organizations, loggedUser.getStudyProgrammes());
     
     List<Map<String, Object>> results = new ArrayList<>();
     List<Person> persons = searchResult.getResults();
