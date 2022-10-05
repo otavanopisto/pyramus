@@ -206,7 +206,24 @@
         return true;
       },
       messages: {
-        fi: 'Sähköpostiosoite puuttuu tai on virheellinen. Valitettavasti vain kirjaimet (a-z), numerot (0-9) ja pisteet (.) ovat sallittuja.'
+        fi: 'Sähköpostiosoite puuttuu tai on virheellinen. Vain kirjaimet (a-z), numerot (0-9) ja pisteet (.) ovat sallittuja.'
+      }
+    });
+
+    Parsley.addValidator('emailIfShown', {
+      requirementType: 'string',
+      validateString: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible') && value) {
+          var emailRegExp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+          if (!value.match(emailRegExp)) {
+            return false;
+          }
+        }
+        return true;
+      },
+      messages: {
+        fi: 'Sähköpostiosoite on virheellinen. Vain kirjaimet (a-z), numerot (0-9) ja pisteet (.) ovat sallittuja. Tämä kenttä ei kuitenkaan ole pakollinen.'
       }
     });
 

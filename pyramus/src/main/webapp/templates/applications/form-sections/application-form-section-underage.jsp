@@ -79,7 +79,7 @@
 
     <div class="form-section__field-container field-underage-email-2">
       <label for="field-underage-email-2">Sähköpostiosoite</label>
-      <input id="field-underage-email-2" type="text" name="field-underage-email-2"/>
+      <input id="field-underage-email-2" type="text" name="field-underage-email-2" data-parsley-email-if-shown="true"/>
     </div> 
     
     <div class="form-section__field-container field-underage-street-address-2">
@@ -121,7 +121,7 @@
 
     <div class="form-section__field-container field-underage-email-3">
       <label for="field-underage-email-3">Sähköpostiosoite</label>
-      <input id="field-underage-email-3" type="text" name="field-underage-email-3"/>
+      <input id="field-underage-email-3" type="text" name="field-underage-email-3" data-parsley-email-if-shown="true"/>
     </div> 
     
     <div class="form-section__field-container field-underage-street-address-3">
