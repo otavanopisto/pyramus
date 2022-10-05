@@ -1,10 +1,13 @@
 package fi.otavanopisto.pyramus.json.students;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -15,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -49,10 +53,12 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     
     StaffMember loggedUser = staffMemberDAO.findById(jsonRequestContext.getLoggedUserId());
-    Organization organization = UserUtils.canAccessAllOrganizations(loggedUser) ?
-        null : loggedUser.getOrganization();
+    Set<Organization> organizations = UserUtils.canAccessAllOrganizations(loggedUser)
+        ? new HashSet<>(organizationDAO.listUnarchived())
+        : Collections.singleton(loggedUser.getOrganization());
     
     Integer resultsPerPage = NumberUtils.createInteger(jsonRequestContext.getRequest().getParameter("maxResults"));
     if (resultsPerPage == null) {
@@ -112,15 +118,15 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       
       searchResult = personDAO.searchPersons(resultsPerPage, page, firstName, lastName, nickname,
           tags, education, email, sex, ssn, addressCity, addressCountry, addressPostalCode, addressStreetAddress,
-          phone, studyProgramme, language, nationality, municipality, title, personFilter, organization, loggedUser.getStudyProgrammes());
+          phone, studyProgramme, language, nationality, municipality, title, personFilter, organizations, loggedUser.getStudyProgrammes());
     }
     else if ("active".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {
       String query = jsonRequestContext.getRequest().getParameter("activesQuery");
-      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ACTIVE_STUDENTS, organization, loggedUser.getStudyProgrammes());
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ACTIVE_STUDENTS, organizations, loggedUser.getStudyProgrammes());
     }
     else {
       String query = jsonRequestContext.getRequest().getParameter("query");
-      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ALL, organization, loggedUser.getStudyProgrammes());
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ALL, organizations, loggedUser.getStudyProgrammes());
     }
 
     List<Map<String, Object>> results = new ArrayList<>();
