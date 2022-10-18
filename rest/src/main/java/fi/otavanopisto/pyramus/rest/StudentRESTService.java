@@ -1161,7 +1161,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, sessionController.getUser());
+    Boolean messageRecipient = Boolean.FALSE;
+    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, messageRecipient, sessionController.getUser());
 
     return Response.ok(objectFactory.createModel(studentGroupUser)).build();
   }
@@ -1375,7 +1376,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
-
+  
   @Path("/studyEndReasons")
   @POST
   @RESTPermit(StudentStudyEndReasonPermissions.CREATE_STUDENTSTUDYENDREASON)
@@ -2821,6 +2822,27 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  @Path("/students/{STUDENTID:[0-9]*}/guidanceCouncelors")
+  @GET
+  @RESTPermit(StudentGroupPermissions.FIND_STUDENTGROUPSTUDENT) // ???
+  public Response listStudentGuidanceCouncelors(
+      @PathParam("STUDENTID") Long studentId, 
+      @PathParam("onlyMessageRecipients") @DefaultValue("false") Boolean onlyMessageRecipients) {
+    
+    Student student = studentController.findStudentById(studentId);
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    // check permission !!
+    
+    List<StudentGroupUser> guidanceCouncelors = studentGroupController.listStudentGuidanceCouncelors(student, onlyMessageRecipients);
+    
+    return Response.ok(objectFactory.createModel(guidanceCouncelors)).build();
+  }
+
   @Path("/variables")
   @POST
   @RESTPermit(UserPermissions.CREATE_USERVARIABLEKEY)

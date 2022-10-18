@@ -143,8 +143,8 @@ public class StudentGroupController {
 
   /* StudentGroupUser */
   
-  public StudentGroupUser createStudentGroupStaffMember(StudentGroup studentGroup, StaffMember staffMember, User updatingUser) {
-    return studentGroupUserDAO.create(studentGroup, staffMember, updatingUser);
+  public StudentGroupUser createStudentGroupStaffMember(StudentGroup studentGroup, StaffMember staffMember, Boolean messageRecipient, User updatingUser) {
+    return studentGroupUserDAO.create(studentGroup, staffMember, messageRecipient, updatingUser);
   }
 
   public StudentGroupUser findStudentGroupUserById(Long id) {
@@ -195,6 +195,10 @@ public class StudentGroupController {
     }
     
     throw new IllegalArgumentException("Given user is of unrecognizable type.");
+  }
+
+  public List<StudentGroupUser> listStudentGuidanceCouncelors(Student student, Boolean onlyMessageRecipients) {
+    return studentGroupUserDAO.listByStudent(student, true, onlyMessageRecipients);
   }
   
 }

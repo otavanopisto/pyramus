@@ -136,6 +136,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
       String colPrefix = "usersTable." + i;
       Long userId = requestContext.getLong(colPrefix + ".userId");
       Long studentGroupUserId = requestContext.getLong(colPrefix + ".studentGroupUserId");
+      boolean messageRecipient = "1".equals(requestContext.getString(colPrefix + ".messageRecipient"));
       StaffMember staffMember = staffMemberDAO.findById(userId);
 
       if (!UserUtils.canAccessOrganization(loggedUser, staffMember.getOrganization())) {
@@ -144,10 +145,13 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
       
       if (studentGroupUserId == null) {
         // New User
-        studentGroupUserDAO.create(studentGroup, staffMember, loggedUser);
+        studentGroupUserDAO.create(studentGroup, staffMember, messageRecipient, loggedUser);
       } else {
         // Old User, still in list
         removables.remove(studentGroupUserId);
+        // Update recipient status
+        StudentGroupUser studentGroupUser = studentGroupUserDAO.findById(studentGroupUserId);
+        studentGroupUserDAO.update(studentGroupUser, messageRecipient);
       }
     }
 

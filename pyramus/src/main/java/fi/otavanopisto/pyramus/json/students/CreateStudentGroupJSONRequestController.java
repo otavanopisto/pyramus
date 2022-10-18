@@ -81,9 +81,10 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "usersTable." + i;
       Long userId = requestContext.getLong(colPrefix + ".userId");
+      boolean messageRecipient = "1".equals(requestContext.getString(colPrefix + ".messageRecipient"));
       StaffMember staffMember = staffMemberDAO.findById(userId);
       
-      studentGroupUserDAO.create(studentGroup, staffMember, loggedUser);
+      studentGroupUserDAO.create(studentGroup, staffMember, messageRecipient, loggedUser);
     }
 
     // Students

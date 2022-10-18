@@ -135,7 +135,14 @@
             editable: false,
             paramName: 'userName'
           }, {
-            left: 270,
+            header : '<fmt:message key="students.createStudentGroup.usersTablePersonHeader"/>',
+            left : 8 + 250 + 8,
+            width: 32,
+            dataType : 'checkbox',
+            editable: true,
+            paramName: 'messageRecipient'
+          }, {
+            left: 8 + 250 + 8 + 32 + 8,
             width: 30,
             dataType: 'button',
             imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
@@ -153,6 +160,7 @@
           usersTable.addRow([
             ${user.staffMember.id},
             '${fn:escapeXml(user.staffMember.fullName)}',
+            '${user.messageRecipient == true ? 1 : 0}',
             '',
             ${user.id}
           ]);
@@ -183,7 +191,7 @@
                 var userName = event.results.users[i].name;
                 var index = getUserRowIndex(userId);
                 if (index == -1) {
-                  usersTable.addRow([userId, userName, '', '']);
+                  usersTable.addRow([userId, userName, '', '', '']);
                 } 
               }
               usersTable.reattachToDom();
