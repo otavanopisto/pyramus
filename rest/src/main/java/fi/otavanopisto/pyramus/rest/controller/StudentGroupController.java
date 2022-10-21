@@ -193,7 +193,7 @@ public class StudentGroupController {
     throw new IllegalArgumentException("Given user is of unrecognizable type.");
   }
 
-  public List<StudentGroupUser> listStudentGuidanceCouncelors(Student student, Boolean onlyMessageRecipients) {
+  public List<StudentGroupUser> listStudentGuidanceCounselors(Student student, Boolean onlyMessageRecipients) {
     return studentGroupUserDAO.listByStudent(student, true, onlyMessageRecipients);
   }
   

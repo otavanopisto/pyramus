@@ -2822,13 +2822,18 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
-  @Path("/students/{STUDENTID:[0-9]*}/guidanceCouncelors")
+  @Path("/students/{STUDENTID:[0-9]*}/guidanceCounselors")
   @GET
-  @RESTPermit(StudentGroupPermissions.FIND_STUDENTGROUPSTUDENT) // ???
-  public Response listStudentGuidanceCouncelors(
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentGuidanceCounselors(
       @PathParam("STUDENTID") Long studentId, 
-      @PathParam("onlyMessageRecipients") @DefaultValue("false") Boolean onlyMessageRecipients) {
-    
+      @QueryParam("onlyMessageRecipients") @DefaultValue("false") Boolean onlyMessageRecipients) {
+    User loggedUser = sessionController.getUser();
+    if (loggedUser == null) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     Student student = studentController.findStudentById(studentId);
 
     Status studentStatus = checkStudent(student);
@@ -2836,11 +2841,13 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(studentStatus).build();
     }
     
-    // check permission !!
+    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_GUIDANCECOUNSELORS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<StudentGroupUser> guidanceCounselors = studentGroupController.listStudentGuidanceCounselors(student, onlyMessageRecipients);
     
-    List<StudentGroupUser> guidanceCouncelors = studentGroupController.listStudentGuidanceCouncelors(student, onlyMessageRecipients);
-    
-    return Response.ok(objectFactory.createModel(guidanceCouncelors)).build();
+    return Response.ok(objectFactory.createModel(guidanceCounselors)).build();
   }
 
   @Path("/variables")
