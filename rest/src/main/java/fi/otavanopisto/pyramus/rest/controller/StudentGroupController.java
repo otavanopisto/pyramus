@@ -39,10 +39,6 @@ public class StudentGroupController {
   @Inject
   private TagDAO tagDAO;
   
-  public StudentGroup createStudentGroup(Organization organization, String name, String description, Date beginDate, User user) {
-    return createStudentGroup(organization, name, description, beginDate, user, Boolean.FALSE);
-  }
-
   public StudentGroup createStudentGroup(Organization organization, String name, String description, Date beginDate, User user, Boolean guidanceGroup) {
     StudentGroup studentGroup = studentGroupDAO.create(organization, name, description, beginDate, user, guidanceGroup);
     return studentGroup;

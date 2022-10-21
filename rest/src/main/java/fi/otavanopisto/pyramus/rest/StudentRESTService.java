@@ -1012,7 +1012,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    StudentGroup studentGroup = studentGroupController.createStudentGroup(organization, name, description, toDate(beginDate), sessionController.getUser());
+    StudentGroup studentGroup = studentGroupController.createStudentGroup(organization, name, description, toDate(beginDate), sessionController.getUser(), entity.getGuidanceGroup());
 
     for (String tag : entity.getTags()) {
       studentGroupController.createStudentGroupTag(studentGroup, tag);

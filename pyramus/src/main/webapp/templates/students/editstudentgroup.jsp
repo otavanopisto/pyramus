@@ -135,7 +135,7 @@
             editable: false,
             paramName: 'userName'
           }, {
-            header : '<fmt:message key="students.createStudentGroup.usersTablePersonHeader"/>',
+            header : '<fmt:message key="students.editStudentGroup.usersTableMessageRecipientHeader"/>',
             left : 8 + 250 + 8,
             width: 32,
             dataType : 'checkbox',
