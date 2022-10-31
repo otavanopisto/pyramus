@@ -126,6 +126,7 @@ public class StudentGroupUserDAO extends PyramusEntityDAO<StudentGroupUser> {
 
     Predicates predicates = Predicates.newInstance()
         .add(root.get(StudentGroupUser_.studentGroup).in(subquery))
+        .add(criteriaBuilder.equal(studentGroupJoin.get(StudentGroup_.archived), Boolean.FALSE))
         .add(criteriaBuilder.equal(studentGroupJoin.get(StudentGroup_.guidanceGroup), Boolean.TRUE), Boolean.TRUE.equals(onlyGuidanceGroups))
         .add(criteriaBuilder.equal(root.get(StudentGroupUser_.messageRecipient), Boolean.TRUE), Boolean.TRUE.equals(onlyMessageRecipients));
     
