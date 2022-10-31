@@ -67,7 +67,7 @@ public class StudentGroupPermissions extends AbstractPyramusPermissionCollection
   public static final String DELETE_STUDENTGROUPSTAFFMEMBER = "DELETE_STUDENTGROUPSTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTS_GUIDANCECOUNSELORS = "LIST_STUDENTS_GUIDANCECOUNSELORS";
   
   @Override
