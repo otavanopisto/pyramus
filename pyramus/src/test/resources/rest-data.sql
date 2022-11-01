@@ -592,6 +592,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroup', max(id) + 1 from StudentGroup;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroupStudent', max(id) + 1 from StudentGroupStudent;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroupUser', max(id) + 1 from StudentGroupUser;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentStudyEndReason', max(id) + 1 from StudentStudyEndReason;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;

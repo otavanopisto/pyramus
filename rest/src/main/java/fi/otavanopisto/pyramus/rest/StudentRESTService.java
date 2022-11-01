@@ -1012,7 +1012,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    StudentGroup studentGroup = studentGroupController.createStudentGroup(organization, name, description, toDate(beginDate), sessionController.getUser());
+    StudentGroup studentGroup = studentGroupController.createStudentGroup(organization, name, description, toDate(beginDate), sessionController.getUser(), entity.getGuidanceGroup());
 
     for (String tag : entity.getTags()) {
       studentGroupController.createStudentGroupTag(studentGroup, tag);
@@ -1161,7 +1161,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, sessionController.getUser());
+    Boolean messageRecipient = Boolean.FALSE;
+    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, messageRecipient, sessionController.getUser());
 
     return Response.ok(objectFactory.createModel(studentGroupUser)).build();
   }
@@ -1375,7 +1376,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
-
+  
   @Path("/studyEndReasons")
   @POST
   @RESTPermit(StudentStudyEndReasonPermissions.CREATE_STUDENTSTUDYENDREASON)
@@ -2821,6 +2822,34 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  @Path("/students/{STUDENTID:[0-9]*}/guidanceCounselors")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentGuidanceCounselors(
+      @PathParam("STUDENTID") Long studentId, 
+      @QueryParam("onlyMessageRecipients") @DefaultValue("false") Boolean onlyMessageRecipients) {
+    User loggedUser = sessionController.getUser();
+    if (loggedUser == null) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Student student = studentController.findStudentById(studentId);
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_GUIDANCECOUNSELORS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<StudentGroupUser> guidanceCounselors = studentGroupController.listStudentGuidanceCounselors(student, onlyMessageRecipients);
+    
+    return Response.ok(objectFactory.createModel(guidanceCounselors)).build();
+  }
+
   @Path("/variables")
   @POST
   @RESTPermit(UserPermissions.CREATE_USERVARIABLEKEY)

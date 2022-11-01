@@ -53,6 +53,14 @@ public class StudentGroupUser {
     return version;
   }
 
+  public Boolean getMessageRecipient() {
+    return messageRecipient;
+  }
+
+  public void setMessageRecipient(Boolean messageRecipient) {
+    this.messageRecipient = messageRecipient;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentGroupUser")  
   @TableGenerator(name="StudentGroupUser", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -66,6 +74,9 @@ public class StudentGroupUser {
   @ManyToOne
   @IndexedEmbedded(includeEmbeddedObjectId = true)
   private StaffMember staffMember;  
+
+  @Column
+  private Boolean messageRecipient;
 
   @Version
   @Column(nullable = false)

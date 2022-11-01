@@ -39,10 +39,6 @@ public class StudentGroupController {
   @Inject
   private TagDAO tagDAO;
   
-  public StudentGroup createStudentGroup(Organization organization, String name, String description, Date beginDate, User user) {
-    return createStudentGroup(organization, name, description, beginDate, user, Boolean.FALSE);
-  }
-
   public StudentGroup createStudentGroup(Organization organization, String name, String description, Date beginDate, User user, Boolean guidanceGroup) {
     StudentGroup studentGroup = studentGroupDAO.create(organization, name, description, beginDate, user, guidanceGroup);
     return studentGroup;
@@ -143,8 +139,8 @@ public class StudentGroupController {
 
   /* StudentGroupUser */
   
-  public StudentGroupUser createStudentGroupStaffMember(StudentGroup studentGroup, StaffMember staffMember, User updatingUser) {
-    return studentGroupUserDAO.create(studentGroup, staffMember, updatingUser);
+  public StudentGroupUser createStudentGroupStaffMember(StudentGroup studentGroup, StaffMember staffMember, Boolean messageRecipient, User updatingUser) {
+    return studentGroupUserDAO.create(studentGroup, staffMember, messageRecipient, updatingUser);
   }
 
   public StudentGroupUser findStudentGroupUserById(Long id) {
@@ -195,6 +191,10 @@ public class StudentGroupController {
     }
     
     throw new IllegalArgumentException("Given user is of unrecognizable type.");
+  }
+
+  public List<StudentGroupUser> listStudentGuidanceCounselors(Student student, Boolean onlyMessageRecipients) {
+    return studentGroupUserDAO.listByStudent(student, true, onlyMessageRecipients);
   }
   
 }
