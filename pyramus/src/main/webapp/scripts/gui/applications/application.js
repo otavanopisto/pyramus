@@ -263,6 +263,10 @@
           }
         }
         $(this).toggle(show);
+        // #1425: If the field is supposed to be visible, its ancestors should be visible as well
+        if (show) {
+          $(this).parents().toggle(show);
+        }
         // #1359: Disable hidden form fields to prevent their serialization when submitting
         $(this).find("input,select,textarea").prop('disabled', !show);
         $(this).find('[data-dependencies]').trigger('change');
