@@ -21,6 +21,7 @@ public class StudentStudyEndReasonDAO extends PyramusEntityDAO<StudentStudyEndRe
 
     StudentStudyEndReason studentStudyEndReason = new StudentStudyEndReason();
     studentStudyEndReason.setName(name);
+    studentStudyEndReason.setArchived(false);
     if (parentReason != null) {
       parentReason.addChildEndReason(studentStudyEndReason);
       entityManager.persist(parentReason);
