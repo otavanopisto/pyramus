@@ -326,28 +326,20 @@
               <select name="studyEndReason">
                 <option></option>  
                 <c:forEach var="reason" items="${studyEndReasons}">
-                  <c:choose>
-                    <c:when test="${reason.id eq student.studyEndReason.id}">
-                      <option value="${reason.id}" selected="selected">${reason.name}</option> 
-                    </c:when>
-                    <c:otherwise>
-                      <option value="${reason.id}">${reason.name}</option> 
-                    </c:otherwise>
-                  </c:choose>
+                  <option value="${reason.id}">${reason.name}</option> 
   
                   <c:if test="${fn:length(reason.childEndReasons) gt 0}">
                     <optgroup>
                       <c:forEach var="childReason" items="${reason.childEndReasons}">
                         <c:choose>
-                          <c:when test="${childReason.id eq student.studyEndReason.id}">
-                            <option value="${childReason.id}" selected="selected">${childReason.name}</option> 
+                          <c:when test="${childReason.archived}">
                           </c:when>
                           <c:otherwise>
                             <option value="${childReason.id}">${childReason.name}</option> 
                           </c:otherwise>
                         </c:choose>
                       </c:forEach>
-                  </optgroup>
+                    </optgroup>
                   </c:if>
                 </c:forEach>
               </select>
