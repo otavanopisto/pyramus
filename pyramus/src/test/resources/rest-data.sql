@@ -458,10 +458,10 @@ values
   (1, 3, 10, 1);
   
 insert into StudentStudyEndReason 
-  (id, name, parentReason, version)
+  (id, name, parentReason, archived, version)
 values 
-  (1, 'StudentStudyEndReason #1', null, 1),
-  (2, 'StudentStudyEndReason #2', 1, 1);
+  (1, 'StudentStudyEndReason #1', null, false, 1),
+  (2, 'StudentStudyEndReason #2', 1, false, 1);
   
 insert into 
   StudentContactLogEntry (id, creatorName, entryDate, text, type, student, version, archived)

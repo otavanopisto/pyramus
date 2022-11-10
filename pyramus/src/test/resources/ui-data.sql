@@ -359,10 +359,10 @@ values
   (2, 'StudentActivityType #2', 1, false);
 
 insert into StudentStudyEndReason 
-  (id, name, parentReason, version)
+  (id, name, parentReason, archived, version)
 values 
-  (1, 'StudentStudyEndReason #1', null ,1),
-  (2, 'StudentStudyEndReason #2', 1 ,1);
+  (1, 'StudentStudyEndReason #1', null, false, 1),
+  (2, 'StudentStudyEndReason #2', 1, false, 1);
   
 insert into ClientApplication 
   (id, clientName, clientId, clientSecret, skipPrompt)
