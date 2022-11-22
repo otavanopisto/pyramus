@@ -34,9 +34,9 @@
 
   <properties>
     <!-- WildFly -->
-    <!-- See https://repo1.maven.org/maven2/org/wildfly/bom/wildfly-jakartaee8/26.1.1.Final/wildfly-jakartaee8-26.1.1.Final.pom -->
+    <!-- See https://repo1.maven.org/maven2/org/wildfly/bom/wildfly-jakartaee8/26.1.2.Final/wildfly-jakartaee8-26.1.2.Final.pom -->
 
-    <wildfly.version>26.1.1.Final</wildfly.version>
+    <wildfly.version>26.1.2.Final</wildfly.version>
 
     <!-- JUnit4 -->
     <junit4.version>4.13.1</junit4.version>
