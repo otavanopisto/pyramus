@@ -526,10 +526,10 @@
         JSONRequest.request("tags/getalltags.json", {
           onSuccess: function (jsonResponse) {
             <c:forEach var="student" items="${students}">
-	            new Autocompleter.Local("tags.${student.id}", "tags_choices.${student.id}", jsonResponse.tags, {
-	              tokens: [',', '\n', ' ']
-	            });
-	          </c:forEach>  
+              new Autocompleter.Local("tags.${student.id}", "tags_choices.${student.id}", jsonResponse.tags, {
+                tokens: [',', '\n', ' ']
+              });
+            </c:forEach>  
           }
         });   
       }
@@ -1142,14 +1142,14 @@
                 <input type="text" name="nickname.${student.id}" value="${fn:escapeXml(student.nickname)}" size="30">                                 
               </div>
 
-	            <div class="genericFormSection">
-	              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-	                <jsp:param name="titleLocale" value="students.editStudent.tagsTitle"/>
-	                <jsp:param name="helpLocale" value="students.editStudent.tagsHelp"/>
-	              </jsp:include>
-	              <input type="text" id="tags.${student.id}" name="tags.${student.id}" size="40" value="${fn:escapeXml(tags[student.id])}"/>
-	              <div id="tags_choices.${student.id}" class="autocomplete_choices"></div>
-	            </div>
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.tagsTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.tagsHelp"/>
+                </jsp:include>
+                <input type="text" id="tags.${student.id}" name="tags.${student.id}" size="40" value="${fn:escapeXml(tags[student.id])}"/>
+                <div id="tags_choices.${student.id}" class="autocomplete_choices"></div>
+              </div>
             
               <div class="genericFormSection">                
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
@@ -1399,18 +1399,20 @@
                     </c:choose>
     
                     <c:if test="${fn:length(reason.childEndReasons) gt 0}">
-	                    <optgroup>
-			                  <c:forEach var="childReason" items="${reason.childEndReasons}">
-			                    <c:choose>
-			                      <c:when test="${childReason.id eq student.studyEndReason.id}">
-			                        <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}" selected="selected">${childReason.name}</option> 
-			                      </c:when>
-			                      <c:otherwise>
-			                        <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}">${childReason.name}</option> 
-			                      </c:otherwise>
-			                    </c:choose>
-			                  </c:forEach>
-                    </optgroup>
+                      <optgroup>
+                        <c:forEach var="childReason" items="${reason.childEndReasons}">
+                          <c:choose>
+                            <c:when test="${childReason.id eq student.studyEndReason.id}">
+                              <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}" selected="selected">${childReason.name}</option> 
+                            </c:when>
+                            <c:when test="${childReason.archived}">
+                            </c:when>
+                            <c:otherwise>
+                              <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}">${childReason.name}</option> 
+                            </c:otherwise>
+                          </c:choose>
+                        </c:forEach>
+                      </optgroup>
                     </c:if>
                   </c:forEach>
                 </select>

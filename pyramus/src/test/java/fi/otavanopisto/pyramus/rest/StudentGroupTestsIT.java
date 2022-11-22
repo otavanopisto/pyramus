@@ -240,5 +240,197 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(404);
   }
+
+  @Test
+  public void testListStudentGroupStudentGuidanceCounselors() {
+    final Long COUNCELOR_STUDENT_ID = 3l;
+    final Long COUNCELOR_STAFF_ID = 10l;
+    
+    StudentGroup entity = new StudentGroup(null, 
+        "temp guidance councelor test group", 
+        "temp guidance councelor test group", 
+        getDate(2014, 6, 6), 
+        null, 
+        null, 
+        null, 
+        null, 
+        Arrays.asList("tag1", "tag2"), 
+        Boolean.TRUE,                           // guidanceGroup
+        TEST_ORGANIZATION_ID,                   // organizationId
+        Boolean.FALSE);
+    
+    Response response = given().headers(getAuthHeaders())
+      .contentType("application/json")
+      .body(entity)
+      .post("/students/studentGroups");
+
+    response.then()
+      .body("id", not(is((Long) null)));
+
+    Long studentGroupId = response.body().jsonPath().getLong("id");
+    given().headers(getAuthHeaders()).get("/students/studentGroups/{ID}", studentGroupId)
+      .then()
+      .statusCode(200);
+    try {
+      fi.otavanopisto.pyramus.rest.model.StudentGroupStudent studentGroupStudent = new fi.otavanopisto.pyramus.rest.model.StudentGroupStudent(null, COUNCELOR_STUDENT_ID);
+      response = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(studentGroupStudent)
+        .post("/students/studentGroups/{ID}/students", studentGroupId);
+      Long studentGroupStudentId = response.body().jsonPath().getLong("id");
+
+      try {
+        fi.otavanopisto.pyramus.rest.model.StudentGroupUser studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID);
+        response = given().headers(getAuthHeaders())
+            .contentType("application/json")
+            .body(studentGroupUser)
+            .post("/students/studentGroups/{ID}/staffmembers", studentGroupId);
+        Long studentGroupUserId = response.body().jsonPath().getLong("id");
+        try {
+          // Actual test
+          given().headers(getAuthHeaders())
+            .get("/students/students/{ID}/guidanceCounselors", COUNCELOR_STUDENT_ID)
+            .then()
+            .statusCode(200)
+            .body("id.size()", is(1))
+            .body("id[0]", is(studentGroupUserId.intValue()))
+            .body("staffMemberId[0]", is(COUNCELOR_STAFF_ID.intValue()));
+          
+          // Test that there's no message recipients
+          given().headers(getAuthHeaders())
+            .get("/students/students/{ID}/guidanceCounselors?onlyMessageRecipients=true", COUNCELOR_STUDENT_ID)
+            .then()
+            .statusCode(200)
+            .body("$.size()", is(0));
+          
+        } finally {
+          given().headers(getAuthHeaders())
+            .contentType("application/json")
+            .delete("/students/studentGroups/{ID}/staffmembers/{ID2}", studentGroupId, studentGroupUserId)
+            .then()
+            .statusCode(204);
+        }
+      } finally {
+        given().headers(getAuthHeaders())
+          .contentType("application/json")
+          .delete("/students/studentGroups/{ID}/students/{ID2}", studentGroupId, studentGroupStudentId)
+          .then()
+          .statusCode(204);
+      }
+      
+    } finally {
+      given().headers(getAuthHeaders())
+        .delete("/students/studentGroups/{ID}?permanent=true", studentGroupId)
+        .then()
+        .statusCode(204);
+    }
+    
+  }
+  
+  @Test
+  public void testListStudentGroupStudentGuidanceCounselors2() {
+    final Long COUNCELOR_STUDENT_ID = 3l;
+    final Long COUNCELOR_STAFF_ID = 10l;
+    final Long COUNCELOR_STAFF_ID2 = 11l;
+    
+    StudentGroup entity = new StudentGroup(null, 
+        "temp guidance councelor test group", 
+        "temp guidance councelor test group", 
+        getDate(2014, 6, 6), 
+        null, 
+        null, 
+        null, 
+        null, 
+        Arrays.asList("tag1", "tag2"), 
+        Boolean.TRUE,                           // guidanceGroup
+        TEST_ORGANIZATION_ID,                   // organizationId
+        Boolean.FALSE);
+    
+    Response response = given().headers(getAuthHeaders())
+      .contentType("application/json")
+      .body(entity)
+      .post("/students/studentGroups");
+
+    response.then()
+      .body("id", not(is((Long) null)));
+
+    Long studentGroupId = response.body().jsonPath().getLong("id");
+    given().headers(getAuthHeaders()).get("/students/studentGroups/{ID}", studentGroupId)
+      .then()
+      .statusCode(200);
+    try {
+      fi.otavanopisto.pyramus.rest.model.StudentGroupStudent studentGroupStudent = new fi.otavanopisto.pyramus.rest.model.StudentGroupStudent(null, COUNCELOR_STUDENT_ID);
+      response = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(studentGroupStudent)
+        .post("/students/studentGroups/{ID}/students", studentGroupId);
+      Long studentGroupStudentId = response.body().jsonPath().getLong("id");
+
+      try {
+        fi.otavanopisto.pyramus.rest.model.StudentGroupUser studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID);
+        response = given().headers(getAuthHeaders())
+            .contentType("application/json")
+            .body(studentGroupUser)
+            .post("/students/studentGroups/{ID}/staffmembers", studentGroupId);
+        Long studentGroupUserId = response.body().jsonPath().getLong("id");
+        try {
+          
+          // Message recipient test
+          
+          
+          studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID2);
+          response = given().headers(getAuthHeaders())
+              .contentType("application/json")
+              .body(studentGroupUser)
+              .post("/students/studentGroups/{ID}/staffmembers", studentGroupId);
+          Long studentGroupUserId2 = response.body().jsonPath().getLong("id");
+          try {
+
+            // Actual test
+            given().headers(getAuthHeaders())
+              .get("/students/students/{ID}/guidanceCounselors", COUNCELOR_STUDENT_ID)
+              .then()
+              .statusCode(200)
+              .body("id.size()", is(2))
+              .body("id[0]", is(studentGroupUserId.intValue()))
+              .body("staffMemberId[0]", is(COUNCELOR_STAFF_ID.intValue()));
+
+            // Test that there's no message recipients
+            given().headers(getAuthHeaders())
+              .get("/students/students/{ID}/guidanceCounselors?onlyMessageRecipients=true", COUNCELOR_STUDENT_ID)
+              .then()
+              .statusCode(200)
+              .body("$.size()", is(0));
+            
+          } finally {
+            given().headers(getAuthHeaders())
+              .contentType("application/json")
+              .delete("/students/studentGroups/{ID}/staffmembers/{ID2}", studentGroupId, studentGroupUserId2)
+              .then()
+              .statusCode(204);
+          }
+        } finally {
+          given().headers(getAuthHeaders())
+            .contentType("application/json")
+            .delete("/students/studentGroups/{ID}/staffmembers/{ID2}", studentGroupId, studentGroupUserId)
+            .then()
+            .statusCode(204);
+        }
+      } finally {
+        given().headers(getAuthHeaders())
+          .contentType("application/json")
+          .delete("/students/studentGroups/{ID}/students/{ID2}", studentGroupId, studentGroupStudentId)
+          .then()
+          .statusCode(204);
+      }
+      
+    } finally {
+      given().headers(getAuthHeaders())
+        .delete("/students/studentGroups/{ID}?permanent=true", studentGroupId)
+        .then()
+        .statusCode(204);
+    }
+    
+  }
   
 }

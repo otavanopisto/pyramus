@@ -524,7 +524,8 @@ public class MuikkuRESTService {
       else if (user instanceof StaffMember) {
         StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, (StaffMember) user);
         if (studentGroupUser == null) {
-          studentGroupController.createStudentGroupStaffMember(studentGroup, (StaffMember) user, loggedUser);
+          Boolean messageRecipient = Boolean.FALSE;
+          studentGroupController.createStudentGroupStaffMember(studentGroup, (StaffMember) user, messageRecipient, loggedUser);
         }
       }
     }

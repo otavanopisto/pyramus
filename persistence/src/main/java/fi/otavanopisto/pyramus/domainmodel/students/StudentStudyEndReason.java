@@ -19,10 +19,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.search.annotations.DocumentId;
 
+import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+
 @Entity
-public class StudentStudyEndReason {
+public class StudentStudyEndReason implements ArchivableEntity {
 
   /**
    * Returns internal unique id
@@ -88,6 +92,16 @@ public class StudentStudyEndReason {
     this.properties = properties;
   }
 
+  @Override
+  public Boolean getArchived() {
+    return archived;
+  }
+
+  @Override
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentStudyEndReason")  
   @TableGenerator(name="StudentStudyEndReason", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -113,4 +127,8 @@ public class StudentStudyEndReason {
   @Version
   @Column(nullable = false)
   private Long version;
+  
+  @NotNull
+  @Column (nullable = false)
+  private Boolean archived;
 }

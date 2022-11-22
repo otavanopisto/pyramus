@@ -10,9 +10,29 @@ public class Predicates {
   public static Predicates newInstance() {
     return new Predicates();
   }
-  
+
+  /**
+   * Adds a predicate to the list
+   * 
+   * @param predicate
+   * @return this list
+   */
   public Predicates add(Predicate predicate) {
     predicates.add(predicate);
+    return this;
+  }
+  
+  /**
+   * Adds a predicate to the list if condition is true
+   * 
+   * @param predicate
+   * @param condition
+   * @return this list
+   */
+  public Predicates add(Predicate predicate, boolean condition) {
+    if (condition) {
+      predicates.add(predicate);
+    }
     return this;
   }
   
