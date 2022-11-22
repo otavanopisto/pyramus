@@ -27,7 +27,7 @@ jobs:
       - name: Prepare maven settings
         run: python prepare-maven.py
       - name: Build with Maven
-        run: mvn install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+        run: mvn clean install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       - name: Set Pyramus host
         run: echo "127.0.0.1 dev.pyramus.fi" | sudo tee -a /etc/hosts
       - name: Test REST
