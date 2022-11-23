@@ -145,34 +145,6 @@
           </annotationProcessorPaths>
         </configuration>
       </plugin>    
-    
-<!--       <plugin> -->
-<!--         <groupId>org.bsc.maven</groupId> -->
-<!--         <artifactId>maven-processor-plugin</artifactId> -->
-<!--         <version>4.5</version> -->
-<!--         <executions> -->
-<!--           <execution> -->
-<!--             <id>process</id> -->
-<!--             <goals> -->
-<!--               <goal>process</goal> -->
-<!--             </goals> -->
-<!--             <phase>generate-sources</phase> -->
-<!--             <configuration> -->
-<!-- <releaseVersion>11</releaseVersion>             -->
-<!--               <processors> -->
-<!--                 <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor> -->
-<!--               </processors> -->
-<!--             </configuration> -->
-<!--           </execution> -->
-<!--         </executions> -->
-<!--         <dependencies> -->
-<!--           <dependency> -->
-<!--             <groupId>org.hibernate.orm</groupId> -->
-<!--             <artifactId>hibernate-jpamodelgen</artifactId> -->
-<!--             <version>${hibernate-jpamodelgen.version}</version> -->
-<!--           </dependency> -->
-<!--         </dependencies> -->
-<!--       </plugin> -->
     </plugins>
   </build>
 
