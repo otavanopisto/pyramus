@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.186-SNAPSHOT</version>
+    <version>0.7.186</version>
     <relativePath>../</relativePath>
   </parent>
   <properties>
@@ -499,7 +499,7 @@
                 <autoCreate>true</autoCreate>
                 <createOptions>
                   <virtualbox-memory>10000</virtualbox-memory>
-                  <virtualbox-no-share></virtualbox-no-share>
+                  <virtualbox-no-share />
                 </createOptions>
               </machine>
               <dockerHost>unix:///var/run/docker.sock</dockerHost>
@@ -656,7 +656,7 @@
               <persistenceXml>${basedir}/src/test/resources/persistence_for_generation.xml</persistenceXml>
               <createDropStatements>false</createDropStatements>
               <omitDialectFromFileName>true</omitDialectFromFileName>
-              <outputFileNamePrefix></outputFileNamePrefix>
+              <outputFileNamePrefix />
               <outputFileNameSuffix>createDatabase</outputFileNameSuffix>
               <packages>
                 <param>fi.otavanopisto.pyramus.domainmodel</param>
@@ -942,7 +942,7 @@
                 <autoCreate>true</autoCreate>
                 <createOptions>
                   <virtualbox-memory>10000</virtualbox-memory>
-                  <virtualbox-no-share></virtualbox-no-share>
+                  <virtualbox-no-share />
                 </createOptions>
               </machine>
               <dockerHost>unix:///var/run/docker.sock</dockerHost>
@@ -1098,7 +1098,7 @@
               <persistenceXml>${basedir}/src/test/resources/persistence_for_generation.xml</persistenceXml>
               <createDropStatements>false</createDropStatements>
               <omitDialectFromFileName>true</omitDialectFromFileName>
-              <outputFileNamePrefix></outputFileNamePrefix>
+              <outputFileNamePrefix />
               <outputFileNameSuffix>createDatabase</outputFileNameSuffix>
               <packages>
                 <param>fi.otavanopisto.pyramus.domainmodel</param>
