@@ -16,7 +16,6 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.util.artifact.ArtifacIdUtils;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
-import sun.misc.Service;
 import fi.internetix.smvc.logging.Logging;
 import fi.otavanopisto.pyramus.domainmodel.plugins.PluginRepository;
 import fi.otavanopisto.pyramus.plugin.maven.MavenClient;
@@ -27,7 +26,6 @@ import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledTaskInterval;
 /** The class responsible for managing plugins.
  * 
  */
-@SuppressWarnings("restriction")
 public class PluginManager {
   
   /** Returns the (singleton) instance of the plugin manager.
@@ -172,7 +170,7 @@ public class PluginManager {
    * 
    */
   public void registerPlugins() {
-    Iterator<PluginDescriptor> pluginDescriptors = Service.providers(PluginDescriptor.class, libraryLoader.getPluginsClassLoader());
+    Iterator<PluginDescriptor> pluginDescriptors = java.util.ServiceLoader.load(PluginDescriptor.class, libraryLoader.getPluginsClassLoader()).iterator();
     while (pluginDescriptors.hasNext()) {
       PluginDescriptor pluginDescriptor = pluginDescriptors.next();
       registerPlugin(pluginDescriptor);

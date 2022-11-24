@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.fileupload.FileItem;
+import javax.servlet.http.Part;
 
+import org.apache.commons.io.IOUtils;
+
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.file.FileTypeDAO;
@@ -44,7 +47,7 @@ public class EditStudentFileJSONRequestController extends JSONRequestController 
     Long fileId = requestContext.getLong("fileId");
     String name = requestContext.getString("fileName");
     Long fileTypeId = requestContext.getLong("fileType");
-    FileItem fileItem = requestContext.getFile("file");
+    Part fileItem = requestContext.getFile("file");
 
     StudentFile studentFile = studentFileDAO.findById(fileId);
     FileType fileType = fileTypeId != null ? fileTypeDAO.findById(fileTypeId) : null;
@@ -52,20 +55,24 @@ public class EditStudentFileJSONRequestController extends JSONRequestController 
     studentFileDAO.updateBasicInfo(studentFile, name, studentFile.getFileName(), fileType, loggedUser);
 
     if (fileItem != null) {
-      String fileIdentifier = null;
-      byte[] data = fileItem.get();
-      if (data != null && data.length > 0) {
-        if (PyramusFileUtils.isFileSystemStorageEnabled()) {
-          try {
-            fileIdentifier = studentFile.getFileId() == null ? PyramusFileUtils.generateFileId() : studentFile.getFileId();
-            PyramusFileUtils.storeFile(studentFile.getStudent(), fileIdentifier, data);
-            data = null;
+      try {
+        String fileIdentifier = null;
+        byte[] data = IOUtils.toByteArray(fileItem.getInputStream());
+        if (data != null && data.length > 0) {
+          if (PyramusFileUtils.isFileSystemStorageEnabled()) {
+            try {
+              fileIdentifier = studentFile.getFileId() == null ? PyramusFileUtils.generateFileId() : studentFile.getFileId();
+              PyramusFileUtils.storeFile(studentFile.getStudent(), fileIdentifier, data);
+              data = null;
+            }
+            catch (IOException e) {
+              logger.log(Level.WARNING, "Store user file to file system failed", e);
+            }
           }
-          catch (IOException e) {
-            logger.log(Level.WARNING, "Store user file to file system failed", e);
-          }
+          studentFileDAO.updateData(studentFile, fileItem.getContentType(), fileIdentifier, data, loggedUser);
         }
-        studentFileDAO.updateData(studentFile, fileItem.getContentType(), fileIdentifier, data, loggedUser);
+      } catch (IOException ioe) {
+        throw new SmvcRuntimeException(ioe);
       }
     }
   }

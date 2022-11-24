@@ -155,22 +155,22 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testGetCourse() {
-    OffsetDateTime created = getDate(2011, 1, 1);
-    OffsetDateTime modified = getDate(2011, 1, 1);
-    OffsetDateTime beginDate = getDateToOffsetDateTime(2011, 2, 2);
-    OffsetDateTime endDate = getDateToOffsetDateTime(2011, 3, 3);
-    OffsetDateTime enrolmentTimeEnd = getDate(2011, 1, 1);
+    String created = getDateString(2011, 1, 1);
+    String modified = getDateString(2011, 1, 1);
+    String beginDate = getDateString(2011, 2, 2);
+    String endDate = getDateString(2011, 3, 3);
+    String enrolmentTimeEnd = getDateString(2011, 1, 1);
 
     given().headers(getAuthHeaders())
       .get("/courses/courses/1001")
       .then()
       .body("id", is(1001))
       .body("name", is("Test Course #2" ))
-      .body("created", is( created.toString() ))
-      .body("lastModified", is( modified.toString() ))
-      .body("beginDate", is( beginDate.toString() ))
-      .body("endDate", is( endDate.toString() ))
-      .body("enrolmentTimeEnd", is( enrolmentTimeEnd.toString() ))
+      .body("created", is( created ))
+      .body("lastModified", is( modified ))
+      .body("beginDate", is( beginDate ))
+      .body("endDate", is( endDate ))
+      .body("enrolmentTimeEnd", is( enrolmentTimeEnd ))
       .body("description", is( "Course #2 for testing" ))
       .body("creatorId", is( 1 ))
       .body("lastModifierId", is( 1 ))
@@ -208,17 +208,17 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
  
   @Test
   public void testListCourses() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
-    OffsetDateTime created1 = getDate(2010, 1, 1);
-    OffsetDateTime modified1 = getDate(2010, 1, 1);
-    OffsetDateTime beginDate1 = getDateToOffsetDateTime(2010, 2, 2);
-    OffsetDateTime endDate1 = getDateToOffsetDateTime(2010, 3, 3);
-    OffsetDateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
+    String created1 = getDateString(2010, 1, 1);
+    String modified1 = getDateString(2010, 1, 1);
+    String beginDate1 = getDateString(2010, 2, 2);
+    String endDate1 = getDateString(2010, 3, 3);
+    String enrolmentTimeEnd1 = getDateString(2010, 1, 1);
     
-    OffsetDateTime created2 = getDate(2011, 1, 1);
-    OffsetDateTime modified2 = getDate(2011, 1, 1);
-    OffsetDateTime beginDate2 = getDateToOffsetDateTime(2011, 2, 2);
-    OffsetDateTime endDate2 = getDateToOffsetDateTime(2011, 3, 3);
-    OffsetDateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
+    String created2 = getDateString(2011, 1, 1);
+    String modified2 = getDateString(2011, 1, 1);
+    String beginDate2 = getDateString(2011, 2, 2);
+    String endDate2 = getDateString(2011, 3, 3);
+    String enrolmentTimeEnd2 = getDateString(2011, 1, 1);
 
     Response response = given().headers(getAuthHeaders())
       .get("/courses/courses/");
@@ -228,11 +228,11 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("id.size()", is(2))
       .body("id[0]", is(1000) )
       .body("name[0]", is("Test Course #1" ))
-      .body("created[0]", is( created1.toString() ))
-      .body("lastModified[0]", is( modified1.toString() ))
-      .body("beginDate[0]", is( beginDate1.toString() ))
-      .body("endDate[0]", is( endDate1.toString() ))
-      .body("enrolmentTimeEnd[0]", is( enrolmentTimeEnd1.toString() ))
+      .body("created[0]", is( created1 ))
+      .body("lastModified[0]", is( modified1 ))
+      .body("beginDate[0]", is( beginDate1 ))
+      .body("endDate[0]", is( endDate1 ))
+      .body("enrolmentTimeEnd[0]", is( enrolmentTimeEnd1 ))
       .body("description[0]", is( "Course #1 for testing" ))
       .body("creatorId[0]", is( 1 ))
       .body("lastModifierId[0]", is( 1 ))
@@ -245,11 +245,11 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("archived[0]", is( false ))
       .body("id[1]", is(1001) )
       .body("name[1]", is("Test Course #2" ))
-      .body("created[1]", is( created2.toString() ))
-      .body("lastModified[1]", is( modified2.toString() ))
-      .body("beginDate[1]", is( beginDate2.toString() ))
-      .body("endDate[1]", is( endDate2.toString() ))
-      .body("enrolmentTimeEnd[1]", is( enrolmentTimeEnd2.toString() ))
+      .body("created[1]", is( created2 ))
+      .body("lastModified[1]", is( modified2 ))
+      .body("beginDate[1]", is( beginDate2 ))
+      .body("endDate[1]", is( endDate2 ))
+      .body("enrolmentTimeEnd[1]", is( enrolmentTimeEnd2 ))
       .body("description[1]", is( "Course #2 for testing" ))
       .body("creatorId[1]", is( 1 ))
       .body("lastModifierId[1]", is( 1 ))

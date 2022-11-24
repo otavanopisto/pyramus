@@ -11,7 +11,6 @@
   </parent>
   
   <dependencies>
-    
     <dependency>
       <groupId>fi.otavanopisto</groupId>
       <artifactId>webapp-permission</artifactId>

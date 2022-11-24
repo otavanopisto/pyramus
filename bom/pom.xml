@@ -34,8 +34,9 @@
 
   <properties>
     <!-- WildFly -->
+    <!-- See https://repo1.maven.org/maven2/org/wildfly/bom/wildfly-jakartaee8/26.1.1.Final/wildfly-jakartaee8-26.1.1.Final.pom -->
 
-    <wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version>
+    <wildfly.version>26.1.1.Final</wildfly.version>
 
     <!-- JUnit4 -->
     <junit4.version>4.13.1</junit4.version>
@@ -45,7 +46,7 @@
 
     <!-- REST-assured -->
 
-    <rest-assured.version>4.0.0</rest-assured.version>
+    <rest-assured.version>5.0.1</rest-assured.version>
 
     <!-- Hamcrest -->
 
@@ -61,8 +62,11 @@
 
     <!-- Commons -->
 
+    <commons-lang.version>2.6</commons-lang.version>
     <commons-fileupload.version>[1.3.3,)</commons-fileupload.version>
-    <commons-lang3.version>3.2.1</commons-lang3.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
 
     <!-- OpenCSV -->
 
@@ -108,11 +112,11 @@
       <!-- WildFly -->
 
       <dependency>
-        <groupId>org.wildfly</groupId>
-        <artifactId>wildfly-spec-api</artifactId>
-        <version>${wildfly-spec-api.version}</version>
-        <type>pom</type>
+        <groupId>org.wildfly.bom</groupId>
+        <artifactId>wildfly-jakartaee8</artifactId>
         <scope>import</scope>
+        <type>pom</type>
+        <version>${wildfly.version}</version>
       </dependency>
 
       <!-- OpenId -->
@@ -126,6 +130,12 @@
       <!-- Commons -->
 
       <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
         <version>${commons-fileupload.version}</version>
@@ -135,6 +145,18 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>${commons-collections4.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils.version}</version>
       </dependency>
 
       <!-- OpenCSV -->

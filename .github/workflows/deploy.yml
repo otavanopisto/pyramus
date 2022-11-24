@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 1.8
+      - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 11
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
@@ -22,8 +22,8 @@ jobs:
       - name: Prepare maven settings
         run: python prepare-maven.py
       - name: Build with Maven
-        run: mvn install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+        run: mvn clean install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       - name: Deploy
-        run: mvn deploy --settings ~/.m2/mySettings.xml
+        run: mvn clean deploy --settings ~/.m2/mySettings.xml
       - name: Webhook to staging
         run: curl -X POST https://${{ secrets.STAGING_WEBHOOK_USER }}:${{ secrets.STAGING_WEBHOOK_USER_PASS }}@${{ secrets.STAGING_WEBHOOK_URL }}

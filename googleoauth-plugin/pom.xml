@@ -1,46 +1,59 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>googleoauth-plugin</artifactId>
-	<name>Pyramus Google Oauth Plugin</name>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>googleoauth-plugin</artifactId>
+  <name>Pyramus Google Oauth Plugin</name>
 
-	<parent>
-		<groupId>fi.otavanopisto.pyramus</groupId>
-		<artifactId>parent</artifactId>
-		<version>0.7.186-SNAPSHOT</version>
-		<relativePath>../</relativePath>
-	</parent>
+  <parent>
+    <groupId>fi.otavanopisto.pyramus</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.7.186-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
 
-	<dependencies>
+  <dependencies>
+    <!-- Servlet -->
 
-		<!-- Scribe -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-		    <groupId>org.scribe</groupId>
-		    <artifactId>scribe</artifactId>
-		    <version>1.3.5</version>
-		</dependency>
+    <!-- Scribe -->
 
+    <dependency>
+      <groupId>org.scribe</groupId>
+      <artifactId>scribe</artifactId>
+      <version>1.3.5</version>
+    </dependency>
 
-		<!-- Pyramus -->
+    <!-- Pyramus -->
 
-		<dependency>
-			<groupId>fi.otavanopisto.pyramus</groupId>
-			<artifactId>smvcj</artifactId>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>smvcj</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>fi.otavanopisto.pyramus</groupId>
-			<artifactId>persistence</artifactId>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>persistence</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>fi.otavanopisto.pyramus</groupId>
-			<artifactId>plugin-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>plugin-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-	</dependencies>
+    <!-- Commons -->
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+  </dependencies>
 
 </project>

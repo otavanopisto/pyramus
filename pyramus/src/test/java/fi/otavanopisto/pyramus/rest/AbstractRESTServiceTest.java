@@ -49,6 +49,7 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
 
     RestAssured.baseURI = getAppUrl(true) + "/1";
     RestAssured.port = getPortHttps();
+    RestAssured.useRelaxedHTTPSValidation();
     RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
         ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {

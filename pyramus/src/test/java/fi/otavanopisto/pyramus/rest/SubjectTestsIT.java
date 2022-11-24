@@ -5,8 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
-import java.time.OffsetDateTime;
-
 import org.junit.Test;
 
 import io.restassured.response.Response;
@@ -65,17 +63,17 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListSubjectCourses() {
-    OffsetDateTime created1 = getDate(2010, 1, 1);
-    OffsetDateTime modified1 = getDate(2010, 1, 1);
-    OffsetDateTime beginDate1 = getDateToOffsetDateTime(2010, 2, 2);
-    OffsetDateTime endDate1 = getDateToOffsetDateTime(2010, 3, 3);
-    OffsetDateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
+    String created1 = getDateString(2010, 1, 1);
+    String modified1 = getDateString(2010, 1, 1);
+    String beginDate1 = getDateString(2010, 2, 2);
+    String endDate1 = getDateString(2010, 3, 3);
+    String enrolmentTimeEnd1 = getDateString(2010, 1, 1);
     
-    OffsetDateTime created2 = getDate(2011, 1, 1);
-    OffsetDateTime modified2 = getDate(2011, 1, 1);
-    OffsetDateTime beginDate2 = getDateToOffsetDateTime(2011, 2, 2);
-    OffsetDateTime endDate2 = getDateToOffsetDateTime(2011, 3, 3);
-    OffsetDateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
+    String created2 = getDateString(2011, 1, 1);
+    String modified2 = getDateString(2011, 1, 1);
+    String beginDate2 = getDateString(2011, 2, 2);
+    String endDate2 = getDateString(2011, 3, 3);
+    String enrolmentTimeEnd2 = getDateString(2011, 1, 1);
 
     given().headers(getAuthHeaders())
       .get("/common/subjects/{ID}/courses", 1)
@@ -83,11 +81,11 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
       .body("id.size()", is(2))
       .body("id[0]", is(1000) )
       .body("name[0]", is("Test Course #1" ))
-      .body("created[0]", is( created1.toString() ))
-      .body("lastModified[0]", is( modified1.toString() ))
-      .body("beginDate[0]", is( beginDate1.toString() ))
-      .body("endDate[0]", is( endDate1.toString() ))
-      .body("enrolmentTimeEnd[0]", is( enrolmentTimeEnd1.toString() ))
+      .body("created[0]", is( created1 ))
+      .body("lastModified[0]", is( modified1 ))
+      .body("beginDate[0]", is( beginDate1 ))
+      .body("endDate[0]", is( endDate1 ))
+      .body("enrolmentTimeEnd[0]", is( enrolmentTimeEnd1 ))
       .body("description[0]", is( "Course #1 for testing" ))
       .body("creatorId[0]", is( 1 ))
       .body("lastModifierId[0]", is( 1 ))
@@ -100,11 +98,11 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
       .body("archived[0]", is( false ))
       .body("id[1]", is(1001) )
       .body("name[1]", is("Test Course #2" ))
-      .body("created[1]", is( created2.toString() ))
-      .body("lastModified[1]", is( modified2.toString() ))
-      .body("beginDate[1]", is( beginDate2.toString() ))
-      .body("endDate[1]", is( endDate2.toString() ))
-      .body("enrolmentTimeEnd[1]", is( enrolmentTimeEnd2.toString() ))
+      .body("created[1]", is( created2 ))
+      .body("lastModified[1]", is( modified2 ))
+      .body("beginDate[1]", is( beginDate2 ))
+      .body("endDate[1]", is( endDate2 ))
+      .body("enrolmentTimeEnd[1]", is( enrolmentTimeEnd2 ))
       .body("description[1]", is( "Course #2 for testing" ))
       .body("creatorId[1]", is( 1 ))
       .body("lastModifierId[1]", is( 1 ))

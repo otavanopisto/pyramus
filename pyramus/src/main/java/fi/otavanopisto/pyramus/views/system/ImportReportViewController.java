@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.servlet.http.Part;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,15 +17,16 @@ import javax.xml.transform.TransformerException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -112,7 +114,7 @@ public class ImportReportViewController extends PyramusFormViewController {
     
     Long existingReportId = requestContext.getLong("report");
     String name = requestContext.getString("name");
-    FileItem file = requestContext.getFile("file");
+    Part file = requestContext.getFile("file");
     Long categoryId = requestContext.getLong("category");
 
     try {
@@ -172,9 +174,20 @@ public class ImportReportViewController extends PyramusFormViewController {
         }
   
         dataStream = new ByteArrayOutputStream();
+        
+        try {
+          DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();    
+          DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("XML 3.0 LS 3.0");
   
-        XMLSerializer xmlSerializer = new XMLSerializer(dataStream, new OutputFormat(reportDocument));
-        xmlSerializer.serialize(reportDocument);
+          LSSerializer serializer = impl.createLSSerializer();
+          LSOutput output = impl.createLSOutput();
+  
+          output.setEncoding("UTF-8");
+          output.setByteStream(dataStream);
+          serializer.write(reportDocument, output);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
       }
       
       User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
