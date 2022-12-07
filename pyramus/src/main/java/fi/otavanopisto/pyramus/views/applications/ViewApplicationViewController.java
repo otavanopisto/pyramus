@@ -298,9 +298,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging"))) {
         fields.put("Asunto kampukselta", simpleBooleanUiValue(getFormValue(formData, "field-lodging")));
       }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging-partial"))) {
-        fields.put("Asunto kampukselta lähijaksojen ajaksi", simpleBooleanUiValue(getFormValue(formData, "field-lodging-partial")));
-      }
       
       // Hakulähde
       
