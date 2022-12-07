@@ -50,7 +50,7 @@
       </select>
     </div>
 
-    <div class="form-section__field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aikuislukio,bandilinja,laakislinja,kasvatustieteet" style="display:none;">
+    <div class="form-section__field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aikuislukio" style="display:none;">
       <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myös keskeytyneet)</label>
       <textarea id="field-previous-studies" name="field-previous-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>
@@ -240,15 +240,6 @@
     <div class="form-section__field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,mk" style="display:none;">
       <label for="field-lodging" class="required">Tarvitsen asunnon opiston kampukselta</label>
       <select id="field-lodging" name="field-lodging" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
-        <option value="">-- Valitse --</option>
-        <option value="kylla">Kyllä</option>
-        <option value="ei">Ei</option>
-      </select>
-    </div>
-
-    <div class="form-section__field-container field-lodging-partial dependent" data-dependent-field="field-line" data-dependent-values="laakislinja,kasvatustieteet" style="display:none;">
-      <label for="field-lodging-partial" class="required">Tarvitsen asunnon opiston kampukselta lähijaksojen ajaksi</label>
-      <select id="field-lodging-partial" name="field-lodging-partial" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
         <option value="kylla">Kyllä</option>
         <option value="ei">Ei</option>

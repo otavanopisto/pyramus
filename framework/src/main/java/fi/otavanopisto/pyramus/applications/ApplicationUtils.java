@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -134,12 +135,6 @@ public class ApplicationUtils {
         return "Nettiperuskoulu";
       case "aikuislukio":
         return "Aikuislukio";
-      case "bandilinja":
-        return "Bändilinja";
-      case "kasvatustieteet":
-        return "Kasvatustieteen linja";
-      case "laakislinja":
-        return "Lääkislinja";
       case "mk":
         return "Maahanmuuttajakoulutukset";
       default:
@@ -375,12 +370,6 @@ public class ApplicationUtils {
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
     case "aikuislukio":
       return studyProgrammeDAO.findById(1L); // Aikuislukio
-    case "bandilinja":
-      return studyProgrammeDAO.findById(8L); // Bändilinja/vapaa
-    case "kasvatustieteet":
-      return null; // TODO Does not yet have a study programme in Pyramus 
-    case "laakislinja":
-      return studyProgrammeDAO.findById(31L); // Lääketieteen opintoihin valmentava koulutus
     case "mk":
       if (StringUtils.isEmpty(foreignLine)) {
         return null;
@@ -1177,7 +1166,7 @@ public class ApplicationUtils {
     if (StringUtils.isEmpty(filename)) {
       return filename;
     }
-    return StringUtils.lowerCase(StringUtils.strip(StringUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), "."));
+    return StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), "."));
   }
 
   private static void processSchoolStudentGroups(School school, Student student) {
