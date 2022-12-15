@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.rest;
 
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -43,6 +45,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
@@ -104,6 +107,66 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
+  
+  // TODO Debug endpoint
+  @Path("/test")
+  @GET
+  @Unsecure
+  @Produces("*/*")
+  public Response testDocument(@QueryParam("n") @DefaultValue ("1") Integer i) {
+    try {
+      StringBuilder baseUrl = new StringBuilder();
+      baseUrl.append(httpRequest.getScheme());
+      baseUrl.append("://");
+      baseUrl.append(httpRequest.getServerName());
+      baseUrl.append(":");
+      baseUrl.append(httpRequest.getServerPort());
+      String documentPath = null;
+      switch (i) {
+      case 2:
+        documentPath = "/templates/applications/document-student-signed-otavia-underage.html";
+        break;
+      case 3:
+        documentPath = "/templates/applications/document-student-signed-otavia-underage-nettilukio.html";
+        break;
+      case 4:
+        documentPath = "/templates/applications/document-student-signed-otava.html";
+        break;
+      case 5:
+        documentPath = "/templates/applications/document-student-signed-otava-underage.html";
+        break;
+       default:
+         documentPath = "/templates/applications/document-student-signed-otavia.html";
+         break;
+      }
+      String document = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(documentPath), "UTF-8");
+
+      // Replace applicant information
+
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICATION-ID]", "53952");
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", "Nettilukio");
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NAME]", "Antti Alaikäinen");
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-EMAIL]", "antti.alaikainen@otavia.fi");
+
+      // Convert to PDF
+
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ITextRenderer renderer = new ITextRenderer();
+      renderer.setDocumentFromString(document, baseUrl.toString());
+      renderer.layout();
+      renderer.createPDF(out);
+      byte[] data = out.toByteArray();
+      return Response.ok(data)
+          .type("application/pdf")
+          .header("Content-Length", data.length)
+          .header("Content-Disposition", String.format("inline; filename=\"%s\"", "vastaanotto.pdf"))
+          .build();
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Oe voe", e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
 
   @Path("/createattachment")
   @POST

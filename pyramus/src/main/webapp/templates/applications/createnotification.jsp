@@ -44,7 +44,7 @@
               <option value="nettilukio">Nettilukio</option>
               <option value="nettipk">Nettiperuskoulu</option>
               <option value="aikuislukio">Aikuislukio</option>
-              <option value="mk">Maahanmuuttajakoulutukset</option>
+              <option value="mk">Aikuisten perusopetus</option>
             </select>
           </div>
 

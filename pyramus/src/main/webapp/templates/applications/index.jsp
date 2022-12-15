@@ -94,21 +94,21 @@
               Aikuislukio on valintasi, jos haluat opiskella lukio-opintoja lähiopintoina Otavan Opiston kampuksella Mikkelissä. Myös asuminen asuntolassa on mahdollista.
             </div>
             <div class="selection-box__link-container">
-              <a class="selection-box__link" href="/applications/create.page?line=aikuislukio">Hae Aikuislukioon</a>
+              <a class="selection-box__link" href="/applications/create.page?line=aikuislukio">Hae aikuislukioon</a>
             </div>
           </div>
 
           <div class="selection-box selection-box--maahanmuuttajakoulutus">
             <div class="selection-box__header-image">
               <div class="selection-box__header-text">
-                Maahanmuuttajakoulutukse<span class="selection-box__header-text-indicator">t...</span>
+                Aikuisten perusopetu<span class="selection-box__header-text-indicator">s...</span>
               </div>
             </div>
             <div class="selection-box__description">
-              Maahanmuuttajakoulutukset ovat opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.
+              Aikuisten perusopetus on tarkoitettu yli 17-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.
             </div>
             <div class="selection-box__link-container">
-              <a class="selection-box__link" href="/applications/create.page?line=mk">Hae Maahanmuuttajakoulutuksiin</a>
+              <a class="selection-box__link" href="/applications/create.page?line=mk">Hae aikuisten perusopetukseen</a>
             </div>
           </div>
         </div>

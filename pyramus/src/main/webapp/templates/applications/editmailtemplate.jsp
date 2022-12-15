@@ -63,7 +63,7 @@
               <option value="nettilukio" <c:if test="${template.line == 'nettilukio'}">selected="selected"</c:if>>Nettilukio</option>
               <option value="nettipk" <c:if test="${template.line == 'nettipk'}">selected="selected"</c:if>>Nettiperuskoulu</option>
               <option value="aikuislukio" <c:if test="${template.line == 'aikuislukio'}">selected="selected"</c:if>>Aikuislukio</option>
-              <option value="mk" <c:if test="${template.line == 'mk'}">selected="selected"</c:if>>Maahanmuuttajakoulutukset</option>
+              <option value="mk" <c:if test="${template.line == 'mk'}">selected="selected"</c:if>>Aikuisten perusopetus</option>
             </select>
           </div>
 

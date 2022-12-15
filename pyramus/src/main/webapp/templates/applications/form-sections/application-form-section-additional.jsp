@@ -15,8 +15,7 @@
         <option value="">-- Valitse --</option>
         <option value="luku">Aikuisten perusopetuksen lukutaitovaihe</option>
         <option value="apa">Aikuisten perusopetuksen alkuvaihe</option>
-        <option value="pk">Aikuisten perusopetuksen päättövaihe (monikulttuurinen peruskoululinja)</option>
-        <option value="lisaopetus">Lisäopetus</option>
+        <option value="pk">Aikuisten perusopetuksen päättövaihe</option>
       </select>
     </div>
 
@@ -30,14 +29,6 @@
 
     <div class="form-section__field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="pk" style="display:none;">
       <p>Koulutuksen tavoitteena on peruskoulun päättötodistus.</p>
-    </div>
-
-    <div class="form-section__field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="luva" style="display:none;">
-      <p>Koulutus on tarkoitettu maahanmuuttajille ja vieraskielisille, joiden tavoitteena ovat lukio-opinnot ja joilla on jo peruskoulun päättötodistus tai vastaavat tiedot.</p>
-    </div>
-
-    <div class="form-section__field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="lisaopetus" style="display:none;">
-      <p>Koulutuksessa voit korottaa peruskoulun päättötodistuksen arvosanoja.</p>
     </div>
 
     <div class="form-section__field-container field-previous-studies-aineopiskelu dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
@@ -196,7 +187,7 @@
     </div>
 
     <div class="form-section__field-container field-previous-foreign-studies dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
-      <label for="field-previous-foreign-studies" class="required">Aikaisemmat opinnot kotimaassasi ja Suomessa</label>
+      <label for="field-previous-foreign-studies" class="required">Aikaisemmat opinnot</label>
       <textarea id="field-previous-foreign-studies" name="field-previous-foreign-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>
 
@@ -217,15 +208,6 @@
       <input id="field-job-other" type="text" name="field-job-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
-    <div class="form-section__field-container field-residence-permit dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
-      <label for="field-residence-permit" class="required">Onko sinulla oleskelulupa Suomeen?</label>
-      <select id="field-residence-permit" name="field-residence-permit" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
-        <option value="">-- Valitse --</option>
-        <option value="kylla">Kyllä</option>
-        <option value="ei">Ei</option>
-      </select>
-    </div>
-
     <div class="form-section__field-container field-info dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aineopiskelu,aikuislukio,mk" style="display:none;">
       <label for="field-info">Haluan kertoa itsestäni ja opiskelutavoitteistani seuraavaa</label>
       <textarea id="field-info" name="field-info" rows="5" cols="40"></textarea>
@@ -237,7 +219,7 @@
       <span class="field-help">Voit kertoa esimerkiksi opiskeluvalmiuksistasi, ajankäytöstäsi, motivaatiostasi ja tavoitteistasi. Nämä tiedot välitetään omalle ohjaajallesi, kun aloitat Nettilukion opinnot.</span>
     </div>
 
-    <div class="form-section__field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,mk" style="display:none;">
+    <div class="form-section__field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,mk" style="display:none;">
       <label for="field-lodging" class="required">Tarvitsen asunnon opiston kampukselta</label>
       <select id="field-lodging" name="field-lodging" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>

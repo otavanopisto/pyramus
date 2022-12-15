@@ -87,6 +87,15 @@
       <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
     </dependency>
 
+    <!-- TODO Only for debug purposes -->
+    <!-- PDF (applications) -->
+
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>flying-saucer-pdf</artifactId>
+      <version>9.1.9</version>
+    </dependency>
+
     <!-- Pyramus -->
 
     <dependency>

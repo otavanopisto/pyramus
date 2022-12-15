@@ -76,9 +76,9 @@
 
       <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
         <h1 class="application-description__line-header">
-          Olet hakemassa <span class="application-description__line-label--maahanmuuttajakoulutus">maahanmuuttajakoulutuksiin</span>
+          Olet hakemassa <span class="application-description__line-label--maahanmuuttajakoulutus">aikuisten perusopetukseen</span>
         </h1>
-        <div class="application-description__line-content">Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.</div>
+        <div class="application-description__line-content">Aikuisten perusopetus on sinulle, jos tarvitset perusopetuksen päättötodistuksen.</div>
       </header>
     </section>
 
@@ -101,7 +101,7 @@
           <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aineopiskelu@otavia.fi">aineopiskelu@otavia.fi</a>.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:maahanmuuttajakoulutukset@otavanopisto.fi">maahanmuuttajakoulutukset@otavanopisto.fi</a>.</p>
+          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aikuistenperusopetus@otavanopisto.fi">aikuistenperusopetus@otavanopisto.fi</a>.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
           <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a>.</p>

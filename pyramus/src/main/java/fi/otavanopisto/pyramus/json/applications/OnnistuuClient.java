@@ -339,7 +339,7 @@ public class OnnistuuClient {
   }
 
   public byte[] generateStaffSignatureDocument(RequestContext requestContext, String applicant, String line,
-      StaffMember signer) throws OnnistuuClientException {
+      StaffMember signer, boolean underageApplicant) throws OnnistuuClientException {
     try {
       HttpServletRequest httpRequest = requestContext.getRequest();
       StringBuilder baseUrl = new StringBuilder();
@@ -364,9 +364,12 @@ public class OnnistuuClient {
       document = StringUtils.replace(document, "[DOCUMENT-APPLICANT]", applicant);
 
       // Replace line specific welcome text
+      // #1430: Differente template for underage applicants
 
-      String welcomeText = IOUtils.toString(requestContext.getServletContext()
-          .getResourceAsStream(String.format("/templates/applications/document-acceptance-%s.html", line)), "UTF-8");
+      String template = underageApplicant
+          ? "/templates/applications/document-acceptance-%s-underage.html"
+          : "/templates/applications/document-acceptance-%s.html";
+      String welcomeText = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(String.format(template, line)), "UTF-8");
       document = StringUtils.replace(document, "[DOCUMENT-TEXT]", welcomeText);
 
       // Replace primary and (optional) secondary signers
@@ -407,7 +410,8 @@ public class OnnistuuClient {
       Long applicationId,
       String line,
       String applicantName,
-      String email) throws OnnistuuClientException {
+      String email,
+      boolean underageApplicant) throws OnnistuuClientException {
     try {
       HttpServletRequest httpRequest = requestContext.getRequest();
       StringBuilder baseUrl = new StringBuilder();
@@ -417,7 +421,22 @@ public class OnnistuuClient {
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
 
-      String documentPath = ApplicationUtils.isOtaviaLine(line) ? "/templates/applications/document-student-signed-otavia.html" : "/templates/applications/document-student-signed-otava.html"; 
+      String documentPath = null;
+      if (ApplicationUtils.isOtaviaLine(line)) {
+        if (underageApplicant) {
+          documentPath = StringUtils.equals(line, "nettilukio")
+              ? "/templates/applications/document-student-signed-otavia-underage-nettilukio.html"
+              : "/templates/applications/document-student-signed-otavia-underage.html";
+        }
+        else {
+          documentPath = "/templates/applications/document-student-signed-otavia.html";
+        }
+      }
+      else {
+        documentPath = underageApplicant
+            ? "/templates/applications/document-student-signed-otava-underage.html"
+            : "/templates/applications/document-student-signed-otava.html";
+      }
 
       // Applicant signed document skeleton
 

@@ -13,7 +13,7 @@
     <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
     <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
     <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
-    <option value="mk" data-underage-support="true" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
+    <option value="mk" data-underage-support="true" data-attachment-support="true">Aikuisten perusopetus</option>
   </select>
     
   <c:if test="${param.includeHandlerLines eq 'true'}">

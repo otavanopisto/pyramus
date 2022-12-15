@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.json.applications;
 
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,10 +78,17 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           JSONObject formData = JSONObject.fromObject(application.getFormData());
           String line = ApplicationUtils.applicationLineUiValue(application.getLine());
+          if (!StringUtils.equals(application.getLine(), "nettilukio") && !StringUtils.equals(application.getLine(), "nettipk")) {
+            line = line.toLowerCase();
+          }
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
           String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+          String birthdayStr = getFormValue(formData, "field-birthday");
+          LocalDate birthday = LocalDate.parse(birthdayStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
+          LocalDate threshold = LocalDate.now().minusYears(18);
+          boolean underageApplicant = birthday.isAfter(threshold);
 
           // Make sure we have application signatures and school approval
           
@@ -93,35 +102,49 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
 
           OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
           
-          // Create Onnistuu document (if not done before) 
+          // 1430: For underage applicants, only create the acceptance PDF
           
-          String documentId = null;
-          if (applicationSignatures.getApplicantDocumentId() == null) {
-            documentId = onnistuuClient.createDocument(String.format("Vastaanotto: %s", applicantName));
-            applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, null, null,
-                ApplicationSignatureState.DOCUMENT_CREATED);
-            
+          byte[] applicantDocument = null;
+          if (underageApplicant) {
+            applicantDocument = onnistuuClient.generateApplicantSignatureDocument(
+                requestContext,
+                application.getId(),
+                line,
+                applicantName,
+                email,
+                true);
           }
           else {
-            documentId = applicationSignatures.getApplicantDocumentId();
-          }
-          
-          // Create and attach PDF to Onnistuu document (if not done before)
 
-          byte[] applicantDocument = null;
-          if (applicationSignatures.getApplicantDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
-            applicantDocument = onnistuuClient.generateApplicantSignatureDocument(requestContext, application.getId(), line, applicantName, email);
-            onnistuuClient.addPdf(documentId, applicantDocument);
-            applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, null, null,
-                ApplicationSignatureState.PDF_UPLOADED);
-          }
+            // Create Onnistuu document (if not done before)
 
-          // Create invitation (if not done before)
+            String documentId = null;
+            if (applicationSignatures.getApplicantDocumentId() == null) {
+              documentId = onnistuuClient.createDocument(String.format("Vastaanotto: %s", applicantName));
+              applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, null, null,
+                  ApplicationSignatureState.DOCUMENT_CREATED);
+              
+            }
+            else {
+              documentId = applicationSignatures.getApplicantDocumentId();
+            }
+            
+            // Create and attach acceptance PDF to Onnistuu document (if not done before)
 
-          if (applicationSignatures.getApplicantDocumentState() == ApplicationSignatureState.PDF_UPLOADED) {
-            OnnistuuClient.Invitation invitation = onnistuuClient.createInvitation(documentId, email);
-            applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, invitation.getUuid(),
-                invitation.getPassphrase(), ApplicationSignatureState.INVITATION_CREATED);
+            if (applicationSignatures.getApplicantDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
+              applicantDocument = onnistuuClient.generateApplicantSignatureDocument(requestContext, application.getId(), line, applicantName, email, false);
+              onnistuuClient.addPdf(documentId, applicantDocument);
+              applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, null, null,
+                  ApplicationSignatureState.PDF_UPLOADED);
+            }
+
+            // Create invitation (if not done before)
+
+            if (applicationSignatures.getApplicantDocumentState() == ApplicationSignatureState.PDF_UPLOADED) {
+              OnnistuuClient.Invitation invitation = onnistuuClient.createInvitation(documentId, email);
+              applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, invitation.getUuid(),
+                  invitation.getPassphrase(), ApplicationSignatureState.INVITATION_CREATED);
+            }
           }
           
           // Construct accepted mail template
@@ -144,28 +167,41 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           attachments.add(new MailAttachment(String.format("%s-oppilaitos.pdf", filename), "application/pdf", staffDocument));
           attachments.add(new MailAttachment(String.format("%s-hakija.pdf", filename), "application/pdf", applicantDocument));
           
-          StringBuilder signUpUrl = new StringBuilder();
-          signUpUrl.append(requestContext.getRequest().getScheme());
-          signUpUrl.append("://");
-          signUpUrl.append(requestContext.getRequest().getServerName());
-          signUpUrl.append(":");
-          signUpUrl.append(requestContext.getRequest().getServerPort());
-          signUpUrl.append("/applications/accept.page?application=");
-          signUpUrl.append(application.getApplicationId());
-          
           String lineOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavian" : "Otavan Opiston";
           String signerOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavia" : "Otavan Opisto";
-          
           String subject = String.format("Hyväksyminen %s opiskelijaksi", lineOrganization);
-          String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-              "/templates/applications/mails/mail-accept-study-place.html"), "UTF-8");
-          content = String.format(content,
-              nickname,
-              lineOrganization,
-              line.toLowerCase(),
-              signUpUrl.toString(),
-              staffMember.getFullName(),
-              signerOrganization);
+
+          String content = null;
+          if (underageApplicant) {
+            content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+                "/templates/applications/mails/mail-accept-study-place-underage.html"), "UTF-8");
+            content = String.format(content,
+                nickname,
+                lineOrganization,
+                line,
+                staffMember.getFullName(),
+                signerOrganization);
+          }
+          else {
+            StringBuilder signUpUrl = new StringBuilder();
+            signUpUrl.append(requestContext.getRequest().getScheme());
+            signUpUrl.append("://");
+            signUpUrl.append(requestContext.getRequest().getServerName());
+            signUpUrl.append(":");
+            signUpUrl.append(requestContext.getRequest().getServerPort());
+            signUpUrl.append("/applications/accept.page?application=");
+            signUpUrl.append(application.getApplicationId());
+
+            content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+                "/templates/applications/mails/mail-accept-study-place.html"), "UTF-8");
+            content = String.format(content,
+                nickname,
+                lineOrganization,
+                line,
+                signUpUrl.toString(),
+                staffMember.getFullName(),
+                signerOrganization);
+          }
           
           // Send mail to applicant (and possible guardian)
           

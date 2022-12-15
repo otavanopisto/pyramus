@@ -136,7 +136,7 @@ public class ApplicationUtils {
       case "aikuislukio":
         return "Aikuislukio";
       case "mk":
-        return "Maahanmuuttajakoulutukset";
+        return "Aikuisten perusopetus";
       default:
         return null;
       }
@@ -384,7 +384,7 @@ public class ApplicationUtils {
       case "luva":
         return studyProgrammeDAO.findById(27L); // LUVA (#1399: deprecated; backward compatibility only)
       case "lisaopetus":
-        return studyProgrammeDAO.findById(15L); // Monikulttuurinen peruskoululinja
+        return studyProgrammeDAO.findById(15L); // Monikulttuurinen peruskoululinja (#1430: deprecated; backward compatibiity only)
       default:
         return null;
       }
