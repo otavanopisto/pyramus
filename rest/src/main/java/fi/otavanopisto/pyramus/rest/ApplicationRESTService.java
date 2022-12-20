@@ -10,8 +10,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,18 +142,44 @@ public class ApplicationRESTService extends AbstractRESTService {
       case 5:
         documentPath = "/templates/applications/document-student-signed-otava-underage.html";
         break;
-       default:
+      case 6:
+        documentPath = "/templates/applications/document-staff-signed-otavia.html"; 
+        break;
+      case 7:
+        documentPath = "/templates/applications/document-staff-signed-otava.html"; 
+        break;
+      case 8:
+        documentPath = "/templates/applications/document-staff-signed-otavia.html"; 
+        break;
+      case 9:
+        documentPath = "/templates/applications/document-staff-signed-otava.html"; 
+        break;
+      default:
          documentPath = "/templates/applications/document-student-signed-otavia.html";
          break;
       }
       String document = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(documentPath), "UTF-8");
 
-      // Replace applicant information
+      if (i >= 6 || i <= 9) {
+        document = StringUtils.replace(document, "[DOCUMENT-DATE]", new SimpleDateFormat("d.M.yyyy").format(new Date()));
+        document = StringUtils.replace(document, "[DOCUMENT-APPLICANT]", "Esko Seppo Hiippari");
+        document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", "<p>Reijo Rehtori</p><p>Rehtori</p><p>Otavia</p>");
+        document = StringUtils.replace(document, "[DOCUMENT-SECONDARY-SIGNER]", "");
+        String template = i >= 8
+            ? "/templates/applications/document-acceptance-%s-underage.html"
+            : "/templates/applications/document-acceptance-%s.html";
+        String welcomeText = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(String.format(template, "nettilukio")), "UTF-8");
+        document = StringUtils.replace(document, "[DOCUMENT-TEXT]", welcomeText);
+      }
+      else {
+      
+        // Replace applicant information
 
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICATION-ID]", "53952");
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", "Nettilukio");
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NAME]", "Antti Alaikäinen");
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-EMAIL]", "antti.alaikainen@otavia.fi");
+        document = StringUtils.replace(document, "[DOCUMENT-APPLICATION-ID]", "53952");
+        document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", "Nettilukio");
+        document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NAME]", "Antti Alaikäinen");
+        document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-EMAIL]", "antti.alaikainen@otavia.fi");
+      }
 
       // Convert to PDF
 
