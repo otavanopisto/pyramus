@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.applications;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,6 +27,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
@@ -52,6 +54,8 @@ import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.system.ConfigurationDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -79,6 +83,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.system.Configuration;
+import fi.otavanopisto.pyramus.domainmodel.system.Setting;
+import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
@@ -93,6 +99,8 @@ import net.sf.json.JSONObject;
 public class ApplicationUtils {
 
   private static final Logger logger = Logger.getLogger(ApplicationUtils.class.getName());
+
+  private static final String SETTINGKEY_SIGNERID = "applications.defaultSignerId";
 
   public static String applicationStateUiValue(ApplicationState applicationState) {
     if (applicationState != null) {
@@ -400,6 +408,130 @@ public class ApplicationUtils {
       referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
     }
     return referenceCode;
+  }
+  
+  public static byte[] generateStaffSignatureDocument(HttpServletRequest request, String applicant, String line,
+      StaffMember signer, boolean underageApplicant) throws Exception {
+    try {
+      StringBuilder baseUrl = new StringBuilder();
+      baseUrl.append(request.getScheme());
+      baseUrl.append("://");
+      baseUrl.append(request.getServerName());
+      baseUrl.append(":");
+      baseUrl.append(request.getServerPort());
+      
+      String documentPath = ApplicationUtils.isOtaviaLine(line) ? "/templates/applications/document-staff-signed-otavia.html" : "/templates/applications/document-staff-signed-otava.html"; 
+
+      // Staff signed document skeleton
+
+      String document = IOUtils.toString(request.getServletContext().getResourceAsStream(documentPath), "UTF-8");
+
+      // Replace document date
+
+      document = StringUtils.replace(document, "[DOCUMENT-DATE]", new SimpleDateFormat("d.M.yyyy").format(new Date()));
+
+      // Replace applicant name
+
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT]", applicant);
+
+      // Replace line specific welcome text
+      // #1430: Differente template for underage applicants
+
+      String template = underageApplicant
+          ? "/templates/applications/document-acceptance-%s-underage.html"
+          : "/templates/applications/document-acceptance-%s.html";
+      String welcomeText = IOUtils.toString(request.getServletContext().getResourceAsStream(String.format(template, line)), "UTF-8");
+      document = StringUtils.replace(document, "[DOCUMENT-TEXT]", welcomeText);
+
+      // Replace primary and (optional) secondary signers
+
+      Long primarySignerId = getPrimarySignerId(line);
+      if (primarySignerId == null) {
+        primarySignerId = signer.getId();
+      }
+      if (primarySignerId.equals(signer.getId())) {
+        document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", getSignature(signer, line));
+        document = StringUtils.replace(document, "[DOCUMENT-SECONDARY-SIGNER]", "");
+      }
+      else {
+        StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+        StaffMember primarySigner = staffMemberDAO.findById(primarySignerId);
+        document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", getSignature(primarySigner, line));
+        document = StringUtils.replace(document, "[DOCUMENT-SECONDARY-SIGNER]",
+            "<p>Puolesta</p>" + getSignature(signer, line));
+      }
+
+      // Convert to PDF
+
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ITextRenderer renderer = new ITextRenderer();
+      renderer.setDocumentFromString(document, baseUrl.toString());
+      renderer.layout();
+      renderer.createPDF(out);
+      return out.toByteArray();
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Unable to create staff document", e);
+      throw e;
+    }
+  }
+  
+  public static byte[] generateApplicantSignatureDocument(
+      HttpServletRequest request,
+      Long applicationId,
+      String line,
+      String applicantName,
+      String email,
+      boolean underageApplicant) throws Exception {
+    try {
+      StringBuilder baseUrl = new StringBuilder();
+      baseUrl.append(request.getScheme());
+      baseUrl.append("://");
+      baseUrl.append(request.getServerName());
+      baseUrl.append(":");
+      baseUrl.append(request.getServerPort());
+
+      String documentPath = null;
+      if (ApplicationUtils.isOtaviaLine(line)) {
+        if (underageApplicant) {
+          documentPath = StringUtils.equals(line, "nettilukio")
+              ? "/templates/applications/document-student-signed-otavia-underage-nettilukio.html"
+              : "/templates/applications/document-student-signed-otavia-underage.html";
+        }
+        else {
+          documentPath = "/templates/applications/document-student-signed-otavia.html";
+        }
+      }
+      else {
+        documentPath = underageApplicant
+            ? "/templates/applications/document-student-signed-otava-underage.html"
+            : "/templates/applications/document-student-signed-otava.html";
+      }
+
+      // Applicant signed document skeleton
+
+      String document = IOUtils.toString(request.getServletContext().getResourceAsStream(documentPath), "UTF-8");
+
+      // Replace applicant information
+
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICATION-ID]", applicationId.toString());
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", StringUtils.capitalize(line));
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NAME]", applicantName);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-EMAIL]", email);
+
+      // Convert to PDF
+
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ITextRenderer renderer = new ITextRenderer();
+      renderer.setDocumentFromString(document, baseUrl.toString());
+      renderer.layout();
+      renderer.createPDF(out);
+      return out.toByteArray();
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Unable to create applicant document", e);
+      throw e;
+    }
   }
   
   public static void sendApplicationModifiedMail(Application application, HttpServletRequest httpRequest, String oldSurname) {
@@ -1203,6 +1335,56 @@ public class ApplicationUtils {
 
   public static String getFormValue(JSONObject object, String key) {
     return object.has(key) ? StringUtils.trim(object.getString(key)) : null;
+  }
+  
+  private static Long getPrimarySignerId(String line) {
+    
+    Long signerId = null;
+    
+    // #1333: Primary signer depends on line. Fall back to default signer if line specific one isn't found
+    
+    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
+    SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+    
+    // Try line specific signer first...
+    
+    SettingKey settingKey = settingKeyDAO.findByName(String.format("%s.%s", SETTINGKEY_SIGNERID, line));
+    if (settingKey != null) {
+      Setting setting = settingDAO.findByKey(settingKey);
+      if (setting != null) {
+        signerId = NumberUtils.toLong(setting.getValue());
+      }
+    }
+    
+    // ...and fall back to default signer if not found
+    
+    if (signerId == null) {
+      settingKey = settingKeyDAO.findByName(SETTINGKEY_SIGNERID);
+      if (settingKey != null) {
+        Setting setting = settingDAO.findByKey(settingKey);
+        if (setting != null) {
+          signerId = NumberUtils.toLong(setting.getValue());
+        }
+      }
+    }
+
+    return signerId;
+  }
+
+  private static String getSignature(StaffMember staffMember, String line) {
+    StringBuffer sb = new StringBuffer();
+    sb.append(String.format("<p>%s</p>", staffMember.getFullName()));
+    if (!StringUtils.isBlank(staffMember.getTitle())) {
+      sb.append(String.format("<p>%s</p>", StringUtils.capitalize(staffMember.getTitle())));
+    }
+    if (ApplicationUtils.isOtaviaLine(line)) {
+      sb.append("<p>Otavia</p>");
+    }
+    else {
+      sb.append("<p>Otavan Opisto</p>");
+    }
+    
+    return sb.toString();
   }
 
 }

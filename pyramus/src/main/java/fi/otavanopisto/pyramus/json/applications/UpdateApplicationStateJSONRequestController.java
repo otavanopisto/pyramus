@@ -77,10 +77,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           // Gather required dynamic data from the application form
           
           JSONObject formData = JSONObject.fromObject(application.getFormData());
-          String line = ApplicationUtils.applicationLineUiValue(application.getLine());
-          if (!StringUtils.equals(application.getLine(), "nettilukio") && !StringUtils.equals(application.getLine(), "nettipk")) {
-            line = line.toLowerCase();
-          }
+          String line = application.getLine();
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
@@ -106,8 +103,8 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           byte[] applicantDocument = null;
           if (underageApplicant) {
-            applicantDocument = onnistuuClient.generateApplicantSignatureDocument(
-                requestContext,
+            applicantDocument = ApplicationUtils.generateApplicantSignatureDocument(
+                requestContext.getRequest(),
                 application.getId(),
                 line,
                 applicantName,
@@ -132,7 +129,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             // Create and attach acceptance PDF to Onnistuu document (if not done before)
 
             if (applicationSignatures.getApplicantDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
-              applicantDocument = onnistuuClient.generateApplicantSignatureDocument(requestContext, application.getId(), line, applicantName, email, false);
+              applicantDocument = ApplicationUtils.generateApplicantSignatureDocument(requestContext.getRequest(), application.getId(), line, applicantName, email, false);
               onnistuuClient.addPdf(documentId, applicantDocument);
               applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, null, null,
                   ApplicationSignatureState.PDF_UPLOADED);

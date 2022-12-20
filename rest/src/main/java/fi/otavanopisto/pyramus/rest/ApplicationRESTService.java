@@ -11,6 +11,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -160,7 +162,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
       String document = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(documentPath), "UTF-8");
 
-      if (i >= 6 || i <= 9) {
+      if (i >= 6 && i <= 9) {
         document = StringUtils.replace(document, "[DOCUMENT-DATE]", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         document = StringUtils.replace(document, "[DOCUMENT-APPLICANT]", "Esko Seppo Hiippari");
         document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", "<p>Reijo Rehtori</p><p>Rehtori</p><p>Otavia</p>");
@@ -197,6 +199,52 @@ public class ApplicationRESTService extends AbstractRESTService {
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Oe voe", e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @Path("/generateapplicantdocument")
+  @GET
+  @Unsecure
+  @Produces("*/*")
+  public Response generateApplicantDocument(@QueryParam("id") Long id, @HeaderParam("Referer") String referer) {
+
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    Application application = applicationDAO.findById(id);
+    if (application == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    // Allow calls from within the application only
+    
+//    if (!isValidCall(application, referer)) {
+//      return Response.status(Status.FORBIDDEN).build();
+//    }
+    
+    // Dynamic document data
+
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String line = application.getLine();
+    String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
+    String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+    String birthdayStr = getFormValue(formData, "field-birthday");
+    LocalDate birthday = LocalDate.parse(birthdayStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
+    LocalDate threshold = LocalDate.now().minusYears(18);
+    boolean underageApplicant = birthday.isAfter(threshold);
+    String filename = StringUtils.replaceChars(StringUtils.lowerCase(applicantName), ' ', '-') + "-hakija.pdf";
+
+    // Document generation
+
+    try {
+      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, underageApplicant);
+      return Response.ok(data)
+          .type("application/pdf")
+          .header("Content-Length", data.length)
+          .header("Content-Disposition", String.format("inline; filename=\"%s\"", filename))
+          .build();
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Applicant document creation failure", e);
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
   }
@@ -523,17 +571,17 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application due to missing line");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String firstName = getFormValue(formData, "field-first-names");
+      String firstName = ApplicationUtils.getFormValue(formData, "field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing first name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String lastName = getFormValue(formData, "field-last-name");
+      String lastName = ApplicationUtils.getFormValue(formData, "field-last-name");
       if (lastName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing last name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+      String email = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-email")));
       if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
@@ -596,9 +644,9 @@ public class ApplicationRESTService extends AbstractRESTService {
         // Aineopiskelija
         if (autoRegistration) {
           // Oppivelvollinen
-          if (StringUtils.equals(getFormValue(formData, "field-compulsory-education"), "kylla")) {
+          if (StringUtils.equals(ApplicationUtils.getFormValue(formData, "field-compulsory-education"), "kylla")) {
             // Sopimusoppilaitos
-            School school = ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school")); // Sopimusoppilaitors
+            School school = ApplicationUtils.resolveSchool(ApplicationUtils.getFormValue(formData, "field-internetix-contract-school")); // Sopimusoppilaitors
             autoRegistration = school != null;
           }
         }
@@ -699,8 +747,8 @@ public class ApplicationRESTService extends AbstractRESTService {
           }
         }
         else {
-          String name = getFormValue(formData, "attachment-name");
-          String description = getFormValue(formData, "attachment-description");
+          String name = ApplicationUtils.getFormValue(formData, "attachment-name");
+          String description = ApplicationUtils.getFormValue(formData, "attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
@@ -916,7 +964,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+    String guardianMail = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 
