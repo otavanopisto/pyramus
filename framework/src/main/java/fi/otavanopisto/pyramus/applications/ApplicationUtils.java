@@ -430,7 +430,7 @@ public class ApplicationUtils {
       baseUrl.append(":");
       baseUrl.append(request.getServerPort());
       
-      String documentPath = ApplicationUtils.isOtaviaLine(line) ? "/templates/applications/document-staff-signed-otavia.html" : "/templates/applications/document-staff-signed-otava.html"; 
+      String documentPath = isOtaviaLine(line) ? "/templates/applications/document-staff-signed-otavia.html" : "/templates/applications/document-staff-signed-otava.html"; 
 
       // Staff signed document skeleton
 
@@ -502,7 +502,7 @@ public class ApplicationUtils {
       baseUrl.append(request.getServerPort());
 
       String documentPath = null;
-      if (ApplicationUtils.isOtaviaLine(line)) {
+      if (isOtaviaLine(line)) {
         if (underageApplicant) {
           documentPath = StringUtils.equals(line, "nettilukio")
               ? "/templates/applications/document-student-signed-otavia-underage-nettilukio.html"
@@ -670,7 +670,7 @@ public class ApplicationUtils {
     // Log entry
     
     if (doLogEntry) {
-      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
+      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", applicationStateUiValue(application.getState()));
       if (notificationPostfix != null) {
         notification = String.format("%s<br/>%s", notification, notificationPostfix);
       }
@@ -799,8 +799,8 @@ public class ApplicationUtils {
       String ssnEnd = getFormValue(formData, "field-ssn-end");
       try {
         Date birthday = StringUtils.isEmpty(birthdayStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(birthdayStr);
-        String ssn = StringUtils.isBlank(ssnEnd) ? null : ApplicationUtils.constructSSN(birthdayStr, ssnEnd);
-        Sex sex = ApplicationUtils.resolveGender(getFormValue(formData, "field-sex"));
+        String ssn = StringUtils.isBlank(ssnEnd) ? null : constructSSN(birthdayStr, ssnEnd);
+        Sex sex = resolveGender(getFormValue(formData, "field-sex"));
         person = personDAO.create(birthday, ssn, sex, null, Boolean.FALSE);
       }
       catch (ParseException e) {
@@ -811,7 +811,7 @@ public class ApplicationUtils {
     
     // Determine correct study programme
     
-    StudyProgramme studyProgramme = ApplicationUtils.resolveStudyProgramme(
+    StudyProgramme studyProgramme = resolveStudyProgramme(
         getFormValue(formData, "field-line"),
         getFormValue(formData, "field-foreign-line"),
         getFormValue(formData, "field-internetix-line"),
@@ -864,14 +864,14 @@ public class ApplicationUtils {
         getFormValue(formData, "field-nickname"),
         additionalInfo,
         studyTimeEnd,
-        ApplicationUtils.resolveStudentActivityType(getFormValue(formData, "field-job")),
-        ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
+        resolveStudentActivityType(getFormValue(formData, "field-job")),
+        resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
         null, // student educational level (entity)
         null, // education (string)
-        ApplicationUtils.resolveNationality(getFormValue(formData, "field-nationality")),
-        ApplicationUtils.resolveMunicipality(getFormValue(formData, "field-municipality")),
-        ApplicationUtils.resolveLanguage(getFormValue(formData, "field-language")),
-        ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school")),
+        resolveNationality(getFormValue(formData, "field-nationality")),
+        resolveMunicipality(getFormValue(formData, "field-municipality")),
+        resolveLanguage(getFormValue(formData, "field-language")),
+        resolveSchool(getFormValue(formData, "field-internetix-contract-school")),
         studyProgramme,
         curriculum,
         null, // previous studies (double)
@@ -1387,7 +1387,7 @@ public class ApplicationUtils {
     if (!StringUtils.isBlank(staffMember.getTitle())) {
       sb.append(String.format("<p>%s</p>", StringUtils.capitalize(staffMember.getTitle())));
     }
-    if (ApplicationUtils.isOtaviaLine(line)) {
+    if (isOtaviaLine(line)) {
       sb.append("<p>Otavia</p>");
     }
     else {
