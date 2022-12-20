@@ -2,8 +2,6 @@ package fi.otavanopisto.pyramus.json.applications;
 
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -82,10 +80,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
           String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
-          String birthdayStr = getFormValue(formData, "field-birthday");
-          LocalDate birthday = LocalDate.parse(birthdayStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
-          LocalDate threshold = LocalDate.now().minusYears(18);
-          boolean underageApplicant = birthday.isAfter(threshold);
+          boolean underageApplicant = ApplicationUtils.isUnderage(application);
 
           // Make sure we have application signatures and school approval
           
@@ -102,7 +97,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           // 1430: For underage applicants, only create the acceptance PDF
           
           byte[] applicantDocument = null;
-          if (underageApplicant) {
+          if (ApplicationUtils.isUnderage(application)) {
             applicantDocument = ApplicationUtils.generateApplicantSignatureDocument(
                 requestContext.getRequest(),
                 application.getId(),

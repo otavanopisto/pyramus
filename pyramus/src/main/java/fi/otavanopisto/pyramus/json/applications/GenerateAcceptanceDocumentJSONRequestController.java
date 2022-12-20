@@ -2,8 +2,6 @@ package fi.otavanopisto.pyramus.json.applications;
 
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,10 +84,6 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
         getFormValue(formData, "field-last-name"));
     String line = application.getLine();
     String documentName = String.format("Hyväksyntä: %s", applicantName);
-    String birthdayStr = getFormValue(formData, "field-birthday");
-    LocalDate birthday = LocalDate.parse(birthdayStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
-    LocalDate threshold = LocalDate.now().minusYears(18);
-    boolean underageApplicant = birthday.isAfter(threshold);
 
     OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
     try {
@@ -109,7 +103,12 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
       // Create and attach PDF to Onnistuu document (if not done before)
 
       if (signatures.getStaffDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
-        byte[] pdf = ApplicationUtils.generateStaffSignatureDocument(requestContext.getRequest(), applicantName, line, staffMember, underageApplicant);
+        byte[] pdf = ApplicationUtils.generateStaffSignatureDocument(
+            requestContext.getRequest(),
+            applicantName,
+            line,
+            staffMember,
+            ApplicationUtils.isUnderage(application));
         onnistuuClient.addPdf(documentId, pdf);
         signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, null, null,
             ApplicationSignatureState.PDF_UPLOADED);

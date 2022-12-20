@@ -11,8 +11,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -227,16 +225,12 @@ public class ApplicationRESTService extends AbstractRESTService {
     String line = application.getLine();
     String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
     String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
-    String birthdayStr = getFormValue(formData, "field-birthday");
-    LocalDate birthday = LocalDate.parse(birthdayStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
-    LocalDate threshold = LocalDate.now().minusYears(18);
-    boolean underageApplicant = birthday.isAfter(threshold);
     String filename = StringUtils.replaceChars(StringUtils.lowerCase(applicantName), ' ', '-') + "-hakija.pdf";
 
     // Document generation
 
     try {
-      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, underageApplicant);
+      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, ApplicationUtils.isUnderage(application));
       return Response.ok(data)
           .type("application/pdf")
           .header("Content-Length", data.length)

@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -158,6 +160,14 @@ public class ApplicationUtils {
   
   public static boolean isValidLine(String line) {
     return applicationLineUiValue(line) != null;
+  }
+  
+  public static boolean isUnderage(Application application) {
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String birthdayStr = getFormValue(formData, "field-birthday");
+    LocalDate birthday = LocalDate.parse(birthdayStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
+    LocalDate threshold = LocalDate.now().minusYears(18);
+    return birthday.isAfter(threshold);
   }
 
   public static String municipalityUiValue(String value) {
