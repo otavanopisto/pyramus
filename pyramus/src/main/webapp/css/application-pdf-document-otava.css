@@ -34,12 +34,9 @@ body {
 }
 
 .document__date {
-  display: inline-block;
-  position: absolute;
-  right: 40px;
-  top: 150px;
+  display: block;
+  float: right;
 }
-
 .document__information h3 {
   font-size: 18px;
   font-weight: 300;
