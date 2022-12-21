@@ -28,23 +28,24 @@ public class GetDocumentUrlsJSONRequestController extends JSONRequestController 
           if (StringUtils.isNotBlank(applicationSignatures.getStaffInvitationId())) {
             String staffDocumentUrl = String.format("/applications/getdocument.binary?documentId=%s&filename=%s",
                 applicationSignatures.getStaffDocumentId(),
-                sanitizeFilename(String.format("%s-%s-oppilaitos.pdf",
-                    applicationSignatures.getApplication().getFirstName(),
-                    applicationSignatures.getApplication().getLastName())));
+                sanitizeFilename(
+                    String.format("%s-%s-oppilaitos.pdf", applicationSignatures.getApplication().getFirstName(),
+                        applicationSignatures.getApplication().getLastName())));
             requestContext.addResponseParameter("staffDocumentUrl", staffDocumentUrl);
           }
           if (StringUtils.isNotBlank(applicationSignatures.getApplicantInvitationId())) {
             String applicantDocumentUrl = String.format("/applications/getdocument.binary?documentId=%s&filename=%s",
                 applicationSignatures.getApplicantDocumentId(),
-                sanitizeFilename(String.format("%s-%s-hakija.pdf",
-                    applicationSignatures.getApplication().getFirstName(),
-                    applicationSignatures.getApplication().getLastName())));
+                sanitizeFilename(
+                    String.format("%s-%s-hakija.pdf", applicationSignatures.getApplication().getFirstName(),
+                        applicationSignatures.getApplication().getLastName())));
             requestContext.addResponseParameter("applicantDocumentUrl", applicantDocumentUrl);
           }
-          else if (application.getState() == ApplicationState.APPROVED_BY_SCHOOL || application.getState() == ApplicationState.TRANSFERRED_AS_STUDENT) {
-            if (ApplicationUtils.isUnderage(application)) {
-              requestContext.addResponseParameter("applicantDocumentUrl", String.format("/1/applications/generateapplicantdocument?id=%d", application.getId()));
-            }
+          else if ((application.getState() == ApplicationState.APPROVED_BY_SCHOOL
+              || application.getState() == ApplicationState.TRANSFERRED_AS_STUDENT)
+              && ApplicationUtils.isUnderage(application)) {
+            requestContext.addResponseParameter("applicantDocumentUrl",
+                String.format("/1/applications/generateapplicantdocument?id=%d", application.getId()));
           }
         }
       }
@@ -60,7 +61,8 @@ public class GetDocumentUrlsJSONRequestController extends JSONRequestController 
     if (StringUtils.isEmpty(filename)) {
       return filename;
     }
-    return StringUtils.replace(StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), ".")), " ", "-");
+    return StringUtils.replace(
+        StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), ".")), " ", "-");
   }
 
 }
