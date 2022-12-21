@@ -35,7 +35,7 @@ body {
 
 .document__date {
   display: block;
-  float: right;
+  margin:0 0 30px;
 }
 
 .document__information h3 {
