@@ -7,8 +7,8 @@
   background-repeat: no-repeat; 
   background-size: 100%;
   margin: 0;
-  padding-top: 100px;
-  padding-bottom: 100px;
+/*   padding-top: 100px; */
+/*   padding-bottom: 100px; */
   size: 210mm 297mm;
 }
 
@@ -30,7 +30,7 @@ body {
 }
 
 .document__body {
-  padding: 50px 40px 0 95px;
+  padding: 150px 40px 0 95px;
   position: relative;
 }
 
