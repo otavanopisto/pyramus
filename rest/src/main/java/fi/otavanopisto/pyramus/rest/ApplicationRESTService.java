@@ -2,7 +2,6 @@ package fi.otavanopisto.pyramus.rest;
 
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,10 +9,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +23,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -47,7 +43,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
@@ -129,9 +124,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     // Allow calls from within the application only
     
-//    if (!isValidCall(application, referer)) {
-//      return Response.status(Status.FORBIDDEN).build();
-//    }
+    if (!isValidCall(application, referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
     
     // Dynamic document data
 
