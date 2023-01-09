@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
@@ -102,7 +103,12 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
       // Create and attach PDF to Onnistuu document (if not done before)
 
       if (signatures.getStaffDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
-        byte[] pdf = onnistuuClient.generateStaffSignatureDocument(requestContext, applicantName, line, staffMember);
+        byte[] pdf = ApplicationUtils.generateStaffSignatureDocument(
+            requestContext.getRequest(),
+            applicantName,
+            line,
+            staffMember,
+            ApplicationUtils.isUnderage(application));
         onnistuuClient.addPdf(documentId, pdf);
         signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, null, null,
             ApplicationSignatureState.PDF_UPLOADED);
@@ -125,7 +131,7 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
               signatures.getStaffInvitationId(),
               signatures.getStaffInvitationToken()));
     }
-    catch (OnnistuuClientException e) {
+    catch (Exception e) {
       logger.log(Level.SEVERE, e.getMessage(), e);
       fail(requestContext, e.getMessage());
     }

@@ -273,7 +273,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Ulkomainen vaihto-opiskelija", simpleBooleanUiValue(getFormValue(formData, "field-foreign-student")));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-foreign-studies"))) {
-        fields.put("Aiemmat opinnot kotimaassa ja Suomessa", getFormValue(formData, "field-previous-foreign-studies"));
+        fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-foreign-studies"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-job"))) {
         if ("muu".equals(getFormValue(formData, "field-job"))) {
@@ -286,9 +286,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-foreign-line"))) {
         fields.put("Opintojen tyyppi", foreignLineUiValue(getFormValue(formData, "field-foreign-line")));
       }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-residence-permit"))) {
-        fields.put("Oleskelulupa Suomeen", simpleBooleanUiValue(getFormValue(formData, "field-residence-permit")));
-      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-info"))) {
         fields.put("Vapaamuotoinen esittely", getFormValue(formData, "field-info"));
       }
@@ -297,9 +294,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging"))) {
         fields.put("Asunto kampukselta", simpleBooleanUiValue(getFormValue(formData, "field-lodging")));
-      }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging-partial"))) {
-        fields.put("Asunto kampukselta lähijaksojen ajaksi", simpleBooleanUiValue(getFormValue(formData, "field-lodging-partial")));
       }
       
       // Hakulähde

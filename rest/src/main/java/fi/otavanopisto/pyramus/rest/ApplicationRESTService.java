@@ -71,6 +71,8 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
+import fi.otavanopisto.pyramus.rest.controller.permissions.ApplicationPermissions;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -94,6 +96,9 @@ public class ApplicationRESTService extends AbstractRESTService {
   private HttpServletRequest httpRequest;
   
   @Inject
+  private SessionController sessionController;
+
+  @Inject
   private SchoolDAO schoolDAO;
 
   @Inject
@@ -104,6 +109,48 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
+  
+  @Path("/generateapplicantdocument")
+  @GET
+  @Unsecure
+  @Produces("*/*")
+  public Response generateApplicantDocument(@QueryParam("id") Long id, @HeaderParam("Referer") String referer) {
+
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    Application application = applicationDAO.findById(id);
+    if (application == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    // Allow calls from within the application only
+    
+    if (!isValidCall(application, referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    // Dynamic document data
+
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String line = application.getLine();
+    String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
+    String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+    String filename = StringUtils.replaceChars(StringUtils.lowerCase(applicantName), ' ', '-') + "-hakija.pdf";
+
+    // Document generation
+
+    try {
+      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, ApplicationUtils.isUnderage(application));
+      return Response.ok(data)
+          .type("application/pdf")
+          .header("Content-Length", data.length)
+          .header("Content-Disposition", String.format("inline; filename=\"%s\"", filename))
+          .build();
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Applicant document creation failure", e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
 
   @Path("/createattachment")
   @POST
@@ -111,9 +158,9 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Consumes(MediaType.MULTIPART_FORM_DATA + ";charset=UTF-8")
   public Response createAttachment(MultipartFormDataInput multipart, @HeaderParam("Referer") String referer) {
     
-    // Allow calls from within the application only
+    // Access check
     
-    if (!isApplicationCall(referer)) {
+    if (!isValidCall(null, referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     
@@ -185,9 +232,15 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Unsecure
   public Response listAttachments(@PathParam("ID") String applicationId, @HeaderParam("Referer") String referer) {
 
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    Application application = applicationDAO.findByApplicationId(applicationId);
+    if (application == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
     // Allow calls from within the application only
     
-    if (!isApplicationCall(referer)) {
+    if (!isValidCall(application, referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -221,9 +274,15 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Produces("*/*")
   public Response getAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
 
-    // Allow calls from within the application only
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    Application application = applicationDAO.findByApplicationId(applicationId);
+    if (application == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    // Access check
     
-    if (!isApplicationCall(referer)) {
+    if (!isValidCall(application, referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -270,9 +329,15 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Unsecure
   public Response removeAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
 
-    // Allow calls from within the application only
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    Application application = applicationDAO.findByApplicationId(applicationId);
+    if (application == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    // Access check
     
-    if (!isApplicationCall(referer)) {
+    if (!isValidCall(application, referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -317,10 +382,13 @@ public class ApplicationRESTService extends AbstractRESTService {
   @POST
   @Unsecure
   public Response getApplicationId(Object object, @HeaderParam("Referer") String referer) {
-    if (!isApplicationCall(referer)) {
+
+    // Access check
+
+    if (!isValidCall(null, referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    
+
     JSONObject formData = JSONObject.fromObject(object);
     try {
       String lastName = formData.getString("field-last-name");
@@ -339,8 +407,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       if (application == null || application.getArchived()) {
         return Response.status(Status.NOT_FOUND).build();
       }
-      // TODO Evaluate application state; can the data still be modified by the applicant?
-
+      
       Map<String, String> response = new HashMap<String, String>();
       response.put("applicationId", application.getApplicationId());
 
@@ -357,7 +424,7 @@ public class ApplicationRESTService extends AbstractRESTService {
   @GET
   @Unsecure
   public Response getAttachmentSizeLimit(@HeaderParam("Referer") String referer) {
-    if (!isApplicationCall(referer)) {
+    if (!isValidCall(null, referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     String attachmentSizeLimit = getSettingValue("applications.attachmentSizeLimit");
@@ -371,14 +438,19 @@ public class ApplicationRESTService extends AbstractRESTService {
   @GET
   @Unsecure
   public Response getApplicationData(@PathParam("ID") String applicationId, @HeaderParam("Referer") String referer) {
-    if (!isApplicationCall(referer)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
     Application application = applicationDAO.findByApplicationId(applicationId);
     if (application == null || application.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
+    
+    // Access check
+    
+    
+    if (!isValidCall(application, referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     return Response.ok(JSONObject.fromObject(application.getFormData())).build();
   }
 
@@ -386,9 +458,6 @@ public class ApplicationRESTService extends AbstractRESTService {
   @POST
   @Unsecure
   public Response createOrUpdateApplication(Object object, @HeaderParam("Referer") String referer) {
-    if (!isApplicationCall(referer)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
 
     // Validate key parts of form data
     
@@ -405,17 +474,17 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application due to missing line");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String firstName = getFormValue(formData, "field-first-names");
+      String firstName = ApplicationUtils.getFormValue(formData, "field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing first name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String lastName = getFormValue(formData, "field-last-name");
+      String lastName = ApplicationUtils.getFormValue(formData, "field-last-name");
       if (lastName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing last name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+      String email = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-email")));
       if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
@@ -429,6 +498,12 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       Application application = applicationDAO.findByApplicationId(applicationId);
       String referenceCode = ApplicationUtils.generateReferenceCode(lastName, application == null ? null : application.getReferenceCode());
+
+      // Access check
+      
+      if (!isValidCall(application, referer)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
 
       // #765: Prevent multiple (active) applications with same e-mail
       
@@ -472,9 +547,9 @@ public class ApplicationRESTService extends AbstractRESTService {
         // Aineopiskelija
         if (autoRegistration) {
           // Oppivelvollinen
-          if (StringUtils.equals(getFormValue(formData, "field-compulsory-education"), "kylla")) {
+          if (StringUtils.equals(ApplicationUtils.getFormValue(formData, "field-compulsory-education"), "kylla")) {
             // Sopimusoppilaitos
-            School school = ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school")); // Sopimusoppilaitors
+            School school = ApplicationUtils.resolveSchool(ApplicationUtils.getFormValue(formData, "field-internetix-contract-school")); // Sopimusoppilaitors
             autoRegistration = school != null;
           }
         }
@@ -575,8 +650,8 @@ public class ApplicationRESTService extends AbstractRESTService {
           }
         }
         else {
-          String name = getFormValue(formData, "attachment-name");
-          String description = getFormValue(formData, "attachment-description");
+          String name = ApplicationUtils.getFormValue(formData, "attachment-name");
+          String description = ApplicationUtils.getFormValue(formData, "attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
@@ -704,18 +779,31 @@ public class ApplicationRESTService extends AbstractRESTService {
     return Response.ok(languageList).build();
   }
 
-  private boolean isApplicationCall(String referer) {
-    if (StringUtils.isEmpty(referer)) {
-      return false;
+  private boolean isValidCall(Application application, String referer) {
+    
+    // Referer check
+    
+    boolean valid = !StringUtils.isEmpty(referer);
+    if (valid) {
+      try {
+        URI refererUri = new URI(referer);
+        URI baseUri = uri.getBaseUri();
+        valid = StringUtils.equals(refererUri.getHost(), baseUri.getHost());
+      }
+      catch (URISyntaxException e) {
+        valid = false;
+      }
     }
-    try {
-      URI refererUri = new URI(referer);
-      URI baseUri = uri.getBaseUri();
-      return StringUtils.equals(refererUri.getHost(), baseUri.getHost());
+
+    // Application check
+    
+    if (valid && application != null) {
+      valid = application.getId().equals(httpRequest.getSession().getAttribute("applicationId"));
+      if (!valid) {
+        valid = sessionController.hasEnvironmentPermission(ApplicationPermissions.MANAGE_APPLICATIONS);
+      }
     }
-    catch (URISyntaxException e) {
-      return false;
-    }
+    return valid;
   }
 
   private byte[] getFile(MultipartFormDataInput multipart, String field) {
@@ -779,7 +867,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+    String guardianMail = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 

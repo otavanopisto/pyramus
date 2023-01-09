@@ -13,10 +13,7 @@
     <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
     <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
     <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
-    <!--<option value="bandilinja" data-underage-support="true" data-attachment-support="true">Bändilinja</option>-->
-    <!--<option value="kasvatustieteet" data-underage-support="false" data-attachment-support="false">Kasvatustieteen linja</option>-->
-    <!--<option value="laakislinja" data-underage-support="false" data-attachment-support="false">Lääkislinja</option>-->
-    <option value="mk" data-underage-support="true" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
+    <option value="mk" data-underage-support="true" data-attachment-support="true">Aikuisten perusopetus</option>
   </select>
     
   <c:if test="${param.includeHandlerLines eq 'true'}">
