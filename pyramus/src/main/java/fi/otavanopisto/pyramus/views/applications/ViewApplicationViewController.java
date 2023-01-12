@@ -79,8 +79,12 @@ public class ViewApplicationViewController extends PyramusViewController {
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
       if (StringUtils.equals("nettilukio",  applicationLine) || StringUtils.equals("nettipk",  applicationLine)) {
         AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
-        fields.put("Yksityisopiskelu", AlternativeLine.PRIVATE == altLine ? "Kyllä" : "Ei");
-        fields.put("Aineopiskelu/yo-tutkinto", AlternativeLine.YO == altLine ? "Kyllä" : "Ei");
+        if (AlternativeLine.PRIVATE == altLine) {
+          fields.put("Opintojen tyyppi", "Yksityisopiskelu");
+        }
+        else if (AlternativeLine.YO == altLine) {
+          fields.put("Opintojen tyyppi", "Aineopiskelu/yo-tutkinto");
+        }
 
         String compulsoryStudies = getFormValue(formData, "field-nettilukio_compulsory");
 
