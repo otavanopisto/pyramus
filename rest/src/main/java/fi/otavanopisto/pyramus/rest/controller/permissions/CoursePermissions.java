@@ -29,7 +29,7 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String FIND_COURSE = "FIND_COURSE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER })
   public static final String UPDATE_COURSE = "UPDATE_COURSE";
   
   @Scope (PermissionScope.ENVIRONMENT)
