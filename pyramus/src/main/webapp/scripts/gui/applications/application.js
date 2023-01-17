@@ -264,7 +264,8 @@
         }
         $(this).toggle(show);
         // #1425: If the field is supposed to be visible, its ancestors should be visible as well
-        if (show) {
+        // #1436: ...but only if the field is in a visible section
+        if (show && $(this).closest("section").is(":visible")) {
           $(this).parents().toggle(show);
         }
         // #1359: Disable hidden form fields to prevent their serialization when submitting
