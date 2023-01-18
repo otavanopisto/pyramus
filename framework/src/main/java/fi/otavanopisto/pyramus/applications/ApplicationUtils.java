@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -164,10 +165,22 @@ public class ApplicationUtils {
   
   public static boolean isUnderage(Application application) {
     JSONObject formData = JSONObject.fromObject(application.getFormData());
-    String birthdayStr = getFormValue(formData, "field-birthday");
-    LocalDate birthday = LocalDate.parse(birthdayStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
-    LocalDate threshold = LocalDate.now().minusYears(18);
-    return birthday.isAfter(threshold);
+    return isUnderage(getFormValue(formData, "field-birthday"));
+  }
+
+  public static boolean isUnderage(String dateString) {
+    if (StringUtils.isBlank(dateString)) {
+      return false;
+    }
+    try {
+      LocalDate birthday = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d.M.yyyy"));
+      LocalDate threshold = LocalDate.now().minusYears(18);
+      return birthday.isAfter(threshold);
+    }
+    catch (DateTimeParseException e) {
+      logger.warning(String.format("Malformatted date %s (%s)", dateString, e.getMessage()));
+      return false;
+    }
   }
 
   public static String municipalityUiValue(String value) {
@@ -952,15 +965,17 @@ public class ApplicationUtils {
         Boolean.TRUE,
         getFormValue(formData, "field-phone"));
     
-    // Guardian info (if email is present, all other fields are required and present, too)
+    // Guardian info for underage applicants
     
-    email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
-    if (!StringUtils.isBlank(email)) {
+    if (isUnderage(getFormValue(formData, "field-birthday"))) {
       
       // Attach email
       
       contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
-      emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+      if (!StringUtils.isBlank(email)) {
+        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+      }
       email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
       if (!StringUtils.isBlank(email)) {
         emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
@@ -972,15 +987,17 @@ public class ApplicationUtils {
 
       // Attach address
       
-      addressDAO.create(
-          student.getContactInfo(),
-          contactType,
-          String.format("%s %s", getFormValue(formData, "field-underage-first-name"), getFormValue(formData, "field-underage-last-name")),
-          getFormValue(formData, "field-underage-street-address"),
-          getFormValue(formData, "field-underage-zip-code"),
-          getFormValue(formData, "field-underage-city"),
-          getFormValue(formData, "field-underage-country"),
-          Boolean.FALSE);
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name"))) {
+        addressDAO.create(
+            student.getContactInfo(),
+            contactType,
+            String.format("%s %s", getFormValue(formData, "field-underage-first-name"), getFormValue(formData, "field-underage-last-name")),
+            getFormValue(formData, "field-underage-street-address"),
+            getFormValue(formData, "field-underage-zip-code"),
+            getFormValue(formData, "field-underage-city"),
+            getFormValue(formData, "field-underage-country"),
+            Boolean.FALSE);
+      }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-2"))) {
         addressDAO.create(
             student.getContactInfo(),
@@ -1006,11 +1023,13 @@ public class ApplicationUtils {
 
       // Attach phone
       
-      phoneNumberDAO.create(
-          student.getContactInfo(),
-          contactType,
-          Boolean.FALSE,
-          getFormValue(formData, "field-underage-phone"));
+      if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone"))) {
+        phoneNumberDAO.create(
+            student.getContactInfo(),
+            contactType,
+            Boolean.FALSE,
+            getFormValue(formData, "field-underage-phone"));
+      }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-2"))) {
         phoneNumberDAO.create(
             student.getContactInfo(),

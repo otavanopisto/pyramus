@@ -122,7 +122,7 @@ public class ViewApplicationViewController extends PyramusViewController {
 
       // Alaikäisen hakemustiedot
       
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-first-name"))) {
+      if (ApplicationUtils.isUnderage(getFormValue(formData, "field-birthday"))) {
         fields = new LinkedHashMap<>();
         sections.put("Alaikäisen hakemustiedot", fields);
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-grounds"))) { 

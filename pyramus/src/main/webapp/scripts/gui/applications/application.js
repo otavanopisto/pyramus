@@ -264,8 +264,9 @@
         }
         $(this).toggle(show);
         // #1425: If the field is supposed to be visible, its ancestors should be visible as well
+        // #1436: ...but only up to section level
         if (show) {
-          $(this).parents().toggle(show);
+          $(this).parentsUntil('section').toggle(show);
         }
         // #1359: Disable hidden form fields to prevent their serialization when submitting
         $(this).find("input,select,textarea").prop('disabled', !show);
