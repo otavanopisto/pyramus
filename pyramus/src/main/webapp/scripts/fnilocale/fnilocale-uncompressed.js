@@ -548,6 +548,30 @@ fni.locale.dateformat.FNILongYearTokenFormatter = Class.create(fni.locale.datefo
 });
 
 fni.locale.dateformat.FNITokenFormatterVault.register(new fni.locale.dateformat.FNILongYearTokenFormatter());/*
+ * FNILongYearWithShortTokenFormatter
+ */
+fni.locale.dateformat.FNILongYearWithShortTokenFormatter = Class.create(fni.locale.dateformat.FNITokenFormatter, 
+  /** @lends fni.locale.dateformat.FNILongYearTokenFormatter# */ 
+  {
+  /**
+   * Class constructor
+   * @class Implements 'y' token formatter 
+   * @extends fni.locale.dateformat.FNITokenFormatter
+   * @constructs
+   * @param $super super class 
+   */
+  initialize: function ($super) {
+    $super();
+  },
+  getToken: function () {
+    return 'y';
+  },
+  format: function (date) {
+    return date.getFullYear();
+  }
+});
+
+fni.locale.dateformat.FNITokenFormatterVault.register(new fni.locale.dateformat.FNILongYearWithShortTokenFormatter());/*
  * Millisecond
  *  
  * Copyright (C) 2008 - 2009 Antti Leppä / Foyt

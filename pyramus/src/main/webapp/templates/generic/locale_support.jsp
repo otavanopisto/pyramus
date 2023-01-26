@@ -5,7 +5,7 @@
 
 <c:choose>
   <c:when test="${localeSupportIncluded != true}">    
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fnilocale/fnilocale.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fnilocale/fnilocale-uncompressed.js"></script>
     <script type="text/javascript">
       var __LOCALE = null;
 
