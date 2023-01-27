@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -487,8 +488,9 @@ public class WorklistRESTService {
     restModel.setPrice(template.getPrice());
     restModel.setFactor(template.getFactor());
     restModel.setBillingNumber(template.getBillingNumber());
-    Set<WorklistItemEditableFields> fields = WorklistController.editableFieldsFromString(template.getEditableFields());
-    restModel.setEditableFields(fields.stream().map(Object::toString).collect(Collectors.toSet()));
+    restModel.setEditableFields(StringUtils.isEmpty(template.getEditableFields())
+        ? Collections.emptySet()
+        : Stream.of(template.getEditableFields().split(",")).collect(Collectors.toSet()));
     return restModel;
   }
   
@@ -510,8 +512,9 @@ public class WorklistRESTService {
       restModel.setRemovable(Boolean.FALSE);
     }
     else {
-      Set<WorklistItemEditableFields> fields = WorklistController.editableFieldsFromString(worklistItem.getEditableFields());
-      restModel.setEditableFields(fields.stream().map(Object::toString).collect(Collectors.toSet()));
+      restModel.setEditableFields(StringUtils.isEmpty(worklistItem.getEditableFields())
+          ? Collections.emptySet()
+          : Stream.of(worklistItem.getEditableFields().split(",")).collect(Collectors.toSet()));
       restModel.setRemovable(worklistItem.getTemplate().getRemovable());
     }
     return restModel;
