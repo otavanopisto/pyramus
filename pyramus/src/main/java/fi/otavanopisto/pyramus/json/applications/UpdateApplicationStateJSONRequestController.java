@@ -170,7 +170,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             content = String.format(content,
                 nickname,
                 lineOrganization,
-                line,
+                ApplicationUtils.applicationLineUiValue(line),
                 staffMember.getFullName(),
                 signerOrganization);
           }
@@ -189,7 +189,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             content = String.format(content,
                 nickname,
                 lineOrganization,
-                line,
+                ApplicationUtils.applicationLineUiValue(line),
                 signUpUrl.toString(),
                 staffMember.getFullName(),
                 signerOrganization);

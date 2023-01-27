@@ -538,7 +538,7 @@ public class ApplicationUtils {
       // Replace applicant information
 
       document = StringUtils.replace(document, "[DOCUMENT-APPLICATION-ID]", applicationId.toString());
-      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", StringUtils.capitalize(line));
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", ApplicationUtils.applicationLineUiValue(line));
       document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NAME]", applicantName);
       document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-EMAIL]", email);
 
