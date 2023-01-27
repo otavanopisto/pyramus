@@ -11,7 +11,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
-import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemEditableFields;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate_;
@@ -20,7 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate_;
 public class WorklistItemTemplateDAO extends PyramusEntityDAO<WorklistItemTemplate> {
 
   public WorklistItemTemplate createTemplate(WorklistItemTemplateType templateType, String description, Double price, Double factor,
-      String billingNumber, Set<WorklistItemEditableFields> editableFields, Boolean removable) {
+      String billingNumber, String editableFields, Boolean removable) {
     WorklistItemTemplate template = new WorklistItemTemplate();
     template.setTemplateType(templateType);
     template.setDescription(description);
@@ -33,7 +32,7 @@ public class WorklistItemTemplateDAO extends PyramusEntityDAO<WorklistItemTempla
   }
 
   public WorklistItemTemplate updateTemplate(WorklistItemTemplate template, WorklistItemTemplateType templateType, String description, Double price, Double factor,
-      String billingNumber, Set<WorklistItemEditableFields> editableFields, Boolean removable) {
+      String billingNumber, String editableFields, Boolean removable) {
     template.setTemplateType(templateType);
     template.setDescription(description);
     template.setPrice(price);

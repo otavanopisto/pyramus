@@ -1,19 +1,16 @@
 package fi.otavanopisto.pyramus.domainmodel.worklist;
 
-import java.util.Set;
-
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 
@@ -73,11 +70,11 @@ public class WorklistItemTemplate implements ArchivableEntity {
     this.archived = archived;
   }
 
-  public Set<WorklistItemEditableFields> getEditableFields() {
+  public String getEditableFields() {
     return editableFields;
   }
 
-  public void setEditableFields(Set<WorklistItemEditableFields> editableFields) {
+  public void setEditableFields(String editableFields) {
     this.editableFields = editableFields;
   }
 
@@ -113,8 +110,7 @@ public class WorklistItemTemplate implements ArchivableEntity {
   private WorklistItemTemplateType templateType;
   
   @Column
-  @Convert(converter = WorklistItemEditableFieldsConverter.class)
-  private Set<WorklistItemEditableFields> editableFields;
+  private String editableFields;
   
   @NotNull
   @Column(nullable = false)

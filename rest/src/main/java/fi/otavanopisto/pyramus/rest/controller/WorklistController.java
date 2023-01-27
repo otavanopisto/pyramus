@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
@@ -30,6 +31,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistBillingSettings;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemEditableFields;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
@@ -186,6 +188,24 @@ public class WorklistController {
     List<WorklistItem> worklistItems = worklistItemDAO.listByOwnerAndTimeframeAndArchived(owner, beginDate, endDate, false);
     worklistItems.sort(Comparator.comparing(WorklistItem::getEntryDate));
     return worklistItems;
+  }
+  
+  public static Set<WorklistItemEditableFields> editableFieldsFromString(String s) {
+    Set<WorklistItemEditableFields> result = new HashSet<>();
+    if (!StringUtils.isEmpty(s)) {
+      String[] editableFields = s.split(",");
+      for (String editableField : editableFields) {
+        result.add(WorklistItemEditableFields.valueOf(editableField));
+      }
+    }
+    return result;
+  }
+
+  public static String editableFieldsToString(Set<WorklistItemEditableFields> fields) {
+    if (fields == null || fields.size() == 0) {
+      return null;
+    }
+    return String.join(",", fields.stream().map(Object::toString).collect(Collectors.toList()));
   }
   
   private boolean isEarliestCourseModuleOfSubjectAssessedByUser(CourseModule courseModule, User user) {
