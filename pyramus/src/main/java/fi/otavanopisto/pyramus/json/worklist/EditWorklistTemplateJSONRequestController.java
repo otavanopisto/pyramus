@@ -14,6 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 
 /**
  * The controller responsible of creating or modifying a worklist template. 
@@ -55,11 +56,11 @@ public class EditWorklistTemplateJSONRequestController extends JSONRequestContro
     
     WorklistItemTemplateDAO worklistItemTemplateDAO = DAOFactory.getInstance().getWorklistItemTemplateDAO();
     if (templateId == null) {
-      worklistItemTemplateDAO.createTemplate(templateType, description, price, factor, billingNumber, editableFields, removable);
+      worklistItemTemplateDAO.createTemplate(templateType, description, price, factor, billingNumber, WorklistController.editableFieldsToString(editableFields), removable);
     }
     else {
       WorklistItemTemplate template = worklistItemTemplateDAO.findById(templateId);
-      worklistItemTemplateDAO.updateTemplate(template, templateType, description, price, factor, billingNumber, editableFields, removable);
+      worklistItemTemplateDAO.updateTemplate(template, templateType, description, price, factor, billingNumber, WorklistController.editableFieldsToString(editableFields), removable);
     }
 
     String redirectURL = requestContext.getRequest().getContextPath() + "/worklist/manageworklisttemplates.page";

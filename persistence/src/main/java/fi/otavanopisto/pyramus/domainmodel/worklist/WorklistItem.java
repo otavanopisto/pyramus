@@ -1,10 +1,8 @@
 package fi.otavanopisto.pyramus.domainmodel.worklist;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,10 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -135,11 +133,11 @@ public class WorklistItem implements ArchivableEntity {
     this.created = created;
   }
 
-  public Set<WorklistItemEditableFields> getEditableFields() {
+  public String getEditableFields() {
     return editableFields;
   }
 
-  public void setEditableFields(Set<WorklistItemEditableFields> editableFields) {
+  public void setEditableFields(String editableFields) {
     this.editableFields = editableFields;
   }
 
@@ -186,8 +184,7 @@ public class WorklistItem implements ArchivableEntity {
   private CourseAssessment courseAssessment;
 
   @Column
-  @Convert(converter = WorklistItemEditableFieldsConverter.class)
-  private Set<WorklistItemEditableFields> editableFields;
+  private String editableFields;
 
   @Column
   @Enumerated (EnumType.STRING)

@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.views.worklist;
 
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -16,6 +15,7 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 
 /**
  * The controller responsible of the Edit Worklist Template view of the application.
@@ -44,10 +44,7 @@ public class EditWorklistTemplateViewController extends PyramusViewController im
     else {
       template = worklistItemTemplateDAO.findById(templateId);
     }
-    Set<WorklistItemEditableFields> fields = template.getEditableFields();
-    if (fields == null) {
-      fields = new HashSet<>();
-    }
+    Set<WorklistItemEditableFields> fields = WorklistController.editableFieldsFromString(template.getEditableFields());
     pageRequestContext.getRequest().setAttribute("worklistTemplate", template);
     pageRequestContext.getRequest().setAttribute("dateEditable", fields.contains(WorklistItemEditableFields.ENTRYDATE));
     pageRequestContext.getRequest().setAttribute("descriptionEditable", fields.contains(WorklistItemEditableFields.DESCRIPTION));

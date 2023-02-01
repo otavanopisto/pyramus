@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -129,19 +131,20 @@ public class WorklistRESTService {
     
     // Get values from template or payload, depending on editability
     
-    String description = template.getEditableFields().contains(WorklistItemEditableFields.DESCRIPTION)
+    Set<WorklistItemEditableFields> fields = WorklistController.editableFieldsFromString(template.getEditableFields());
+    String description = fields.contains(WorklistItemEditableFields.DESCRIPTION)
         ? payload.getDescription()
         : template.getDescription();
-    Date entryDate = template.getEditableFields().contains(WorklistItemEditableFields.ENTRYDATE)
+    Date entryDate = fields.contains(WorklistItemEditableFields.ENTRYDATE)
         ? java.sql.Date.valueOf(payload.getEntryDate())
         : new Date();
-    Double price = template.getEditableFields().contains(WorklistItemEditableFields.PRICE)
+    Double price = fields.contains(WorklistItemEditableFields.PRICE)
         ? payload.getPrice()
         : template.getPrice();
-    Double factor = template.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
+    Double factor = fields.contains(WorklistItemEditableFields.FACTOR)
         ? payload.getFactor()
         : template.getFactor();
-    String billingNumber = template.getEditableFields().contains(WorklistItemEditableFields.BILLING_NUMBER)
+    String billingNumber = fields.contains(WorklistItemEditableFields.BILLING_NUMBER)
         ? payload.getBillingNumber()
         : template.getBillingNumber();
     
@@ -188,19 +191,20 @@ public class WorklistRESTService {
     
     // Get values from item or payload, depending on editability
     
-    String description = worklistItem.getEditableFields().contains(WorklistItemEditableFields.DESCRIPTION)
+    Set<WorklistItemEditableFields> fields = WorklistController.editableFieldsFromString(worklistItem.getEditableFields());
+    String description = fields.contains(WorklistItemEditableFields.DESCRIPTION)
         ? payload.getDescription()
         : worklistItem.getDescription();
-    Date entryDate = worklistItem.getEditableFields().contains(WorklistItemEditableFields.ENTRYDATE)
+    Date entryDate = fields.contains(WorklistItemEditableFields.ENTRYDATE)
         ? java.sql.Date.valueOf(payload.getEntryDate())
         : worklistItem.getEntryDate();
-    Double price = worklistItem.getEditableFields().contains(WorklistItemEditableFields.PRICE)
+    Double price = fields.contains(WorklistItemEditableFields.PRICE)
         ? payload.getPrice()
         : worklistItem.getPrice();
-    Double factor = worklistItem.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
+    Double factor = fields.contains(WorklistItemEditableFields.FACTOR)
         ? payload.getFactor()
         : worklistItem.getFactor();
-    String billingNumber = worklistItem.getEditableFields().contains(WorklistItemEditableFields.BILLING_NUMBER)
+    String billingNumber = fields.contains(WorklistItemEditableFields.BILLING_NUMBER)
         ? payload.getBillingNumber()
         : worklistItem.getBillingNumber();
         
@@ -484,7 +488,9 @@ public class WorklistRESTService {
     restModel.setPrice(template.getPrice());
     restModel.setFactor(template.getFactor());
     restModel.setBillingNumber(template.getBillingNumber());
-    restModel.setEditableFields(template.getEditableFields().stream().map(Object::toString).collect(Collectors.toSet()));
+    restModel.setEditableFields(StringUtils.isEmpty(template.getEditableFields())
+        ? Collections.emptySet()
+        : Stream.of(template.getEditableFields().split(",")).collect(Collectors.toSet()));
     return restModel;
   }
   
@@ -506,7 +512,9 @@ public class WorklistRESTService {
       restModel.setRemovable(Boolean.FALSE);
     }
     else {
-      restModel.setEditableFields(worklistItem.getEditableFields().stream().map(Object::toString).collect(Collectors.toSet()));
+      restModel.setEditableFields(StringUtils.isEmpty(worklistItem.getEditableFields())
+          ? Collections.emptySet()
+          : Stream.of(worklistItem.getEditableFields().split(",")).collect(Collectors.toSet()));
       restModel.setRemovable(worklistItem.getTemplate().getRemovable());
     }
     return restModel;
