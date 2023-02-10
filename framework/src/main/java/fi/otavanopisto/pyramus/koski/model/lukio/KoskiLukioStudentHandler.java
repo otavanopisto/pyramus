@@ -160,10 +160,12 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
         continue;
       }
       
+      Subject subject = lukionOppiaineenSuoritusWSubject.getSubject();
+      
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
-      if (calculateMeanGrades) {
+      if (lasketaankoAineKeskiarvo(calculateMeanGrades, student, subject)) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(lukionOppiaineenSuoritusWSubject) ? 
-            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, lukionOppiaineenSuoritusWSubject.getSubject(), lukionOppiaineenSuoritus);
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, subject, lukionOppiaineenSuoritus);
         
         if (aineKeskiarvo != null) {
           LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
