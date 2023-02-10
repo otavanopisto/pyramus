@@ -105,8 +105,14 @@ public class KoskiClient {
   public OppijaReturnVal findPersonByOid(String personOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), personOid);
     
-    Builder request = getClientBuilder(uri);
-    return request.get(OppijaReturnVal.class);
+    Client client = ClientBuilder.newClient();
+    try {
+      Builder request = prepareRequest(client, uri);
+      OppijaReturnVal returnVal = request.get(OppijaReturnVal.class);
+      return returnVal;
+    } finally {
+      client.close();
+    }
   }
 
   /**
@@ -115,8 +121,14 @@ public class KoskiClient {
   public Oppija findOppijaByOid(String oppijaOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), oppijaOid);
     
-    Builder request = getClientBuilder(uri);
-    return request.get(Oppija.class);
+    Client client = ClientBuilder.newClient();
+    try {
+      Builder request = prepareRequest(client, uri);
+      Oppija oppija = request.get(Oppija.class);
+      return oppija;
+    } finally {
+      client.close();
+    }
   }
 
   /**
@@ -260,66 +272,72 @@ public class KoskiClient {
       String requestStr = writer.toString();
 
       String uri = String.format("%s/oppija", getBaseUrl());
-      Builder request = getClientBuilder(uri);
-      Response response = request.put(Entity.json(requestStr));
-      if (response.getStatus() == 200) {
-        String ret = response.readEntity(String.class);
-        
-        // For test environment the oid's are not saved
-        if (!settings.isTestEnvironment()) {
-          OppijaReturnVal oppijaReturnVal = mapper.readValue(ret, OppijaReturnVal.class);
-          String servedPersonOid = oppijaReturnVal.getHenkilo().getOid();
-          
-          if (StringUtils.isEmpty(personOid)) {
-            // If the oid was empty in db, save the given one
-            personVariableDAO.setPersonVariable(person, KOSKI_HENKILO_OID, servedPersonOid);
-          } else {
-            // Validate the oid is the same
-            if (!StringUtils.equals(personOid, servedPersonOid))
-              throw new RuntimeException("Returned person oid doesn't match the saved oid");
-          }
 
-          Set<SourceSystemId> invalidatedSourceSystemIds = oppija.getOpiskeluoikeudet().stream()
-            .filter(opiskeluoikeus -> opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().stream().anyMatch(opiskeluoikeusjakso -> opiskeluoikeusjakso.getTila().getValue() == OpiskeluoikeudenTila.mitatoity))
-            .map(opiskeluoikeus -> parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId()))
-            .collect(Collectors.toSet());
+      Client client = ClientBuilder.newClient();
+      try {
+        Response response = prepareRequest(client, uri).put(Entity.json(requestStr));
+  
+        if (response.getStatus() == 200) {
+          String ret = response.readEntity(String.class);
           
-          for (OpiskeluoikeusReturnVal opiskeluoikeus : oppijaReturnVal.getOpiskeluoikeudet()) {
-            if (opiskeluoikeus.getLahdejarjestelmanId() != null && 
-                opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
-                StringUtils.equals(opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getKoodiarvo(), "pyramus")) {
-              SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId());
-              if (sourceSystemId != null) {
-                Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
-                
-                KoskiStudentHandler handler = koskiController.getStudentHandler(sourceSystemId.getHandler());
-                if (reportedStudent.getArchived() || invalidatedSourceSystemIds.contains(sourceSystemId)) {
-                  // For archived or invalidated student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
-                  handler.removeOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
+          // For test environment the oid's are not saved
+          if (!settings.isTestEnvironment()) {
+            OppijaReturnVal oppijaReturnVal = mapper.readValue(ret, OppijaReturnVal.class);
+            String servedPersonOid = oppijaReturnVal.getHenkilo().getOid();
+            
+            if (StringUtils.isEmpty(personOid)) {
+              // If the oid was empty in db, save the given one
+              personVariableDAO.setPersonVariable(person, KOSKI_HENKILO_OID, servedPersonOid);
+            } else {
+              // Validate the oid is the same
+              if (!StringUtils.equals(personOid, servedPersonOid))
+                throw new RuntimeException("Returned person oid doesn't match the saved oid");
+            }
+  
+            Set<SourceSystemId> invalidatedSourceSystemIds = oppija.getOpiskeluoikeudet().stream()
+              .filter(opiskeluoikeus -> opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().stream().anyMatch(opiskeluoikeusjakso -> opiskeluoikeusjakso.getTila().getValue() == OpiskeluoikeudenTila.mitatoity))
+              .map(opiskeluoikeus -> parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId()))
+              .collect(Collectors.toSet());
+            
+            for (OpiskeluoikeusReturnVal opiskeluoikeus : oppijaReturnVal.getOpiskeluoikeudet()) {
+              if (opiskeluoikeus.getLahdejarjestelmanId() != null && 
+                  opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
+                  StringUtils.equals(opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getKoodiarvo(), "pyramus")) {
+                SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId());
+                if (sourceSystemId != null) {
+                  Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
+                  
+                  KoskiStudentHandler handler = koskiController.getStudentHandler(sourceSystemId.getHandler());
+                  if (reportedStudent.getArchived() || invalidatedSourceSystemIds.contains(sourceSystemId)) {
+                    // For archived or invalidated student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
+                    handler.removeOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
+                  } else {
+                    handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
+                  }
                 } else {
-                  handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
+                  logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));
                 }
               } else {
-                logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));
+                logger.log(Level.WARNING, String.format("Could not update student oid because returned source system was not defined or isn't this system."));
               }
-            } else {
-              logger.log(Level.WARNING, String.format("Could not update student oid because returned source system was not defined or isn't this system."));
             }
           }
+  
+          // Log successful event
+          koskiPersonLogDAO.create(person, KoskiPersonState.SUCCESS, new Date());
+          logger.info(String.format("KoskiClient: successfully updated person %d.", person.getId()));
+          return true;
+        } else {
+          String ret = response.readEntity(String.class);
+          String errorMessage = errorResponseMessage(ret);
+          
+          // Log failed event
+          koskiPersonLogDAO.create(person, KoskiPersonState.SERVER_FAILURE, new Date(), errorMessage);
+          logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), person.getId(), ret));
+          return false;
         }
-
-        // Log successful event
-        koskiPersonLogDAO.create(person, KoskiPersonState.SUCCESS, new Date());
-        logger.info(String.format("KoskiClient: successfully updated person %d.", person.getId()));
-        return true;
-      } else {
-        String ret = response.readEntity(String.class);
-        String errorMessage = errorResponseMessage(ret);
-        
-        // Log failed event
-        koskiPersonLogDAO.create(person, KoskiPersonState.SERVER_FAILURE, new Date(), errorMessage);
-        logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), person.getId(), ret));
-        return false;
+      } finally {
+        client.close();
       }
     } catch (Exception ex) {
       try {
@@ -417,9 +435,8 @@ public class KoskiClient {
     }
   }
 
-  private Builder getClientBuilder(String uri) {
+  private Builder prepareRequest(Client client, String uri) {
     String auth = getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_AUTH);
-    Client client = ClientBuilder.newClient();
     WebTarget target = client.target(uri);
     Builder request = target
         .request(MediaType.APPLICATION_JSON_TYPE)
