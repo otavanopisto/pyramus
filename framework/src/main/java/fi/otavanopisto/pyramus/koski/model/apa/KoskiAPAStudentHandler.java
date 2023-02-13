@@ -144,11 +144,14 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
         // Skip empty subjects
         continue;
       }
+
+      Subject subject = oppiaineenSuoritusWSubject.getSubject();
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
-      if (calculateMeanGrades) {
+
+      if (lasketaankoAineKeskiarvo(calculateMeanGrades, student, subject)) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritusWSubject) ? 
-            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, oppiaineenSuoritusWSubject.getSubject(), oppiaineenSuoritus);
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, subject, oppiaineenSuoritus);
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());

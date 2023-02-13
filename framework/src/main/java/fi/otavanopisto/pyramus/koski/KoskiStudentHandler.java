@@ -80,10 +80,10 @@ import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 public abstract class KoskiStudentHandler {
 
-  public static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
-  public static final String KOSKI_INTERNETIX_STUDYPERMISSION_ID = "koski.internetix-studypermission-id";
-  public static final String KOSKI_LINKED_STUDYPERMISSION_ID = "koski.linked-to-studypermission-id";
-  public static final String KOSKI_SCHOOL_OID = "koski.schooloid";
+  public static final String KOSKI_STUDYPERMISSION_ID = KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID;
+  public static final String KOSKI_INTERNETIX_STUDYPERMISSION_ID = KoskiConsts.VariableNames.KOSKI_INTERNETIX_STUDYPERMISSION_ID;
+  public static final String KOSKI_LINKED_STUDYPERMISSION_ID = KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID;
+  public static final String KOSKI_SCHOOL_OID = KoskiConsts.SchoolVariables.KOSKI_SCHOOL_OID;
 
   @Inject
   private Logger logger;
@@ -815,6 +815,18 @@ public abstract class KoskiStudentHandler {
     return null;
   }
 
+  /**
+   * True, jos lasketaankoKeskiarvot=true tai jos student,subject -yhdistelmällä on tallennettu
+   * ainekeskiarvo.
+   * 
+   * @param lasketaankoKeskiarvot
+   * @param student
+   * @param subject
+   */
+  protected boolean lasketaankoAineKeskiarvo(boolean lasketaankoKeskiarvot, Student student, Subject subject) {
+    return lasketaankoKeskiarvot || (getSubjectGrade(student, subject) != null);
+  }
+  
   protected StudentSubjectGrade findStudentSubjectGrade(Student student, Subject subject) {
     return studentSubjectGradeDAO.findBy(student, subject);
   }

@@ -5,6 +5,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import fi.otavanopisto.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
@@ -23,6 +24,9 @@ public class KoskiStartupInitializer {
   @Inject
   private SettingKeyDAO settingKeyDAO;
   
+  @Inject
+  private SchoolVariableKeyDAO schoolVariableKeyDAO;
+  
   @PostConstruct
   private void ensureVariableKeysExist() {
     ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_AUTH);
@@ -34,6 +38,7 @@ public class KoskiStartupInitializer {
     }
     
     ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID, "Koski: opiskeluoikeuden oid", VariableType.TEXT, true);
+    ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_INTERNETIX_STUDYPERMISSION_ID, "Koski: aineopiskeluoikeuden oid", VariableType.TEXT, false);
     ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID, "Koski: sisältyvän opiskeluoikeuden oid", VariableType.TEXT, true);
     ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_SKIPPED_STUDENT, "Ohita Koski-integraatiossa", VariableType.TEXT, true);
 
@@ -41,6 +46,10 @@ public class KoskiStartupInitializer {
     ensureUserVariableExists(KoskiConsts.UserVariables.UNDER18_STARTREASON, "Alle 18-vuotiaana aloittaneen aloittamissyy", VariableType.TEXT, true);
     ensureUserVariableExists(KoskiConsts.UserVariables.PK_GRADE_UPGRADE, "Perusopetuksen arvosanojen korottaja", VariableType.BOOLEAN, true);
 
+    if (schoolVariableKeyDAO.findVariableKey(KoskiConsts.SchoolVariables.KOSKI_SCHOOL_OID) == null) {
+      schoolVariableKeyDAO.create(KoskiConsts.SchoolVariables.KOSKI_SCHOOL_OID, "Koski: oppilaitoksen OID", VariableType.TEXT, true);
+    }
+    
     // Subject Selections
     
     ensureUserVariableExists(KoskiConsts.SubjectSelections.MATH, "Matematiikka", VariableType.TEXT, false);

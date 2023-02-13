@@ -16,8 +16,9 @@ public class KoskiConsts {
   public static class VariableNames {
     // Persons' oid
     public static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
-    // Study permission oid
+    // Study permission oids
     public static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
+    public static final String KOSKI_INTERNETIX_STUDYPERMISSION_ID = "koski.internetix-studypermission-id";
     // Linked study permission oid
     public static final String KOSKI_LINKED_STUDYPERMISSION_ID = "koski.linked-to-studypermission-id";
     // Skipped from integration
@@ -30,6 +31,10 @@ public class KoskiConsts {
     public static final String PK_GRADE_UPGRADE = "perusopetusKorottaja";
   }
 
+  public static class SchoolVariables {
+    public static final String KOSKI_SCHOOL_OID = "koski.schooloid";
+  }
+  
   public static class SubjectSelections {
     public static final String MATH = "lukioMatematiikka";
     public static final String NATIVE_LANGUAGE = "lukioAidinkieli";
