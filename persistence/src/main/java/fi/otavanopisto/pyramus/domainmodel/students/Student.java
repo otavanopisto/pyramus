@@ -8,10 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -39,6 +41,12 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 @Entity
 @Indexed
 @PrimaryKeyJoinColumn(name="id")
+@Table (
+    indexes = {
+        @Index(name = "IDX6e1m7j2411omlxi037a9uoddm", columnList = "studyStartDate"),
+        @Index(name = "IDXngi0qhp83ytohmc24btun6g24", columnList = "studyEndDate")
+    }
+)
 public class Student extends User implements ArchivableEntity {
 
   /**

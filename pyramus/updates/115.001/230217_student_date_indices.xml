@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>create index IDX6e1m7j2411omlxi037a9uoddm on Student (studyStartDate);</sql>
+  <sql>create index IDXngi0qhp83ytohmc24btun6g24 on Student (studyEndDate);</sql>
+
+</update>

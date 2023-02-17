@@ -356,6 +356,62 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  /**
+   * List unarchived students that have the specified study start date.
+   * 
+   * Students' study start date is saved as a date so this seems to work
+   * no matter what the time component is in the given Date but be wary
+   * that it might be JPA implementation specific. This would be better
+   * with LocalDate but that needs refactoring of the dates in Student.
+   * 
+   * @param studyStartDate
+   * @return
+   */
+  public List<Student> listUnarchivedByStudyStartDate(Date studyStartDate) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(Student_.studyStartDate), studyStartDate)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  /**
+   * List unarchived students that have the specified study end date.
+   * 
+   * Students' study end date is saved as a date so this seems to work
+   * no matter what the time component is in the given Date but be wary
+   * that it might be JPA implementation specific. This would be better
+   * with LocalDate but that needs refactoring of the dates in Student.
+   * 
+   * @param studyEndDate
+   * @return
+   */
+  public List<Student> listUnarchivedByStudyEndDate(Date studyEndDate) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(Student_.studyEndDate), studyEndDate)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public List<Student> listBy(Collection<Organization> organizations, String email, List<StudentGroup> groups, Boolean archived, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager(); 
     
