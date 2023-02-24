@@ -702,18 +702,18 @@
               pccElement.update("" + subject.passedCoursesCount);
               
               var subMeanContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsMeanGradeContainer"}));
+              var subMeanComputedGrade = subMeanContainer.appendChild(new Element("div", {className: "studentSubjectCreditsComputedMeanGrade"}));
               var subMeanGrade = subMeanContainer.appendChild(new Element("div", {
                 id: "studentSubjectCreditsMeanGrade." + studentId + "." + subject.id,
                 className: "studentSubjectCreditsMeanGrade"
               }));
-              var subMeanComputedGrade = subMeanContainer.appendChild(new Element("div", {className: "studentSubjectCreditsComputedMeanGrade"}));
 
               if (subject.meanGrade) {
-                subMeanGrade.update("" + subject.meanGrade.name);
+                subMeanGrade.update(getLocale().getText("students.viewStudent.subjectGrades.givenSubjectGradeLabel") + " " + subject.meanGrade.name);
               }
 
               if (subject.computedMeanGrade) {
-                subMeanComputedGrade.update("" + subject.computedMeanGrade);
+                subMeanComputedGrade.update(getLocale().getText("students.viewStudent.subjectGrades.computedAverageGradeLabel") + " " + subject.computedMeanGrade);
               }
 
               var subMeanEditButton = subMeanContainer.appendChild(new Element("img", {
@@ -734,7 +734,7 @@
         var subjectId = button.getAttribute("data-subjectId")
         
         var dialog = new IxDialog({
-          id : 'uploadReportDialog',
+          id : 'editStudentSubjectGradeDialog',
           contentURL : GLOBAL_contextPath + '/students/editstudentsubjectgradedialog.page?studentId=' + studentId + '&subjectId=' + subjectId,
           centered : true,
           showOk : true,
@@ -791,7 +791,7 @@
           }
         });
         
-        dialog.setSize("400px", "400px");
+        dialog.setSize("420px", "420px");
         dialog.open();
       }
       

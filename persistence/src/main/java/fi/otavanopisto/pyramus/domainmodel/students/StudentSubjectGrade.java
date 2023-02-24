@@ -105,7 +105,7 @@ public class StudentSubjectGrade {
   @Temporal (value=TemporalType.DATE)
   private Date gradeDate;
   
-  @ManyToOne
+  @ManyToOne (optional = false)
   @JoinColumn(name="gradeApprover")
   private StaffMember gradeApprover;
 
