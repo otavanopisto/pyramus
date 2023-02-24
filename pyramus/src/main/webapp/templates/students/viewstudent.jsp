@@ -778,7 +778,7 @@
                     subMeanGradeElement.update("");
                   } else {
                     var gradeName = results.gradeName;
-                    subMeanGradeElement.update(gradeName);
+                    subMeanGradeElement.update(getLocale().getText("students.viewStudent.subjectGrades.givenSubjectGradeLabel") + " " + gradeName);
                   }
                 },
                 onFailure: function(errorMessage, errorCode, isHttpError, jsonResponse) {
@@ -791,7 +791,7 @@
           }
         });
         
-        dialog.setSize("420px", "420px");
+        dialog.setSize("460px", "420px");
         dialog.open();
       }
       
