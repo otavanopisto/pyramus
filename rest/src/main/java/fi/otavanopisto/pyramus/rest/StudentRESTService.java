@@ -2724,6 +2724,49 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(courseAssessmentRequest)).build();
   }
   
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/latest")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findLatestCourseAssessmentRequestByWorkspaceAndStudent(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
+    
+    Student student = studentController.findStudentById(studentId);
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    Course course = courseController.findCourseById(courseId);
+    
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.FIND_COURSEASSESSMENTREQUEST, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
+    
+    if (courseAssessmentRequest == null) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+    
+    if (!course.getId().equals(courseAssessmentRequest.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student course").build();
+    }
+    
+    if (!student.getId().equals(courseAssessmentRequest.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student student").build();
+    }
+    
+    return Response.ok(objectFactory.createModel(courseAssessmentRequest)).build();
+  }
+  
+  
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/{ID:[0-9]*}")
   @PUT
   @RESTPermit(handling = Handling.INLINE)
