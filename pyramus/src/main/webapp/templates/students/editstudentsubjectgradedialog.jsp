@@ -47,8 +47,8 @@
             <jsp:param name="helpLocale" value="students.editStudentSubjectGradeDialog.gradeTitle"/>
           </jsp:include>
           
-          <select name="gradeId">
-            <option value=""><fmt:message key="students.editStudentSubjectGradeDialog.defaultGradeTitle"/></option>
+          <select name="gradeId" class="required">
+            <option value=""></option>
           
             <c:forEach var="gradingScale" items="${gradingScales}">
               <optgroup label="${fn:escapeXml(gradingScale.name)}">
@@ -72,7 +72,7 @@
             <jsp:param name="titleLocale" value="students.editStudentSubjectGradeDialog.gradeDateTitle"/>
             <jsp:param name="helpLocale" value="students.editStudentSubjectGradeDialog.gradeDateHelp"/>
           </jsp:include>
-          <input type="text" name="gradeDate" class="ixDateField" value="${fn:escapeXml(studentSubjectGrade.gradeDate.time)}"/>
+          <input type="text" name="gradeDate" class="ixDateField required" value="${fn:escapeXml(studentSubjectGrade.gradeDate.time)}"/>
         </div>
 
         <div class="genericFormSection">      
@@ -81,7 +81,7 @@
             <jsp:param name="helpLocale" value="students.editStudentSubjectGradeDialog.gradeApproverHelp"/>
           </jsp:include>
 
-          <select id="gradeApproverId" name="gradeApproverId">
+          <select id="gradeApproverId" name="gradeApproverId" class="required">
             <option></option>
             <c:forEach var="studyApprover" items="${studyApprovers}">
               <c:choose>
