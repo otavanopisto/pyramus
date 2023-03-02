@@ -161,8 +161,19 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
       }
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      
+      List<StudentProject> results = query.getResultList();
+      List<StudentProject> filteredResults = new ArrayList<>();
+      
+      // Filtering out the results that belongs to archived students
+      for (StudentProject result : results) {
+        Student student = result.getStudent();
+        
+        if (student.getArchived().equals(Boolean.FALSE)) {
+          filteredResults.add(result);
+        }
+      }
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, filteredResults);
 
     }
     catch (ParseException e) {
@@ -216,8 +227,20 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
       }
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
+      
+      List<StudentProject> results = query.getResultList();
+      List<StudentProject> filteredResults = new ArrayList<>();
+      
+      // Filtering out the results that belongs to archived students
+      for (StudentProject result : results) {
+        Student student = result.getStudent();
+        
+        if (student.getArchived().equals(Boolean.FALSE)) {
+          filteredResults.add(result);
+        }
+      }
 
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, filteredResults);
 
     }
     catch (ParseException e) {
