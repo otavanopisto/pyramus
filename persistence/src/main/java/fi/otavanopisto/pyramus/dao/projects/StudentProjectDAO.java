@@ -132,6 +132,8 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
       queryBuilder.append(')');
     }
     
+    addTokenizedSearchCriteria(queryBuilder, "student.archived", Boolean.FALSE.toString(), true);
+    
     EntityManager entityManager = getEntityManager();
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
@@ -161,19 +163,7 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
       }
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-      
-      List<StudentProject> results = query.getResultList();
-      List<StudentProject> filteredResults = new ArrayList<>();
-      
-      // Filtering out the results that belongs to archived students
-      for (StudentProject result : results) {
-        Student student = result.getStudent();
-        
-        if (student.getArchived().equals(Boolean.FALSE)) {
-          filteredResults.add(result);
-        }
-      }
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, filteredResults);
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     }
     catch (ParseException e) {
@@ -195,6 +185,8 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
       addTokenizedSearchCriteria(queryBuilder, "tags.text", tags, true);
     if (!StringUtils.isBlank(description))
       addTokenizedSearchCriteria(queryBuilder, "student.fullName", studentName, true); 
+
+    addTokenizedSearchCriteria(queryBuilder, "student.archived", Boolean.FALSE.toString(), true);
 
     EntityManager entityManager = getEntityManager();
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
@@ -227,20 +219,8 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
       }
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-      
-      List<StudentProject> results = query.getResultList();
-      List<StudentProject> filteredResults = new ArrayList<>();
-      
-      // Filtering out the results that belongs to archived students
-      for (StudentProject result : results) {
-        Student student = result.getStudent();
-        
-        if (student.getArchived().equals(Boolean.FALSE)) {
-          filteredResults.add(result);
-        }
-      }
 
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, filteredResults);
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     }
     catch (ParseException e) {
