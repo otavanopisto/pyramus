@@ -478,6 +478,12 @@
           <artifactId>mysql-connector-java</artifactId>
           <version>${mysql-connector-java.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
+		<dependency>
+		  <groupId>org.codehaus.plexus</groupId>
+		  <artifactId>plexus-utils</artifactId>
+		  <version>3.4.2</version>
+		</dependency>
       </dependencies>
       <build>
 
@@ -669,6 +675,13 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>keytool-maven-plugin</artifactId>
             <version>1.6</version>
+            <dependencies>
+              <dependency>
+		        <groupId>org.codehaus.plexus</groupId>
+		  		<artifactId>plexus-utils</artifactId>
+		  		<version>3.4.2</version>
+			  </dependency>
+            </dependencies>
             <executions>
               <execution>
                 <phase>generate-resources</phase>
