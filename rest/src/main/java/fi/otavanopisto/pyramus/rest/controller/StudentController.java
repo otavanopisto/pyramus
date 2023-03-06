@@ -436,18 +436,6 @@ public class StudentController {
         courseActivity.setActivityDate(courseStudent.getEnrolmentTime());
         courseActivity.setState(CourseActivityState.ONGOING);
         
-        // Status override if course has been graded
-        
-        CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE); 
-        if (courseAssessment != null && courseAssessment.getGrade() != null) {
-          courseActivity.setText(courseAssessment.getVerbalAssessment());
-          courseActivity.setGrade(courseAssessment.getGrade().getName());
-          courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
-          courseActivity.setActivityDate(courseAssessment.getDate());
-          courseActivity.setGradeDate(courseAssessment.getDate());
-          courseActivity.setState(CourseActivityState.GRADED);
-        }
-        
         // Status override if course has been graded as linked credit
         
         CreditLink linkedAssessment = linkedAssessments.stream()
@@ -460,6 +448,18 @@ public class StudentController {
           courseActivity.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
           courseActivity.setActivityDate(linkedAssessment.getCreated());
           courseActivity.setGradeDate(linkedAssessment.getCreated());
+          courseActivity.setState(CourseActivityState.GRADED);
+        }
+
+        // Status override if course has been graded
+        
+        CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE); 
+        if (courseAssessment != null && courseAssessment.getGrade() != null) {
+          courseActivity.setText(courseAssessment.getVerbalAssessment());
+          courseActivity.setGrade(courseAssessment.getGrade().getName());
+          courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
+          courseActivity.setActivityDate(courseAssessment.getDate());
+          courseActivity.setGradeDate(courseAssessment.getDate());
           courseActivity.setState(CourseActivityState.GRADED);
         }
         
