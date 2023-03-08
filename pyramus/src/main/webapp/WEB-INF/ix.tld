@@ -20,5 +20,16 @@
     </attribute>
     <dynamic-attributes>true</dynamic-attributes>
   </tag>
+
+  <tag>
+    <name>applicationAccess</name>
+    <tag-class>fi.otavanopisto.pyramus.taglib.ApplicationAccessTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+      <name>line</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+  </tag>
   
 </taglib>
