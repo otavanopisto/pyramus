@@ -26,21 +26,26 @@ public class ManageApplicationViewController extends PyramusViewController {
   
   public void process(PageRequestContext pageRequestContext) {
     try {
-
-      StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-      StaffMember staffMember = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
-      
       Long applicationId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("application"));
       if (applicationId == null) {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
       Application application = applicationDAO.findById(applicationId);
       if (application == null) {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+
+      StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+      StaffMember staffMember = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+      if (staffMember == null || !ApplicationUtils.hasLineAccess(staffMember, application.getLine())) {
+        pageRequestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
+      
       ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
       ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
       

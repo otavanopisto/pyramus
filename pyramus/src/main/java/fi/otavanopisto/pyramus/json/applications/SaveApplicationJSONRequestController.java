@@ -64,6 +64,11 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
+      if (!ApplicationUtils.hasLineAccess(staffMember, line)) {
+        logger.log(Level.WARNING, "Refusing application due to missing line access");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
       String firstName = getFormValue(formData, "field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application due to missing first name");

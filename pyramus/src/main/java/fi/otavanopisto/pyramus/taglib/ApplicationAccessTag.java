@@ -22,12 +22,14 @@ public class ApplicationAccessTag extends TagSupport {
     if (userId == null) {
       return SKIP_BODY;
     }
-    boolean isAdmin = StringUtils.equals(Role.ADMINISTRATOR.name(), (String) session.getAttribute("loggedUserRole"));
-    if (isAdmin) {
-      return EVAL_BODY_INCLUDE;
-    }
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StaffMember staffMember = staffMemberDAO.findById(userId);
+    if (staffMember == null) {
+      return SKIP_BODY;
+    }
+    if (staffMember.getRole() == Role.ADMINISTRATOR) {
+      return EVAL_BODY_INCLUDE;
+    }
     boolean aineopiskelu = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()));
     boolean nettilukio = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()));
     boolean nettipk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTIPERUSKOULU.getKey()));
@@ -51,9 +53,7 @@ public class ApplicationAccessTag extends TagSupport {
     else if (StringUtils.equals(line, "mk")) {
       return mk ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
-    else {
-      return SKIP_BODY;
-    }
+    return SKIP_BODY;
   }
   
   public void setLine(String line) {
@@ -61,6 +61,5 @@ public class ApplicationAccessTag extends TagSupport {
   }
   
   private String line;
-  
   
 }
