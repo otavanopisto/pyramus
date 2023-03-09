@@ -362,12 +362,12 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
       
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
       luceneQuery = parser.parse(queryString);
-
+      
       FullTextQuery query = (FullTextQuery) fullTextEntityManager
           .createFullTextQuery(luceneQuery, Person.class)
           .setSort(
               new Sort(new SortField[] { 
-                  SortField.FIELD_SCORE, 
+                  new SortField("active", SortField.Type.STRING, true), 
                   new SortField("lastNameSortable", SortField.Type.STRING),
                   new SortField("firstNameSortable", SortField.Type.STRING) })).setFirstResult(firstResult).setMaxResults(resultsPerPage);
 
