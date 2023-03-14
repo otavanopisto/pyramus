@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
@@ -72,6 +73,11 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
     if (application.getState() != ApplicationState.WAITING_STAFF_SIGNATURE) {
       logger.warning(String.format("Application with id %d in incorrect state (%s)", id, application.getState()));
       fail(requestContext, "Hakemus ei ole allekirjoitettavassa tilassa");
+      return;
+    }
+    if (!ApplicationUtils.hasLineAccess(staffMember, application.getLine())) {
+      logger.warning(String.format("User %d has no line access to application %d", staffMember.getId(), application.getId()));
+      fail(requestContext, "Ei pääsyoikeutta hakemuksen linjalle");
       return;
     }
 

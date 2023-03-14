@@ -123,6 +123,11 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+      if (!ApplicationUtils.hasLineAccess(staffMember, application.getLine())) {
+        logger.log(Level.WARNING, "Refusing application due to missing line access");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
       boolean referenceCodeModified = !StringUtils.equalsIgnoreCase(application.getLastName(), lastName);
       String oldSurname = referenceCodeModified ? application.getLastName() : lastName;
       String referenceCode = referenceCodeModified
