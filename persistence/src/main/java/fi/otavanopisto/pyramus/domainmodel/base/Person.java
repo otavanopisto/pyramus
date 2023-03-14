@@ -561,7 +561,8 @@ public class Person implements ContextReference {
    * @return <code>true</code> if this abstract student contains at least one active student, otherwise <code>false</code>
    */
   @Transient
-  @Field
+  @SortableField
+  @Field(analyze = Analyze.NO, store = Store.NO)
   public String getActive() {
     String result = Boolean.FALSE.toString();
     for (Student student : getStudents()) {
