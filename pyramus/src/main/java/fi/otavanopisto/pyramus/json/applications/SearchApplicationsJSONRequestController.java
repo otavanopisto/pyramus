@@ -1,28 +1,43 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 public class SearchApplicationsJSONRequestController extends JSONRequestController {
 
+  private static final Logger logger = Logger.getLogger(SearchApplicationsJSONRequestController.class.getName());
+
   public void process(JSONRequestContext requestContext) {
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
+    
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
 
     Integer resultsPerPage = NumberUtils.createInteger(requestContext.getRequest().getParameter("maxResults"));
@@ -36,14 +51,30 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
     }
     
     String applicantName = requestContext.getString("applicantName");
+    Set<String> lines = new HashSet<>();
     String line = requestContext.getString("line");
+    if (!StringUtils.isEmpty(line)) {
+      if (!ApplicationUtils.hasLineAccess(staffMember, line)) {
+        try {
+          requestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+        }
+        catch (IOException e) {
+          logger.log(Level.SEVERE, "Unable to serve error response", e);
+        }
+        return;
+      }
+      lines.add(line);
+    }
+    else {
+      lines = ApplicationUtils.listAccessibleLines(staffMember);
+    }
     String stateStr = requestContext.getString("state");
     ApplicationState state = null;
     if (stateStr != null) {
       state = ApplicationState.valueOf(stateStr);
     }
     
-    SearchResult<Application> searchResult = applicationDAO.searchApplications(resultsPerPage, page, applicantName, line, state, Boolean.TRUE);
+    SearchResult<Application> searchResult = applicationDAO.searchApplications(resultsPerPage, page, applicantName, lines, state, Boolean.TRUE);
 
     List<Map<String, Object>> results = new ArrayList<>();
     List<Application> applications = searchResult.getResults();

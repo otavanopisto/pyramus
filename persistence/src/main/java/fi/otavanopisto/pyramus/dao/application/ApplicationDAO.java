@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.dao.application;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -67,13 +69,21 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
   }
   
   @SuppressWarnings("unchecked")
-  public SearchResult<Application> searchApplications(int resultsPerPage, int page, String applicantName, String line, ApplicationState state, boolean filterArchived) {
+  public SearchResult<Application> searchApplications(int resultsPerPage, int page, String applicantName, Set<String> lines, ApplicationState state, boolean filterArchived) {
+    
+    if (lines.isEmpty()) {
+      return new SearchResult<>(0, 0, 0, 0, 0, Collections.emptyList());
+    }
+    
     int firstResult = page * resultsPerPage;
 
     StringBuilder queryBuilder = new StringBuilder();
-    if (!StringUtils.isBlank(line)) {
-      addTokenizedSearchCriteria(queryBuilder, "line", line, true);
+    queryBuilder.append("+(");
+    for (String line : lines) {
+      addTokenizedSearchCriteria(queryBuilder, "line", line, false);
     }
+    queryBuilder.append(")");
+    
     if (state != null) {
       addTokenizedSearchCriteria(queryBuilder, "state", state.toString(), true);
     }

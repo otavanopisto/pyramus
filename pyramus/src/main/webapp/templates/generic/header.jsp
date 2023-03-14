@@ -103,22 +103,24 @@
       </li>
     </ul>
 
-    <ul id="GUI_MENU_applicationsContainer">
-      <li id="GUI_MENU_applicationsLink">
-        <fmt:message key="generic.navigation.applications"/>
-        <ul id="GUI_MENU_applicationsItemContainer" class="GUI_MENU_itemContainer">
-          <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/browse.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.browse"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createnotification.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createNotification"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listnotifications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageNotifications"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createmailtemplate.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createMailTemplate"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listmailtemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageMailTemplates"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createemailsignature.page" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createEmailSignature"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/changehandler.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.changeHandler"/></a></li>
-          <ix:extensionHook name="generic.navigation.applicationsMenu"/>
-        </ul>
-      </li>
-    </ul>
+    <ix:applicationAccess>
+      <ul id="GUI_MENU_applicationsContainer">
+        <li id="GUI_MENU_applicationsLink">
+          <fmt:message key="generic.navigation.applications"/>
+          <ul id="GUI_MENU_applicationsItemContainer" class="GUI_MENU_itemContainer">
+            <li class="GUI_MENU_top"></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/browse.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.browse"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createnotification.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createNotification"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listnotifications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageNotifications"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createmailtemplate.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createMailTemplate"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listmailtemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageMailTemplates"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createemailsignature.page" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createEmailSignature"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/changehandler.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.changeHandler"/></a></li>
+            <ix:extensionHook name="generic.navigation.applicationsMenu"/>
+          </ul>
+        </li>
+      </ul>
+    </ix:applicationAccess>
 
     <ul id="GUI_MENU_matriculationContainer">
       <li id="GUI_MENU_matriculationLink">

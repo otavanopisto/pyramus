@@ -88,11 +88,13 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.system.Configuration;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
 import fi.otavanopisto.pyramus.framework.SettingUtils;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -104,6 +106,55 @@ public class ApplicationUtils {
   private static final Logger logger = Logger.getLogger(ApplicationUtils.class.getName());
 
   private static final String SETTINGKEY_SIGNERID = "applications.defaultSignerId";
+  
+  private static final String LINE_AINEOPISKELU = "aineopiskelu";
+  private static final String LINE_NETTILUKIO = "nettilukio";
+  private static final String LINE_NETTIPK = "nettipk";
+  private static final String LINE_AIKUISLUKIO = "aikuislukio";
+  private static final String LINE_MK = "mk";
+  
+  public static boolean hasLineAccess(StaffMember staffMember, String line) {
+    if (staffMember.getRole() == Role.ADMINISTRATOR) {
+      return true;
+    }
+    if (StringUtils.equals(line, LINE_AINEOPISKELU) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()))) {
+      return true;
+    }
+    if (StringUtils.equals(line, LINE_NETTILUKIO) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()))) {
+      return true;
+    }
+    if (StringUtils.equals(line, LINE_NETTIPK) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTIPERUSKOULU.getKey()))) {
+      return true;
+    }
+    if (StringUtils.equals(line, LINE_AIKUISLUKIO) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISLUKIO.getKey()))) {
+      return true;
+    }
+    if (StringUtils.equals(line, LINE_MK) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISTENPERUSOPETUS.getKey()))) {
+      return true;
+    }
+    return false;
+  }
+  
+  public static Set<String> listAccessibleLines(StaffMember staffMember) {
+    boolean isAdmin = staffMember.getRole() == Role.ADMINISTRATOR;
+    Set<String> lines = new HashSet<>();
+    if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()))) {
+      lines.add(LINE_AINEOPISKELU);
+    }
+    if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()))) {
+      lines.add(LINE_NETTILUKIO);
+    }
+    if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTIPERUSKOULU.getKey()))) {
+      lines.add(LINE_NETTIPK);
+    }
+    if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISLUKIO.getKey()))) {
+      lines.add(LINE_AIKUISLUKIO);
+    }
+    if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISTENPERUSOPETUS.getKey()))) {
+      lines.add(LINE_MK);
+    }
+    return lines;
+  }
 
   public static String applicationStateUiValue(ApplicationState applicationState) {
     if (applicationState != null) {
@@ -138,15 +189,15 @@ public class ApplicationUtils {
   public static String applicationLineUiValue(String value) {
     if (value != null) {
       switch (value) {
-      case "aineopiskelu":
+      case LINE_AINEOPISKELU:
         return "Aineopiskelu";
-      case "nettilukio":
+      case LINE_NETTILUKIO:
         return "Nettilukio";
-      case "nettipk":
+      case LINE_NETTIPK:
         return "Nettiperuskoulu";
-      case "aikuislukio":
+      case LINE_AIKUISLUKIO:
         return "Aikuislukio";
-      case "mk":
+      case LINE_MK:
         return "Aikuisten perusopetus";
       default:
         return null;
@@ -381,14 +432,14 @@ public class ApplicationUtils {
     }
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
-    case "aineopiskelu":
+    case LINE_AINEOPISKELU:
       if (StringUtils.equals(internetixLine, "pk")) {
         return studyProgrammeDAO.findById(12L); // Aineopiskelu/peruskoulu
       }
       else {
         return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
       }
-    case "nettilukio": {
+    case LINE_NETTILUKIO: {
       if (nettilukioAlternative == AlternativeLine.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
       }
@@ -397,11 +448,11 @@ public class ApplicationUtils {
       }
       return studyProgrammeDAO.findById(6L); // Nettilukio
     }
-    case "nettipk":
+    case LINE_NETTIPK:
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
-    case "aikuislukio":
+    case LINE_AIKUISLUKIO:
       return studyProgrammeDAO.findById(1L); // Aikuislukio
-    case "mk":
+    case LINE_MK:
       if (StringUtils.isEmpty(foreignLine)) {
         return null;
       }

@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="/ix" prefix="ix"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -177,11 +178,21 @@
             </jsp:include>
             <select id="applicationLine" name="applicationLine">
               <option value=""></option>
-              <option value="aineopiskelu">Aineopiskelu</option>
-              <option value="nettilukio">Nettilukio</option>
-              <option value="nettipk">Nettiperuskoulu</option>
-              <option value="aikuislukio">Aikuislukio</option>
-              <option value="mk">Aikuisten perusopetus</option>
+              <ix:applicationAccess line="aineopiskelu">
+                <option value="aineopiskelu">Aineopiskelu</option>
+              </ix:applicationAccess>
+              <ix:applicationAccess line="nettilukio">
+                <option value="nettilukio">Nettilukio</option>
+              </ix:applicationAccess>
+              <ix:applicationAccess line="nettipk">
+                <option value="nettipk">Nettiperuskoulu</option>
+              </ix:applicationAccess>
+              <ix:applicationAccess line="aikuislukio">
+                <option value="aikuislukio">Aikuislukio</option>
+              </ix:applicationAccess>
+              <ix:applicationAccess line="mk">
+                <option value="mk">Aikuisten perusopetus</option>
+              </ix:applicationAccess>
             </select>
           </div>
   

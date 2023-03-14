@@ -56,6 +56,10 @@ public class ViewApplicationViewController extends PyramusViewController {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+      if (!ApplicationUtils.hasLineAccess(staffMember, application.getLine())) {
+        pageRequestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
       ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
       ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
       

@@ -63,6 +63,11 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         fail(requestContext, "Puuttuva hakemus");
         return;
       }
+      if (!ApplicationUtils.hasLineAccess(staffMember, application.getLine())) {
+        logger.warning(String.format("User %d has no line access to application %d", staffMember.getId(), application.getId()));
+        fail(requestContext, "Ei pääsyoikeutta hakemuksen linjalle");
+        return;
+      }
       
       // Only do anything if the application state actually changes
       
