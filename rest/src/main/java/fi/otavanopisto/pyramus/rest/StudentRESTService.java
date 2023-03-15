@@ -9,8 +9,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -82,6 +84,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -128,6 +131,7 @@ import fi.otavanopisto.pyramus.rest.model.CourseActivity;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
+import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
@@ -3283,6 +3287,30 @@ public class StudentRESTService extends AbstractRESTService {
     // return student
     
     return Response.ok(objectFactory.createModel(student)).build();    
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/guidanceRelation")
+  @GET
+  @RESTPermit(StudentPermissions.GET_STUDENT_GUIDANCE_RELATION)
+  public Response getStudentCourseStats(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Student not found").build();
+    }
+    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).entity("Staff member not found").build();
+    }
+    boolean specEdTeacher = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
+    boolean guidanceCounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
+    Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+    Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
+    boolean courseTeacher = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
+    StudentGuidanceRelation relation = new StudentGuidanceRelation();
+    relation.setSpecEdTeacher(specEdTeacher);
+    relation.setGuidanceCounselor(guidanceCounselor);
+    relation.setCourseTeacher(courseTeacher);
+    return Response.ok(relation).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/courseStats")
