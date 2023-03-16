@@ -68,7 +68,7 @@
 
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-previous-studies-nettilukio-lukio" name="field-previous-studies-nettilukio" value="lukio" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"  data-dependencies="true"/>
+          <input type="checkbox" id="field-previous-studies-nettilukio-lukio" name="field-previous-studies-nettilukio" value="lukio" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true"/>
         </div>
         <div class="field-row-label">
           <label for="field-previous-studies-nettilukio-lukio">Lukio (keskeytynyt)</label>
