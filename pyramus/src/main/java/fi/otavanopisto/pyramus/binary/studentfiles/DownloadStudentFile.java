@@ -37,6 +37,7 @@ public class DownloadStudentFile extends BinaryRequestController {
     StudentFile studentFile = studentFileDAO.findById(fileId);
     
     if (studentFile != null) {
+      // If file name is not set to Null, Content-Disposition will be 'attachment' and then automatically downloaded
       binaryRequestContext.setFileName(null);
       
       try {
