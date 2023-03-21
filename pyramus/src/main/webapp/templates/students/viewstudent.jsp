@@ -572,7 +572,7 @@
             onclick: function (event) {
               var table = event.tableComponent;
               var fileId = table.getCellValue(event.row, table.getNamedColumnIndex('fileId'));
-              redirectTo(GLOBAL_contextPath + '/studentfiles/downloadfile.binary?fileId=' + fileId);
+              window.open(GLOBAL_contextPath + '/studentfiles/downloadfile.binary?fileId=' + fileId);
             }
           }, {
             width: 22,

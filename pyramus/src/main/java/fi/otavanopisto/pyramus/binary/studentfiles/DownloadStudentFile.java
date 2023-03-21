@@ -37,7 +37,8 @@ public class DownloadStudentFile extends BinaryRequestController {
     StudentFile studentFile = studentFileDAO.findById(fileId);
     
     if (studentFile != null) {
-      binaryRequestContext.setFileName(studentFile.getFileName());
+      binaryRequestContext.setFileName(null);
+      
       try {
         binaryRequestContext.setResponseContent(PyramusFileUtils.getFileData(studentFile), studentFile.getContentType());
       }
