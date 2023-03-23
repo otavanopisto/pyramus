@@ -241,30 +241,6 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String DELETE_COURSEDESCRIPTIONCATEGORY = "DELETE_COURSEDESCRIPTIONCATEGORY";
 
   /**
-   * StaffMemberRole
-   */
-  
-  @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
-  public static final String CREATE_STAFFMEMBERROLE = "CREATE_STAFFMEMBERROLE";
-  
-  @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
-  public static final String LIST_STAFFMEMBERROLES = "LIST_STAFFMEMBERROLES";
-  
-  @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
-  public static final String FIND_STAFFMEMBERROLE = "FIND_STAFFMEMBERROLE";
-  
-  @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
-  public static final String UPDATE_STAFFMEMBERROLE = "UPDATE_STAFFMEMBERROLE";
-  
-  @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR })
-  public static final String DELETE_STAFFMEMBERROLE = "DELETE_STAFFMEMBERROLE";
-  
-  /**
    * CourseEducationType & CourseEducationSubtype
    */
 

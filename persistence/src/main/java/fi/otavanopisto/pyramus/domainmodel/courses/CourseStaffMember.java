@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.domainmodel.courses;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.search.annotations.IndexedEmbedded;
@@ -13,14 +15,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 @Entity
 public class CourseStaffMember extends CourseUser {
   
-  public CourseStaffMemberRole getRole() {
-    return role;
-  }
-  
-  public void setRole(CourseStaffMemberRole role) {
-    this.role = role;
-  }
-  
   public StaffMember getStaffMember() {
     return staffMember;
   }
@@ -29,10 +23,18 @@ public class CourseStaffMember extends CourseUser {
     this.staffMember = staffMember;
   }
 
+  public CourseStaffMemberRoleEnum getRole() {
+    return role;
+  }
+
+  public void setRole(CourseStaffMemberRoleEnum role) {
+    this.role = role;
+  }
+
   @ManyToOne 
   @IndexedEmbedded
   private StaffMember staffMember;
   
-  @ManyToOne
-  private CourseStaffMemberRole role;
+  @Enumerated(EnumType.STRING)
+  private CourseStaffMemberRoleEnum role;
 }

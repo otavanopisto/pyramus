@@ -38,7 +38,6 @@ public class SetupWizardPageFlowController {
     "coursestates", 
     "coursetypes", 
     "courseparticipationtypes",
-    "courseuserroles",
     
     // Student
 

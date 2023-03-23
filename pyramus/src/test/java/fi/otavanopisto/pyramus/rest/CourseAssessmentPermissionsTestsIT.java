@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.rest.model.Course;
 import fi.otavanopisto.pyramus.rest.model.CourseAssessment;
 import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
+import fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
 import io.restassured.response.Response;
 
@@ -29,7 +30,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   private static final long TEST_GRADEID = 2;
   private static final long TEST_ASSESSORID = 6;
   private static final long TEST_STUDENTID = 3;
-  private static final long TEST_COURSETEACHER_ROLEID = 1;
+  private static final CourseStaffMemberRoleEnum TEST_COURSETEACHER_ROLE = CourseStaffMemberRoleEnum.COURSE_TEACHER;
 
   // STUDYGUIDER_ prefixed id's are for student who is in a group lead by studyguider test role
   private static final long STUDYGUIDER_TEST_STUDENTID = 13L;
@@ -143,7 +144,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   @Test
   public void testCreateCourseAssessmentAsCourseTeacher() throws NoSuchFieldException {
     if (StringUtils.equals(Role.TEACHER.toString(), getRole()) || StringUtils.equals(Role.STUDY_GUIDER.toString(), getRole())) {
-      CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLEID);
+      CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLE);
 
       try {
         CourseAssessment courseAssessment = new CourseAssessment(null, testCOURSESTUDENT.getId(), testCOURSEMODULE.getId(), TEST_GRADEID, 1l, getUserIdForRole(getRole()), getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
@@ -220,7 +221,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
       CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
       try {
         // Add the current test user to the course so they have access to the course assessments
-        CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLEID);
+        CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLE);
           
         try {
           Response response = given().headers(getAuthHeaders())
@@ -260,7 +261,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   @Test
   public void listCourseAssessmentsAsCourseTeacher() throws NoSuchFieldException {
     if (StringUtils.equals(Role.TEACHER.toString(), getRole()) || StringUtils.equals(Role.STUDY_GUIDER.toString(), getRole())) {
-      CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLEID);
+      CourseStaffMember tempCourseTeacher = tools().createCourseStaffMember(testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLE);
 
       try {
         Response response = given().headers(getAuthHeaders())
@@ -387,7 +388,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   @Test
   public void testUpdateCourseAssessmentAsCourseTeacher() throws NoSuchFieldException {
     if (StringUtils.equals(Role.TEACHER.toString(), getRole()) || StringUtils.equals(Role.STUDY_GUIDER.toString(), getRole())) {
-      CourseStaffMember tempCourseTeacher = new CourseStaffMember(null, testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLEID);      
+      CourseStaffMember tempCourseTeacher = new CourseStaffMember(null, testCOURSE.getId(), getUserIdForRole(getRole()), TEST_COURSETEACHER_ROLE);      
 
       Response response = given().headers(getAdminAuthHeaders())
         .contentType("application/json")

@@ -13,6 +13,7 @@ import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
+import fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRoleEnum;
 
 @RunWith(Parameterized.class)
 public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermissionsTest {
@@ -31,7 +32,7 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
   
   @Test
   public void testPermissionsCreateCourseStaffMember() throws NoSuchFieldException{
-    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, 1l);
+    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -65,7 +66,7 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
   
   @Test
   public void testPermissionsUpdateCourseStaffMemberRole() throws NoSuchFieldException {
-    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, 1l);
+    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     Long id = null;
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -76,7 +77,7 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
     try {
       id = response.body().jsonPath().getLong("id");
       
-      CourseStaffMember updateEntity = new CourseStaffMember(id, null, 1l, 2l);
+      CourseStaffMember updateEntity = new CourseStaffMember(id, null, 1l, CourseStaffMemberRoleEnum.COURSE_TUTOR);
       
       Response updateResponse = given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -91,7 +92,7 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
   
   @Test
   public void testPermissionsDeleteCourseStaffMember() throws NoSuchFieldException {
-    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, 1l);
+    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")

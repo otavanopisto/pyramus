@@ -9,6 +9,7 @@ import org.junit.Test;
 import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
+import fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRoleEnum;
 
 public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
   
@@ -16,7 +17,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateCourseStaffMember() {
-    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, 1l);
+    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -26,7 +27,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
     response.then()
       .statusCode(200)
       .body("id", not(is((Long) null)))
-      .body("roleId", is(entity.getRoleId().intValue()))
+      .body("role", is(CourseStaffMemberRoleEnum.COURSE_TEACHER.name()))
       .body("staffMemberId", is(entity.getStaffMemberId().intValue()))
       .body("courseId", is(entity.getCourseId().intValue()));
     
@@ -46,11 +47,11 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id.size()", is(4))
       .body("id[0]", is(1))
-      .body("roleId[0]", is(1))
+      .body("role[0]", is(CourseStaffMemberRoleEnum.COURSE_TEACHER.name()))
       .body("courseId[0]", is((int) COURSE_ID)) 
       .body("staffMemberId[0]", is(1))    
       .body("id[1]", is(2))
-      .body("roleId[1]", is(2))
+      .body("role[1]", is(CourseStaffMemberRoleEnum.COURSE_TUTOR.name()))
       .body("courseId[1]", is((int) COURSE_ID)) 
       .body("staffMemberId[1]", is(2));
   }
@@ -62,14 +63,14 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
     .then()
     .statusCode(200)
       .body("id", is(1))
-      .body("roleId", is(1))
+      .body("role", is(CourseStaffMemberRoleEnum.COURSE_TEACHER.name()))
       .body("courseId", is((int) COURSE_ID)) 
       .body("staffMemberId", is(1));   
   }
   
   @Test
   public void testUpdateCourseStaffMemberRole() {
-    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, 1l);
+    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     Long id = null;
     
     Response response = given().headers(getAuthHeaders())
@@ -80,14 +81,14 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
     response.then()
       .statusCode(200)
       .body("id", not(is((Long) null)))
-      .body("roleId", is(1))
+      .body("role", is(CourseStaffMemberRoleEnum.COURSE_TEACHER.name()))
       .body("courseId", is((int) COURSE_ID)) 
       .body("staffMemberId", is(1));   
     
     try {
       id = response.body().jsonPath().getLong("id");
       
-      CourseStaffMember updateEntity = new CourseStaffMember(id, null, 1l, 2l);
+      CourseStaffMember updateEntity = new CourseStaffMember(id, null, 1l, CourseStaffMemberRoleEnum.COURSE_TUTOR);
       
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -95,7 +96,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
         .put("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, updateEntity.getId())
         .then()
         .statusCode(200)
-        .body("roleId", is(2));
+        .body("role", is(CourseStaffMemberRoleEnum.COURSE_TUTOR.name()));
 
 
     } finally {
@@ -108,7 +109,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteCourseStaffMember() {
-    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, 1l);
+    CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -118,7 +119,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
     response.then()
       .statusCode(200)
       .body("id", not(is((Long) null)))
-      .body("roleId", is(1))
+      .body("role", is(CourseStaffMemberRoleEnum.COURSE_TEACHER.name()))
       .body("courseId", is((int) COURSE_ID)) 
       .body("staffMemberId", is(1));  
     

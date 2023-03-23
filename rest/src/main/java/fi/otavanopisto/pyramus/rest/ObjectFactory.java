@@ -68,7 +68,6 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
@@ -103,6 +102,7 @@ import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryCommentCont
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.model.AcademicTerm;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
+import fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.rest.model.Curriculum;
 import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
@@ -113,6 +113,7 @@ import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.rest.model.UserRole;
 import fi.otavanopisto.pyramus.rest.model.VariableType;
 import fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriodType;
+import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 
 @ApplicationScoped
 public class ObjectFactory {
@@ -819,20 +820,13 @@ public class ObjectFactory {
           }
         },
         
-        new Mapper<CourseStaffMemberRole>() {
-          @Override
-          public Object map(CourseStaffMemberRole entity) {
-            return new fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRole(entity.getId(), entity.getName());
-          }
-        },
-        
         new Mapper<CourseStaffMember>() {
           @Override
           public Object map(CourseStaffMember entity) {
             Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
             Long userId = entity.getStaffMember() != null ? entity.getStaffMember().getId() : null;
-            Long roleId = entity.getRole() != null ? entity.getRole().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.CourseStaffMember(entity.getId(), courseId, userId, roleId);
+            CourseStaffMemberRoleEnum role = PyramusRestUtils.convert(entity.getRole());
+            return new fi.otavanopisto.pyramus.rest.model.CourseStaffMember(entity.getId(), courseId, userId, role);
           }
         },
         

@@ -347,13 +347,12 @@
             left : 266,
             dataType: 'select',
             editable: true,
-            paramName: 'roleId',
+            paramName: 'role',
             required: true,
             options: [
-              <c:forEach var="role" items="${roles}" varStatus="vs">
-                {text: "${role.name}", value: ${role.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
+              {text: getLocale().getText("courseroles.TEACHER"), value: "TEACHER"},
+              {text: getLocale().getText("courseroles.TUTOR"), value: "TUTOR"},
+              {text: getLocale().getText("courseroles.ORGANIZER"), value: "ORGANIZER"}
             ]
           }, {
             left: 474,
@@ -371,7 +370,7 @@
             ${courseUser.id},
             ${courseUser.staffMember.id},
             '${fn:escapeXml(courseUser.staffMember.lastName)}, ${fn:escapeXml(courseUser.staffMember.firstName)}',
-            ${courseUser.role.id},
+            '${courseUser.role}',
             ''
           ]);
         </c:forEach>
