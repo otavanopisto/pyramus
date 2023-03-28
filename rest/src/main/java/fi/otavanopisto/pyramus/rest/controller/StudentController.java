@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -481,7 +482,12 @@ public class StudentController {
       List<TransferCredit> transferCredits = listStudentTransferCredits(student);
       for (TransferCredit transferCredit : transferCredits) {
         CourseActivity courseActivity = new CourseActivity();
-        courseActivity.setCurriculumIds(Collections.emptyList());
+        if (transferCredit.getCurriculum() != null) {
+          courseActivity.setCurriculumIds(Arrays.asList(transferCredit.getCurriculum().getId()));
+        }
+        else {
+          courseActivity.setCurriculumIds(Collections.emptyList());
+        }
         courseActivity.setCourseName(transferCredit.getCourseName());
         courseActivity.setGrade(transferCredit.getGrade().getName());
         courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
@@ -498,7 +504,12 @@ public class StudentController {
       for (CreditLink creditLink : linkedTransferCredits) {
         TransferCredit transferCredit = (TransferCredit) creditLink.getCredit();
         CourseActivity courseActivity = new CourseActivity();
-        courseActivity.setCurriculumIds(Collections.emptyList());
+        if (transferCredit.getCurriculum() != null) {
+          courseActivity.setCurriculumIds(Arrays.asList(transferCredit.getCurriculum().getId()));
+        }
+        else {
+          courseActivity.setCurriculumIds(Collections.emptyList());
+        }
         courseActivity.setCourseName(transferCredit.getCourseName());
         courseActivity.setGrade(transferCredit.getGrade().getName());
         courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
