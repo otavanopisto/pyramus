@@ -21,14 +21,6 @@ public class CourseActivity {
     this.courseName = courseName;
   }
 
-  public List<Long> getCurriculumIds() {
-    return curriculumIds;
-  }
-
-  public void setCurriculumIds(List<Long> curriculumIds) {
-    this.curriculumIds = curriculumIds;
-  }
-
   public String getGrade() {
     return grade;
   }
@@ -77,18 +69,26 @@ public class CourseActivity {
     this.gradeDate = gradeDate;
   }
 
-  public Long getCourseModuleId() {
-    return courseModuleId;
+  public CourseActivitySubject getSubject() {
+    return subject;
   }
 
-  public void setCourseModuleId(Long courseModuleId) {
-    this.courseModuleId = courseModuleId;
+  public void setSubject(CourseActivitySubject subject) {
+    this.subject = subject;
+  }
+
+  public List<CourseActivityCurriculum> getCurriculums() {
+    return curriculums;
+  }
+
+  public void setCurriculums(List<CourseActivityCurriculum> curriculums) {
+    this.curriculums = curriculums;
   }
 
   private Long courseId;
-  private Long courseModuleId;
+  private CourseActivitySubject subject;
   private String courseName;
-  private List<Long> curriculumIds;
+  private List<CourseActivityCurriculum> curriculums;
   private String grade;
   private Boolean passingGrade;
   private Date gradeDate;

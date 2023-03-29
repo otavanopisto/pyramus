@@ -77,7 +77,9 @@ import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.CourseActivityCurriculum;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
+import fi.otavanopisto.pyramus.rest.model.CourseActivitySubject;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Dependent
@@ -422,13 +424,37 @@ public class StudentController {
       Course course = courseStudent.getCourse();
       CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
       
+      // Course curriculums (same for each module)
+      
+      List<CourseActivityCurriculum> curriculums = new ArrayList<>();
+      for (Curriculum c : course.getCurriculums()) {
+        CourseActivityCurriculum cac = new CourseActivityCurriculum();
+        cac.setId(c.getId());
+        cac.setName(c.getName());
+        curriculums.add(cac);
+      }
+      
       for (CourseModule courseModule : course.getCourseModules()) {
         // Construct course base information and assume it's ongoing
         
         CourseActivity courseActivity = new CourseActivity();
         courseActivity.setCourseId(course.getId());
-        courseActivity.setCourseModuleId(courseModule.getId());
-        courseActivity.setCurriculumIds(course.getCurriculums().stream().map(Curriculum::getId).collect(Collectors.toList()));
+        
+        CourseActivitySubject subject = new CourseActivitySubject();
+        subject.setCourseModuleId(courseModule.getId());
+        if (courseModule.getCourseLength() != null) {
+          subject.setCourseLength(courseModule.getCourseLength().getUnits());
+          subject.setCourseLengthSymbol(courseModule.getCourseLength().getUnit().getSymbol());
+        }
+        subject.setCourseNumber(courseModule.getCourseNumber());
+        if (courseModule.getSubject() != null) {
+          subject.setSubjectCode(courseModule.getSubject().getCode());
+          subject.setSubjectName(courseModule.getSubject().getName());
+        }
+        courseActivity.setSubject(subject);
+        
+        courseActivity.setCurriculums(curriculums);
+        
         String courseName = course.getName();
         if (!StringUtils.isEmpty(course.getNameExtension())) {
           courseName = String.format("%s (%s)", courseName, course.getNameExtension());
@@ -483,11 +509,27 @@ public class StudentController {
       for (TransferCredit transferCredit : transferCredits) {
         CourseActivity courseActivity = new CourseActivity();
         if (transferCredit.getCurriculum() != null) {
-          courseActivity.setCurriculumIds(Arrays.asList(transferCredit.getCurriculum().getId()));
+          CourseActivityCurriculum cac = new CourseActivityCurriculum();
+          cac.setId(transferCredit.getCurriculum().getId());
+          cac.setName(transferCredit.getCurriculum().getName());
+          courseActivity.setCurriculums(Arrays.asList(cac));
         }
         else {
-          courseActivity.setCurriculumIds(Collections.emptyList());
+          courseActivity.setCurriculums(Collections.emptyList());
         }
+        
+        CourseActivitySubject subject = new CourseActivitySubject();
+        if (transferCredit.getCourseLength() != null) {
+          subject.setCourseLength(transferCredit.getCourseLength().getUnits());
+          subject.setCourseLengthSymbol(transferCredit.getCourseLength().getUnit().getSymbol());
+        }
+        subject.setCourseNumber(transferCredit.getCourseNumber());
+        if (transferCredit.getSubject() != null) {
+          subject.setSubjectCode(transferCredit.getSubject().getCode());
+          subject.setSubjectName(transferCredit.getSubject().getName());
+        }
+        courseActivity.setSubject(subject);
+        
         courseActivity.setCourseName(transferCredit.getCourseName());
         courseActivity.setGrade(transferCredit.getGrade().getName());
         courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
@@ -505,11 +547,27 @@ public class StudentController {
         TransferCredit transferCredit = (TransferCredit) creditLink.getCredit();
         CourseActivity courseActivity = new CourseActivity();
         if (transferCredit.getCurriculum() != null) {
-          courseActivity.setCurriculumIds(Arrays.asList(transferCredit.getCurriculum().getId()));
+          CourseActivityCurriculum cac = new CourseActivityCurriculum();
+          cac.setId(transferCredit.getCurriculum().getId());
+          cac.setName(transferCredit.getCurriculum().getName());
+          courseActivity.setCurriculums(Arrays.asList(cac));
         }
         else {
-          courseActivity.setCurriculumIds(Collections.emptyList());
+          courseActivity.setCurriculums(Collections.emptyList());
         }
+        
+        CourseActivitySubject subject = new CourseActivitySubject();
+        if (transferCredit.getCourseLength() != null) {
+          subject.setCourseLength(transferCredit.getCourseLength().getUnits());
+          subject.setCourseLengthSymbol(transferCredit.getCourseLength().getUnit().getSymbol());
+        }
+        subject.setCourseNumber(transferCredit.getCourseNumber());
+        if (transferCredit.getSubject() != null) {
+          subject.setSubjectCode(transferCredit.getSubject().getCode());
+          subject.setSubjectName(transferCredit.getSubject().getName());
+        }
+        courseActivity.setSubject(subject);
+
         courseActivity.setCourseName(transferCredit.getCourseName());
         courseActivity.setGrade(transferCredit.getGrade().getName());
         courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
