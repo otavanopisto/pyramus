@@ -77,6 +77,7 @@ import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.CourseActivityAssessment;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityCurriculum;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
 import fi.otavanopisto.pyramus.rest.model.CourseActivitySubject;
@@ -424,7 +425,17 @@ public class StudentController {
       Course course = courseStudent.getCourse();
       CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
       
-      // Course curriculums (same for each module)
+      // Course basic information
+      
+      CourseActivity courseActivity = new CourseActivity();
+      courseActivity.setCourseId(course.getId());
+      String courseName = course.getName();
+      if (!StringUtils.isEmpty(course.getNameExtension())) {
+        courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+      }
+      courseActivity.setCourseName(courseName);
+      
+      // Curriculums
       
       List<CourseActivityCurriculum> curriculums = new ArrayList<>();
       for (Curriculum c : course.getCurriculums()) {
@@ -433,12 +444,18 @@ public class StudentController {
         cac.setName(c.getName());
         curriculums.add(cac);
       }
+      courseActivity.setCurriculums(curriculums);
+
+      // Subjects and their assessments, to be filled when going through course modules
+      
+      List<CourseActivitySubject> subjects = new ArrayList<>();
+      List<CourseActivityAssessment> assessments = new ArrayList<>();
+      courseActivity.setSubjects(subjects);
+      courseActivity.setAssessments(assessments);
       
       for (CourseModule courseModule : course.getCourseModules()) {
-        // Construct course base information and assume it's ongoing
         
-        CourseActivity courseActivity = new CourseActivity();
-        courseActivity.setCourseId(course.getId());
+        // Subject
         
         CourseActivitySubject subject = new CourseActivitySubject();
         subject.setCourseModuleId(courseModule.getId());
@@ -451,17 +468,14 @@ public class StudentController {
           subject.setSubjectCode(courseModule.getSubject().getCode());
           subject.setSubjectName(courseModule.getSubject().getName());
         }
-        courseActivity.setSubject(subject);
+        subjects.add(subject);
         
-        courseActivity.setCurriculums(curriculums);
+        // Assessment
         
-        String courseName = course.getName();
-        if (!StringUtils.isEmpty(course.getNameExtension())) {
-          courseName = String.format("%s (%s)", courseName, course.getNameExtension());
-        }
-        courseActivity.setCourseName(courseName);
-        courseActivity.setActivityDate(courseStudent.getEnrolmentTime());
-        courseActivity.setState(CourseActivityState.ONGOING);
+        CourseActivityAssessment assessment = new CourseActivityAssessment();
+        assessment.setDate(courseStudent.getEnrolmentTime());
+        assessment.setState(CourseActivityState.ONGOING);
+        assessment.setCourseModuleId(courseModule.getId());
         
         // Status override if course has been graded as linked credit
         
@@ -470,36 +484,46 @@ public class StudentController {
             .findAny()
             .orElse(null);
         if (linkedAssessment != null) {
-          courseActivity.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
-          courseActivity.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
-          courseActivity.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
-          courseActivity.setActivityDate(linkedAssessment.getCreated());
-          courseActivity.setGradeDate(linkedAssessment.getCreated());
-          courseActivity.setState(CourseActivityState.GRADED);
+          assessment.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
+          assessment.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
+          assessment.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
+          assessment.setGradeDate(linkedAssessment.getCreated());
+          assessment.setState(CourseActivityState.GRADED_PASS);
         }
 
         // Status override if course has been graded
         
         CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE); 
         if (courseAssessment != null && courseAssessment.getGrade() != null) {
-          courseActivity.setText(courseAssessment.getVerbalAssessment());
-          courseActivity.setGrade(courseAssessment.getGrade().getName());
-          courseActivity.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
-          courseActivity.setActivityDate(courseAssessment.getDate());
-          courseActivity.setGradeDate(courseAssessment.getDate());
-          courseActivity.setState(CourseActivityState.GRADED);
+          assessment.setText(courseAssessment.getVerbalAssessment());
+          assessment.setGrade(courseAssessment.getGrade().getName());
+          assessment.setPassingGrade(courseAssessment.getGrade() == null || courseAssessment.getGrade().getPassingGrade());
+          assessment.setGradeDate(courseAssessment.getDate());
+          assessment.setState(assessment.getPassingGrade() ? CourseActivityState.GRADED_PASS : CourseActivityState.GRADED_FAIL);
         }
         
         // Status override if student has requested the course to be assessed
         
-        if (request != null && !request.getHandled() && request.getCreated().after(courseActivity.getActivityDate())) {
-          courseActivity.setText(request.getRequestText());
-          courseActivity.setActivityDate(request.getCreated());
-          courseActivity.setState(CourseActivityState.ASSESSMENT_REQUESTED);
+        if (request != null && !request.getHandled() && request.getCreated().after(assessment.getDate())) {
+          assessment.setText(request.getRequestText());
+          assessment.setDate(request.getCreated());
+          switch (assessment.getState()) {
+          case GRADED_PASS:
+            assessment.setState(CourseActivityState.ASSESSMENT_REQUESTED_PASSING_GRADE);
+            break;
+          case GRADED_FAIL:
+            assessment.setState(CourseActivityState.ASSESSMENT_REQUESTED_FAILING_GRADE);
+            break;
+          default:
+            assessment.setState(CourseActivityState.ASSESSMENT_REQUESTED_NO_GRADE);
+            break;
+          }
         }
         
-        courseActivities.add(courseActivity);
+        assessments.add(assessment);
+        
       }
+      courseActivities.add(courseActivity);
     }    
 
     // Optionally include transfer credits as well
@@ -507,7 +531,14 @@ public class StudentController {
     if (includeTransferCredits) {
       List<TransferCredit> transferCredits = listStudentTransferCredits(student);
       for (TransferCredit transferCredit : transferCredits) {
+        
+        // Basic info
+        
         CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCourseName(transferCredit.getCourseName());
+        
+        // Curriculum
+
         if (transferCredit.getCurriculum() != null) {
           CourseActivityCurriculum cac = new CourseActivityCurriculum();
           cac.setId(transferCredit.getCurriculum().getId());
@@ -517,6 +548,8 @@ public class StudentController {
         else {
           courseActivity.setCurriculums(Collections.emptyList());
         }
+        
+        // Subject
         
         CourseActivitySubject subject = new CourseActivitySubject();
         if (transferCredit.getCourseLength() != null) {
@@ -528,13 +561,20 @@ public class StudentController {
           subject.setSubjectCode(transferCredit.getSubject().getCode());
           subject.setSubjectName(transferCredit.getSubject().getName());
         }
-        courseActivity.setSubject(subject);
+        courseActivity.setSubjects(Arrays.asList(subject));
         
-        courseActivity.setCourseName(transferCredit.getCourseName());
-        courseActivity.setGrade(transferCredit.getGrade().getName());
-        courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
-        courseActivity.setActivityDate(transferCredit.getDate());
-        courseActivity.setState(CourseActivityState.TRANSFERRED);
+        // Assessment
+        
+        CourseActivityAssessment assessment = new CourseActivityAssessment();
+        if (transferCredit.getGrade() != null) {
+          assessment.setGrade(transferCredit.getGrade().getName());
+          assessment.setPassingGrade(transferCredit.getGrade().getPassingGrade());
+          assessment.setGradeDate(transferCredit.getDate());
+        }
+        assessment.setDate(transferCredit.getDate());
+        assessment.setState(CourseActivityState.TRANSFERRED);
+        courseActivity.setAssessments(Arrays.asList(assessment));
+        
         courseActivities.add(courseActivity);
       }
       
@@ -545,7 +585,14 @@ public class StudentController {
           : Collections.emptyList();
       for (CreditLink creditLink : linkedTransferCredits) {
         TransferCredit transferCredit = (TransferCredit) creditLink.getCredit();
+        
+        // Basic info
+        
         CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCourseName(transferCredit.getCourseName());
+        
+        // Curriculum
+
         if (transferCredit.getCurriculum() != null) {
           CourseActivityCurriculum cac = new CourseActivityCurriculum();
           cac.setId(transferCredit.getCurriculum().getId());
@@ -555,6 +602,8 @@ public class StudentController {
         else {
           courseActivity.setCurriculums(Collections.emptyList());
         }
+        
+        // Subject
         
         CourseActivitySubject subject = new CourseActivitySubject();
         if (transferCredit.getCourseLength() != null) {
@@ -566,13 +615,20 @@ public class StudentController {
           subject.setSubjectCode(transferCredit.getSubject().getCode());
           subject.setSubjectName(transferCredit.getSubject().getName());
         }
-        courseActivity.setSubject(subject);
+        courseActivity.setSubjects(Arrays.asList(subject));
+        
+        // Assessment
 
-        courseActivity.setCourseName(transferCredit.getCourseName());
-        courseActivity.setGrade(transferCredit.getGrade().getName());
-        courseActivity.setPassingGrade(transferCredit.getGrade().getPassingGrade());
-        courseActivity.setActivityDate(transferCredit.getDate());
-        courseActivity.setState(CourseActivityState.TRANSFERRED);
+        CourseActivityAssessment assessment = new CourseActivityAssessment();
+        if (transferCredit.getGrade() != null) {
+          assessment.setGrade(transferCredit.getGrade().getName());
+          assessment.setPassingGrade(transferCredit.getGrade().getPassingGrade());
+          assessment.setGradeDate(transferCredit.getDate());
+        }
+        assessment.setDate(transferCredit.getDate());
+        assessment.setState(CourseActivityState.TRANSFERRED);
+        courseActivity.setAssessments(Arrays.asList(assessment));
+
         courseActivities.add(courseActivity);
       }
     }

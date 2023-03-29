@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import java.util.Date;
 import java.util.List;
 
 public class CourseActivity {
@@ -21,62 +20,6 @@ public class CourseActivity {
     this.courseName = courseName;
   }
 
-  public String getGrade() {
-    return grade;
-  }
-
-  public void setGrade(String grade) {
-    this.grade = grade;
-  }
-
-  public Boolean getPassingGrade() {
-    return passingGrade;
-  }
-
-  public void setPassingGrade(Boolean passingGrade) {
-    this.passingGrade = passingGrade;
-  }
-
-  public Date getActivityDate() {
-    return activityDate;
-  }
-
-  public void setActivityDate(Date activityDate) {
-    this.activityDate = activityDate;
-  }
-
-  public CourseActivityState getState() {
-    return state;
-  }
-
-  public void setState(CourseActivityState state) {
-    this.state = state;
-  }
-
-  public String getText() {
-    return text;
-  }
-
-  public void setText(String text) {
-    this.text = text;
-  }
-
-  public Date getGradeDate() {
-    return gradeDate;
-  }
-
-  public void setGradeDate(Date gradeDate) {
-    this.gradeDate = gradeDate;
-  }
-
-  public CourseActivitySubject getSubject() {
-    return subject;
-  }
-
-  public void setSubject(CourseActivitySubject subject) {
-    this.subject = subject;
-  }
-
   public List<CourseActivityCurriculum> getCurriculums() {
     return curriculums;
   }
@@ -85,15 +28,26 @@ public class CourseActivity {
     this.curriculums = curriculums;
   }
 
+  public List<CourseActivitySubject> getSubjects() {
+    return subjects;
+  }
+
+  public void setSubjects(List<CourseActivitySubject> subjects) {
+    this.subjects = subjects;
+  }
+
+  public List<CourseActivityAssessment> getAssessments() {
+    return assessments;
+  }
+
+  public void setAssessments(List<CourseActivityAssessment> assessments) {
+    this.assessments = assessments;
+  }
+
   private Long courseId;
-  private CourseActivitySubject subject;
   private String courseName;
+  private List<CourseActivitySubject> subjects;
   private List<CourseActivityCurriculum> curriculums;
-  private String grade;
-  private Boolean passingGrade;
-  private Date gradeDate;
-  private String text;
-  private Date activityDate;
-  private CourseActivityState state;
+  private List<CourseActivityAssessment> assessments;
 
 }
