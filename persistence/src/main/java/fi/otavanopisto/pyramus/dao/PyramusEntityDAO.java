@@ -99,7 +99,12 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   
   protected void addTokenizedSearchCriteria(StringBuilder queryBuilder, boolean required, String value, String ... fields) {
     String inputText = value.replaceAll(" +", " ");
-    String[] tokens = escapeSearchCriteria(inputText).split("[ ,]");
+    String[] tokens = new String[] {inputText};
+    
+    if (!fields[0].contains("Emails")) {
+      tokens = escapeSearchCriteria(inputText).split("[ ,]");
+    }
+    
     for (String token : tokens) {
       if (!StringUtils.isBlank(token)) {
         if (required) {
@@ -114,7 +119,7 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
       }
     }
   }
-
+  
   protected String getSearchDateInfinityHigh() {
     return DATERANGE_INFINITY_HIGH;
   }
