@@ -99,11 +99,8 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   
   protected void addTokenizedSearchCriteria(StringBuilder queryBuilder, boolean required, String value, String ... fields) {
     String inputText = value.replaceAll(" +", " ");
-    String[] tokens = new String[] {inputText};
     
-    if (!fields[0].contains("Emails")) {
-      tokens = escapeSearchCriteria(inputText).split("[ ,]");
-    }
+    String[] tokens = escapeSearchCriteria(inputText).split("[ ,]");
     
     for (String token : tokens) {
       if (!StringUtils.isBlank(token)) {
@@ -119,7 +116,23 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
       }
     }
   }
-  
+
+  protected void addTokenizedSearchCriteriaEmail(StringBuilder queryBuilder, boolean required, String value, String ... fields) {
+    String inputText = value.replaceAll(" +", " ");
+    
+      if (!StringUtils.isBlank(inputText)) {
+        if (required) {
+          queryBuilder.append("+");
+        }
+        
+        queryBuilder.append('(');
+        for (String field : fields) {
+          queryBuilder.append(field).append(':').append(inputText).append(' ');
+        }
+        queryBuilder.append(')');
+      }
+    
+  }
   protected String getSearchDateInfinityHigh() {
     return DATERANGE_INFINITY_HIGH;
   }
