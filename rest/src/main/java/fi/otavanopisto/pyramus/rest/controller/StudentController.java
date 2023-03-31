@@ -411,11 +411,7 @@ public class StudentController {
   
   /* Course activity */
   
-  public List<CourseActivity> listCourseActivities(List<CourseStudent> courseStudents, boolean includeTransferCredits) {
-    if (courseStudents.isEmpty()) {
-      return Collections.emptyList();
-    }
-    Student student = courseStudents.get(0).getStudent();
+  public List<CourseActivity> listCourseActivities(Student student, List<CourseStudent> courseStudents, boolean includeTransferCredits) {
     List<CourseActivity> courseActivities = new ArrayList<>();
     List<CreditLink> linkedAssessments = creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment); 
     

@@ -3225,7 +3225,7 @@ public class StudentRESTService extends AbstractRESTService {
     
     // Serve data
     
-    List<CourseActivity> courseActivities = studentController.listCourseActivities(courseStudents, includeTransferCredits);
+    List<CourseActivity> courseActivities = studentController.listCourseActivities(student, courseStudents, includeTransferCredits);
     return Response.ok(courseActivities).build();
   }
   
