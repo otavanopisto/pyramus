@@ -135,6 +135,7 @@ function updateTable(event) {
             selectController.addOption(selectHandlerInstance, "LAB3", "Latina (LAB3)");
             selectController.addOption(selectHandlerInstance, "ARB3", "Arabia (ARB3)");
             selectController.addOption(selectHandlerInstance, "JPB3", "Japani (JPB3)");
+            selectController.addOption(selectHandlerInstance, "KOB3", "Korea (KOB3)");
             selectController.addOption(selectHandlerInstance, "KXB3", "Muu kieli (KXB3)");
           }
         break;
