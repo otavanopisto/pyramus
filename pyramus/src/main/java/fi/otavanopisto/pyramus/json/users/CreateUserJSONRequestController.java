@@ -144,6 +144,8 @@ public class CreateUserJSONRequestController extends JSONRequestController {
         if (!passwordBlank) {
           if (!password.equals(password2))
             throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+        } else {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
         }
 
         String externalId = internalAuthenticationProvider.createCredentials(username, password);

@@ -243,7 +243,7 @@
       var name = $(this).attr('name');
       var srcVisible = $(this).is(':visible') || name == 'field-line';
       var value = [];
-      if ($(this).is(':checkbox')) {
+      if ($(this).is(':checkbox') || $(this).is(':radio')) {
         $('input[name="' + name + '"]:checked').each(function() {
           value.push($(this).val());
         });
@@ -576,6 +576,9 @@
       type: "GET",
       contentType: "application/json; charset=utf-8",
       success: function(result) {
+        $('.form-section').each(function() {
+          $(this).toggle($(this).attr('data-skip') != 'true' && !$(this).hasClass('section-summary'));
+        });
         for (var key in result) {
           if (key.startsWith('field-attachments-')) {
             continue;
@@ -618,9 +621,6 @@
         }
         preloadApplicationAttachments(result);
         setupNicknameSelector();
-        $('.form-section').each(function() {
-          $(this).toggle($(this).attr('data-skip') != 'true' && !$(this).hasClass('section-summary'));
-        });
       }
     });
   }
