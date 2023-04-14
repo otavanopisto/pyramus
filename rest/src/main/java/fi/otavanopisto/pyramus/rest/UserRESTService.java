@@ -66,6 +66,7 @@ public class UserRESTService {
     userContactInfo.setDateOfBirth(person.getBirthday() == null ? null : new java.sql.Date(person.getBirthday().getTime()).toLocalDate());
     userContactInfo.setPhoneNumber(phoneNumber == null ? null : phoneNumber.getNumber());
     if (address != null) {
+      userContactInfo.setAddressName(address.getName());
       userContactInfo.setStreetAddress(address.getStreetAddress());
       userContactInfo.setZipCode(address.getPostalCode());
       userContactInfo.setCity(address.getCity());
