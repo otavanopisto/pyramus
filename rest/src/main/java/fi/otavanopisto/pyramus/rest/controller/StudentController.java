@@ -79,6 +79,7 @@ import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.rest.model.CourseActivity;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityAssessment;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityCurriculum;
+import fi.otavanopisto.pyramus.rest.model.CourseActivityInfo;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityState;
 import fi.otavanopisto.pyramus.rest.model.CourseActivitySubject;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -411,7 +412,7 @@ public class StudentController {
   
   /* Course activity */
   
-  public List<CourseActivity> listCourseActivities(Student student, List<CourseStudent> courseStudents, boolean includeTransferCredits) {
+  public CourseActivityInfo listCourseActivities(Student student, List<CourseStudent> courseStudents, boolean includeTransferCredits) {
     List<CourseActivity> courseActivities = new ArrayList<>();
     List<CreditLink> linkedAssessments = creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment); 
     
@@ -629,7 +630,15 @@ public class StudentController {
       }
     }
     
-    return courseActivities;
+    // Basic info about the student complemented with the activity list above
+    
+    CourseActivityInfo courseActivityInfo = new CourseActivityInfo();
+    courseActivityInfo.setLineName(student.getStudyProgramme().getName());
+    courseActivityInfo.setLineCategory(student.getStudyProgramme().getCategory().getName());
+    courseActivityInfo.setDefaultLine(student.getPerson().getDefaultUser().getId().equals(student.getId()));
+    courseActivityInfo.setActivities(courseActivities);
+    
+    return courseActivityInfo;
   }
   
   /* Study Period */
