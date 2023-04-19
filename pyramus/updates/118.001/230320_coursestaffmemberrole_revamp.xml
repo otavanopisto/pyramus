@@ -21,6 +21,7 @@
     where role_id = 3;
   </sql>
 
+  <sql>alter table CourseStaffMember drop foreign key FKE4A80A5F35065A14;</sql>
   <sql>alter table CourseStaffMember drop column role_id;</sql>
   <sql>drop table CourseStaffMemberRole;</sql>
 
