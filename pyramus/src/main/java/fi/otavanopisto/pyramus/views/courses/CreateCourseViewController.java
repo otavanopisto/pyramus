@@ -31,7 +31,6 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
-import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
@@ -72,7 +71,6 @@ public class CreateCourseViewController extends PyramusViewController implements
    */
   public void process(PageRequestContext pageRequestContext) {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
-    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseStateDAO courseStateDAO = DAOFactory.getInstance().getCourseStateDAO();
@@ -165,7 +163,6 @@ public class CreateCourseViewController extends PyramusViewController implements
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("states", courseStateDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("types", courseTypeDAO.listUnarchived());
-    pageRequestContext.getRequest().setAttribute("roles", courseStaffMemberRoleDAO.listAll());
     pageRequestContext.getRequest().setAttribute("courseParticipationTypes", courseParticipationTypes);
     pageRequestContext.getRequest().setAttribute("courseEnrolmentTypes", enrolmentTypeDAO.listAll());
     pageRequestContext.getRequest().setAttribute("courseLengthTimeUnits", educationalTimeUnits);

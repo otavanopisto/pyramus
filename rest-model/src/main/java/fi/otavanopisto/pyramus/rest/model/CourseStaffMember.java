@@ -6,12 +6,12 @@ public class CourseStaffMember {
     super();
   }
 
-  public CourseStaffMember(Long id, Long courseId, Long staffMemberId, Long roleId) {
+  public CourseStaffMember(Long id, Long courseId, Long staffMemberId, CourseStaffMemberRoleEnum role) {
     super();
     this.id = id;
     this.courseId = courseId;
     this.staffMemberId = staffMemberId;
-    this.roleId = roleId;
+    this.role = role;
   }
 
   public Long getId() {
@@ -30,14 +30,6 @@ public class CourseStaffMember {
     this.courseId = courseId;
   }
 
-  public Long getRoleId() {
-    return roleId;
-  }
-
-  public void setRoleId(Long roleId) {
-    this.roleId = roleId;
-  }
-
   public Long getStaffMemberId() {
     return staffMemberId;
   }
@@ -46,8 +38,16 @@ public class CourseStaffMember {
     this.staffMemberId = staffMemberId;
   }
 
+  public CourseStaffMemberRoleEnum getRole() {
+    return role;
+  }
+
+  public void setRole(CourseStaffMemberRoleEnum role) {
+    this.role = role;
+  }
+
   private Long id;
   private Long courseId;
   private Long staffMemberId;
-  private Long roleId;
+  private CourseStaffMemberRoleEnum role;
 }

@@ -15,6 +15,7 @@ import fi.otavanopisto.pyramus.rest.model.CourseAssessment;
 import fi.otavanopisto.pyramus.rest.model.CourseLength;
 import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
+import fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
 import fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.rest.model.Organization;
@@ -138,8 +139,8 @@ public class AbstractRESTServiceTestTools {
       .statusCode(204);
   }
 
-  public CourseStaffMember createCourseStaffMember(Long courseId, Long staffMemberId, Long roleId) {
-    CourseStaffMember courseStaffMember = new CourseStaffMember(null, courseId, staffMemberId, roleId);      
+  public CourseStaffMember createCourseStaffMember(Long courseId, Long staffMemberId, CourseStaffMemberRoleEnum role) {
+    CourseStaffMember courseStaffMember = new CourseStaffMember(null, courseId, staffMemberId, role);      
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
