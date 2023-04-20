@@ -26,7 +26,6 @@ import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
@@ -51,7 +50,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
@@ -91,9 +90,6 @@ public class CourseController {
   
   @Inject
   private CourseEnrolmentTypeDAO courseEnrolmentTypeDAO;
-
-  @Inject
-  private CourseStaffMemberRoleDAO courseStaffMemberRoleDAO;
 
   @Inject
   private CourseStaffMemberDAO courseStaffMemberDAO;
@@ -441,31 +437,9 @@ public class CourseController {
     return courseDAO.listByStaffMember(staffMember);
   }
   
-  /* CourseStaffMemberRole */
-
-  public CourseStaffMemberRole createStaffMemberRole(String name) {
-    return courseStaffMemberRoleDAO.create(name);
-  }
-  
-  public CourseStaffMemberRole findStaffMemberRoleById(Long id) {
-    return courseStaffMemberRoleDAO.findById(id);
-  }
-  
-  public List<CourseStaffMemberRole> listStaffMemberRoles() {
-    return courseStaffMemberRoleDAO.listAll();
-  }
-
-  public CourseStaffMemberRole updateCourseStaffMemberRoleName(CourseStaffMemberRole courseStaffMemberRole, String name) {
-    return courseStaffMemberRoleDAO.updateName(courseStaffMemberRole, name);
-  }
-  
-  public void deleteStaffMemberRole(CourseStaffMemberRole courseStaffMemberRole) {
-    courseStaffMemberRoleDAO.delete(courseStaffMemberRole);
-  }
-  
   /* CourseStaffMembers */
   
-  public CourseStaffMember createStaffMember(Course course, StaffMember staffMember, CourseStaffMemberRole role) {
+  public CourseStaffMember createStaffMember(Course course, StaffMember staffMember, CourseStaffMemberRoleEnum role) {
     return courseStaffMemberDAO.create(course, staffMember, role);
   }
   
@@ -477,7 +451,7 @@ public class CourseController {
     return courseStaffMemberDAO.listByCourse(course);
   }
 
-  public CourseStaffMember updateStaffMemberRole(CourseStaffMember staffMember, CourseStaffMemberRole role) {
+  public CourseStaffMember updateStaffMemberRole(CourseStaffMember staffMember, CourseStaffMemberRoleEnum role) {
     return courseStaffMemberDAO.updateRole(staffMember, role);
   }
   

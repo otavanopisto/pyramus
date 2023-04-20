@@ -44,7 +44,6 @@ import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
@@ -80,7 +79,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
@@ -268,7 +267,6 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     CourseEnrolmentTypeDAO enrolmentTypeDAO = DAOFactory.getInstance().getCourseEnrolmentTypeDAO();
     CourseComponentDAO componentDAO = DAOFactory.getInstance().getCourseComponentDAO();
     CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
-    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     OtherCostDAO otherCostDAO = DAOFactory.getInstance().getOtherCostDAO();
@@ -500,9 +498,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       String colPrefix = "personnelTable." + i;
       Long courseUserId = requestContext.getLong(colPrefix + ".courseUserId");
       Long userId = requestContext.getLong(colPrefix + ".userId");
-      Long roleId = requestContext.getLong(colPrefix + ".roleId");
+      CourseStaffMemberRoleEnum role = (CourseStaffMemberRoleEnum) requestContext.getEnum(colPrefix + ".role", CourseStaffMemberRoleEnum.class);
       staffMember = userDAO.findById(userId);
-      CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(roleId);
       if (courseUserId == -1) {
         courseUserId = courseStaffMemberDAO.create(course, staffMember, role).getId();
       } else {

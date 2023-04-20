@@ -179,7 +179,6 @@
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managefiletypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageFileTypes"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyendreasons.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.studyEndReasons"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/curriculums.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCurriculums"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/courseuserroles.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseUserRoles"/></a></li>
             <ix:extensionHook name="generic.navigation.settingsMenu"/>
           </ul>
         </li>

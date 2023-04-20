@@ -436,7 +436,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(education))
           addTokenizedSearchCriteria(queryBuilder, true, education, "inactiveEducations", "activeEducations");
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, true, lucenizeEmailSearchTerm(email), "inactiveEmails", "activeEmails", "staffMemberEmails");
+          addTokenizedSearchCriteriaEmail(queryBuilder, true, lucenizeEmailSearchTerm(email), "inactiveEmails", "activeEmails", "staffMemberEmails");
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, true, addressCity, "inactiveCities", "activeCities", "staffMemberCities");
         if (!StringUtils.isBlank(addressCountry))
@@ -566,7 +566,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(tags))
           addTokenizedSearchCriteria(queryBuilder, true, tags, "staffMemberTags");
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, true, lucenizeEmailSearchTerm(email), "staffMemberEmails");
+          addTokenizedSearchCriteriaEmail(queryBuilder, true, lucenizeEmailSearchTerm(email), "staffMemberEmails");
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, true, addressCity, "staffMemberCities");
         if (!StringUtils.isBlank(addressCountry))

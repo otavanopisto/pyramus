@@ -491,9 +491,7 @@ Old. Needed anymore?
     (10, 'ff81d5b8500c773e7a1776a7963801e2', 'https://localhost:8443/oauth2ClientTest/success', 12, 1),
 /** CLOSED ROLE**/
     (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1);    
-    
-insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
-    
+        
 insert into 
   CourseUser (id, course, version)
 values 
@@ -506,12 +504,12 @@ values
   (7, 1001, 1);
   
 insert into 
-  CourseStaffMember (id, staffMember_id, role_id)
+  CourseStaffMember (id, staffMember_id, role)
 values 
-  (1, 1, 1),
-  (2, 2, 2),
-  (3, 5, 1),
-  (4, 6, 1);
+  (1, 1, 'TEACHER'),
+  (2, 2, 'TUTOR'),
+  (3, 5, 'TEACHER'),
+  (4, 6, 'TEACHER');
 
 insert into 
   CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student)
@@ -721,9 +719,6 @@ INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)
 DELETE FROM hibernate_sequences WHERE sequence_name = 'ClientApplicationAuthorizationCode';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'ClientApplicationAuthorizationCode', COALESCE(MAX(id) + 1, 1) FROM ClientApplicationAuthorizationCode;
-DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseStaffMemberRole';
-INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
-  SELECT 'CourseStaffMemberRole', COALESCE(MAX(id) + 1, 1) FROM CourseStaffMemberRole;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseUser';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'CourseUser', COALESCE(MAX(id) + 1, 1) FROM CourseUser;

@@ -14,7 +14,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
@@ -34,7 +34,7 @@ public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
   @Inject
   private Event<CourseStaffMemberDeletedEvent> courseStaffMemberDeletedEvent;
 
-  public CourseStaffMember create(Course course, StaffMember staffMember, CourseStaffMemberRole role) {
+  public CourseStaffMember create(Course course, StaffMember staffMember, CourseStaffMemberRoleEnum role) {
     CourseStaffMember courseStaffMember = new CourseStaffMember();
     courseStaffMember.setCourse(course);
     courseStaffMember.setStaffMember(staffMember);
@@ -83,7 +83,7 @@ public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public CourseStaffMember updateRole(CourseStaffMember courseStaffMember, CourseStaffMemberRole role) {
+  public CourseStaffMember updateRole(CourseStaffMember courseStaffMember, CourseStaffMemberRoleEnum role) {
     courseStaffMember.setRole(role);
     persist(courseStaffMember);
     

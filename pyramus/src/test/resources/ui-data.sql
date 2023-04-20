@@ -611,9 +611,6 @@ INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)
 DELETE FROM hibernate_sequences WHERE sequence_name = 'ClientApplicationAuthorizationCode';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'ClientApplicationAuthorizationCode', COALESCE(MAX(id) + 1, 1) FROM ClientApplicationAuthorizationCode;
-DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseStaffMemberRole';
-INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
-  SELECT 'CourseStaffMemberRole', COALESCE(MAX(id) + 1, 1) FROM CourseStaffMemberRole;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseUser';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'CourseUser', COALESCE(MAX(id) + 1, 1) FROM CourseUser;

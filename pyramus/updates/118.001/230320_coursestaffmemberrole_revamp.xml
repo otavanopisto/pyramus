@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>alter table CourseStaffMember add column role varchar(255);</sql>
+  
+  <sql>
+    update CourseStaffMember
+    set role = 'TEACHER'
+    where role_id = 1;
+  </sql>
+
+  <sql>
+    update CourseStaffMember
+    set role = 'TUTOR'
+    where role_id = 2;
+  </sql>
+
+  <sql>
+    update CourseStaffMember
+    set role = 'ORGANIZER'
+    where role_id = 3;
+  </sql>
+
+  <sql>alter table CourseStaffMember drop foreign key FKE4A80A5F35065A14;</sql>
+  <sql>alter table CourseStaffMember drop column role_id;</sql>
+  <sql>drop table CourseStaffMemberRole;</sql>
+
+</update>

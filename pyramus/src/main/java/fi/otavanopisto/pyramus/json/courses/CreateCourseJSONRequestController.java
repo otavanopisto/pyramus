@@ -40,7 +40,6 @@ import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
@@ -66,7 +65,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
@@ -261,7 +260,6 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
-    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
@@ -364,9 +362,8 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "personnelTable." + i;
       Long userId = requestContext.getLong(colPrefix + ".userId");
-      Long roleId = requestContext.getLong(colPrefix + ".roleId");
+      CourseStaffMemberRoleEnum role = (CourseStaffMemberRoleEnum) requestContext.getEnum(colPrefix + ".role", CourseStaffMemberRoleEnum.class);
       StaffMember staffMember = userDAO.findById(userId);
-      CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(roleId);
       courseStaffMemberDAO.create(course, staffMember, role);
     }
     

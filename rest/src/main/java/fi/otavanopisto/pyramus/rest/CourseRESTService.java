@@ -53,7 +53,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
@@ -85,6 +85,7 @@ import fi.otavanopisto.pyramus.rest.model.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.rest.model.CourseLength;
 import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/courses")
@@ -1020,7 +1021,8 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
-    if (entity.getRoleId() == null) {
+    CourseStaffMemberRoleEnum role = PyramusRestUtils.convert(entity.getRole());
+    if (role == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
@@ -1035,11 +1037,6 @@ public class CourseRESTService extends AbstractRESTService {
     
     StaffMember staffMember = userController.findStaffMemberById(entity.getStaffMemberId());
     if (staffMember == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-
-    CourseStaffMemberRole role = courseController.findStaffMemberRoleById(entity.getRoleId());
-    if (role == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -1136,8 +1133,9 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (entity.getRoleId() == null) {
-      return Response.status(Status.BAD_REQUEST).build(); 
+    CourseStaffMemberRoleEnum role = PyramusRestUtils.convert(entity.getRole());
+    if (role == null) {
+      return Response.status(Status.BAD_REQUEST).build();
     }
     
     if (entity.getStaffMemberId() == null) {
@@ -1158,11 +1156,6 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    CourseStaffMemberRole role = courseController.findStaffMemberRoleById(entity.getRoleId());
-    if (role == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
     return Response
       .status(Status.OK)
       .entity(objectFactory.createModel(courseController.updateStaffMemberRole(staffMember, role)))
@@ -1778,80 +1771,4 @@ public class CourseRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
-  @Path("/staffMemberRoles")
-  @POST
-  @RESTPermit (CoursePermissions.CREATE_STAFFMEMBERROLE)
-  public Response createStaffMemberRole(fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRole entity) {
-    if (entity == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    if (StringUtils.isBlank(entity.getName())) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    CourseStaffMemberRole staffMemberRole = courseController.createStaffMemberRole(entity.getName());
-    
-    return Response.ok(objectFactory.createModel(staffMemberRole)).build();
-  }
-  
-  @Path("/staffMemberRoles")
-  @GET
-  @RESTPermit (CoursePermissions.LIST_STAFFMEMBERROLES)
-  public Response listStaffMemberRoles() {
-    List<CourseStaffMemberRole> staffMemberRoles = courseController.listStaffMemberRoles();
-    if (staffMemberRoles.isEmpty()) {
-      return Response.noContent().build();
-    }
-    
-    return Response.ok(objectFactory.createModel(staffMemberRoles)).build();
-  }
-  
-  @Path("/staffMemberRoles/{ID}")
-  @GET
-  @RESTPermit (CoursePermissions.FIND_STAFFMEMBERROLE)
-  public Response findStaffMemberRrole(@PathParam ("ID") Long id) {
-    CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
-    if (staffMemberRole == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    return Response.ok(objectFactory.createModel(staffMemberRole)).build();
-  }
-  
-  @Path("/staffMemberRoles/{ID}")
-  @PUT
-  @RESTPermit (CoursePermissions.UPDATE_STAFFMEMBERROLE)
-  public Response updateStaffMemberRrole(@PathParam ("ID") Long id, fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRole entity) {
-    if (entity == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    if (StringUtils.isBlank(entity.getName())) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
-    if (staffMemberRole == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    staffMemberRole = courseController.updateCourseStaffMemberRoleName(staffMemberRole, entity.getName());
-    
-    return Response.ok(objectFactory.createModel(staffMemberRole)).build();
-  }
-  
-  @Path("/staffMemberRoles/{ID}")
-  @DELETE
-  @RESTPermit (CoursePermissions.DELETE_STAFFMEMBERROLE)
-  public Response deleteStaffMemberRrole(@PathParam ("ID") Long id) {
-    CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
-    if (staffMemberRole == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    courseController.deleteStaffMemberRole(staffMemberRole);
-    
-    return Response.noContent().build();
-  }
 }
