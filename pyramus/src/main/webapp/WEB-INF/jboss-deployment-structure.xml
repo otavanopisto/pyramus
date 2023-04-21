@@ -1,9 +1,15 @@
 <jboss-deployment-structure>
   <deployment>
+    <exclusions>
+      <module name="org.jboss.resteasy.resteasy-json-binding-provider" />
+      <module name="org.jboss.resteasy.resteasy-jettison-provider" />
+    </exclusions>
     <dependencies>
       <module name="org.apache.commons.codec" />
       <module name="org.apache.commons.io" />
       <module name="org.apache.httpcomponents" />
+      <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import" />
+      <module name="org.jboss.resteasy.resteasy-jaxb-provider" />
     </dependencies>
   </deployment>
 </jboss-deployment-structure>
