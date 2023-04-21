@@ -37,6 +37,7 @@ public class SuoritusDeserializer extends JsonDeserializer<Suoritus> {
       SuorituksenTyyppi tyyppiEnum = SuorituksenTyyppi.valueOf(tyyppi);
       
       switch (tyyppiEnum) {
+        case lukionaineopinnot:
         case lukionoppiaineenoppimaara:
           return KoskiConsts.LUKIO2019_DIAARIT.contains(diaariNumero)
               ? codec.treeToValue(tree, LukionOppiaineenOppimaaranSuoritus2019.class)

@@ -108,7 +108,10 @@ public class KoskiClient {
     Client client = ClientBuilder.newClient();
     try {
       Builder request = prepareRequest(client, uri);
-      OppijaReturnVal returnVal = request.get(OppijaReturnVal.class);
+      
+      String oppijaStr = request.get(String.class);
+      ObjectMapper objectMapper = new ObjectMapper();
+      OppijaReturnVal returnVal = objectMapper.readValue(oppijaStr, OppijaReturnVal.class);
       return returnVal;
     } finally {
       client.close();
@@ -124,7 +127,10 @@ public class KoskiClient {
     Client client = ClientBuilder.newClient();
     try {
       Builder request = prepareRequest(client, uri);
-      Oppija oppija = request.get(Oppija.class);
+      
+      String oppijaStr = request.get(String.class);
+      ObjectMapper objectMapper = new ObjectMapper();
+      Oppija oppija = objectMapper.readValue(oppijaStr, Oppija.class);
       return oppija;
     } finally {
       client.close();
