@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import java.util.Date;
 import java.util.List;
 
 public class CourseActivity {
@@ -21,79 +20,34 @@ public class CourseActivity {
     this.courseName = courseName;
   }
 
-  public List<Long> getCurriculumIds() {
-    return curriculumIds;
+  public List<CourseActivityCurriculum> getCurriculums() {
+    return curriculums;
   }
 
-  public void setCurriculumIds(List<Long> curriculumIds) {
-    this.curriculumIds = curriculumIds;
+  public void setCurriculums(List<CourseActivityCurriculum> curriculums) {
+    this.curriculums = curriculums;
   }
 
-  public String getGrade() {
-    return grade;
+  public List<CourseActivitySubject> getSubjects() {
+    return subjects;
   }
 
-  public void setGrade(String grade) {
-    this.grade = grade;
+  public void setSubjects(List<CourseActivitySubject> subjects) {
+    this.subjects = subjects;
   }
 
-  public Boolean getPassingGrade() {
-    return passingGrade;
+  public List<CourseActivityAssessment> getAssessments() {
+    return assessments;
   }
 
-  public void setPassingGrade(Boolean passingGrade) {
-    this.passingGrade = passingGrade;
-  }
-
-  public Date getActivityDate() {
-    return activityDate;
-  }
-
-  public void setActivityDate(Date activityDate) {
-    this.activityDate = activityDate;
-  }
-
-  public CourseActivityState getState() {
-    return state;
-  }
-
-  public void setState(CourseActivityState state) {
-    this.state = state;
-  }
-
-  public String getText() {
-    return text;
-  }
-
-  public void setText(String text) {
-    this.text = text;
-  }
-
-  public Date getGradeDate() {
-    return gradeDate;
-  }
-
-  public void setGradeDate(Date gradeDate) {
-    this.gradeDate = gradeDate;
-  }
-
-  public Long getCourseModuleId() {
-    return courseModuleId;
-  }
-
-  public void setCourseModuleId(Long courseModuleId) {
-    this.courseModuleId = courseModuleId;
+  public void setAssessments(List<CourseActivityAssessment> assessments) {
+    this.assessments = assessments;
   }
 
   private Long courseId;
-  private Long courseModuleId;
   private String courseName;
-  private List<Long> curriculumIds;
-  private String grade;
-  private Boolean passingGrade;
-  private Date gradeDate;
-  private String text;
-  private Date activityDate;
-  private CourseActivityState state;
+  private List<CourseActivitySubject> subjects;
+  private List<CourseActivityCurriculum> curriculums;
+  private List<CourseActivityAssessment> assessments;
 
 }
