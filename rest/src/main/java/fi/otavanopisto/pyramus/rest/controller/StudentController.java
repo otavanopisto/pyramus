@@ -475,6 +475,7 @@ public class StudentController {
         assessment.setCourseModuleId(courseModule.getId());
         
         // Status override if course has been graded as linked credit
+        // TODO: Should all linked credits be treated as transfer credits?
         
         CreditLink linkedAssessment = linkedAssessments.stream()
             .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
@@ -484,6 +485,7 @@ public class StudentController {
           assessment.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
           assessment.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
           assessment.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
+          assessment.setDate(linkedAssessment.getCreated());
           assessment.setGradeDate(linkedAssessment.getCreated());
           assessment.setState(CourseActivityState.GRADED_PASS);
         }
@@ -495,6 +497,7 @@ public class StudentController {
           assessment.setText(courseAssessment.getVerbalAssessment());
           assessment.setGrade(courseAssessment.getGrade().getName());
           assessment.setPassingGrade(courseAssessment.getGrade() == null || courseAssessment.getGrade().getPassingGrade());
+          assessment.setDate(courseAssessment.getDate());
           assessment.setGradeDate(courseAssessment.getDate());
           assessment.setState(assessment.getPassingGrade() ? CourseActivityState.GRADED_PASS : CourseActivityState.GRADED_FAIL);
         }
