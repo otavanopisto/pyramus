@@ -127,7 +127,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentStudyEndReason
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
-import fi.otavanopisto.pyramus.rest.model.CourseActivity;
+import fi.otavanopisto.pyramus.rest.model.CourseActivityInfo;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
@@ -3229,8 +3229,8 @@ public class StudentRESTService extends AbstractRESTService {
     
     // Serve data
     
-    List<CourseActivity> courseActivities = studentController.listCourseActivities(courseStudents, includeTransferCredits);
-    return Response.ok(courseActivities).build();
+    CourseActivityInfo courseActivityInfo = studentController.listCourseActivities(student, courseStudents, includeTransferCredits);
+    return Response.ok(courseActivityInfo).build();
   }
   
   @Path("/students/{ID:[0-9]*}/increaseStudyTime")

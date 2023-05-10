@@ -673,7 +673,21 @@
             </jsp:include>
             <div class="genericViewFormDataText">
               <c:forEach var="courseUser" items="${courseUsers}">
-                <div>${courseUser.staffMember.lastName}, ${courseUser.staffMember.firstName} - ${courseUser.role.name}</div>
+                <c:choose>
+                  <c:when test="${courseUser.role eq 'TEACHER'}">
+                    <c:set var="courseUserRoleText">- <fmt:message key="courseroles.TEACHER"/></c:set>
+                  </c:when>
+                  <c:when test="${courseUser.role eq 'TUTOR'}">
+                    <c:set var="courseUserRoleText">- <fmt:message key="courseroles.TUTOR"/></c:set>
+                  </c:when>
+                  <c:when test="${courseUser.role eq 'ORGANIZER'}">
+                    <c:set var="courseUserRoleText">- <fmt:message key="courseroles.ORGANIZER"/></c:set>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="courseUserRoleText"></c:set>
+                  </c:otherwise>
+                </c:choose>
+                <div>${courseUser.staffMember.lastName}, ${courseUser.staffMember.firstName} ${courseUserRoleText}</div>
               </c:forEach>
             </div>
           </div>        
