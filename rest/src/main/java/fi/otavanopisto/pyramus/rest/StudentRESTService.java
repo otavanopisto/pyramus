@@ -3380,7 +3380,7 @@ public class StudentRESTService extends AbstractRESTService {
     Status studentStatus = checkStudent(student);
     
     if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
+      return Response.ok(false).build();
     
     StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
     
