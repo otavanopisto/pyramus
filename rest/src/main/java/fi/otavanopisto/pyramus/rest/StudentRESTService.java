@@ -42,6 +42,7 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
@@ -128,6 +129,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityInfo;
+import fi.otavanopisto.pyramus.rest.model.SpecEdTeacher;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
@@ -234,6 +236,9 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Inject
   private CourseModuleDAO courseModuleDAO;
+
+  @Inject
+  private StaffMemberDAO staffMemberDAO;
   
   @Path("/languages")
   @POST
@@ -2895,6 +2900,53 @@ public class StudentRESTService extends AbstractRESTService {
     List<StudentGroupUser> guidanceCounselors = studentGroupController.listStudentGuidanceCounselors(student, onlyMessageRecipients);
     
     return Response.ok(objectFactory.createModel(guidanceCounselors)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/specEdTeachers")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentSpecEdTeachers(
+      @PathParam("STUDENTID") Long studentId,
+      @QueryParam("includeGuidanceCouncelors") @DefaultValue("false") Boolean includeGuidanceCouncelors,
+      @QueryParam("onlyMessageRecipients") @DefaultValue("false") Boolean onlyMessageRecipients) {
+    User loggedUser = sessionController.getUser();
+    if (loggedUser == null) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Student student = studentController.findStudentById(studentId);
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_SPECEDTEACHERS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    List<SpecEdTeacher> specEdTeachers = new ArrayList<>();
+    
+    // Special education teachers
+    
+    Set<Long> ids = staffMemberDAO.listByProperty(StaffMemberProperties.SPEC_ED_TEACHER.getKey(), "1").stream().map(StaffMember::getId).collect(Collectors.toSet());
+    for (Long id : ids) {
+      specEdTeachers.add(new SpecEdTeacher(id, false));
+    }
+    
+    // Optional guidance councelors
+
+    if (includeGuidanceCouncelors) {
+      List<StudentGroupUser> guidanceCounselors = studentGroupController.listStudentGuidanceCounselors(student, onlyMessageRecipients);
+      for (StudentGroupUser guidanceCounselor : guidanceCounselors) {
+        if (!ids.contains(guidanceCounselor.getStaffMember().getId())) {
+          specEdTeachers.add(new SpecEdTeacher(guidanceCounselor.getStaffMember().getId(), true));
+        }
+      }
+    }
+    
+    return Response.ok(specEdTeachers).build();
   }
 
   @Path("/variables")
