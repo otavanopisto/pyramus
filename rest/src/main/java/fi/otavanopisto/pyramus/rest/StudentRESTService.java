@@ -44,6 +44,8 @@ import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
+import fi.otavanopisto.pyramus.domainmodel.base.Address;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
@@ -56,6 +58,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -135,6 +138,7 @@ import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
+import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
@@ -3339,6 +3343,73 @@ public class StudentRESTService extends AbstractRESTService {
     // return student
     
     return Response.ok(objectFactory.createModel(student)).build();    
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/contactInfo")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentContactInfo(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    // Access check. Allowed for administrators, special education teachers, student's guidance counselors, student's teachers, or students themselves
+    
+    boolean accessible = false;
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    if (staffMember == null) {
+      if (loggedUser.getId().equals(student.getId())) {
+        accessible = true;
+      }
+      else {
+        return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
+      }
+    }
+    if (!accessible) {
+      accessible = staffMember.getRole().equals(Role.ADMINISTRATOR);
+    }
+    if (!accessible) {
+      accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
+    }
+    if (!accessible) {
+      accessible = studentController.amIGuidanceCounselor(studentId, staffMember);
+    }
+    if (!accessible) {
+      Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+      Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
+      accessible = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
+    }
+    if (!accessible) {
+      return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
+    }
+    
+    // Contact info
+
+    Person person = student.getPerson();
+    ContactInfo contactInfo = student.getContactInfo();
+    PhoneNumber phoneNumber = contactInfo.getPhoneNumbers().stream().filter(p -> Boolean.TRUE.equals(p.getDefaultNumber())).findFirst().orElse(null);
+    Address address = contactInfo.getAddresses().stream().filter(a -> Boolean.TRUE.equals(a.getDefaultAddress())).findFirst().orElse(null);
+    Email email = contactInfo.getEmails().stream().filter(e -> Boolean.TRUE.equals(e.getDefaultAddress())).findFirst().orElse(null);
+    
+    UserContactInfo userContactInfo = new UserContactInfo();
+    userContactInfo.setFirstName(student.getFirstName());
+    userContactInfo.setLastName(student.getLastName());
+    userContactInfo.setDateOfBirth(person.getBirthday() == null ? null : new java.sql.Date(person.getBirthday().getTime()).toLocalDate());
+    userContactInfo.setPhoneNumber(phoneNumber == null ? null : phoneNumber.getNumber());
+    if (address != null) {
+      userContactInfo.setAddressName(address.getName());
+      userContactInfo.setStreetAddress(address.getStreetAddress());
+      userContactInfo.setZipCode(address.getPostalCode());
+      userContactInfo.setCity(address.getCity());
+      userContactInfo.setCountry(address.getCountry());
+    }
+    userContactInfo.setEmail(email == null ? null : email.getAddress());
+
+    return Response.ok(userContactInfo).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/guidanceRelation")
