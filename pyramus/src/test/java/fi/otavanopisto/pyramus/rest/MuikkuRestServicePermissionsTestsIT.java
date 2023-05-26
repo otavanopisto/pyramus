@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Stream;
@@ -137,7 +138,7 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
   private Response createStaffMember(Role loggedInRole, Role createdStaffMemberRole) {
     StaffMemberPayload payload = new StaffMemberPayload();
     payload.setIdentifier(null);
-    payload.setRole(createdStaffMemberRole.toString());
+    payload.setRoles(Arrays.asList(createdStaffMemberRole.toString()));
     payload.setFirstName("Muikku");
     payload.setLastName("Manager");
     payload.setEmail("muikkumanager@example.com");
@@ -151,7 +152,7 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
   private Response testUpdateStaffMemberWithOptions(Role loggedInRole, long staffMemberId, Role updatedStaffMemberRole) {
     StaffMemberPayload payload = new StaffMemberPayload();
     payload.setIdentifier(String.valueOf(staffMemberId));
-    payload.setRole(updatedStaffMemberRole.toString());
+    payload.setRoles(Arrays.asList(updatedStaffMemberRole.toString()));
     payload.setFirstName("Maikki");
     payload.setLastName("Man-Ager");
     payload.setEmail("maikki@example.com");

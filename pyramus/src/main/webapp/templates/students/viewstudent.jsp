@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="/ix" prefix="ix"%>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -106,7 +107,7 @@
           }  
         }));     
 
-        <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+        <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsPoseAsLabel"/>',
@@ -3162,26 +3163,25 @@
                   value="students.viewStudent.roleHelp" />
               </jsp:include>
               <div class="genericViewFormDataText">
-                <c:choose>
-                  <c:when test="${staffMember.role == 'CLOSED'}">
-                    <fmt:message key="students.viewStudent.roleClosedTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'GUEST'}">
-                    <fmt:message key="students.viewStudent.roleGuestTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'USER'}">
-                    <fmt:message key="students.viewStudent.roleUserTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'MANAGER'}">
-                    <fmt:message key="students.viewStudent.roleManagerTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'ADMINISTRATOR'}">
-                    <fmt:message key="students.viewStudent.roleAdministratorTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'STUDY_PROGRAMME_LEADER'}">
-                    <fmt:message key="students.viewStudent.roleStudyProgrammeLeaderTitle"/>
-                  </c:when>
-                </c:choose>
+                <c:forEach var="staffMemberRole" items="${staffMember.roles}">
+                  <c:choose>
+                    <c:when test="${staffMemberRole == Role.GUEST}">
+                      <div><fmt:message key="students.viewStudent.roleGuestTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.USER}">
+                      <div><fmt:message key="students.viewStudent.roleUserTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.MANAGER}">
+                      <div><fmt:message key="students.viewStudent.roleManagerTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.ADMINISTRATOR}">
+                      <div><fmt:message key="students.viewStudent.roleAdministratorTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.STUDY_PROGRAMME_LEADER}">
+                      <div><fmt:message key="students.viewStudent.roleStudyProgrammeLeaderTitle"/></div>
+                    </c:when>
+                  </c:choose>
+                </c:forEach>
               </div>
             </div>
   

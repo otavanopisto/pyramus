@@ -33,8 +33,6 @@ public final class Common {
         return "ff81d5b8500c773e7a1776a7963801e5";
       case STUDY_PROGRAMME_LEADER:
         return "ff81d5b8500c773e7a1776a7963801e2";
-      case CLOSED:
-        return "ff81d5b8500c773e7a1776a796380166";
       default:
         throw new RuntimeException("Missing or EVERYONE role auth requested.");
     }
@@ -58,11 +56,13 @@ public final class Common {
         return 9l;
       case USER:
         return 5l;
-      case CLOSED:
-        return 14l;
       default:
         throw new RuntimeException("Missing or EVERYONE role auth requested.");
     }
+  }
+
+  public static Long getClosedUserId() {
+    return 14l;
   }
   
 }

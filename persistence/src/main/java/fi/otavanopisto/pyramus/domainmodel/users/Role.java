@@ -48,12 +48,7 @@ public enum Role {
   /**
    * Study programme leader (linjanvetäjä)
    */
-  STUDY_PROGRAMME_LEADER (9),
-
-  /**
-   * Closed account role.
-   */
-  CLOSED (10);
+  STUDY_PROGRAMME_LEADER (9);
   
   /**
    * Constructor specifying the role.

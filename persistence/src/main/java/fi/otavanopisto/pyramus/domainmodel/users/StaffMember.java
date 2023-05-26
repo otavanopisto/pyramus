@@ -19,13 +19,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
@@ -36,15 +34,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @PrimaryKeyJoinColumn(name="id")
 public class StaffMember extends User implements ArchivableEntity {
-  
-  public void setRole(Role role) {
-    this.role = role;
-  }
-
-  @Override
-  public Role getRole() {
-    return role;
-  }
   
   public void setTitle(String title) {
     this.title = title;
@@ -83,14 +72,46 @@ public class StaffMember extends User implements ArchivableEntity {
     this.studyProgrammes = studyProgrammes;
   }
 
+  @Override
+  public Set<Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(Set<Role> roles) {
+    this.roles = roles;
+  }
+  
+  @Transient
+  @Override
+  public boolean isAccountEnabled() {
+    return isEnabled();
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  private boolean enabled;
+  
   private String title;  
   
-  @NotNull
-  @Column (nullable = false)
+//  @NotNull
+//  @Column (nullable = false)
+//  @Enumerated (EnumType.STRING)
+//  @Field (store = Store.NO)
+//  // TODO Some way to disallow Role.EVERYONE
+//  private Role role;
+
+  // TODO fix the environment to not need EAGER here
+  @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
   @Enumerated (EnumType.STRING)
-  @Field (store = Store.NO)
-  // TODO Some way to disallow Role.EVERYONE
-  private Role role;
+  @Column (name = "role")
+  @CollectionTable (name = "StaffMemberRoles", joinColumns = @JoinColumn(name = "staffMember_id"))
+  private Set<Role> roles;
 
   @ElementCollection
   @MapKeyColumn (name = "name", length = 100)

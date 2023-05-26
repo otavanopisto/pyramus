@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.students;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -263,12 +264,6 @@ public class Student extends User implements ArchivableEntity {
 
   @Transient
   @Override
-  public Role getRole() {
-    return Role.STUDENT;
-  }
-  
-  @Transient
-  @Override
   public Organization getOrganization() {
     StudyProgramme studyProgramme2 = getStudyProgramme();
     
@@ -299,6 +294,17 @@ public class Student extends User implements ArchivableEntity {
     this.funding = funding;
   }
 
+  @Transient
+  @Override
+  public boolean isAccountEnabled() {
+    return true;
+  }
+  
+  @Override
+  public Set<Role> getRoles() {
+    return Set.of(Role.STUDENT);
+  }
+  
   private String nickname;
     
   @Lob

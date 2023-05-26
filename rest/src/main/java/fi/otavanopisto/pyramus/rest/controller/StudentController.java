@@ -572,7 +572,7 @@ public class StudentController {
   public ContactLogAccess resolveContactLogAccess(Student student) {
     User loggedUser = sessionController.getUser();
     
-    if (loggedUser.getRole().equals(Role.ADMINISTRATOR)) {
+    if (loggedUser.hasRole(Role.ADMINISTRATOR)) {
       return ContactLogAccess.ALL;
     } 
     StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
@@ -580,7 +580,7 @@ public class StudentController {
     if (staffMember == null) {
       return ContactLogAccess.NONE;
     } else {
-      if (staffMember.getRole().equals(Role.CLOSED)) {
+      if (!staffMember.isAccountEnabled()) {
         return ContactLogAccess.NONE;
       }
     }

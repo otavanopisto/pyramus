@@ -27,7 +27,7 @@ public class ApplicationAccessTag extends TagSupport {
     if (staffMember == null) {
       return SKIP_BODY;
     }
-    if (staffMember.getRole() == Role.ADMINISTRATOR) {
+    if (staffMember.hasRole(Role.ADMINISTRATOR)) {
       return EVAL_BODY_INCLUDE;
     }
     boolean aineopiskelu = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()));

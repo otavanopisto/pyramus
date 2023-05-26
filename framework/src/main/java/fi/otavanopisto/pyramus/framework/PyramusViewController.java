@@ -1,11 +1,14 @@
 package fi.otavanopisto.pyramus.framework;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.AccessDeniedException;
@@ -45,9 +48,8 @@ public abstract class PyramusViewController implements PageController {
 
         UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
 
-        UserRole userRole = UserUtils.roleToUserRole(user.getRole());
-        
-        if (!contains(roles, userRole)) {
+        EnumSet<UserRole> userRoles = UserUtils.rolesToUserRoles(user.getRoles());
+        if (!CollectionUtils.containsAny(Arrays.asList(roles), userRoles)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
         }
       }

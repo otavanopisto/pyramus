@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.json.users;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -11,7 +12,6 @@ import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -63,7 +63,7 @@ public class LoginJSONRequestController extends JSONRequestController {
     for (InternalAuthenticationProvider provider : AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders()) {
       try {
         User user = provider.getUser(username, password);
-        if (user != null && !user.getArchived() && !Role.CLOSED.equals(user.getRole())) {
+        if (user != null && !user.getArchived() && user.isAccountEnabled()) {
           
           // User has been authorized, so store him in the session
           
@@ -71,9 +71,9 @@ public class LoginJSONRequestController extends JSONRequestController {
           session.setAttribute("loggedUserName", user.getFullName());
           session.setAttribute("authenticationProvider", provider.getName());
           if (user instanceof StaffMember) {
-            session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
+            session.setAttribute("loggedUserRoles", Set.copyOf(((StaffMember) user).getRoles()));
           }
-          
+
           try {
             DAOFactory.getInstance().getLoginLogDAO().create(user, new Date());
           } catch (Exception ex) {

@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.plugin.muikku;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageController;
@@ -41,7 +40,7 @@ public class IndexViewController extends PyramusViewController implements PageCo
       Long loggedUserId = requestContext.getLoggedUserId();
       User user = userDAO.findById(loggedUserId);
       if (user != null) {
-        return ArrayUtils.contains(REDIRECT_ROLES, user.getRole());
+        return user.hasAnyRole(REDIRECT_ROLES);
       }
     }
     

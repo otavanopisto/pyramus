@@ -129,7 +129,6 @@
               </jsp:include>      
               <select name="role">
                 <option></option>
-                <option value="CLOSED"><fmt:message key="users.searchUsers.roleClosedTitle"/></option>
                 <option value="GUEST"><fmt:message key="users.searchUsers.roleGuestTitle"/></option>
                 <option value="USER"><fmt:message key="users.searchUsers.roleUserTitle"/></option>
                 <option value="MANAGER"><fmt:message key="users.searchUsers.roleManagerTitle"/></option>

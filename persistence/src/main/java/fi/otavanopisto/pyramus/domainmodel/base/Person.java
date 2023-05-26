@@ -42,6 +42,7 @@ import org.hibernate.search.annotations.Store;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.CollectionBridge;
@@ -831,10 +832,15 @@ public class Person implements ContextReference {
   public String getStaffMemberRoles() {
     Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
-      String s = staffMember.getRole().toString(); 
-      
-      if (s != null) {
-        results.add(s);
+      Set<Role> roles = staffMember.getRoles();
+      if (roles != null) {
+        roles.forEach(role -> {
+          String s = role.toString();
+          
+          if (s != null) {
+            results.add(s);
+          }
+        });
       }
     }
 

@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.views.system.setupwizard;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -16,7 +17,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 public class AdminPasswordSetupWizardViewController extends SetupWizardController {
@@ -47,8 +47,9 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     userIdentificationDAO.create(person, "internal", String.valueOf(internalAuth.getId()));
-    User user = userDAO.create(defaults.getOrganization(), firstName, lastName, Role.ADMINISTRATOR, person, false);
+    StaffMember user = userDAO.create(defaults.getOrganization(), firstName, lastName, EnumSet.of(Role.ADMINISTRATOR), person, false);
     personDAO.updateDefaultUser(person, user);
+    userDAO.updateEnabled(user, true);
   }
 
   @Override

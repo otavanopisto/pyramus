@@ -77,12 +77,12 @@ public class UserController {
 
   /* StaffMember */
 
-  public StaffMember createStaffMember(Organization organization, String firstName, String lastName, Role role, Person person) {
-    return staffMemberDAO.create(organization, firstName, lastName, role, person, false);
+  public StaffMember createStaffMember(Organization organization, String firstName, String lastName, Set<Role> roles, Person person) {
+    return staffMemberDAO.create(organization, firstName, lastName, roles, person, false);
   }
 
-  public StaffMember updateStaffMember(StaffMember staffMember, Organization organization, String firstName, String lastName, Role role) {
-    return staffMemberDAO.update(staffMember, organization, firstName, lastName, role);
+  public StaffMember updateStaffMember(StaffMember staffMember, Organization organization, String firstName, String lastName, Set<Role> roles) {
+    return staffMemberDAO.update(staffMember, organization, firstName, lastName, roles);
   }
   
   public void archiveStaffMember(StaffMember staffMember) {
@@ -106,7 +106,7 @@ public class UserController {
     }
     
     Email email = emailDAO.create(user.getContactInfo(), contactType, defaultAddress, address);
-    if (user.getRole() == Role.STUDENT) {
+    if (user.hasRole(Role.STUDENT)) {
       studentDAO.fireUpdate(user.getId());
     }
     else {

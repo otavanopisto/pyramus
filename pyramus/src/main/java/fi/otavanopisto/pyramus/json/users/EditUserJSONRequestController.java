@@ -73,8 +73,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
 
     Long loggedUserId = requestContext.getLoggedUserId();
-    StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
-    Role loggedUserRole = loggedUser.getRole();
+    final StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     
     Long userId = requestContext.getLong("userId");
 
@@ -92,10 +91,17 @@ public class EditUserJSONRequestController extends JSONRequestController {
       }
     }
 
+    Boolean accountActive = requestContext.getBoolean("accountActive");
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     String title = requestContext.getString("title");
-    Role role = Role.getRole(requestContext.getInteger("role").intValue());
+    
+    String[] roleSelections = StringUtils.isNotBlank(requestContext.getString("role")) ? requestContext.getString("role").split(",") : new String[0];
+    Set<Role> roles = new HashSet<>(roleSelections.length);
+    for (String roleSelection : roleSelections) {
+      roles.add(Role.valueOf(roleSelection));
+    }
+
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
@@ -158,9 +164,11 @@ public class EditUserJSONRequestController extends JSONRequestController {
       }
     }
     
-    staffMemberDAO.update(staffMember, organization, firstName, lastName, role);
+    staffMemberDAO.update(staffMember, organization, firstName, lastName, roles);
 
-    if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
+    if (loggedUser.hasRole(Role.ADMINISTRATOR)) {
+      staffMemberDAO.updateEnabled(staffMember, accountActive);
+
       Integer propertyCount = requestContext.getInteger("propertiesTable.rowCount");
       for (int i = 0; i < (propertyCount != null ? propertyCount : 0); i++) {
         String colPrefix = "propertiesTable." + i;
@@ -298,7 +306,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     
     // Variables
 
-    if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
+    if (loggedUser.hasRole(Role.ADMINISTRATOR)) {
       Integer variableCount = requestContext.getInteger("variablesTable.rowCount");
       for (int i = 0; i < (variableCount != null ? variableCount : 0); i++) {
         String colPrefix = "variablesTable." + i;
@@ -349,7 +357,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
       staffMember = staffMemberDAO.findById(staffMember.getId());
       HttpSession session = requestContext.getRequest().getSession(true);
       session.setAttribute("loggedUserName", staffMember.getFullName());
-      session.setAttribute("loggedUserRole", Role.valueOf(staffMember.getRole().name()));
+      session.setAttribute("loggedUserRoles", staffMember.getRoles());
     }
 
     requestContext.setRedirectURL(requestContext.getReferer(true));

@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.servlet.http.HttpSession;
 
@@ -138,7 +139,7 @@ public abstract class GenericDAO<T> {
   }
 
   @SuppressWarnings("rawtypes")
-  public void auditUpdate(Long personId, Long userId, T entity, SingularAttribute field, Object newValue, boolean logValueData) {
+  public void auditUpdate(Long personId, Long userId, T entity, Attribute field, Object newValue, boolean logValueData) {
     try {
       Object oldValue = ReflectionApiUtils.getObjectFieldValue(entity, field.getName(), true);
       if (!Objects.equals(oldValue, newValue)) {

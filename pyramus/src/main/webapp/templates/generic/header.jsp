@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/ix" prefix="ix"%>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!-- Header starts -->
 
@@ -148,7 +149,7 @@
       </li>
     </ul>
     
-    <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+    <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
       <ul id="GUI_MENU_settingsContainer">
         <li id="GUI_MENU_settingsLink">
           <fmt:message key="generic.navigation.settings"/>

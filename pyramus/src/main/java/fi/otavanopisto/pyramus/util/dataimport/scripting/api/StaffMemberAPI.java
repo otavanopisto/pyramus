@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 
+import java.util.EnumSet;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
@@ -31,7 +33,7 @@ public class StaffMemberAPI {
       throw new InvalidScriptException("Organization not found");
     }
     
-    StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, Role.valueOf(role), person, false);
+    StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, EnumSet.of(Role.valueOf(role)), person, false);
     if (staffMember == null) {
       throw new InvalidScriptException("Failed to create new staff member");
     } else {

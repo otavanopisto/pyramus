@@ -1,5 +1,9 @@
 package fi.otavanopisto.pyramus.security.impl;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,6 +12,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
@@ -61,19 +66,18 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     }
     
     boolean allowed = false;
+    Set<Role> environmentRoles = getUserEntityEnvironmentRoles(userEntity);
 
     if (PermissionScope.COURSE.equals(permission.getScope()) && (contextReference != null)) {
       Course course = resolveCourse(contextReference);
       if (course != null) {
-        allowed = hasCourseAccess(course, userEntity, permission);
+        allowed = hasCourseAccess(course, userEntity, environmentRoles, permission);
       }
     }
     
-    Role environmentRole = userEntity.getRole();
-    
     allowed = 
         allowed || 
-        environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(environmentRole, permission) ||
+        hasEnvironmentPermissionAccess(environmentRoles, permission) ||
         hasEveryonePermission(permission, contextReference);
 
     PyramusPermissionCollection collection = findCollection(permission.getName());
@@ -96,16 +100,26 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     return allowed;
   }
 
+  private Set<Role> getUserEntityEnvironmentRoles(fi.otavanopisto.pyramus.domainmodel.users.User userEntity) {
+    return userEntity.getRoles() != null ? Set.copyOf(userEntity.getRoles()) : Collections.emptySet();
+  }
+
+  private boolean hasEnvironmentPermissionAccess(Collection<Role> environmentRoles, Permission permission) {
+    return CollectionUtils.isNotEmpty(environmentUserRolePermissionDAO.listByUserRolesAndPermission(environmentRoles, permission));
+  }
+  
   private boolean hasCourseAccess(Course course, fi.otavanopisto.pyramus.domainmodel.users.User userEntity,
-      Permission permission) {
+      Collection<Role> userEnvironmentRoles, Permission permission) {
     PyramusPermissionCollection permissionCollection = findCollection(permission.getName());
     if (permissionCollection != null) {
       try {
         String[] defaultRoles = permissionCollection.getDefaultRoles(permission.getName());
 
-        // Is EnvironmentRole in the environment roles of the permission
-        if ((userEntity.getRole() != null) && ArrayUtils.contains(defaultRoles, userEntity.getRole().toString())) {
-          return true;
+        for (Role userEnvironmentRole : userEnvironmentRoles) {
+          // Is EnvironmentRole in the environment roles of the permission
+          if ((userEnvironmentRole != null) && ArrayUtils.contains(defaultRoles, userEnvironmentRole.toString())) {
+            return true;
+          }
         }
         
         CourseRoleArchetype[] defaultCourseRoles = permissionCollection.getDefaultCourseRoles(permission.getName());
@@ -139,7 +153,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   @Override
   public boolean hasEveryonePermission(Permission permission, ContextReference contextReference) {
     Role everyoneRole = getEveryoneRole();
-    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, permission);
+    return hasEnvironmentPermissionAccess(Arrays.asList(everyoneRole), permission);
   }
 
 }
