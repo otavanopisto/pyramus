@@ -392,7 +392,7 @@
           <ix:extensionHook name="students.createStudent.tabs"/>
 
           <div class="genericFormSubmitSectionOffTab">
-            <input type="submit" name="login" class="formvalid" value="<fmt:message key="students.createStudent.createButton"/>">
+            <input type="submit" class="formvalid" value="<fmt:message key="students.createStudent.createButton"/>">
           </div>
         </form>
       </div>
