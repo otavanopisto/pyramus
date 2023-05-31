@@ -131,7 +131,7 @@
             onclick : function(event) {
               var table = event.tableComponent;
               var enrollmentId = table.getCellValue(event.row, table.getNamedColumnIndex('enrollmentId'));
-              redirectTo(GLOBAL_contextPath + '/matriculation/edit.page?enrollment=' + enrollmentId);
+              window.open(GLOBAL_contextPath + '/matriculation/edit.page?enrollment=' + enrollmentId, "_blank");
             }
           }]
         });
