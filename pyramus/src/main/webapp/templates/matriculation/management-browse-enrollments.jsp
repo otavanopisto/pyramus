@@ -25,9 +25,11 @@
         JSONRequest.request("matriculation/searchenrollments.json", {
           parameters: {
             page: page,
+            name: searchForm.name.value,
             examId: searchForm.examId.value,
             state: searchForm.enrollmentState.value,
-            below20courses: below20courses
+            below20courses: below20courses,
+            sort: searchForm.sorting.value
           },
           onSuccess: function(jsonResponse) {
             var resultsTable = getIxTableById('searchResultsTable');
@@ -155,6 +157,13 @@
         <div id="filters" class="tabContent">
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleText" value="Nimi"/>
+            </jsp:include>
+            <input type="text" name="name" />
+          </div>
+  
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleText" value="Ilmoittautumiskierros"/>
             </jsp:include>
             <select id="examId" name="examId">
@@ -192,6 +201,17 @@
             <input type="checkbox" name="below20courses" id="below20courses" value="1"> Vain alle 20 kurssia suorittaneet
           </div>
           
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleText" value="Järjestys"/>
+            </jsp:include>
+            <select id="sorting" name="sorting">
+              <option value="NONE"></option>
+              <option value="DATE">Ilmoittautumispäivämäärä (uusin ensin)</option>
+              <option value="STATE">Ilmoittautumisen tila</option>
+            </select>
+          </div>
+  
           <div class="genericFormSubmitSection">
             <input type="submit" value="Käytä">
           </div>

@@ -13,6 +13,7 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO.MatriculationExamEnrollmentSorting;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
@@ -38,11 +39,14 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
     Long examId = requestContext.getLong("examId");
     MatriculationExam exam = examId != null ? examDAO.findById(examId) : null;
     
+    String nameQuery = requestContext.getString("name");
     Boolean below20courses = requestContext.getBoolean("below20courses");
     String stateStr = requestContext.getString("state");
+    String sortingStr = requestContext.getString("sort");
     MatriculationExamEnrollmentState state = StringUtils.isNotBlank(stateStr) ? MatriculationExamEnrollmentState.valueOf(stateStr) : null;
-    
-    List<MatriculationExamEnrollment> enrollments = dao.listBy(exam, state, BooleanUtils.isTrue(below20courses), page * resultsPerPage, resultsPerPage);
+    MatriculationExamEnrollmentSorting sorting = StringUtils.isNotBlank(sortingStr) ? MatriculationExamEnrollmentSorting.valueOf(sortingStr) : null;
+
+    List<MatriculationExamEnrollment> enrollments = dao.listBy(nameQuery, exam, state, BooleanUtils.isTrue(below20courses), page * resultsPerPage, resultsPerPage, sorting);
     
     List<Map<String, Object>> results = new ArrayList<>();
     for (MatriculationExamEnrollment enrollment : enrollments) {

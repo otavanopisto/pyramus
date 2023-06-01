@@ -12,6 +12,9 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
+
+import fi.otavanopisto.pyramus.dao.Predicates;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
@@ -149,11 +152,13 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
   }
   
   public List<MatriculationExamEnrollment> listBy(
+      String nameQuery,
       MatriculationExam exam, 
       MatriculationExamEnrollmentState state,
       boolean below20courses,
       int firstResult,
-      int maxResults) {
+      int maxResults,
+      MatriculationExamEnrollmentSorting sorting) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -161,6 +166,27 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
     
     List<Predicate> predicates = new ArrayList<>();
+    
+    if (StringUtils.isNotEmpty(nameQuery)) {
+      String[] split = nameQuery.split(" ");
+      Predicates namePredicates = Predicates.newInstance();
+      
+      for (String s : split) {
+        if (StringUtils.isNotBlank(s)) {
+          namePredicates.add(criteriaBuilder.like(root.get(MatriculationExamEnrollment_.name), "%" + s + "%"));
+        }
+      }
+      
+      if (!namePredicates.isEmpty()) {
+        if (namePredicates.size() == 1) {
+          predicates.add(namePredicates.array()[0]);
+        }
+        else if (namePredicates.size() > 1) {
+          predicates.add(criteriaBuilder.and(namePredicates.array()));
+        }
+      }
+    }
+    
     if (exam != null) {
       predicates.add(criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam));
     }
@@ -175,6 +201,19 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     
     if (!predicates.isEmpty()) {
       criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    }
+    
+    if (sorting != null) {
+      switch (sorting) {
+        case NONE:
+        break;
+        case DATE:
+          criteria.orderBy(criteriaBuilder.desc(root.get(MatriculationExamEnrollment_.enrollmentDate)));
+        break;
+        case STATE:
+          criteria.orderBy(criteriaBuilder.asc(root.get(MatriculationExamEnrollment_.state)));
+        break;
+      }
     }
     
     return entityManager
@@ -251,4 +290,9 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     return persist(enrollment);
   }
 
+  public enum MatriculationExamEnrollmentSorting {
+    NONE,
+    DATE,
+    STATE
+  }
 }
