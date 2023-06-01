@@ -235,6 +235,14 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private CourseModuleDAO courseModuleDAO;
   
+  private static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA = "lukioMatematiikka";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_A = "lukioKieliA";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B1 = "lukioKieliB1";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B2 = "lukioKieliB2";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B3 = "lukioKieliB3";
+
   @Path("/languages")
   @POST
   @RESTPermit(LanguagePermissions.CREATE_LANGUAGE)
@@ -3380,7 +3388,7 @@ public class StudentRESTService extends AbstractRESTService {
     Status studentStatus = checkStudent(student);
     
     if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
+      return Response.ok(false).build();
     
     StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
     
@@ -3410,5 +3418,60 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Status.OK;
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/subjectChoices")
+  @GET
+  @RESTPermit(StudentPermissions.LIST_STUDENT_SUBJECT_CHOICES)
+  public Response listStudentSubjectChoices(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    User user = userController.findUserById(studentId);
+    
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    List<String> variableList = new ArrayList<>();
+    
+    List<UserVariable> variables = userController.listUserVariablesByUser(user);
+    
+    for (UserVariable variable : variables) {
+      String variableKey = variable.getKey().getVariableKey();
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_A)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_USKONTO)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_B1)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_B2)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_B3)) {
+        variableList.add(variable.getValue());
+      }
+    }
+    
+    return Response.ok(variableList).build();
+  }
+
 
 }
