@@ -36,6 +36,14 @@ public class Predicates {
     return this;
   }
   
+  public boolean isEmpty() {
+    return predicates.isEmpty();
+  }
+  
+  public int size() {
+    return predicates.size();
+  }
+  
   public Predicate[] array() {
     return predicates.toArray(new Predicate[0]);
   }
