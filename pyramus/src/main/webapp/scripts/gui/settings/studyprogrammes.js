@@ -52,6 +52,7 @@ function onLoad(event) {
           dataType : 'select',
           editable : false,
           paramName : 'organization',
+          required : true,
           options : (function() {
             var result = [];
             for ( var i = 0, l = organizations.length; i < l; i++) {
@@ -70,6 +71,7 @@ function onLoad(event) {
           dataType : 'select',
           editable : false,
           paramName : 'category',
+          required : true,
           options : (function() {
             var result = [];
             for ( var i = 0, l = categories.length; i < l; i++) {
