@@ -45,7 +45,7 @@ public class SchoolsSetupWizardViewController extends SetupWizardController {
       }
       
       BillingDetails billingDetails = null;
-      schoolDAO.create(code, name, schoolField, billingDetails);
+      schoolDAO.create(code, name, schoolField, null, billingDetails);
     }    
   }
 

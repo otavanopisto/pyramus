@@ -107,6 +107,13 @@
           </jsp:include>
           <div id="phoneNumbersTable"></div>
         </div>
+        <div class="genericFormSection">  
+          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+            <jsp:param name="titleLocale" value="settings.viewSchool.studentGroupTitle"/>
+            <jsp:param name="helpLocale" value="settings.viewSchool.studentGroupHelp"/>
+          </jsp:include>
+          ${fn:escapeXml(school.studentGroup.name)}
+        </div>
         <div class="genericFormSection">
           <jsp:include page="/templates/generic/fragments/formtitle.jsp">
             <jsp:param name="titleLocale" value="settings.viewSchool.billingDetailsTitle"/>

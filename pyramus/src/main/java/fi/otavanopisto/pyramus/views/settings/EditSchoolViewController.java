@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableKeyDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
@@ -52,6 +53,7 @@ public class EditSchoolViewController extends PyramusViewController implements B
     SchoolVariableKeyDAO schoolVariableKeyDAO = DAOFactory.getInstance().getSchoolVariableKeyDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
+    StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
 
     Long schoolId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("school"));
     School school = schoolDAO.findById(schoolId);
@@ -130,6 +132,7 @@ public class EditSchoolViewController extends PyramusViewController implements B
     pageRequestContext.getRequest().setAttribute("school", school);
     pageRequestContext.getRequest().setAttribute("variableKeys", schoolUserEditableVariableKeys);
     pageRequestContext.getRequest().setAttribute("schoolFields", schoolFieldDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("studentGroups", studentGroupDAO.listUnarchived());
 
     pageRequestContext.setIncludeJSP("/templates/settings/editschool.jsp");
   }
