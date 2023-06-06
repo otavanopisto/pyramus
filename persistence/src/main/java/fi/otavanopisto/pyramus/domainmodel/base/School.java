@@ -19,6 +19,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
@@ -32,8 +33,8 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
-import org.hibernate.validator.constraints.NotEmpty;
 
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
@@ -164,6 +165,14 @@ public class School implements ArchivableEntity {
     this.billingDetails = billingDetails;
   }
 
+  public StudentGroup getStudentGroup() {
+    return studentGroup;
+  }
+
+  public void setStudentGroup(StudentGroup studentGroup) {
+    this.studentGroup = studentGroup;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="School")  
   @TableGenerator(name="School", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -181,6 +190,10 @@ public class School implements ArchivableEntity {
   @Column (nullable = false)
   @Field
   private String name;
+  
+  @ManyToOne
+  @JoinColumn (name = "studentGroup")
+  private StudentGroup studentGroup;
   
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="contactInfo")

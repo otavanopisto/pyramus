@@ -18,11 +18,13 @@ import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
@@ -48,6 +50,7 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     BillingDetailsDAO billingDetailsDAO = DAOFactory.getInstance().getBillingDetailsDAO();
+    StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
 
     String schoolCode = requestContext.getString("code");
     String schoolName = requestContext.getString("name");
@@ -57,6 +60,12 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
     SchoolField schoolField = null;
     if (schoolFieldId != null && schoolFieldId.intValue() >= 0)
       schoolField = schoolFieldDAO.findById(schoolFieldId);
+    
+    Long studentGroupId = requestContext.getLong("studentGroupId");
+    StudentGroup studentGroup = null;
+    if (studentGroupId != null && studentGroupId.intValue() >= 0) {
+      studentGroup = studentGroupDAO.findById(studentGroupId);
+    }
 
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
@@ -93,7 +102,7 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
         billingEmailAddress, billingElectronicBillingAddress, billingElectronicBillingOperator,
         billingCompanyIdentifier, billingReferenceNumber, billingNotes);
     
-    School school = schoolDAO.create(schoolCode, schoolName, schoolField, billingDetails);
+    School school = schoolDAO.create(schoolCode, schoolName, schoolField, studentGroup, billingDetails);
     
     // Tags
     

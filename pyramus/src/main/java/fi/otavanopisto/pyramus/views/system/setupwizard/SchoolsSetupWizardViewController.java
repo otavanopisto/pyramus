@@ -8,6 +8,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 
 public class SchoolsSetupWizardViewController extends SetupWizardController {
@@ -45,7 +46,8 @@ public class SchoolsSetupWizardViewController extends SetupWizardController {
       }
       
       BillingDetails billingDetails = null;
-      schoolDAO.create(code, name, schoolField, billingDetails);
+      StudentGroup studentGroup = null;
+      schoolDAO.create(code, name, schoolField, studentGroup, billingDetails);
     }    
   }
 
