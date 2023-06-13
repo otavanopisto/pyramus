@@ -298,6 +298,11 @@
       $('.aineopiskelu-promise').toggle();
     });
 
+    $('.aineopiskelupk-promise-link, .aineopiskelupk-promise__close, .aineopiskelupk-promise-overlay').on('click', function() {
+      $('.aineopiskelupk-promise-overlay').toggle();
+      $('.aineopiskelupk-promise').toggle();
+    });
+
     $('.nettipk-promise-link, .nettipk-promise__close, .nettipk-promise-overlay').on('click', function() {
       $('.nettipk-promise-overlay').toggle();
       $('.nettipk-promise').toggle();

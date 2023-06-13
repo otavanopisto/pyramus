@@ -549,7 +549,7 @@ public class ApplicationRESTService extends AbstractRESTService {
           // Oppivelvollinen
           if (StringUtils.equals(ApplicationUtils.getFormValue(formData, "field-compulsory-education"), "kylla")) {
             // Sopimusoppilaitos
-            School school = ApplicationUtils.resolveSchool(ApplicationUtils.getFormValue(formData, "field-internetix-contract-school")); // Sopimusoppilaitors
+            School school = ApplicationUtils.resolveSchool(formData); // Sopimusoppilaitors
             autoRegistration = school != null;
           }
         }

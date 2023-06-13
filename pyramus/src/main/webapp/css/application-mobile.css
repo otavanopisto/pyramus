@@ -435,6 +435,7 @@ b {
 .nettilukio-promise-overlay,
 .nettilukio-contactpromise-overlay,
 .aineopiskelu-promise-overlay,
+.aineopiskelupk-promise-overlay,
 .nettipk-promise-overlay {
   position: fixed;
   top: 0;
@@ -450,6 +451,7 @@ b {
 .nettilukio-promise,
 .nettilukio-contactpromise,
 .aineopiskelu-promise,
+.aineopiskelupk-promise,
 .nettipk-promise {
   background: #fff;
   border: 3px solid #8ed2de;
@@ -469,6 +471,7 @@ b {
 .nettilukio-promise__close,
 .nettilukio-contactpromise__close,
 .aineopiskelu-promise__close,
+.aineopiskelupk-promise__close,
 .nettipk-promise__close {
   background-color: #009fe3;
   background-image: url('../gfx/icons/48x48/actions/close.png');

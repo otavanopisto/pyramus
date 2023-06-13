@@ -52,6 +52,15 @@ label {
   display: block;
 }
 
+h2.required::after {
+  content: '*';
+  font-size: 14px;
+  color: #d31111;
+  padding: 0 4px;
+  position: relative;
+  bottom: 6px;
+}
+
 label.required::after {
   content: '*';
   font-size: 14px;

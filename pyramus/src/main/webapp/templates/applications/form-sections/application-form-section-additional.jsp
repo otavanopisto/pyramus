@@ -31,7 +31,7 @@
       <p>Koulutuksen tavoitteena on peruskoulun päättötodistus.</p>
     </div>
 
-    <div class="form-section__field-container field-previous-studies-aineopiskelu dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
+    <div class="form-section__field-container field-previous-studies-aineopiskelu dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,aineopiskelupk" style="display:none;">
       <label for="field-previous-studies-aineopiskelu" class="required">Yleissivistävä koulutustausta</label>
       <select id="field-previous-studies-aineopiskelu" name="field-previous-studies-aineopiskelu" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
@@ -177,7 +177,7 @@
       </select>
     </div>
 
-    <div class="form-section__field-container field-foreign-student dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">
+    <div class="form-section__field-container field-foreign-student dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
       <label for="field-foreign-student" class="required">Oletko ulkomainen vaihto-opiskelija?</label>
       <select id="field-foreign-student" name="field-foreign-student" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
@@ -208,9 +208,10 @@
       <input id="field-job-other" type="text" name="field-job-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
-    <div class="form-section__field-container field-info dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aineopiskelu,aikuislukio,mk" style="display:none;">
+    <div class="form-section__field-container field-info dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aineopiskelu,aineopiskelupk,aikuislukio,mk" style="display:none;">
       <label for="field-info">Haluan kertoa itsestäni ja opiskelutavoitteistani seuraavaa</label>
       <textarea id="field-info" name="field-info" rows="5" cols="40"></textarea>
+      <span class="field-help">Huom! Älä kirjoita tähän terveystietoja.</span>
     </div>
 
     <div class="form-section__field-container field-info-nettilukio dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">

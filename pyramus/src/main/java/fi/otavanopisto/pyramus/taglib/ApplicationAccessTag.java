@@ -31,15 +31,19 @@ public class ApplicationAccessTag extends TagSupport {
       return EVAL_BODY_INCLUDE;
     }
     boolean aineopiskelu = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()));
+    boolean aineopiskelupk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU_PK.getKey()));
     boolean nettilukio = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()));
     boolean nettipk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTIPERUSKOULU.getKey()));
     boolean aikuislukio = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISLUKIO.getKey()));
     boolean mk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISTENPERUSOPETUS.getKey()));
     if (StringUtils.isEmpty(line)) {
-      return aineopiskelu || nettilukio || nettipk || aikuislukio || mk ? EVAL_BODY_INCLUDE : SKIP_BODY;
+      return aineopiskelu || aineopiskelupk || nettilukio || nettipk || aikuislukio || mk ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     else if (StringUtils.equals(line, "aineopiskelu")) {
       return aineopiskelu ? EVAL_BODY_INCLUDE : SKIP_BODY;
+    }
+    else if (StringUtils.equals(line, "aineopiskelupk")) {
+      return aineopiskelupk ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     else if (StringUtils.equals(line, "nettilukio")) {
       return nettilukio ? EVAL_BODY_INCLUDE : SKIP_BODY;

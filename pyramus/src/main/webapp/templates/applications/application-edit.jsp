@@ -62,9 +62,22 @@
 
       <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
         <h1 class="application-description__line-header">
-          Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
+          Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">Nettilukion aineopiskelijaksi</span>
         </h1>
-        <div class="application-description__line-content">Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.</div>
+        <div class="application-description__line-content">
+          <p>Aineopiskelijana voit opiskella yksittäisiä lukion opintojaksoja. Opiskelu on maksullista.</p>
+          <p>Jos olet syntynyt 2005 tai myöhemmin, tarkistamme tietosi Opetushallituksen Valpas-palvelusta ennen opiskelijaksi hyväksymistä. Oppivelvolliset ja maksuttomaan opiskeluun oikeutetut voivat opiskella Nettilukiossa aineopiskelijana vain, jos asiasta on sovittu oman oppilaitoksen kanssa ja oppilaitos maksaa opiskelun.</p>
+        </div>
+      </header>
+
+      <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelupk" style="display:none;">
+        <h1 class="application-description__line-header">
+          Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">Nettiperuskoulun aineopiskelijaksi</span>
+        </h1>
+        <div class="application-description__line-content">
+          <p>Aineopiskelijana voit opiskella yksittäisiä perusopetuksen opintojaksoja. Opiskelu on maksullista.</p>
+          <p>Jos olet alle 18-vuotias, tarkistamme tietosi Opetushallituksen Valpas-palvelusta ennen opiskelijaksi hyväksymistä. Oppivelvolliset ja maksuttomaan opiskeluun oikeutetut voivat opiskella Nettiperuskoulussa aineopiskelijana vain, jos asiasta on sovittu oman oppilaitoksen kanssa ja oppilaitos maksaa opiskelun.</p>
+        </div>
       </header>
 
       <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">

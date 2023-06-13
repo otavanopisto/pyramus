@@ -112,6 +112,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-education"))) {
         fields.put("Oppivelvollinen", simpleBooleanUiValue(getFormValue(formData, "field-compulsory-education")));
       }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-education"))) {
+        fields.put("Perusopetuksen oppimäärä", simpleBooleanUiValue(getFormValue(formData, "field-compulsory-done")));
+      }
       fields.put("Sukupuoli", ApplicationUtils.genderUiValue(getFormValue(formData, "field-sex")));
       fields.put("Osoite", String.format("%s\n%s %s\n%s",
           getFormValue(formData, "field-street-address"),
@@ -170,10 +173,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
         fields = new LinkedHashMap<>();
         sections.put("Koulutusaste", fields);
-        fields.put("Haluaa opiskella", StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")
-            ? "Lukion kursseja tai opintojaksoja"
-            : "Perusopetuksen kursseja");
-        if (StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")) {
+        if (!StringUtils.isBlank(getFormValue(formData, "field-internetix-curriculum"))) {
           fields.put("Opetussuunnitelma", StringUtils.equals(getFormValue(formData, "field-internetix-curriculum"), "ops2016")
               ? "OPS 2016"
               : "OPS 2021");
@@ -183,7 +183,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         sections.put("Aineopiskelijan oppilaitos", fields);
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
         if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
-          School school = ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school"));
+          School school = ApplicationUtils.resolveSchool(formData);
           isContractSchool = school != null;
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));

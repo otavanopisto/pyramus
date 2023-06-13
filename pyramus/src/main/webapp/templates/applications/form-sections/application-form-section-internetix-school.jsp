@@ -7,18 +7,7 @@
 
     <div class="application-line"></div>
 
-    <h2 class="form-section__header">Koulutusaste</h2>
-    
-    <div class="form-section__field-container field-internetix-line">
-      <label for="field-internetix-line" class="required">Haluan opiskella</label>
-      <select id="field-internetix-line" name="field-internetix-line" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
-        <option value="">-- Valitse --</option>
-        <option value="lukio">Lukion kursseja tai opintojaksoja</option>
-        <option value="pk">Perusopetuksen kursseja</option>
-      </select>
-    </div>
-
-    <div class="form-section__field-container field-internetix-curriculum dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">
+    <div class="form-section__field-container field-internetix-curriculum dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
       <label for="field-internetix-curriculum" class="required">Opetussuunnitelma</label>
       <select id="field-internetix-curriculum" name="field-internetix-curriculum" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
@@ -77,7 +66,8 @@
         <option value="ammatillinen-perus">Ammatillinen perustutkinto</option>
         <option value="kaksoistutkinto">Kaksoistutkinto</option>
         <option value="oppisopimus">Oppisopimuskoulutus</option>
-        <option value="korkeakoulu" class="dependent" data-dependent-field="field-internetix-line" data-dependent-values="lukio" style="display:none;">Korkeakoulututkinto</option>
+        <option value="korkeakoulu">Korkeakoulututkinto</option>
+        <option value="muu">Muu tutkinto</option>
       </select>
     </div>
     
