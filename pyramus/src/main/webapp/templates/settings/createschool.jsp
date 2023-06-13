@@ -124,6 +124,19 @@
           <div id="phoneTable"></div>
         </div>
 
+        <div class="genericFormSection">  
+          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+            <jsp:param name="titleLocale" value="settings.createSchool.studentGroupTitle"/>
+            <jsp:param name="helpLocale" value="settings.createSchool.studentGroupHelp"/>
+          </jsp:include>
+          <select name="studentGroupId">
+            <option value="-1"></option>
+            <c:forEach var="studentGroup" items="${studentGroups}">
+              <option value="${studentGroup.id}">${fn:escapeXml(studentGroup.name)}</option>
+            </c:forEach>
+          </select>
+        </div>
+
         <div class="genericFormSection">
           <jsp:include page="/templates/generic/fragments/formtitle.jsp">
             <jsp:param name="titleLocale" value="settings.createSchool.billingDetailsTitle"/>

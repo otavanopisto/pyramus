@@ -63,148 +63,153 @@
         </ul>
       </li>
     </ul>
-    
-    <ul id="GUI_MENU_projectsContainer">
-      <li id="GUI_MENU_projectsLink">
-        <fmt:message key="generic.navigation.projects"/>
-        <ul id="GUI_MENU_projectsItemContainer" class="GUI_MENU_itemContainer">
-          <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/createproject.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createProject"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/searchprojects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchProjects"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/createstudentproject.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createStudentProject"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/searchstudentprojects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchStudentProjects"/></a></li>
-          <ix:extensionHook name="generic.navigation.projectsMenu"/>
-        </ul>
-      </li>
-    </ul>
 
-    <ul id="GUI_MENU_resourcesContainer">
-      <li id="GUI_MENU_resourcesLink">
-        <fmt:message key="generic.navigation.resources"/>
-        <ul id="GUI_MENU_resourcesItemContainer" class="GUI_MENU_itemContainer">
-          <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/resourcecategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageResourceCategories"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/creatematerialresource.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createMaterialResource"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/createworkresource.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createWorkResource"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/searchresources.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchResources"/></a></li>
-          <ix:extensionHook name="generic.navigation.resourcesMenu"/>
-        </ul>
-      </li>
-    </ul>
-
-    <ul id="GUI_MENU_reportsContainer">
-      <li id="GUI_MENU_reportsLink">
-        <fmt:message key="generic.navigation.reports"/>
-        <ul id="GUI_MENU_reportsItemContainer" class="GUI_MENU_itemContainer">
-          <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/reports/listreports.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listReports"/></a></li>
-          <ix:extensionHook name="generic.navigation.reportsMenu"/>
-        </ul>
-      </li>
-    </ul>
-
-    <ix:applicationAccess>
-      <ul id="GUI_MENU_applicationsContainer">
-        <li id="GUI_MENU_applicationsLink">
-          <fmt:message key="generic.navigation.applications"/>
-          <ul id="GUI_MENU_applicationsItemContainer" class="GUI_MENU_itemContainer">
+    <c:if test="${loggedUserId != null}">
+      <ul id="GUI_MENU_projectsContainer">
+        <li id="GUI_MENU_projectsLink">
+          <fmt:message key="generic.navigation.projects"/>
+          <ul id="GUI_MENU_projectsItemContainer" class="GUI_MENU_itemContainer">
             <li class="GUI_MENU_top"></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/browse.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.browse"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createnotification.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createNotification"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listnotifications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageNotifications"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createmailtemplate.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createMailTemplate"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listmailtemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageMailTemplates"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createemailsignature.page" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createEmailSignature"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/changehandler.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.changeHandler"/></a></li>
-            <ix:extensionHook name="generic.navigation.applicationsMenu"/>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/createproject.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createProject"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/searchprojects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchProjects"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/createstudentproject.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createStudentProject"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/projects/searchstudentprojects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchStudentProjects"/></a></li>
+            <ix:extensionHook name="generic.navigation.projectsMenu"/>
           </ul>
         </li>
       </ul>
-    </ix:applicationAccess>
 
-    <ul id="GUI_MENU_matriculationContainer">
-      <li id="GUI_MENU_matriculationLink">
-        <fmt:message key="generic.navigation.matriculation"/>
-        <ul id="GUI_MENU_matriculationItemContainer" class="GUI_MENU_itemContainer">
-          <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/browse.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.browse"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/exams.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.browseExams"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/ytljson.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.ytljson"/></a></li>
-          <ix:extensionHook name="generic.navigation.matriculationMenu"/>
-        </ul>
-      </li>
-    </ul>
+      <ul id="GUI_MENU_resourcesContainer">
+        <li id="GUI_MENU_resourcesLink">
+          <fmt:message key="generic.navigation.resources"/>
+          <ul id="GUI_MENU_resourcesItemContainer" class="GUI_MENU_itemContainer">
+            <li class="GUI_MENU_top"></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/resourcecategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageResourceCategories"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/creatematerialresource.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createMaterialResource"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/createworkresource.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createWorkResource"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/resources/searchresources.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchResources"/></a></li>
+            <ix:extensionHook name="generic.navigation.resourcesMenu"/>
+          </ul>
+        </li>
+      </ul>
 
-    <ul id="GUI_MENU_worklistContainer">
-      <li id="GUI_MENU_worklistLink">
-        <fmt:message key="generic.navigation.worklist"/>
-        <ul id="GUI_MENU_worklistItemContainer" class="GUI_MENU_itemContainer">
-          <li class="GUI_MENU_top"></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/listworklistitems.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listWorklistItems"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/manageworklisttemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageWorklistTemplates"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/billingsettings.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.editBillingSettings"/></a></li>
-          <ix:extensionHook name="generic.navigation.worklistMenu"/>
+      <ul id="GUI_MENU_reportsContainer">
+        <li id="GUI_MENU_reportsLink">
+          <fmt:message key="generic.navigation.reports"/>
+          <ul id="GUI_MENU_reportsItemContainer" class="GUI_MENU_itemContainer">
+            <li class="GUI_MENU_top"></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/reports/listreports.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listReports"/></a></li>
+            <ix:extensionHook name="generic.navigation.reportsMenu"/>
+          </ul>
+        </li>
+      </ul>
+
+      <ix:applicationAccess>
+        <ul id="GUI_MENU_applicationsContainer">
+          <li id="GUI_MENU_applicationsLink">
+            <fmt:message key="generic.navigation.applications"/>
+            <ul id="GUI_MENU_applicationsItemContainer" class="GUI_MENU_itemContainer">
+              <li class="GUI_MENU_top"></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/browse.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.browse"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createnotification.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createNotification"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listnotifications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageNotifications"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createmailtemplate.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createMailTemplate"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listmailtemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageMailTemplates"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createemailsignature.page" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createEmailSignature"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/changehandler.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.changeHandler"/></a></li>
+              <ix:extensionHook name="generic.navigation.applicationsMenu"/>
+            </ul>
+          </li>
         </ul>
-      </li>
-    </ul>
+      </ix:applicationAccess>
+
+      <ul id="GUI_MENU_matriculationContainer">
+        <li id="GUI_MENU_matriculationLink">
+          <fmt:message key="generic.navigation.matriculation"/>
+          <ul id="GUI_MENU_matriculationItemContainer" class="GUI_MENU_itemContainer">
+            <li class="GUI_MENU_top"></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/browse.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.browse"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/exams.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.browseExams"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/ytljson.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.ytljson"/></a></li>
+            <ix:extensionHook name="generic.navigation.matriculationMenu"/>
+          </ul>
+        </li>
+      </ul>
+
+      <ul id="GUI_MENU_worklistContainer">
+        <li id="GUI_MENU_worklistLink">
+          <fmt:message key="generic.navigation.worklist"/>
+          <ul id="GUI_MENU_worklistItemContainer" class="GUI_MENU_itemContainer">
+            <li class="GUI_MENU_top"></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/listworklistitems.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listWorklistItems"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/manageworklisttemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageWorklistTemplates"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/worklist/billingsettings.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.editBillingSettings"/></a></li>
+            <ix:extensionHook name="generic.navigation.worklistMenu"/>
+          </ul>
+        </li>
+      </ul>
     
-    <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
       <ul id="GUI_MENU_settingsContainer">
         <li id="GUI_MENU_settingsLink">
           <fmt:message key="generic.navigation.settings"/>
           <ul id="GUI_MENU_settingsItemContainer" class="GUI_MENU_itemContainer">
             <li class="GUI_MENU_top"></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createuser.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createUser"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/searchusers.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchUsers"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/createschool.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createSchool"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/searchschools.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchSchools"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/creategradingscale.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createGradingScale"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/listgradingscales.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listGradingScales"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationTypes"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationsubtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationSubtypes"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/subjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSubjects"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/academicterms.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageAcademicTerms"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammes"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammecategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammeCategories"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/reportcategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageReportCategories"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/municipalities.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageMunicipalities"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/timeunits.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTimeUnits"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursestates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseStates"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursetypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseTypes"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managetransfercredittemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTransferCreditTemplates"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/courseparticipationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseParticipationTypes"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/manageschoolfields.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSchoolFields"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managechangelog.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageChangeLog"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursedescriptioncategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseDescriptionCategories"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managefiletypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageFileTypes"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyendreasons.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.studyEndReasons"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/curriculums.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCurriculums"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/subjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSubjects"/></a></li>
+            
+            <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createuser.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createUser"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/searchusers.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchUsers"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/creategradingscale.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createGradingScale"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/listgradingscales.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listGradingScales"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationTypes"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationsubtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationSubtypes"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/academicterms.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageAcademicTerms"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammes"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammecategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammeCategories"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/reportcategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageReportCategories"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/timeunits.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTimeUnits"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursestates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseStates"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursetypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseTypes"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managetransfercredittemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageTransferCreditTemplates"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/courseparticipationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseParticipationTypes"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/manageschoolfields.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSchoolFields"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managechangelog.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageChangeLog"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/coursedescriptioncategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCourseDescriptionCategories"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/managefiletypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageFileTypes"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyendreasons.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.studyEndReasons"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/curriculums.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageCurriculums"/></a></li>
+            </c:if>
             <ix:extensionHook name="generic.navigation.settingsMenu"/>
           </ul>
         </li>
       </ul>
     
-      <ul id="GUI_MENU_systemContainer">
-        <li id="GUI_MENU_systemLink">
-          <fmt:message key="generic.navigation.system"/>
-          <ul id="GUI_MENU_systemItemContainer" class="GUI_MENU_itemContainer">
-            <li class="GUI_MENU_top"></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/systemsettings.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSystemSettings"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/plugins.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.plugins"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/initialdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importInitialData"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importcsv.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importCSV"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importData"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importscripteddata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importScriptedData"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importreport.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importReport"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/reindexhibernateobjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.reindexHibernateEntities"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/elementcheatsheet.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.layoutElementsCheatSheet"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/clientapplications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.clientApplications"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/managepermissions.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.managePermissions"/></a></li>
-            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importexportpermissions.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importexportPermissions"/></a></li>
-            <ix:extensionHook name="generic.navigation.systemMenu"/>
-          </ul>
-        </li>
-      </ul>
+      <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+        <ul id="GUI_MENU_systemContainer">
+          <li id="GUI_MENU_systemLink">
+            <fmt:message key="generic.navigation.system"/>
+            <ul id="GUI_MENU_systemItemContainer" class="GUI_MENU_itemContainer">
+              <li class="GUI_MENU_top"></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/systemsettings.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSystemSettings"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/plugins.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.plugins"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/initialdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importInitialData"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importcsv.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importCSV"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importData"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importscripteddata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importScriptedData"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importreport.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importReport"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/reindexhibernateobjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.reindexHibernateEntities"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/elementcheatsheet.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.layoutElementsCheatSheet"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/clientapplications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.clientApplications"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/managepermissions.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.managePermissions"/></a></li>
+              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importexportpermissions.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importexportPermissions"/></a></li>
+              <ix:extensionHook name="generic.navigation.systemMenu"/>
+            </ul>
+          </li>
+        </ul>
+      </c:if>
     </c:if>
     
     <ul id="GUI_MENU_helpContainer">

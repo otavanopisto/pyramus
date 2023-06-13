@@ -32,9 +32,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
+import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.SchoolPermissions;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
@@ -47,6 +49,9 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Inject
   private SchoolController schoolController;
+  
+  @Inject
+  private StudentGroupController studentGroupController;
   
   @Inject
   private CommonController commonController;
@@ -80,9 +85,17 @@ public class SchoolRESTService extends AbstractRESTService {
     if (schoolField == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }      
+
+    StudentGroup studentGroup = null;
+    if (entity.getStudentGroupId() != null) {
+      studentGroup = studentGroupController.findStudentGroupById(entity.getStudentGroupId());
+      if (studentGroup == null) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+    }
     
     BillingDetails billingDetails = null;
-    School school = schoolController.createSchool(code, name, schoolField, billingDetails);
+    School school = schoolController.createSchool(code, name, schoolField, studentGroup, billingDetails);
     if (entity.getTags() != null) {
       schoolController.updateSchoolTags(school, entity.getTags());
     }
@@ -170,9 +183,17 @@ public class SchoolRESTService extends AbstractRESTService {
     SchoolField schoolField = schoolController.findSchoolFieldById(entity.getFieldId());
     if (schoolField == null) {
       return Response.status(Status.BAD_REQUEST).build();
-    }      
+    }
     
-    schoolController.updateSchool(school, code, name, schoolField);
+    StudentGroup studentGroup = null;
+    if (entity.getStudentGroupId() != null) {
+      studentGroup = studentGroupController.findStudentGroupById(entity.getStudentGroupId());
+      if (studentGroup == null) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+    }
+    
+    schoolController.updateSchool(school, code, name, schoolField, studentGroup);
     schoolController.updateSchoolTags(school, entity.getTags());
     schoolController.updateSchoolVariables(school, entity.getVariables());
     schoolController.updateSchoolAdditionalContactInfo(school, entity.getAdditionalContactInfo());

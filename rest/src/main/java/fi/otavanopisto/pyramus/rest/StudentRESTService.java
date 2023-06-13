@@ -42,7 +42,10 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
+import fi.otavanopisto.pyramus.domainmodel.base.Address;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
@@ -55,6 +58,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -128,11 +132,13 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityInfo;
+import fi.otavanopisto.pyramus.rest.model.SpecEdTeacher;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
+import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
@@ -234,6 +240,9 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Inject
   private CourseModuleDAO courseModuleDAO;
+
+  @Inject
+  private StaffMemberDAO staffMemberDAO;
   
   private static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
   private static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
@@ -2905,6 +2914,53 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(guidanceCounselors)).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/specEdTeachers")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentSpecEdTeachers(
+      @PathParam("STUDENTID") Long studentId,
+      @QueryParam("includeGuidanceCouncelors") @DefaultValue("false") Boolean includeGuidanceCouncelors,
+      @QueryParam("onlyMessageRecipients") @DefaultValue("false") Boolean onlyMessageRecipients) {
+    User loggedUser = sessionController.getUser();
+    if (loggedUser == null) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Student student = studentController.findStudentById(studentId);
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_SPECEDTEACHERS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    List<SpecEdTeacher> specEdTeachers = new ArrayList<>();
+    
+    // Special education teachers
+    
+    Set<Long> ids = staffMemberDAO.listByProperty(StaffMemberProperties.SPEC_ED_TEACHER.getKey(), "1").stream().map(StaffMember::getId).collect(Collectors.toSet());
+    for (Long id : ids) {
+      specEdTeachers.add(new SpecEdTeacher(id, false));
+    }
+    
+    // Optional guidance councelors
+
+    if (includeGuidanceCouncelors) {
+      List<StudentGroupUser> guidanceCounselors = studentGroupController.listStudentGuidanceCounselors(student, onlyMessageRecipients);
+      for (StudentGroupUser guidanceCounselor : guidanceCounselors) {
+        if (!ids.contains(guidanceCounselor.getStaffMember().getId())) {
+          specEdTeachers.add(new SpecEdTeacher(guidanceCounselor.getStaffMember().getId(), true));
+        }
+      }
+    }
+    
+    return Response.ok(specEdTeachers).build();
+  }
+
   @Path("/variables")
   @POST
   @RESTPermit(UserPermissions.CREATE_USERVARIABLEKEY)
@@ -3295,6 +3351,73 @@ public class StudentRESTService extends AbstractRESTService {
     // return student
     
     return Response.ok(objectFactory.createModel(student)).build();    
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/contactInfo")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentContactInfo(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    // Access check. Allowed for administrators, special education teachers, student's guidance counselors, student's teachers, or students themselves
+    
+    boolean accessible = false;
+    User loggedUser = sessionController.getUser();
+    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
+    if (staffMember == null) {
+      if (loggedUser.getId().equals(student.getId())) {
+        accessible = true;
+      }
+      else {
+        return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
+      }
+    }
+    if (!accessible) {
+      accessible = staffMember.getRole().equals(Role.ADMINISTRATOR);
+    }
+    if (!accessible) {
+      accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
+    }
+    if (!accessible) {
+      accessible = studentController.amIGuidanceCounselor(studentId, staffMember);
+    }
+    if (!accessible) {
+      Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+      Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
+      accessible = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
+    }
+    if (!accessible) {
+      return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
+    }
+    
+    // Contact info
+
+    Person person = student.getPerson();
+    ContactInfo contactInfo = student.getContactInfo();
+    PhoneNumber phoneNumber = contactInfo.getPhoneNumbers().stream().filter(p -> Boolean.TRUE.equals(p.getDefaultNumber())).findFirst().orElse(null);
+    Address address = contactInfo.getAddresses().stream().filter(a -> Boolean.TRUE.equals(a.getDefaultAddress())).findFirst().orElse(null);
+    Email email = contactInfo.getEmails().stream().filter(e -> Boolean.TRUE.equals(e.getDefaultAddress())).findFirst().orElse(null);
+    
+    UserContactInfo userContactInfo = new UserContactInfo();
+    userContactInfo.setFirstName(student.getFirstName());
+    userContactInfo.setLastName(student.getLastName());
+    userContactInfo.setDateOfBirth(person.getBirthday() == null ? null : new java.sql.Date(person.getBirthday().getTime()).toLocalDate());
+    userContactInfo.setPhoneNumber(phoneNumber == null ? null : phoneNumber.getNumber());
+    if (address != null) {
+      userContactInfo.setAddressName(address.getName());
+      userContactInfo.setStreetAddress(address.getStreetAddress());
+      userContactInfo.setZipCode(address.getPostalCode());
+      userContactInfo.setCity(address.getCity());
+      userContactInfo.setCountry(address.getCountry());
+    }
+    userContactInfo.setEmail(email == null ? null : email.getAddress());
+
+    return Response.ok(userContactInfo).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/guidanceRelation")

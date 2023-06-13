@@ -139,6 +139,29 @@
             </jsp:include>
             <div id="phoneTable"></div>
           </div>
+  
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="settings.editSchool.studentGroupTitle"/>
+              <jsp:param name="helpLocale" value="settings.editSchool.studentGroupHelp"/>
+            </jsp:include>
+            <select name="studentGroupId">
+              <option value="-1"></option>
+              <c:forEach var="studentGroup" items="${studentGroups}">
+                <c:choose>
+                  <c:when test="${studentGroup.id eq school.studentGroup.id}">
+                    <option value="${studentGroup.id}" selected="selected">${fn:escapeXml(studentGroup.name)}</option>
+                  </c:when>
+                  <c:otherwise>
+                    <option value="${studentGroup.id}">${fn:escapeXml(studentGroup.name)}</option>
+                  </c:otherwise>
+                </c:choose>
+              </c:forEach>
+              <c:if test="${school.studentGroup.archived}">
+                <option value="${school.studentGroup.id}" selected="selected">${fn:escapeXml(school.studentGroup.name)} ***</option>
+              </c:if>
+            </select>
+          </div>
 
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
