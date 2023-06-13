@@ -223,11 +223,11 @@ public class ApplicationUtils {
   }
   
   public static boolean isUnderage(Application application) {
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
-    return isUnderage(getFormValue(formData, "field-birthday"));
+    return isUnderage(JSONObject.fromObject(application.getFormData()));
   }
   
-  public static boolean isInternetixUnderage(String dateString) {
+  public static boolean isInternetixUnderage(JSONObject formData) {
+    String dateString = getFormValue(formData, "field-birthday");
     // #1487: If you're born on or after 1.1.2005 and are younger than 20 
     if (StringUtils.isBlank(dateString)) {
       return false;
@@ -249,7 +249,8 @@ public class ApplicationUtils {
     }
   }
 
-  public static boolean isUnderage(String dateString) {
+  public static boolean isUnderage(JSONObject formData) {
+    String dateString = getFormValue(formData, "field-birthday");
     if (StringUtils.isBlank(dateString)) {
       return false;
     }
@@ -1059,7 +1060,7 @@ public class ApplicationUtils {
     
     // Guardian info for underage applicants
     
-    if (isUnderage(getFormValue(formData, "field-birthday"))) {
+    if (isUnderage(formData)) {
       
       // Attach email
       

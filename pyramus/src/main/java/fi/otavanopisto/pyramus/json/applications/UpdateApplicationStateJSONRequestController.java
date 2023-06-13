@@ -85,7 +85,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
           String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
-          boolean underageApplicant = ApplicationUtils.isUnderage(getFormValue(formData, "field-birthday"));
+          boolean underageApplicant = ApplicationUtils.isUnderage(formData);
 
           // Make sure we have application signatures and school approval
           
