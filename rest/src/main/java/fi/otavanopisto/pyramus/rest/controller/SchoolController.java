@@ -33,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
@@ -72,8 +73,8 @@ public class SchoolController {
   
   /* School */
 
-  public School createSchool(String code, String name, SchoolField schoolField, BillingDetails billingDetails) {
-    School school = schoolDAO.create(code, name, schoolField, billingDetails);
+  public School createSchool(String code, String name, SchoolField schoolField, StudentGroup studentGroup, BillingDetails billingDetails) {
+    School school = schoolDAO.create(code, name, schoolField, studentGroup, billingDetails);
     return school;
   }
   
@@ -97,8 +98,8 @@ public class SchoolController {
     return schools;
   }
 
-  public School updateSchool(School school, String code, String name, SchoolField schoolField) {
-    return schoolDAO.update(school, code, name, schoolField);
+  public School updateSchool(School school, String code, String name, SchoolField schoolField, StudentGroup studentGroup) {
+    return schoolDAO.update(school, code, name, schoolField, studentGroup);
   }
 
   public School archiveSchool(School school, User user) {

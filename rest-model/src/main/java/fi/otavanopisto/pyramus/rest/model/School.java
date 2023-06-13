@@ -85,6 +85,14 @@ public class School {
     this.variables = variables;
   }
 
+  public Long getStudentGroupId() {
+    return studentGroupId;
+  }
+
+  public void setStudentGroupId(Long studentGroupId) {
+    this.studentGroupId = studentGroupId;
+  }
+
   private Long id;
   private String code;
   private String name;
@@ -92,5 +100,6 @@ public class School {
   private Boolean archived;
   private List<String> tags;
   private Long fieldId;
+  private Long studentGroupId;
   private Map<String, String> variables;
 }

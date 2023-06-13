@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -27,6 +28,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
@@ -52,6 +54,7 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     BillingDetailsDAO billingDetailsDAO = DAOFactory.getInstance().getBillingDetailsDAO();
+    StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
 
     Long schoolId = NumberUtils.createLong(requestContext.getRequest().getParameter("schoolId"));
     School school = schoolDAO.findById(schoolId);
@@ -60,6 +63,12 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
     SchoolField schoolField = null;
     if ((schoolFieldId != null) && (schoolFieldId.intValue() >= 0))
       schoolField = schoolFieldDAO.findById(schoolFieldId);
+    
+    Long studentGroupId = requestContext.getLong("studentGroupId");
+    StudentGroup studentGroup = null;
+    if (studentGroupId != null && studentGroupId.intValue() >= 0) {
+      studentGroup = studentGroupDAO.findById(studentGroupId);
+    }
     
     String schoolCode = requestContext.getString("code");
     String schoolName = requestContext.getString("name");
@@ -78,7 +87,7 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
       }
     }
     
-    schoolDAO.update(school, schoolCode, schoolName, schoolField);
+    schoolDAO.update(school, schoolCode, schoolName, schoolField, studentGroup);
 
     // BillingDetails
     

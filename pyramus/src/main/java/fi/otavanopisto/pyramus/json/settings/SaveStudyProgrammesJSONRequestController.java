@@ -52,6 +52,10 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
         if (organizationId != null) {
           organization = organizationDAO.findById(organizationId);
         }
+        
+        if (category == null || organization == null) {
+          throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, "Category or organization couldn't be found.");
+        }
   
         if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
           throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "No permission to assign organization to study programme.");

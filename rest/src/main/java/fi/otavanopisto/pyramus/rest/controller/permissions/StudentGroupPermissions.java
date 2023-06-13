@@ -69,6 +69,10 @@ public class StudentGroupPermissions extends AbstractPyramusPermissionCollection
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTS_GUIDANCECOUNSELORS = "LIST_STUDENTS_GUIDANCECOUNSELORS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER, TRUSTED_SYSTEM })
+  public static final String LIST_STUDENTS_SPECEDTEACHERS = "LIST_STUDENTS_SPECEDTEACHERS";
   
   @Override
   public List<String> listPermissions() {

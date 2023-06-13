@@ -53,10 +53,8 @@ import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
-import fi.otavanopisto.pyramus.dao.system.ConfigurationDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -83,9 +81,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
-import fi.otavanopisto.pyramus.domainmodel.system.Configuration;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -98,7 +94,6 @@ import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class ApplicationUtils {
@@ -921,6 +916,7 @@ public class ApplicationUtils {
     // Create student
     
     Date studyStartDate = new Date();
+    School school = resolveSchool(getFormValue(formData, "field-internetix-contract-school"));
     Student student = studentDAO.create(
         person,
         getFormValue(formData, "field-first-names"),
@@ -935,7 +931,7 @@ public class ApplicationUtils {
         resolveNationality(getFormValue(formData, "field-nationality")),
         resolveMunicipality(getFormValue(formData, "field-municipality")),
         resolveLanguage(getFormValue(formData, "field-language")),
-        resolveSchool(getFormValue(formData, "field-internetix-contract-school")),
+        school,
         studyProgramme,
         curriculum,
         null, // previous studies (double)
@@ -945,6 +941,13 @@ public class ApplicationUtils {
         null, // study end text
         Boolean.FALSE); // archived
     
+    // #1480: If school has a student group, add student to it
+    
+    if (school != null && school.getStudentGroup() != null) {
+      StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
+      studentGroupStudentDAO.create(school.getStudentGroup(), student, staffMember);
+    }
+
     userVariableDAO.createDefaultValueVariables(student);
     
     // StudyPeriods
@@ -1107,10 +1110,13 @@ public class ApplicationUtils {
           String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
           if (!StringUtils.isBlank(customSchool)) {
             List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
-            School school = schools.isEmpty() ? null : schools.get(0);
+            school = schools.isEmpty() ? null : schools.get(0);
             if (school != null) {
               studentDAO.updateSchool(student, school);
-              processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
+              if (school.getStudentGroup() != null) {
+                StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
+                studentGroupStudentDAO.create(school.getStudentGroup(), student, staffMember);
+              }
             }
             else {
               String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
@@ -1379,38 +1385,6 @@ public class ApplicationUtils {
       return filename;
     }
     return StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), "."));
-  }
-
-  private static void processSchoolStudentGroups(School school, Student student) {
-    ConfigurationDAO configurationDAO = DAOFactory.getInstance().getConfigurationDAO();
-    Configuration configuration = configurationDAO.findByName("application");
-    if (configuration != null && !StringUtils.isEmpty(configuration.getValue())) {
-      try {
-        JSONObject configurationDocument = JSONObject.fromObject(configuration.getValue());
-        if (configurationDocument.has("schoolStudentGroups")) {
-          JSONArray schoolStudentGroups = configurationDocument.getJSONArray("schoolStudentGroups");
-          for (int i = 0; i < schoolStudentGroups.size(); i++) {
-            JSONObject schoolStudentGroup = schoolStudentGroups.getJSONObject(i);
-            String mapSchool = schoolStudentGroup.getString("school");
-            if (StringUtils.equalsIgnoreCase(mapSchool, school.getName())) {
-              String mapStudentGroup = schoolStudentGroup.getString("studentGroup");
-              StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
-              List<StudentGroup> studentGroups = studentGroupDAO.listByNameLowercaseAndArchived(mapStudentGroup, Boolean.FALSE);
-              if (studentGroups.size() != 1) {
-                logger.warning(String.format("Skipping school %s student group %s mapping because it doesn't point to a single student group", mapSchool, mapStudentGroup));
-                continue;
-              }
-              StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
-              studentGroupStudentDAO.create(studentGroups.get(0), student, studentGroups.get(0).getLastModifier());
-            }
-          }
-        }
-      }
-      catch (Exception e) {
-        logger.log(Level.WARNING, "Exception processing student school and student group mapping", e);
-      }
-    }
-    
   }
 
   public static String getFormValue(JSONObject object, String key) {

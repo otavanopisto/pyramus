@@ -33,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable_;
 import fi.otavanopisto.pyramus.domainmodel.base.School_;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 @Stateless
@@ -50,7 +51,7 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
    * 
    * @return The created school
    */
-  public School create(String code, String name, SchoolField schoolField, BillingDetails billingDetails) {
+  public School create(String code, String name, SchoolField schoolField, StudentGroup studentGroup, BillingDetails billingDetails) {
     ContactInfo contactInfo = new ContactInfo();
     School school = new School();
     school.setCode(code);
@@ -58,6 +59,7 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     school.setField(schoolField);
     school.setContactInfo(contactInfo);
     school.setBillingDetails(billingDetails);
+    school.setStudentGroup(studentGroup);
     return persist(school);
   }
   
@@ -237,12 +239,13 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
    * @param schoolField
    * @return 
    */
-  public School update(School school, String code, String name, SchoolField schoolField) {
+  public School update(School school, String code, String name, SchoolField schoolField, StudentGroup studentGroup) {
     EntityManager entityManager = getEntityManager();
 
     school.setCode(code);
     school.setName(name);
     school.setField(schoolField);
+    school.setStudentGroup(studentGroup);
     entityManager.persist(school);
     
     return school;
