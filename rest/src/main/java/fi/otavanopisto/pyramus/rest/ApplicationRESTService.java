@@ -55,6 +55,7 @@ import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
+import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -64,7 +65,6 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
-import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
@@ -540,31 +540,43 @@ public class ApplicationRESTService extends AbstractRESTService {
         
         // Automatic registration of new Internetix students
         
-        boolean autoRegistration = StringUtils.equals("aineopiskelu", line);
+        boolean autoRegistrationSupported = ApplicationUtils.isInternetixLine(line);
+        boolean autoRegistrationPossible = true;
         
-        // #1347: Jos aineopiskelijaksi hakeva on oppivelvollinen mutta ei sopimusoppilaitoksessa, käsitellään manuaalisesti
+        // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
 
-        // Aineopiskelija
-        if (autoRegistration) {
-          // Oppivelvollinen
-          if (StringUtils.equals(ApplicationUtils.getFormValue(formData, "field-compulsory-education"), "kylla")) {
-            // Sopimusoppilaitos
-            School school = ApplicationUtils.resolveSchool(formData); // Sopimusoppilaitors
-            autoRegistration = school != null;
+        if (autoRegistrationSupported) {
+          School school = ApplicationUtils.resolveSchool(formData);
+          if (school != null) {
+            SchoolVariableDAO schoolVariableDAO = DAOFactory.getInstance().getSchoolVariableDAO();
+            String cs = schoolVariableDAO.findValueBySchoolAndKey(school, "contractSchool");
+            autoRegistrationPossible = !StringUtils.equals(cs, "1");
           }
         }
         
-        if (autoRegistration) {
-          Person person = null;
+        // #1487: Jos aineopiskelijaksi hakeva on jo olemassa, käsitellään manuaalisesti
+        
+        if (autoRegistrationSupported && autoRegistrationPossible) {
           try {
-            person = ApplicationUtils.resolvePerson(application);
+            ApplicationUtils.resolvePerson(application);
           }
           catch (DuplicatePersonException dpe) {
-            autoRegistration = false;
+            autoRegistrationPossible = false;
           }
-          autoRegistration = autoRegistration && person == null;
         }
-        if (autoRegistration) {
+        
+        // #1487: Jos aineopiskelija on alle 20 (lukio) tai alle 18 (pk), käsitellään manuaalisesti
+        
+        if (autoRegistrationSupported && autoRegistrationPossible) {
+          if (StringUtils.equals(line, "aineopiskelu")) {
+            autoRegistrationPossible = !ApplicationUtils.isInternetixUnderage(formData);
+          }
+          else {
+            autoRegistrationPossible = !ApplicationUtils.isUnderage(formData);
+          }
+        }
+        
+        if (autoRegistrationSupported && autoRegistrationPossible) {
           Student student = ApplicationUtils.createPyramusStudent(application, null, null);
           if (student != null) {
             PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
@@ -577,7 +589,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             ApplicationUtils.mailCredentialsInfo(httpRequest, student, application);
             response.put("autoRegistered", "true");
           }
-          else {
+          else if (autoRegistrationPossible) {
             logger.log(Level.SEVERE, "Creating student for application %s failed. Falling back to manual processing");
             newApplicationPostProcessing(application);
           }
@@ -870,22 +882,22 @@ public class ApplicationRESTService extends AbstractRESTService {
     String guardianMail = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email")));
     try {
 
-      // #769: Do not mail application edit instructions to Internetix applicants 
-      if (!StringUtils.equals(application.getLine(), "aineopiskelu")) {
+      // Confirmation mail subject and content
 
-        // Confirmation mail subject and content
-        
-        String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            String.format("/templates/applications/mails/mail-confirmation-%s-subject.txt", line)), "UTF-8");
-        String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            String.format("/templates/applications/mails/mail-confirmation-%s-content.html", line)), "UTF-8");
-        
-        if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
-          logger.log(Level.SEVERE, String.format("Confirmation mail for line %s not defined", line));
-          return;
-        }
+      String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+          String.format("/templates/applications/mails/mail-confirmation-%s-subject.txt", line)), "UTF-8");
+      String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+          String.format("/templates/applications/mails/mail-confirmation-%s-content.html", line)), "UTF-8");
+
+      if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
+        logger.log(Level.SEVERE, String.format("Confirmation mail for line %s not defined", line));
+        return;
+      }
+
+      if (!ApplicationUtils.isInternetixLine(application.getLine())) {
 
         // Replace the dynamic parts of the mail content (edit link, surname and reference code)
+        // #1487: Internetix confirmation mails do not have any dynamic content
 
         StringBuilder viewUrl = new StringBuilder();
         viewUrl.append(httpRequest.getScheme());
@@ -896,24 +908,24 @@ public class ApplicationRESTService extends AbstractRESTService {
         viewUrl.append("/applications/edit.page");
 
         content = String.format(content, viewUrl, surname, referenceCode);
-
-        // Send mail to applicant or, for minors, applicant and guardian
-
-        if (StringUtils.isEmpty(guardianMail)) {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
-        }
-        else {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
-        }
-
-        // #879: Add sent confirmation mail to application log
-        
-        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-        applicationLogDAO.create(application,
-            ApplicationLogType.HTML,
-            String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
-            null);
       }
+
+      // Send mail to applicant or, for minors, applicant and guardian
+
+      if (StringUtils.isEmpty(guardianMail)) {
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
+      }
+      else {
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+      }
+
+      // #879: Add sent confirmation mail to application log
+
+      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+      applicationLogDAO.create(application,
+          ApplicationLogType.HTML,
+          String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+          null);
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);
