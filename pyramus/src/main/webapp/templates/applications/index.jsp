@@ -70,8 +70,8 @@
               </div>
             </div>
             <div class="selection-box__description">
-              Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.<br/><br/>
-              Jos haluat käyttää vain oppimateriaaleja, sinun ei tarvitse ilmoittautua. Löydät avoimet oppimateriaalit osoitteesta: <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a> → Avoimet materiaalit
+              Aineopiskelijana voit opiskella yksittäisiä lukion tai perusopetuksen kursseja.<br/><br/>
+              Jos haluat käyttää vain oppimateriaaleja, sinun ei tarvitse ilmoittautua. <a href="https://otavanopisto.muikkuverkko.fi">Löydät avoimet oppimateriaalit täältä</a>.
             </div>
             <div class="selection-box__link-container">
               <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Ilmoittaudu Nettilukion aineopiskelijaksi</a>
