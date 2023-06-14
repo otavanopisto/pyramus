@@ -3370,7 +3370,7 @@ public class StudentRESTService extends AbstractRESTService {
       }
     }
     if (!accessible) {
-      accessible = staffMember.getRole().equals(Role.ADMINISTRATOR);
+      accessible = staffMember.hasRole(Role.ADMINISTRATOR);
     }
     if (!accessible) {
       accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
