@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
+import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
@@ -367,8 +368,8 @@ public class ApplicationUtils {
 
   public static School resolveSchool(JSONObject formData) {
     String value = getFormValue(formData, "field-internetix-contract-school");
-    SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     if (!StringUtils.isBlank(value)) {
+      SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
       if (StringUtils.equals(value, "muu")) {
         String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
         if (!StringUtils.isBlank(customSchool)) {
@@ -381,6 +382,16 @@ public class ApplicationUtils {
       }
     }
     return null;
+  }
+  
+  public static boolean isContractSchool(JSONObject formData) {
+    School school = resolveSchool(formData);
+    if (school != null) {
+      SchoolVariableDAO schoolVariableDAO = DAOFactory.getInstance().getSchoolVariableDAO();
+      String contractSchool = schoolVariableDAO.findValueBySchoolAndKey(school, "contractSchool");
+      return StringUtils.equals(contractSchool, "1");
+    }
+    return false;
   }
   
   public static String genderUiValue(String value) {
@@ -476,16 +487,29 @@ public class ApplicationUtils {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case LINE_AINEOPISKELU:
-      // TODO oppivelvolliset
+      boolean alternativeInternetixLine = isInternetixUnderage(formData);
+      if (!alternativeInternetixLine) {
+        alternativeInternetixLine = isContractSchool(formData);
+      }
+      if (alternativeInternetixLine) {
+        return studyProgrammeDAO.findById(49L); // Aineopiskelu/lukio (oppivelvolliset)
+      }
       return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
     case LINE_AINEOPISKELU_PK:
+      InternetixStudyProgramme internetixLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-aineopiskelu_alternativelines"));
+      if (internetixLine == InternetixStudyProgramme.OPPIVELVOLLINEN) {
+        return studyProgrammeDAO.findById(41L); // Aineopiskelu/perusopetus (oppivelvolliset)
+      }
+      else if (internetixLine == InternetixStudyProgramme.OPPILAITOS) {
+        return studyProgrammeDAO.findById(50L); // Aineopiskelu/perusopetus (oppilaitos ilmoittaa)
+      }
       return studyProgrammeDAO.findById(12L); // Aineopiskelu/perusopetus
     case LINE_NETTILUKIO: {
       AlternativeLine nettilukioAlternative = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
       if (nettilukioAlternative == AlternativeLine.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
       }
-      if (nettilukioAlternative == AlternativeLine.YO) {
+      else if (nettilukioAlternative == AlternativeLine.YO) {
         return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
       }
       return studyProgrammeDAO.findById(6L); // Nettilukio

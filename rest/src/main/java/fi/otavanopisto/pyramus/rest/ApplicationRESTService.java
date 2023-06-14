@@ -55,7 +55,6 @@ import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
-import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -534,7 +533,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             email,
             referenceCode,
             formData.toString(),
-            !StringUtils.equals(line, "aineopiskelu"), // applicantEditable (#769: Internetix applicants may not edit submitted data)
+            !ApplicationUtils.isInternetixLine(line), // applicantEditable (#769: Internetix applicants may not edit submitted data)
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
         
@@ -546,12 +545,7 @@ public class ApplicationRESTService extends AbstractRESTService {
         // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
 
         if (autoRegistrationSupported) {
-          School school = ApplicationUtils.resolveSchool(formData);
-          if (school != null) {
-            SchoolVariableDAO schoolVariableDAO = DAOFactory.getInstance().getSchoolVariableDAO();
-            String cs = schoolVariableDAO.findValueBySchoolAndKey(school, "contractSchool");
-            autoRegistrationPossible = !StringUtils.equals(cs, "1");
-          }
+          autoRegistrationPossible = !ApplicationUtils.isContractSchool(formData);
         }
         
         // #1487: Jos aineopiskelijaksi hakeva on jo olemassa, käsitellään manuaalisesti
@@ -565,7 +559,7 @@ public class ApplicationRESTService extends AbstractRESTService {
           }
         }
         
-        // #1487: Jos aineopiskelija on alle 20 (lukio) tai alle 18 (pk), käsitellään manuaalisesti
+        // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
         
         if (autoRegistrationSupported && autoRegistrationPossible) {
           if (StringUtils.equals(line, "aineopiskelu")) {
