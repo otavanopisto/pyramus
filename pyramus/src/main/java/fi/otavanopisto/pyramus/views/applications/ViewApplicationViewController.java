@@ -105,7 +105,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.equals("aineopiskelupk", applicationLine)) {
         InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-aineopiskelu_alternativelines"));
         if (InternetixStudyProgramme.OPPILAITOS == altLine) {
-          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos maksaa)");
+          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos ilmoittaa)");
         }
         else if (InternetixStudyProgramme.OPPIVELVOLLINEN == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppivelvolliset)");
@@ -125,7 +125,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-education"))) {
         fields.put("Oppivelvollinen", simpleBooleanUiValue(getFormValue(formData, "field-compulsory-education")));
       }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-education"))) {
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-done"))) {
         fields.put("Perusopetuksen oppimäärä", simpleBooleanUiValue(getFormValue(formData, "field-compulsory-done")));
       }
       fields.put("Sukupuoli", ApplicationUtils.genderUiValue(getFormValue(formData, "field-sex")));
@@ -200,7 +200,6 @@ public class ViewApplicationViewController extends PyramusViewController {
           isContractSchool = ApplicationUtils.isContractSchool(formData);
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
-            fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
             fields.put("Opiskelupaikkakunta", getFormValue(formData, "field-internetix-contract-school-municipality"));
             fields.put("Oppilaitoksen yhteyshenkilö", getFormValue(formData, "field-internetix-contract-school-contact"));
             StudentExaminationType examinationType = ApplicationUtils.resolveStudentExaminationType(
@@ -211,8 +210,8 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
           else {
             fields.put("Oppilaitos", school.getName());
-            fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
           }
+          fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
         }
         
         // Possu, jos aineopiskelijan automaattinen ilmoittautuminen ei ollut mahdollilsta

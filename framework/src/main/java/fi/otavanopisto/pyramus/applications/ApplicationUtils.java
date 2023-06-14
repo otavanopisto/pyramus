@@ -502,11 +502,7 @@ public class ApplicationUtils {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case LINE_AINEOPISKELU:
-      boolean alternativeInternetixLine = isInternetixUnderage(formData);
-      if (!alternativeInternetixLine) {
-        alternativeInternetixLine = isContractSchool(formData);
-      }
-      if (alternativeInternetixLine) {
+      if (!isInternetixAutoRegistrationPossible(formData)) {
         return studyProgrammeDAO.findById(49L); // Aineopiskelu/lukio (oppivelvolliset)
       }
       return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
