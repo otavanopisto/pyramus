@@ -17,9 +17,6 @@
     </div>
 
     <h2 class="form-section__header">Oppilaitostiedot</h2>
-    <p>Kurssimateriaalien käyttäminen itseopiskelussa on ilmaista. Voit siis ilmoittautua Muikun käyttäjäksi ja ilmoittautua kursseille, vaikka et haluaisikaan niistä arviointia tai kurssisuoritusta. Jos haluat, että opettaja arvioi kurssisuorituksesi, se on joissakin tapauksissa maksullista. <a href="#" class="internetix-course-fees-link">Lue lisää</a>.</p>
-    <p><b>Huom!</b> Oppilaitostieto tarkistetaan vielä jälkikäteen ja lähetämme laskun kurssin suorittamisesta, mikäli olet opiskelijana jossain toisessa oppilaitoksessa.</p>
-
     <div class="form-section__field-container field-internetix-school">
       <label for="field-internetix-school" class="required">Opiskelu muussa oppilaitoksessa</label>
       <select id="field-internetix-school" name="field-internetix-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
@@ -71,30 +68,4 @@
       </select>
     </div>
     
-    <div class="course-fees-overlay" style="display:none;">
-    </div>
-    <div class="course-fees" style="display:none;">
-      <div class="course-fees__close"></div>
-      <h3>Aineopiskelulinjan kurssimaksuista</h3>
-      <p>Aineopiskelulinjalla voit opiskella samoja kursseja kuin Otavan Opiston nettilukiossa ja nettiperuskoulussa. Lisäksi tarjolla on jonkin verran myös muita kursseja.</p>
-      <p><b>Milloin opiskelu maksaa?</b></p>
-      <p>Oppimateriaalien itsenäinen opiskeleminen (ilman arviointia) aineopiskelulinjalla on maksutonta.</p>
-      <p>Kurssiarvioinnin maksullisuuteen vaikuttaa kaksi asiaa: suoritettu kurssi sekä se, opiskeletko suoritushetkellä toisessa oppilaitoksessa.</p>
-      <p><b>Jos et opiskele missään oppilaitoksessa:</b></p>
-      <ul>
-        <li>voit tehdä ilmaiseksi lukion pakollisia tai valtakunnallisia syventäviä kursseja</li>
-        <li>voit tehdä ilmaiseksi perusopetuksen pakollisia tai valinnaisia kursseja</li>
-        <li>koulukohtaiset syventävät kurssit ovat aina maksullisia (140€/kurssi)</li>
-        <li>Huom! perusopetuksen kurssit ovat aina maksullisia oppivelvollisuusikäisille eli alle 17-vuotiaille (140€/kurssi)</li>
-      </ul>
-      <p><b>Jos opiskelet sopimusoppilaitoksessa</b> (oppilaitoksen nimi löytyy ilmoittautumislomakkeen listalta):</p>
-      <ul>
-        <li>varmista aina etukäteen oman oppilaitoksesi opolta tai rehtorilta, maksaako oppilaitos kurssisi vai joudutko maksamaan sen itse (140€/kurssi)</li>
-      </ul>
-      <p><b>Jos opiskelet jossain muussa oppilaitoksessa:</b></p>
-      <ul>
-        <li>kaikki lukion ja perusopetuksen kurssit ovat maksullisia (140€/kurssi)</li>
-      </ul>
-    </div>
-
   </section>

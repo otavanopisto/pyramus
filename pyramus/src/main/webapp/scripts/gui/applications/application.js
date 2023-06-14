@@ -274,13 +274,6 @@
       });
     });
     
-    // Course fees
-
-    $('.internetix-course-fees-link, .course-fees__close, .course-fees-overlay').on('click', function() {
-      $('.course-fees-overlay').toggle();
-      $('.course-fees').toggle();
-    });
-    
     // Study promises
 
     $('.nettilukio-promise-link, .nettilukio-promise__close, .nettilukio-promise-overlay').on('click', function() {
@@ -363,7 +356,7 @@
               if (response.autoRegistered == 'true') {
                 navigateTo('.section-done.registered');
               }
-              else if ($('#field-line').val() == 'aineopiskelu') {
+              else if ($('#field-line').val() == 'aineopiskelu' || $('#field-line').val() == 'aineopiskelupk') {
                 navigateTo('.section-done.internetix-submitted');
               }
               else {
@@ -449,12 +442,12 @@
     var option =  $('#field-line').find('option:selected');
     var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true' || $('body').attr('data-mode') == 'edit';
     $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
-    $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
+    $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu' && option.val() != 'aineopiskelupk');
     // section toggle for existing applications
     var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
     if (existingApplication) {
       $('.section-attachments').toggle(hasAttachmentSupport);
-      $('.section-internetix-school').toggle(line == 'aineopiskelu');
+      $('.section-internetix-school').toggle(line == 'aineopiskelu' || line == 'aineopiskelupk');
     }
     // age check when line changes 
     $('#field-birthday').trigger('change');
@@ -469,7 +462,11 @@
     updateProgress();
     // #774: selected study program
     if ($('#field-application-id').attr('data-preload') != 'true') {
-      $('.form-section__header').removeClass().addClass('form-section__header form-section__header--' + option.text());
+      var requiredSection = $('.form-section__header').hasClass('required');
+      $('.form-section__header').removeClass().addClass('form-section__header form-section__header--' + option.val());
+      if (requiredSection) {
+        $('.form-section__header').addClass('required');
+      }
     }
   };
   

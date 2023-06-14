@@ -400,23 +400,27 @@ h3 {
   line-height: 1;
 }
 
-.form-section__header--Nettilukio {
+.form-section__header--nettilukio {
   color: #5dbdc5;
 }
 
-.form-section__header--Nettiperuskoulu {
+.form-section__header--nettipk {
   color: #ef7d00;
 }
 
-.form-section__header--Aineopiskelu {
+.form-section__header--aineopiskelu {
   color: #c04080;
 }
 
-.form-section__header--Aikuislukio {
+.form-section__header--aineopiskelupk {
+  color: #c04080;
+}
+
+.form-section__header--aikuislukio {
   color: #0080bb;
 }
 
-.form-section__header--Maahanmuuttajakoulutukset {
+.form-section__header--mk {
   color: #5dbdc5;
 }
 
@@ -429,9 +433,8 @@ b {
   font-weight: 600;
 }
 
-/* Course fees and study promises */
+/* Study promises */
 
-.course-fees-overlay,
 .nettilukio-promise-overlay,
 .nettilukio-contactpromise-overlay,
 .aineopiskelu-promise-overlay,
@@ -447,7 +450,6 @@ b {
   width: 100%;
 }
 
-.course-fees,
 .nettilukio-promise,
 .nettilukio-contactpromise,
 .aineopiskelu-promise,
@@ -467,7 +469,6 @@ b {
   z-index: 100;
 }
 
-.course-fees__close,
 .nettilukio-promise__close,
 .nettilukio-contactpromise__close,
 .aineopiskelu-promise__close,

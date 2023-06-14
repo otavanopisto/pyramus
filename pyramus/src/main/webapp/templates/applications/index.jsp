@@ -74,7 +74,8 @@
               Jos haluat käyttää vain oppimateriaaleja, sinun ei tarvitse ilmoittautua. Löydät avoimet oppimateriaalit osoitteesta: <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a> → Avoimet materiaalit
             </div>
             <div class="selection-box__link-container">
-              <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Ilmoittaudu aineopiskelijaksi</a>
+              <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Ilmoittaudu Nettilukion aineopiskelijaksi</a>
+              <a class="selection-box__link" href="/applications/create.page?line=aineopiskelupk">Ilmoittaudu Nettiperuskoulun aineopiskelijaksi</a>
             </div>
           </div>
         </div>

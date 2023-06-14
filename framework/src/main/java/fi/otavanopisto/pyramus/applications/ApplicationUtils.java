@@ -113,10 +113,10 @@ public class ApplicationUtils {
     if (staffMember.getRole() == Role.ADMINISTRATOR) {
       return true;
     }
-    if (StringUtils.equals(line, LINE_AINEOPISKELU_PK) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU_PK.getKey()))) {
+    if (StringUtils.equals(line, LINE_AINEOPISKELU) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()))) {
       return true;
     }
-    if (StringUtils.equals(line, LINE_AINEOPISKELU) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()))) {
+    if (StringUtils.equals(line, LINE_AINEOPISKELU_PK) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU_PK.getKey()))) {
       return true;
     }
     if (StringUtils.equals(line, LINE_NETTILUKIO) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()))) {
@@ -228,11 +228,11 @@ public class ApplicationUtils {
   
   public static boolean isInternetixUnderage(JSONObject formData) {
     String dateString = getFormValue(formData, "field-birthday");
-    // #1487: If you're born on or after 1.1.2005 and are younger than 20 
     if (StringUtils.isBlank(dateString)) {
       return false;
     }
     try {
+      // #1487: If you're born on or after 1.1.2005 and are under 20...
       LocalDate birthday = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d.M.yyyy"));
       LocalDate threshold = LocalDate.parse("1.1.2005", DateTimeFormatter.ofPattern("d.M.yyyy"));
       if (birthday.equals(threshold) || birthday.isAfter(threshold)) {
@@ -241,7 +241,8 @@ public class ApplicationUtils {
           return true;
         }
       }
-      return birthday.isAfter(threshold);
+      // ...otherwise under 18
+      return isUnderage(formData);
     }
     catch (DateTimeParseException e) {
       logger.warning(String.format("Malformatted date %s (%s)", dateString, e.getMessage()));
