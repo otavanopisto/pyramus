@@ -232,7 +232,7 @@ textarea {
   word-wrap: break-word;
 }
 
-.user-exists-container, .compulsory-contract-school-container {
+.user-exists-container, .internetix-restrictions-container {
   background: #fcdcdb;
   width: 100%;
   padding: 5px;
@@ -248,13 +248,13 @@ textarea {
   margin: 0 10px 5px;
 }
 
-.user-exists-description, .compulsory-contract-school-description {
+.user-exists-description, .internetix-restrictions-description {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
 }
 
-.user-exists-description-piggy, .compulsory-contract-school-description-piggy {
+.user-exists-description-piggy, .internetix-restrictions-description-piggy {
   background: url('../gfx/piggy.png') #fcdcdb no-repeat center center;
   background-size: contain;
   width: 48px;
@@ -263,12 +263,12 @@ textarea {
   margin: 2px 15px 0 5px;
 }
 
-.user-exists-description-actions, .compulsory-contract-school-description-actions {
+.user-exists-description-actions, .internetix-restrictions-description-actions {
   font-size: 14px;
   flex: 1 1 auto;
 }
 
-.user-exists-description-actions span, .compulsory-contract-school-description-actions span {
+.user-exists-description-actions span, .internetix-restrictions-description-actions span {
   display: inline-block;
   margin: 4px 4px 4px 0;
 }

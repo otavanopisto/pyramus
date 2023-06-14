@@ -135,6 +135,21 @@ public class ApplicationUtils {
     return false;
   }
   
+  public static boolean isInternetixAutoRegistrationPossible(JSONObject formData) {
+    // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
+    if (ApplicationUtils.isContractSchool(formData)) {
+      return false;
+    }
+    // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
+    String line = getFormValue(formData, "field-line");
+    if (StringUtils.equals(line, "aineopiskelu")) {
+      return !isInternetixUnderage(formData);
+    }
+    else {
+      return !isUnderage(formData);
+    }
+  }
+  
   public static boolean isInternetixLine(String line) {
     return StringUtils.equals(line, LINE_AINEOPISKELU) || StringUtils.equals(line, LINE_AINEOPISKELU_PK);
   }

@@ -23,12 +23,12 @@
         <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
         
-          <c:if test="${contractSchoolConflict}">
-            <div class="compulsory-contract-school-container">
-              <div class="compulsory-contract-school-description">
-                <div class="compulsory-contract-school-description-piggy"></div>
-                <div class="compulsory-contract-school-actions">
-                  <span>Oppivelvollinen ei opiskele sopimusoppilaitoksessa</span> 
+          <c:if test="${internetixConflict}">
+            <div class="internetix-restrictions-container">
+              <div class="internetix-restrictions-description">
+                <div class="internetix-restrictions-description-piggy"></div>
+                <div class="internetix-restrictions-actions">
+                  <span>Automaattisen ilmoittautumisen reunaehdot eivät täyttyneet</span> 
                 </div>
               </div>
             </div>

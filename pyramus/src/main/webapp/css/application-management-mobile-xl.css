@@ -17,7 +17,7 @@
   min-width: 240px;
 }
 
-.user-exists-container, .compulsory-contract-school-container {
+.user-exists-container, .internetix-restrictions-container {
   padding: 10px;
 }
 
@@ -26,7 +26,7 @@
   margin: 0 10px 10px;
 }
 
-.user-exists-description-piggy, .compulsory-contract-school-description-piggy {
+.user-exists-description-piggy, .internetix-restrictions-description-piggy {
   width: 64px;
   height: 64px;
   flex: 0 0 64px;

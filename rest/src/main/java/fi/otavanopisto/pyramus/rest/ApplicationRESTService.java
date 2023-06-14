@@ -540,13 +540,7 @@ public class ApplicationRESTService extends AbstractRESTService {
         // Automatic registration of new Internetix students
         
         boolean autoRegistrationSupported = ApplicationUtils.isInternetixLine(line);
-        boolean autoRegistrationPossible = true;
-        
-        // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
-
-        if (autoRegistrationSupported) {
-          autoRegistrationPossible = !ApplicationUtils.isContractSchool(formData);
-        }
+        boolean autoRegistrationPossible = autoRegistrationSupported && ApplicationUtils.isInternetixAutoRegistrationPossible(formData);
         
         // #1487: Jos aineopiskelijaksi hakeva on jo olemassa, käsitellään manuaalisesti
         
@@ -558,18 +552,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             autoRegistrationPossible = false;
           }
         }
-        
-        // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
-        
-        if (autoRegistrationSupported && autoRegistrationPossible) {
-          if (StringUtils.equals(line, "aineopiskelu")) {
-            autoRegistrationPossible = !ApplicationUtils.isInternetixUnderage(formData);
-          }
-          else {
-            autoRegistrationPossible = !ApplicationUtils.isUnderage(formData);
-          }
-        }
-        
+
         if (autoRegistrationSupported && autoRegistrationPossible) {
           Student student = ApplicationUtils.createPyramusStudent(application, null, null);
           if (student != null) {
@@ -584,7 +567,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             response.put("autoRegistered", "true");
           }
           else if (autoRegistrationPossible) {
-            logger.log(Level.SEVERE, "Creating student for application %s failed. Falling back to manual processing");
+            logger.log(Level.SEVERE, String.format("Auto-registration of application %d failed. Falling back to manual processing", application.getId()));
             newApplicationPostProcessing(application);
           }
         }

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.applications.AlternativeLine;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
+import fi.otavanopisto.pyramus.applications.InternetixStudyProgramme;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
@@ -81,7 +82,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       fields.put("Muokkaustunnus", application.getReferenceCode());
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
-      if (StringUtils.equals("nettilukio",  applicationLine) || StringUtils.equals("nettipk",  applicationLine)) {
+      if (StringUtils.equals("nettilukio", applicationLine) || StringUtils.equals("nettipk",  applicationLine)) {
         AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
         if (AlternativeLine.PRIVATE == altLine) {
           fields.put("Opintojen tyyppi", "Yksityisopiskelu");
@@ -99,6 +100,18 @@ public class ViewApplicationViewController extends PyramusViewController {
           if (StringUtils.isNotBlank(compulsoryEndDateStr)) {
             fields.put("Maksuton oppivelvollisuus päättynyt alkaen", compulsoryEndDateStr);
           }
+        }
+      }
+      if (StringUtils.equals("aineopiskelupk", applicationLine)) {
+        InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-aineopiskelu_alternativelines"));
+        if (InternetixStudyProgramme.OPPILAITOS == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos maksaa)");
+        }
+        else if (InternetixStudyProgramme.OPPIVELVOLLINEN == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppivelvolliset)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus");
         }
       }
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
@@ -170,7 +183,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       
       // Aineopiskelijan koulutusaste ja oppilaitos
       
-      if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      if (ApplicationUtils.isInternetixLine(getFormValue(formData, "field-line"))) {
         fields = new LinkedHashMap<>();
         sections.put("Koulutusaste", fields);
         if (!StringUtils.isBlank(getFormValue(formData, "field-internetix-curriculum"))) {
@@ -184,10 +197,10 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
         if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
           School school = ApplicationUtils.resolveSchool(formData);
-          isContractSchool = school != null;
+          isContractSchool = ApplicationUtils.isContractSchool(formData);
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
-            fields.put("Sopimusoppilaitos", "Ei");
+            fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
             fields.put("Opiskelupaikkakunta", getFormValue(formData, "field-internetix-contract-school-municipality"));
             fields.put("Oppilaitoksen yhteyshenkilö", getFormValue(formData, "field-internetix-contract-school-contact"));
             StudentExaminationType examinationType = ApplicationUtils.resolveStudentExaminationType(
@@ -198,14 +211,17 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
           else {
             fields.put("Oppilaitos", school.getName());
-            fields.put("Sopimusoppilaitos", "Kyllä");
+            fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
           }
         }
-        if (!isContractSchool && StringUtils.equals(getFormValue(formData, "field-compulsory-education"), "kylla")) {
-          pageRequestContext.getRequest().setAttribute("contractSchoolConflict", Boolean.TRUE);
+        
+        // Possu, jos aineopiskelijan automaattinen ilmoittautuminen ei ollut mahdollilsta
+        
+        if (!ApplicationUtils.isInternetixAutoRegistrationPossible(formData)) {
+          pageRequestContext.getRequest().setAttribute("internetixConflict", Boolean.TRUE);
         }
       }
-
+      
       // Hakemiseen vaadittavat lisätiedot
       
       fields = new LinkedHashMap<>();
