@@ -86,6 +86,7 @@
       <input type="hidden" name="field-nettilukio_alternativelines"/>
       <input type="hidden" name="field-nettilukio_compulsory"/>
       <input type="hidden" name="field-nettilukio_compulsory_enddate"/>
+      <input type="hidden" name="field-internetix_alternativelines"/>
     </c:otherwise>
   </c:choose>
 

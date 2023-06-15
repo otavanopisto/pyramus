@@ -42,7 +42,8 @@
             </jsp:include> 
             <select name="line">
               <option value="" <c:if test="${notification.line == ''}">selected="selected"</c:if>>Kaikki linjat</option>
-              <option value="aineopiskelu" <c:if test="${notification.line == 'aineopiskelu'}">selected="selected"</c:if>>Aineopiskelu</option>
+              <option value="aineopiskelu" <c:if test="${notification.line == 'aineopiskelu'}">selected="selected"</c:if>>Aineopiskelu/lukio</option>
+              <option value="aineopiskelupk" <c:if test="${notification.line == 'aineopiskelupk'}">selected="selected"</c:if>>Aineopiskelu/perusopetus</option>
               <option value="nettilukio" <c:if test="${notification.line == 'nettilukio'}">selected="selected"</c:if>>Nettilukio</option>
               <option value="nettipk" <c:if test="${notification.line == 'nettipk'}">selected="selected"</c:if>>Nettiperuskoulu</option>
               <option value="aikuislukio" <c:if test="${notification.line == 'aikuislukio'}">selected="selected"</c:if>>Aikuislukio</option>
