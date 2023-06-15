@@ -535,7 +535,16 @@
       $('div.application-handling-option').each(function() {
         // see if option is valid for the application line 
         var line = $(this).attr('data-line');
-        var available = !line || applicationLine == line || (line.startsWith('!') && applicationLine != line.substring(1));
+        var available = !line; // yes, if no line specified at all
+        if (!available) {
+          var values = line.split(',');
+          for (var i = 0; i < values.length; i++) {
+            available = applicationLine == values[i]; // application line matches
+            if (available) {
+              break;
+            }
+          }
+        }
         // see if option is valid for the application state
         if (available) {
           var optionState = $(this).attr('data-state');
