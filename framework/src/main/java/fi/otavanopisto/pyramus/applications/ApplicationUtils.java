@@ -248,12 +248,12 @@ public class ApplicationUtils {
       return false;
     }
     try {
-      // #1487: If you're born on or after 1.1.2005 and are under 20...
+      // #1487: If you're born on or after 1.1.2005, until the end of the year you turn 20...
       LocalDate birthday = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d.M.yyyy"));
       LocalDate threshold = LocalDate.parse("1.1.2005", DateTimeFormatter.ofPattern("d.M.yyyy"));
       if (birthday.equals(threshold) || birthday.isAfter(threshold)) {
         threshold = LocalDate.now().minusYears(20);
-        if (birthday.equals(threshold) || birthday.isAfter(threshold)) {
+        if (LocalDate.now().getYear() - birthday.getYear() <= 20) {
           return true;
         }
       }
