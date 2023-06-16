@@ -140,6 +140,11 @@ public class ApplicationUtils {
     if (ApplicationUtils.isContractSchool(formData)) {
       return false;
     }
+    // #1487: Jos hetun loppuosa puuttuu tai on XXX, käsitellään manuaalisesti
+    String ssnSuffix = getFormValue(formData, "field-ssn-end");
+    if (StringUtils.isEmpty(ssnSuffix) || StringUtils.equals("XXXX", ssnSuffix)) {
+      return false;
+    }
     // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
     String line = getFormValue(formData, "field-line");
     if (StringUtils.equals(line, "aineopiskelu")) {

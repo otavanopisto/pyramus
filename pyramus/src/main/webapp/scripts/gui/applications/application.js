@@ -462,11 +462,13 @@
     updateProgress();
     // #774: selected study program
     if ($('#field-application-id').attr('data-preload') != 'true') {
-      var requiredSection = $('.form-section__header').hasClass('required');
-      $('.form-section__header').removeClass().addClass('form-section__header form-section__header--' + option.val());
-      if (requiredSection) {
-        $('.form-section__header').addClass('required');
-      }
+      $('.form-section__header').each(function() {
+        var requiredSection = $(this).hasClass('required');
+        $(this).removeClass().addClass('form-section__header form-section__header--' + option.val());
+        if (requiredSection) {
+          $(this).addClass('required');
+        }
+      });
     }
   };
   

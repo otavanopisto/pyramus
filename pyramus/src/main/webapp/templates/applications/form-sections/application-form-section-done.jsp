@@ -14,7 +14,6 @@
 
   <section class="form-section section-done internetix-submitted" data-skip="true" style="display:none;">
     <h2 class="form-section__header">Ilmoittautumisesi on tallennettu</h2>
-    <p>Ilmoittautumisesi on tallennettu.</p>
     <p>Lähetämme sinulle sähköpostia antamaasi osoitteeseen, kun hakemus on käsitelty.</p>
   </section>
 
