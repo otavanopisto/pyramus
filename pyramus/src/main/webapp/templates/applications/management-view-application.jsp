@@ -23,6 +23,16 @@
         <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
         
+          <div class="user-exists-container" style="display:none;">
+            <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
+            <div class="user-exists-description">
+              <div class="user-exists-description-piggy"></div>
+              <div class="user-exists-description-actions">
+                <span>Hakijan Pyramus-profiili:</span> 
+              </div>
+            </div>
+          </div>
+
           <c:if test="${internetixConflict}">
             <div class="internetix-restrictions-container">
               <div class="internetix-restrictions-description">
@@ -33,16 +43,6 @@
               </div>
             </div>
           </c:if>
-
-          <div class="user-exists-container" style="display:none;">
-            <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
-            <div class="user-exists-description">
-              <div class="user-exists-description-piggy"></div>
-              <div class="user-exists-description-actions">
-                <span>Hakijan Pyramus-profiili:</span> 
-              </div>
-            </div>
-          </div>
         
           <c:forEach var="section" items="${sections}">
             <h3 class="application-data-title">${section.key}</h3>
