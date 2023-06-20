@@ -257,7 +257,6 @@ public class ApplicationUtils {
       LocalDate birthday = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d.M.yyyy"));
       LocalDate threshold = LocalDate.parse("1.1.2005", DateTimeFormatter.ofPattern("d.M.yyyy"));
       if (birthday.equals(threshold) || birthday.isAfter(threshold)) {
-        threshold = LocalDate.now().minusYears(20);
         if (LocalDate.now().getYear() - birthday.getYear() <= 20) {
           return true;
         }
