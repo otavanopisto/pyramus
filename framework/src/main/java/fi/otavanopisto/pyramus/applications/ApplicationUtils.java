@@ -512,7 +512,7 @@ public class ApplicationUtils {
       }
       return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
     case LINE_AINEOPISKELU_PK:
-      InternetixStudyProgramme internetixLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-aineopiskelu_alternativelines"));
+      InternetixStudyProgramme internetixLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
       if (internetixLine == InternetixStudyProgramme.OPPIVELVOLLINEN) {
         return studyProgrammeDAO.findById(41L); // Aineopiskelu/perusopetus (oppivelvolliset)
       }

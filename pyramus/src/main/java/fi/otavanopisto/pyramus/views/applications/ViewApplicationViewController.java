@@ -105,7 +105,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         }
       }
       if (StringUtils.equals("aineopiskelupk", applicationLine)) {
-        InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-aineopiskelu_alternativelines"));
+        InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
         if (InternetixStudyProgramme.OPPILAITOS == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos ilmoittaa)");
         }

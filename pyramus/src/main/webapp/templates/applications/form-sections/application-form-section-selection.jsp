@@ -42,7 +42,7 @@
       <div data-dependent-field="field-line" data-dependent-values="aineopiskelupk" style="display:none;">
         <div class="field-row-flex">
           <div class="field-row-element">
-            <input type="radio" id="field-internetix_alternativelines_perusopetus" name="field-internetix_alternativelines" value="AINEOPISKELU_PERUSOPETUS"/>
+            <input type="radio" id="field-internetix_alternativelines_perusopetus" name="field-internetix_alternativelines" value="PERUSOPETUS" checked="checked"/>
           </div>
           <div class="field-row-label">
             <label for="field-internetix_alternativelines_perusopetus">Aineopiskelu/perusopetus</label>
@@ -50,7 +50,7 @@
         </div>
         <div class="field-row-flex">
           <div class="field-row-element">
-            <input type="radio" id="field-internetix_alternativelines_oppilaitos" name="field-internetix_alternativelines" value="AINEOPISKELU_OPPILAITOS"/>
+            <input type="radio" id="field-internetix_alternativelines_oppilaitos" name="field-internetix_alternativelines" value="OPPILAITOS"/>
           </div>
           <div class="field-row-label">
             <label for="field-internetix_alternativelines_oppilaitos">Aineopiskelu/perusopetus (oppilaitos ilmoittaa)</label>
@@ -58,7 +58,7 @@
         </div>
         <div class="field-row-flex">
           <div class="field-row-element">
-            <input type="radio" id="field-internetix_alternativelines_oppivelvollinen" name="field-internetix_alternativelines" value="AINEOPISKELU_OPPIVELVOLLINEN"/>
+            <input type="radio" id="field-internetix_alternativelines_oppivelvollinen" name="field-internetix_alternativelines" value="OPPIVELVOLLINEN"/>
           </div>
           <div class="field-row-label">
             <label for="field-internetix_alternativelines_oppivelvollinen">Aineopiskelu/perusopetus (oppivelvolliset)</label>
