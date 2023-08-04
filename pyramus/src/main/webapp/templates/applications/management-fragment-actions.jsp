@@ -14,7 +14,7 @@
     </div>
     <div class="application-handling-option accept-action" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyväksymisestä</span></div>
     <div class="application-handling-option accept-action" data-state="TRANSFERRED_AS_STUDENT" data-show="PROCESSING,STAFF_SIGNED,APPROVED_BY_SCHOOL,APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>
-    <div class="application-handling-option accept-action" data-line="aineopiskelu.aineopiskelupk" data-state="REGISTRATION_CHECKED" data-show="REGISTERED_AS_STUDENT"><span class="application-handling-text">Kuittaa tarkistetuksi</span></div>    
+    <div class="application-handling-option accept-action" data-line="aineopiskelu,aineopiskelupk" data-state="REGISTRATION_CHECKED" data-show="REGISTERED_AS_STUDENT"><span class="application-handling-text">Kuittaa tarkistetuksi</span></div>    
     <div class="application-handling-option decline-action" data-state="REJECTED" data-show="PROCESSING,APPROVED_BY_SCHOOL,APPROVED_BY_APPLICANT,REGISTERED_AS_STUDENT"><span class="application-handling-text decline-application">Hylkää hakemus</span></div>
     <div class="application-handling-option delete-action" data-state="ARCHIVE" data-show="PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
   </div>
