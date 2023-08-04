@@ -113,7 +113,7 @@ public class WorklistController {
     if (courseBillingRestModel != null) {
       String type = courseModule.getSubject() != null && courseModule.getSubject().getEducationType() != null
           ? courseModule.getSubject().getEducationType().getName() : null;
-      if (StringUtils.equalsIgnoreCase(type,  PyramusConsts.SUBJECT_PERUSOPETUS)) {
+      if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_PERUSOPETUS)) {
         return courseBillingRestModel.getElementaryPrice();
       }
       else if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_LUKIO)) {
