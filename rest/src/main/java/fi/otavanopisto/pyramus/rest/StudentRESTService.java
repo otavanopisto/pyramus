@@ -2188,61 +2188,63 @@ public class StudentRESTService extends AbstractRESTService {
       CourseBillingRestModel courseBillingRestModel = worklistController.getCourseBillingRestModel();
       if (courseBillingRestModel != null) {
         
-        // Determine billing number from student's study programme
-        // (high school if applicable, elementary as fallback)
-        
-        String code = student.getStudyProgramme() != null &&
-            student.getStudyProgramme().getCategory() !=  null &&
-            student.getStudyProgramme().getCategory().getEducationType() != null &&
-            student.getStudyProgramme().getCategory().getEducationType().getCode() != null
-            ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
-        boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
-        String billingNumber = isHighSchoolStudent
-            ? courseBillingRestModel.getHighSchoolBillingNumber()
-            : courseBillingRestModel.getElementaryBillingNumber();
-        
-        // Description part 1: type (not localized because manual worklist items do not support localization, either) 
-        
-        String description = isRaisedGrade ? "Arvosanan korotus" : "Kurssiarviointi";
-
-        // Description part 2: student display name
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(student.getFirstName());
-        if (!StringUtils.isEmpty(student.getNickname())) {
-          sb.append(String.format(" \"%s\"", student.getNickname()));
-        }
-        if (!StringUtils.isEmpty(student.getLastName())) {
-          sb.append(String.format(" %s", student.getLastName()));
-        }
-        if (student.getStudyProgramme() != null) {
-          sb.append(String.format(" (%s)", student.getStudyProgramme().getName()));
-        }
-        String studentDisplayName = sb.toString();
-
-        // Description part 3: course display name
-
-        sb = new StringBuilder();
-        sb.append(course.getName());
-        if (!StringUtils.isEmpty(course.getNameExtension())) {
-          sb.append(String.format(" (%s)", course.getNameExtension()));
-        }
-        String courseDisplayName = sb.toString();
-        
         // Price
         
         Double price = worklistController.getCourseModuleBasePrice(courseModule, sessionController.getUser());
+        if (price != null) {
 
-        worklistController.create(
-            assessor,
-            template,
-            new Date(),
-            String.format("%s - %s - %s", description, studentDisplayName, courseDisplayName),
-            price,
-            template.getFactor(),
-            billingNumber,
-            courseAssessment,
-            sessionController.getUser());
+          // Determine billing number from student's study programme
+          // (high school if applicable, elementary as fallback)
+
+          String code = student.getStudyProgramme() != null &&
+              student.getStudyProgramme().getCategory() !=  null &&
+              student.getStudyProgramme().getCategory().getEducationType() != null &&
+              student.getStudyProgramme().getCategory().getEducationType().getCode() != null
+              ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
+          boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+          String billingNumber = isHighSchoolStudent
+              ? courseBillingRestModel.getHighSchoolBillingNumber()
+                  : courseBillingRestModel.getElementaryBillingNumber();
+
+          // Description part 1: type (not localized because manual worklist items do not support localization, either) 
+
+          String description = isRaisedGrade ? "Arvosanan korotus" : "Kurssiarviointi";
+
+          // Description part 2: student display name
+
+          StringBuilder sb = new StringBuilder();
+          sb.append(student.getFirstName());
+          if (!StringUtils.isEmpty(student.getNickname())) {
+            sb.append(String.format(" \"%s\"", student.getNickname()));
+          }
+          if (!StringUtils.isEmpty(student.getLastName())) {
+            sb.append(String.format(" %s", student.getLastName()));
+          }
+          if (student.getStudyProgramme() != null) {
+            sb.append(String.format(" (%s)", student.getStudyProgramme().getName()));
+          }
+          String studentDisplayName = sb.toString();
+
+          // Description part 3: course display name
+
+          sb = new StringBuilder();
+          sb.append(course.getName());
+          if (!StringUtils.isEmpty(course.getNameExtension())) {
+            sb.append(String.format(" (%s)", course.getNameExtension()));
+          }
+          String courseDisplayName = sb.toString();
+
+          worklistController.create(
+              assessor,
+              template,
+              new Date(),
+              String.format("%s - %s - %s", description, studentDisplayName, courseDisplayName),
+              price,
+              template.getFactor(),
+              billingNumber,
+              courseAssessment,
+              sessionController.getUser());
+        }
       }
     }
     
