@@ -23,22 +23,14 @@
         <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
         
-          <div class="user-exists-container" style="display:none;">
-            <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
-            <div class="user-exists-description">
-              <div class="user-exists-description-piggy"></div>
-              <div class="user-exists-description-actions">
-                <span>Hakijan Pyramus-profiili:</span> 
-              </div>
-            </div>
-          </div>
-
-          <c:if test="${internetixConflict}">
-            <div class="internetix-restrictions-container">
-              <div class="internetix-restrictions-description">
-                <div class="internetix-restrictions-description-piggy"></div>
-                <div class="internetix-restrictions-actions">
-                  <span>Automaattisen ilmoittautumisen reunaehdot eivät täyttyneet</span> 
+          <c:if test="${!empty conflicts}">
+            <div class="application-conflicts-container">
+              <div class="application-conflicts-description">
+                <div class="application-conflicts-description-piggy"></div>
+                <div class="application-conflicts-actions">
+                  <c:forEach items="${conflicts}" var="conflict">
+                    <p>${conflict}</p>
+                  </c:forEach>
                 </div>
               </div>
             </div>

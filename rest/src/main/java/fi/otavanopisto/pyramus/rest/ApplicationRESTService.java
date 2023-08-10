@@ -64,6 +64,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
@@ -540,13 +541,14 @@ public class ApplicationRESTService extends AbstractRESTService {
         // Automatic registration of new Internetix students
         
         boolean autoRegistrationSupported = ApplicationUtils.isInternetixLine(line);
-        boolean autoRegistrationPossible = autoRegistrationSupported && ApplicationUtils.isInternetixAutoRegistrationPossible(formData);
+        boolean autoRegistrationPossible = autoRegistrationSupported && ApplicationUtils.isInternetixAutoRegistrationPossible(formData, false);
         
         // #1487: Jos aineopiskelijaksi hakeva on jo olemassa, käsitellään manuaalisesti
         
         if (autoRegistrationSupported && autoRegistrationPossible) {
           try {
-            ApplicationUtils.resolvePerson(application);
+            Person person = ApplicationUtils.resolvePerson(application);
+            autoRegistrationPossible = person == null;
           }
           catch (DuplicatePersonException dpe) {
             autoRegistrationPossible = false;

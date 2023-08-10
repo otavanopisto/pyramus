@@ -170,36 +170,6 @@
       });
     });
     
-    // Existing students (unless student already created)
-    
-    var currentState = $('#info-application-state-value').attr('data-state');
-    if (currentState != 'TRANSFERRED_AS_STUDENT' && currentState != 'REGISTERED_AS_STUDENT' && currentState != 'REGISTRATION_CHECKED' && currentState != 'REJECTED') {
-      $.ajax({
-        url: '/applications/listexistingpersons.json',
-        type: "GET",
-        data: {
-          applicationEntityId: $('body').attr('data-application-entity-id')
-        },
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          if (response.persons.length == 0) {
-            $('div.user-exists-container').hide();
-          }
-          else {
-            for (var i = 0; i < response.persons.length; i++) {
-              var personElement = $('<span>').addClass('user-exists-user-link-container').appendTo($('div.user-exists-description-actions'));
-              var hrefElement = $('<a>').appendTo(personElement);
-              hrefElement.attr('href', '/students/viewstudent.page?person=' + response.persons[i].id);
-              hrefElement.attr('target', '_blank');
-              hrefElement.text(response.persons[i].name);
-            }
-            $('div.user-exists-container').show();
-          }
-        }
-      });
-    }
-    
     // Helper functions
     
     function loadLogEntries() {

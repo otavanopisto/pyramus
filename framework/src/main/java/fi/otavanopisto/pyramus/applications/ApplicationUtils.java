@@ -135,15 +135,17 @@ public class ApplicationUtils {
     return false;
   }
   
-  public static boolean isInternetixAutoRegistrationPossible(JSONObject formData) {
+  public static boolean isInternetixAutoRegistrationPossible(JSONObject formData, boolean allowEmptySsn) {
     // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
     if (ApplicationUtils.isContractSchool(formData)) {
       return false;
     }
     // #1487: Jos hetun loppuosa puuttuu tai on XXX, käsitellään manuaalisesti
     String ssnSuffix = getFormValue(formData, "field-ssn-end");
-    if (StringUtils.isEmpty(ssnSuffix) || StringUtils.equals("XXXX", ssnSuffix)) {
-      return false;
+    if (StringUtils.isEmpty(ssnSuffix) || StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
+      if (!allowEmptySsn) {
+        return false;
+      }
     }
     // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
     String line = getFormValue(formData, "field-line");
@@ -506,7 +508,7 @@ public class ApplicationUtils {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case LINE_AINEOPISKELU:
-      if (!isInternetixAutoRegistrationPossible(formData)) {
+      if (!isInternetixAutoRegistrationPossible(formData, true)) {
         return studyProgrammeDAO.findById(49L); // Aineopiskelu/lukio (oppivelvolliset)
       }
       return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
@@ -1348,7 +1350,7 @@ public class ApplicationUtils {
       
       char[] ssnChars = ssn.toCharArray();
       ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
-      ssn = ssnChars.toString();
+      ssn = String.valueOf(ssnChars);
       persons = personDAO.listBySSNUppercase(ssn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);
@@ -1362,7 +1364,7 @@ public class ApplicationUtils {
     for (Email email : emails) {
       if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
         User user = userDAO.findByContactInfo(email.getContactInfo());
-        if (user != null) {
+        if (user != null && !Boolean.TRUE.equals(user.getArchived())) {
           Person person = user.getPerson();
           if (person != null) {
             existingPersons.put(person.getId(), person);
@@ -1385,6 +1387,9 @@ public class ApplicationUtils {
         if (staffMember != null) {
           throw new DuplicatePersonException("Käyttäjätiedot viittaavat henkilökunnan jäseneen");
         }
+      }
+      if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
+        throw new DuplicatePersonException("Hakemuksen ja olemassa olevan käyttäjän henkilötunnus eivät täsmää");
       }
       return person;
     }
