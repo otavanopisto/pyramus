@@ -502,8 +502,12 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       staffMember = userDAO.findById(userId);
       if (courseUserId == -1) {
         courseUserId = courseStaffMemberDAO.create(course, staffMember, role).getId();
-      } else {
-        courseStaffMemberDAO.updateRole(courseStaffMemberDAO.findById(courseUserId), role);
+      }
+      else {
+        CourseStaffMember courseStaffMember = courseStaffMemberDAO.findById(courseUserId);
+        if (courseStaffMember != null && courseStaffMember.getRole() != role) {
+          courseStaffMemberDAO.updateRole(courseStaffMemberDAO.findById(courseUserId), role);
+        }
       }
       
       existingIds.add(courseUserId);
