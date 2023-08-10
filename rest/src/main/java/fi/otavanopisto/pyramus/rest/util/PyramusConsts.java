@@ -8,4 +8,8 @@ public class PyramusConsts {
   // Name of the curriculum representing 2021 curriculum
   public static final String OPS_2021 = "OPS 2021";
   
+  // Subject education types
+  public static final String SUBJECT_PERUSOPETUS = "Perusopetus";
+  public static final String SUBJECT_LUKIO = "Lukio";
+  
 }

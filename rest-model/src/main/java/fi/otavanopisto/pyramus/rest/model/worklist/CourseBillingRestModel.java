@@ -2,6 +2,30 @@ package fi.otavanopisto.pyramus.rest.model.worklist;
 
 public class CourseBillingRestModel {
 
+  public Double getElementaryPrice() {
+    return elementaryPrice;
+  }
+
+  public void setElementaryPrice(Double elementaryPrice) {
+    this.elementaryPrice = elementaryPrice;
+  }
+
+  public Double getHighSchoolPrice() {
+    return highSchoolPrice;
+  }
+
+  public void setHighSchoolPrice(Double highSchoolPrice) {
+    this.highSchoolPrice = highSchoolPrice;
+  }
+
+  public Double getHighSchoolPointPrice() {
+    return highSchoolPointPrice;
+  }
+
+  public void setHighSchoolPointPrice(Double highSchoolPointPrice) {
+    this.highSchoolPointPrice = highSchoolPointPrice;
+  }
+
   public String getHighSchoolBillingNumber() {
     return highSchoolBillingNumber;
   }
@@ -18,34 +42,10 @@ public class CourseBillingRestModel {
     this.elementaryBillingNumber = elementaryBillingNumber;
   }
 
-  public Double getDefaultPrice() {
-    return defaultPrice;
-  }
-
-  public void setDefaultPrice(Double defaultPrice) {
-    this.defaultPrice = defaultPrice;
-  }
-
-  public Double getDefault2021Price() {
-    return default2021Price;
-  }
-
-  public void setDefault2021Price(Double default2021Price) {
-    this.default2021Price = default2021Price;
-  }
-
-  public Double getDefault2021PointPrice() {
-    return default2021PointPrice;
-  }
-
-  public void setDefault2021PointPrice(Double default2021PointPrice) {
-    this.default2021PointPrice = default2021PointPrice;
-  }
-
   private String highSchoolBillingNumber;
   private String elementaryBillingNumber;
-  private Double defaultPrice;
-  private Double default2021Price;
-  private Double default2021PointPrice;
+  private Double elementaryPrice;
+  private Double highSchoolPrice;
+  private Double highSchoolPointPrice;
 
 }
