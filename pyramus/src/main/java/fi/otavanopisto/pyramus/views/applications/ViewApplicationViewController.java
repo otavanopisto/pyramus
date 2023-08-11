@@ -400,7 +400,7 @@ public class ViewApplicationViewController extends PyramusViewController {
     // No conflicts if the application is already handled
     
     if (application.getState() == ApplicationState.TRANSFERRED_AS_STUDENT ||
-        application.getState() == ApplicationState.TRANSFERRED_AS_STUDENT ||
+        application.getState() == ApplicationState.REGISTERED_AS_STUDENT ||
         application.getState() == ApplicationState.REGISTRATION_CHECKED ||
         application.getState() == ApplicationState.REJECTED) {
       return conflicts;
