@@ -22,6 +22,7 @@ import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
@@ -87,7 +88,10 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
       }
     }
     
-    schoolDAO.update(school, schoolCode, schoolName, schoolField, studentGroup);
+    if (school.getContactInfo() == null) {
+      school = schoolDAO.updateContactInfo(school, new ContactInfo());
+    }
+    school = schoolDAO.update(school, schoolCode, schoolName, schoolField, studentGroup);
 
     // BillingDetails
     
@@ -114,7 +118,7 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
           billingEmailAddress, billingElectronicBillingAddress, billingElectronicBillingOperator, 
           billingCompanyIdentifier, billingReferenceNumber, billingNotes);
       
-      schoolDAO.updateBillingDetails(school, billingDetails);
+      school = schoolDAO.updateBillingDetails(school, billingDetails);
     } else {
       BillingDetails billingDetails = school.getBillingDetails();
       billingDetailsDAO.updatePersonName(billingDetails, billingPersonName);
@@ -136,7 +140,7 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
     
     // Tags
 
-    schoolDAO.updateTags(school, tagEntities);
+    school = schoolDAO.updateTags(school, tagEntities);
 
     // Addresses
     

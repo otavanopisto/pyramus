@@ -170,36 +170,6 @@
       });
     });
     
-    // Existing students (unless student already created)
-    
-    var currentState = $('#info-application-state-value').attr('data-state');
-    if (currentState != 'TRANSFERRED_AS_STUDENT' && currentState != 'REGISTERED_AS_STUDENT' && currentState != 'REGISTRATION_CHECKED' && currentState != 'REJECTED') {
-      $.ajax({
-        url: '/applications/listexistingpersons.json',
-        type: "GET",
-        data: {
-          applicationEntityId: $('body').attr('data-application-entity-id')
-        },
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          if (response.persons.length == 0) {
-            $('div.user-exists-container').hide();
-          }
-          else {
-            for (var i = 0; i < response.persons.length; i++) {
-              var personElement = $('<span>').addClass('user-exists-user-link-container').appendTo($('div.user-exists-description-actions'));
-              var hrefElement = $('<a>').appendTo(personElement);
-              hrefElement.attr('href', '/students/viewstudent.page?person=' + response.persons[i].id);
-              hrefElement.attr('target', '_blank');
-              hrefElement.text(response.persons[i].name);
-            }
-            $('div.user-exists-container').show();
-          }
-        }
-      });
-    }
-    
     // Helper functions
     
     function loadLogEntries() {
@@ -535,7 +505,16 @@
       $('div.application-handling-option').each(function() {
         // see if option is valid for the application line 
         var line = $(this).attr('data-line');
-        var available = !line || applicationLine == line || (line.startsWith('!') && applicationLine != line.substring(1));
+        var available = !line; // yes, if no line specified at all
+        if (!available) {
+          var values = line.split(',');
+          for (var i = 0; i < values.length; i++) {
+            available = applicationLine == values[i]; // application line matches
+            if (available) {
+              break;
+            }
+          }
+        }
         // see if option is valid for the application state
         if (available) {
           var optionState = $(this).attr('data-state');

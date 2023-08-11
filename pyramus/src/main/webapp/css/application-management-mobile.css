@@ -232,7 +232,7 @@ textarea {
   word-wrap: break-word;
 }
 
-.user-exists-container, .compulsory-contract-school-container {
+.application-conflicts-container {
   background: #fcdcdb;
   width: 100%;
   padding: 5px;
@@ -241,20 +241,13 @@ textarea {
   margin: 0 0 20px;
 }
 
-.user-exists-description-title {
-  color: #6e0303;
-  font-size: 16px;
-  font-weight: 400;
-  margin: 0 10px 5px;
-}
-
-.user-exists-description, .compulsory-contract-school-description {
+.application-conflicts-description {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
 }
 
-.user-exists-description-piggy, .compulsory-contract-school-description-piggy {
+.application-conflicts-description-piggy {
   background: url('../gfx/piggy.png') #fcdcdb no-repeat center center;
   background-size: contain;
   width: 48px;
@@ -263,25 +256,14 @@ textarea {
   margin: 2px 15px 0 5px;
 }
 
-.user-exists-description-actions, .compulsory-contract-school-description-actions {
+.application-conflicts-description-actions {
   font-size: 14px;
   flex: 1 1 auto;
 }
 
-.user-exists-description-actions span, .compulsory-contract-school-description-actions span {
+.application-conflicts-description-actions span {
   display: inline-block;
   margin: 4px 4px 4px 0;
-}
-
-.user-exists-user-link-container a {
-  color: #fff;
-  background: #f563a6;
-  border-radius: 2px;
-  display: inline-block;
-  font-weight: 400;
-  line-height: 1;
-  padding: 4px 6px;
-  text-decoration: none;
 }
 
 .additional-info-container {

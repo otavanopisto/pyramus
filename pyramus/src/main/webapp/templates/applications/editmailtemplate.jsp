@@ -59,7 +59,8 @@
             </jsp:include> 
             <select name="line">
               <option value="" <c:if test="${template.line == ''}">selected="selected"</c:if>></option>
-              <option value="aineopiskelu" <c:if test="${template.line == 'aineopiskelu'}">selected="selected"</c:if>>Aineopiskelu</option>
+              <option value="aineopiskelu" <c:if test="${template.line == 'aineopiskelu'}">selected="selected"</c:if>>Aineopiskelu/lukio</option>
+              <option value="aineopiskelupk" <c:if test="${template.line == 'aineopiskelupk'}">selected="selected"</c:if>>Aineopiskelu/perusopetus</option>
               <option value="nettilukio" <c:if test="${template.line == 'nettilukio'}">selected="selected"</c:if>>Nettilukio</option>
               <option value="nettipk" <c:if test="${template.line == 'nettipk'}">selected="selected"</c:if>>Nettiperuskoulu</option>
               <option value="aikuislukio" <c:if test="${template.line == 'aikuislukio'}">selected="selected"</c:if>>Aikuislukio</option>

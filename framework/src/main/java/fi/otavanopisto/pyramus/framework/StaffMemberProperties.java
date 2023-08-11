@@ -21,6 +21,9 @@ public class StaffMemberProperties {
   public static final EntityProperty APPLICATIONS_AINEOPISKELU = new EntityProperty("applicationsAineopiskelu",
       VariableType.BOOLEAN, "staffMemberProperties.applicationsAineopiskelu");
 
+  public static final EntityProperty APPLICATIONS_AINEOPISKELU_PK = new EntityProperty("applicationsAineopiskeluPk",
+      VariableType.BOOLEAN, "staffMemberProperties.applicationsAineopiskeluPk");
+
   public static final EntityProperty APPLICATIONS_NETTILUKIO = new EntityProperty("applicationsNettilukio",
       VariableType.BOOLEAN, "staffMemberProperties.applicationsNettilukio");
 
@@ -37,7 +40,7 @@ public class StaffMemberProperties {
       VariableType.BOOLEAN, "staffMemberProperties.specEdTeacher");
 
   public static List<EntityProperty> listProperties() {
-    return Arrays.asList(STUDY_APPROVER, WORKLIST_APPROVER, REPORT_SIGNATORY, APPLICATIONS_AINEOPISKELU, APPLICATIONS_NETTILUKIO,
+    return Arrays.asList(STUDY_APPROVER, WORKLIST_APPROVER, REPORT_SIGNATORY, APPLICATIONS_AINEOPISKELU, APPLICATIONS_AINEOPISKELU_PK, APPLICATIONS_NETTILUKIO,
         APPLICATIONS_NETTIPERUSKOULU, APPLICATIONS_AIKUISLUKIO, APPLICATIONS_AIKUISTENPERUSOPETUS, SPEC_ED_TEACHER);
   }
   

@@ -9,7 +9,8 @@
 
   <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true" data-preselect="${preselectLine}">
     <option value="">-- Valitse --</option>
-    <option value="aineopiskelu" data-underage-support="true" data-attachment-support="false">Aineopiskelu</option>
+    <option value="aineopiskelu" data-underage-support="true" data-attachment-support="false">Aineopiskelu/lukio</option>
+    <option value="aineopiskelupk" data-underage-support="true" data-attachment-support="false">Aineopiskelu/perusopetus</option>
     <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
     <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
     <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
@@ -38,6 +39,33 @@
         </div>
       </div>
 
+      <div data-dependent-field="field-line" data-dependent-values="aineopiskelupk" style="display:none;">
+        <div class="field-row-flex">
+          <div class="field-row-element">
+            <input type="radio" id="field-internetix_alternativelines_perusopetus" name="field-internetix_alternativelines" value="PERUSOPETUS" checked="checked"/>
+          </div>
+          <div class="field-row-label">
+            <label for="field-internetix_alternativelines_perusopetus">Aineopiskelu/perusopetus</label>
+          </div>
+        </div>
+        <div class="field-row-flex">
+          <div class="field-row-element">
+            <input type="radio" id="field-internetix_alternativelines_oppilaitos" name="field-internetix_alternativelines" value="OPPILAITOS"/>
+          </div>
+          <div class="field-row-label">
+            <label for="field-internetix_alternativelines_oppilaitos">Aineopiskelu/perusopetus (oppilaitos ilmoittaa)</label>
+          </div>
+        </div>
+        <div class="field-row-flex">
+          <div class="field-row-element">
+            <input type="radio" id="field-internetix_alternativelines_oppivelvollinen" name="field-internetix_alternativelines" value="OPPIVELVOLLINEN"/>
+          </div>
+          <div class="field-row-label">
+            <label for="field-internetix_alternativelines_oppivelvollinen">Aineopiskelu/perusopetus (oppivelvolliset)</label>
+          </div>
+        </div>
+      </div>
+
       <div data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk" style="display:none;">
         <div class="form-section__field-container">
           <label for="field-nettilukio_compulsory">Maksuton oppivelvollisuus</label>
@@ -58,6 +86,7 @@
       <input type="hidden" name="field-nettilukio_alternativelines"/>
       <input type="hidden" name="field-nettilukio_compulsory"/>
       <input type="hidden" name="field-nettilukio_compulsory_enddate"/>
+      <input type="hidden" name="field-internetix_alternativelines"/>
     </c:otherwise>
   </c:choose>
 

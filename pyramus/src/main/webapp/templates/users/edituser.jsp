@@ -49,12 +49,12 @@
             paramName: 'key'
           },{
             left : 38,
-            width: 150,
+            width: 250,
             dataType : 'text',
             editable: false,
             paramName: 'name'
           }, {
-            left : 188,
+            left : 288,
             width : 750,
             dataType: 'text',
             editable: false,
@@ -109,12 +109,12 @@
             paramName: 'key'
           },{
             left : 38,
-            width: 150,
+            width: 250,
             dataType : 'text',
             editable: false,
             paramName: 'name'
           }, {
-            left : 188,
+            left : 288,
             width : 750,
             dataType: 'text',
             editable: false,

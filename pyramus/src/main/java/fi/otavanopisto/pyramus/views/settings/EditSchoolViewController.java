@@ -78,7 +78,7 @@ public class EditSchoolViewController extends PyramusViewController implements B
     
     String jsonContactTypes = new JSONArrayExtractor("id", "name").extractString(contactTypes);
     
-    List<Address> addresses = school.getContactInfo().getAddresses();
+    List<Address> addresses = school.getContactInfo() == null ? Collections.emptyList() : school.getContactInfo().getAddresses();
     JSONArray jsonAddresses = new JSONArrayExtractor("id",
     												"defaultAddress",
     												"name",
@@ -93,7 +93,7 @@ public class EditSchoolViewController extends PyramusViewController implements B
       }
     }
     
-    List<Email> emails = school.getContactInfo().getEmails();
+    List<Email> emails = school.getContactInfo() == null ? Collections.emptyList() : school.getContactInfo().getEmails();
     JSONArray jsonEmails = new JSONArrayExtractor("id", "defaultAddress", "address").extract(emails);
     for (int i = 0; i < jsonEmails.size(); i++) {
       JSONObject jsonEmail = jsonEmails.getJSONObject(i);
@@ -102,7 +102,7 @@ public class EditSchoolViewController extends PyramusViewController implements B
       }
     }
     
-    List<PhoneNumber> phoneNumbers = school.getContactInfo().getPhoneNumbers();
+    List<PhoneNumber> phoneNumbers = school.getContactInfo() == null ? Collections.emptyList() : school.getContactInfo().getPhoneNumbers();
     JSONArray jsonPhoneNumbers = new JSONArrayExtractor("id", "defaultNumber", "number").extract(phoneNumbers);
     for (int i = 0; i < jsonPhoneNumbers.size(); i++) {
       JSONObject jsonPhoneNumber = jsonPhoneNumbers.getJSONObject(i);

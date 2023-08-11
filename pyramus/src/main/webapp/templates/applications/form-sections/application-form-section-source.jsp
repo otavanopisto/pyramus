@@ -7,7 +7,7 @@
 
     <div class="application-line"></div>
 
-    <h2 class="form-section__header">Mistä sait tiedon koulutuksesta?</h2>
+    <h2 class="form-section__header required">Mistä sait tiedon koulutuksesta?</h2>
   
     <div class="form-section__field-container field-source">
       <div class="field-row-flex">
