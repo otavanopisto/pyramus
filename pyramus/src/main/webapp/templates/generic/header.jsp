@@ -158,6 +158,7 @@
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/searchschools.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchSchools"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/municipalities.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageMunicipalities"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/subjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSubjects"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/academicterms.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageAcademicTerms"/></a></li>
             
             <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createuser.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createUser"/></a></li>
@@ -166,7 +167,6 @@
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/listgradingscales.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.listGradingScales"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationTypes"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/educationsubtypes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageEducationSubtypes"/></a></li>
-              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/academicterms.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageAcademicTerms"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammes.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammes"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/studyprogrammecategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageStudyProgrammeCategories"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/reportcategories.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageReportCategories"/></a></li>
