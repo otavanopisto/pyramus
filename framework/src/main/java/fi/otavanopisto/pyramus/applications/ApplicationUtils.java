@@ -1350,8 +1350,8 @@ public class ApplicationUtils {
       
       char[] ssnChars = ssn.toCharArray();
       ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
-      String wrongsSsn = String.valueOf(ssnChars);
-      persons = personDAO.listBySSNUppercase(wrongsSsn);
+      String wrongSsn = String.valueOf(ssnChars);
+      persons = personDAO.listBySSNUppercase(wrongSsn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);
       }
