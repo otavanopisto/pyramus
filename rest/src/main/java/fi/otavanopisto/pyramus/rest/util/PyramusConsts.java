@@ -12,4 +12,8 @@ public class PyramusConsts {
   public static final String SUBJECT_PERUSOPETUS = "Perusopetus";
   public static final String SUBJECT_LUKIO = "Lukio";
   
+  // Education time unit symbols
+  public static final String TIMEUNIT_OP = "op";
+  public static final String TIMEUNIT_HOURS = "h";
+  
 }
