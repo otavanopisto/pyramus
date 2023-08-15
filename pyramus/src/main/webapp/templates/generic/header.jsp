@@ -188,7 +188,7 @@
         </li>
       </ul>
     
-      <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+      <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
         <ul id="GUI_MENU_systemContainer">
           <li id="GUI_MENU_systemLink">
             <fmt:message key="generic.navigation.system"/>
