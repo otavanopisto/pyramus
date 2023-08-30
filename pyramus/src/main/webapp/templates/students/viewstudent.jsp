@@ -148,6 +148,12 @@
           }
         }
 
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+          iconURL: GLOBAL_contextPath + '/gfx/list-add.png',
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsCreateStudentParentRegistrationLabel"/>',
+          link: GLOBAL_contextPath + '/studentparents/createstudentparentregistration.page?studentId=' + studentId 
+        }));
+
         var studentReports = JSDATA["studentReports"].evalJSON();
         
         if (studentReports) {
@@ -1201,6 +1207,50 @@
         return studentProjectModulesTable;
       }
 
+      function setupStudentParentsTable(studentId) {
+        var studentParentDataAll = JSDATA["studentParents"].evalJSON();
+        
+        if (!studentParentDataAll) {
+          return;
+        }
+
+        var studentParentData = studentParentDataAll[studentId];
+        if (!studentParentData) {
+          return;
+        }
+
+        if (studentParentData.length == 0) {
+          return;
+        }
+        
+        var studentParentsTable = new IxTable($('studentParentsTableContainer.' + studentId), {
+          id : "studentParentsTable." + studentId,
+          columns : [{
+            left : 8,
+            width: 160,
+            dataType : 'text',
+            editable: false,
+            paramName: 'name'
+          }, {
+            left : 180,
+            width : 500,
+            dataType: 'text',
+            editable: false,
+            paramName: 'email'
+          }]
+        });
+
+        for (var i = 0, l = studentParentData.length; i < l; i++) {
+          var name = studentParentData[i].firstName + " " + studentParentData[i].lastName;
+          studentParentsTable.addRow([
+            name,
+            studentParentData[i].email
+          ]);
+        }
+        
+        return studentParentsTable;
+      }
+
       function onLoad(event) {
         var coursesTable;
         var filesTable;
@@ -1688,6 +1738,8 @@
           if (personVariables && personVariables.length > 0) {
             initPersonVariablesTable(${student.id}, personVariables);
           }
+          
+          setupStudentParentsTable(${student.id});
         </c:forEach>
         
         
@@ -2316,6 +2368,20 @@
                             value="students.viewStudent.municipalityHelp" />
                         </jsp:include>
                         <div class="genericViewFormDataText">${student.municipality.name}</div>
+                      </div>
+                    </c:when>
+                  </c:choose>
+
+                  <c:choose>
+                    <c:when test="${studentHasParents[student.id]}">
+                      <div class="genericFormSection">
+                        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale" value="students.viewStudent.studentParentsTitle" />
+                          <jsp:param name="helpLocale" value="students.viewStudent.studentParentsHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">
+                          <div id="studentParentsTableContainer.${student.id}"></div>
+                        </div>
                       </div>
                     </c:when>
                   </c:choose>

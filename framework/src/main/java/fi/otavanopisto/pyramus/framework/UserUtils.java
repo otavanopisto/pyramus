@@ -55,12 +55,37 @@ public class UserUtils {
    * @throws IllegalArgumentException if the given email is blank 
    */
   public static boolean isAllowedEmail(String emailAddress, ContactType contactType, Long personId) {
+    return isAllowedEmail(emailAddress, !contactType.getNonUnique(), personId);
+  }
+
+  /**
+   * Is email address allowed (not in use)
+   * 
+   * @param emailAddress address
+   * @param unique if the email has to be unique. if false, this method returns always true
+   * @return true if email is not in use
+   * @throws IllegalArgumentException if the given email is blank 
+   */
+  public static boolean isAllowedEmail(String emailAddress, boolean unique) {
+    return isAllowedEmail(emailAddress, unique, null);
+  }
+  
+  /**
+   * Is email address allowed (not in use by another person)
+   * 
+   * @param emailAddress address
+   * @param unique if the email has to be unique. if false, this method returns always true
+   * @param personId id of person receiving this address
+   * @return true if email may be used by the provided person
+   * @throws IllegalArgumentException if the given email is blank 
+   */
+  public static boolean isAllowedEmail(String emailAddress, boolean unique, Long personId) {
     if (StringUtils.isBlank(emailAddress)) {
       throw new IllegalArgumentException("Email address cannot be blank.");
     }
     
     // if Email is being put into non-unique field, it is always allowed    
-    if (contactType.getNonUnique()) {
+    if (!unique) {
       return true;
     }
     

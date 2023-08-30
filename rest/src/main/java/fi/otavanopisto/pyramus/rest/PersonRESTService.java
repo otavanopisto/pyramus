@@ -259,6 +259,18 @@ public class PersonRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(userController.listStaffMembersByPerson(person))).build();
   }
   
+  @Path("/persons/{ID:[0-9]*}/studentParents")
+  @GET
+  @RESTPermit (StudentPermissions.LIST_STUDENTPARENTSBYPERSON)
+  public Response listStudentParentsByPerson(@PathParam("ID") Long id) {
+    Person person = personController.findPersonById(id);
+    if (person == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(userController.listStudentParentsByPerson(person))).build();
+  }
+  
   @Path("/persons/{ID:[0-9]*}/credentials")
   @GET
   @RESTPermit (handling = Handling.INLINE)
