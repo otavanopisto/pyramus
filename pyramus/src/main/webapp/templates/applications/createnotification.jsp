@@ -40,7 +40,8 @@
             </jsp:include> 
             <select name="line">
               <option value="" selected="selected">Kaikki linjat</option>
-              <option value="aineopiskelu">Aineopiskelu</option>
+              <option value="aineopiskelu">Aineopiskelu/lukio</option>
+              <option value="aineopiskelupk">Aineopiskelu/perusopetus</option>
               <option value="nettilukio">Nettilukio</option>
               <option value="nettipk">Nettiperuskoulu</option>
               <option value="aikuislukio">Aikuislukio</option>

@@ -23,26 +23,18 @@
         <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
         
-          <c:if test="${contractSchoolConflict}">
-            <div class="compulsory-contract-school-container">
-              <div class="compulsory-contract-school-description">
-                <div class="compulsory-contract-school-description-piggy"></div>
-                <div class="compulsory-contract-school-actions">
-                  <span>Oppivelvollinen ei opiskele sopimusoppilaitoksessa</span> 
+          <c:if test="${!empty conflicts}">
+            <div class="application-conflicts-container">
+              <div class="application-conflicts-description">
+                <div class="application-conflicts-description-piggy"></div>
+                <div class="application-conflicts-actions">
+                  <c:forEach items="${conflicts}" var="conflict">
+                    <p>${conflict}</p>
+                  </c:forEach>
                 </div>
               </div>
             </div>
           </c:if>
-
-          <div class="user-exists-container" style="display:none;">
-            <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
-            <div class="user-exists-description">
-              <div class="user-exists-description-piggy"></div>
-              <div class="user-exists-description-actions">
-                <span>Hakijan Pyramus-profiili:</span> 
-              </div>
-            </div>
-          </div>
         
           <c:forEach var="section" items="${sections}">
             <h3 class="application-data-title">${section.key}</h3>

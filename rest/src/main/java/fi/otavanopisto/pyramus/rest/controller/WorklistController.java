@@ -24,9 +24,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistBillingSettingsDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
-import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistBillingSettings;
@@ -108,28 +106,41 @@ public class WorklistController {
   }
   
   public Double getCourseModuleBasePrice(CourseModule courseModule, User user) {
-    // Determine base price based on curriculum and course length
+    
+    // Determine base price based on education type and course length
     
     CourseBillingRestModel courseBillingRestModel = getCourseBillingRestModel();
     if (courseBillingRestModel != null) {
-      CourseBase course = courseModule.getCourse();
-      
-      Set<Curriculum> curriculums = course.getCurriculums();
-      if (curriculums != null) {
-        boolean is2021Course = curriculums.stream().anyMatch(curriculum -> StringUtils.equalsIgnoreCase(curriculum.getName(), PyramusConsts.OPS_2021));
-        if (is2021Course) {
-          Double price = isEarliestCourseModuleOfSubjectAssessedByUser(courseModule, user)
-              ? courseBillingRestModel.getDefault2021Price()
-              : courseBillingRestModel.getDefault2021PointPrice(); 
-          Double length = courseModule.getCourseLength().getUnits();
-          if (length > 1) {
-            price += courseBillingRestModel.getDefault2021PointPrice() * (length - 1); 
-          }
-          return price;
+      String type = courseModule.getSubject() != null && courseModule.getSubject().getEducationType() != null
+          ? courseModule.getSubject().getEducationType().getName() : null;
+      if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_PERUSOPETUS)) {
+        return courseBillingRestModel.getElementaryPrice();
+      }
+      else if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_LUKIO)) {
+        Double price = isEarliestCourseModuleOfSubjectAssessedByUser(courseModule, user)
+            ? courseBillingRestModel.getHighSchoolPrice()
+            : courseBillingRestModel.getHighSchoolPointPrice(); 
+        Double length = 0d;
+        String symbol = courseModule.getCourseLength().getUnit().getSymbol();
+        if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_OP)) {
+          // pituus opintopisteinä 
+          length = courseModule.getCourseLength().getUnits();
+        }
+        else if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_HOURS) && courseModule.getCourseLength().getUnits() == 38) {
+          // pituus opintotunteina (lukiossa ainoa vaihtoehto on 38h -> 2 op) 
+          length = 2d;
         }
         else {
-          return courseBillingRestModel.getDefaultPrice();
+          // jos pituus ei ole opintopisteitä tai 38 opintotuntia, ei laskuteta
+          return null;
         }
+        if (length > 1) {
+          price += courseBillingRestModel.getHighSchoolPointPrice() * (length - 1); 
+        }
+        return price;
+      }
+      else {
+        return null;
       }
     }
     return null;

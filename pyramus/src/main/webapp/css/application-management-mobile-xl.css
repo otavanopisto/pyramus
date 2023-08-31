@@ -17,16 +17,11 @@
   min-width: 240px;
 }
 
-.user-exists-container, .compulsory-contract-school-container {
+.application-conflicts-container {
   padding: 10px;
 }
 
-.user-exists-description-title {
-  font-size: 18px;
-  margin: 0 10px 10px;
-}
-
-.user-exists-description-piggy, .compulsory-contract-school-description-piggy {
+.application-conflicts-description-piggy {
   width: 64px;
   height: 64px;
   flex: 0 0 64px;

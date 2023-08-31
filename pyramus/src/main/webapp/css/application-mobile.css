@@ -176,13 +176,14 @@ body {
 }
 
 .selection-box__link {
-  border-radius: 2px;
+  border-radius: 5px;
   color: #fff;
   display: inline-block;
   font-size: 13px;
   font-weight: 400;
-  line-height: 1;
-  padding: 8px;
+  line-height: 1.25rem;
+  margin: 5px 0 0;
+  padding: 8px 12px;
   text-decoration: none;
   text-transform: uppercase;
 }
@@ -400,23 +401,27 @@ h3 {
   line-height: 1;
 }
 
-.form-section__header--Nettilukio {
+.form-section__header--nettilukio {
   color: #5dbdc5;
 }
 
-.form-section__header--Nettiperuskoulu {
+.form-section__header--nettipk {
   color: #ef7d00;
 }
 
-.form-section__header--Aineopiskelu {
+.form-section__header--aineopiskelu {
   color: #c04080;
 }
 
-.form-section__header--Aikuislukio {
+.form-section__header--aineopiskelupk {
+  color: #c04080;
+}
+
+.form-section__header--aikuislukio {
   color: #0080bb;
 }
 
-.form-section__header--Maahanmuuttajakoulutukset {
+.form-section__header--mk {
   color: #5dbdc5;
 }
 
@@ -429,12 +434,12 @@ b {
   font-weight: 600;
 }
 
-/* Course fees and study promises */
+/* Study promises */
 
-.course-fees-overlay,
 .nettilukio-promise-overlay,
 .nettilukio-contactpromise-overlay,
 .aineopiskelu-promise-overlay,
+.aineopiskelupk-promise-overlay,
 .nettipk-promise-overlay {
   position: fixed;
   top: 0;
@@ -446,10 +451,10 @@ b {
   width: 100%;
 }
 
-.course-fees,
 .nettilukio-promise,
 .nettilukio-contactpromise,
 .aineopiskelu-promise,
+.aineopiskelupk-promise,
 .nettipk-promise {
   background: #fff;
   border: 3px solid #8ed2de;
@@ -465,10 +470,10 @@ b {
   z-index: 100;
 }
 
-.course-fees__close,
 .nettilukio-promise__close,
 .nettilukio-contactpromise__close,
 .aineopiskelu-promise__close,
+.aineopiskelupk-promise__close,
 .nettipk-promise__close {
   background-color: #009fe3;
   background-image: url('../gfx/icons/48x48/actions/close.png');
