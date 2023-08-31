@@ -111,7 +111,7 @@ public class ApplicationUtils {
   private static final String LINE_MK = "mk";
   
   public static boolean hasLineAccess(StaffMember staffMember, String line) {
-    if (staffMember.getRole() == Role.ADMINISTRATOR) {
+    if (staffMember.hasRole(Role.ADMINISTRATOR)) {
       return true;
     }
     if (StringUtils.equals(line, LINE_AINEOPISKELU) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()))) {
@@ -162,7 +162,7 @@ public class ApplicationUtils {
   }
   
   public static Set<String> listAccessibleLines(StaffMember staffMember) {
-    boolean isAdmin = staffMember.getRole() == Role.ADMINISTRATOR;
+    boolean isAdmin = staffMember.hasRole(Role.ADMINISTRATOR);
     Set<String> lines = new HashSet<>();
     if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU_PK.getKey()))) {
       lines.add(LINE_AINEOPISKELU_PK);

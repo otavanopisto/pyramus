@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.json.users;
 
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,8 +52,9 @@ public class PoseJSONRequestController extends JSONRequestController {
     /**
      * Logging in is restricted to default users so we try to represent the default user instead
      */
-    if ((user.getPerson() != null) && (user.getPerson().getDefaultUser() != null))
+    if ((user.getPerson() != null) && (user.getPerson().getDefaultUser() != null)) {
       user = user.getPerson().getDefaultUser();
+    }
     
     if (user instanceof StaffMember) {
       Role role = ((StaffMember) user).getRole();
@@ -66,13 +68,14 @@ public class PoseJSONRequestController extends JSONRequestController {
         break;
       }
       logger.log(Level.INFO, String.format("User %d posing staff member %d", jsonRequestContext.getLoggedUserId(), user.getId()));
-      session.setAttribute("loggedUserRole", UserRole.valueOf(role.name()));
       session.setAttribute("loggedUserId", user.getId());
       session.setAttribute("loggedUserName", user.getFullName());
+      session.setAttribute("loggedUserRoles", Set.of(((StaffMember) user).getRole()));
     } else if (user instanceof Student) {
       logger.log(Level.INFO, String.format("User %d posing student %d", jsonRequestContext.getLoggedUserId(), user.getId()));
       session.setAttribute("loggedUserId", user.getId());
       session.setAttribute("loggedUserName", user.getFullName()); 
+      session.removeAttribute("loggedUserRoles");
     } else {
       logger.log(Level.SEVERE, String.format("User %d was not not a student or a staffMember", userId));
       throw new SmvcRuntimeException(PyramusStatusCode.PAGE_NOT_FOUND, "Requested user could not be found");

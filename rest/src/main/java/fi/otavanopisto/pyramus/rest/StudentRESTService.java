@@ -3308,9 +3308,9 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Staff member not found").build();
     }
     
-    if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
-      if (!staffMember.getRole().equals(Role.ADMINISTRATOR)) {
-        if (!staffMember.getRole().equals(Role.STUDY_PROGRAMME_LEADER)) {
+    if (!staffMember.hasRole(Role.TRUSTED_SYSTEM)) {
+      if (!staffMember.hasRole(Role.ADMINISTRATOR)) {
+        if (!staffMember.hasRole(Role.STUDY_PROGRAMME_LEADER)) {
           boolean amICounselor = studentController.amIGuidanceCounselor(id, staffMember);
           if (!amICounselor) {
             return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
@@ -3372,7 +3372,7 @@ public class StudentRESTService extends AbstractRESTService {
       }
     }
     if (!accessible) {
-      accessible = staffMember.getRole().equals(Role.ADMINISTRATOR);
+      accessible = staffMember.hasRole(Role.ADMINISTRATOR);
     }
     if (!accessible) {
       accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));

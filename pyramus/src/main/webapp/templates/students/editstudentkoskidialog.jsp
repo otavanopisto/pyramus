@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -27,10 +28,10 @@
       function onLoad(event) {
         var tabControl2 = new IxProtoTabs($('studentKoskiDialogTabs'));
         var personId = '${person.id}';
-        var loggedUserRole = '${loggedUserRole}';
+        var isAdmin = '${loggedUserRoles.contains(Role.ADMINISTRATOR) ? "true" : "false"}' === "true";
         
         initIDsTable(personId);
-        initInvalidationTable(personId, loggedUserRole);
+        initInvalidationTable(personId, isAdmin);
 
         loadIDsTable(personId);
         loadInvalidationTable(personId);
@@ -108,7 +109,7 @@
         });
       }
       
-      function initInvalidationTable(personId, loggedUserRole) {
+      function initInvalidationTable(personId, isAdmin) {
         var table = new IxTable($('studentKoskiInvalidateTableContainer'), {
           id : "studentKoskiInvalidateTable",
           columns : [{
@@ -128,7 +129,7 @@
           }, {
             width: 22,
             right: 8,
-            hidden: loggedUserRole != 'ADMINISTRATOR',
+            hidden: !isAdmin,
             dataType: 'button',
             paramName: 'archiveButton',
             imgsrc: GLOBAL_contextPath + '/gfx/edit-delete.png',
