@@ -3546,7 +3546,7 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/subjectChoices")
   @GET
-  @RESTPermit(StudentPermissions.LIST_STUDENT_SUBJECT_CHOICES)
+  @RESTPermit(handling = Handling.INLINE)
   public Response listStudentSubjectChoices(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
@@ -3555,9 +3555,28 @@ public class StudentRESTService extends AbstractRESTService {
     
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
+
     
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
+    }
+    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
+
+    User loggedUser = sessionController.getUser();
+
+    if (staffMember != null){
+      if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
+        if (!staffMember.getRole().equals(Role.ADMINISTRATOR)) {
+          boolean amICounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
+          if (!amICounselor) {
+            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
+          }
+        }
+      }
+    } else {
+      if (!loggedUser.getId().equals(student.getId())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     List<String> variableList = new ArrayList<>();
