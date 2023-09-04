@@ -120,7 +120,20 @@ public class WorklistController {
         Double price = isEarliestCourseModuleOfSubjectAssessedByUser(courseModule, user)
             ? courseBillingRestModel.getHighSchoolPrice()
             : courseBillingRestModel.getHighSchoolPointPrice(); 
-        Double length = courseModule.getCourseLength().getUnits();
+        Double length = 0d;
+        String symbol = courseModule.getCourseLength().getUnit().getSymbol();
+        if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_OP)) {
+          // pituus opintopisteinä 
+          length = courseModule.getCourseLength().getUnits();
+        }
+        else if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_HOURS) && courseModule.getCourseLength().getUnits() == 38) {
+          // pituus opintotunteina (lukiossa ainoa vaihtoehto on 38h -> 2 op) 
+          length = 2d;
+        }
+        else {
+          // jos pituus ei ole opintopisteitä tai 38 opintotuntia, ei laskuteta
+          return null;
+        }
         if (length > 1) {
           price += courseBillingRestModel.getHighSchoolPointPrice() * (length - 1); 
         }
