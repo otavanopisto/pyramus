@@ -3551,20 +3551,13 @@ public class StudentRESTService extends AbstractRESTService {
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
     
-    User user = userController.findUserById(studentId);
-    
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
-
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
-
     User loggedUser = sessionController.getUser();
 
-    if (staffMember != null){
+    if (loggedUser instanceof StaffMember) {
+      StaffMember staffMember = (StaffMember) loggedUser;
       if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
         if (!staffMember.getRole().equals(Role.ADMINISTRATOR)) {
           boolean amICounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
@@ -3581,7 +3574,7 @@ public class StudentRESTService extends AbstractRESTService {
     
     List<String> variableList = new ArrayList<>();
     
-    List<UserVariable> variables = userController.listUserVariablesByUser(user);
+    List<UserVariable> variables = userController.listUserVariablesByUser(student);
     
     for (UserVariable variable : variables) {
       String variableKey = variable.getKey().getVariableKey();
