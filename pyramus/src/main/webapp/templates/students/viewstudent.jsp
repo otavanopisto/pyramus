@@ -992,7 +992,7 @@
               }
             }
           }, {
-            header : '<fmt:message key="students.viewStudent.courseNumberTableSubjectHeader"/>',
+            header : '<fmt:message key="students.viewStudent.courseAssessmentsTableCourseNumberHeader"/>',
             right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8, 
             width: 70,
             dataType: 'number',
