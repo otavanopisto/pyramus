@@ -32,7 +32,7 @@ public class LoginJSONRequestController extends JSONRequestController {
   /**
    * Processes the request to log in. Authorizes the given credentials and if they match a user,
    * stores the user into the session (keys <code>loggedUserId</code>, <code>loggedUserName</code>,
-   * and <code>loggedUserRole</code>).
+   * and <code>loggedUserRoles</code>).
    * <p/>
    * If the session contains a <code>loginRedirectUrl</code> key, redirects the user to that URL.
    * Otherwise, redirects back to the index page of the application.

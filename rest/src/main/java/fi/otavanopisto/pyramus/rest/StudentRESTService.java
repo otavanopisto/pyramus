@@ -3308,14 +3308,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Staff member not found").build();
     }
     
-    if (!staffMember.hasRole(Role.TRUSTED_SYSTEM)) {
-      if (!staffMember.hasRole(Role.ADMINISTRATOR)) {
-        if (!staffMember.hasRole(Role.STUDY_PROGRAMME_LEADER)) {
-          boolean amICounselor = studentController.amIGuidanceCounselor(id, staffMember);
-          if (!amICounselor) {
-            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
-          }
-        }
+    if (!staffMember.hasAnyRole(Role.TRUSTED_SYSTEM, Role.ADMINISTRATOR, Role.STUDY_PROGRAMME_LEADER)) {
+      boolean amICounselor = studentController.amIGuidanceCounselor(id, staffMember);
+      if (!amICounselor) {
+        return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
       }
     }
     
