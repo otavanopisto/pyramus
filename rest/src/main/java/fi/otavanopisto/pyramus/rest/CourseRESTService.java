@@ -57,6 +57,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -75,6 +76,7 @@ import fi.otavanopisto.pyramus.rest.controller.ModuleController;
 import fi.otavanopisto.pyramus.rest.controller.OrganizationController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
+import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
@@ -84,7 +86,10 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.rest.model.CourseLength;
 import fi.otavanopisto.pyramus.rest.model.CourseModule;
+import fi.otavanopisto.pyramus.rest.model.course.CourseAssessmentPrice;
+import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
@@ -130,6 +135,9 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Inject
   private AssessmentController assessmentController;
+
+  @Inject
+  private WorklistController worklistController;
 
   @Path("/courses")
   @POST
@@ -512,6 +520,95 @@ public class CourseRESTService extends AbstractRESTService {
       .status(Status.OK)
       .entity(objectFactory.createModel(courseDescriptions))
       .build();
+  }
+
+  @Path("/courses/{ID:[0-9]*}/assessmentPrice")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getCourseAssessmentPrice(@PathParam("ID") Long id) {
+    
+    CourseAssessmentPrice price = new CourseAssessmentPrice(0d);
+    
+    // User has to be a student
+    
+    User user = sessionController.getUser();
+    Student student = user == null ? null : studentController.findStudentById(user.getId());
+    if (student == null) {
+      return Response.ok(price).build();
+    }
+    
+    // Study programme needs to be the one that has paid assessments
+    
+    if (!StringUtils.equalsIgnoreCase(student.getStudyProgramme().getName(), PyramusConsts.STUDYPROGRAMME_PAID_ASSESSMENTS)) {
+      return Response.ok(price).build();
+    }
+    
+    // Course needs to exist
+    
+    Course course = courseController.findCourseById(id);
+    if (course == null && course.getArchived()) {
+      return Response.ok(price).build();
+    }
+    
+    // Student must not have previous assessments for the course
+    
+    List<CourseAssessment> assessments = assessmentController.listByCourseAndStudent(course, student);
+    if (assessments.size()  > 0) {
+      return Response.ok(price).build();
+    }
+    
+    // Student must not have previous assessment requests for the course
+    
+    List<CourseAssessmentRequest> requests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    if (requests.size() > 0) {
+      return Response.ok(price).build();
+    }
+    
+    // Billing model must exist
+    
+    CourseBillingRestModel billing = worklistController.getCourseBillingRestModel();
+    if (billing == null) {
+      logger.warning("Course billing model not defined");
+      return Response.ok(price).build();
+    }
+    
+    // Course needs to be either OPS 2016 or OPS 2021
+    
+    Set<Curriculum> curriculums = course.getCurriculums();
+    Curriculum curriculum = curriculums.stream().filter(c -> StringUtils.equalsIgnoreCase(c.getName(), PyramusConsts.OPS_2016)).findFirst().orElse(null);
+    if (curriculum != null) {
+      // OPS 2016 price
+      price.setPrice(billing.getAssessment2016Price());
+    }
+    else {
+      curriculum = curriculums.stream().filter(c -> StringUtils.equalsIgnoreCase(c.getName(), PyramusConsts.OPS_2021)).findFirst().orElse(null);
+      if (curriculum != null) {
+        Double length = 0d;
+        for (fi.otavanopisto.pyramus.domainmodel.base.CourseModule module : course.getCourseModules()) {
+          // Each module length needs to be op or 38 hours
+          String symbol = module.getCourseLength().getUnit().getSymbol();
+          if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_OP)) {
+            length += module.getCourseLength().getUnits();
+          }
+          else if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_HOURS) && module.getCourseLength().getUnits() == 38) {
+            length += 2;
+          }
+        }
+        if (length.equals(1d)) {
+          // OPS 2021 1op price
+          price.setPrice(billing.getAssessment2021op1Price());
+        }
+        else if (length.equals(2d)) {
+          // OPS 2021 2op price
+          price.setPrice(billing.getAssessment2021op2Price());
+        }
+        else if (length.equals(3d)) {
+          // OPS 2021 3op price
+          price.setPrice(billing.getAssessment2021op3Price());
+        }
+      }
+    }
+    return Response.ok(price).build();
   }
 
   @Path("/courses/{ID:[0-9]*}/assessmentsRequests/")
