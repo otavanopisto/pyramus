@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Email;
 
 @Entity
 public class OrganizationContactPerson {
@@ -81,7 +82,7 @@ public class OrganizationContactPerson {
   private String name;
 
   @Column
-  @org.hibernate.validator.constraints.Email
+  @Email
   private String email;
 
   @Column

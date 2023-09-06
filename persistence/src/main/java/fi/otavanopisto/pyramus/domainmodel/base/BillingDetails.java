@@ -7,9 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
+import javax.validation.constraints.Email;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.Email;
 
 @Entity
 public class BillingDetails {
