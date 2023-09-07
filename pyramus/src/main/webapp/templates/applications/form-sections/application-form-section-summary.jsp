@@ -28,7 +28,7 @@
           <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         </div>
         <div class="field-row-label">
-          <label for="field-privacy" class="required">Olen lukenut <a href="https://otavia.fi/opiskelija-ja-opintotietorekisterin-tietosuojaseloste/" target="_blank" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavian oppilaitoshallintajärjestelmään sekä verkko-oppimisympäristöön.</label>
+          <label for="field-privacy" class="required">Olen lukenut <a href="https://drive.google.com/file/d/1rcKBLel8fXZdwiqgBcZdu4MKTRHeyEHy/view" target="_blank" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavian oppilaitoshallintajärjestelmään sekä verkko-oppimisympäristöön. Tietoni tallentuvat myös Opetushallituksen Opintopolku-järjestelmään.</label>
         </div>
       </div>
     </div>
@@ -79,6 +79,17 @@
       </div>
     </div>
 
+    <div class="summary-container field-aineopiskelupk-promise dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelupk" style="display:none;">
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-aineopiskelupk-promise" name="field-aineopiskelupk-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        </div>
+        <div class="field-row-label">
+          <label for="field-aineopiskelupk-promise" class="required">Ymmärrän, että verkko-oppimisympäristö Muikussa tekemäni itsenäiset verkkokurssisuoritukset ovat näyttöjä omasta osaamisestani, ja sitoudun tekemään tehtävät itsenäisesti. <a href="#" class="aineopiskelupk-promise-link">Opiskelun säännöt Nettiperuskoulussa</a>.</label>
+        </div>
+      </div>
+    </div>
+
     <div class="summary-container field-nettipk-promise dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
@@ -118,12 +129,26 @@
     </div>
     <div class="aineopiskelu-promise" style="display:none;">
       <div class="aineopiskelu-promise__close"></div>
+      <h3>Opintojakson itsenäinen suorittaminen</h3>
+      <p>Nettilukion opintojaksojen arvioitavia tehtäviä tehdessä on tärkeä muistaa, että vastauksesi osoittavat juuri sinun henkilökohtaista osaamistasi: vastauksiin sisältyvät asiat, esimerkit ja tekstin rakentaminen ovat näyttöjä siitä, miten sinä olet asian hahmottanut ja ymmärtänyt. Arvioitavat tehtävät muodostavat pohjan henkilökohtaisen suorituksesi arvioinnille.</p>
+      <p>Arvioitavien tehtävien osalta yhteistyö toisen opiskelijan kanssa ei lähtökohtaisesti ole mahdollista, ellei opettaja ole erikseen tehtävänannossa näin ohjeistanut tai ellei opettajan kanssa sovita tästä ennen opintojakson suorittamista.</p>
+      <p>Mikäli sinulla kuitenkin olisi mahdollisuus opiskella opintojaksoja toisen opiskelijan kanssa yhdessä, se on tietyin reunaehdoin sallittua. Tällaisessa tilanteessa on tärkeää että ilmaiset tämän opettajalle jo opintojakson alussa JA tuot tämän esiin esimerkiksi oppimispäiväkirjassa erittelemällä tekemistä siten, että sinun osuutesi oppimisesta tulee näkyviin. Arvioinnin kannalta oppimisprosessin läpinäkyvyys on tärkeää.</p>
+      <p>Kurssin materiaalien läpikäyminen ja harjoitustehtävien tekeminen jonkun toisen tuella on mahdollista. Jos tarvitset apua arvioitavien tehtävien tekemisessä, käänny opettajan puoleen. Siten opettajan on mahdollista nähdä, millaista apua olet saanut. Huom.! Avun pyytäminen ei vaikuta arvosanaasi alentavasti.</p>
+      <p>Plagiointi ja tekoälyn tuottaman tekstin esittäminen omanaan ei ole sallittua.</p>  
+      <p>Muista, että opintojaksolla annettavat näytöt osaamisesta (arvioitavat tehtävät, oppimispäiväkirja, loppunäyttö) ovat henkilökohtaisia!</p>
+    </div>
+
+    <div class="aineopiskelupk-promise-overlay" style="display:none;">
+    </div>
+    <div class="aineopiskelupk-promise" style="display:none;">
+      <div class="aineopiskelupk-promise__close"></div>
       <h3>Kurssin itsenäinen suorittaminen</h3>
-      <p>Nettilukion kurssien arvioitavia tehtäviä tehdessä on tärkeä muistaa, että vastauksesi osoittavat juuri sinun henkilökohtaista osaamistasi: vastauksiin sisältyvät asiat, esimerkit, tekstin rakentaminen ovat näyttöjä siitä, miten sinä olet asian hahmottanut ja ymmärtänyt. Arvioitavat tehtävät muodostavat pohjan henkilökohtaisen kurssisuorituksesi arvioinnille.</p>
+      <p>Nettiperuskoulussa kurssien arvioitavia tehtäviä tehdessä on tärkeä muistaa, että vastauksesi osoittavat juuri sinun henkilökohtaista osaamistasi: vastauksiin sisältyvät asiat, esimerkit ja tekstin rakentaminen ovat näyttöjä siitä, miten sinä olet asian hahmottanut ja ymmärtänyt. Arvioitavat tehtävät muodostavat pohjan henkilökohtaisen suorituksesi arvioinnille.</p>
       <p>Arvioitavien tehtävien osalta yhteistyö toisen opiskelijan kanssa ei lähtökohtaisesti ole mahdollista, ellei opettaja ole erikseen tehtävänannossa näin ohjeistanut tai ellei opettajan kanssa sovita tästä ennen kurssin suorittamista.</p>
-      <p>Mikäli sinulla kuitenkin olisi mahdollisuus opiskella verkkokursseja toisen opiskelijan kanssa yhdessä, se on tietyin reunaehdoin sallittua. Tällaisessa tilanteessa on tärkeää että ilmaiset tämän opettajalle jo kurssin alussa JA tuot tämän esiin esim. oppimispäiväkirjassa erittelemällä tekemistä siten, että sinun osuutesi oppimisesta tulee näkyviin. Arvioinnin kannalta oppimisprosessin läpinäkyvyys on tärkeää.</p>
-      <p>Kurssin materiaalien läpikäyminen ja harjoitustehtävien tekeminen jonkun toisen tuella on mahdollista. Jos tarvitset apua arvioitavien tehtävien tekemisessä, käänny opettajan puoleen tai kysy apua oppiainekohtaisessa FB-ryhmässä. Siten opettajan on mahdollista nähdä, millaista apua olet saanut. HUOM! Avun pyytäminen ei vaikuta arvosanaasi alentavasti.</p>
-      <p><b>Muista, että kurssilla annettavat näytöt osaamisesta (arvioitavat tehtävät, oppimispäiväkirja) ovat henkilökohtaisia!</b></p>
+      <p>Mikäli sinulla kuitenkin olisi mahdollisuus opiskella kursseja toisen opiskelijan kanssa yhdessä, se on tietyin reunaehdoin sallittua. Tällaisessa tilanteessa on tärkeää että ilmaiset tämän opettajalle jo kurssin alussa JA tuot tämän esiin esim. oppimispäiväkirjassa erittelemällä tekemistä siten, että sinun osuutesi oppimisesta tulee näkyviin. Arvioinnin kannalta oppimisprosessin läpinäkyvyys on tärkeää.</p>
+      <p>Kurssin materiaalien läpikäyminen ja harjoitustehtävien tekeminen jonkun toisen tuella on mahdollista. Jos tarvitset apua arvioitavien tehtävien tekemisessä, käänny opettajan puoleen. Siten opettajan on mahdollista nähdä, millaista apua olet saanut. Huom.! Avun pyytäminen ei vaikuta arvosanaasi alentavasti.</p>
+      <p>Plagiointi ja tekoälyn tuottaman tekstin esittäminen omanaan ei ole sallittua.</p>  
+      <p>Muista, että kurssilla annettavat näytöt osaamisesta (arvioitavat tehtävät, oppimispäiväkirja, loppunäyttö) ovat henkilökohtaisia!</p>
     </div>
 
     <div class="nettipk-promise-overlay" style="display:none;">

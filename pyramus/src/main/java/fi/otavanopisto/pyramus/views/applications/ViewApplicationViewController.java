@@ -3,8 +3,12 @@ package fi.otavanopisto.pyramus.views.applications;
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,15 +21,23 @@ import org.apache.commons.lang3.StringUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.applications.AlternativeLine;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
+import fi.otavanopisto.pyramus.applications.InternetixStudyProgramme;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
+import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
+import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
@@ -78,10 +90,12 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, String> fields = new LinkedHashMap<>();
       sections.put("Perustiedot", fields);
       
-      fields.put("Muokkaustunnus", application.getReferenceCode());
+      if (application.getApplicantEditable()) {
+        fields.put("Muokkaustunnus", application.getReferenceCode());
+      }
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
-      if (StringUtils.equals("nettilukio",  applicationLine) || StringUtils.equals("nettipk",  applicationLine)) {
+      if (StringUtils.equals("nettilukio", applicationLine) || StringUtils.equals("nettipk",  applicationLine)) {
         AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
         if (AlternativeLine.PRIVATE == altLine) {
           fields.put("Opintojen tyyppi", "Yksityisopiskelu");
@@ -101,6 +115,18 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
         }
       }
+      if (StringUtils.equals("aineopiskelupk", applicationLine)) {
+        InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
+        if (InternetixStudyProgramme.OPPILAITOS == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos ilmoittaa)");
+        }
+        else if (InternetixStudyProgramme.OPPIVELVOLLINEN == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppivelvolliset)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus");
+        }
+      }
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
         fields.put("Kutsumanimi", getFormValue(formData, "field-nickname"));
@@ -111,6 +137,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-education"))) {
         fields.put("Oppivelvollinen", simpleBooleanUiValue(getFormValue(formData, "field-compulsory-education")));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-done"))) {
+        fields.put("Perusopetuksen oppimäärä", simpleBooleanUiValue(getFormValue(formData, "field-compulsory-done")));
       }
       fields.put("Sukupuoli", ApplicationUtils.genderUiValue(getFormValue(formData, "field-sex")));
       fields.put("Osoite", String.format("%s\n%s %s\n%s",
@@ -126,7 +155,7 @@ public class ViewApplicationViewController extends PyramusViewController {
 
       // Alaikäisen hakemustiedot
       
-      if (ApplicationUtils.isUnderage(getFormValue(formData, "field-birthday"))) {
+      if (ApplicationUtils.isUnderage(formData)) {
         fields = new LinkedHashMap<>();
         sections.put("Alaikäisen hakemustiedot", fields);
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-grounds"))) { 
@@ -167,13 +196,10 @@ public class ViewApplicationViewController extends PyramusViewController {
       
       // Aineopiskelijan koulutusaste ja oppilaitos
       
-      if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      if (ApplicationUtils.isInternetixLine(getFormValue(formData, "field-line"))) {
         fields = new LinkedHashMap<>();
         sections.put("Koulutusaste", fields);
-        fields.put("Haluaa opiskella", StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")
-            ? "Lukion kursseja tai opintojaksoja"
-            : "Perusopetuksen kursseja");
-        if (StringUtils.equals(getFormValue(formData, "field-internetix-line"), "lukio")) {
+        if (!StringUtils.isBlank(getFormValue(formData, "field-internetix-curriculum"))) {
           fields.put("Opetussuunnitelma", StringUtils.equals(getFormValue(formData, "field-internetix-curriculum"), "ops2016")
               ? "OPS 2016"
               : "OPS 2021");
@@ -183,11 +209,10 @@ public class ViewApplicationViewController extends PyramusViewController {
         sections.put("Aineopiskelijan oppilaitos", fields);
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
         if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
-          School school = ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school"));
-          isContractSchool = school != null;
+          School school = ApplicationUtils.resolveSchool(formData);
+          isContractSchool = ApplicationUtils.isContractSchool(formData);
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
-            fields.put("Sopimusoppilaitos", "Ei");
             fields.put("Opiskelupaikkakunta", getFormValue(formData, "field-internetix-contract-school-municipality"));
             fields.put("Oppilaitoksen yhteyshenkilö", getFormValue(formData, "field-internetix-contract-school-contact"));
             StudentExaminationType examinationType = ApplicationUtils.resolveStudentExaminationType(
@@ -198,14 +223,11 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
           else {
             fields.put("Oppilaitos", school.getName());
-            fields.put("Sopimusoppilaitos", "Kyllä");
           }
-        }
-        if (!isContractSchool && StringUtils.equals(getFormValue(formData, "field-compulsory-education"), "kylla")) {
-          pageRequestContext.getRequest().setAttribute("contractSchoolConflict", Boolean.TRUE);
+          fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
         }
       }
-
+      
       // Hakemiseen vaadittavat lisätiedot
       
       fields = new LinkedHashMap<>();
@@ -357,7 +379,8 @@ public class ViewApplicationViewController extends PyramusViewController {
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
       pageRequestContext.getRequest().setAttribute("applicationLine", application.getLine());      
-      pageRequestContext.getRequest().setAttribute("sections", sections);      
+      pageRequestContext.getRequest().setAttribute("sections", sections);
+      pageRequestContext.getRequest().setAttribute("conflicts", gatherConflicts(application));
       
       pageRequestContext.setIncludeJSP("/templates/applications/management-view-application.jsp");
     }
@@ -365,6 +388,134 @@ public class ViewApplicationViewController extends PyramusViewController {
       logger.log(Level.SEVERE, "Unable to serve error response", e);
       return;
     }
+  }
+  
+  private List<String> gatherConflicts(Application application) {
+    EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    
+    List<String> conflicts = new ArrayList<>();
+    
+    // No conflicts if the application is already handled
+    
+    if (application.getState() == ApplicationState.TRANSFERRED_AS_STUDENT ||
+        application.getState() == ApplicationState.REGISTERED_AS_STUDENT ||
+        application.getState() == ApplicationState.REGISTRATION_CHECKED ||
+        application.getState() == ApplicationState.REJECTED) {
+      return conflicts;
+    }
+    
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    
+    Set<Long> personIds = new HashSet<>();
+
+    // SSN checks
+    
+    String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
+    if (!StringUtils.isBlank(ssn)) {
+      
+      // Also check SSNs with "wrong" delimiter
+      
+      char[] ssnChars = ssn.toCharArray();
+      ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
+      String wrongSSN = String.valueOf(ssnChars);
+      
+      // Persons by SSN
+      
+      List<Person> persons = personDAO.listBySSNUppercase(ssn);
+      persons.addAll(personDAO.listBySSNUppercase(wrongSSN));
+      for (Person person : persons) {
+        personIds.add(person.getId());
+        String url = String.format("/students/viewstudent.page?person=%d", person.getId());
+        String name = person.getDefaultUser() == null ? "???" : person.getDefaultUser().getFullName();
+        String conflict = String.format("Hakija löytyy jo Pyramuksesta henkilötunnuksen perusteella: <a href=\"%s\" target=\"_blank\">%s</a>", url, name);
+        
+        // Check if existing person is actually a staff member
+        
+        if (person.getDefaultUser() != null) {
+          StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+          StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
+          if (staffMember != null) {
+            conflict += "<br/><b>Huom!</b> Hakija on henkilökunnan jäsen";
+          }
+        }
+        
+        // Check if SSNs match
+        
+        if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
+          conflict += "<br/><b>Huom!</b> Hakemuksen ja olemassa olevan henkilön henkilötunnus eivät täsmää";
+        }
+
+        conflicts.add(conflict);
+      }
+    }
+    
+    // Email checks
+    
+    String emailAddress = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+    if (!StringUtils.isBlank(emailAddress)) {
+      List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
+      for (Email email : emails) {
+        if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
+          User user = userDAO.findByContactInfo(email.getContactInfo());
+          if (user != null && !Boolean.TRUE.equals(user.getArchived())) {
+            Person person = user.getPerson();
+            if (person != null && !personIds.contains(person.getId())) {
+              personIds.add(person.getId());
+              String url = String.format("/students/viewstudent.page?person=%d", person.getId());
+              String name = person.getDefaultUser() == null ? "???" : person.getDefaultUser().getFullName();
+              String conflict = String.format("Hakija löytyy jo Pyramuksesta sähköpostiosoitteen perusteella: <a href=\"%s\" target=\"_blank\">%s</a>", url, name);
+
+              // Check if existing person is actually a staff member
+              
+              if (person.getDefaultUser() != null) {
+                StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+                StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
+                if (staffMember != null) {
+                  conflict += "<br/><b>Huom!</b> Hakija on henkilökunnan jäsen";
+                }
+              }
+              
+              // Check if SSNs match
+              
+              if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
+                conflict += "<br/><b>Huom!</b> Hakemuksen ja olemassa olevan käyttäjän henkilötunnus eivät täsmää";
+              }
+              
+              conflicts.add(conflict);
+            }
+          }
+        }
+      }
+    }
+    
+    // Internetix checks
+    
+    if (ApplicationUtils.isInternetixLine(application.getLine())) {
+
+      // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
+      if (ApplicationUtils.isContractSchool(formData)) {
+        conflicts.add("Hakija opiskelee sopimusoppilaitoksessa");
+      }
+      // #1487: Jos hetun loppuosa puuttuu tai on XXX, käsitellään manuaalisesti
+      String ssnSuffix = getFormValue(formData, "field-ssn-end");
+      if (StringUtils.isEmpty(ssnSuffix)) {
+        conflicts.add("Hakijan henkilötunnuksen loppuosa puuttuu");
+      }
+      if (StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
+        conflicts.add("Hakijan henkilötunnuksen loppuosa on XXXX");
+      }
+      // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
+      if (StringUtils.equals(application.getLine(), "aineopiskelu") && ApplicationUtils.isInternetixUnderage(formData)) {
+        conflicts.add("Hakija on alle 20 (vain 1.1.2005 jälkeen syntyneet)");
+      }
+      else if (ApplicationUtils.isUnderage(formData)) {
+        conflicts.add("Hakija on alaikäinen");
+      }
+    }
+    
+    return conflicts;
   }
   
   private String foreignLineUiValue(String value) {

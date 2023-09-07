@@ -8,4 +8,12 @@ public class PyramusConsts {
   // Name of the curriculum representing 2021 curriculum
   public static final String OPS_2021 = "OPS 2021";
   
+  // Subject education types
+  public static final String SUBJECT_PERUSOPETUS = "Perusopetus";
+  public static final String SUBJECT_LUKIO = "Lukio";
+  
+  // Education time unit symbols
+  public static final String TIMEUNIT_OP = "op";
+  public static final String TIMEUNIT_HOURS = "h";
+  
 }

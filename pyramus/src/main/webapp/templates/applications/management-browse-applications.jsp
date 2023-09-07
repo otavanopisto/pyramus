@@ -179,7 +179,10 @@
             <select id="applicationLine" name="applicationLine">
               <option value=""></option>
               <ix:applicationAccess line="aineopiskelu">
-                <option value="aineopiskelu">Aineopiskelu</option>
+                <option value="aineopiskelu">Aineopiskelu/lukio</option>
+              </ix:applicationAccess>
+              <ix:applicationAccess line="aineopiskelupk">
+                <option value="aineopiskelupk">Aineopiskelu/perusopetus</option>
               </ix:applicationAccess>
               <ix:applicationAccess line="nettilukio">
                 <option value="nettilukio">Nettilukio</option>
