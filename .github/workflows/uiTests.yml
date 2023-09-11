@@ -23,13 +23,13 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Build with Maven
-        run: mvn clean install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+        run: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       - name: Set Pyramus host
         run: echo "127.0.0.1 dev.pyramus.fi" | sudo tee -a /etc/hosts
       - name: Test REST
         run: |
             pushd .
             cd pyramus
-            mvn clean verify --settings ~/.m2/mySettings.xml -Pui-it
+            mvn clean verify -Pui-it
             popd
              
