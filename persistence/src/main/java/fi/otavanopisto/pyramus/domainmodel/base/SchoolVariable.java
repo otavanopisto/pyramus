@@ -1,14 +1,20 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
-import java.lang.Long;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
+import javax.persistence.Version;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
@@ -25,35 +31,35 @@ import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFa
 )
 public class SchoolVariable implements ArchivableEntity {
 
-	public SchoolVariable() {
-		super();
-	}
-	
-	public Long getId() {
-		return this.id;
-	}
-	
-	public School getSchool() {
+  public SchoolVariable() {
+    super();
+  }
+    
+  public Long getId() {
+    return this.id;
+  }
+    
+  public School getSchool() {
     return school;
   }
-	
-	public void setSchool(School school) {
+    
+  public void setSchool(School school) {
     this.school = school;
   }
-	
-	public SchoolVariableKey getKey() {
+    
+  public SchoolVariableKey getKey() {
     return key;
   }
-	
-	public void setKey(SchoolVariableKey key) {
+    
+  public void setKey(SchoolVariableKey key) {
     this.key = key;
   }
-	
-	public String getValue() {
+    
+  public String getValue() {
     return value;
   }
-	
-	public void setValue(String value) {
+    
+  public void setValue(String value) {
     this.value = value;
   }
 
@@ -83,21 +89,21 @@ public class SchoolVariable implements ArchivableEntity {
     return archived;
   }
 
-	@Id
+  @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="SchoolVariable")  
   @TableGenerator(name="SchoolVariable", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-	private Long id;
-	
-	@ManyToOne
+  private Long id;
+    
+  @ManyToOne
   @JoinColumn(name = "school")
-	private School school;
-	
-	@ManyToOne
+  private School school;
+    
+  @ManyToOne
   @JoinColumn(name = "variableKey")
   private SchoolVariableKey key;
-	
-	@NotEmpty
-	private String value;
+    
+  @NotEmpty
+  private String value;
 
   @Version
   @Column(nullable = false)

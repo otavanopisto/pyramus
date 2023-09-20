@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.time.OffsetDateTime;
 import java.util.List;
