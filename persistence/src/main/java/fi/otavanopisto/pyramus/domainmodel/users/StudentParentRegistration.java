@@ -89,7 +89,7 @@ public class StudentParentRegistration {
   @Email
   private String email;
   
-  @Column(nullable = false)
+  @Column(nullable = false, updatable = false)
   @NotEmpty
   @NotNull
   private String hash;

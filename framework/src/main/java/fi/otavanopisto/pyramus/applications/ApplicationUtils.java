@@ -18,9 +18,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -59,6 +61,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -87,6 +90,7 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentRegistration;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
@@ -924,6 +928,7 @@ public class ApplicationUtils {
     ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
+    StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -1179,6 +1184,44 @@ public class ApplicationUtils {
             Boolean.FALSE,
             getFormValue(formData, "field-underage-phone-3"));
       }
+      
+      // Create guardian invitations
+      
+      // Guardian #1
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+      if (StringUtils.isNotBlank(email)) {
+        String firstName = getFormValue(formData, "field-underage-first-name");
+        String lastName = getFormValue(formData, "field-underage-last-name");
+        
+        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+          String hash = UUID.randomUUID().toString();
+          studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+        }
+      }
+      
+      // Guardian #2
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
+      if (StringUtils.isNotBlank(email)) {
+        String firstName = getFormValue(formData, "field-underage-first-name-2");
+        String lastName = getFormValue(formData, "field-underage-last-name-2");
+        
+        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+          String hash = UUID.randomUUID().toString();
+          studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+        }
+      }
+      
+      // Guardian #3
+      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
+      if (StringUtils.isNotBlank(email)) {
+        String firstName = getFormValue(formData, "field-underage-first-name-3");
+        String lastName = getFormValue(formData, "field-underage-last-name-3");
+        
+        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+          String hash = UUID.randomUUID().toString();
+          studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+        }
+      }
     }
     
     // Warning if Internetix custom school isn't found
@@ -1265,12 +1308,7 @@ public class ApplicationUtils {
       String subject = "Muikku-oppimisympäristön tunnukset";
       String content;
       if (userIdentification == null) {
-        StringBuilder createCredentialsUrl = new StringBuilder();
-        createCredentialsUrl.append(request.getScheme());
-        createCredentialsUrl.append("://");
-        createCredentialsUrl.append(request.getServerName());
-        createCredentialsUrl.append(":");
-        createCredentialsUrl.append(request.getServerPort());
+        StringBuilder createCredentialsUrl = new StringBuilder(getRequestURIRoot(request));
         createCredentialsUrl.append("/applications/createcredentials.page?a=");
         createCredentialsUrl.append(application.getApplicationId());
         createCredentialsUrl.append("&t=");
@@ -1323,6 +1361,41 @@ public class ApplicationUtils {
         ApplicationLogType.HTML,
         String.format("<p>%s</p><p><b>%s</b></p>%s", "Hakijalle lähetetty ohjeet Muikku-tunnuksista", subject, content),
         null);
+
+      /**
+       * Send instructions to guardians how to create their credentials
+       */
+
+      StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
+      List<StudentParentRegistration> guardians = studentParentRegistrationDAO.listBy(student);
+
+      String guardianEmailContent = IOUtils.toString(request.getServletContext().getResourceAsStream(
+          "/templates/applications/mails/mail-credentials-guardian-create.html"), "UTF-8");
+      
+      for (StudentParentRegistration guardian : guardians) {
+        StringBuffer guardianCreateCredentialsLink = new StringBuffer(getRequestURIRoot(request));
+        guardianCreateCredentialsLink.append("/parentregister.page?c=");
+        guardianCreateCredentialsLink.append(guardian.getHash());
+        
+        // subject is the same as for above messages
+        content = String.format(guardianEmailContent, guardian.getFirstName(), guardianCreateCredentialsLink.toString());
+        
+        Mailer.sendMail(
+            Mailer.JNDI_APPLICATION,
+            Mailer.HTML,
+            null,
+            guardian.getEmail(),
+            subject,
+            content);
+
+        // Add notification about sent mail
+
+        applicationLogDAO.create(
+            application,
+            ApplicationLogType.HTML,
+            String.format("<p>%s%s%s</p>", "Huoltajalle ", guardian.getEmail(), " lähetetty ohjeet Muikku-tunnuksien luomiseen"),
+            null);
+      }
     }
     catch (IOException ioe) {
       logger.log(Level.SEVERE, "Error retrieving mail templates", ioe);
@@ -1504,4 +1577,22 @@ public class ApplicationUtils {
     return sb.toString();
   }
 
+  public static String getRequestURIRoot(ServletRequest request) {
+    StringBuilder rootUri = new StringBuilder();
+    rootUri.append(request.getScheme());
+    rootUri.append("://");
+    rootUri.append(request.getServerName());
+    
+    boolean includePort = !(
+        (StringUtils.equals(request.getScheme(), "http") && request.getServerPort() == 80) ||
+        (StringUtils.equals(request.getScheme(), "https") && request.getServerPort() == 443)
+    );
+    
+    if (includePort) {
+      rootUri.append(":");
+      rootUri.append(request.getServerPort());
+    }
+    
+    return rootUri.toString();
+  }
 }

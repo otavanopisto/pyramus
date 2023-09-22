@@ -1226,26 +1226,49 @@
         var studentParentsTable = new IxTable($('studentParentsTableContainer.' + studentId), {
           id : "studentParentsTable." + studentId,
           columns : [{
-            left : 8,
+            left : 0,
             width: 160,
             dataType : 'text',
             editable: false,
             paramName: 'name'
           }, {
-            left : 180,
-            width : 500,
+            left : 0 + 160 + 8,
+            width: 200,
             dataType: 'text',
             editable: false,
             paramName: 'email'
+          }, {
+            dataType: 'hidden',
+            paramName: 'studentParentId'
+          }, {
+            left: 0 + 160 + 8 + 200 + 8,
+            width: 22,
+            dataType: 'button',
+            hidden: true,
+            paramName: 'studentParentEditButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            tooltip: '<fmt:message key="students.viewStudent.studentParentsTableEditTooltip"/>',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var studentParentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentParentId'));
+              redirectTo(GLOBAL_contextPath + '/studentparents/editstudentparent.page?userId=' + studentParentId);
+            }
           }]
         });
 
         for (var i = 0, l = studentParentData.length; i < l; i++) {
           var name = studentParentData[i].firstName + " " + studentParentData[i].lastName;
-          studentParentsTable.addRow([
+          var rowIndex = studentParentsTable.addRow([
             name,
-            studentParentData[i].email
+            studentParentData[i].email,
+            studentParentData[i].userId,
+            ''
           ]);
+          
+          if (studentParentData[i].status === "USER") {
+            var columnIndex = studentParentsTable.getNamedColumnIndex('studentParentEditButton');
+            studentParentsTable.showCell(rowIndex, columnIndex);
+          }
         }
         
         return studentParentsTable;

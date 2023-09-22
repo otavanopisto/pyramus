@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table StudentParent (
+       id bigint not null,
+        primary key (id)
+    );
+  </sql>
+
+  <sql>
+    create table StudentParentChild (
+       id bigint not null auto_increment,
+        student bigint not null,
+        studentParent bigint not null,
+        primary key (id)
+    );
+  </sql>
+
+  <sql>
+    create table StudentParentRegistration (
+       id bigint not null auto_increment,
+        email varchar(255) not null,
+        firstName varchar(255) not null,
+        hash varchar(255) not null,
+        lastName varchar(255) not null,
+        student_id bigint not null,
+        primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table StudentParent 
+       add constraint FKtbubo3mx992vy3vgvy04yh83c 
+       foreign key (id) 
+       references User (id);
+  </sql>
+
+  <sql>
+    alter table StudentParentChild 
+       add constraint FKhvt6ljmr17uanyeh5uxh5ajqd 
+       foreign key (student) 
+       references Student (id);
+  </sql>
+
+  <sql>
+    alter table StudentParentChild 
+       add constraint FKroqljqwwqnlv8vj29p1tkma91 
+       foreign key (studentParent) 
+       references StudentParent (id);
+  </sql>
+
+  <sql>
+    alter table StudentParentRegistration 
+       add constraint FK39w6vxb75f8hh6vtynf3fo90u 
+       foreign key (student_id) 
+       references Student (id);
+  </sql>
+
+</update>

@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -47,6 +48,16 @@ public class ContactType implements ArchivableEntity {
     return version;
   }
 
+  /**
+   * Returns true if the Contact Type needs to have unique email values.
+   * 
+   * @return true if the Contact Type needs to have unique email values
+   */
+  @Transient
+  public boolean isUniqueEmails() {
+    return !Boolean.TRUE.equals(getNonUnique());
+  }
+  
   public Boolean getNonUnique() {
     return nonUnique;
   }

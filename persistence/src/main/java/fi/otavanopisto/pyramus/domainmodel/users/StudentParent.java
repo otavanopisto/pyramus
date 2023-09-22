@@ -1,15 +1,13 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
-import java.util.ArrayList;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 import org.hibernate.annotations.Cache;
@@ -27,20 +25,36 @@ public class StudentParent extends User {
     return Set.of(Role.STUDENT_PARENT);
   }
   
+  /**
+   * StudentParent's account is enabled if any single one of the children is underage
+   * or otherwise able to still be accessed. If none of the children are such, the account
+   * is automatically disabled.
+   */
   @Override
   public boolean isAccountEnabled() {
-    return true; // TODO ?
+    List<StudentParentChild> currentChildren = getChildren();
+    
+    for (StudentParentChild parentChild : currentChildren) {
+      Student child = parentChild.getStudent();
+      
+      if (child.getPerson() != null && child.getPerson().getBirthday() != null) {
+        LocalDate birthday = Instant.ofEpochMilli(child.getPerson().getBirthday().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate threshold = LocalDate.now().minusYears(18);
+
+        if (birthday.isAfter(threshold)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
   }
   
-  public List<Student> getChildren() {
+  public List<StudentParentChild> getChildren() {
     return children;
   }
 
-  public void setChildren(List<Student> children) {
-    this.children = children;
-  }
-
-  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinTable (name = "StudentParentChildren", joinColumns = @JoinColumn(name = "studentParentId"), inverseJoinColumns = @JoinColumn(name = "studentId"))
-  private List<Student> children = new ArrayList<>();
+  @OneToMany (mappedBy = "studentParent")
+  private List<StudentParentChild> children;
+  
 }

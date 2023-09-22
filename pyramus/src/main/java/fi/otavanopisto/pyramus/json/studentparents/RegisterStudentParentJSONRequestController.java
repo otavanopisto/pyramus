@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.json.studentparents;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -9,6 +7,7 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentChildDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -34,7 +33,7 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     String username = StringUtils.trim(requestContext.getString("username"));
     String password1 = StringUtils.trim(requestContext.getString("password1"));
     String password2 = StringUtils.trim(requestContext.getString("password2"));
-    String ssnConfirm = StringUtils.trim(requestContext.getString("ssnConfirm"));
+    String ssnConfirm = StringUtils.trim(requestContext.getString("ssn-confirm"));
 
     if (!StringUtils.equals(password1, password2)) {
       throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Password confirmation didn't match.");
@@ -43,6 +42,7 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
+    StudentParentChildDAO studentParentChildDAO = DAOFactory.getInstance().getStudentParentChildDAO();
     StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
 
@@ -59,7 +59,9 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
       throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Email is already in use.");
     }
     
-    StudentParent studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName(), Arrays.asList(studentParentRegistration.getStudent()));
+    StudentParent studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName());
+    studentParentChildDAO.create(studentParent, studentParentRegistration.getStudent());
+    
     ContactType contactType = contactTypeDAO.findById(1L);
     emailDAO.create(studentParent.getContactInfo(), contactType, true, studentParentRegistration.getEmail()).getId(); 
 

@@ -97,6 +97,11 @@ public class UserUtils {
     StaffMember staffMember = staffMemberDAO.findByUniqueEmail(emailAddress);
     List<Student> students = studentDAO.listBy(null, emailAddress, null, null, null, null);
 
+    // True, if email is not in use
+    if (staffMember == null && students.isEmpty()) {
+      return true;
+    }
+
     if (personId != null) {
       // True, if found matches the person, or if not found at all 
       boolean allowed = true;
@@ -121,8 +126,30 @@ public class UserUtils {
       
       return allowed;
     } else {
-      // True, if email is not in use
-      return staffMember == null && students.isEmpty();
+      /**
+       * The email is being assigned to a user that likely doesn't exist yet (personId = null)
+       * so check if there is globally unique use of it already.
+       */
+      
+      if (staffMember != null) {
+        return false;
+      }
+      
+      for (Student student : students) {
+        if (student.getContactInfo().getEmails() != null) {
+          for (Email email : student.getContactInfo().getEmails()) {
+            if (emailAddress.equalsIgnoreCase(email.getAddress())) {
+              // Not allowed if the email is in use in a non-unique field
+              
+              if (email.getContactType().isUniqueEmails()) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+      
+      return true;
     }
   }
   

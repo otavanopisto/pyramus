@@ -36,6 +36,26 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   public static final String LIST_STAFFMEMBER_EMAILS = "LIST_STAFFMEMBER_EMAILS";
 
   /**
+   * StudentParent
+   */
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  public static final String LIST_STUDENTPARENTS = "LIST_STUDENTPARENTS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  public static final String FIND_STUDENTPARENT = "FIND_STUDENTPARENT";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  public static final String LIST_STUDENTPARENT_EMAILS = "LIST_STUDENTPARENT_EMAILS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  public static final String LIST_STUDENTPARENT_STUDENTS = "LIST_STUDENTPARENT_STUDENTS";
+
+  /**
    * UserVariable
    */
   

@@ -150,6 +150,7 @@ import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentChildDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
@@ -301,6 +302,10 @@ public class DAOFactory {
   
   public StudentParentDAO getStudentParentDAO() {
     return (StudentParentDAO) findByClass(StudentParentDAO.class);
+  }
+  
+  public StudentParentChildDAO getStudentParentChildDAO() {
+    return (StudentParentChildDAO) findByClass(StudentParentChildDAO.class);
   }
   
   public StudentParentRegistrationDAO getStudentParentRegistrationDAO() {
