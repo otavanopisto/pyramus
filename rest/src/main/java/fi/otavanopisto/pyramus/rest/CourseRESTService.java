@@ -546,7 +546,7 @@ public class CourseRESTService extends AbstractRESTService {
     // Course needs to exist
     
     Course course = courseController.findCourseById(id);
-    if (course == null && course.getArchived()) {
+    if (course == null || course.getArchived()) {
       return Response.ok(price).build();
     }
     
