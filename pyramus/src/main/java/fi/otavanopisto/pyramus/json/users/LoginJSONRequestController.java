@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.json.users;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -32,7 +33,7 @@ public class LoginJSONRequestController extends JSONRequestController {
   /**
    * Processes the request to log in. Authorizes the given credentials and if they match a user,
    * stores the user into the session (keys <code>loggedUserId</code>, <code>loggedUserName</code>,
-   * and <code>loggedUserRole</code>).
+   * and <code>loggedUserRoles</code>).
    * <p/>
    * If the session contains a <code>loginRedirectUrl</code> key, redirects the user to that URL.
    * Otherwise, redirects back to the index page of the application.
@@ -71,7 +72,7 @@ public class LoginJSONRequestController extends JSONRequestController {
           session.setAttribute("loggedUserName", user.getFullName());
           session.setAttribute("authenticationProvider", provider.getName());
           if (user instanceof StaffMember) {
-            session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
+            session.setAttribute("loggedUserRoles", Set.of(((StaffMember) user).getRole()));
           }
           
           try {

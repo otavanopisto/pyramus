@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -55,7 +56,7 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
         session.setAttribute("authenticationProvider", authenticationProvider.getName());
 
         if (user instanceof StaffMember) {
-          session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
+          session.setAttribute("loggedUserRoles", Set.of(((StaffMember) user).getRole()));
         }
         
         try {

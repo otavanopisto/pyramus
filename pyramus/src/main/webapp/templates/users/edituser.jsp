@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -440,7 +441,7 @@
         }
 
         <c:choose>
-          <c:when test="${(loggedUserRole == 'ADMINISTRATOR')}">
+          <c:when test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
             setupUserVariablesTable();
             setupStaffMemberPropertiesTable();
           </c:when>
@@ -652,7 +653,7 @@
             </div>
                 
             <c:choose>
-              <c:when test="${(loggedUserRole == 'ADMINISTRATOR')}">
+              <c:when test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
                 <div class="genericFormSection">  
                   <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                     <jsp:param name="titleLocale" value="users.editUser.propertiesTitle"/>

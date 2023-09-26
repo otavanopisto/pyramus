@@ -24,6 +24,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Analyze;
@@ -164,6 +165,17 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   
   public void setArchived(Boolean archived) {
     this.archived = archived;
+  }
+  
+  @Transient
+  public final boolean hasRole(Role role) {
+    return role != null && role == getRole();
+  }
+  
+  @Transient
+  public final boolean hasAnyRole(Role ... roles) {
+    Role role = getRole();
+    return role != null && ArrayUtils.contains(roles, role);
   }
   
   @Id

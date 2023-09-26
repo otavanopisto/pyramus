@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="/ix" prefix="ix"%>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -106,7 +107,7 @@
           }  
         }));     
 
-        <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+        <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsPoseAsLabel"/>',
