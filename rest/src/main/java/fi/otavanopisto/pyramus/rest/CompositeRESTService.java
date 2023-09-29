@@ -207,6 +207,13 @@ public class CompositeRESTService {
     for (Course course : courses) {
       List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndHandled(course, Boolean.FALSE);
       for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        
+        // Skip assessment requests that belong to students or course students who have been archived
+        
+        if (courseAssessmentRequest.getCourseStudent().getArchived() || courseAssessmentRequest.getCourseStudent().getStudent().getArchived()) {
+          continue;
+        }
+        
         boolean passing = course.getCourseModules().size() > 0;
         Date evaluationDate = null;
         
