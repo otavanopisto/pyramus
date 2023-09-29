@@ -43,7 +43,7 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
   public static final String DELETE_COURSEASSESSMENT = "DELETE_COURSEASSESSMENT";
 
   @Scope (PermissionScope.COURSE)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   @DefaultCoursePermissionRoles ({ CourseRoleArchetype.STUDENT })
   public static final String CREATE_COURSEASSESSMENTREQUEST = "CREATE_COURSEASSESSMENTREQUEST";
   
