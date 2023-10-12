@@ -224,7 +224,7 @@ public class PersonRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (handling = Handling.INLINE)
   public Response getOppija(@PathParam("ID") Long id) {
-    if (sessionController.getUser() == null || sessionController.getUser().getRole() != Role.ADMINISTRATOR) {
+    if (sessionController.getUser() == null || !sessionController.getUser().hasRole(Role.ADMINISTRATOR)) {
       return Response.status(Status.NOT_FOUND).build();
     }
     

@@ -46,7 +46,7 @@ public class ClientApplicationTokenCleaner {
     }
     for (ClientApplicationAccessToken token : tokens) {
       ClientApplicationAuthorizationCode authCode = token.getClientApplicationAuthorizationCode();
-      if (authCode.getUser().getRole() == Role.TRUSTED_SYSTEM) {
+      if (authCode.getUser().hasRole(Role.TRUSTED_SYSTEM)) {
         continue;
       }
       clientApplicationAccessTokenDAO.delete(token);

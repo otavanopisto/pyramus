@@ -185,10 +185,10 @@ public class UserUtils {
   
   public static boolean allowEditCredentials(User editor, Person whose) {
     return
-        (editor.getRole() == Role.ADMINISTRATOR) ||
+        (editor.hasRole(Role.ADMINISTRATOR)) ||
         (editor.getPerson().getId().equals(whose.getId())) ||
-        ((editor.getRole() == Role.STUDY_PROGRAMME_LEADER) && (UserUtils.getHighestPersonRole(whose) != Role.MANAGER && UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR)) ||
-        ((editor.getRole() == Role.MANAGER) && (UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR));
+        ((editor.hasRole(Role.STUDY_PROGRAMME_LEADER)) && (UserUtils.getHighestPersonRole(whose) != Role.MANAGER && UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR)) ||
+        ((editor.hasRole(Role.MANAGER)) && (UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR));
   }
 
   /**
@@ -236,7 +236,7 @@ public class UserUtils {
   }
   
   public static boolean isAdmin(User user) {
-    return user != null && user.getRole() == Role.ADMINISTRATOR;
+    return user != null && user.hasRole(Role.ADMINISTRATOR);
   }
 
   public static boolean isOwnerOf(User user, Person person) {
@@ -268,7 +268,7 @@ public class UserUtils {
       return false;
     }
     
-    if (user.getRole() == Role.ADMINISTRATOR) {
+    if (user.hasRole(Role.ADMINISTRATOR)) {
       return true;
     } else {
       DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();

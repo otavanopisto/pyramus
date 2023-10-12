@@ -5,7 +5,11 @@ public class PyramusConsts {
   // Education type code for study programmes categorized under high school studies
   public static final String STUDYPROGRAMME_LUKIO = "lukio";
   
-  // Name of the curriculum representing 2021 curriculum
+  // Study programme of paid course assessments
+  public static final String STUDYPROGRAMME_PAID_ASSESSMENTS = "Aineopiskelu/lukio";
+  
+  // Curriculum names
+  public static final String OPS_2016 = "OPS 2016";
   public static final String OPS_2021 = "OPS 2021";
   
   // Subject education types

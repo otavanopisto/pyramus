@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/ix" prefix="ix"%>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!-- Header starts -->
 
@@ -160,7 +161,7 @@
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/subjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSubjects"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/academicterms.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageAcademicTerms"/></a></li>
             
-            <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+            <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createuser.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createUser"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/searchusers.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchUsers"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/settings/creategradingscale.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createGradingScale"/></a></li>
@@ -187,7 +188,7 @@
         </li>
       </ul>
     
-      <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+      <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
         <ul id="GUI_MENU_systemContainer">
           <li id="GUI_MENU_systemLink">
             <fmt:message key="generic.navigation.system"/>

@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="/ix" prefix="ix"%>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -106,7 +107,7 @@
           }  
         }));     
 
-        <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+        <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsPoseAsLabel"/>',
@@ -804,7 +805,7 @@
           columns : [{
             header : '<fmt:message key="students.viewStudent.transferCreditsTableNameHeader"/>',
             left: 8,
-            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 200 + 8, 
+            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 70 + 8 + 200 + 8, 
             dataType: 'text',
             editable: false,
             sortAttributes: {
@@ -819,7 +820,7 @@
             }
           }, {
             header : '<fmt:message key="students.viewStudent.transferCreditsTableSubjectHeader"/>',
-            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8, 
+            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 70 + 8, 
             width: 200,
             dataType: 'text',
             editable: false,
@@ -831,6 +832,22 @@
               sortDescending: {
                 toolTip: '<fmt:message key="generic.sort.descending"/>',
                 sortAction: IxTable_ROWSTRINGSORT
+              }
+            }
+          }, {
+            header : '<fmt:message key="students.viewStudent.transferCreditsTableCourseNumberHeader"/>',
+            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8, 
+            width: 70,
+            dataType: 'number',
+            editable: false,
+            sortAttributes: {
+              sortAscending: {
+                toolTip: '<fmt:message key="generic.sort.ascending"/>',
+                sortAction: IxTable_ROWNUMBERSORT 
+              },
+              sortDescending: {
+                toolTip: '<fmt:message key="generic.sort.descending"/>',
+                sortAction: IxTable_ROWNUMBERSORT
               }
             }
           }, {
@@ -946,7 +963,7 @@
           columns : [{
             header : '<fmt:message key="students.viewStudent.courseAssessmentsTableNameHeader"/>',
             left: 8,
-            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 200 + 8, 
+            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 70 + 8 + 200 + 8, 
             dataType: 'text',
             editable: false,
             sortAttributes: {
@@ -961,7 +978,7 @@
             }
           }, {
             header : '<fmt:message key="students.viewStudent.courseAssessmentsTableSubjectHeader"/>',
-            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8, 
+            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 70 + 8, 
             width: 200,
             dataType: 'text',
             editable: false,
@@ -973,6 +990,22 @@
               sortDescending: {
                 toolTip: '<fmt:message key="generic.sort.descending"/>',
                 sortAction: IxTable_ROWSTRINGSORT
+              }
+            }
+          }, {
+            header : '<fmt:message key="students.viewStudent.courseAssessmentsTableCourseNumberHeader"/>',
+            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8, 
+            width: 70,
+            dataType: 'number',
+            editable: false,
+            sortAttributes: {
+              sortAscending: {
+                toolTip: '<fmt:message key="generic.sort.ascending"/>',
+                sortAction: IxTable_ROWNUMBERSORT 
+              },
+              sortDescending: {
+                toolTip: '<fmt:message key="generic.sort.descending"/>',
+                sortAction: IxTable_ROWNUMBERSORT
               }
             }
           }, {
@@ -1306,6 +1339,7 @@
             rows.push([
               '${fn:escapeXml(studentTransferCredit.courseName)}',
               '${fn:escapeXml(subjectName)}',
+              '${studentTransferCredit.courseNumber}',
               '${fn:escapeXml(studentTransferCredit.curriculum.name)}',
               '${studentTransferCredit.date.time}',
               '${studentTransferCredit.courseLength.units}',
@@ -1387,6 +1421,7 @@
               rows.push([
                 studentAssessment.courseName,
                 studentAssessment.subjectName,
+                studentAssessment.courseNumber,
                 curriculumsStr,
                 topAssessment.timestamp,
                 studentAssessment.courseLength,
@@ -1444,6 +1479,7 @@
               rows.push([
                   cAs.courseName,
                   cAs.subjectName,
+                  cAs.courseNumber,
                   curriculums,
                   cAs.creditDate,
                   cAs.courseLength,
@@ -1491,6 +1527,7 @@
               rows.push([
                   tc.courseName,
                   tc.subjectName,
+                  tc.courseNumber,
                   tc.curriculumName,
                   tc.creditDate,
                   tc.courseLength,

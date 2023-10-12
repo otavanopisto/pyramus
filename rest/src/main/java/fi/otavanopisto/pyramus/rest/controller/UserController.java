@@ -106,7 +106,7 @@ public class UserController {
     }
     
     Email email = emailDAO.create(user.getContactInfo(), contactType, defaultAddress, address);
-    if (user.getRole() == Role.STUDENT) {
+    if (user.hasRole(Role.STUDENT)) {
       studentDAO.fireUpdate(user.getId());
     }
     else {

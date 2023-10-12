@@ -12,7 +12,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
@@ -119,7 +118,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
               Role.TEACHER
           };
           
-          return UserUtils.hasManagementOrganizationAccess(loggedUser) && ArrayUtils.contains(allowedRoles, loggedUser.getRole());
+          return UserUtils.hasManagementOrganizationAccess(loggedUser) && loggedUser.hasAnyRole(allowedRoles);
         } else {
           return false;
         }

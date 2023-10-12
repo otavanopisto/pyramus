@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>delete from WorkListBillingSettings;</sql>
+  <sql>insert into WorkListBillingSettings (settings) values ('{"highSchoolBillingNumber": "7201 4022 100",
+"elementaryBillingNumber": "7200 4022 165",
+"elementaryPrice": 75,
+"highSchoolPrice": 58.82,
+"highSchoolPointPrice": 27.68,
+"assessment2016Price": 140,
+"assessment2021op1Price": 95,
+"assessment2021op2Price": 140,
+"assessment2021op3Price": 175}');</sql>
+
+</update>

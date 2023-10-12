@@ -385,7 +385,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     courseDAO.updateCurriculums(course, curriculums);
 
-    if (Role.ADMINISTRATOR.equals(loggedUser.getRole())) {
+    if (loggedUser.hasRole(Role.ADMINISTRATOR)) {
       Boolean isCourseTemplate = requestContext.getBoolean("isCourseTemplate");
       courseDAO.updateCourseTemplate(course, Boolean.TRUE.equals(isCourseTemplate));
     }
