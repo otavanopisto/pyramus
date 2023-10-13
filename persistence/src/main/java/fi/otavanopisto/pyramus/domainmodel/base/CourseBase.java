@@ -382,8 +382,7 @@ public abstract class CourseBase implements ArchivableEntity {
   @IndexedEmbedded(includeEmbeddedObjectId = true) 
   private Set<Curriculum> curriculums = new HashSet<>();
 
-  @OneToMany
-  @JoinColumn (name = "course", updatable = false, insertable = false)
+  @OneToMany (mappedBy = "course", fetch = FetchType.LAZY)
   @IndexedEmbedded(includeEmbeddedObjectId = true)
   private List<CourseModule> courseModules = new Vector<>();
 }
