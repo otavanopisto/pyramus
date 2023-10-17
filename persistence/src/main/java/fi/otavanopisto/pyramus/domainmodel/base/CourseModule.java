@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.domainmodel.base;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -82,7 +81,7 @@ public class CourseModule {
   @GeneratedValue(strategy = GenerationType.IDENTITY)  
   private Long id;
 
-  @ManyToOne (fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name="course", nullable = false)
   @NotNull
   private CourseBase course;
