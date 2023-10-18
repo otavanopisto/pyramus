@@ -8,7 +8,6 @@ public class SmvcRuntimeException extends RuntimeException {
   /** The serial version UID of the class */
   private static final long serialVersionUID = -5069996150452823136L;
 
-  @Deprecated
   public SmvcRuntimeException(Exception e) {
     super(e);
   }

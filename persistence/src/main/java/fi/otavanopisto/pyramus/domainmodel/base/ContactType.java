@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Indexed

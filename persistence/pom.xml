@@ -6,7 +6,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.204-SNAPSHOT</version>
+    <version>0.7.205-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
@@ -74,12 +74,6 @@
       <scope>provided</scope>
     </dependency>
   
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <scope>provided</scope>
-    </dependency>    
-
     <!-- EJB -->
 
     <dependency>

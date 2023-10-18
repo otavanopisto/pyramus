@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 /** Entity object for SimplePlugin authorization provider. */

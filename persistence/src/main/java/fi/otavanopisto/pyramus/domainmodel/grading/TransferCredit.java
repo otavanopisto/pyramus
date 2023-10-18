@@ -8,9 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;

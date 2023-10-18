@@ -464,6 +464,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
             obj.put("courseStudentId", courseStudent.getId());
             obj.put("courseName", course.getName());
             obj.put("subjectName", getSubjectText(courseModule.getSubject(), pageRequestContext.getRequest().getLocale()));
+            obj.put("courseNumber", courseModule.getCourseNumber());
             
             JSONArray jsonCurriculums = new JSONArray();
             for (Curriculum curriculum : course.getCurriculums()) {
@@ -562,6 +563,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
         obj.put("courseName", courseAssessment.getCourseStudent().getCourse().getName());
         obj.put("subjectName", subjectName);
+        obj.put("courseNumber", courseAssessment.getCourseNumber());
         obj.put("creditDate", courseAssessment.getDate().getTime());
         obj.put("courseLength", courseAssessment.getCourseLength().getUnits().toString());
         obj.put("courseLengthUnitName", courseAssessment.getCourseLength().getUnit().getName());
@@ -624,6 +626,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
         obj.put("courseName", transferCredit.getCourseName());
         obj.put("subjectName", subjectName);
+        obj.put("courseNumber", transferCredit.getCourseNumber());
         obj.put("creditDate", transferCredit.getDate().getTime());
         obj.put("courseLength", transferCredit.getCourseLength().getUnits().toString());
         obj.put("courseLengthUnitName", transferCredit.getCourseLength().getUnit().getName());
