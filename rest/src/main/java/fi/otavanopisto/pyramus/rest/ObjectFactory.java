@@ -95,8 +95,10 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
@@ -123,6 +125,9 @@ public class ObjectFactory {
   @Inject
   private Logger logger;
 
+  @Inject
+  private CommonController commonController;
+  
   @Inject
   private SchoolController schoolController;
 
@@ -876,6 +881,42 @@ public class ObjectFactory {
             
             return new fi.otavanopisto.pyramus.rest.model.StudentParent(entity.getId(), personId, organizationId, additionalContactInfo, 
                 entity.getFirstName(), entity.getLastName(), userRoles, tags, variables);
+          }
+        },
+        
+        new Mapper<StudentParentChild>() {
+          
+          public Object map(StudentParentChild entity) {
+            Student student = entity.getStudent();
+            
+            String studyProgrammeName = student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null;
+            
+            String defaultEmail = null;
+            String defaultPhoneNumber = null;
+            String defaultAddress = null;
+            
+            if (student.getContactInfo() != null) {
+              Email email = commonController.findDefaultEmailByContactInfo(student.getContactInfo());
+              defaultEmail = email != null ? email.getAddress() : null;
+              
+              PhoneNumber phoneNumber = commonController.findDefaultPhoneNumberByContactInfo(student.getContactInfo());
+              defaultPhoneNumber = phoneNumber != null ? phoneNumber.getNumber() : null;
+              
+              Address address = commonController.findDefaultAddressByContactInfo(student.getContactInfo());
+              defaultAddress = address != null ? address.toOneliner() : null;
+            }
+
+            return new fi.otavanopisto.pyramus.rest.model.StudentParentChild(
+                student.getId(),
+                student.getPersonId(),
+                student.getFirstName(),
+                student.getLastName(),
+                student.getNickname(),
+                studyProgrammeName, 
+                defaultEmail, 
+                defaultPhoneNumber, 
+                defaultAddress
+            );
           }
         },
         

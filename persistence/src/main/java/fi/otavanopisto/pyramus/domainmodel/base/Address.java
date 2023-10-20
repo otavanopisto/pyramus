@@ -1,5 +1,9 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,9 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
@@ -95,6 +101,19 @@ public class Address {
 
   public Long getVersion() {
     return version;
+  }
+  
+  @Transient
+  public String toOneliner() {
+    List<String> sequence = Arrays.asList(
+        getName(),
+        getStreetAddress(),
+        getPostalCode(),
+        getCity(),
+        getCountry()
+    );
+    
+    return sequence.stream().filter(s -> StringUtils.isNotBlank(s)).collect(Collectors.joining(" "));
   }
 
   @Id
