@@ -99,13 +99,6 @@ public class StaffMember extends User implements ArchivableEntity {
   
   private String title;  
   
-//  @NotNull
-//  @Column (nullable = false)
-//  @Enumerated (EnumType.STRING)
-//  @Field (store = Store.NO)
-//  // TODO Some way to disallow Role.EVERYONE
-//  private Role role;
-
   // TODO fix the environment to not need EAGER here
   @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
   @Enumerated (EnumType.STRING)
