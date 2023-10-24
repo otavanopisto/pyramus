@@ -28,6 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.HibernateException;
@@ -37,7 +38,6 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
@@ -382,8 +382,7 @@ public abstract class CourseBase implements ArchivableEntity {
   @IndexedEmbedded(includeEmbeddedObjectId = true) 
   private Set<Curriculum> curriculums = new HashSet<>();
 
-  @OneToMany
-  @JoinColumn (name = "course", updatable = false, insertable = false)
+  @OneToMany (mappedBy = "course", fetch = FetchType.LAZY)
   @IndexedEmbedded(includeEmbeddedObjectId = true)
   private List<CourseModule> courseModules = new Vector<>();
 }

@@ -15,9 +15,11 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 
 @Stateless
 public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmentRequest> {
@@ -114,12 +116,17 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     CriteriaQuery<CourseAssessmentRequest> criteria = criteriaBuilder.createQuery(CourseAssessmentRequest.class);
     Root<CourseAssessmentRequest> root = criteria.from(CourseAssessmentRequest.class);
     Join<CourseAssessmentRequest, CourseStudent> courseStudentJoin = root.join(CourseAssessmentRequest_.courseStudent);
+    Join<CourseStudent, Student> studentJoin = courseStudentJoin.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
     
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE),
             criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.course), course),
             criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),            
             criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), Boolean.FALSE)
         ));
     
@@ -173,13 +180,17 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<CourseAssessmentRequest> criteria = criteriaBuilder.createQuery(CourseAssessmentRequest.class);
     Root<CourseAssessmentRequest> root = criteria.from(CourseAssessmentRequest.class);
-    Join<CourseAssessmentRequest, CourseStudent> courseStudent = root.join(CourseAssessmentRequest_.courseStudent);
+    Join<CourseAssessmentRequest, CourseStudent> courseStudentJoin = root.join(CourseAssessmentRequest_.courseStudent);
+    Join<CourseStudent, Student> studentJoin = courseStudentJoin.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
     
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.equal(courseStudent.get(CourseStudent_.course), course),
-            criteriaBuilder.equal(courseStudent.get(CourseStudent_.archived), Boolean.FALSE),            
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.course), course),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),            
             criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), Boolean.FALSE)
         ));
     
@@ -192,13 +203,17 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<CourseAssessmentRequest> criteria = criteriaBuilder.createQuery(CourseAssessmentRequest.class);
     Root<CourseAssessmentRequest> root = criteria.from(CourseAssessmentRequest.class);
-    Join<CourseAssessmentRequest, CourseStudent> courseStudent = root.join(CourseAssessmentRequest_.courseStudent);
+    Join<CourseAssessmentRequest, CourseStudent> courseStudentJoin = root.join(CourseAssessmentRequest_.courseStudent);
+    Join<CourseStudent, Student> studentJoin = courseStudentJoin.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
     
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.equal(courseStudent.get(CourseStudent_.course), course),
-            criteriaBuilder.equal(courseStudent.get(CourseStudent_.archived), Boolean.FALSE),            
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.course), course),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),            
             criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(CourseAssessmentRequest_.handled), handled)
         ));
@@ -212,12 +227,17 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<CourseAssessmentRequest> criteria = criteriaBuilder.createQuery(CourseAssessmentRequest.class);
     Root<CourseAssessmentRequest> root = criteria.from(CourseAssessmentRequest.class);
-    Join<CourseAssessmentRequest, CourseStudent> courseStudent = root.join(CourseAssessmentRequest_.courseStudent);
+    Join<CourseAssessmentRequest, CourseStudent> courseStudentJoin = root.join(CourseAssessmentRequest_.courseStudent);
+    Join<CourseStudent, Student> studentJoin = courseStudentJoin.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
     
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.equal(courseStudent.get(CourseStudent_.student), student),
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), Boolean.FALSE)
         ));
     
