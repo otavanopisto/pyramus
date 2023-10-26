@@ -6,11 +6,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -33,10 +35,10 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.EntityProperty;
+import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
-import fi.otavanopisto.pyramus.framework.PyramusViewController;
+import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
-import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -49,7 +51,26 @@ import net.sf.json.JSONObject;
  * 
  * @see fi.otavanopisto.pyramus.json.users.EditUserJSONRequestController
  */
-public class EditUserViewController extends PyramusViewController implements Breadcrumbable {
+public class EditUserViewController extends PyramusViewController2 implements Breadcrumbable {
+
+  public EditUserViewController() {
+    super(PyramusRequestControllerAccess.REQUIRELOGIN);
+  }
+
+  @Override
+  protected boolean checkAccess(RequestContext requestContext) {
+    if (!requestContext.isLoggedIn()) {
+      return false;
+    }
+
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+
+    Long loggedUserId = requestContext.getLoggedUserId();
+    StaffMember staffMember = staffMemberDAO.findById(loggedUserId);
+    Long userId = requestContext.getLong("userId");
+
+    return staffMember.getRoles().contains(Role.ADMINISTRATOR) || Objects.equals(loggedUserId, userId);
+  }
 
   /**
    * Processes the page request by including the corresponding JSP page to the response. 
@@ -163,16 +184,6 @@ public class EditUserViewController extends PyramusViewController implements Bre
     pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);
     
     pageRequestContext.setIncludeJSP("/templates/users/edituser.jsp");
-  }
-
-  /**
-   * Returns the roles allowed to access this page. Available for only those
-   * with {@link Role#MANAGER} or {@link Role#ADMINISTRATOR} privileges.
-   * 
-   * @return The roles allowed to access this page
-   */
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   /**

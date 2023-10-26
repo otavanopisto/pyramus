@@ -98,12 +98,12 @@ public class CreateUserViewController extends PyramusViewController implements B
 
   /**
    * Returns the roles allowed to access this page. Creating new users requires
-   * {@link Role#MANAGER} or {@link Role#ADMINISTRATOR} privileges.
+   * {@link Role#ADMINISTRATOR} privileges.
    * 
    * @return The roles allowed to access this page
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
 
   /**

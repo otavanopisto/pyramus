@@ -644,7 +644,7 @@
                   <c:set var="rolesDisabled" value=""/>
                 </c:when>
                 <c:otherwise>
-                  <c:set var="rolesDisabled" value="readonly"/>
+                  <c:set var="rolesDisabled" value="disabled"/>
                 </c:otherwise>
               </c:choose>
               

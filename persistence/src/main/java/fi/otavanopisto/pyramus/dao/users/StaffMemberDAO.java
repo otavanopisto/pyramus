@@ -325,15 +325,13 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     }
   }
   
-  public StaffMember update(StaffMember staffMember, Organization organization, String firstName, String lastName, Set<Role> roles) {
+  public StaffMember update(StaffMember staffMember, Organization organization, String firstName, String lastName) {
     auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.firstName, firstName, true);
     auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.lastName, lastName, true);
-    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.roles, roles, true);
 
     staffMember.setOrganization(organization);
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
-    staffMember.setRoles(roles);
     persist(staffMember);
     
     staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
@@ -364,7 +362,20 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   }
 
   public StaffMember updateEnabled(StaffMember staffMember, boolean accountEnabled) {
+    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.enabled, accountEnabled, true);
+
     staffMember.setEnabled(accountEnabled);
+    persist(staffMember);
+    
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
+    
+    return staffMember;
+  }
+
+  public StaffMember updateRoles(StaffMember staffMember, Set<Role> roles) {
+    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.roles, roles, true);
+
+    staffMember.setRoles(roles);
     persist(staffMember);
     
     staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
