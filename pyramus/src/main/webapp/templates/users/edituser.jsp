@@ -649,7 +649,7 @@
               </c:choose>
               
               <div>
-                <input type="checkbox" id="role." name="role" value="GUEST" ${user.roles.contains(Role.GUEST) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <input type="checkbox" id="role.GUEST" name="role" value="GUEST" ${user.roles.contains(Role.GUEST) ? 'checked="checked"' : ''} ${rolesDisabled} />
                 <label for="role.GUEST"><fmt:message key="users.editUser.roleGuestTitle"/></label>
               </div>
               
