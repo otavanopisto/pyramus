@@ -67,6 +67,11 @@ public class EditUserViewController extends PyramusViewController2 implements Br
 
     Long loggedUserId = requestContext.getLoggedUserId();
     StaffMember staffMember = staffMemberDAO.findById(loggedUserId);
+    
+    if (staffMember == null) {
+      return false;
+    }
+    
     Long userId = requestContext.getLong("userId");
 
     return staffMember.hasRole(Role.ADMINISTRATOR) || Objects.equals(loggedUserId, userId);
