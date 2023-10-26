@@ -71,7 +71,7 @@ public class EditUserJSONRequestController extends JSONRequestController2 {
     StaffMember staffMember = staffMemberDAO.findById(loggedUserId);
     Long userId = requestContext.getLong("userId");
 
-    return staffMember.getRoles().contains(Role.ADMINISTRATOR) || Objects.equals(loggedUserId, userId);
+    return staffMember.hasRole(Role.ADMINISTRATOR) || Objects.equals(loggedUserId, userId);
   }
 
   /**
