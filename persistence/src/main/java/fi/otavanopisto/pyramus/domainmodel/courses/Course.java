@@ -329,7 +329,7 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
     this.courseTemplate = courseTemplate;
   }
 
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="module")
   private Module module;
   

@@ -462,7 +462,7 @@
         }));
         
 
-        <c:if test="${loggedUserRole == 'ADMINISTRATOR' && user.role ne 'ADMINISTRATOR'}">
+        <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR) && user.role ne 'ADMINISTRATOR'}">
         relatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
           text: '<fmt:message key="users.editUser.basicTabRelatedActionsPoseAsLabel"/>',
@@ -624,7 +624,7 @@
                 <jsp:param name="helpLocale" value="users.editUser.roleHelp"/>
               </jsp:include>
               <c:choose>
-                <c:when test="${loggedUserRole == 'ADMINISTRATOR'}">
+                <c:when test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
                   <select name="role">
                     <option value="10" <c:if test="${user.role == 'CLOSED'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleClosedTitle"/></option>
                     <option value="1" <c:if test="${user.role == 'GUEST'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleGuestTitle"/></option>

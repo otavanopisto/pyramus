@@ -88,6 +88,7 @@ import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemRestModel;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemStatus;
@@ -169,7 +170,7 @@ public class MuikkuRESTService {
     if (student == null || student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    if (!restSecurity.hasPermission(new String[] { MuikkuPermissions.GET_STUDENT_COURSE_ACTIVITY, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
@@ -630,7 +631,7 @@ public class MuikkuRESTService {
     
     // Study programme validation
     
-    if (StringUtils.isBlank(payload.getStudyProgrammeIdentifier()) || !NumberUtils.isNumber(payload.getStudyProgrammeIdentifier())) {
+    if (StringUtils.isBlank(payload.getStudyProgrammeIdentifier()) || !NumberUtils.isCreatable(payload.getStudyProgrammeIdentifier())) {
       return Response.status(Status.BAD_REQUEST).entity("Invalid payload study programme").build();
     }
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
@@ -752,7 +753,7 @@ public class MuikkuRESTService {
     if (!UserUtils.canAccessOrganization(sessionController.getUser(), student.getStudyProgramme().getOrganization())) {
       return Response.status(Status.BAD_REQUEST).entity("No study programme access").build();
     }
-    if (StringUtils.isBlank(payload.getStudyProgrammeIdentifier()) || !NumberUtils.isNumber(payload.getStudyProgrammeIdentifier())) {
+    if (StringUtils.isBlank(payload.getStudyProgrammeIdentifier()) || !NumberUtils.isCreatable(payload.getStudyProgrammeIdentifier())) {
       return Response.status(Status.BAD_REQUEST).entity("Invalid payload study programme").build();
     }
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
