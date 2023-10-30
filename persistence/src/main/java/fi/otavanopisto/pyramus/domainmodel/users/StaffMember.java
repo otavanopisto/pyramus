@@ -21,6 +21,7 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Indexed;
@@ -84,7 +85,7 @@ public class StaffMember extends User implements ArchivableEntity {
   @Transient
   @Override
   public boolean isAccountEnabled() {
-    return isEnabled();
+    return isEnabled() && CollectionUtils.isNotEmpty(getRoles());
   }
 
   public boolean isEnabled() {

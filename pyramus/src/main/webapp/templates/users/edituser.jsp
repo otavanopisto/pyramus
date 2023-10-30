@@ -513,8 +513,8 @@
                     <jsp:param name="helpLocale" value="users.editUser.accountEnabledHelp"/>
                   </jsp:include>                  
                   <select name="accountActive" class="required">
-                    <option value="true" ${user.accountEnabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.active"/></option>
-                    <option value="false" ${not user.accountEnabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.inactive"/></option>
+                    <option value="true" ${user.enabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.active"/></option>
+                    <option value="false" ${not user.enabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.inactive"/></option>
                   </select>
                 </div>
               </c:when>
