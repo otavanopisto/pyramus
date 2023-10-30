@@ -116,18 +116,32 @@ update Person p
 set p.defaultUser_id = p.id;
   
 insert into
-  StaffMember (id, organization, role, title)
+  StaffMember (id, organization, title)
 values 
-  (1, 1, 'GUEST', null),
-  (2, 1, 'GUEST', null),
-  (5, 1, 'USER', null),
-  (6, 1, 'MANAGER', null),
-  (7, 1, 'ADMINISTRATOR', null),
-  (9, 1, 'TRUSTED_SYSTEM', null),
-  (10, 1, 'STUDY_GUIDER', null),
-  (11, 1, 'TEACHER', null),
-  (12, 1, 'STUDY_PROGRAMME_LEADER', null),
-  (14, 1, 'CLOSED', null);
+  (1, 1, null),
+  (2, 1, null),
+  (5, 1, null),
+  (6, 1, null),
+  (7, 1, null),
+  (9, 1, null),
+  (10, 1, null),
+  (11, 1, null),
+  (12, 1, null),
+  (14, 1, null);
+  
+insert into
+  StaffMemberRoles (staffMember_id, role)
+values
+  (1, 'GUEST'),
+  (2, 'GUEST'),
+  (5, 'USER'),
+  (6, 'MANAGER'),
+  (7, 'ADMINISTRATOR'),
+  (9, 'TRUSTED_SYSTEM'),
+  (10, 'STUDY_GUIDER'),
+  (11, 'TEACHER'),
+  (12, 'STUDY_PROGRAMME_LEADER'),
+  (14, 'CLOSED');
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
