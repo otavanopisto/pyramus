@@ -81,8 +81,12 @@ public class UserController {
     return staffMemberDAO.create(organization, firstName, lastName, roles, person, false);
   }
 
-  public StaffMember updateStaffMember(StaffMember staffMember, Organization organization, String firstName, String lastName, Set<Role> roles) {
-    return staffMemberDAO.update(staffMember, organization, firstName, lastName, roles);
+  public StaffMember updateStaffMember(StaffMember staffMember, Organization organization, String firstName, String lastName) {
+    return staffMemberDAO.update(staffMember, organization, firstName, lastName);
+  }
+  
+  public StaffMember updateStaffMemberRoles(StaffMember staffMember, Set<Role> roles) {
+    return staffMemberDAO.updateRoles(staffMember, roles);
   }
   
   public void archiveStaffMember(StaffMember staffMember) {

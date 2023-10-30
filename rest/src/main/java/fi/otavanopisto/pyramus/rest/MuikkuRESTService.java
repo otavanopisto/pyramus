@@ -394,7 +394,8 @@ public class MuikkuRESTService {
 
     // Update user
     
-    staffMember = userController.updateStaffMember(staffMember, staffMember.getOrganization(), payload.getFirstName(), payload.getLastName(), roles);
+    staffMember = userController.updateStaffMember(staffMember, staffMember.getOrganization(), payload.getFirstName(), payload.getLastName());
+    staffMember = userController.updateStaffMemberRoles(staffMember, roles);
     
     // Update email
     try {
