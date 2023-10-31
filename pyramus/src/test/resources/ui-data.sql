@@ -83,13 +83,13 @@ values
   (2, '2', 'internal', 8);
 
 insert into
-  StaffMember (id, title)
+  StaffMember (id, title, enabled)
 values 
-  (1, null),
-  (2, null),
-  (5, null),
-  (6, null),
-  (7, null);
+  (1, null, true),
+  (2, null, true),
+  (5, null, true),
+  (6, null, true),
+  (7, null, true);
   
 insert into
   StaffMember (staffMember_id, role)

@@ -116,18 +116,18 @@ update Person p
 set p.defaultUser_id = p.id;
   
 insert into
-  StaffMember (id, organization, title)
+  StaffMember (id, organization, title, enabled)
 values 
-  (1, 1, null),
-  (2, 1, null),
-  (5, 1, null),
-  (6, 1, null),
-  (7, 1, null),
-  (9, 1, null),
-  (10, 1, null),
-  (11, 1, null),
-  (12, 1, null),
-  (14, 1, null);
+  (1, 1, null, true),
+  (2, 1, null, true),
+  (5, 1, null, true),
+  (6, 1, null, true),
+  (7, 1, null, true),
+  (9, 1, null, true),
+  (10, 1, null, true),
+  (11, 1, null, true),
+  (12, 1, null, true),
+  (14, 1, null, true);
   
 insert into
   StaffMemberRoles (staffMember_id, role)
