@@ -140,8 +140,7 @@ values
   (9, 'TRUSTED_SYSTEM'),
   (10, 'STUDY_GUIDER'),
   (11, 'TEACHER'),
-  (12, 'STUDY_PROGRAMME_LEADER'),
-  (14, 'CLOSED');
+  (12, 'STUDY_PROGRAMME_LEADER');
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
