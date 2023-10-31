@@ -21,7 +21,7 @@ public class StaffMemberTestsIT extends AbstractRESTServiceTest {
       .body("id[1]", is(2))
       .body("firstName[1]", is("Test Guest"))
       .body("lastName[1]", is("User #2"))
-      .body("role[1]", is("GUEST"));
+      .body("roles[1][0]", is("GUEST"));
   }
   
   @Test
