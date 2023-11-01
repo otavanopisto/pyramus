@@ -590,6 +590,11 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return persist(student);
   }
 
+  public Student updateParentBillingDetails(Student student, String parentBillingDetails) {
+    student.setParentBillingDetails(parentBillingDetails);
+    return persist(student);
+  }
+
   public Student removeTag(Student student, Tag tag) {
     student.removeTag(tag);
     persist(student);
