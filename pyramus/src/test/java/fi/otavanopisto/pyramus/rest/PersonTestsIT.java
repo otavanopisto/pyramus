@@ -359,6 +359,6 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .body("id[0]", is(1))
       .body("firstName[0]", is("Test Guest"))
       .body("lastName[0]", is("User #1"))
-      .body("role[0]", is(UserRole.GUEST.name()));
+      .body("roles[0][0]", is(UserRole.GUEST.name()));
   }
 }

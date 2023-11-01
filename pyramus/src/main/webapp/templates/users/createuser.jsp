@@ -447,7 +447,7 @@
                     <jsp:param name="helpLocale" value="users.createUser.roleHelp"/>
                   </jsp:include>
                   <div>
-                    <input type="checkbox" id="role." name="role" value="GUEST"/>
+                    <input type="checkbox" id="role.GUEST" name="role" value="GUEST"/>
                     <label for="role.GUEST"><fmt:message key="users.createUser.roleGuestTitle"/></label>
                   </div>
               

@@ -83,14 +83,23 @@ values
   (2, '2', 'internal', 8);
 
 insert into
-  StaffMember (id, role, title)
+  StaffMember (id, title, enabled)
 values 
-  (1, 'GUEST', null),
-  (2, 'GUEST', null),
-  (5, 'USER', null),
-  (6, 'MANAGER', null),
-  (7, 'ADMINISTRATOR', null);
+  (1, null, true),
+  (2, null, true),
+  (5, null, true),
+  (6, null, true),
+  (7, null, true);
   
+insert into
+  StaffMember (staffMember_id, role)
+values 
+  (1, 'GUEST'),
+  (2, 'GUEST'),
+  (5, 'USER'),
+  (6, 'MANAGER'),
+  (7, 'ADMINISTRATOR');
+
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
 values 

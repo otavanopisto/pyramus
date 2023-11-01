@@ -513,8 +513,8 @@
                     <jsp:param name="helpLocale" value="users.editUser.accountEnabledHelp"/>
                   </jsp:include>                  
                   <select name="accountActive" class="required">
-                    <option value="true" ${user.accountEnabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.active"/></option>
-                    <option value="false" ${not user.accountEnabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.inactive"/></option>
+                    <option value="true" ${user.enabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.active"/></option>
+                    <option value="false" ${not user.enabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.inactive"/></option>
                   </select>
                 </div>
               </c:when>
@@ -644,12 +644,12 @@
                   <c:set var="rolesDisabled" value=""/>
                 </c:when>
                 <c:otherwise>
-                  <c:set var="rolesDisabled" value="readonly"/>
+                  <c:set var="rolesDisabled" value="disabled"/>
                 </c:otherwise>
               </c:choose>
               
               <div>
-                <input type="checkbox" id="role." name="role" value="GUEST" ${user.roles.contains(Role.GUEST) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <input type="checkbox" id="role.GUEST" name="role" value="GUEST" ${user.roles.contains(Role.GUEST) ? 'checked="checked"' : ''} ${rolesDisabled} />
                 <label for="role.GUEST"><fmt:message key="users.editUser.roleGuestTitle"/></label>
               </div>
               
