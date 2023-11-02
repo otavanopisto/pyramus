@@ -299,6 +299,14 @@ public class Student extends User implements ArchivableEntity {
     this.funding = funding;
   }
 
+  public String getParentBillingDetails() {
+    return parentBillingDetails;
+  }
+
+  public void setParentBillingDetails(String parentBillingDetails) {
+    this.parentBillingDetails = parentBillingDetails;
+  }
+
   private String nickname;
     
   @Lob
@@ -371,4 +379,10 @@ public class Student extends User implements ArchivableEntity {
   
   @Enumerated (EnumType.STRING)
   private StudentFunding funding;
+
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
+  @Column (nullable = true)
+  private String parentBillingDetails;
+  
 }

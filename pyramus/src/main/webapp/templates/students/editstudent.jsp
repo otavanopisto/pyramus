@@ -1184,6 +1184,14 @@
                 <textarea name="otherContactInfo.${student.id}" rows="5" cols="50">${student.contactInfo.additionalInfo}</textarea>
               </div>
 
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.parentBillingDetailsTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.parentBillingDetailsHelp"/>
+                </jsp:include>
+                <textarea name="parentBillingDetails.${student.id}" rows="5" cols="50">${student.parentBillingDetails}</textarea>
+              </div>
+
               <div class="genericFormSection">                    
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.municipalityTitle"/>
@@ -1487,6 +1495,7 @@
                   </div>
                 </c:when>
               </c:choose>
+
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.additionalInformationTitle"/>
@@ -1494,6 +1503,7 @@
                 </jsp:include>
                 <textarea name="additionalInfo.${student.id}" ix:cktoolbar="studentAdditionalInformation" ix:ckeditor="true">${student.additionalInfo}</textarea>
               </div>
+
               <ix:extensionHook name="students.editStudent.tabs.studyProgramme"/>
             </div>
           </c:forEach>
