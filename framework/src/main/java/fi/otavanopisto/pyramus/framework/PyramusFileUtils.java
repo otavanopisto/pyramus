@@ -69,6 +69,24 @@ public class PyramusFileUtils {
     }
   }
   
+  public static boolean deleteFileData(StudentFile studentFile) throws IOException {
+    if (studentFile.getFileId() == null) {
+      return true;
+    }
+    else {
+      File storageFolder = getStorageFolder(studentFile.getStudent());
+      java.nio.file.Path path = Paths.get(storageFolder.getPath(), studentFile.getFileId());
+      File file = path.toFile();
+      if (file.exists()) {
+        file = FileUtils.delete(file);
+        return !file.exists();
+      }
+      
+      // ?? File didn't exist
+      return false; 
+    }
+  }
+  
   public static void storeFile(User user, String fileId, byte[] data) throws IOException {
     File storageFolder = getStorageFolder(user);
     File userFile = Paths.get(storageFolder.getPath(), fileId).toFile();
