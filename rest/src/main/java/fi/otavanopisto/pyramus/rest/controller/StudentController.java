@@ -537,7 +537,7 @@ public class StudentController {
         CourseActivity courseActivity = new CourseActivity();
         courseActivity.setCourseName(transferCredit.getCourseName());
         
-        if (courseActivity.getOptionality() != null) {
+        if (transferCredit.getOptionality() != null) {
           courseActivity.setOptionality(transferCredit.getOptionality().name());
         }
         // Curriculum
