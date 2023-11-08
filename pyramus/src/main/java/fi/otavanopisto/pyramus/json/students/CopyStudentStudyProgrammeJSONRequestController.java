@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.json.students;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -14,12 +15,14 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -30,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
@@ -40,6 +44,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
@@ -59,6 +64,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
+    StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
 
     Long studentId = requestContext.getLong("studentId");
     Student oldStudent = studentDAO.findById(studentId);
@@ -82,6 +88,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
 
     Boolean linkCredits = requestContext.getBoolean("linkCredits");
     Boolean setAsDefaultUser = requestContext.getBoolean("setAsDefaultUser");
+    Boolean moveFiles = requestContext.getBoolean("moveFiles");
     
     Person person = oldStudent.getPerson();
     String firstName = oldStudent.getFirstName();
@@ -163,6 +170,18 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
       List<CreditLink> creditLinks = creditLinkDAO.listByStudent(oldStudent);
       for (CreditLink creditLink : creditLinks) {
         creditLinkDAO.create(creditLink.getCredit(), newStudent, loggedUser);
+      }
+    }
+    
+    if (moveFiles) {
+      List<StudentFile> studentFiles = studentFileDAO.listByStudent(oldStudent, TSB.FALSE);
+      for (StudentFile studentFile : studentFiles) {
+        try {
+          PyramusFileUtils.moveFileForNewStudent(studentFile, newStudent, loggedUser);
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
     }
     
