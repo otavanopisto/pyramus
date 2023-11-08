@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment_;
@@ -44,19 +45,28 @@ public class StudentContactLogEntryCommentDAO extends PyramusEntityDAO<StudentCo
   }
   
   public List<StudentContactLogEntryComment> listByEntry(StudentContactLogEntry entry) {
+    return listByEntry(entry, TSB.FALSE);
+  }
+
+  public List<StudentContactLogEntryComment> listByEntry(StudentContactLogEntry entry, TSB archived) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentContactLogEntryComment> criteria = criteriaBuilder.createQuery(StudentContactLogEntryComment.class);
     Root<StudentContactLogEntryComment> root = criteria.from(StudentContactLogEntryComment.class);
     criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(StudentContactLogEntryComment_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(StudentContactLogEntryComment_.entry), entry)
-        ));
+    
+    if (archived.isBoolean()) {
+      criteria.where(
+          criteriaBuilder.and(
+              criteriaBuilder.equal(root.get(StudentContactLogEntryComment_.archived), Boolean.FALSE),
+              criteriaBuilder.equal(root.get(StudentContactLogEntryComment_.entry), entry)
+          ));
+    } else {
+      criteria.where(criteriaBuilder.equal(root.get(StudentContactLogEntryComment_.entry), entry));
+    }
     
     return entityManager.createQuery(criteria).getResultList();
   }
-  
+
 }
