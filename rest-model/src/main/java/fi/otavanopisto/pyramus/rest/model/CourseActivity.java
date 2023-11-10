@@ -44,10 +44,19 @@ public class CourseActivity {
     this.assessments = assessments;
   }
 
+  public String getOptionality() {
+    return optionality;
+  }
+
+  public void setOptionality(String optionality) {
+    this.optionality = optionality;
+  }
+
   private Long courseId;
   private String courseName;
   private List<CourseActivitySubject> subjects;
   private List<CourseActivityCurriculum> curriculums;
   private List<CourseActivityAssessment> assessments;
+  private String optionality;
 
 }
