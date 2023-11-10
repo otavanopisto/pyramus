@@ -20,26 +20,14 @@
     <script type="text/javascript">
     
       function onLoad(event) {
-        var termOptions = [
-          {value: "SPRING2016", text: "Kevät 2016"},
-          {value: "AUTUMN2016", text: "Syksy 2016"},
-          {value: "SPRING2017", text: "Kevät 2017"},
-          {value: "AUTUMN2017", text: "Syksy 2017"},
-          {value: "SPRING2018", text: "Kevät 2018"},
-          {value: "AUTUMN2018", text: "Syksy 2018"},
-          {value: "SPRING2019", text: "Kevät 2019"},
-          {value: "AUTUMN2019", text: "Syksy 2019"},
-          {value: "SPRING2020", text: "Kevät 2020"},
-          {value: "AUTUMN2020", text: "Syksy 2020"},
-          {value: "SPRING2021", text: "Kevät 2021"},
-          {value: "AUTUMN2021", text: "Syksy 2021"},
-          {value: "SPRING2022", text: "Kevät 2022"},
-          {value: "AUTUMN2022", text: "Syksy 2022"},
-          {value: "SPRING2023", text: "Kevät 2023"},
-          {value: "AUTUMN2023", text: "Syksy 2023"},
-          {value: "SPRING2024", text: "Kevät 2024"},
-          {value: "AUTUMN2024", text: "Syksy 2024"}
-        ];
+        var currentYear = new Date().getFullYear();
+        var termOptions = [];
+        
+        for (var y = 2016; y <= currentYear + 4; y++) {
+          termOptions.push({value: "SPRING" + y, text: "Kevät " + y});
+          termOptions.push({value: "AUTUMN" + y, text: "Syksy " + y});
+        }
+
         var subjectOptions = [
           {value:"AI", text:"Äidinkieli"},
           {value:"S2", text:"Suomi toisena kielenä"},
