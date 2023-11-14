@@ -60,9 +60,18 @@ public class LoginJSONRequestController extends JSONRequestController {
     
     // Go through all authentication providers and see if one authorizes the given credentials
     
+    System.out.println(String.format("Trying to login with %s/%s", username, password));
+    
     for (InternalAuthenticationProvider provider : AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders()) {
+      System.out.println(String.format("Trying to login with provider %s", provider.getName()));
+      
       try {
         User user = provider.getUser(username, password);
+        
+        System.out.println(String.format("Provider user id %d", user != null ? user.getId() : null));
+        System.out.println(String.format("Provider user archived %b", user != null ? user.getArchived() : null));
+        System.out.println(String.format("Provider enabled %b", user != null ? user.isAccountEnabled() : null));
+        
         if (user != null && !user.getArchived() && user.isAccountEnabled()) {
           
           // User has been authorized, so store him in the session
