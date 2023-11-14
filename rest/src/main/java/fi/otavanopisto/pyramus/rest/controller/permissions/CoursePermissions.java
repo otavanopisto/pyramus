@@ -78,7 +78,7 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER })
   @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
   public static final String CREATE_COURSESTUDENT = "CREATE_COURSESTUDENT";
   
