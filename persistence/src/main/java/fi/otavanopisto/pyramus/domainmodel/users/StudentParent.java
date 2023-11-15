@@ -20,6 +20,15 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 @PrimaryKeyJoinColumn(name="id")
 public class StudentParent extends User {
 
+  /**
+   * TODO
+   * - Opiskelijan hetu ei saa olla tyhjä -> huoltaja pystyy muuten luomaan tunnukset ilman vahvistusta
+   * - Huoltajan tunnuksen luontiin käytettävä lomake on taitettava
+   * - Mitä tehdään tilanteessa, jossa huoltajalla on useita huollettavia? Kirjautuminen?
+   * - Huoltajan kutsun luomisesta ei lähde sähköpostia (ainakaan viewstudentin kautta)
+   * - Jos opiskelija ei ole enää alaikäinen -> ei järkeä antaa luoda huoltajia
+   */
+  
   @Override
   public Set<Role> getRoles() {
     return Set.of(Role.STUDENT_PARENT);
