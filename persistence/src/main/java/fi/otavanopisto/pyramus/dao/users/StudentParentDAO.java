@@ -57,6 +57,7 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
 
     // ???
     person.addUser(studentParent);
+    person.setDefaultUser(studentParent);
     getEntityManager().persist(person);
     
     studentParentCreatedEvent.fire(new StudentParentCreatedEvent(studentParent.getId()));
