@@ -3420,11 +3420,14 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/guidanceRelation")
   @GET
-  @RESTPermit(StudentPermissions.GET_STUDENT_GUIDANCE_RELATION)
+  @RESTPermit(handling = Handling.INLINE)
   public Response getStudentGuidanceRelation(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
       return Response.status(Status.NOT_FOUND).entity("Student not found").build();
+    }
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_GUIDANCE_RELATION, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
     StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
     if (staffMember == null) {

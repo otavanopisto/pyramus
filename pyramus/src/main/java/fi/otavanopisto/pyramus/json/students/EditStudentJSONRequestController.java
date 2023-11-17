@@ -272,6 +272,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       String nickname = StringUtils.trim(requestContext.getString("nickname." + student.getId()));
       String additionalInfo = requestContext.getString("additionalInfo." + student.getId());
       String additionalContactInfo = requestContext.getString("otherContactInfo." + student.getId());
+      String parentBillingDetails = requestContext.getString("parentBillingDetails." + student.getId());
       String education = requestContext.getString("education." + student.getId());
       Double previousStudies = requestContext.getDouble("previousStudies." + student.getId());
       Date studyTimeEnd = requestContext.getDate("studyTimeEnd." + student.getId());
@@ -412,6 +413,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       
       studentDAO.updateApprover(student, approver);
       studentDAO.updateFunding(student, funding);
+      studentDAO.updateParentBillingDetails(student, parentBillingDetails);
       
       // Tags
 
