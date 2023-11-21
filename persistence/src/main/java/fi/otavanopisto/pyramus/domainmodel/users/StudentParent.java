@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -63,7 +64,31 @@ public class StudentParent extends User {
     return children;
   }
 
+  /**
+   * Returns true if this StudentParent is parent of given Student.
+   * 
+   * @param student Student
+   * @return true if this StudentParent is parent of given Student
+   */
+  @Transient
+  public boolean isParentOf(Student student) {
+    if (student == null) {
+      throw new IllegalArgumentException();
+    }
+    
+    List<StudentParentChild> studentParentChildren = getChildren();
+    for (StudentParentChild studentParentChild : studentParentChildren) {
+      if (studentParentChild != null && studentParentChild.getStudent() != null && Boolean.FALSE.equals(studentParentChild.getStudent().getArchived())) {
+        if (studentParentChild.getStudent().getId().equals(student.getId())) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+  
   @OneToMany (mappedBy = "studentParent")
   private List<StudentParentChild> children;
-  
+
 }

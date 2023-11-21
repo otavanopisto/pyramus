@@ -24,12 +24,19 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
+import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
+import fi.otavanopisto.pyramus.rest.controller.CourseController;
+import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.students.StudentParentStudentCourseRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 
 @Path("/studentparents")
@@ -40,7 +47,16 @@ import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 public class StudentParentRESTService extends AbstractRESTService {
 
   @Inject
+  private AssessmentController assessmentController;
+
+  @Inject
+  private CourseController courseController;
+
+  @Inject
   private UserController userController;
+
+  @Inject
+  private StudentController studentController;
 
   @Inject
   private ObjectFactory objectFactory;
@@ -128,6 +144,43 @@ public class StudentParentRESTService extends AbstractRESTService {
     }
 
     return Response.ok(objectFactory.createModel(studentParent.getChildren())).build();
+  }
+  
+  @Path("/studentparents/{ID:[0-9]*}/students/{STUDENTID:[0-9]*}/courses")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentParentStudentsCourses(
+      @PathParam("ID") Long id, @PathParam("STUDENTID") Long studentId) {
+    StudentParent studentParent = userController.findStudentParentById(id);
+    if (studentParent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || !studentParent.isParentOf(student)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STUDENTPARENT_STUDENTS, UserPermissions.USER_OWNER }, studentParent, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<StudentParentStudentCourseRestModel> results = new ArrayList<>();
+    List<CourseStudent> courseStudents = courseController.listCourseStudentsByStudent(student);
+    for (CourseStudent courseStudent : courseStudents) {
+      CourseAssessmentRequest latestAssessmentRequest = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
+      
+      results.add(new StudentParentStudentCourseRestModel(
+          courseStudent.getCourse().getId(),
+          courseStudent.getId(),
+          courseStudent.getCourse().getName(),
+          courseStudent.getCourse().getNameExtension(),
+          courseStudent.getEnrolmentTime(),
+          latestAssessmentRequest != null ? latestAssessmentRequest.getCreated() : null
+      ));
+    }
+    
+    return Response.ok(results).build();
   }
   
 }
