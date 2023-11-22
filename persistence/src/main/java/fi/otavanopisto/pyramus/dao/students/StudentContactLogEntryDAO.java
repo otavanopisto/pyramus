@@ -8,9 +8,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
@@ -64,24 +66,40 @@ public class StudentContactLogEntryDAO extends PyramusEntityDAO<StudentContactLo
   }
   
   /**
-   * Lists all contact log entries for given student.
+   * Lists all unarchived contact log entries for given student.
    * 
    * @param student
    *          Student to list contact entries for.
    * @return List with StudentContactLogEntry items belonging to the student.
    */
   public List<StudentContactLogEntry> listByStudent(Student student) {
+    return listByStudent(student, TSB.FALSE);
+  }
+  
+  /**
+   * Lists all contact log entries for given student that match the archived parameter.
+   * 
+   * @param student student
+   * @param archived archived
+   * @return contact log entries for given student
+   */
+  public List<StudentContactLogEntry> listByStudent(Student student, TSB archived) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentContactLogEntry> criteria = criteriaBuilder.createQuery(StudentContactLogEntry.class);
     Root<StudentContactLogEntry> root = criteria.from(StudentContactLogEntry.class);
     criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(StudentContactLogEntry_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(StudentContactLogEntry_.student), student)
-        ));
+    
+    if (archived.isBoolean()) {
+      criteria.where(
+          criteriaBuilder.and(
+              criteriaBuilder.equal(root.get(StudentContactLogEntry_.archived), archived.booleanValue()),
+              criteriaBuilder.equal(root.get(StudentContactLogEntry_.student), student)
+          ));
+    } else {
+      criteria.where(criteriaBuilder.equal(root.get(StudentContactLogEntry_.student), student));
+    }
     
     return entityManager.createQuery(criteria).getResultList();
   }
@@ -157,6 +175,20 @@ public class StudentContactLogEntryDAO extends PyramusEntityDAO<StudentContactLo
     int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
     return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+  }
+  
+  public List<Student> listPastStudentsWithContactEntries(Date studentStudyEndThreshold, int maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<StudentContactLogEntry> root = criteria.from(StudentContactLogEntry.class);
+    Join<StudentContactLogEntry, Student> student = root.join(StudentContactLogEntry_.student);
+
+    criteria.select(student).distinct(true);
+    criteria.where(getPastStudentPredicate(criteriaBuilder, student, studentStudyEndThreshold));
+    
+    return entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
   }
   
 }
