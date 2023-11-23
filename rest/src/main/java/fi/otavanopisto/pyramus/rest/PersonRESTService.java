@@ -137,7 +137,7 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { PersonPermissions.FIND_PERSON, PersonPermissions.PERSON_OWNER }, person, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { PersonPermissions.FIND_PERSON, PersonPermissions.PERSON_OWNER, PersonPermissions.PERSON_PARENT }, person, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     

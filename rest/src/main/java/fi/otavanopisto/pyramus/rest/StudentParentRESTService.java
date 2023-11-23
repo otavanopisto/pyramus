@@ -143,7 +143,7 @@ public class StudentParentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    return Response.ok(objectFactory.createModel(studentParent.getChildren())).build();
+    return Response.ok(objectFactory.createModel(studentParent.getActiveChildren())).build();
   }
   
   @Path("/studentparents/{ID:[0-9]*}/students/{STUDENTID:[0-9]*}/courses")
@@ -157,7 +157,7 @@ public class StudentParentRESTService extends AbstractRESTService {
     }
     
     Student student = studentController.findStudentById(studentId);
-    if (student == null || !studentParent.isParentOf(student)) {
+    if (student == null || !studentParent.isActiveParentOf(student)) {
       return Response.status(Status.NOT_FOUND).build();
     }
     

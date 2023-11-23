@@ -15,6 +15,9 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   @Scope (PermissionScope.USER_OWNER)
   public static final String USER_OWNER = "USER_OWNER";
 
+  @Scope (PermissionScope.STUDENT_PARENT)
+  public static final String STUDENT_PARENT = "STUDENT_PARENT";
+  
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String CREATE_STAFFMEMBER = "CREATE_STAFFMEMBER";

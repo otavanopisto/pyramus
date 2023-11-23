@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
@@ -41,7 +42,7 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
   @Inject
   private Event<StudentParentDeletedEvent> studentParentDeletedEvent;
   
-  public StudentParent create(String firstName, String lastName) {
+  public StudentParent create(String firstName, String lastName, Organization organization) {
     ContactInfo contactInfo = new ContactInfo();
     Person person = new Person();
     
@@ -49,6 +50,7 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
 
     studentParent.setFirstName(firstName);
     studentParent.setLastName(lastName);
+    studentParent.setOrganization(organization);
     studentParent.setContactInfo(contactInfo);
     studentParent.setPerson(person);
     studentParent.setArchived(false);

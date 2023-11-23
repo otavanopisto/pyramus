@@ -1602,7 +1602,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -3528,7 +3528,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Status.NOT_FOUND;
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Status.FORBIDDEN;
     }
 

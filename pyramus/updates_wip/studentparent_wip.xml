@@ -4,6 +4,7 @@
   <sql>
     create table StudentParent (
        id bigint not null,
+        organization bigint,
         primary key (id)
     );
   </sql>
@@ -34,6 +35,13 @@
        add constraint FKtbubo3mx992vy3vgvy04yh83c 
        foreign key (id) 
        references User (id);
+  </sql>
+
+  <sql>
+    alter table StudentParent 
+       add constraint FKjen0t331ljylbps66o2q5j3bq 
+       foreign key (organization) 
+       references Organization (id);
   </sql>
 
   <sql>

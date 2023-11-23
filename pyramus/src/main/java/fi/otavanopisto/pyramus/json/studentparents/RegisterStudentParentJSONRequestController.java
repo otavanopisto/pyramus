@@ -12,6 +12,7 @@ import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentRegistration;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -59,7 +60,8 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
       throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Email is already in use.");
     }
     
-    StudentParent studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName());
+    Organization organization = studentParentRegistration.getStudent().getOrganization();
+    StudentParent studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName(), organization);
     studentParentChildDAO.create(studentParent, studentParentRegistration.getStudent());
     
     ContactType contactType = contactTypeDAO.findById(1L);
