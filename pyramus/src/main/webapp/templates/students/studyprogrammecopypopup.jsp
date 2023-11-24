@@ -51,6 +51,9 @@
         <fmt:param>${courseAssessmentCount + transferCreditCount + creditLinkCount}</fmt:param>
       </fmt:message></div>
       <div><input type="checkbox" id="defaultUserCheckBox" name="defaultUserCheckBox" checked="checked" value="1"/> <fmt:message key="students.copyStudyProgrammePopup.defaultUserCheckboxCaption"/></div>
+
+      <div><fmt:message key="students.copyStudyProgrammePopup.dialogMoveFiles"/></div>
+      <div><input type="checkbox" id="moveFilesCheckBox" name="moveFilesCheckBox" checked="checked" value="1"/> <label for="moveFilesCheckBox"><fmt:message key="students.copyStudyProgrammePopup.moveFilesCheckboxCaption"/></label></div>
     </div>
   </body>
 </html>

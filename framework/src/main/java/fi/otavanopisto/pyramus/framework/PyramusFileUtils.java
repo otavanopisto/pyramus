@@ -12,6 +12,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 public class PyramusFileUtils {
@@ -66,6 +68,67 @@ public class PyramusFileUtils {
       java.nio.file.Path path = Paths.get(storageFolder.getPath(), studentFile.getFileId());
       File file = path.toFile();
       return file.exists() ? FileUtils.readFileToByteArray(file) : null; 
+    }
+  }
+  
+  public static boolean moveFileForNewStudent(StudentFile studentFile, Student newStudent, StaffMember modifier) throws IOException {
+    if (studentFile.getStudent() == null || newStudent == null || !studentFile.getStudent().getPersonId().equals(newStudent.getPersonId())) {
+      throw new IllegalArgumentException("Cannot move file under another person.");
+    }
+
+    if (studentFile.getFileId() == null) {
+      return true;
+    }
+    else {
+      File oldFolder = getStorageFolder(studentFile.getStudent());
+      java.nio.file.Path oldFilePath = Paths.get(oldFolder.getPath(), studentFile.getFileId());
+      File oldFile = oldFilePath.toFile();
+      
+      if (oldFilePath.toFile().exists()) {
+        File newFolder = getStorageFolder(newStudent);
+        
+        FileUtils.moveFileToDirectory(oldFile, newFolder, true);
+        
+        StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
+        studentFileDAO.updateStudent(studentFile, newStudent, modifier);
+        return true;
+      }
+      else {
+        // Moving the file failed, old file was not found
+        return false;
+      }
+    }
+  }
+  
+  /**
+   * Deletes a StudentFile
+   * 
+   * @param studentFile the StudentFile to be deleted
+   * @return true if all went smoothly
+   * @throws IOException if something goes wrong
+   */
+  public static boolean deleteFile(StudentFile studentFile) throws IOException {
+    StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
+
+    if (studentFile.getFileId() == null) {
+      // File data is in the entity (old)
+      studentFileDAO.delete(studentFile);
+      return true;
+    }
+    else {
+      // File data is on disk
+      File storageFolder = getStorageFolder(studentFile.getStudent());
+      java.nio.file.Path path = Paths.get(storageFolder.getPath(), studentFile.getFileId());
+      File file = path.toFile();
+      if (file.exists()) {
+        // Throws an exception if deletion fails
+        FileUtils.delete(file);
+        studentFileDAO.delete(studentFile);
+        return true;
+      }
+      
+      // ?? File didn't exist
+      return false; 
     }
   }
   

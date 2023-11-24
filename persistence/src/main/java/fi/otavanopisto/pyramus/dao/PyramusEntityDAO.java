@@ -6,11 +6,17 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
+
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 
 public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
 
@@ -153,6 +159,13 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
     else {
       return QueryParser.escape(value);
     }
+  }
+  
+  protected Predicate getPastStudentPredicate(CriteriaBuilder criteriaBuilder, Path<Student> student, Date studentStudyEndThreshold) {
+    return criteriaBuilder.and(
+        criteriaBuilder.isNotNull(student.get(Student_.studyEndDate)),
+        criteriaBuilder.lessThan(student.get(Student_.studyEndDate), studentStudyEndThreshold)
+    );
   }
   
   private static final String DATERANGE_INFINITY_LOW = "00000000";

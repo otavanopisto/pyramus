@@ -602,7 +602,7 @@
           </c:choose>
 
           studentId = ${student.id};
-          setupRelatedCommands(studentId, '${sprogName}', ${studentHasCredits[student.id]});
+          setupRelatedCommands(studentId, '${sprogName}', ${studentHasCredits[student.id]}, ${studentHasFiles[student.id]});
           setupStudent(studentId, data);
 
           // Addresses
@@ -794,7 +794,7 @@
         }));
       }
 
-      function setupRelatedCommands(studentId, studyProgrammeName, studentHasCredits) {
+      function setupRelatedCommands(studentId, studyProgrammeName, studentHasCredits, studentHasFiles) {
         var studentRelatedActionsHoverMenu = new IxHoverMenu($('studentRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.editStudent.studentTabRelatedActionsLabel"/>'
         });
@@ -815,9 +815,15 @@
               cancelLabel : '<fmt:message key="students.copyStudyProgrammePopup.cancelLabel"/>'
             });
 
-            var dHeight = studentHasCredits ? "320px" : "240px";
+            var dHeight = 240;
+            if (studentHasCredits) {
+              dHeight += 80;
+            }
+            if (studentHasFiles) {
+              dHeight += 40;
+            }
             
-            dialog.setSize("360px", dHeight);
+            dialog.setSize("420px", dHeight + "px");
             dialog.addDialogListener( function(event) {
               var dlg = event.dialog;
           
@@ -830,6 +836,9 @@
                   var defaultUserCheckBox = pelem.down("input[name='defaultUserCheckBox']");
                   var setAsDefaultUser = defaultUserCheckBox.checked == true ? true : false;
 
+                  var mfbox = pelem.down("input[name='moveFilesCheckBox']");
+                  var moveFiles = mfbox.checked == true ? true : false;
+
                   var newStudyProgrammeIdSelect = pelem.down("select[name='newStudyProgrammeId']");
                   var newStudyProgrammeId = newStudyProgrammeIdSelect.value;
                   
@@ -838,7 +847,8 @@
                       studentId: studentId,
                       newStudyProgrammeId: newStudyProgrammeId,
                       linkCredits: linkCredits,
-                      setAsDefaultUser: setAsDefaultUser
+                      setAsDefaultUser: setAsDefaultUser,
+                      moveFiles: moveFiles
                     },
                     onSuccess: function (jsonResponse) {
                       window.location.reload();

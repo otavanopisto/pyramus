@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,6 +30,7 @@ import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
@@ -47,6 +49,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -147,6 +150,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
 
     Locale locale = pageRequestContext.getRequest().getLocale();
     
@@ -194,6 +198,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     
     Map<Long, String> studentTags = new HashMap<>();
     Map<Long, Boolean> studentHasCredits = new HashMap<>();
+    Map<Long, Boolean> studentHasFiles = new HashMap<>();
 
     List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
@@ -217,6 +222,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
           creditLinkDAO.countByStudent(student) +
           courseAssessmentDAO.countByStudent(student) +
           transferCreditDAO.countByStudent(student) > 0);
+      studentHasFiles.put(student.getId(), CollectionUtils.isNotEmpty(studentFileDAO.listByStudent(student, TSB.FALSE)));
       
       JSONArray variables = new JSONArray();
       for (UserVariableKey userVariableKey : userVariableKeys) {
@@ -383,6 +389,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("variableKeys", userVariableKeys);
     pageRequestContext.getRequest().setAttribute("personVariableKeys", personVariableKeys);
     pageRequestContext.getRequest().setAttribute("studentHasCredits", studentHasCredits);
+    pageRequestContext.getRequest().setAttribute("studentHasFiles", studentHasFiles);
     pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("allowEditCredentials", UserUtils.allowEditCredentials(loggedUser, person));
