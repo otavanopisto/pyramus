@@ -2899,7 +2899,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(studentStatus).build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_GUIDANCECOUNSELORS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_GUIDANCECOUNSELORS, StudentPermissions.STUDENT_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
