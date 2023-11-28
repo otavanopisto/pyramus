@@ -84,6 +84,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.ContactLogAccess;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -3418,22 +3419,31 @@ public class StudentRESTService extends AbstractRESTService {
     if (student == null) {
       return Response.status(Status.NOT_FOUND).entity("Student not found").build();
     }
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_GUIDANCE_RELATION, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_GUIDANCE_RELATION, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
-    if (staffMember == null) {
-      return Response.status(Status.NOT_FOUND).entity("Staff member not found").build();
+
+    boolean specEdTeacher = false;
+    boolean guidanceCounselor = false;
+    boolean courseTeacher = false;
+    boolean studentParent = (sessionController.getUser() instanceof StudentParent && ((StudentParent) sessionController.getUser()).isActiveParentOf(student));
+
+    if (sessionController.getUser() instanceof StaffMember) {
+      StaffMember staffMember = (StaffMember) sessionController.getUser();
+      
+      specEdTeacher = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
+      guidanceCounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
+      
+      Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+      Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
+      courseTeacher = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
     }
-    boolean specEdTeacher = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
-    boolean guidanceCounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
-    Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
-    Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
-    boolean courseTeacher = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
+
     StudentGuidanceRelation relation = new StudentGuidanceRelation();
     relation.setSpecEdTeacher(specEdTeacher);
     relation.setGuidanceCounselor(guidanceCounselor);
     relation.setCourseTeacher(courseTeacher);
+    relation.setStudentParent(studentParent);
     return Response.ok(relation).build();
   }
 
@@ -3498,21 +3508,19 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/amICounselor")
   @GET
+  @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
   public Response amICounselor(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
     
-    if (studentStatus != Status.OK)
+    if (studentStatus != Status.OK) {
       return Response.ok(false).build();
-    
-    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
-    
-    if (staffMember == null) {
-      return Response.status(Status.NOT_FOUND).entity("Staff member not found").build();
     }
     
-    Boolean amICounselor = studentController.amIGuidanceCounselor(student.getId(), staffMember);
+    Boolean amICounselor = sessionController.getUser() instanceof StaffMember
+        ? studentController.amIGuidanceCounselor(student.getId(), (StaffMember) sessionController.getUser())
+        : Boolean.FALSE;
     
     return Response.ok(amICounselor).build();
   }
