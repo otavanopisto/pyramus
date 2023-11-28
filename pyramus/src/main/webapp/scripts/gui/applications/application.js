@@ -662,6 +662,7 @@
     descriptionElement.attr('name', 'attachment-description');
     descriptionElement.attr('placeholder', 'Kuvaus');
     descriptionElement.attr('value', description);
+    descriptionElement.attr('maxlength', 200);
     fileElement.find('.application-file__description').append(nameElement);
     fileElement.find('.application-file__description').append(descriptionElement);
     fileElement.find('.application-file__link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
