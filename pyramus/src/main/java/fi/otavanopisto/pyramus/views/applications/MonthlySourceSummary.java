@@ -39,7 +39,7 @@ public class MonthlySourceSummary {
     Logger logger = Logger.getLogger(MonthlySourceSummary.class.getName());
     logger.info("Running monthly application source summary");
     
-    // #1526: Summary recipients ase database setting
+    // #1526: Summary recipients as a database setting
     
     String recipients = null;
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
@@ -67,6 +67,7 @@ public class MonthlySourceSummary {
       lines.put("aikuislukio", createSourceMap());
       lines.put("mk", createSourceMap());
       lines.put("aineopiskelu", createSourceMap());
+      lines.put("aineopiskelupk", createSourceMap());
       
       Map<String, Integer> lineApplicationCounts = new LinkedHashMap<String, Integer>();
       lineApplicationCounts.put("nettilukio", 0);
@@ -74,6 +75,7 @@ public class MonthlySourceSummary {
       lineApplicationCounts.put("aikuislukio", 0);
       lineApplicationCounts.put("mk", 0);
       lineApplicationCounts.put("aineopiskelu", 0);
+      lineApplicationCounts.put("aineopiskelupk", 0);
 
       // Timeframe
 
