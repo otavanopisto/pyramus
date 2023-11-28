@@ -334,7 +334,6 @@
     });
 
     $('.button-save-application').click(function() {
-      // TODO Disable UI, show saving message 
       var valid = false;
       var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
       if (existingApplication) {
@@ -344,6 +343,8 @@
         valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       }
       if (valid) {
+        $('.button-save-application').html('Tallennetaan...');
+        $('.button-save-application').prop('disabled', true);
         var data = JSON.stringify($('.application-form').serializeObject());
         $.ajax({
           url: $('#application-form').attr('data-save-url'),
@@ -352,6 +353,8 @@
           dataType: "json",
           contentType: "application/json; charset=utf-8",
           success: function(response) {
+            $('.button-save-application').html('Lähetä');
+            $('.button-save-application').prop('disabled', false);
             if ($('#application-form').attr('data-done-page') == 'true') {
               if (response.autoRegistered == 'true') {
                 navigateTo('.section-done.registered');
@@ -374,6 +377,8 @@
             }
           },
           error: function(err) {
+            $('.button-save-application').html('Lähetä');
+            $('.button-save-application').prop('disabled', false);
             if (err.status == 409) {
               $('.notification-queue').notificationQueue('notification', 'error',
                   'Annetulla sähköpostiosoitteella on jo jätetty hakemus');
