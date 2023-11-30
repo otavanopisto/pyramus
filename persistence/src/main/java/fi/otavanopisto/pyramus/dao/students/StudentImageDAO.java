@@ -1,9 +1,13 @@
 package fi.otavanopisto.pyramus.dao.students;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -68,6 +72,20 @@ public class StudentImageDAO extends PyramusEntityDAO<StudentImage> {
     return entityManager.createQuery(criteria).getSingleResult() > 0;
   }
 
+  public List<Student> listPastStudentsWithImage(Date studentStudyEndThreshold, int maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<StudentImage> root = criteria.from(StudentImage.class);
+    Join<StudentImage, Student> student = root.join(StudentImage_.student);
+
+    criteria.select(student).distinct(true);
+    criteria.where(getPastStudentPredicate(criteriaBuilder, student, studentStudyEndThreshold));
+    
+    return entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
+  }
+  
   @Override
   public void delete(StudentImage image) {
     super.delete(image);

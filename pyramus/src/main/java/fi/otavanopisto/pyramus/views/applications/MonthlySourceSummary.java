@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -21,7 +23,11 @@ import org.apache.commons.lang3.StringUtils;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.system.Setting;
+import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import net.sf.json.JSONObject;
 
@@ -32,6 +38,25 @@ public class MonthlySourceSummary {
   public void doMonhtlySummary() {
     Logger logger = Logger.getLogger(MonthlySourceSummary.class.getName());
     logger.info("Running monthly application source summary");
+    
+    // #1526: Summary recipients as a database setting
+    
+    String recipients = null;
+    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
+    SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+    SettingKey settingKey = settingKeyDAO.findByName("applications.summaryMailRecipients");
+    if (settingKey != null) {
+      Setting setting = settingDAO.findByKey(settingKey);
+      if (setting != null) {
+        recipients = setting.getValue();
+      }
+    }
+    if (StringUtils.isEmpty(recipients)) {
+      logger.warning("No recipients for monthly application source summary");
+      return;
+    }
+    Set<String> recipientSet = Stream.of(recipients.split(",")).collect(Collectors.toSet());
+    
     try {
       
       // Lines and sources
@@ -42,6 +67,7 @@ public class MonthlySourceSummary {
       lines.put("aikuislukio", createSourceMap());
       lines.put("mk", createSourceMap());
       lines.put("aineopiskelu", createSourceMap());
+      lines.put("aineopiskelupk", createSourceMap());
       
       Map<String, Integer> lineApplicationCounts = new LinkedHashMap<String, Integer>();
       lineApplicationCounts.put("nettilukio", 0);
@@ -49,6 +75,7 @@ public class MonthlySourceSummary {
       lineApplicationCounts.put("aikuislukio", 0);
       lineApplicationCounts.put("mk", 0);
       lineApplicationCounts.put("aineopiskelu", 0);
+      lineApplicationCounts.put("aineopiskelupk", 0);
 
       // Timeframe
 
@@ -124,7 +151,7 @@ public class MonthlySourceSummary {
         }
       }
       
-      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, "mediatiimi@otavanopisto.fi", subject, summary.toString());
+      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, recipientSet, subject, summary.toString());
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to send application monthly source summary", e);
