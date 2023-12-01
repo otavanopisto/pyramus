@@ -3357,31 +3357,33 @@ public class StudentRESTService extends AbstractRESTService {
     
     // Access check. Allowed for administrators, special education teachers, student's guidance counselors, student's teachers, or students themselves
     
-    boolean accessible = false;
     User loggedUser = sessionController.getUser();
-    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
-    if (staffMember == null) {
-      if (loggedUser.getId().equals(student.getId())) {
-        accessible = true;
+    boolean accessible = loggedUser.getId().equals(student.getId());
+    
+    if (!accessible && loggedUser instanceof StudentParent) {
+      StudentParent studentParent = (StudentParent) loggedUser;
+      accessible = studentParent.isActiveParentOf(student);
+    }
+    
+    if (!accessible && loggedUser instanceof StaffMember) {
+      StaffMember staffMember = (StaffMember) loggedUser;
+
+      if (!accessible) {
+        accessible = staffMember.hasRole(Role.ADMINISTRATOR);
       }
-      else {
-        return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
+      if (!accessible) {
+        accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
+      }
+      if (!accessible) {
+        accessible = studentController.amIGuidanceCounselor(studentId, staffMember);
+      }
+      if (!accessible) {
+        Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+        Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
+        accessible = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
       }
     }
-    if (!accessible) {
-      accessible = staffMember.hasRole(Role.ADMINISTRATOR);
-    }
-    if (!accessible) {
-      accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
-    }
-    if (!accessible) {
-      accessible = studentController.amIGuidanceCounselor(studentId, staffMember);
-    }
-    if (!accessible) {
-      Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
-      Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
-      accessible = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
-    }
+    
     if (!accessible) {
       return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
     }
