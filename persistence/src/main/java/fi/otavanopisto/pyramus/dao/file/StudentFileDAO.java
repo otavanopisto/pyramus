@@ -8,14 +8,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.file.FileType;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
+import fi.otavanopisto.pyramus.domainmodel.file.StudentFile_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.domainmodel.file.StudentFile_;
 
 @Stateless
 public class StudentFileDAO extends PyramusEntityDAO<StudentFile> {
@@ -101,18 +103,61 @@ public class StudentFileDAO extends PyramusEntityDAO<StudentFile> {
     return studentFile;
   }
   
+  /**
+   * Don't use this directly, use PyramusFileUtils.moveFileForNewStudent
+   */
+  public StudentFile updateStudent(StudentFile studentFile, Student student, User modifier) {
+    if (studentFile.getStudent() == null || student == null || !studentFile.getStudent().getPerson().getId().equals(student.getPerson().getId())) {
+      throw new IllegalArgumentException("Cannot move files between different persons.");
+    }
+    
+    EntityManager em = getEntityManager();
+
+    studentFile.setStudent(student);
+    studentFile.setLastModified(new Date());
+    studentFile.setLastModifier(modifier);
+  
+    em.persist(studentFile);
+
+    return studentFile;
+  }
+  
   public List<StudentFile> listByStudent(Student student) {
+    return listByStudent(student, TSB.FALSE);
+  }
+
+  public List<StudentFile> listByStudent(Student student, TSB archived) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentFile> criteria = criteriaBuilder.createQuery(StudentFile.class);
     Root<StudentFile> root = criteria.from(StudentFile.class);
     criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(StudentFile_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(StudentFile_.student), student)));
+    
+    if (archived.isBoolean()) {
+      criteria.where(
+          criteriaBuilder.and(
+              criteriaBuilder.equal(root.get(StudentFile_.archived), archived.booleanValue()),
+              criteriaBuilder.equal(root.get(StudentFile_.student), student)));
+    } else {
+      criteria.where(criteriaBuilder.equal(root.get(StudentFile_.student), student));
+    }
     
     return entityManager.createQuery(criteria).getResultList();
   }
+
+  public List<Student> listPastStudentsWithFiles(Date studentStudyEndThreshold, int maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<StudentFile> root = criteria.from(StudentFile.class);
+    Join<StudentFile, Student> student = root.join(StudentFile_.student);
+
+    criteria.select(student).distinct(true);
+    criteria.where(getPastStudentPredicate(criteriaBuilder, student, studentStudyEndThreshold));
+    
+    return entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
+  }
+  
 }
