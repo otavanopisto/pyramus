@@ -40,7 +40,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
   
   @Test
   public void testCreateStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "TST", "create", TEST_CATEGORY_ID, null, Boolean.FALSE, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "TST", "create", TEST_CATEGORY_ID, null, Boolean.FALSE, Boolean.FALSE, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -96,7 +96,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
 
   @Test
   public void testUpdateStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "NOT", "Not Updated", TEST_CATEGORY_ID, null, Boolean.FALSE, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "NOT", "Not Updated", TEST_CATEGORY_ID, null, Boolean.FALSE, Boolean.FALSE, null);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -105,7 +105,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
 
     Long id = response.body().jsonPath().getLong("id");
     try {
-      StudyProgramme updateStudyProgramme = new StudyProgramme(id, TEST_ORGANIZATION_ID, "UPD", "Updated", 2l, null, Boolean.FALSE, Boolean.FALSE);
+      StudyProgramme updateStudyProgramme = new StudyProgramme(id, TEST_ORGANIZATION_ID, "UPD", "Updated", 2l, null, Boolean.FALSE, Boolean.FALSE, null);
 
       response = given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -121,7 +121,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
   
   @Test
   public void testDeleteStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "TST", "create type", TEST_CATEGORY_ID, null, Boolean.FALSE, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "TST", "create type", TEST_CATEGORY_ID, null, Boolean.FALSE, Boolean.FALSE, null);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
