@@ -206,6 +206,8 @@ public class UserUtils {
         return UserRole.STUDY_GUIDER;
       case STUDY_PROGRAMME_LEADER:
         return UserRole.STUDY_PROGRAMME_LEADER;
+      case STUDENT_PARENT:
+        return UserRole.STUDENT_PARENT;
         
       default:
         throw new RuntimeException(String.format("Unknown role %s", role));

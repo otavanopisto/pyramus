@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.users;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -23,6 +24,7 @@ public class StudentParentRegistrationDAO extends PyramusEntityDAO<StudentParent
     studentParentRegistration.setEmail(email);
     studentParentRegistration.setStudent(student);
     studentParentRegistration.setHash(hash);
+    studentParentRegistration.setCreated(new Date());
 
     return persist(studentParentRegistration);
   }
