@@ -244,6 +244,14 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private StaffMemberDAO staffMemberDAO;
   
+  private static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA = "lukioMatematiikka";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_A = "lukioKieliA";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B1 = "lukioKieliB1";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B2 = "lukioKieliB2";
+  private static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B3 = "lukioKieliB3";
+
   @Path("/languages")
   @POST
   @RESTPermit(LanguagePermissions.CREATE_LANGUAGE)
@@ -3534,5 +3542,72 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Status.OK;
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/subjectChoices")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentSubjectChoices(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    User loggedUser = sessionController.getUser();
+
+    if (loggedUser instanceof StaffMember) {
+      StaffMember staffMember = (StaffMember) loggedUser;
+      if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
+        if (!staffMember.getRole().equals(Role.ADMINISTRATOR) && !staffMember.getRole().equals(Role.MANAGER) && !staffMember.getRole().equals(Role.STUDY_PROGRAMME_LEADER)) {
+          boolean amICounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
+          if (!amICounselor) {
+            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
+          }
+        }
+      }
+    } else {
+      if (!loggedUser.getId().equals(student.getId())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    List<String> variableList = new ArrayList<>();
+    
+    List<UserVariable> variables = userController.listUserVariablesByUser(student);
+    
+    for (UserVariable variable : variables) {
+      String variableKey = variable.getKey().getVariableKey();
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_A)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_USKONTO)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_B1)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_B2)) {
+        variableList.add(variable.getValue());
+      }
+      
+      if(variableKey.equals(USERVARIABLE_SUBJECT_CHOICES_KIELI_B3)) {
+        variableList.add(variable.getValue());
+      }
+    }
+    
+    return Response.ok(variableList).build();
+  }
+
 
 }
