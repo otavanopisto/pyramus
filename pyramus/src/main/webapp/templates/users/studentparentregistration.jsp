@@ -55,53 +55,53 @@
       </c:when>
       <c:otherwise>
         <section class="application-description application-description--credentials">
-		      <div class="application-description__credentials">
-		        <div class="application-description__credentials-header">
-		          <fmt:message key="studentparents.parentRegistration.pageTitle"/>
-		        </div>
-		      </div>
-		    </section>
-		    
+          <div class="application-description__credentials">
+            <div class="application-description__credentials-header">
+              <fmt:message key="studentparents.parentRegistration.pageTitle"/>
+            </div>
+          </div>
+        </section>
+        
         <main class="application-content application-content--credentials">
           <section class="application-content__form application-content__form--credentials">
             <form class="application-form">
               <input type="hidden" id="hash" name="hash" value="${hash}"/>
               <section class="form-section section-create-credentials current">
-			          <div class="form-section__field-container">
+                <div class="form-section__field-container">
                   <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
                   <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25">
                 </div>
-			    
-		            <c:choose>
-		              <c:when test="${loggedUserId != null}">
-		                <div class="form-section__field-container">
-		                  <input type="hidden" name="type" id="parentRegisterCredentialType" value="LOGGEDIN"/>
-		                
-		                  <fmt:message key="studentparents.parentRegistration.loggedInMessagePre"/>
-		                  <span style="font-size: 1.2rem; font-weight: 400;">${loggedUserName}</span>.
-		                  <fmt:message key="studentparents.parentRegistration.loggedInMessagePost"/>
-		                </div>
-		              </c:when>
-		              <c:otherwise>
-		              
-		                <input type="hidden" name="type" id="parentRegisterCredentialType" value="CREATE"/>
-		                <div id="createGuardianCredentialsContainer">
-		                  <div>
-		                    <fmt:message key="studentparents.parentRegistration.alreadyRegistered"/>
-		                    <a href="#" onclick="toggleLogin();"><fmt:message key="studentparents.parentRegistration.alreadyRegisteredLoginLinkLabel"/></a>.
-		                  </div>
-		          
-						          <div class="form-section__field-container">
-			                  <label class="required" for="u"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label> 
-			                  <input id="u" type="text" name="new-username" required="required" autocomplete="new-username" size="30">
-			                </div>
-		                      
-		                  <div class="form-section__field-container">
+          
+                <c:choose>
+                  <c:when test="${loggedUserId != null}">
+                    <div class="form-section__field-container">
+                      <input type="hidden" name="type" id="parentRegisterCredentialType" value="LOGGEDIN"/>
+                    
+                      <fmt:message key="studentparents.parentRegistration.loggedInMessagePre"/>
+                      <span style="font-size: 1.2rem; font-weight: 400;">${loggedUserName}</span>.
+                      <fmt:message key="studentparents.parentRegistration.loggedInMessagePost"/>
+                    </div>
+                  </c:when>
+                  
+                  <c:otherwise>
+                    <input type="hidden" name="type" id="parentRegisterCredentialType" value="CREATE"/>
+                    <div id="createGuardianCredentialsContainer">
+                      <div>
+                        <fmt:message key="studentparents.parentRegistration.alreadyRegistered"/>
+                        <a href="#" onclick="toggleLogin();"><fmt:message key="studentparents.parentRegistration.alreadyRegisteredLoginLinkLabel"/></a>.
+                      </div>
+              
+                      <div class="form-section__field-container">
+                        <label class="required" for="u"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label> 
+                        <input id="u" type="text" name="new-username" required="required" autocomplete="new-username" size="30">
+                      </div>
+                          
+                      <div class="form-section__field-container">
                          <label class="required" for="p1"><fmt:message key="studentparents.parentRegistration.password1Title"/></label> 
                          <input type="password" id="p1" name="new-password1" required="required" autocomplete="new-password" class="equals equals-new-password2" size="25">
                        </div>
-		          
-		                  <div class="form-section__field-container">
+              
+                      <div class="form-section__field-container">
                          <label class="required" for="p2"><fmt:message key="studentparents.parentRegistration.password2Title"/></label> 
                          <input type="password" id="p2" name="new-password2" required="required" autocomplete="new-password" class="equals equals-new-password1" size="25">
                        </div>
