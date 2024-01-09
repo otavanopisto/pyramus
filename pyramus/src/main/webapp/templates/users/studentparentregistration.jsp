@@ -86,7 +86,7 @@
                   <c:otherwise>
                     <input type="hidden" name="type" id="parentRegisterCredentialType" value="CREATE"/>
                     <div id="createGuardianCredentialsContainer">
-                      <div>
+                      <div class="form-section__field-container">
                         <fmt:message key="studentparents.parentRegistration.alreadyRegistered"/>
                         <a href="#" onclick="toggleLogin();"><fmt:message key="studentparents.parentRegistration.alreadyRegisteredLoginLinkLabel"/></a>.
                       </div>
