@@ -112,9 +112,6 @@
         var line = $('select[name="field-line"]').val();
         var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
         $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
-        if ($('#field-ssn-end').val()) {
-          $('#field-ssn-end').parsley().validate();
-        }
       }
       else {
         $('.section-underage').attr('data-skip', 'true');
@@ -469,13 +466,6 @@
     }
     // age check when line changes 
     $('#field-birthday').trigger('change');
-    // semi-required ssn postfix
-    if (line == 'mk') {
-      $('label[for="field-ssn-end"]').removeClass('required');
-    }
-    else {
-      $('label[for="field-ssn-end"]').addClass('required');
-    }
     // update page count
     updateProgress();
     // #774: selected study program
