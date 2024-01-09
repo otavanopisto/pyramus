@@ -26,6 +26,20 @@
                 <div class="error-container" style="display:none;"></div>
     
     <c:choose>
+      <c:when test="${credentialsCreated eq true}">
+        <section class="application-description application-description--credentials">
+          <div class="application-description__credentials">
+            <div class="application-description__credentials-header">
+              <fmt:message key="studentparents.parentRegistration.credentialsCreatedDone"/>
+            </div>
+          </div>
+        </section>
+        
+        <main class="application-content application-content--credentials">
+          <p><fmt:message key="studentparents.parentRegistration.credentialsCreatedLoginHere"/> <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
+        </main>
+        
+      </c:when>
       <c:when test="${invalidLogin}">
         <section class="application-description application-description--credentials">
           <div class="application-description__credentials">

@@ -26,17 +26,22 @@ public class StudentParentRegistrationViewController extends PyramusViewControll
       throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Operation not available.");
     }
     
-    String hash = StringUtils.trim(requestContext.getString("c"));
-    boolean invalidLogin = false;
-    
-    if (requestContext.isLoggedIn()) {
-      StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
-      
-      invalidLogin = studentParentDAO.findById(requestContext.getLoggedUserId()) == null;
+    if (StringUtils.equals(requestContext.getString("status"), "ok")) {
+      requestContext.getRequest().setAttribute("credentialsCreated", Boolean.TRUE);
     }
-    
-    requestContext.getRequest().setAttribute("hash", hash);
-    requestContext.getRequest().setAttribute("invalidLogin", invalidLogin);
+    else {
+      String hash = StringUtils.trim(requestContext.getString("c"));
+      boolean invalidLogin = false;
+      
+      if (requestContext.isLoggedIn()) {
+        StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
+        
+        invalidLogin = studentParentDAO.findById(requestContext.getLoggedUserId()) == null;
+      }
+      
+      requestContext.getRequest().setAttribute("hash", hash);
+      requestContext.getRequest().setAttribute("invalidLogin", invalidLogin);
+    }
     
     requestContext.setIncludeJSP("/templates/users/studentparentregistration.jsp");
   }
