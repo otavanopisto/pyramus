@@ -409,7 +409,7 @@ p:first-child {
 	margin: 0 0 1rem;
 }
 
-p:last-child {
+p:last-child:not(:first-child) {
   margin: 1rem 0 0;
 }
 
@@ -439,6 +439,7 @@ p:last-child {
 
 a {
   color: #009fe3;
+  font-weight: 400;
 }
 
 strong,
@@ -565,6 +566,7 @@ span.email {
 
 .application-footer__contact-row {
   color: #fff;
+  font-weight: 400;
   line-height: 1;
   padding: 5px 0;
 }

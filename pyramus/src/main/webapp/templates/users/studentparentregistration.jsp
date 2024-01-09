@@ -33,7 +33,9 @@
         </section>
         
         <main class="application-content application-content--credentials">
-          <p><fmt:message key="studentparents.parentRegistration.credentialsCreatedLoginHere"/> <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
+          <section class="application-content__form application-content__form--credentials">
+            <p><fmt:message key="studentparents.parentRegistration.credentialsCreatedLoginHere"/> <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
+          </section>
         </main>
         
       </c:when>
@@ -86,7 +88,7 @@
 		                <div id="createGuardianCredentialsContainer">
 		                  <div>
 		                    <fmt:message key="studentparents.parentRegistration.alreadyRegistered"/>
-		                    <a href="#" onclick="toggleLogin();" style="font-weight: 400;"><fmt:message key="studentparents.parentRegistration.alreadyRegisteredLoginLinkLabel"/></a>.
+		                    <a href="#" onclick="toggleLogin();"><fmt:message key="studentparents.parentRegistration.alreadyRegisteredLoginLinkLabel"/></a>.
 		                  </div>
 		          
 						          <div class="form-section__field-container">
