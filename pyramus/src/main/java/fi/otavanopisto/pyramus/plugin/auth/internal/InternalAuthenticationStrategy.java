@@ -231,4 +231,11 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
     return null;
   }
 
+  @Override
+  public boolean isAvailableUsername(String username) {
+    InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO(); 
+    InternalAuth internalAuth = internalAuthDAO.findByUsername(username);
+    return internalAuth == null;
+  }
+
 }
