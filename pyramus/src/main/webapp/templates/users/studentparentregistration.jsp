@@ -77,17 +77,17 @@
 		          
 						          <div class="form-section__field-container">
 			                  <label class="required" for="u"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label> 
-			                  <input id="u" type="text" name="new-username" autocomplete="new-username" size="30">
+			                  <input id="u" type="text" name="new-username" required="required" autocomplete="new-username" size="30">
 			                </div>
 		                      
 		                  <div class="form-section__field-container">
                          <label class="required" for="p1"><fmt:message key="studentparents.parentRegistration.password1Title"/></label> 
-                         <input type="password" id="p1" name="new-password1" autocomplete="new-password" class="equals equals-new-password2" size="25">
+                         <input type="password" id="p1" name="new-password1" required="required" autocomplete="new-password" class="equals equals-new-password2" size="25">
                        </div>
 		          
 		                  <div class="form-section__field-container">
                          <label class="required" for="p2"><fmt:message key="studentparents.parentRegistration.password2Title"/></label> 
-                         <input type="password" id="p2" name="new-password2" autocomplete="new-password" class="equals equals-new-password1" size="25">
+                         <input type="password" id="p2" name="new-password2" required="required" autocomplete="new-password" class="equals equals-new-password1" size="25">
                        </div>
 		                </div>
 		    
