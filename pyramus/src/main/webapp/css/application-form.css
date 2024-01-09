@@ -27,6 +27,14 @@
 .form-section__field-container {
   margin: 10px 0;
 } 
+
+.form-section__field-container:first-child {
+  margin: 0 0 10px;
+} 
+
+.form-section__field-container:last-child {
+  margin: 10px 0 0;
+} 
  
 .summary-container {
   margin: 20px 0;

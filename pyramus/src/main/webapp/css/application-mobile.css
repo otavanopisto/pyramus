@@ -401,6 +401,18 @@ h3 {
   line-height: 1;
 }
 
+p {
+	margin: 1rem 0;
+}
+
+p:first-child {
+	margin: 0 0 1rem;
+}
+
+p:last-child {
+  margin: 1rem 0 0;
+}
+
 .form-section__header--nettilukio {
   color: #5dbdc5;
 }

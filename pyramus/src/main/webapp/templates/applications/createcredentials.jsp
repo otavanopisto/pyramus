@@ -49,8 +49,10 @@
         </section>
         
         <main class="application-content application-content--credentials">
-          <p>Voit kirjautua niillä osoitteessa <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
-          <p>Mikäli olet unohtanut tunnuksesi, voit palauttaa ne sähköpostiisi Muikun etusivulta löytyvän <i>Unohtuiko salasana?</i> -linkin kautta.</p>
+          <section class="application-content__form application-content__form--credentials">
+            <p>Voit kirjautua niillä osoitteessa <a style="font-weight: 400;" href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
+            <p>Mikäli olet unohtanut tunnuksesi, voit palauttaa ne sähköpostiisi Muikun etusivulta löytyvän <i>Unohtuiko salasana?</i> -linkin kautta.</p>
+          </section>
         </main>
         
       </c:when>
