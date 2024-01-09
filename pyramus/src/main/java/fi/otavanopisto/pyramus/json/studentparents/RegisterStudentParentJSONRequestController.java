@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.json.studentparents;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -61,84 +63,92 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     }
     
     StudentParent studentParent = null;
-    
-    if (requestContext.isLoggedIn()) {
-      if (FORMTYPE_LOGGEDIN.equals(formType)) {
-        studentParent = studentParentDAO.findById(requestContext.getLoggedUserId());
+
+    try {
+      if (requestContext.isLoggedIn()) {
+        if (FORMTYPE_LOGGEDIN.equals(formType)) {
+          studentParent = studentParentDAO.findById(requestContext.getLoggedUserId());
+        }
+        else {
+          throw new StudentParentRegistrationException("Internal error.");
+        }
       }
       else {
-        fail(requestContext, "Internal error.");
-        return;
-      }
-    }
-    else {
-      if (FORMTYPE_CREATE.equals(formType)) {
-        String username = StringUtils.trim(requestContext.getString("new-username"));
-        String password1 = StringUtils.trim(requestContext.getString("new-password1"));
-        String password2 = StringUtils.trim(requestContext.getString("new-password2"));
-        
-        if (!StringUtils.equals(password1, password2)) {
-          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.passwordConfirmError"));
-          return;
-        }
-        
-        if (StringUtils.isBlank(password1)) {
-          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
-          return;
-        }
-        
-        // Require email to be unique
-        boolean unique = true;
-        if (!UserUtils.isAllowedEmail(studentParentRegistration.getEmail(), unique)) {
-          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
-          return;
-        }
+        if (FORMTYPE_CREATE.equals(formType)) {
+          String username = StringUtils.trim(requestContext.getString("new-username"));
+          String password1 = StringUtils.trim(requestContext.getString("new-password1"));
+          String password2 = StringUtils.trim(requestContext.getString("new-password2"));
+          
+          if (!StringUtils.equals(password1, password2)) {
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.passwordConfirmError"));
+          }
+          
+          if (StringUtils.isBlank(password1)) {
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
+          }
+          
+          // Require email to be unique
+          boolean unique = true;
+          if (!UserUtils.isAllowedEmail(studentParentRegistration.getEmail(), unique)) {
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+          }
+  
+          if (!internalAuthenticationProvider.isAvailableUsername(username)) {
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+          }
+          
+          Organization organization = studentParentRegistration.getStudent().getOrganization();
+          studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName(), organization);
+    
+          ContactType contactType = contactTypeDAO.findById(1L);
+          emailDAO.create(studentParent.getContactInfo(), contactType, true, studentParentRegistration.getEmail()).getId(); 
 
-        // TOOD Transaction
-        Organization organization = studentParentRegistration.getStudent().getOrganization();
-        studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName(), organization);
-  
-        ContactType contactType = contactTypeDAO.findById(1L);
-        emailDAO.create(studentParent.getContactInfo(), contactType, true, studentParentRegistration.getEmail()).getId(); 
-  
-        try {
-          String externalId = internalAuthenticationProvider.createCredentials(username, password1);
-          userIdentificationDAO.create(studentParent.getPerson(), internalAuthenticationProvider.getName(), externalId);
-        } catch (Exception ex) {
-          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
-          return;
-        }
-        
-      } else if (FORMTYPE_LOGIN.equals(formType)) {
-        String username = StringUtils.trim(requestContext.getString("username"));
-        String password = StringUtils.trim(requestContext.getString("password"));
-  
-        User user = null;
-        try {
-          user = internalAuthenticationProvider.getUser(username, password);
-        } catch (AuthenticationException e) {
-          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
-          return;
-        }
-        
-        if (user != null && user instanceof StudentParent) {
-          studentParent = (StudentParent) user;
-        } else {
-          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "users.login.loginFailed"));
-          return;
+          try {
+            String externalId = internalAuthenticationProvider.createCredentials(username, password1);
+            userIdentificationDAO.create(studentParent.getPerson(), internalAuthenticationProvider.getName(), externalId);
+          } catch (Exception ex) {
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+          }
+          
+        } else if (FORMTYPE_LOGIN.equals(formType)) {
+          String username = StringUtils.trim(requestContext.getString("username"));
+          String password = StringUtils.trim(requestContext.getString("password"));
+    
+          User user = null;
+          try {
+            user = internalAuthenticationProvider.getUser(username, password);
+          } catch (AuthenticationException e) {
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "users.login.loginFailed"));
+          }
+          
+          if (user != null && user instanceof StudentParent) {
+            studentParent = (StudentParent) user;
+          } else {
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "users.login.loginFailed"));
+          }
         }
       }
-    }
+  
+      if (studentParent != null) {
+        studentParentChildDAO.create(studentParent, studentParentRegistration.getStudent());
+        
+        studentParentRegistrationDAO.delete(studentParentRegistration);
+        
+        requestContext.addResponseParameter("status", "OK");
+      } else {
+        throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.userNotFoundError"));
+      }
+    
+    } catch (StudentParentRegistrationException spre) {
+      fail(requestContext, spre.getMessage());
 
-    if (studentParent != null) {
-      studentParentChildDAO.create(studentParent, studentParentRegistration.getStudent());
+      // Servlet handles transaction for us so throw an exception to trigger rollback
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, spre.getMessage());
+    } catch (Exception ex) {
+      fail(requestContext, "Internal error");
       
-      studentParentRegistrationDAO.delete(studentParentRegistration);
-      
-      requestContext.addResponseParameter("status", "OK");
-    } else {
-      fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.userNotFoundError"));
-      return;
+      // Servlet handles transaction for us so throw an exception to trigger rollback
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Internal error");
     }
   }
 
@@ -146,6 +156,14 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     return new UserRole[] { UserRole.EVERYONE };
   }
 
+  class StudentParentRegistrationException extends Exception {
+    private static final long serialVersionUID = 2368935209757750369L;
+
+    public StudentParentRegistrationException(String message) {
+      super(message);
+    }
+  }
+  
   private void fail(JSONRequestContext requestContext, String reason) {
     requestContext.addResponseParameter("status", "FAIL");
     requestContext.addResponseParameter("reason", reason);
