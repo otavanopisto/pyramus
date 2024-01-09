@@ -65,8 +65,8 @@
         <main class="application-content application-content--credentials">
           <section class="application-content__form application-content__form--credentials">
 		        <form class="application-form" action="parentregister.json" method="post" ix:jsonform="true">
+		          <input type="hidden" name="hash" value="${hash}"/>
 		          <section class="form-section section-create-credentials current">
-			          <input type="hidden" name="hash" value="${hash}"/>
 			          <div class="form-section__field-container">
                   <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
                   <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25">
