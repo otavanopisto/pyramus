@@ -155,10 +155,8 @@
         if (value == '') {
           return true;
         }
-        var valid = value.length == 11 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value.substring(7, 11));
-        if (valid) {
-          var l = "-ABCDEFYXWVU";
-          if (l.indexOf(value.charAt(6).toUpperCase()) == -1) {
+        if (value.length == 11 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value.substring(7, 11))) {
+          if ('-ABCDEFYXWVU'.indexOf(value.charAt(6).toUpperCase()) == -1) {
             return false;
           }
           var num = value.substring(0, 6) + value.substring(7, 10);
