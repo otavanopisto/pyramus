@@ -149,13 +149,28 @@
       }
     });
     
-    Parsley.addValidator('ssnEndFormat', {
+    Parsley.addValidator('ssn', {
       requirementType: 'string',
       validateString: function(value) {
-        return isValidSsnEnd(value, $('#field-line').val() == 'mk');
+        if (value == '') {
+          return true;
+        }
+        var valid = value.length == 11 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value.substring(7, 11));
+        if (valid) {
+          var l = "-ABCDEFYXWVU";
+          if (l.indexOf(value.charAt(6).toUpperCase()) == -1) {
+            return false;
+          }
+          var num = value.substring(0, 6) + value.substring(7, 10);
+          if (!isNaN(num)) {
+            var checksumChars = '0123456789ABCDEFHJKLMNPRSTUVWXY';
+            return checksumChars[num % 31] == value.substring(10, 11).toUpperCase();
+          }
+        }
+        return false;
       },
       messages: {
-        fi: 'Henkilötunnuksen loppuosan muoto on virheellinen'
+        fi: 'Henkilötunnuksen muoto on virheellinen'
       }
     });
     
@@ -510,28 +525,6 @@
       $('#summary-email').text($('#field-email').val());
     }
     updateProgress();
-  }
-  
-  function isValidSsnEnd(value, allowEmpty) {
-    if (!value || value == '') {
-      return allowEmpty;
-    }
-    else if (value.toUpperCase() == 'XXXX') {
-      return true;
-    }
-    var valid = value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
-    if (valid) {
-      valid = false;
-      var num = $('#field-birthday').val();
-      if (num) {
-        num = moment(num, "D.M.YYYY").format('DDMMYY') + value.substring(0, 3);
-        if (!isNaN(num)) {
-          var checksumChars = '0123456789ABCDEFHJKLMNPRSTUVWXY';
-          valid = checksumChars[num % 31] == value.substring(3, 4).toUpperCase();
-        }
-      }
-    }
-    return valid;
   }
   
   function updateProgress() {
