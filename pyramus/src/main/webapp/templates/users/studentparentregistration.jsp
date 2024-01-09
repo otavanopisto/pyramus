@@ -108,7 +108,7 @@
 		                </div>
 		    
 		                <div id="loginGuardianCredentialsContainer" style="display: none;">
-		                  <div><fmt:message key="studentparents.parentRegistration.loginLabel"/></div>
+		                  <div class="form-section__header form-section__header--credentials"><fmt:message key="studentparents.parentRegistration.loginLabel"/></div>
 		                
 		                  <div class="form-section__field-container">
 		                    <label for="lu"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label>
