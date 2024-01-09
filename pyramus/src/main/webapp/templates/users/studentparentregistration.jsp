@@ -9,28 +9,12 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-<%--     <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include> --%>
-    <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
-    <jsp:include page="/templates/generic/jsonform_support.jsp"></jsp:include>
-    <jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
-    <jsp:include page="/templates/generic/message_adapter_support.jsp"></jsp:include>
-    
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
-    
-    <script type="text/javascript">
-      function onLoad(event) {
-        var tabControl = new IxProtoTabs($('tabs'));
-      };
-      
-      function toggleLogin() {
-        $('createGuardianCredentialsContainer').hide();
-        $('loginGuardianCredentialsContainer').show();
-        $('parentRegisterCredentialType').setValue('LOGIN');
-      }
-    </script>
-    
+    <script defer="defer" type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script defer="defer" type="text/javascript" src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/users/studentparent-credentials.js"></script>
   </head>
-  <body onload="onLoad(event);">
+  <body>
     <header class="application-header">
       <div class="application-header__content">
         <div class="application-header__logo">
@@ -64,9 +48,9 @@
 		    
         <main class="application-content application-content--credentials">
           <section class="application-content__form application-content__form--credentials">
-		        <form class="application-form" action="parentregister.json" method="post" ix:jsonform="true">
-		          <input type="hidden" name="hash" value="${hash}"/>
-		          <section class="form-section section-create-credentials current">
+            <form class="application-form">
+              <input type="hidden" id="hash" name="hash" value="${hash}"/>
+              <section class="form-section section-create-credentials current">
 			          <div class="form-section__field-container">
                   <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
                   <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25">
@@ -122,9 +106,13 @@
 		                </div>
 		              </c:otherwise>
 		            </c:choose>
+		            
+		            <div class="form-section__field-container">
+		              <div class="error-container" style="display:none;"></div>
+		            </div>
 			    
 			          <nav class="form-navigation">
-			            <button type="submit" name="login" class="button-create-credentials">
+			            <button name="login" id="button-create-credentials" class="button-create-credentials">
 			              <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
 			            </button>
 			          </nav>

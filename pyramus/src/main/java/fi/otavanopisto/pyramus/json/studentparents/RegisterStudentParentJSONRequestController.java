@@ -2,8 +2,6 @@ package fi.otavanopisto.pyramus.json.studentparents;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.internetix.smvc.InvalidLoginException;
-import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -19,7 +17,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentRegistration;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
-import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationException;
@@ -40,7 +37,8 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
   public void process(JSONRequestContext requestContext) {
     InternalAuthenticationProvider internalAuthenticationProvider = AuthenticationProviderVault.getInstance().getInternalAuthenticationProvider("internal");
     if (internalAuthenticationProvider == null) {
-      throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Operation not available.");
+      fail(requestContext, "Operation not available.");
+      return;
     }
 
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
@@ -58,7 +56,8 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     
     // Validate
     if (studentParentRegistration == null || StringUtils.isBlank(ssnConfirm) || !StringUtils.equals(ssnConfirm, studentParentRegistration.getStudent().getPerson().getSocialSecurityNumber())) {
-      throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.formValidationError"));
+      fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.formValidationError"));
+      return;
     }
     
     StudentParent studentParent = null;
@@ -68,7 +67,8 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
         studentParent = studentParentDAO.findById(requestContext.getLoggedUserId());
       }
       else {
-        throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, "Internal error.");
+        fail(requestContext, "Internal error.");
+        return;
       }
     }
     else {
@@ -78,22 +78,26 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
         String password2 = StringUtils.trim(requestContext.getString("new-password2"));
         
         if (!StringUtils.equals(password1, password2)) {
-          throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.passwordConfirmError"));
+          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.passwordConfirmError"));
+          return;
         }
         
         if (StringUtils.isBlank(password1)) {
-          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
+          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
+          return;
         }
         
-        Organization organization = studentParentRegistration.getStudent().getOrganization();
-        studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName(), organization);
-  
         // Require email to be unique
         boolean unique = true;
         if (!UserUtils.isAllowedEmail(studentParentRegistration.getEmail(), unique)) {
-          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+          return;
         }
-        
+
+        // TOOD Transaction
+        Organization organization = studentParentRegistration.getStudent().getOrganization();
+        studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName(), organization);
+  
         ContactType contactType = contactTypeDAO.findById(1L);
         emailDAO.create(studentParent.getContactInfo(), contactType, true, studentParentRegistration.getEmail()).getId(); 
   
@@ -101,7 +105,8 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
           String externalId = internalAuthenticationProvider.createCredentials(username, password1);
           userIdentificationDAO.create(studentParent.getPerson(), internalAuthenticationProvider.getName(), externalId);
         } catch (Exception ex) {
-          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+          return;
         }
         
       } else if (FORMTYPE_LOGIN.equals(formType)) {
@@ -112,13 +117,15 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
         try {
           user = internalAuthenticationProvider.getUser(username, password);
         } catch (AuthenticationException e) {
-          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+          return;
         }
         
         if (user != null && user instanceof StudentParent) {
           studentParent = (StudentParent) user;
         } else {
-          throw new InvalidLoginException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "users.login.loginFailed"));
+          fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "users.login.loginFailed"));
+          return;
         }
       }
     }
@@ -128,9 +135,10 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
       
       studentParentRegistrationDAO.delete(studentParentRegistration);
       
-      requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/");
+      requestContext.addResponseParameter("status", "OK");
     } else {
-      throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.userNotFoundError"));
+      fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.userNotFoundError"));
+      return;
     }
   }
 
@@ -138,4 +146,9 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     return new UserRole[] { UserRole.EVERYONE };
   }
 
+  private void fail(JSONRequestContext requestContext, String reason) {
+    requestContext.addResponseParameter("status", "FAIL");
+    requestContext.addResponseParameter("reason", reason);
+  }
+  
 }
