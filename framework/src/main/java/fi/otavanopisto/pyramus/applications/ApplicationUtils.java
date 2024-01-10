@@ -848,16 +848,26 @@ public class ApplicationUtils {
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     String ssn = getFormValue(formData, "field-ssn");
     if (!StringUtils.isEmpty(ssn)) {
-      int d = Integer.parseInt(ssn.substring(0, 2));
-      int m = Integer.parseInt(ssn.substring(2, 4));
-      int y = Integer.parseInt(ssn.substring(4, 6));
-      if ("ABCDEF".indexOf(ssn.charAt(6)) >= 0) {
-        y += 2000;
+      if (ssn.length() != 11) {
+        logger.severe(String.format("Invalid SSN format %s", ssn));
+        return null;
       }
-      else {
-        y += 1900;
+      try {
+        int d = Integer.parseInt(ssn.substring(0, 2));
+        int m = Integer.parseInt(ssn.substring(2, 4));
+        int y = Integer.parseInt(ssn.substring(4, 6));
+        if ("ABCDEF".indexOf(ssn.charAt(6)) >= 0) {
+          y += 2000;
+        }
+        else {
+          y += 1900;
+        }
+        return String.format("%d.%d.%d", d, m, y);
       }
-      return String.format("%d.%d.%d", d, m, y);
+      catch (NumberFormatException e) {
+        logger.severe(String.format("Invalid SSN format %s", ssn));
+        return null;
+      }
     }
     else {
       return getFormValue(formData, "field-birthday"); 
