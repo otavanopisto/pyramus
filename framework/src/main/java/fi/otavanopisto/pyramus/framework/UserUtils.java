@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -25,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
@@ -93,12 +95,14 @@ public class UserUtils {
 
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
 
     StaffMember staffMember = staffMemberDAO.findByUniqueEmail(emailAddress);
+    StudentParent studentParent = studentParentDAO.findByUniqueEmail(emailAddress);
     List<Student> students = studentDAO.listBy(null, emailAddress, null, null, null, null);
 
     // True, if email is not in use
-    if (staffMember == null && students.isEmpty()) {
+    if (staffMember == null && studentParent == null && students.isEmpty()) {
       return true;
     }
 
@@ -107,6 +111,7 @@ public class UserUtils {
       boolean allowed = true;
       
       allowed = allowed && (staffMember != null ? personId.equals(staffMember.getPerson().getId()) : true);
+      allowed = allowed && (studentParent != null ? personId.equals(studentParent.getPerson().getId()) : true);
       
       for (Student student : students) {
         if (student.getContactInfo().getEmails() != null) {
@@ -131,7 +136,8 @@ public class UserUtils {
        * so check if there is globally unique use of it already.
        */
       
-      if (staffMember != null) {
+      // Doesn't this have the assumption that staffmembers/studentParents have only unique contacts?
+      if (staffMember != null || studentParent != null) {
         return false;
       }
       

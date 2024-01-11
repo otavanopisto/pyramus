@@ -56,8 +56,21 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     
     StudentParentRegistration studentParentRegistration = studentParentRegistrationDAO.findByHash(hash);
     
+    /*
+     * For valid student
+     * - All relevant fields must exist
+     * - Student cannot be archived
+     * - Student must be underage
+     */
+    boolean isValidStudent = 
+        studentParentRegistration != null && 
+        studentParentRegistration.getStudent() != null &&
+        studentParentRegistration.getStudent().getPerson() != null &&
+        Boolean.FALSE.equals(studentParentRegistration.getStudent().getArchived()) &&
+        Boolean.TRUE.equals(studentParentRegistration.getStudent().getPerson().isUnderAge());
+    
     // Validate
-    if (studentParentRegistration == null || StringUtils.isBlank(ssnConfirm) || !StringUtils.equals(ssnConfirm, studentParentRegistration.getStudent().getPerson().getSocialSecurityNumber())) {
+    if (!isValidStudent || StringUtils.isBlank(ssnConfirm) || !StringUtils.equals(ssnConfirm, studentParentRegistration.getStudent().getPerson().getSocialSecurityNumber())) {
       fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.formValidationError"));
       return;
     }

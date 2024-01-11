@@ -5,8 +5,10 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -47,9 +49,13 @@ public class CreateStudentParentRegistrationJSONRequestController extends JSONRe
       }
     }
 
-    String firstName = requestContext.getString("firstName");
-    String lastName = requestContext.getString("lastName");
-    String email = requestContext.getString("email");
+    if (!student.getPerson().isUnderAge()) {
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Student is not underage.");
+    }
+    
+    String firstName = StringUtils.trim(requestContext.getString("firstName"));
+    String lastName = StringUtils.trim(requestContext.getString("lastName"));
+    String email = StringUtils.trim(requestContext.getString("email"));
 
     String hash = UUID.randomUUID().toString();
     StudentParentRegistration guardian = studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
