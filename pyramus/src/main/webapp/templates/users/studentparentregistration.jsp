@@ -86,7 +86,7 @@
                   <c:otherwise>
                     <input type="hidden" name="type" id="parentRegisterCredentialType" value="CREATE"/>
                     <div id="createGuardianCredentialsContainer">
-                      <div>
+                      <div class="form-section__field-container">
                         <fmt:message key="studentparents.parentRegistration.alreadyRegistered"/>
                         <a href="#" onclick="toggleLogin();"><fmt:message key="studentparents.parentRegistration.alreadyRegisteredLoginLinkLabel"/></a>.
                       </div>
@@ -105,36 +105,36 @@
                          <label class="required" for="p2"><fmt:message key="studentparents.parentRegistration.password2Title"/></label> 
                          <input type="password" id="p2" name="new-password2" required="required" autocomplete="new-password" class="equals equals-new-password1" size="25">
                        </div>
-                    </div>
-        
-                    <div id="loginGuardianCredentialsContainer" style="display: none;">
-                      <div><fmt:message key="studentparents.parentRegistration.loginLabel"/></div>
-                    
-                      <div class="form-section__field-container">
-                        <label for="lu"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label>
-                        <input id="lu" type="text" name="username" required="required" size="30">
-                      </div>
-    
-                      <div class="form-section__field-container">
-                        <label for="lp1"><fmt:message key="studentparents.parentRegistration.password1Title"/></label>
-                        <input id="lp1" type="password" name="password" required="required" size="25">
-                      </div>                  
-                    </div>
-                  </c:otherwise>
-                </c:choose>
-                
-                <div class="form-section__field-container">
-                  <div class="error-container" style="display:none;"></div>
-                </div>
-          
-                <nav class="form-navigation">
-                  <button name="login" id="button-create-credentials" class="button-create-credentials">
-                    <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
-                  </button>
-                </nav>
-              </section>
-            </form>
-          </section>
+		                </div>
+		    
+		                <div id="loginGuardianCredentialsContainer" style="display: none;">
+		                  <div class="form-section__header form-section__header--credentials"><fmt:message key="studentparents.parentRegistration.loginLabel"/></div>
+		                
+		                  <div class="form-section__field-container">
+		                    <label for="lu"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label>
+		                    <input id="lu" type="text" name="username" required="required" size="30">
+		                  </div>
+		
+		                  <div class="form-section__field-container">
+		                    <label for="lp1"><fmt:message key="studentparents.parentRegistration.password1Title"/></label>
+		                    <input id="lp1" type="password" name="password" required="required" size="25">
+		                  </div>                  
+		                </div>
+		              </c:otherwise>
+		            </c:choose>
+		            
+		            <div class="form-section__field-container">
+		              <div class="error-container" style="display:none;"></div>
+		            </div>
+			    
+			          <nav class="form-navigation">
+			            <button name="login" id="button-create-credentials" class="button-create-credentials">
+			              <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
+			            </button>
+			          </nav>
+		          </section>
+		        </form>
+		      </section>
         </main>
       </c:otherwise>
     </c:choose>

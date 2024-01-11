@@ -12,12 +12,16 @@
   margin: 0 0 20px;
 }
 
+.form-section__header--credentials {
+	margin: 20px 0;
+}
+
 .form-section__subheader {
   font-size: 16px;
   color: #009fe3;
   font-weight: 400;
   line-height: 1;
-  margin: 20px 0 20px;
+  margin: 20px 0;
 }
 
 .form-section.current {
