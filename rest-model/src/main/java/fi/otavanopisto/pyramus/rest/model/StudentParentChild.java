@@ -9,7 +9,7 @@ public class StudentParentChild implements ContextReference {
   }
   
   public StudentParentChild(Long studentId, Long personId, String firstName, String lastName, String nickname,
-      String studyProgrammeName, String defaultEmail, String defaultPhoneNumber, String defaultAddress) {
+      String studyProgrammeName, String defaultEmail, String defaultPhoneNumber, Address defaultAddress) {
     super();
     this.studentId = studentId;
     this.personId = personId;
@@ -86,11 +86,11 @@ public class StudentParentChild implements ContextReference {
     this.defaultPhoneNumber = defaultPhoneNumber;
   }
   
-  public String getDefaultAddress() {
+  public Address getDefaultAddress() {
     return defaultAddress;
   }
 
-  public void setDefaultAddress(String defaultAddress) {
+  public void setDefaultAddress(Address defaultAddress) {
     this.defaultAddress = defaultAddress;
   }
 
@@ -102,6 +102,6 @@ public class StudentParentChild implements ContextReference {
   private String studyProgrammeName;
   private String defaultEmail;
   private String defaultPhoneNumber;
-  private String defaultAddress;
+  private Address defaultAddress;
   
 }

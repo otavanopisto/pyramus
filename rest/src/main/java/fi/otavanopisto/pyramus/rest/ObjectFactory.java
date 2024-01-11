@@ -893,7 +893,7 @@ public class ObjectFactory {
             
             String defaultEmail = null;
             String defaultPhoneNumber = null;
-            String defaultAddress = null;
+            fi.otavanopisto.pyramus.rest.model.Address defaultAddress = null;
             
             if (student.getContactInfo() != null) {
               Email email = commonController.findDefaultEmailByContactInfo(student.getContactInfo());
@@ -903,7 +903,11 @@ public class ObjectFactory {
               defaultPhoneNumber = phoneNumber != null ? phoneNumber.getNumber() : null;
               
               Address address = commonController.findDefaultAddressByContactInfo(student.getContactInfo());
-              defaultAddress = address != null ? address.toOneliner() : null;
+              if (address != null) {
+                Long contactTypeId = address.getContactType() != null ? address.getContactType().getId() : null;
+                defaultAddress = new fi.otavanopisto.pyramus.rest.model.Address(address.getId(), contactTypeId, address.getDefaultAddress(), address.getName(), 
+                    address.getStreetAddress(), address.getPostalCode(), address.getCity(), address.getCountry());
+              }
             }
 
             return new fi.otavanopisto.pyramus.rest.model.StudentParentChild(
