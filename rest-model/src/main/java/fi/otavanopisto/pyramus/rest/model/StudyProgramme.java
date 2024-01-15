@@ -5,7 +5,7 @@ public class StudyProgramme {
   public StudyProgramme() {
   }
 
-  public StudyProgramme(Long id, Long organizationId, String code, String name, Long categoryId, String officialEducationType, Boolean hasEvaluationFees, Boolean archived) {
+  public StudyProgramme(Long id, Long organizationId, String code, String name, Long categoryId, String officialEducationType, Boolean hasEvaluationFees, Boolean archived, String educationTypeCode) {
     super();
     this.id = id;
     this.organizationId = organizationId;
@@ -15,6 +15,7 @@ public class StudyProgramme {
     this.officialEducationType = officialEducationType;
     this.hasEvaluationFees = hasEvaluationFees;
     this.archived = archived;
+    this.educationTypeCode = educationTypeCode;
   }
 
   public Long getId() {
@@ -81,6 +82,14 @@ public class StudyProgramme {
     this.officialEducationType = officialEducationType;
   }
 
+  public String getEducationTypeCode() {
+    return educationTypeCode;
+  }
+
+  public void setEducationTypeCode(String educationTypeCode) {
+    this.educationTypeCode = educationTypeCode;
+  }
+
   private Long id;
   private Long organizationId;
   private String name;
@@ -89,4 +98,5 @@ public class StudyProgramme {
   private String officialEducationType;
   private Boolean hasEvaluationFees;
   private Boolean archived;
+  private String educationTypeCode;
 }
