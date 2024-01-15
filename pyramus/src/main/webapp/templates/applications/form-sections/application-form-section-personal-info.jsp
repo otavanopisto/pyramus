@@ -24,17 +24,27 @@
       </div>
     </div> 
     
-    <div class="form-section__field-container field-birthday">
+    <div class="-form-section__field-container-field-has-ssn">
+      <label for="field-has-ssn" class="required">Minulla on suomalainen henkilötunnus</label>
+      <select id="field-has-ssn" name="field-has-ssn" data-parsley-required="true" data-dependencies="true">
+        <option value="">-- Valitse --</option>
+        <option value="kylla">Kyllä</option>
+        <option value="ei">Ei</option>
+      </select>
+    </div>
+
+    <div class="form-section__field-container field-birthday dependent" data-dependent-field="field-has-ssn" data-dependent-values="ei" style="display:none;">
       <label for="field-birthday" class="required">Syntymäaika</label>
-      <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true" data-parsley-date-format="">
+      <input type="text" id="field-birthday" name="field-birthday" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-date-format="">
       <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
     </div>
 
-    <div class="form-section__field-container field-ssn-end">
-      <label for="field-ssn-end">Henkilötunnuksen loppuosa</label>
-      <input type="text" id="field-ssn-end" name="field-ssn-end" maxlength="4" style="text-transform:uppercase;" data-parsley-validate-if-empty="true" data-parsley-ssn-end-format="">
-      <span class="field-help">Esitysmuoto XXXX (ilman edeltävää välimerkkiä A tai -)</span>
+    <div class="form-section__field-container field-ssn dependent" data-dependent-field="field-has-ssn" data-dependent-values="kylla" style="display:none;">
+      <label for="field-ssn" class="required">Henkilötunnus</label>
+      <input type="text" id="field-ssn" name="field-ssn" style="text-transform:uppercase;" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-ssn="">
     </div>
+
+    <input type="hidden" name="field-ssn-end"/>
     
     <div class="-form-section__field-container-field-compulsory-education dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelupk" style="display:none;">
       <label for="field-compulsory-education" class="required">Olen oppivelvollinen</label>

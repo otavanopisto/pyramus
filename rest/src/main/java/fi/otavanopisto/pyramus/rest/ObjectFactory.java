@@ -624,8 +624,12 @@ public class ObjectFactory {
           @Override
           public Object map(StudyProgramme entity) {
             Long categoryId = entity.getCategory() != null ? entity.getCategory().getId() : null;
+            String educationTypeCode = null;
+            if (entity.getCategory() != null) {
+              educationTypeCode = entity.getCategory().getEducationType() != null ? entity.getCategory().getEducationType().getCode() : null;
+            }
             Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), organizationId, entity.getCode(), entity.getName(), categoryId, entity.getOfficialEducationType(), entity.getHasEvaluationFees(), entity.getArchived());
+            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), organizationId, entity.getCode(), entity.getName(), categoryId, entity.getOfficialEducationType(), entity.getHasEvaluationFees(), entity.getArchived(), educationTypeCode);
           }
         },
         

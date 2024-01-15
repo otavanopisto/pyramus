@@ -140,8 +140,8 @@ public class ApplicationUtils {
     if (ApplicationUtils.isContractSchool(formData)) {
       return false;
     }
-    // #1487: Jos hetun loppuosa puuttuu tai on XXX, käsitellään manuaalisesti
-    String ssnSuffix = getFormValue(formData, "field-ssn-end");
+    // #1487: Jos hetun loppuosa puuttuu tai on XXXX, käsitellään manuaalisesti
+    String ssnSuffix = getSsnSuffix(formData);
     if (StringUtils.isEmpty(ssnSuffix) || StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
       if (!allowEmptySsn) {
         return false;
@@ -154,6 +154,16 @@ public class ApplicationUtils {
     }
     else {
       return !isUnderage(formData);
+    }
+  }
+  
+  private static String getSsnSuffix(JSONObject formData) {
+    String ssn = getFormValue(formData, "field-ssn");
+    if (!StringUtils.isEmpty(ssn)) {
+      return StringUtils.upperCase(StringUtils.substring(ssn, 7, 11));
+    }
+    else {
+      return StringUtils.upperCase(getFormValue(formData, "field-ssn-end"));
     }
   }
   
@@ -830,13 +840,53 @@ public class ApplicationUtils {
           staffMember);
     }
   }
+  
+  public static String extractBirthdayString(Application application) {
+    if (application == null) {
+      return null;
+    }
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String ssn = getFormValue(formData, "field-ssn");
+    if (!StringUtils.isEmpty(ssn)) {
+      if (ssn.length() != 11) {
+        logger.severe(String.format("Invalid SSN format %s", ssn));
+        return null;
+      }
+      try {
+        int d = Integer.parseInt(ssn.substring(0, 2));
+        int m = Integer.parseInt(ssn.substring(2, 4));
+        int y = Integer.parseInt(ssn.substring(4, 6));
+        if ("ABCDEF".indexOf(ssn.charAt(6)) >= 0) {
+          y += 2000;
+        }
+        else {
+          y += 1900;
+        }
+        return String.format("%d.%d.%d", d, m, y);
+      }
+      catch (NumberFormatException e) {
+        logger.severe(String.format("Invalid SSN format %s", ssn));
+        return null;
+      }
+    }
+    else {
+      return getFormValue(formData, "field-birthday"); 
+    }
+  }
 
   public static String extractSSN(Application application) {
     if (application == null) {
       return null;
     }
     JSONObject formData = JSONObject.fromObject(application.getFormData());
-    return constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
+    if (!StringUtils.isEmpty(getFormValue(formData, "field-ssn"))) {
+      // #1529: SSN is in its own field
+      return StringUtils.upperCase(getFormValue(formData, "field-ssn"));
+    }
+    else {
+      // #1529: Backwards compatibility for old way of determining SSN (might result in an incorrect separator character)
+      return constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
+    }
   }
 
   public static String constructSSN(String birthday, String ssnEnd) {
@@ -942,13 +992,12 @@ public class ApplicationUtils {
     // Create person (if needed)
     
     if (person == null) {
-      String birthdayStr = getFormValue(formData, "field-birthday");
-      String ssnEnd = getFormValue(formData, "field-ssn-end");
+      // #1529: Determine birthday from birthday field or SSN field
+      String birthdayStr = extractBirthdayString(application);
       try {
         Date birthday = StringUtils.isBlank(birthdayStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(birthdayStr);
-        String ssn = StringUtils.isBlank(ssnEnd) ? null : constructSSN(birthdayStr, ssnEnd);
         Sex sex = resolveGender(getFormValue(formData, "field-sex"));
-        person = personDAO.create(birthday, ssn, sex, null, Boolean.FALSE);
+        person = personDAO.create(birthday, extractSSN(application), sex, null, Boolean.FALSE);
       }
       catch (ParseException e) {
         logger.severe(String.format("Invalid birthday format in application entity %d", application.getId()));

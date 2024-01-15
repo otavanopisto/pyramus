@@ -131,8 +131,15 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
         fields.put("Kutsumanimi", getFormValue(formData, "field-nickname"));
       }
-      fields.put("Syntymäaika", getFormValue(formData, "field-birthday"));
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-ssn-end"))) {
+      String ssn = ApplicationUtils.extractSSN(application);
+      if (StringUtils.isNotBlank(ssn)) {
+        fields.put("Henkilötunnus", ssn);
+      }
+      String birthday = ApplicationUtils.extractBirthdayString(application);
+      if (StringUtils.isNotEmpty(birthday)) {
+        fields.put("Syntymäaika", birthday);
+      }
+      if (StringUtils.isBlank(ssn) && StringUtils.isNotBlank(getFormValue(formData, "field-ssn-end"))) {
         fields.put("Henkilötunnuksen loppuosa", StringUtils.upperCase(getFormValue(formData, "field-ssn-end"))); 
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-compulsory-education"))) {

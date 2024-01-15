@@ -36,37 +36,37 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
     Long category = 1L;
     
     // null organization
-    studyProgramme = new StudyProgramme(null, null, code, name, category, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, null, code, name, category, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
     // missing organization
-    studyProgramme = new StudyProgramme(null, 0L, code, name, category, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, 0L, code, name, category, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
 
     // null code
-    studyProgramme = new StudyProgramme(null, organizationId, null, name, category, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, organizationId, null, name, category, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
     // missing code
-    studyProgramme = new StudyProgramme(null, organizationId, "", name, category, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, organizationId, "", name, category, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
 
     // null name
-    studyProgramme = new StudyProgramme(null, organizationId, code, null, category, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, organizationId, code, null, category, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
     // missing name
-    studyProgramme = new StudyProgramme(null, organizationId, code, "", category, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, organizationId, code, "", category, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
 
     // null category
-    studyProgramme = new StudyProgramme(null, organizationId, code, name, null, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, organizationId, code, name, null, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
     // missing category
-    studyProgramme = new StudyProgramme(null, organizationId, code, name, 0L, null, Boolean.FALSE, Boolean.FALSE);
+    studyProgramme = new StudyProgramme(null, organizationId, code, name, 0L, null, Boolean.FALSE, Boolean.FALSE, null);
     given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
   }
 
   @Test
   public void testCreateStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "TST", "create", 1l, "Official education type", Boolean.FALSE, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "TST", "create", 1l, "Official education type", Boolean.FALSE, Boolean.FALSE, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -123,7 +123,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "NOT", "Not Updated", 1l, "Official education type", Boolean.FALSE, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "NOT", "Not Updated", 1l, "Official education type", Boolean.FALSE, Boolean.FALSE, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -140,7 +140,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
     
     Long id = response.body().jsonPath().getLong("id");
     try {
-      StudyProgramme updateStudyProgramme = new StudyProgramme(id, organization.getId(), "UPD", "Updated", 2l, "Updated education type", Boolean.FALSE, Boolean.FALSE);
+      StudyProgramme updateStudyProgramme = new StudyProgramme(id, organization.getId(), "UPD", "Updated", 2l, "Updated education type", Boolean.FALSE, Boolean.FALSE, null);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -165,7 +165,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "TST", "create type", 1l, null, Boolean.FALSE, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "TST", "create type", 1l, null, Boolean.FALSE, Boolean.FALSE, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
