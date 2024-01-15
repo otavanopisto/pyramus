@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
@@ -173,11 +174,11 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   @Column(nullable = false)
   private Boolean archived = Boolean.FALSE;
   
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="participationType")
   private CourseParticipationType participationType;
   
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="enrolmentType")
   private CourseEnrolmentType courseEnrolmentType;
 
@@ -189,7 +190,7 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   @Enumerated (EnumType.STRING)
   private CourseOptionality optionality;
 
-  @ManyToOne 
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="billingDetails")
   private BillingDetails billingDetails;
 
@@ -201,7 +202,7 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   
   private Currency lodgingFeeCurrency;
 
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   private Room room;
 
   private String roomAdditionalInfo;
