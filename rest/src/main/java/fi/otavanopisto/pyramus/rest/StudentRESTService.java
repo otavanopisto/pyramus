@@ -3557,8 +3557,8 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (loggedUser instanceof StaffMember) {
       StaffMember staffMember = (StaffMember) loggedUser;
-      if (!staffMember.getRole().equals(Role.TRUSTED_SYSTEM)) {
-        if (!staffMember.getRole().equals(Role.ADMINISTRATOR) && !staffMember.getRole().equals(Role.MANAGER) && !staffMember.getRole().equals(Role.STUDY_PROGRAMME_LEADER)) {
+      if (!staffMember.hasRole(Role.TRUSTED_SYSTEM)) {
+        if (!staffMember.hasRole(Role.ADMINISTRATOR) && !staffMember.hasRole(Role.MANAGER) && !staffMember.hasRole(Role.STUDY_PROGRAMME_LEADER)) {
           boolean amICounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
           if (!amICounselor) {
             return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
