@@ -73,7 +73,7 @@ public class AcceptApplicationViewController extends PyramusViewController {
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
-    String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
+    String ssn = ApplicationUtils.extractSSN(application);
     String line = ApplicationUtils.applicationLineUiValue(application.getLine());
     String docUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
         applicationSignatures.getApplicantInvitationId(),

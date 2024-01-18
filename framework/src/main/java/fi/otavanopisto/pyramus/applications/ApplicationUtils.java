@@ -889,7 +889,7 @@ public class ApplicationUtils {
     }
   }
 
-  public static String constructSSN(String birthday, String ssnEnd) {
+  private static String constructSSN(String birthday, String ssnEnd) {
     if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd) || StringUtils.equalsIgnoreCase(ssnEnd, "XXXX")) {
       return null;
     }
@@ -1382,25 +1382,14 @@ public class ApplicationUtils {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    JSONObject applicationData = JSONObject.fromObject(application.getFormData());
 
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
-    String ssn = constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+    String ssn = extractSSN(application); 
     if (StringUtils.isNotBlank(ssn)) {
 
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
-      for (Person person : persons) {
-        existingPersons.put(person.getId(), person);
-      }
-      
-      // SSN with "wrong" delimiter
-      
-      char[] ssnChars = ssn.toCharArray();
-      ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
-      String wrongSsn = String.valueOf(ssnChars);
-      persons = personDAO.listBySSNUppercase(wrongSsn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);
       }

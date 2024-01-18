@@ -419,19 +419,12 @@ public class ViewApplicationViewController extends PyramusViewController {
 
     // SSN checks
     
-    String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
+    String ssn = ApplicationUtils.extractSSN(application);
     if (!StringUtils.isBlank(ssn)) {
-      
-      // Also check SSNs with "wrong" delimiter
-      
-      char[] ssnChars = ssn.toCharArray();
-      ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
-      String wrongSSN = String.valueOf(ssnChars);
       
       // Persons by SSN
       
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
-      persons.addAll(personDAO.listBySSNUppercase(wrongSSN));
       for (Person person : persons) {
         personIds.add(person.getId());
         String url = String.format("/students/viewstudent.page?person=%d", person.getId());
