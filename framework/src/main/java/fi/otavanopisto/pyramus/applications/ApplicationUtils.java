@@ -135,7 +135,8 @@ public class ApplicationUtils {
     return false;
   }
   
-  public static boolean isInternetixAutoRegistrationPossible(JSONObject formData, boolean allowEmptySsn) {
+  public static boolean isInternetixAutoRegistrationPossible(Application application, boolean allowEmptySsn) {
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
     if (ApplicationUtils.isContractSchool(formData)) {
       return false;
@@ -150,10 +151,10 @@ public class ApplicationUtils {
     // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
     String line = getFormValue(formData, "field-line");
     if (StringUtils.equals(line, "aineopiskelu")) {
-      return !isInternetixUnderage(formData);
+      return !isInternetixUnderage(application);
     }
     else {
-      return !isUnderage(formData);
+      return !isUnderage(application);
     }
   }
   
@@ -255,12 +256,8 @@ public class ApplicationUtils {
     return applicationLineUiValue(line) != null;
   }
   
-  public static boolean isUnderage(Application application) {
-    return isUnderage(JSONObject.fromObject(application.getFormData()));
-  }
-  
-  public static boolean isInternetixUnderage(JSONObject formData) {
-    String dateString = getFormValue(formData, "field-birthday");
+  public static boolean isInternetixUnderage(Application application) {
+    String dateString = extractBirthdayString(application);
     if (StringUtils.isBlank(dateString)) {
       return false;
     }
@@ -274,7 +271,7 @@ public class ApplicationUtils {
         }
       }
       // ...otherwise under 18
-      return isUnderage(formData);
+      return isUnderage(application);
     }
     catch (DateTimeParseException e) {
       logger.warning(String.format("Malformatted date %s (%s)", dateString, e.getMessage()));
@@ -282,8 +279,8 @@ public class ApplicationUtils {
     }
   }
 
-  public static boolean isUnderage(JSONObject formData) {
-    String dateString = getFormValue(formData, "field-birthday");
+  public static boolean isUnderage(Application application) {
+    String dateString = extractBirthdayString(application);
     if (StringUtils.isBlank(dateString)) {
       return false;
     }
@@ -510,7 +507,8 @@ public class ApplicationUtils {
     }
   }
   
-  public static StudyProgramme resolveStudyProgramme(JSONObject formData) {
+  public static StudyProgramme resolveStudyProgramme(Application application) {
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = getFormValue(formData, "field-line");
     if (StringUtils.isBlank(line)) {
       return null;
@@ -518,7 +516,7 @@ public class ApplicationUtils {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case LINE_AINEOPISKELU:
-      if (!isInternetixAutoRegistrationPossible(formData, true)) {
+      if (!isInternetixAutoRegistrationPossible(application, true)) {
         return studyProgrammeDAO.findById(49L); // Aineopiskelu/lukio (oppivelvolliset)
       }
       return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
@@ -1007,7 +1005,7 @@ public class ApplicationUtils {
     
     // Determine correct study programme
     
-    StudyProgramme studyProgramme = resolveStudyProgramme(formData);
+    StudyProgramme studyProgramme = resolveStudyProgramme(application);
     if (studyProgramme == null) {
       logger.severe(String.format("Unable to resolve study programme of application entity %d", application.getId()));
       return null;
@@ -1151,7 +1149,7 @@ public class ApplicationUtils {
     
     // Guardian info for underage applicants
     
-    if (isUnderage(formData)) {
+    if (isUnderage(application)) {
       
       // Attach email
       

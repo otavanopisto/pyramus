@@ -84,7 +84,7 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
         getFormValue(formData, "field-last-name"));
     String line = application.getLine();
     String documentName = String.format("Hyväksyntä: %s", applicantName);
-    boolean isUnderage = ApplicationUtils.isUnderage(formData); 
+    boolean isUnderage = ApplicationUtils.isUnderage(application); 
 
     OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
     try {

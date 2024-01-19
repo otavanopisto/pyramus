@@ -105,6 +105,33 @@
     $('#field-line').on('change', function() {
       setLine($(this).val());
     });
+    $('#field-ssn').on('change', function() {
+      var ssn = $(this).val();
+      if (ssn && ssn.length == 11) {
+        var d = parseInt(ssn.substring(0, 2));
+        var m = parseInt(ssn.substring(2, 4));
+        var y = parseInt(ssn.substring(4, 6));
+        if ('ABCDEF'.indexOf(ssn.charAt(6).toUpperCase()) >= 0) {
+          y += 2000;
+        }
+        else {
+          y += 1900;
+        }
+        var birthday = d + '.' + m + '.' + y;
+        var years = moment().diff(moment(birthday, "D.M.YYYY"), 'years');
+        var line = $('select[name="field-line"]').val();
+        var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
+        $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
+      }
+      else {
+        $('.section-underage').attr('data-skip', 'true');
+      }
+      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
+      if (existingApplication) {
+        $('.section-underage').toggle($('.section-underage').attr('data-skip') != 'true');
+      }
+      updateProgress();
+    });
     $('#field-birthday').on('change', function() {
       var birthday = $(this).val();
       if (birthday) {
@@ -465,6 +492,7 @@
       $('.section-internetix-school').toggle(line == 'aineopiskelu' || line == 'aineopiskelupk');
     }
     // age check when line changes 
+    $('#field-ssn').trigger('change');
     $('#field-birthday').trigger('change');
     // update page count
     updateProgress();
