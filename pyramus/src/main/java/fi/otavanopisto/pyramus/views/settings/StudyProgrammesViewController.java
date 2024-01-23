@@ -3,6 +3,8 @@ package fi.otavanopisto.pyramus.views.settings;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
@@ -14,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
+import fi.otavanopisto.pyramus.framework.StudyProgrammeProperties;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 
@@ -44,6 +47,9 @@ public class StudyProgrammesViewController extends PyramusViewController impleme
       if (studyProgrammes.get(i).getCategory() != null) {
         jsonStudyProgrammeCategory.put("categoryId", studyProgrammes.get(i).getCategory().getId());
       }
+      
+      boolean hasAutomaticSubjectChoices = StringUtils.equals("1", studyProgrammes.get(i).getProperties().get(StudyProgrammeProperties.AUTOMATED_SUBJECTCHOICES.getKey()));
+      jsonStudyProgrammeCategory.put("hasAutomaticSubjectChoices", hasAutomaticSubjectChoices);
     }
     
     String jsonCategories = new JSONArrayExtractor("name", "id").extractString(studyProgrammeCategoryDAO.listUnarchived());
