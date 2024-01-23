@@ -541,7 +541,7 @@ public class ApplicationRESTService extends AbstractRESTService {
         // Automatic registration of new Internetix students
         
         boolean autoRegistrationSupported = ApplicationUtils.isInternetixLine(line);
-        boolean autoRegistrationPossible = autoRegistrationSupported && ApplicationUtils.isInternetixAutoRegistrationPossible(formData, false);
+        boolean autoRegistrationPossible = autoRegistrationSupported && ApplicationUtils.isInternetixAutoRegistrationPossible(application, false);
         
         // #1487: Jos aineopiskelijaksi hakeva on jo olemassa, käsitellään manuaalisesti
         

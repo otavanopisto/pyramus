@@ -1,12 +1,18 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
@@ -127,6 +133,14 @@ public class StudyProgramme implements ArchivableEntity {
     this.officialEducationType = officialEducationType;
   }
 
+  public Map<String, String> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Map<String, String> properties) {
+    this.properties = properties;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudyProgramme")  
   @TableGenerator(name="StudyProgramme", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -156,6 +170,12 @@ public class StudyProgramme implements ArchivableEntity {
   @NotNull
   @Column(nullable = false)
   private Boolean hasEvaluationFees;
+
+  @ElementCollection
+  @MapKeyColumn (name = "name", length = 100)
+  @Column (name = "value", length = 255)
+  @CollectionTable (name = "StudyProgrammeProperties", joinColumns = @JoinColumn(name = "studyProgramme_id"))
+  private Map<String, String> properties = new HashMap<String, String>();
 
   @NotNull
   @Column(nullable = false)

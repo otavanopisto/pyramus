@@ -117,6 +117,20 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     return persist(studyProgramme);
   }
 
+  /**
+   * Persists StudyProgramme after properties have changed.
+   * 
+   * This is just a dummy method to persist a StudyProgramme as
+   * the properties need to be changed outside this DAO.
+   * 
+   * @param studyProgramme
+   * @return
+   */
+  public StudyProgramme updateProperties(StudyProgramme studyProgramme) {
+    studyProgrammeUpdatedEvent.fire(new StudyProgrammeUpdatedEvent(studyProgramme.getId()));
+    return persist(studyProgramme);
+  }
+  
   @Override
   public void archive(ArchivableEntity entity, User modifier) {
     super.archive(entity, modifier);
@@ -125,5 +139,5 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
       studyProgrammeRemovedEvent.fire(new StudyProgrammeArchivedEvent(studyProgramme.getId()));
     }
   }
-  
+
 }
