@@ -8,7 +8,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -16,6 +15,7 @@ import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -64,15 +64,16 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   @Inject
   private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
   
-  public StaffMember create(Organization organization, String firstName, String lastName, Role role, Person person, Boolean archived) {
+  public StaffMember create(Organization organization, String firstName, String lastName, Set<Role> roles, Person person, Boolean archived) {
     ContactInfo contactInfo = new ContactInfo();
     
     StaffMember staffMember = new StaffMember();
 
+    staffMember.setEnabled(false);
     staffMember.setOrganization(organization);
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
-    staffMember.setRole(role);
+    staffMember.setRoles(roles);
     staffMember.setContactInfo(contactInfo);
     staffMember.setPerson(person);
     // TODO: allow archive on StaffMember
@@ -132,38 +133,6 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<StaffMember> listByNotRole(Role role) {
-    return listByNotRole(role, null, null);
-  }
-
-  public List<StaffMember> listByNotRole(Role role, Integer firstResult, Integer maxResults) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
-    Root<StaffMember> root = criteria.from(StaffMember.class);
-    criteria.select(root);
-    
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.notEqual(root.get(StaffMember_.role), role),
-            criteriaBuilder.notEqual(root.get(StaffMember_.archived), Boolean.FALSE)
-        )
-    );
-    
-    TypedQuery<StaffMember> query = entityManager.createQuery(criteria);
-    
-    if (firstResult != null) {
-      query.setFirstResult(firstResult);
-    }
-    
-    if (maxResults != null) {
-      query.setMaxResults(maxResults);
-    }
-    
-    return query.getResultList();
-  }
-  
   public List<StaffMember> listByOrganizationAndArchived(Organization organization, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -288,7 +257,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
 
   @SuppressWarnings("unchecked")
   public SearchResult<StaffMember> searchUsers(int resultsPerPage, int page, String firstName, String lastName, String tags,
-      String email, Role[] roles) {
+      String email, Set<Role> roles) {
 
     int firstResult = page * resultsPerPage;
     
@@ -313,10 +282,10 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
       queryBuilder.append(")");
     }
 
-    if (roles.length > 0) {
+    if (CollectionUtils.isNotEmpty(roles)) {
       queryBuilder.append("+(");
       for (Role role : roles) {
-        addTokenizedSearchCriteria(queryBuilder, "role", role.toString(), false);
+        addTokenizedSearchCriteria(queryBuilder, "roles", role.toString(), false);
       }
       queryBuilder.append(")");
     }
@@ -356,15 +325,13 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     }
   }
   
-  public StaffMember update(StaffMember staffMember, Organization organization, String firstName, String lastName, Role role) {
+  public StaffMember update(StaffMember staffMember, Organization organization, String firstName, String lastName) {
     auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.firstName, firstName, true);
     auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.lastName, lastName, true);
-    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.role, role, true);
 
     staffMember.setOrganization(organization);
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
-    staffMember.setRole(role);
     persist(staffMember);
     
     staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
@@ -387,6 +354,28 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   
   public StaffMember updateTitle(StaffMember staffMember, String title) {
     staffMember.setTitle(title);
+    persist(staffMember);
+    
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
+    
+    return staffMember;
+  }
+
+  public StaffMember updateEnabled(StaffMember staffMember, boolean accountEnabled) {
+    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.enabled, accountEnabled, true);
+
+    staffMember.setEnabled(accountEnabled);
+    persist(staffMember);
+    
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
+    
+    return staffMember;
+  }
+
+  public StaffMember updateRoles(StaffMember staffMember, Set<Role> roles) {
+    auditUpdate(staffMember.getPersonId(), staffMember.getId(), staffMember, StaffMember_.roles, roles, true);
+
+    staffMember.setRoles(roles);
     persist(staffMember);
     
     staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));

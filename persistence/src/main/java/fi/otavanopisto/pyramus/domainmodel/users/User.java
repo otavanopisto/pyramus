@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,16 +26,17 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.search.bridge.builtin.impl.BuiltinIterableBridge;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -142,11 +145,6 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   }
 
   @Transient
-  public Role getRole() {
-    return Role.EVERYONE;
-  }
-
-  @Transient
   public Organization getOrganization() {
     return null;
   }
@@ -166,16 +164,44 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   public void setArchived(Boolean archived) {
     this.archived = archived;
   }
+
+  @Transient
+  public Set<Role> getRoles() {
+    return Collections.emptySet();
+  }
   
   @Transient
   public final boolean hasRole(Role role) {
-    return role != null && role == getRole();
+    Set<Role> roles = getRoles();
+    return roles != null ? roles.contains(role) : false;
   }
   
   @Transient
   public final boolean hasAnyRole(Role ... roles) {
-    Role role = getRole();
-    return role != null && ArrayUtils.contains(roles, role);
+    for (Role role : roles) {
+      if (hasRole(role)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  @Transient
+  public boolean isAccountEnabled() {
+    return false;
+  }
+
+  @Field (name = "roles", store = Store.NO)
+  @FieldBridge(impl=BuiltinIterableBridge.class)
+  public Set<String> getRolesSearchable() {
+    if (getRoles() == null) {
+      return null;
+    }
+    
+    return getRoles().stream()
+        .map(role -> role.name())
+        .collect(Collectors.toSet());
   }
   
   @Id
@@ -217,4 +243,5 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   @Version
   @Column(nullable = false)
   private Long version;
+
 }

@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,7 @@ public class StaffMember implements ContextReference {
     super();
   }
 
-  public StaffMember(Long id, Long personId, Long organizationId, String additionalContactInfo, String firstName, String lastName, String title, UserRole role,
+  public StaffMember(Long id, Long personId, Long organizationId, String additionalContactInfo, String firstName, String lastName, String title, EnumSet<UserRole> roles,
       List<String> tags, Map<String, String> variables, Set<Long> studyProgrammeIds) {
     super();
     this.id = id;
@@ -22,7 +23,7 @@ public class StaffMember implements ContextReference {
     this.firstName = firstName;
     this.lastName = lastName;
     this.title = title;
-    this.role = role;
+    this.roles = roles;
     this.tags = tags;
     this.variables = variables;
     this.studyProgrammeIds = studyProgrammeIds;
@@ -76,12 +77,12 @@ public class StaffMember implements ContextReference {
     this.title = title;
   }
 
-  public UserRole getRole() {
-    return role;
+  public EnumSet<UserRole> getRoles() {
+    return roles;
   }
 
-  public void setRole(UserRole role) {
-    this.role = role;
+  public void setRole(EnumSet<UserRole> roles) {
+    this.roles = roles;
   }
   
   public List<String> getTags() {
@@ -123,7 +124,7 @@ public class StaffMember implements ContextReference {
   private String firstName;
   private String lastName;
   private String title;
-  private UserRole role;
+  private EnumSet<UserRole> roles;
   private Map<String, String> variables;
   private List<String> tags;
   private Set<Long> studyProgrammeIds;

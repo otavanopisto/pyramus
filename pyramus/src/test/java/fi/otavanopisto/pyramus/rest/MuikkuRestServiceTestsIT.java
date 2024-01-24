@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import io.restassured.response.Response;
@@ -26,7 +28,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
     Role testStaffMemberRole = Role.MANAGER;
     StaffMemberPayload payload = new StaffMemberPayload();
     payload.setIdentifier(null);
-    payload.setRole(testStaffMemberRole.toString());
+    payload.setRoles(Arrays.asList(testStaffMemberRole.toString()));
     payload.setFirstName("Muikku");
     payload.setLastName("Manager");
     payload.setEmail("muikkumanager@example.com");
@@ -42,7 +44,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
       .body("firstName", is(payload.getFirstName()))
       .body("lastName", is(payload.getLastName()))
       .body("email", is(payload.getEmail()))
-      .body("role", is(testStaffMemberRole.toString()));
+      .body("roles[0]", is(testStaffMemberRole.toString()));
       
     long staffMemberId = response.body().jsonPath().getLong("identifier");
     long personId = getStaffMemberPersonId(staffMemberId);
@@ -63,7 +65,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
     Role testStaffMemberRole = Role.MANAGER;
     StaffMemberPayload payload = new StaffMemberPayload();
     payload.setIdentifier(null);
-    payload.setRole(testStaffMemberRole.toString());
+    payload.setRoles(Arrays.asList(testStaffMemberRole.toString()));
     payload.setFirstName("Muikku");
     payload.setLastName("Manager");
     payload.setEmail("muikkumanager@example.com");
@@ -110,7 +112,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
     Role testStaffMemberRole = Role.TEACHER;
     StaffMemberPayload payload = new StaffMemberPayload();
     payload.setIdentifier(null);
-    payload.setRole(testStaffMemberRole.toString());
+    payload.setRoles(Arrays.asList(testStaffMemberRole.toString()));
     payload.setFirstName("Muikku");
     payload.setLastName("Manager");
     payload.setEmail("muikkumanager@example.com");
@@ -126,7 +128,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
       .body("firstName", is(payload.getFirstName()))
       .body("lastName", is(payload.getLastName()))
       .body("email", is(payload.getEmail()))
-      .body("role", is(testStaffMemberRole.toString()));
+      .body("roles[0]", is(testStaffMemberRole.toString()));
       
     long staffMemberId = response.body().jsonPath().getLong("identifier");
     long personId = getStaffMemberPersonId(staffMemberId);
@@ -134,7 +136,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
       Role testUpdatedStaffMemberRole = Role.MANAGER;
       payload = new StaffMemberPayload();
       payload.setIdentifier(String.valueOf(staffMemberId));
-      payload.setRole(testUpdatedStaffMemberRole.toString());
+      payload.setRoles(Arrays.asList(testUpdatedStaffMemberRole.toString()));
       payload.setFirstName("Muikku");
       payload.setLastName("Manager");
       payload.setEmail("muikkumanager@example.com");
@@ -149,7 +151,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
         .body("firstName", is(payload.getFirstName()))
         .body("lastName", is(payload.getLastName()))
         .body("email", is(payload.getEmail()))
-        .body("role", is(testUpdatedStaffMemberRole.toString()));
+        .body("roles[0]", is(testUpdatedStaffMemberRole.toString()));
     } finally {
       given().headers(getAuthHeaders())
         .delete("/staff/members/{ID}?permanent=true", staffMemberId)

@@ -17,11 +17,11 @@ public class StaffMemberTestsIT extends AbstractRESTServiceTest {
       .body("id[0]", is(1))
       .body("firstName[0]", is("Test Guest"))
       .body("lastName[0]", is("User #1"))
-      .body("role[0]", is("GUEST"))
+      .body("roles[0][0]", is("GUEST"))
       .body("id[1]", is(2))
       .body("firstName[1]", is("Test Guest"))
       .body("lastName[1]", is("User #2"))
-      .body("role[1]", is("GUEST"));
+      .body("roles[1][0]", is("GUEST"));
   }
   
   @Test
@@ -34,7 +34,7 @@ public class StaffMemberTestsIT extends AbstractRESTServiceTest {
       .body("id[0]", is(1))
       .body("firstName[0]", is("Test Guest"))
       .body("lastName[0]", is("User #1"))
-      .body("role[0]", is("GUEST"));
+      .body("roles[0][0]", is("GUEST"));
   }
   
   @Test
@@ -46,7 +46,7 @@ public class StaffMemberTestsIT extends AbstractRESTServiceTest {
       .body("id", is(1))
       .body("firstName", is("Test Guest"))
       .body("lastName", is("User #1"))
-      .body("role", is("GUEST"));
+      .body("roles[0]", is("GUEST"));
   }
   
 }

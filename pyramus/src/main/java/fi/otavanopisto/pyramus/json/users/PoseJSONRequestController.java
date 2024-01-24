@@ -57,20 +57,16 @@ public class PoseJSONRequestController extends JSONRequestController {
     }
     
     if (user instanceof StaffMember) {
-      Role role = ((StaffMember) user).getRole();
-      switch (role) {
-        case EVERYONE:
-        case ADMINISTRATOR:
-        case TRUSTED_SYSTEM:
-          logger.log(Level.WARNING, String.format("User %d tried to pose user %d who is in forbidden role %s", jsonRequestContext.getLoggedUserId(), userId, role.name()));
-          throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Unauthorized"); 
-        default:
-        break;
+      StaffMember staffMember = ((StaffMember) user);
+      
+      if (staffMember.hasAnyRole(Role.EVERYONE, Role.ADMINISTRATOR, Role.TRUSTED_SYSTEM)) {
+        logger.log(Level.WARNING, String.format("User %d tried to pose user %d who has a forbidden role", jsonRequestContext.getLoggedUserId(), userId));
+        throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Unauthorized"); 
       }
       logger.log(Level.INFO, String.format("User %d posing staff member %d", jsonRequestContext.getLoggedUserId(), user.getId()));
       session.setAttribute("loggedUserId", user.getId());
       session.setAttribute("loggedUserName", user.getFullName());
-      session.setAttribute("loggedUserRoles", Set.of(((StaffMember) user).getRole()));
+      session.setAttribute("loggedUserRoles", Set.copyOf(staffMember.getRoles()));
     } else if (user instanceof Student) {
       logger.log(Level.INFO, String.format("User %d posing student %d", jsonRequestContext.getLoggedUserId(), user.getId()));
       session.setAttribute("loggedUserId", user.getId());

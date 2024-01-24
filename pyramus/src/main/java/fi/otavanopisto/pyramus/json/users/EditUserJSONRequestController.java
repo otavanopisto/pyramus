@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.json.users;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
@@ -38,10 +40,10 @@ import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
-import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.JSONRequestController2;
+import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
-import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -51,7 +53,31 @@ import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
  * 
  * @see fi.otavanopisto.pyramus.views.users.EditUserViewController
  */
-public class EditUserJSONRequestController extends JSONRequestController {
+public class EditUserJSONRequestController extends JSONRequestController2 {
+
+  public EditUserJSONRequestController() {
+    super(PyramusRequestControllerAccess.REQUIRELOGIN);
+  }
+
+  @Override
+  protected boolean checkAccess(RequestContext requestContext) {
+    if (!requestContext.isLoggedIn()) {
+      return false;
+    }
+
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+
+    Long loggedUserId = requestContext.getLoggedUserId();
+    StaffMember staffMember = staffMemberDAO.findById(loggedUserId);
+
+    if (staffMember == null) {
+      return false;
+    }
+    
+    Long userId = requestContext.getLong("userId");
+
+    return staffMember.hasRole(Role.ADMINISTRATOR) || Objects.equals(loggedUserId, userId);
+  }
 
   /**
    * Processes the request to edit an user. Simply gathers the fields submitted from the
@@ -94,7 +120,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     String title = requestContext.getString("title");
-    Role role = Role.getRole(requestContext.getInteger("role").intValue());
+    
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
@@ -157,9 +183,19 @@ public class EditUserJSONRequestController extends JSONRequestController {
       }
     }
     
-    staffMemberDAO.update(staffMember, organization, firstName, lastName, role);
+    staffMemberDAO.update(staffMember, organization, firstName, lastName);
 
     if (loggedUser.hasRole(Role.ADMINISTRATOR)) {
+      Boolean accountActive = requestContext.getBoolean("accountActive");
+      staffMemberDAO.updateEnabled(staffMember, accountActive);
+
+      String[] roleSelections = StringUtils.isNotBlank(requestContext.getString("role")) ? requestContext.getString("role").split(",") : new String[0];
+      Set<Role> roles = new HashSet<>(roleSelections.length);
+      for (String roleSelection : roleSelections) {
+        roles.add(Role.valueOf(roleSelection));
+      }
+      staffMemberDAO.updateRoles(staffMember, roles);
+      
       Integer propertyCount = requestContext.getInteger("propertiesTable.rowCount");
       for (int i = 0; i < (propertyCount != null ? propertyCount : 0); i++) {
         String colPrefix = "propertiesTable." + i;
@@ -348,14 +384,10 @@ public class EditUserJSONRequestController extends JSONRequestController {
       staffMember = staffMemberDAO.findById(staffMember.getId());
       HttpSession session = requestContext.getRequest().getSession(true);
       session.setAttribute("loggedUserName", staffMember.getFullName());
-      session.setAttribute("loggedUserRoles", Set.of(staffMember.getRole()));
+      session.setAttribute("loggedUserRoles", Set.copyOf(staffMember.getRoles()));
     }
 
     requestContext.setRedirectURL(requestContext.getReferer(true));
-  }
-
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
 }

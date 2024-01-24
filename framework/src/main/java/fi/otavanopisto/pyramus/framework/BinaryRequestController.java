@@ -1,5 +1,10 @@
 package fi.otavanopisto.pyramus.framework;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+
+import org.apache.commons.collections.CollectionUtils;
+
 import fi.internetix.smvc.AccessDeniedException;
 import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.RequestContext;
@@ -24,8 +29,8 @@ public abstract class BinaryRequestController implements fi.internetix.smvc.cont
         
         UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
 
-        UserRole userRole = UserUtils.roleToUserRole(user.getRole());
-        if (!contains(roles, userRole)) {
+        EnumSet<UserRole> userRoles = UserUtils.rolesToUserRoles(user.getRoles());
+        if (!CollectionUtils.containsAny(Arrays.asList(roles), userRoles)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
         }
       }

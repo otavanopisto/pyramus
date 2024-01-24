@@ -12,7 +12,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.PersistenceException;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
@@ -93,7 +92,7 @@ public class ManagePermissionsViewController extends PyramusFormViewController {
   }
 
   private Role[] manageableRoles() {
-    return ArrayUtils.removeElement(Role.values(), Role.CLOSED);
+    return Role.values();
   }
   
   private void resetRoles(Role role) {

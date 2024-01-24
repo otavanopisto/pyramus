@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.security;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -20,35 +21,48 @@ import fi.otavanopisto.pyramus.domainmodel.security.EnvironmentRolePermission_;
 public class EnvironmentRolePermissionDAO extends PyramusEntityDAO<EnvironmentRolePermission> {
 
   public EnvironmentRolePermission create(Role role, Permission permission) {
-		EnvironmentRolePermission eurpermission = new EnvironmentRolePermission();
+    EnvironmentRolePermission eurpermission = new EnvironmentRolePermission();
 
-		eurpermission.setRole(role);
-		eurpermission.setPermission(permission);
+    eurpermission.setRole(role);
+    eurpermission.setPermission(permission);
 
-		getEntityManager().persist(eurpermission);
+    getEntityManager().persist(eurpermission);
 
-		return eurpermission;
-	}
+    return eurpermission;
+  }
 
-	// TODO: Not a DAO method
-	public boolean hasEnvironmentPermissionAccess(Role role, Permission permission) {
-		return findByUserRoleAndPermission(role, permission) != null;
-	}
+  public List<EnvironmentRolePermission> listByUserRolesAndPermission(Collection<Role> roles, Permission permission) {
+    EntityManager entityManager = getEntityManager();
+  
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<EnvironmentRolePermission> criteria = criteriaBuilder.createQuery(EnvironmentRolePermission.class);
+    Root<EnvironmentRolePermission> root = criteria.from(EnvironmentRolePermission.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            root.get(EnvironmentRolePermission_.role).in(roles),
+            criteriaBuilder.equal(root.get(EnvironmentRolePermission_.permission), permission)
+        )
+    );
+  
+    return entityManager.createQuery(criteria).getResultList();
+  }
 
-	public EnvironmentRolePermission findByUserRoleAndPermission(Role role, Permission permission) {
-		EntityManager entityManager = getEntityManager();
+  public EnvironmentRolePermission findByUserRoleAndPermission(Role role, Permission permission) {
+    EntityManager entityManager = getEntityManager();
 
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<EnvironmentRolePermission> criteria = criteriaBuilder.createQuery(EnvironmentRolePermission.class);
-		Root<EnvironmentRolePermission> root = criteria.from(EnvironmentRolePermission.class);
-		criteria.select(root);
-		criteria.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(EnvironmentRolePermission_.role), role),
-				criteriaBuilder.equal(root.get(EnvironmentRolePermission_.permission), permission)));
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<EnvironmentRolePermission> criteria = criteriaBuilder.createQuery(EnvironmentRolePermission.class);
+    Root<EnvironmentRolePermission> root = criteria.from(EnvironmentRolePermission.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(EnvironmentRolePermission_.role), role),
+        criteriaBuilder.equal(root.get(EnvironmentRolePermission_.permission), permission)));
 
-		return getSingleResult(entityManager.createQuery(criteria));
-	}
-	
-	public List<EnvironmentRolePermission> listByUserRole(Role role) {
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public List<EnvironmentRolePermission> listByUserRole(Role role) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -60,10 +74,10 @@ public class EnvironmentRolePermissionDAO extends PyramusEntityDAO<EnvironmentRo
     );
 
     return entityManager.createQuery(criteria).getResultList();
-	}
+  }
 
-	@Override
-	public void delete(EnvironmentRolePermission environmentUserRolePermission) {
-		super.delete(environmentUserRolePermission);
-	}
+  @Override
+  public void delete(EnvironmentRolePermission environmentUserRolePermission) {
+    super.delete(environmentUserRolePermission);
+  }
 }

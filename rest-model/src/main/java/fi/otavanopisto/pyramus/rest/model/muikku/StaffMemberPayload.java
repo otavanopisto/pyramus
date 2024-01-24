@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model.muikku;
 
+import java.util.List;
+
 public class StaffMemberPayload {
 
   public String getFirstName() {
@@ -26,14 +28,6 @@ public class StaffMemberPayload {
     this.email = email;
   }
 
-  public String getRole() {
-    return role;
-  }
-
-  public void setRole(String role) {
-    this.role = role;
-  }
-
   public String getIdentifier() {
     return identifier;
   }
@@ -42,10 +36,18 @@ public class StaffMemberPayload {
     this.identifier = identifier;
   }
 
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
+  }
+
   private String identifier;
   private String firstName;
   private String lastName;
   private String email;
-  private String role;
+  private List<String> roles;
 
 }

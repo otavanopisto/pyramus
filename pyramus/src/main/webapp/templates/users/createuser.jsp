@@ -445,17 +445,41 @@
                   <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                     <jsp:param name="titleLocale" value="users.createUser.roleTitle"/>
                     <jsp:param name="helpLocale" value="users.createUser.roleHelp"/>
-                  </jsp:include>                  
-                  <select name="role">
-                    <option value="10"><fmt:message key="users.createUser.roleClosedTitle"/></option>
-                    <option value="1"><fmt:message key="users.createUser.roleGuestTitle"/></option>
-                    <option value="2"><fmt:message key="users.createUser.roleUserTitle"/></option>
-                    <option value="7"><fmt:message key="users.createUser.roleTeacherTitle"/></option>
-                    <option value="8"><fmt:message key="users.createUser.roleStudyGuiderTitle"/></option>
-                    <option value="9"><fmt:message key="users.createUser.roleStudyProgrammeLeaderTitle"/></option>
-                    <option value="3"><fmt:message key="users.createUser.roleManagerTitle"/></option>
-                    <option value="4"><fmt:message key="users.createUser.roleAdministratorTitle"/></option>
-                  </select>
+                  </jsp:include>
+                  <div>
+                    <input type="checkbox" id="role.GUEST" name="role" value="GUEST"/>
+                    <label for="role.GUEST"><fmt:message key="users.createUser.roleGuestTitle"/></label>
+                  </div>
+              
+                  <div>
+                    <input type="checkbox" id="role.USER" name="role" value="USER"/>
+                    <label for="role.USER"><fmt:message key="users.createUser.roleUserTitle"/></label>
+                  </div>
+              
+                  <div>
+                    <input type="checkbox" id="role.TEACHER" name="role" value="TEACHER"/>
+                    <label for="role.TEACHER"><fmt:message key="users.createUser.roleTeacherTitle"/></label>
+                  </div>
+              
+                  <div>
+                    <input type="checkbox" id="role.STUDY_GUIDER" name="role" value="STUDY_GUIDER"/>
+                    <label for="role.STUDY_GUIDER"><fmt:message key="users.createUser.roleStudyGuiderTitle"/></label>
+                  </div>
+              
+                  <div>
+                    <input type="checkbox" id="role.STUDY_PROGRAMME_LEADER" name="role" value="STUDY_PROGRAMME_LEADER"/>
+                    <label for="role.STUDY_PROGRAMME_LEADER"><fmt:message key="users.createUser.roleStudyProgrammeLeaderTitle"/></label>
+                  </div>
+              
+                  <div>
+                    <input type="checkbox" id="role.MANAGER" name="role" value="MANAGER"/>
+                    <label for="role.MANAGER"><fmt:message key="users.createUser.roleManagerTitle"/></label>
+                  </div>
+
+                  <div>
+                    <input type="checkbox" id="role.ADMINISTRATOR" name="role" value="ADMINISTRATOR"/>
+                    <label for="role.ADMINISTRATOR"><fmt:message key="users.createUser.roleAdministratorTitle"/></label>
+                  </div>
                 </div>
               </c:when>
               <c:otherwise>

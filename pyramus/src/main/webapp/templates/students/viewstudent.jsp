@@ -3199,26 +3199,25 @@
                   value="students.viewStudent.roleHelp" />
               </jsp:include>
               <div class="genericViewFormDataText">
-                <c:choose>
-                  <c:when test="${staffMember.role == 'CLOSED'}">
-                    <fmt:message key="students.viewStudent.roleClosedTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'GUEST'}">
-                    <fmt:message key="students.viewStudent.roleGuestTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'USER'}">
-                    <fmt:message key="students.viewStudent.roleUserTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'MANAGER'}">
-                    <fmt:message key="students.viewStudent.roleManagerTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'ADMINISTRATOR'}">
-                    <fmt:message key="students.viewStudent.roleAdministratorTitle"/>
-                  </c:when>
-                  <c:when test="${staffMember.role == 'STUDY_PROGRAMME_LEADER'}">
-                    <fmt:message key="students.viewStudent.roleStudyProgrammeLeaderTitle"/>
-                  </c:when>
-                </c:choose>
+                <c:forEach var="staffMemberRole" items="${staffMember.roles}">
+                  <c:choose>
+                    <c:when test="${staffMemberRole == Role.GUEST}">
+                      <div><fmt:message key="students.viewStudent.roleGuestTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.USER}">
+                      <div><fmt:message key="students.viewStudent.roleUserTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.MANAGER}">
+                      <div><fmt:message key="students.viewStudent.roleManagerTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.ADMINISTRATOR}">
+                      <div><fmt:message key="students.viewStudent.roleAdministratorTitle"/></div>
+                    </c:when>
+                    <c:when test="${staffMemberRole == Role.STUDY_PROGRAMME_LEADER}">
+                      <div><fmt:message key="students.viewStudent.roleStudyProgrammeLeaderTitle"/></div>
+                    </c:when>
+                  </c:choose>
+                </c:forEach>
               </div>
             </div>
   

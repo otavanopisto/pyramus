@@ -2,8 +2,10 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -33,6 +36,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -278,17 +283,32 @@ public class MuikkuRESTService {
 
     // Basic payload validation
     
-    if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail(), payload.getRole())) {
+    if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail())) {
       return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
     }
-    
+
+    if (CollectionUtils.isEmpty(payload.getRoles())) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+
     // Endpoint only supports creation of managers and teachers
     
-    Role role = Role.valueOf(payload.getRole());
-    if (role != Role.MANAGER && role != Role.TEACHER) {
-      return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
-    }
+    EnumSet<Role> roles = EnumSet.noneOf(Role.class);
     
+    for (String roleStr : payload.getRoles()) {
+      Role role = EnumUtils.getEnum(Role.class, roleStr);
+      
+      if (role == Role.MANAGER || role == Role.TEACHER) {
+        roles.add(role);
+      } else {
+        return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", roleStr)).build();
+      }
+    }
+
+    if (roles.isEmpty()) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+
     // Check if user exists based on email
     
     String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
@@ -299,7 +319,7 @@ public class MuikkuRESTService {
     // User creation
     
     Person person = personController.createPerson(null,  null,  null,  null,  Boolean.FALSE);
-    StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), role, person);
+    StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), roles, person);
     personController.updatePersonDefaultUser(person, staffMember);
     userController.addUserEmail(staffMember, defaults.getUserDefaultContactType(), address, Boolean.TRUE);
     payload.setIdentifier(staffMember.getId().toString());
@@ -318,23 +338,32 @@ public class MuikkuRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Payload identifier doesn't match path identifier").build();
     }
     
-    if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail(), payload.getRole())) {
+    if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail())) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+    
+    if (CollectionUtils.isEmpty(payload.getRoles())) {
       return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
     }
     
     // Test allowed roles
     
-    Role role;
-    try {
-      role = Role.valueOf(payload.getRole());
-      if (role != Role.MANAGER && role != Role.TEACHER) {
-        return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
+    EnumSet<Role> roles = EnumSet.noneOf(Role.class);
+    
+    for (String roleStr : payload.getRoles()) {
+      Role role = EnumUtils.getEnum(Role.class, roleStr);
+      
+      if (role == Role.MANAGER || role == Role.TEACHER) {
+        roles.add(role);
+      } else {
+        return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", roleStr)).build();
       }
     }
-    catch (Exception e) {
-      return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
-    }
     
+    if (roles.isEmpty()) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+
     // Find user
     
     Long staffMemberId = Long.valueOf(payload.getIdentifier());
@@ -342,9 +371,12 @@ public class MuikkuRESTService {
     if (staffMember == null || !UserUtils.canAccessOrganization(sessionController.getUser(), staffMember.getOrganization())) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    Role existingRole = staffMember.getRole();
-    if (existingRole != Role.MANAGER && existingRole != Role.TEACHER) {
-      role = existingRole;
+
+    EnumSet<Role> existingRoles = EnumSet.copyOf(staffMember.getRoles());
+
+    // If existing roles include roles that are not within the supported roles, use the original roles
+    if (CollectionUtils.isNotEmpty(CollectionUtils.subtract(existingRoles, EnumSet.of(Role.MANAGER, Role.TEACHER)))) {
+      roles = existingRoles;
     }
 
     List<Email> staffMemberEmails = userController.listStaffMemberEmails(staffMember);
@@ -362,7 +394,8 @@ public class MuikkuRESTService {
 
     // Update user
     
-    staffMember = userController.updateStaffMember(staffMember, staffMember.getOrganization(), payload.getFirstName(), payload.getLastName(), role);
+    staffMember = userController.updateStaffMember(staffMember, staffMember.getOrganization(), payload.getFirstName(), payload.getLastName());
+    staffMember = userController.updateStaffMemberRoles(staffMember, roles);
     
     // Update email
     try {
@@ -593,7 +626,10 @@ public class MuikkuRESTService {
     payload.setFirstName(staffMember.getFirstName());
     payload.setLastName(staffMember.getLastName());
     payload.setEmail(email.getAddress());
-    payload.setRole(staffMember.getRole().toString());
+    List<String> roles = staffMember.getRoles() != null
+        ? staffMember.getRoles().stream().map(role -> role.toString()).collect(Collectors.toList()) 
+        : Collections.emptyList();
+    payload.setRoles(roles);
     return payload;
   }
 

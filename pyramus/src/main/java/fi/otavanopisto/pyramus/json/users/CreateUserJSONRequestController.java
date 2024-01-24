@@ -85,7 +85,13 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     String title = requestContext.getString("title");
-    Role role = Role.getRole(requestContext.getInteger("role"));
+
+    String[] roleSelections = StringUtils.isNotBlank(requestContext.getString("role")) ? requestContext.getString("role").split(",") : new String[0];
+    Set<Role> roles = new HashSet<>(roleSelections.length);
+    for (String roleSelection : roleSelections) {
+      roles.add(Role.valueOf(roleSelection));
+    }
+
     String tagsText = requestContext.getString("tags");
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
@@ -115,7 +121,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     // User
 
     Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
-    StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, role, person, false);
+    StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, roles, person, false);
     if (title != null)
       staffMemberDAO.updateTitle(staffMember, title);
     
@@ -226,7 +232,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
 
 }

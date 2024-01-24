@@ -14,7 +14,6 @@ import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
@@ -48,7 +47,7 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
     try {
       ExternalAuthenticationProvider authenticationProvider = authenticationProviders.getExternalAuthenticationProviders().get(0);
       User user = authenticationProvider.processResponse(requestContext);
-      if (user != null && !Role.CLOSED.equals(user.getRole())) {
+      if (user != null && user.isAccountEnabled()) {
         // User has been authorized, so store him in the session
         
         session.setAttribute("loggedUserId", user.getId());
@@ -56,7 +55,7 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
         session.setAttribute("authenticationProvider", authenticationProvider.getName());
 
         if (user instanceof StaffMember) {
-          session.setAttribute("loggedUserRoles", Set.of(((StaffMember) user).getRole()));
+          session.setAttribute("loggedUserRoles", Set.copyOf(((StaffMember) user).getRoles()));
         }
         
         try {

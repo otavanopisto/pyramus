@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.framework;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -102,14 +104,28 @@ public class UserUtils {
   public static Role getHighestPersonRole(Person person) {
     List<StaffMember> staffMembers = person.getStaffMembers();
     
-    Role role = Role.EVERYONE;
+    Role highestRole = Role.EVERYONE;
     
     for (StaffMember staffMember : staffMembers) {
-      if (isHigherOrEqualRole(staffMember.getRole(), role))
-        role = staffMember.getRole();
+      for (Role staffMemberRole : staffMember.getRoles()) {
+        if (isHigherOrEqualRole(staffMemberRole, highestRole)) {
+          highestRole = staffMemberRole;
+        }
+      }
     }
     
-    return role;
+    return highestRole;
+  }
+
+  public static EnumSet<UserRole> rolesToUserRoles(Collection<Role> roles) {
+    EnumSet<UserRole> userRoles = EnumSet.noneOf(UserRole.class);
+    for (Role role : roles) {
+      UserRole userRole = roleToUserRole(role);
+      if (userRole != null) {
+        userRoles.add(userRole);
+      }
+    }
+    return userRoles;
   }
   
   public static UserRole roleToUserRole(Role role) {
@@ -138,8 +154,6 @@ public class UserUtils {
         return UserRole.STUDY_GUIDER;
       case STUDY_PROGRAMME_LEADER:
         return UserRole.STUDY_PROGRAMME_LEADER;
-      case CLOSED:
-        return UserRole.CLOSED;
         
       default:
         throw new RuntimeException(String.format("Unknown role %s", role));

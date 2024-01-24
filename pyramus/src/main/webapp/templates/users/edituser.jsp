@@ -462,7 +462,7 @@
         }));
         
 
-        <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR) && user.role ne 'ADMINISTRATOR'}">
+        <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR) && !user.roles.contains(Role.ADMINISTRATOR)}">
         relatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
           text: '<fmt:message key="users.editUser.basicTabRelatedActionsPoseAsLabel"/>',
@@ -505,6 +505,21 @@
             
             <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
             
+            <c:choose>
+              <c:when test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
+                <div class="genericFormSection">
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="users.editUser.accountEnabled"/>
+                    <jsp:param name="helpLocale" value="users.editUser.accountEnabledHelp"/>
+                  </jsp:include>                  
+                  <select name="accountActive" class="required">
+                    <option value="true" ${user.enabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.active"/></option>
+                    <option value="false" ${not user.enabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.inactive"/></option>
+                  </select>
+                </div>
+              </c:when>
+            </c:choose>
+
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="terms.organization"/>
@@ -623,33 +638,50 @@
                 <jsp:param name="titleLocale" value="users.editUser.roleTitle"/>
                 <jsp:param name="helpLocale" value="users.editUser.roleHelp"/>
               </jsp:include>
+
               <c:choose>
                 <c:when test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
-                  <select name="role">
-                    <option value="10" <c:if test="${user.role == 'CLOSED'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleClosedTitle"/></option>
-                    <option value="1" <c:if test="${user.role == 'GUEST'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleGuestTitle"/></option>
-                    <option value="2" <c:if test="${user.role == 'USER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleUserTitle"/></option>
-                    <option value="7" <c:if test="${user.role == 'TEACHER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleTeacherTitle"/></option>
-                    <option value="8" <c:if test="${user.role == 'STUDY_GUIDER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleStudyGuiderTitle"/></option>
-                    <option value="9" <c:if test="${user.role == 'STUDY_PROGRAMME_LEADER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleStudyProgrammeLeaderTitle"/></option>
-                    <option value="3" <c:if test="${user.role == 'MANAGER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleManagerTitle"/></option>
-                    <option value="4" <c:if test="${user.role == 'ADMINISTRATOR'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleAdministratorTitle"/></option>
-                  </select>
+                  <c:set var="rolesDisabled" value=""/>
                 </c:when>
                 <c:otherwise>
-                  <input type="hidden" name="role" value="${user.role.value}"/>
-                  <c:choose>
-                    <c:when test="${user.role == 'CLOSED'}"><div><fmt:message key="users.editUser.roleClosedTitle"/></div></c:when>
-                    <c:when test="${user.role == 'GUEST'}"><div><fmt:message key="users.editUser.roleGuestTitle"/></div></c:when>
-                    <c:when test="${user.role == 'USER'}"><div><fmt:message key="users.editUser.roleUserTitle"/></div></c:when>
-                    <c:when test="${user.role == 'TEACHER'}"><div><fmt:message key="users.editUser.roleTeacherTitle"/></div></c:when>
-                    <c:when test="${user.role == 'STUDY_GUIDER'}"><div><fmt:message key="users.editUser.roleStudyGuiderTitle"/></div></c:when>
-                    <c:when test="${user.role == 'STUDY_PROGRAMME_LEADER'}"><div><fmt:message key="users.editUser.roleStudyProgrammeLeaderTitle"/></div></c:when>
-                    <c:when test="${user.role == 'MANAGER'}"><div><fmt:message key="users.editUser.roleManagerTitle"/></div></c:when>
-                    <c:when test="${user.role == 'ADMINISTRATOR'}"><div><fmt:message key="users.editUser.roleAdministratorTitle"/></div></c:when>
-                  </c:choose>
+                  <c:set var="rolesDisabled" value="disabled"/>
                 </c:otherwise>
               </c:choose>
+              
+              <div>
+                <input type="checkbox" id="role.GUEST" name="role" value="GUEST" ${user.roles.contains(Role.GUEST) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <label for="role.GUEST"><fmt:message key="users.editUser.roleGuestTitle"/></label>
+              </div>
+              
+              <div>
+                <input type="checkbox" id="role.USER" name="role" value="USER" ${user.roles.contains(Role.USER) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <label for="role.USER"><fmt:message key="users.editUser.roleUserTitle"/></label>
+              </div>
+              
+              <div>
+                <input type="checkbox" id="role.TEACHER" name="role" value="TEACHER" ${user.roles.contains(Role.TEACHER) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <label for="role.TEACHER"><fmt:message key="users.editUser.roleTeacherTitle"/></label>
+              </div>
+              
+              <div>
+                <input type="checkbox" id="role.STUDY_GUIDER" name="role" value="STUDY_GUIDER" ${user.roles.contains(Role.STUDY_GUIDER) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <label for="role.STUDY_GUIDER"><fmt:message key="users.editUser.roleStudyGuiderTitle"/></label>
+              </div>
+              
+              <div>
+                <input type="checkbox" id="role.STUDY_PROGRAMME_LEADER" name="role" value="STUDY_PROGRAMME_LEADER" ${user.roles.contains(Role.STUDY_PROGRAMME_LEADER) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <label for="role.STUDY_PROGRAMME_LEADER"><fmt:message key="users.editUser.roleStudyProgrammeLeaderTitle"/></label>
+              </div>
+              
+              <div>
+                <input type="checkbox" id="role.MANAGER" name="role" value="MANAGER" ${user.roles.contains(Role.MANAGER) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <label for="role.MANAGER"><fmt:message key="users.editUser.roleManagerTitle"/></label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="role.ADMINISTRATOR" name="role" value="ADMINISTRATOR" ${user.roles.contains(Role.ADMINISTRATOR) ? 'checked="checked"' : ''} ${rolesDisabled} />
+                <label for="role.ADMINISTRATOR"><fmt:message key="users.editUser.roleAdministratorTitle"/></label>
+              </div>
             </div>
                 
             <c:choose>

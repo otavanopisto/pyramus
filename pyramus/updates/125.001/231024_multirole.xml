@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    alter table StaffMember add column enabled bit not null;
+  </sql>
+
+  <sql>
+    update StaffMember set enabled = false;
+  </sql>
+
+  <sql>
+    update StaffMember set enabled = true where role is not null and role not in ('CLOSED');
+  </sql>
+
+  <sql>
+    create table StaffMemberRoles (
+       staffMember_id bigint not null,
+       role varchar(255)
+    );
+  </sql>
+
+  <sql>
+    alter table StaffMemberRoles 
+       add constraint FKkvpgdmaikfaxixcejeoxtfuce 
+       foreign key (staffMember_id) 
+       references StaffMember (id);
+  </sql>
+
+  <sql>
+    insert into StaffMemberRoles (staffMember_id, role)
+    select id, role 
+    from StaffMember
+    where role is not null and role not in ('CLOSED');
+  </sql>
+
+  <sql>
+    alter table StaffMember drop column role;
+  </sql>
+  
+</update>

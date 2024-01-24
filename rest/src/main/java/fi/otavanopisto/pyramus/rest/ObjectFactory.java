@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -867,13 +868,17 @@ public class ObjectFactory {
             variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
           };
           
-          UserRole role = UserRole.valueOf(entity.getRole().name());
+          EnumSet<UserRole> userRoles = EnumSet.noneOf(UserRole.class);
+          if (entity.getRoles() != null) {
+            entity.getRoles().forEach(role -> userRoles.add(UserRole.valueOf(role.name())));
+          }
+
           String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
           Long personId = entity.getPerson() != null ? entity.getPerson().getId() : null;
           Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
           
           return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, organizationId, additionalContactInfo, 
-              entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables,
+              entity.getFirstName(), entity.getLastName(), entity.getTitle(), userRoles, tags, variables,
               entity.getStudyProgrammes().stream().map(StudyProgramme::getId).collect(Collectors.toSet()));
         }
       },

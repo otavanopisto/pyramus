@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -34,12 +35,10 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
     
     String text = requestContext.getString("text");
     Role role = (Role) requestContext.getEnum("role", Role.class);
-    Role[] roles;
+    Set<Role> roles = null;
     
-    if (role == null) {
-      roles = new Role[] { Role.ADMINISTRATOR, Role.EVERYONE, Role.GUEST, Role.MANAGER, Role.USER, Role.TEACHER, Role.STUDY_GUIDER, Role.STUDY_PROGRAMME_LEADER };
-    } else {
-      roles = new Role[] { role };
+    if (role != null) {
+      roles = Set.of(role);
     }
 
     SearchResult<StaffMember> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, roles);
