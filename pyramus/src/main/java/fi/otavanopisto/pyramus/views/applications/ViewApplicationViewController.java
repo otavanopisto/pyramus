@@ -162,7 +162,7 @@ public class ViewApplicationViewController extends PyramusViewController {
 
       // Alaikäisen hakemustiedot
       
-      if (ApplicationUtils.isUnderage(formData)) {
+      if (ApplicationUtils.isUnderage(application)) {
         fields = new LinkedHashMap<>();
         sections.put("Alaikäisen hakemustiedot", fields);
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-grounds"))) { 
@@ -419,19 +419,12 @@ public class ViewApplicationViewController extends PyramusViewController {
 
     // SSN checks
     
-    String ssn = ApplicationUtils.constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
+    String ssn = ApplicationUtils.extractSSN(application);
     if (!StringUtils.isBlank(ssn)) {
-      
-      // Also check SSNs with "wrong" delimiter
-      
-      char[] ssnChars = ssn.toCharArray();
-      ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
-      String wrongSSN = String.valueOf(ssnChars);
       
       // Persons by SSN
       
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
-      persons.addAll(personDAO.listBySSNUppercase(wrongSSN));
       for (Person person : persons) {
         personIds.add(person.getId());
         String url = String.format("/students/viewstudent.page?person=%d", person.getId());
@@ -514,10 +507,10 @@ public class ViewApplicationViewController extends PyramusViewController {
         conflicts.add("Hakijan henkilötunnuksen loppuosa on XXXX");
       }
       // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
-      if (StringUtils.equals(application.getLine(), "aineopiskelu") && ApplicationUtils.isInternetixUnderage(formData)) {
+      if (StringUtils.equals(application.getLine(), "aineopiskelu") && ApplicationUtils.isInternetixUnderage(application)) {
         conflicts.add("Hakija on alle 20 (vain 1.1.2005 jälkeen syntyneet)");
       }
-      else if (ApplicationUtils.isUnderage(formData)) {
+      else if (ApplicationUtils.isUnderage(application)) {
         conflicts.add("Hakija on alaikäinen");
       }
     }

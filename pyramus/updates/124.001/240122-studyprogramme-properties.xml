@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+    create table StudyProgrammeProperties (
+      studyProgramme_id bigint not null,
+      value varchar(255),
+      name varchar(100) not null,
+      primary key (studyProgramme_id, name)
+    );
+  </sql>
+  
+  <sql>
+    alter table StudyProgrammeProperties 
+      add constraint FKfxiekq0ykoek7g4h6uwrxx8j1 
+      foreign key (studyProgramme_id) 
+      references StudyProgramme (id);
+  </sql>
+  
+</update>

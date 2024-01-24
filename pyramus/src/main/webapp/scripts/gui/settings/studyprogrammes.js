@@ -5,7 +5,7 @@ var studyProgrammes = JSDATA["studyProgrammes"].evalJSON();
 
 function addStudyProgrammesTableRow() {
   var table = getIxTableById('studyProgrammesTable');
-  var rowIndex = table.addRow([ '', '', '', '', '', '', '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ '', '', '', '', '', '', '', '', '', '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -94,10 +94,18 @@ function onLoad(event) {
         {
           header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableOfficialEducationTypeHeader"),
           left : 346 + 200 + 8 + 200 + 8 + 200 + 8,
-          right : 8 + 22 + 8 + 100 + 8,
+          right : 8 + 22 + 8 + 100 + 8 + 100 + 8,
           dataType : 'text',
           editable : false,
           paramName : 'officialEducationType'
+        },
+        {
+          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableHasAutomaticSubjectChoices"),
+          width: 100,
+          right : 8 + 22 + 8 + 100 + 8,
+          dataType : 'checkbox',
+          editable : false,
+          paramName : 'hasAutomaticSubjectChoices'
         },
         {
           header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableHasEvaluationFeesHeader"),
@@ -181,8 +189,9 @@ function onLoad(event) {
   var rows = new Array();
   for (var i = 0, l = studyProgrammes.length; i < l; i++) {
     var studyProgramme = studyProgrammes[i];
+    var hasAutomaticSubjectChoices = studyProgramme.hasAutomaticSubjectChoices == true ? "1" : "";
     var hasEvaluationFees = studyProgramme.hasEvaluationFees == true ? "1" : "";
-    rows.push([ '', jsonEscapeHTML(studyProgramme.name), studyProgramme.organizationId, studyProgramme.categoryId, studyProgramme.code, studyProgramme.officialEducationType, hasEvaluationFees, '', '', studyProgramme.id, 0 ]);
+    rows.push([ '', jsonEscapeHTML(studyProgramme.name), studyProgramme.organizationId, studyProgramme.categoryId, studyProgramme.code, studyProgramme.officialEducationType, hasAutomaticSubjectChoices, hasEvaluationFees, '', '', studyProgramme.id, 0 ]);
   }
   studyProgrammeTable.addRows(rows);
 
