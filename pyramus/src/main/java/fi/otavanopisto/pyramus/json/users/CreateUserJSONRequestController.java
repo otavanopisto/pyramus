@@ -97,6 +97,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
     Long organizationId = requestContext.getLong("organizationId");
+    Boolean accountActive = requestContext.getBoolean("accountActive");
 
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
     Organization organization = organizationId != null ? organizationDAO.findById(organizationId) : null;
@@ -122,11 +123,14 @@ public class CreateUserJSONRequestController extends JSONRequestController {
 
     Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
     StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, roles, person, false);
-    if (title != null)
-      staffMemberDAO.updateTitle(staffMember, title);
+    staffMember = staffMemberDAO.updateEnabled(staffMember, accountActive);
+
+    if (StringUtils.isNotBlank(title)) {
+      staffMember = staffMemberDAO.updateTitle(staffMember, title);
+    }
     
-    if(person.getDefaultUser() == null){
-      personDAO.updateDefaultUser(person, staffMember);
+    if (person.getDefaultUser() == null) {
+      person = personDAO.updateDefaultUser(person, staffMember);
     }
     
     // Authentication
