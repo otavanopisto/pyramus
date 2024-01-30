@@ -139,16 +139,4 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
     return studentParent;
   }
 
-//  @Override
-//  public void delete(StudentParent user) {
-//    Long id = user.getId();
-//    
-//    if (user.getPerson() != null)
-//      user.getPerson().removeUser(user);
-//
-//    super.delete(user);
-//    
-//    staffMemberDeletedEvent.fire(new StaffMemberDeletedEvent(id));
-//  }
-  
 }

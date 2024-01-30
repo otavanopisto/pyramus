@@ -1,8 +1,5 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -118,16 +115,7 @@ public class StudentParent extends User {
     }
     
     // Check for underage
-    if (student.getPerson() != null && student.getPerson().getBirthday() != null) {
-      LocalDate birthday = Instant.ofEpochMilli(student.getPerson().getBirthday().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-      LocalDate threshold = LocalDate.now().minusYears(18);
-
-      if (birthday.isAfter(threshold)) {
-        return true;
-      }
-    }
-
-    return false;
+    return student.getPerson() != null && Boolean.TRUE.equals(student.getPerson().isUnderAge());
   }
   
   @OneToMany (mappedBy = "studentParent")
