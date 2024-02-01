@@ -34,10 +34,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
-import fi.otavanopisto.pyramus.framework.EntityProperty;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
-import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
@@ -137,8 +135,7 @@ public class EditStudentParentViewController extends PyramusViewController imple
     // Audit (not logging when returning to this page after save reloads it) 
 
     if (!StringUtils.contains(pageRequestContext.getReferer(false), "editstudentparent.page")) {
-      // TODO
-//      staffDAO.auditView(user.getPersonId(), user.getId(), "Edit staff");
+      studentParentDAO.auditView(user.getPersonId(), user.getId(), "Edit Student Parent");
     }
     
     List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();

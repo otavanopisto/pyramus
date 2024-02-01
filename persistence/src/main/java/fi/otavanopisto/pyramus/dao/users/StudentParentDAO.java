@@ -57,7 +57,6 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
     
     persist(studentParent);
 
-    // ???
     person.addUser(studentParent);
     person.setDefaultUser(studentParent);
     getEntityManager().persist(person);
@@ -128,6 +127,8 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
   }
   
   public StudentParent update(StudentParent studentParent, String firstName, String lastName) {
+    auditUpdate(studentParent.getPersonId(), studentParent.getId(), studentParent, StudentParent_.firstName, firstName, true);
+    auditUpdate(studentParent.getPersonId(), studentParent.getId(), studentParent, StudentParent_.lastName, lastName, true);
     
     studentParent.setFirstName(firstName);
     studentParent.setLastName(lastName);

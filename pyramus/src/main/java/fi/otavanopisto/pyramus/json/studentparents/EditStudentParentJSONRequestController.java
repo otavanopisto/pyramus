@@ -25,7 +25,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
@@ -37,14 +36,14 @@ import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 
 /**
- * The controller responsible of editing an existing Pyramus user. 
+ * The controller responsible of editing an existing Student Parent. 
  * 
- * @see fi.otavanopisto.pyramus.views.users.EditUserViewController
+ * @see fi.otavanopisto.pyramus.views.studentparents.EditStudentParentViewController
  */
 public class EditStudentParentJSONRequestController extends JSONRequestController {
 
   /**
-   * Processes the request to edit an user. Simply gathers the fields submitted from the
+   * Processes the request to edit a student parent. Simply gathers the fields submitted from the
    * web page and updates the database.
    * 
    * @param jsonRequestContext The JSON request context
@@ -67,31 +66,24 @@ public class EditStudentParentJSONRequestController extends JSONRequestControlle
 
     StudentParent studentParent = studentParentDAO.findById(userId);
 
-//    if (staffMember.getOrganization() != null) {
-//      // Check that the editing user has access to the organization
-//      if (!UserUtils.canAccessOrganization(loggedUser, staffMember.getOrganization())) {
-//        throw new RuntimeException("Cannot access users' organization");
-//      }
-//    } else {
-//      // Check that the editing user has generic access when users' organization is null
-//      if (!UserUtils.canAccessAllOrganizations(loggedUser)) {
-//        throw new RuntimeException("Cannot access users' organization");
-//      }
-//    }
+    if (studentParent.getOrganization() != null) {
+      // Check that the editing user has access to the organization
+      if (!UserUtils.canAccessOrganization(loggedUser, studentParent.getOrganization())) {
+        throw new RuntimeException("Cannot access users' organization");
+      }
+    } else {
+      // Check that the editing user has generic access when users' organization is null
+      if (!UserUtils.canAccessAllOrganizations(loggedUser)) {
+        throw new RuntimeException("Cannot access users' organization");
+      }
+    }
 
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     
-    String[] roleSelections = StringUtils.isNotBlank(requestContext.getString("role")) ? requestContext.getString("role").split(",") : new String[0];
-    Set<Role> roles = new HashSet<>(roleSelections.length);
-    for (String roleSelection : roleSelections) {
-      roles.add(Role.valueOf(roleSelection));
-    }
-
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
-    String tagsText = requestContext.getString("tags");
     
     Long organizationId = requestContext.getLong("organizationId");
     Organization organization = null;
