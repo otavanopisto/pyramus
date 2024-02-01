@@ -356,21 +356,6 @@
             
             <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
             
-            <c:choose>
-              <c:when test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
-                <div class="genericFormSection">
-                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                    <jsp:param name="titleLocale" value="users.editUser.accountEnabled"/>
-                    <jsp:param name="helpLocale" value="users.editUser.accountEnabledHelp"/>
-                  </jsp:include>                  
-                  <select name="accountActive" class="required">
-                    <option value="true" ${user.accountEnabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.active"/></option>
-                    <option value="false" ${not user.accountEnabled ? 'selected="selected"' : ''}><fmt:message key="users.editUser.accountEnabledStatus.inactive"/></option>
-                  </select>
-                </div>
-              </c:when>
-            </c:choose>
-
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="users.editUser.firstNameTitle"/>
