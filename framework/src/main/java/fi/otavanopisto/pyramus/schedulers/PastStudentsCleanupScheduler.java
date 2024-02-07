@@ -12,6 +12,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -108,9 +110,15 @@ public class PastStudentsCleanupScheduler {
    */
   private int getBatchSize() {
     String value = SettingUtils.getSettingValue(PASTSTUDENTSCLEANUPSHCEDULER_BATCHSIZE_VARIABLE);
-    try {
-      return Integer.parseInt(value);
-    } catch (NumberFormatException nfe) {
+    
+    if (StringUtils.isNotBlank(value)) {
+      try {
+        return Integer.parseInt(value);
+      } catch (Exception nfe) {
+        return MAX_STUDENTS_BATCHSIZE_DEFAULT;
+      }
+    }
+    else {
       return MAX_STUDENTS_BATCHSIZE_DEFAULT;
     }
   }
