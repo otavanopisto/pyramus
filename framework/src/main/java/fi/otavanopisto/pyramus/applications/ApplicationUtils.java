@@ -848,7 +848,7 @@ public class ApplicationUtils {
       return null;
     }
     JSONObject formData = JSONObject.fromObject(application.getFormData());
-    String ssn = getFormValue(formData, "field-ssn");
+    String ssn = StringUtils.upperCase(getFormValue(formData, "field-ssn"));
     if (!StringUtils.isEmpty(ssn)) {
       if (ssn.length() != 11) {
         logger.severe(String.format("Invalid SSN format %s", ssn));
