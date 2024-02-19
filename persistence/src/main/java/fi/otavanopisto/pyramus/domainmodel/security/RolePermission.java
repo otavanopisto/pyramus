@@ -32,12 +32,12 @@ public class RolePermission {
   }
 
   public Role getRole() {
-		return role;
-	}
+    return role;
+  }
   
   public void setRole(Role role) {
-		this.role = role;
-	}
+    this.role = role;
+  }
 
   public Permission getPermission() {
     return permission;
