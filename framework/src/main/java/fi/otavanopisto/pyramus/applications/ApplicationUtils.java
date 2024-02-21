@@ -1440,7 +1440,7 @@ public class ApplicationUtils {
         applicationLogDAO.create(
             application,
             ApplicationLogType.HTML,
-            String.format("<p>%s%s%s</p>", "Huoltajalle ", guardian.getEmail(), " lähetetty ohjeet Muikku-tunnuksien luomiseen"),
+            String.format("<p>%s %s %s</p><p><b>%s</b></p>%s", "Huoltajalle", guardian.getEmail(), "lähetetty ohjeet Muikku-tunnuksien luomiseen", subject, content),
             null);
       }
     }
