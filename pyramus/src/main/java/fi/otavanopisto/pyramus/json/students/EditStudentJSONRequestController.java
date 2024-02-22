@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
@@ -58,6 +59,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
@@ -143,12 +146,17 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentCardDAO studentCardDAO = DAOFactory.getInstance().getStudentCardDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
     Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
     Person person = personDAO.findById(personId);
 
+    StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType", StudentCardType.class);
+    Date studentCardExpires = requestContext.getDate("expiryDate");
+    Boolean active = requestContext.getBoolean("active");
+    
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
     Sex sex = (Sex) requestContext.getEnum("gender", Sex.class);
@@ -523,7 +531,29 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           ApplicationUtils.deleteApplication(application);
         }
       }
+      
+      // Student card
+      
+      StudentCard studentCard = studentCardDAO.findByStudent(student.getId());
+
+      Date expiryDate = null;
+      
+      if (student.getStudyEndDate() != null) {
+        expiryDate = student.getStudyEndDate();
+      } else if (studentCardExpires != null) {
+        expiryDate = studentCardExpires;
+      }  else {
+        expiryDate = student.getStudyTimeEnd();
+      }
+      
+      if (studentCard != null) {
+        studentCardDAO.update(studentCard, active, expiryDate, studentCardType);
+      } else {
+        
+        studentCardDAO.create(student.getId(), false, expiryDate, studentCardType);
+      }
     }
+    
 
     // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed
