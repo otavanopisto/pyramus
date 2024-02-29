@@ -66,6 +66,8 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
 
     Long personId = requestContext.getLong("personId");
+    // If the user is being created under existing person, skip credentials
+    boolean createCredentials = personId == null;
     
     int emailCount2 = requestContext.getInteger("emailTable.rowCount");
     for (int i = 0; i < emailCount2; i++) {
@@ -135,7 +137,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     
     // Authentication
     
-    if (AuthenticationProviderVault.getInstance().hasInternalStrategies()) {
+    if (AuthenticationProviderVault.getInstance().hasInternalStrategies() && createCredentials) {
       boolean usernameBlank = StringUtils.isBlank(username);
       boolean passwordBlank = StringUtils.isBlank(password);
       
