@@ -62,6 +62,7 @@
           parameters: {
             text: searchForm.text.value,
             role: searchForm.role.value,
+            enabled: searchForm.enabled.value,
             page: page
           },
           onSuccess: function (jsonResponse) {
@@ -136,6 +137,18 @@
                 <option value="TEACHER"><fmt:message key="users.searchUsers.roleTeacherTitle"/></option>
                 <option value="STUDY_GUIDER"><fmt:message key="users.searchUsers.roleStudyGuiderTitle"/></option>
                 <option value="STUDY_PROGRAMME_LEADER"><fmt:message key="users.searchUsers.roleStudyProgrammeLeaderTitle"/></option>
+              </select>
+            </div>
+            
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="users.searchUsers.enabledTitle"/>
+                <jsp:param name="helpLocale" value="users.searchUsers.enabledHelp"/>
+              </jsp:include>      
+              <select name="enabled">
+                <option><fmt:message key="users.searchUsers.enabledShowAll"/></option>
+                <option value="true"><fmt:message key="users.searchUsers.enabledShowActive"/></option>
+                <option value="false"><fmt:message key="users.searchUsers.enabledShowClosed"/></option>
               </select>
             </div>
             
