@@ -389,7 +389,7 @@
               <input type="text" name="title" size="30">
             </div>
         
-            <c:if test="${hasInternalAuthenticationStrategies}">
+            <c:if test="${hasInternalAuthenticationStrategies && createCredentials}">
               <div id="createUserCredentialsContainer">
                 <div class="genericFormSection">  
                   <jsp:include page="/templates/generic/fragments/formtitle.jsp">

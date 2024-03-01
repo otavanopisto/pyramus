@@ -29,6 +29,7 @@ import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -257,7 +258,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
 
   @SuppressWarnings("unchecked")
   public SearchResult<StaffMember> searchUsers(int resultsPerPage, int page, String firstName, String lastName, String tags,
-      String email, Set<Role> roles) {
+      String email, Set<Role> roles, TSB enabled) {
 
     int firstResult = page * resultsPerPage;
     
@@ -282,6 +283,12 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
       queryBuilder.append(")");
     }
 
+    if (enabled.isBoolean()) {
+      queryBuilder.append("+(");
+      addTokenizedSearchCriteria(queryBuilder, "enabled", enabled.booleanValue().toString(), false);
+      queryBuilder.append(")");
+    }
+    
     if (CollectionUtils.isNotEmpty(roles)) {
       queryBuilder.append("+(");
       for (Role role : roles) {
