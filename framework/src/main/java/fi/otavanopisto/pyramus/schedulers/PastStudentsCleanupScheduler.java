@@ -12,6 +12,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -23,7 +25,8 @@ import fi.otavanopisto.pyramus.schedulers.shredder.ShredderTask;
 @Singleton
 public class PastStudentsCleanupScheduler {
 
-  private static final int MAX_STUDENTS_BATCH = 50;
+  private static final int MAX_STUDENTS_BATCHSIZE_DEFAULT = 50;
+  private static final String PASTSTUDENTSCLEANUPSHCEDULER_BATCHSIZE_VARIABLE = "paststudentscleanupscheduler.batchSize";
   private static final String PASTSTUDENTSCLEANUPSHCEDULER_ENABLED_VARIABLE = "paststudentscleanupscheduler.enabled";
   
   @Inject
@@ -45,7 +48,7 @@ public class PastStudentsCleanupScheduler {
       return;
     }
     
-    int maxStudents = MAX_STUDENTS_BATCH;
+    int maxStudents = getBatchSize();
     
     for (ShredderTask shredderSuggester : shredderTasks) {
       List<Student> students = shredderSuggester.suggest(maxStudents);
@@ -82,6 +85,12 @@ public class PastStudentsCleanupScheduler {
       SettingKey settingKey = settingKeyDAO.create(PASTSTUDENTSCLEANUPSHCEDULER_ENABLED_VARIABLE);
       settingDAO.create(settingKey, "false");
     }
+    
+    // Create batchSize variable with default value if it doesn't exist
+    if (settingKeyDAO.findByName(PASTSTUDENTSCLEANUPSHCEDULER_BATCHSIZE_VARIABLE) == null) {
+      SettingKey settingKey = settingKeyDAO.create(PASTSTUDENTSCLEANUPSHCEDULER_BATCHSIZE_VARIABLE);
+      settingDAO.create(settingKey, String.valueOf(MAX_STUDENTS_BATCHSIZE_DEFAULT));
+    }
   }
 
   /**
@@ -92,6 +101,26 @@ public class PastStudentsCleanupScheduler {
   private boolean isEnabled() {
     String value = SettingUtils.getSettingValue(PASTSTUDENTSCLEANUPSHCEDULER_ENABLED_VARIABLE);
     return Boolean.parseBoolean(value);
+  }
+
+  /**
+   * Returns batch size from variable.
+   * 
+   * @return batch size from variable
+   */
+  private int getBatchSize() {
+    String value = SettingUtils.getSettingValue(PASTSTUDENTSCLEANUPSHCEDULER_BATCHSIZE_VARIABLE);
+    
+    if (StringUtils.isNotBlank(value)) {
+      try {
+        return Integer.parseInt(value);
+      } catch (Exception nfe) {
+        return MAX_STUDENTS_BATCHSIZE_DEFAULT;
+      }
+    }
+    else {
+      return MAX_STUDENTS_BATCHSIZE_DEFAULT;
+    }
   }
 
   /**
