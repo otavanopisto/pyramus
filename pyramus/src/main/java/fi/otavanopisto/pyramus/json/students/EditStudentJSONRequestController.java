@@ -557,7 +557,9 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           expiryDate = studentCardExpires;
         }
         
-        studentCardDAO.create(student, active, expiryDate, studentCardType);
+        if (studentCardType != null) {
+          studentCardDAO.create(student, active, expiryDate, studentCardType);
+        }
         
       }
     }

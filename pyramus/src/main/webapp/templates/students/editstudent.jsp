@@ -1096,7 +1096,7 @@
                   <jsp:param name="titleLocale" value="students.editStudent.studyProgrammeTitle"/>
                   <jsp:param name="helpLocale" value="students.editStudent.studyProgrammeHelp"/>
                 </jsp:include>            
-                <div>${student.studyProgramme.name}<c:if test="${student.studyProgramme.archived}"> *</c:if></div>
+                <div>${student.studyProgramme.name}<c:if test="${student.hasFinishedStudies}">*</c:if></div>
               </div>
             <div class="genericFormSection"> </div>
             <div class="genericFormSection">               
@@ -1127,19 +1127,17 @@
               <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${studentCard.expiryDate.time}">
             </div>
             
-            <div class="genericFormSection">    
-                       
+            <div class="genericFormSection">
               		<jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 		<jsp:param name="titleLocale" value="integrations.slice.status"/>
               		</jsp:include>      
-              	    <c:choose>
-                	  <c:when test="${studentCard.active}">
-                	    <input type="checkbox" name="active.${student.id}" value="true" checked="checked" />
-                	  </c:when>
+              	  	<c:choose>
+                	  <c:when test="${studentCard.active}"><input type="checkbox" name="active.${student.id}" value="true" checked="checked"/></c:when>
                 	  <c:otherwise>
-                	    <input type="checkbox" name="active.${student.id}" value="false" />
+                	    <input type="checkbox" name="active.${student.id}" value="true"/>
                 	  </c:otherwise>              
-              	  	</c:choose>
+              		</c:choose>
+              
               	  	<fmt:message key="integrations.slice.active"/>
             	  </div>
             	  </div>
