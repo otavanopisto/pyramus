@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCardType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCard_;
@@ -16,7 +17,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentCard_;
 @Stateless
 public class StudentCardDAO extends PyramusEntityDAO<StudentCard> {
  
-  public StudentCard create(Long student, Boolean active, Date expiryDate, StudentCardType type) {
+  public StudentCard create(Student student, Boolean active, Date expiryDate, StudentCardType type) {
     EntityManager entityManager = getEntityManager();
     
     StudentCard studentCard = new StudentCard();
@@ -63,11 +64,9 @@ public class StudentCardDAO extends PyramusEntityDAO<StudentCard> {
     Root<StudentCard> root = criteria.from(StudentCard.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(StudentCard_.userSchoolDataIdentifier_id), studentId)
-        ));
+        criteriaBuilder.equal(root.get(StudentCard_.student), studentId)
+      );
     
     return getSingleResult(entityManager.createQuery(criteria));
   }
-  
 }

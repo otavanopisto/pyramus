@@ -9,7 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.TableGenerator;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -21,12 +21,12 @@ public class StudentCard {
     return id;
   }
 
-  public Long getStudent() {
-    return userSchoolDataIdentifier_id;
+  public Student getStudent() {
+    return student;
   }
 
-  public void setStudent(Long userSchoolDataIdentifier_id) {
-    this.userSchoolDataIdentifier_id = userSchoolDataIdentifier_id;
+  public void setStudent(Student student) {
+    this.student = student;
   }
 
   public StudentCardType getType() {
@@ -55,16 +55,14 @@ public class StudentCard {
 
 
   @Id 
-  @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentCard")  
-  @TableGenerator(name="StudentCard", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @GeneratedValue (strategy = GenerationType.IDENTITY) 
   private Long id;
   
   @NotNull
-  @Column (nullable = false)
-  private Long userSchoolDataIdentifier_id;
+  @OneToOne 
+  private Student student;
   
-  @NotNull
-  @Column(nullable = false)
+  @Column
   @Enumerated (EnumType.STRING)
   private StudentCardType type;
 

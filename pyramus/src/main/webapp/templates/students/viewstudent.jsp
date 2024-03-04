@@ -2859,7 +2859,8 @@
                       <jsp:param name="helpLocale"
                         value="students.viewStudent.firstNameHelp" />
                     </jsp:include>
-                    <div class="genericViewFormDataText">${student.firstName}</div>
+                    <div class="genericViewFormDataText">
+                    ${student.firstName}</div>                       	
                   </div>
                   
                   <div class="genericFormSection"
@@ -2873,6 +2874,21 @@
                     </jsp:include>
                     <div class="genericViewFormDataText">${student.lastName}</div>
                   </div>
+                  
+                  <c:choose>
+                    <c:when test="${!empty student.studyProgramme}">
+                      <div class="genericFormSection">
+                        <jsp:include
+                          page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale"
+                            value="students.viewStudent.studyProgrammeTitle" />
+                          <jsp:param name="helpLocale"
+                            value="students.viewStudent.studyProgrammeHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">${student.studyProgramme.name}</div>
+                      </div>
+                    </c:when>
+                  </c:choose>
                   
                   <c:choose>
                     <c:when test="${!empty person.birthday}">
@@ -2928,8 +2944,8 @@
               		</jsp:include>     
               		<div class="genericViewFormDataText">
               		  <c:choose>
-                        <c:when test="${!empty studentCard.expiryDate}">
-                          <fmt:formatDate value="${studentCard.expiryDate}" />
+                        <c:when test="${!empty studentCards[student.id].expiryDate}">
+                          <fmt:formatDate value="${studentCards[student.id].expiryDate}" />
                         
                  	    </c:when>
                  	    
@@ -2948,17 +2964,13 @@
               		</jsp:include>            
               	    <div class="genericViewFormDataText">
               	      <c:choose>
-                        <c:when test="${!empty studentCard.type}">
+                        <c:when test="${!empty studentCards[student.id].type}">
                         <c:choose>
-                        <c:when test="${studentCard.type == 'BLUE'}">
+                        <c:when test="${studentCards[student.id].type == 'BLUE'}">
                         <fmt:message key="generic.studentCardTypes.blue"/>
                         </c:when>
-                        <c:when test="${studentCard.type == 'GREEN'}">
+                        <c:when test="${studentCards[student.id].type == 'GREEN'}">
                         <fmt:message key="generic.studentCardTypes.green"/>
-                        </c:when>
-                        
-                        <c:when test="${studentCard.type == 'NONE'}">
-                        <fmt:message key="generic.studentCardTypes.none"/>
                         </c:when>
                         <c:otherwise>
                           <div>
@@ -2982,7 +2994,7 @@
                 		<jsp:param name="titleLocale" value="integrations.slice.status"/>
               		</jsp:include>      
               	    <c:choose>
-                	  <c:when test="${studentCard.active}">
+                	  <c:when test="${studentCards[student.id].active}">
                 	    <fmt:message key="integrations.slice.active"/>
                 	  </c:when>
                 	  <c:otherwise>

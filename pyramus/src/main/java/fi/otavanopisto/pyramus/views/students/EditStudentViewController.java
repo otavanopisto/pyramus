@@ -163,8 +163,6 @@ public class EditStudentViewController extends PyramusViewController2 implements
     
     List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
         studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
-
-    StudentCard studentCard = null;
         
     Collections.sort(students, new Comparator<Student>() {
       @Override
@@ -203,7 +201,8 @@ public class EditStudentViewController extends PyramusViewController2 implements
     Map<Long, String> studentTags = new HashMap<>();
     Map<Long, Boolean> studentHasCredits = new HashMap<>();
     Map<Long, Boolean> studentHasFiles = new HashMap<>();
-
+    Map<Long, StudentCard> studentCards = new HashMap<>();
+    
     List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
@@ -271,7 +270,9 @@ public class EditStudentViewController extends PyramusViewController2 implements
       if (!studyPeriodsJSON.isEmpty()) {
         studentStudyPeriodsJSON.put(student.getId(), studyPeriodsJSON);
       }
-      studentCard = studentCardDAO.findByStudent(student.getId());
+      
+      studentCards.put(student.getId(), studentCardDAO.findByStudent(student.getId()));
+      
     }
     
     setJsDataVariable(pageRequestContext, "studentLodgingPeriods", studentLodgingPeriods.toString());
@@ -378,7 +379,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("person", person);
-    pageRequestContext.getRequest().setAttribute("studentCard", studentCard);
+    pageRequestContext.getRequest().setAttribute("studentCards", studentCards);
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("activityTypes", studentActivityTypeDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);

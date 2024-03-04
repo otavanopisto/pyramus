@@ -194,7 +194,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     StaffMember staffMember = staffMemberDAO.findByPerson(person);
     pageRequestContext.getRequest().setAttribute("staffMember", staffMember);
     
-    StudentCard studentCard = null;
+    Map<Long, StudentCard> studentCards = new HashMap<>();
     List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
         studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
     
@@ -299,7 +299,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     for (Student student : students) {
 
       // Student card
-      studentCard = studentCardDAO.findByStudent(student.getId());
+      studentCards.put(student.getId(), studentCardDAO.findByStudent(student.getId()));
       
       /**
        * Fetch courses this student is part of and sort the courses by course name
@@ -883,7 +883,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     setJsDataVariable(pageRequestContext, "curriculums", curriculumsJSON.toString());
     setJsDataVariable(pageRequestContext, "studentVariables", studentVariablesJSON.toString());
     
-    pageRequestContext.getRequest().setAttribute("studentCard", studentCard);
+    pageRequestContext.getRequest().setAttribute("studentCards", studentCards);
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("courses", courseStudents);
     pageRequestContext.getRequest().setAttribute("contactEntries", contactEntries);

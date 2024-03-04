@@ -152,10 +152,6 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     
     Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
     Person person = personDAO.findById(personId);
-
-    StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType", StudentCardType.class);
-    Date studentCardExpires = requestContext.getDate("expiryDate");
-    Boolean active = requestContext.getBoolean("active");
     
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
@@ -289,6 +285,11 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       String studyEndText = requestContext.getString("studyEndText." + student.getId());
       String tagsText = requestContext.getString("tags." + student.getId());
       StudentFunding funding = (StudentFunding) requestContext.getEnum("funding." + student.getId(), StudentFunding.class);
+      
+      Date studentCardExpires = requestContext.getDate("expiryDate." + student.getId());
+      Boolean active = requestContext.getBoolean("active." + student.getId());
+      StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType." + student.getId(), StudentCardType.class);
+      
       
       Set<Tag> tagEntities = new HashSet<>();
       if (!StringUtils.isBlank(tagsText)) {
@@ -545,7 +546,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         expiryDate = student.getStudyTimeEnd();
       }
       
-      if (studentCard != null) {
+      if (studentCard != null && studentCardType != null) {
         // If user has set the expiry date manually we have to use it
         if (studentCardExpires != null && studentCard.getExpiryDate() != studentCardExpires) {
           expiryDate = studentCardExpires;
@@ -555,7 +556,9 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         if (studentCardExpires != null) {
           expiryDate = studentCardExpires;
         }
-        studentCardDAO.create(student.getId(), false, expiryDate, studentCardType);
+        
+        studentCardDAO.create(student, active, expiryDate, studentCardType);
+        
       }
     }
     

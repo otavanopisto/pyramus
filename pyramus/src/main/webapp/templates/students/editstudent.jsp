@@ -1053,8 +1053,10 @@
 	      
 		  <div id="integrations" class="tabContent">    
             <div id="integrationsRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
-            
-           <input type="hidden" name="studentCard" value="${studentCard.id}"/>
+            <div
+                  id="coursesTabRelatedActionsHoverMenuContainer.${student.id}"
+                  class="tabRelatedActionsContainer"></div>
+            <input type="hidden" name="studentCards" value="${studentCards[student.id]}"/>
             
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
@@ -1084,21 +1086,35 @@
                 <fmt:formatDate value="${person.birthday}" />
             </div>
             
+            <div class="genericFormSection">   
+            <c:forEach var="student" items="${students}">
+            <div class="genericViewInfoWapper ${secureInfoClass}"
+                  id="studentViewIntegrationInfoWrapper">
+            
+            <div class="genericFormSection">           
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.studyProgrammeTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.studyProgrammeHelp"/>
+                </jsp:include>            
+                <div>${student.studyProgramme.name}<c:if test="${student.studyProgramme.archived}"> *</c:if></div>
+              </div>
+            <div class="genericFormSection"> </div>
             <div class="genericFormSection">               
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.emailTableEmailsTitle"/>
                 </jsp:include>
-                <c:forEach var="student" items="${students}">
+                
                 <div id="emailTable.${student.id}"></div>
-                </c:forEach>
+                
               </div>
+            <c:set var="studentCard" value="${studentCards[student.id]}" />
             
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="integrations.slice.cardType"/>
               </jsp:include>
-              <select name="studentCardType">
-                <option value="NONE" ${studentCard.type == 'NONE' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.none"/></option>
+              <select name="studentCardType.${student.id}">
+                <option value=""><fmt:message key="generic.studentCardTypes.none"/></option>
                 <option value="GREEN" ${studentCard.type == 'GREEN' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.green"/></option>
                 <option value="BLUE" ${studentCard.type == 'BLUE' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.blue"/></option>
               </select>
@@ -1108,7 +1124,7 @@
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="integrations.slice.expiryDate"/>
               </jsp:include>            
-              <input type="text" name="expiryDate" class="ixDateField" value="${studentCard.expiryDate.time}">
+              <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${studentCard.expiryDate.time}">
             </div>
             
             <div class="genericFormSection">    
@@ -1118,14 +1134,18 @@
               		</jsp:include>      
               	    <c:choose>
                 	  <c:when test="${studentCard.active}">
-                	    <input type="checkbox" name="active" value="true" checked="checked" />
+                	    <input type="checkbox" name="active.${student.id}" value="true" checked="checked" />
                 	  </c:when>
                 	  <c:otherwise>
-                	    <input type="checkbox" name="active" value="false" />
+                	    <input type="checkbox" name="active.${student.id}" value="false" />
                 	  </c:otherwise>              
               	  	</c:choose>
               	  	<fmt:message key="integrations.slice.active"/>
             	  </div>
+            	  </div>
+          		</c:forEach>
+          	
+			</div> 
           </div>
           
           <!-- Integrations ends  -->
@@ -1177,7 +1197,7 @@
                 </jsp:include>            
                 <div>${student.studyProgramme.name}<c:if test="${student.studyProgramme.archived}"> *</c:if></div>
               </div>
-  
+              
               <div class="genericFormSection">           
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.curriculumTitle"/>
