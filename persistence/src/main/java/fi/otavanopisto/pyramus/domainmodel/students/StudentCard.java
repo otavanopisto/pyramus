@@ -62,7 +62,8 @@ public class StudentCard {
   @OneToOne 
   private Student student;
   
-  @Column
+  @NotNull
+  @Column (nullable = false)
   @Enumerated (EnumType.STRING)
   private StudentCardType type;
 
@@ -72,6 +73,6 @@ public class StudentCard {
   
   @NotNull
   @Temporal(value = TemporalType.DATE)
-  @Column
+  @Column (nullable = false)
   private Date expiryDate;
 }
