@@ -11,5 +11,11 @@
         primary key (id)
     )
   </sql>
+  <sql>
+    alter table StudentCard 
+       add constraint FKpvvuoslyef2wag5el0kmb3313 
+       foreign key (student_id) 
+       references Student (id);
+  </sql>
   
 </update>

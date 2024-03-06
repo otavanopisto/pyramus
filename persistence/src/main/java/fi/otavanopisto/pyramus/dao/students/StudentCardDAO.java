@@ -56,7 +56,7 @@ public class StudentCardDAO extends PyramusEntityDAO<StudentCard> {
     return studentCard;
   }
   
-  public StudentCard findByStudent(Long studentId) {
+  public StudentCard findByStudent(Student student) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -64,7 +64,7 @@ public class StudentCardDAO extends PyramusEntityDAO<StudentCard> {
     Root<StudentCard> root = criteria.from(StudentCard.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(root.get(StudentCard_.student), studentId)
+        criteriaBuilder.equal(root.get(StudentCard_.student), student)
       );
     
     return getSingleResult(entityManager.createQuery(criteria));

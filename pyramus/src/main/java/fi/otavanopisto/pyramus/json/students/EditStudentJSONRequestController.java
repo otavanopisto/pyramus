@@ -535,7 +535,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       
       // Student card
       
-      StudentCard studentCard = studentCardDAO.findByStudent(student.getId());
+      StudentCard studentCard = studentCardDAO.findByStudent(student);
 
       Date expiryDate = null;
       
