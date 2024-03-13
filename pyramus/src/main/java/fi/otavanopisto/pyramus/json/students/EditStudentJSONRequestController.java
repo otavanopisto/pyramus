@@ -535,32 +535,30 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       
       // Student card
       
-      StudentCard studentCard = studentCardDAO.findByStudent(student);
-
-      Date expiryDate = null;
-      
-      // Set expiry date automatically same as study end date or study time end
-      if (student.getStudyEndDate() != null) {
-        expiryDate = student.getStudyEndDate();
-      }  else {
-        expiryDate = student.getStudyTimeEnd();
-      }
-      
-      if (studentCard != null && studentCardType != null) {
-        // If user has set the expiry date manually we have to use it
-        if (studentCardExpires != null && studentCard.getExpiryDate() != studentCardExpires) {
-          expiryDate = studentCardExpires;
-        }
-        studentCardDAO.update(studentCard, active, expiryDate, studentCardType);
-      } else {
-        if (studentCardExpires != null) {
-          expiryDate = studentCardExpires;
+      if (studentCardType != null) {
+        StudentCard studentCard = studentCardDAO.findByStudent(student);
+  
+        Date expiryDate = null;
+        
+        // Set expiry date automatically same as study end date or study time end
+        if (student.getStudyEndDate() != null) {
+          expiryDate = student.getStudyEndDate();
+        }  else {
+          expiryDate = student.getStudyTimeEnd();
         }
         
-        if (studentCardType != null) {
+        if (studentCard != null) {
+          // If user has set the expiry date manually we have to use it
+          if (studentCardExpires != null && studentCard.getExpiryDate() != studentCardExpires) {
+            expiryDate = studentCardExpires;
+          }
+          studentCardDAO.update(studentCard, active, expiryDate, studentCardType);
+        } else {
+          if (studentCardExpires != null) {
+            expiryDate = studentCardExpires;
+          }
           studentCardDAO.create(student, active, expiryDate, studentCardType);
         }
-        
       }
     }
     
