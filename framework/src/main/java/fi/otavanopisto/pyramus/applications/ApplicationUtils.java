@@ -106,6 +106,7 @@ public class ApplicationUtils {
   private static final Logger logger = Logger.getLogger(ApplicationUtils.class.getName());
 
   private static final String SETTINGKEY_SIGNERID = "applications.defaultSignerId";
+  public static final String SETTINGKEY_STUDENTPARENTREGISTRATIONENABLED = "applications.studentParentRegistrationEnabled";
   
   private static final String LINE_AINEOPISKELU = "aineopiskelu";
   private static final String LINE_AINEOPISKELU_PK = "aineopiskelupk";
@@ -1232,43 +1233,46 @@ public class ApplicationUtils {
             getFormValue(formData, "field-underage-phone-3"));
       }
       
-      // Create guardian invitations
+      // Create guardian invitations if the automated registration is enabled
       
-      // Guardian #1
-      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
-      if (StringUtils.isNotBlank(email)) {
-        String firstName = getFormValue(formData, "field-underage-first-name");
-        String lastName = getFormValue(formData, "field-underage-last-name");
+      if (isStudentParentRegistrationsEnabled()) {
+        // Guardian #1
+        email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+        if (StringUtils.isNotBlank(email)) {
+          String firstName = getFormValue(formData, "field-underage-first-name");
+          String lastName = getFormValue(formData, "field-underage-last-name");
+          
+          if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+            String hash = UUID.randomUUID().toString();
+            studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+          }
+        }
         
-        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
-          String hash = UUID.randomUUID().toString();
-          studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+        // Guardian #2
+        email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
+        if (StringUtils.isNotBlank(email)) {
+          String firstName = getFormValue(formData, "field-underage-first-name-2");
+          String lastName = getFormValue(formData, "field-underage-last-name-2");
+          
+          if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+            String hash = UUID.randomUUID().toString();
+            studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+          }
+        }
+        
+        // Guardian #3
+        email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
+        if (StringUtils.isNotBlank(email)) {
+          String firstName = getFormValue(formData, "field-underage-first-name-3");
+          String lastName = getFormValue(formData, "field-underage-last-name-3");
+          
+          if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+            String hash = UUID.randomUUID().toString();
+            studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+          }
         }
       }
       
-      // Guardian #2
-      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
-      if (StringUtils.isNotBlank(email)) {
-        String firstName = getFormValue(formData, "field-underage-first-name-2");
-        String lastName = getFormValue(formData, "field-underage-last-name-2");
-        
-        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
-          String hash = UUID.randomUUID().toString();
-          studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
-        }
-      }
-      
-      // Guardian #3
-      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
-      if (StringUtils.isNotBlank(email)) {
-        String firstName = getFormValue(formData, "field-underage-first-name-3");
-        String lastName = getFormValue(formData, "field-underage-last-name-3");
-        
-        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
-          String hash = UUID.randomUUID().toString();
-          studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
-        }
-      }
     }
     
     // Warning if Internetix custom school isn't found
@@ -1631,4 +1635,14 @@ public class ApplicationUtils {
     
     return rootUri.toString();
   }
+  
+  /**
+   * Returns true if the StudentParentRegistration invitations 
+   * are enabled when approving a student.
+   */
+  public static boolean isStudentParentRegistrationsEnabled() {
+    String enabledSettingValue = SettingUtils.getSettingValue(SETTINGKEY_STUDENTPARENTREGISTRATIONENABLED);
+    return StringUtils.isNotBlank(enabledSettingValue) ? Boolean.parseBoolean(enabledSettingValue) : false;
+  }
+  
 }
