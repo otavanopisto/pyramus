@@ -178,10 +178,6 @@ public class StudentController {
     return students;
   }
 
-  public boolean hasCommonGroups(User user, Student student) {
-    return studentDAO.hasCommonGroups(user, student);
-  }
-  
   public boolean isStudentGuider(StaffMember staffMember, Student student) {
     return studentDAO.isStudyGuider(staffMember, student);
   }
@@ -709,7 +705,7 @@ public class StudentController {
     
     return !studentGroups.isEmpty();
   }
-  
+
   public ContactLogAccess resolveContactLogAccess(Student student) {
     User loggedUser = sessionController.getUser();
     
