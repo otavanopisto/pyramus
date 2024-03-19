@@ -10,20 +10,18 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionFeatures;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.PermissionFeatureHandler;
 
 /**
- * Restricts featured permissions to guidance group students (implied by contextRefenrce) 
- * if the user has role feature FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST. If the 
- * user doesn't have the feature, returns the default permission.
+ * Allows permission, if the given student (from contextReference) is
+ * on a course where the user is a teacher on.
  */
-@PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
+@PermissionFeature(PyramusPermissionFeatures.ALLOW_COURSE_TEACHER)
 @RequestScoped
-public class OnlyGroupStudentsPermissionFeature extends AbstractPermissionFeature implements PermissionFeatureHandler {
+public class AllowCourseTeacherPermissionFeature extends AbstractPermissionFeature implements PermissionFeatureHandler {
 
   @Inject
   private Logger logger;
@@ -31,30 +29,23 @@ public class OnlyGroupStudentsPermissionFeature extends AbstractPermissionFeatur
   @Inject
   private StudentDAO studentDAO;
 
-  @Inject
-  private Permissions permissionController;
-  
   @Override
   public boolean hasPermission(String permission, fi.otavanopisto.security.User user, ContextReference contextReference, boolean allowed) {
-    // By default the permission needs to be allowed. This feature only disallows permission.
-    if (!allowed)
-      return allowed;
+    // If the permission is already allowed, we don't need to check anything
+    if (allowed) {
+      return true;
+    }
     
     User maybeStudent = resolveUser(contextReference);
     
-    boolean hf = permissionController.hasEnvironmentPermission(user, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
-    
-    if (maybeStudent instanceof Student) {
-      if (hf && user instanceof StaffMember)
-        return studentDAO.isStudyGuider((StaffMember) user, (Student) maybeStudent);
-      else
-        return allowed;
+    if (maybeStudent instanceof Student && user instanceof StaffMember) {
+      boolean haveCommonCourses = studentDAO.haveCommonCourses((StaffMember) user, (Student) maybeStudent);
+      return haveCommonCourses;
     } else {
       String contextStr = contextReference == null ? "null" : contextReference.getClass().getSimpleName();
       logger.log(Level.WARNING, String.format("ContextReference %s was not student, ignoring and returning default permission", contextStr));
+      return allowed;
     }
-    
-    return allowed;
   }
   
 }

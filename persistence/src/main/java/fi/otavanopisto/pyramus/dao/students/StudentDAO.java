@@ -42,7 +42,12 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme_;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember_;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
@@ -506,6 +511,43 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
         criteriaBuilder.and(
             root.in(groupQuery1),
             root.in(groupQuery2)
+        )
+    );
+    
+    return entityManager.createQuery(criteria).getSingleResult() > 0;
+  }
+  
+  public boolean haveCommonCourses(StaffMember staffmember, Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<Course> root = criteria.from(Course.class);
+
+    Subquery<Course> staffQuery = criteria.subquery(Course.class);
+    Root<CourseStaffMember> staffRoot = staffQuery.from(CourseStaffMember.class);
+    staffQuery.select(staffRoot.get(CourseStaffMember_.course));
+    staffQuery.where(
+        criteriaBuilder.equal(staffRoot.get(CourseStaffMember_.staffMember), staffmember)
+    );
+    
+    Subquery<Course> studentQuery = criteria.subquery(Course.class);
+    Root<CourseStudent> studentRoot = studentQuery.from(CourseStudent.class);
+    studentQuery.select(studentRoot.get(CourseStudent_.course));
+    studentQuery.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(studentRoot.get(CourseStudent_.student), student),
+            criteriaBuilder.equal(studentRoot.get(CourseStudent_.archived), Boolean.FALSE)
+        )
+    );
+    
+    criteria.select(criteriaBuilder.count(root));
+    
+    criteria.where(
+        criteriaBuilder.and(
+            root.in(staffQuery),
+            root.in(studentQuery),
+            criteriaBuilder.equal(root.get(Course_.archived), Boolean.FALSE)
         )
     );
     
