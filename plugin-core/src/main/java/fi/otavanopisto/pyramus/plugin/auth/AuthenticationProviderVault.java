@@ -76,6 +76,16 @@ public class AuthenticationProviderVault {
     return authenticationProviders.get(name);
   }
   
+  public ExternalAuthenticationProvider getExternalAuthenticationProvider(String name) {
+    AuthenticationProvider authenticationProvider = authenticationProviders.get(name);
+    return authenticationProvider instanceof ExternalAuthenticationProvider ? (ExternalAuthenticationProvider) authenticationProvider : null;
+  }
+  
+  public InternalAuthenticationProvider getInternalAuthenticationProvider(String name) {
+    AuthenticationProvider authenticationProvider = authenticationProviders.get(name);
+    return authenticationProvider instanceof InternalAuthenticationProvider ? (InternalAuthenticationProvider) authenticationProvider : null;
+  }
+  
   /**
     Registers the various authentication providers to this class.
   **/

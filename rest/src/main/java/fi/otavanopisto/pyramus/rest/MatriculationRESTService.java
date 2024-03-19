@@ -44,6 +44,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
@@ -119,6 +120,27 @@ public class MatriculationRESTService extends AbstractRESTService {
       upperSecondarySchoolCurriculum = matriculationEligibilityController.hasGroupEligibility(loggedStudent);
     }
 
+    return Response.ok(new MatriculationEligibilities(upperSecondarySchoolCurriculum)).build();
+  }
+
+  @Path("/students/{STUDENTID}/eligibility")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listEligibilities(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    User loggedUser = sessionController.getUser();
+    if (!loggedUser.getId().equals(studentId)) {
+      if (!((loggedUser instanceof StudentParent) && (((StudentParent) loggedUser).isActiveParentOf(student)))) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    }
+    
+    boolean upperSecondarySchoolCurriculum = matriculationEligibilityController.hasGroupEligibility(student);
     return Response.ok(new MatriculationEligibilities(upperSecondarySchoolCurriculum)).build();
   }
 

@@ -150,6 +150,9 @@ import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentChildDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -295,6 +298,18 @@ public class DAOFactory {
   
   public StudentStudyPeriodDAO getStudentStudyPeriodDAO() {
     return (StudentStudyPeriodDAO) findByClass(StudentStudyPeriodDAO.class);
+  }
+  
+  public StudentParentDAO getStudentParentDAO() {
+    return (StudentParentDAO) findByClass(StudentParentDAO.class);
+  }
+  
+  public StudentParentChildDAO getStudentParentChildDAO() {
+    return (StudentParentChildDAO) findByClass(StudentParentChildDAO.class);
+  }
+  
+  public StudentParentRegistrationDAO getStudentParentRegistrationDAO() {
+    return (StudentParentRegistrationDAO) findByClass(StudentParentRegistrationDAO.class);
   }
   
   /* Course */

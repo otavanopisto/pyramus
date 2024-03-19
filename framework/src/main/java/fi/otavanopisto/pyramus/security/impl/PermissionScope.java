@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.security.impl;
 
-public class PermissionScope {
+public interface PermissionScope {
   public static final String ENVIRONMENT = "ENVIRONMENT";
   public static final String COURSE = "COURSE";
 
@@ -18,4 +18,14 @@ public class PermissionScope {
    * Owner of an person entity (e.g. Student or User of same person entity)
    */
   public static final String PERSON_OWNER = "PERSON_OWNER";
+  
+  /**
+   * 
+   */
+  public static final String PERSON_PARENT = "PERSON_PARENT";
+  
+  /**
+   * 
+   */
+  public static final String STUDENT_PARENT = "STUDENT_PARENT";
 }

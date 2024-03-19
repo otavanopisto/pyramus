@@ -148,6 +148,12 @@
           }
         }
 
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+          iconURL: GLOBAL_contextPath + '/gfx/list-add.png',
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsCreateStudentParentRegistrationLabel"/>',
+          link: GLOBAL_contextPath + '/studentparents/createstudentparentregistration.page?studentId=' + studentId 
+        }));
+
         var studentReports = JSDATA["studentReports"].evalJSON();
         
         if (studentReports) {
@@ -1233,6 +1239,73 @@
         return studentProjectModulesTable;
       }
 
+      function setupStudentParentsTable(studentId) {
+        var studentParentDataAll = JSDATA["studentParents"].evalJSON();
+        
+        if (!studentParentDataAll) {
+          return;
+        }
+
+        var studentParentData = studentParentDataAll[studentId];
+        if (!studentParentData) {
+          return;
+        }
+
+        if (studentParentData.length == 0) {
+          return;
+        }
+        
+        var studentParentsTable = new IxTable($('studentParentsTableContainer.' + studentId), {
+          id : "studentParentsTable." + studentId,
+          columns : [{
+            left : 0,
+            width: 160,
+            dataType : 'text',
+            editable: false,
+            paramName: 'name'
+          }, {
+            left : 0 + 160 + 8,
+            width: 200,
+            dataType: 'text',
+            editable: false,
+            paramName: 'email'
+          }, {
+            dataType: 'hidden',
+            paramName: 'studentParentId'
+          }, {
+            left: 0 + 160 + 8 + 200 + 8,
+            width: 22,
+            dataType: 'button',
+            hidden: true,
+            paramName: 'studentParentEditButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            tooltip: '<fmt:message key="students.viewStudent.studentParentsTableEditTooltip"/>',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var studentParentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentParentId'));
+              redirectTo(GLOBAL_contextPath + '/studentparents/editstudentparent.page?userId=' + studentParentId);
+            }
+          }]
+        });
+
+        for (var i = 0, l = studentParentData.length; i < l; i++) {
+          var name = studentParentData[i].firstName + " " + studentParentData[i].lastName;
+          var rowIndex = studentParentsTable.addRow([
+            name,
+            studentParentData[i].email,
+            studentParentData[i].userId,
+            ''
+          ]);
+          
+          if (studentParentData[i].status === "USER") {
+            var columnIndex = studentParentsTable.getNamedColumnIndex('studentParentEditButton');
+            studentParentsTable.showCell(rowIndex, columnIndex);
+          }
+        }
+        
+        return studentParentsTable;
+      }
+
       function onLoad(event) {
         var coursesTable;
         var filesTable;
@@ -1724,6 +1797,8 @@
           if (personVariables && personVariables.length > 0) {
             initPersonVariablesTable(${student.id}, personVariables);
           }
+          
+          setupStudentParentsTable(${student.id});
         </c:forEach>
         
         
@@ -2352,6 +2427,20 @@
                             value="students.viewStudent.municipalityHelp" />
                         </jsp:include>
                         <div class="genericViewFormDataText">${student.municipality.name}</div>
+                      </div>
+                    </c:when>
+                  </c:choose>
+
+                  <c:choose>
+                    <c:when test="${studentHasParents[student.id]}">
+                      <div class="genericFormSection">
+                        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale" value="students.viewStudent.studentParentsTitle" />
+                          <jsp:param name="helpLocale" value="students.viewStudent.studentParentsHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">
+                          <div id="studentParentsTableContainer.${student.id}"></div>
+                        </div>
                       </div>
                     </c:when>
                   </c:choose>

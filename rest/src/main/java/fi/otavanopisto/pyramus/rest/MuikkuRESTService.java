@@ -175,7 +175,7 @@ public class MuikkuRESTService {
     if (student == null || student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {

@@ -26,8 +26,17 @@ public class StudentGuidanceRelation {
     this.isCourseTeacher = isCourseTeacher;
   }
 
+  public boolean isStudentParent() {
+    return isStudentParent;
+  }
+
+  public void setStudentParent(boolean isStudentParent) {
+    this.isStudentParent = isStudentParent;
+  }
+
   private boolean isSpecEdTeacher;
   private boolean isGuidanceCounselor;
   private boolean isCourseTeacher;
+  private boolean isStudentParent;
 
 }

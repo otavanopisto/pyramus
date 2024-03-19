@@ -361,7 +361,7 @@ public class StudentProject implements ArchivableEntity {
   @IndexedEmbedded 
   private List<StudentProjectSubjectCourse> studentProjectSubjectCourses = new Vector<>();
 
-  @ManyToOne 
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="creator")
   @IndexedEmbedded (depth = 1)
   private User creator;
@@ -370,7 +370,7 @@ public class StudentProject implements ArchivableEntity {
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date created;
   
-  @ManyToOne  
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="lastModifier")
   private User lastModifier;
   

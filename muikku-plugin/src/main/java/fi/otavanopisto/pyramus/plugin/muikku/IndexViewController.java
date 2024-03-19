@@ -16,7 +16,8 @@ public class IndexViewController extends PyramusViewController implements PageCo
   
   private Role[] REDIRECT_ROLES = {
     Role.GUEST,
-    Role.STUDENT
+    Role.STUDENT,
+    Role.STUDENT_PARENT
   };
   
   @Override

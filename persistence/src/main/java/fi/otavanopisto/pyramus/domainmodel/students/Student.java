@@ -320,32 +320,32 @@ public class Student extends User implements ArchivableEntity {
   @Column
   private String additionalInfo;
   
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "nationality")
   private Nationality nationality;
 
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "language")
   private Language language;
 
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "municipality")
   private Municipality municipality;
 
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "school")
   @IndexedEmbedded (depth = 1)
   private School school;
   
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "activityType")
   private StudentActivityType activityType;
 
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "examinationType")
   private StudentExaminationType examinationType;
 
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "educationalLevel")
   private StudentEducationalLevel educationalLevel;
 
@@ -368,7 +368,7 @@ public class Student extends User implements ArchivableEntity {
   @DateBridge (resolution = Resolution.DAY)
   private Date studyEndDate;
   
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "studyEndReason")
   @IndexedEmbedded
   private StudentStudyEndReason studyEndReason;
@@ -379,7 +379,7 @@ public class Student extends User implements ArchivableEntity {
   @ManyToOne
   private Curriculum curriculum;
   
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="studyApprover")
   private StaffMember studyApprover;
   

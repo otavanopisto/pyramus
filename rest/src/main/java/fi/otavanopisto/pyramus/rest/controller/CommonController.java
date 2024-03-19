@@ -457,6 +457,10 @@ public class CommonController {
     return addressDAO.findById(id);
   }
   
+  public Address findDefaultAddressByContactInfo(ContactInfo contactInfo) {
+    return addressDAO.findDefaultAddress(contactInfo);
+  }
+  
   public void deleteAddress(Address address) {
     addressDAO.delete(address);
   }
@@ -469,6 +473,10 @@ public class CommonController {
   
   public PhoneNumber findPhoneNumberById(Long id) {
     return phoneNumberDAO.findById(id);
+  }
+  
+  public PhoneNumber findDefaultPhoneNumberByContactInfo(ContactInfo contactInfo) {
+    return phoneNumberDAO.findDefaultPhoneNumber(contactInfo);
   }
   
   public void deletePhoneNumber(PhoneNumber phoneNumber) {

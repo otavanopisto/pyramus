@@ -21,7 +21,7 @@ public class StudyProgrammePermissions extends AbstractPyramusPermissionCollecti
   public static final String LIST_STUDYPROGRAMMES = "LIST_STUDYPROGRAMMES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TEACHER, STUDY_GUIDER, STUDY_PROGRAMME_LEADER, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TEACHER, STUDY_GUIDER, STUDY_PROGRAMME_LEADER, STUDENT, STUDENT_PARENT, TRUSTED_SYSTEM })
   public static final String FIND_STUDYPROGRAMME = "FIND_STUDYPROGRAMME";
   
   @Scope (PermissionScope.ENVIRONMENT)

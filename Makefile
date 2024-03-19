@@ -3,9 +3,10 @@ SHELL := /bin/bash
 .PHONY: help
 help:
 	@echo ""
-	@echo "make build			- Build the whole application"
-	@echo "make clean			- Clean the whole application"
-	@echo "make produce-ddl		- Produce the database definition from Entities"
+	@echo "make build         - Build the whole application"
+	@echo "make clean         - Clean the whole application"
+	@echo "make produce-ddl   - Produce the database definition from Entities"
+	@echo "make test          - Run tests"
 	@echo ""
 
 .PHONY: clean
@@ -21,3 +22,7 @@ produce-ddl:
 	mvn clean process-classes -Pgen-ddl
 	@echo ""
 	@echo "Find DDL in pyramus/target/sql"
+
+.PHONY: test
+test:
+	mvn clean verify -Pit

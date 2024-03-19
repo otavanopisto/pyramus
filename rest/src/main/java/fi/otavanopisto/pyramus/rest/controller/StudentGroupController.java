@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 
@@ -188,6 +189,10 @@ public class StudentGroupController {
     
     if (user instanceof StaffMember) {
       return studentGroupUserDAO.findByStudentGroupAndStaffMember(studentGroup, (StaffMember) user) != null;
+    }
+    
+    if (user instanceof StudentParent) {
+      return false;
     }
     
     throw new IllegalArgumentException("Given user is of unrecognizable type.");

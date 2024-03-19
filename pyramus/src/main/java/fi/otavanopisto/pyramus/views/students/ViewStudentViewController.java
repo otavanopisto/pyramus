@@ -50,12 +50,15 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
+import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
@@ -81,6 +84,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentRegistration;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
@@ -179,6 +184,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     PersonVariableKeyDAO personVariableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
+    StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
 
     Long loggedUserId = pageRequestContext.getLoggedUserId();
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
@@ -246,6 +253,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     Map<Long, List<StudentStudyPeriod>> studentStudyPeriods = new HashMap<>();
     Map<Long, StudentTOR> subjectCredits = new HashMap<>();
     Map<Long, List<MatriculationExamEnrollment>> studentMatriculationEnrollments = new HashMap<>();
+    Map<Long, Boolean> studentHasParents = new HashMap<>();
     
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
@@ -254,6 +262,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     JSONArray studentReportsJSON = new JSONArray();
     JSONArray curriculumsJSON = new JSONArray();
     JSONObject studentAssessmentsJSON = new JSONObject();
+    JSONObject studentParentsJSON = new JSONObject();
     
     List<Report> studentReports = reportDAO.listByContextType(ReportContextType.Student);
     Collections.sort(studentReports, new StringAttributeComparator("getName"));
@@ -834,7 +843,42 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       studentLodgingPeriods.put(student.getId(), studentLodgingPeriodEntities);
       studentStudyPeriods.put(student.getId(), studentStudyPeriodEntities);
       studentMatriculationEnrollments.put(student.getId(), matriculationExamEnrollmentDAO.listByStudent(student));
+
       
+      arr = new JSONArray();
+      
+      List<StudentParentRegistration> studentParentRegistrations = studentParentRegistrationDAO.listBy(student);
+      for (StudentParentRegistration studentParentRegistration : studentParentRegistrations) {
+        JSONObject studentParentJSON = new JSONObject();
+        studentParentJSON.put("status", "REGISTRATION");
+        studentParentJSON.put("personId", null);
+        studentParentJSON.put("userId", null);
+        studentParentJSON.put("firstName", studentParentRegistration.getFirstName());
+        studentParentJSON.put("lastName", studentParentRegistration.getLastName());
+        studentParentJSON.put("email", studentParentRegistration.getEmail());
+        arr.add(studentParentJSON);
+      }
+      
+      List<StudentParent> studentParents = studentParentDAO.listBy(student);
+      for (StudentParent studentParent : studentParents) {
+        JSONObject studentParentJSON = new JSONObject();
+        studentParentJSON.put("status", "USER");
+        studentParentJSON.put("personId", studentParent.getPersonId());
+        studentParentJSON.put("userId", studentParent.getId());
+        studentParentJSON.put("firstName", studentParent.getFirstName());
+        studentParentJSON.put("lastName", studentParent.getLastName());
+        
+        String emails =
+            studentParent.getContactInfo() != null && studentParent.getContactInfo().getEmails() != null 
+            ? studentParent.getContactInfo().getEmails().stream().map(Email::getAddress).collect(Collectors.joining(", "))
+            : null;
+        studentParentJSON.put("email", emails);
+        arr.add(studentParentJSON);
+      }
+
+      studentHasParents.put(student.getId(), studentParentRegistrations.size() > 0 || studentParents.size() > 0);
+      studentParentsJSON.put(student.getId(), arr);
+
       try {
         StudentTOR tor = StudentTORController.constructStudentTOR(student);
         subjectCredits.put(student.getId(), tor);
@@ -875,6 +919,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     setJsDataVariable(pageRequestContext, "studentReports", studentReportsJSON.toString());
     setJsDataVariable(pageRequestContext, "curriculums", curriculumsJSON.toString());
     setJsDataVariable(pageRequestContext, "studentVariables", studentVariablesJSON.toString());
+    setJsDataVariable(pageRequestContext, "studentParents", studentParentsJSON.toString());
     
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("courses", courseStudents);
@@ -892,7 +937,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("studentLodgingPeriods", studentLodgingPeriods);
     pageRequestContext.getRequest().setAttribute("studentStudyPeriods", studentStudyPeriods);
     pageRequestContext.getRequest().setAttribute("studentMatriculationEnrollments", studentMatriculationEnrollments);
-
+    pageRequestContext.getRequest().setAttribute("studentHasParents", studentHasParents);
+    
     pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 
     pageRequestContext.setIncludeJSP("/templates/students/viewstudent.jsp");

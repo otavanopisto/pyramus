@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.grading;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -28,10 +29,10 @@ public class ProjectAssessment extends Credit {
 
   @Transient
   public Student getStudent() {
-    return studentProject != null ? studentProject.getStudent() : null;
+    return getStudentProject() != null ? getStudentProject().getStudent() : null;
   }
   
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="studentProject")
   private StudentProject studentProject;
 }

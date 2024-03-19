@@ -92,4 +92,14 @@ public interface InternalAuthenticationProvider extends AuthenticationProvider {
    * @return
    */
   public boolean validatePassword(String externalId, String password);
+
+  /**
+   * Returns true if the given username is available (i.e. not in use) 
+   * for this provider.
+   * 
+   * @param username
+   * @return
+   */
+  public boolean isAvailableUsername(String username);
+  
 }

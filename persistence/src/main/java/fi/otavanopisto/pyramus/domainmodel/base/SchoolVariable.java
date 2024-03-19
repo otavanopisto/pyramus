@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.domainmodel.base;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -94,7 +95,7 @@ public class SchoolVariable implements ArchivableEntity {
   @TableGenerator(name="SchoolVariable", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
     
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name = "school")
   private School school;
     

@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.webhooks;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
@@ -37,6 +38,9 @@ import fi.otavanopisto.pyramus.events.StudentGroupStudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupStudentRemovedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupStudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupUpdatedEvent;
+import fi.otavanopisto.pyramus.events.StudentParentCreatedEvent;
+import fi.otavanopisto.pyramus.events.StudentParentDeletedEvent;
+import fi.otavanopisto.pyramus.events.StudentParentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.StudyProgrammeArchivedEvent;
 import fi.otavanopisto.pyramus.events.StudyProgrammeCreatedEvent;
@@ -198,6 +202,28 @@ public class WebhookEventListeners {
 
   public void onStaffMemberDeleted(@Observes(during=TransactionPhase.AFTER_SUCCESS) StaffMemberDeletedEvent event) {
     webhooks.sendWebhookNotification(new WebhookStaffMemberDeletePayload(event.getStaffMemberId()));
+  }
+
+  /* StudentParent */
+  
+  public void onStudentParentCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentParentCreatedEvent event) {
+    webhooks.sendWebhookNotification(new WebhookStudentParentCreatePayload(event.getStudentParentId()));
+  }
+  
+  public synchronized void onStudentParentUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) StudentParentUpdatedEvent event) {
+    datas.addUpdatedStudentParentId(event.getStudentParentId());
+  }
+
+  public synchronized void onStudentParentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentParentUpdatedEvent event) {
+    Set<Long> updatedStudentParentIds = datas.retrieveUpdatedStudentParentIds();
+    
+    for (Long updatedStudentParentId : updatedStudentParentIds) {
+      webhooks.sendWebhookNotification(new WebhookStudentParentUpdatePayload(updatedStudentParentId));
+    }
+  }
+
+  public void onStudentParentDeleted(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentParentDeletedEvent event) {
+    webhooks.sendWebhookNotification(new WebhookStudentParentDeletePayload(event.getStudentParentId()));
   }
 
   /* StudyProgramme */
