@@ -35,6 +35,7 @@ public class MailService {
   @Inject
   private Logger logger;
 
+  @Lock(LockType.READ)
   public void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, Set<String> bcc, String subject,
       String content, List<MailAttachment> attachments) {
     mailEvent.fire(new MailEvent(jndiName, mimeType, from, to, cc, bcc, subject, content, attachments));
