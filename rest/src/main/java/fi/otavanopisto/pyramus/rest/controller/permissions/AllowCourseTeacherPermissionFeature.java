@@ -42,8 +42,14 @@ public class AllowCourseTeacherPermissionFeature extends AbstractPermissionFeatu
       boolean haveCommonCourses = studentDAO.haveCommonCourses((StaffMember) user, (Student) maybeStudent);
       return haveCommonCourses;
     } else {
-      String contextStr = contextReference == null ? "null" : contextReference.getClass().getSimpleName();
-      logger.log(Level.WARNING, String.format("ContextReference %s was not student, ignoring and returning default permission", contextStr));
+      // If contextReference is not a student, log a warning as it means the 
+      // permission is used somewhere without specifying proper contextReference
+      if (!(maybeStudent instanceof Student)) {
+        String contextStr = contextReference == null ? "null" : contextReference.getClass().getSimpleName();
+        logger.log(Level.WARNING, String.format("ContextReference %s was not student, ignoring and returning default permission", contextStr));
+      }
+      
+      // Couldn't resolve the course teacher <-> student status so default to the provided state
       return allowed;
     }
   }
