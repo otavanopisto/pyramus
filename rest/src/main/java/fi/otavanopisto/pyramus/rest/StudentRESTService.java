@@ -3627,21 +3627,9 @@ public class StudentRESTService extends AbstractRESTService {
     
     User loggedUser = sessionController.getUser();
 
-//    if (loggedUser instanceof StaffMember) {
-//      StaffMember staffMember = (StaffMember) loggedUser;
-//      if (!staffMember.hasRole(Role.TRUSTED_SYSTEM)) {
-//        if (!staffMember.hasRole(Role.ADMINISTRATOR) && !staffMember.hasRole(Role.MANAGER) && !staffMember.hasRole(Role.STUDY_PROGRAMME_LEADER)) {
-//          boolean amICounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
-//          if (!amICounselor) {
-//            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
-//          }
-//        }
-//      }
-//    } else {
-//      if (!loggedUser.getId().equals(student.getId())) {
-//        return Response.status(Status.FORBIDDEN).build();
-//      }
-//    }
+      if (!loggedUser.getId().equals(student.getId()) && !loggedUser.hasRole(Role.ADMINISTRATOR)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     
     StudentCard studentCard = studentCardDAO.findByStudent(student);
     
@@ -3664,7 +3652,7 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/studentCard/{CARDID:[0-9]*}")  
   @PUT
   @RESTPermit(handling = Handling.INLINE)
-  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, @PathParam("CARDID") Long cardId, fi.otavanopisto.pyramus.rest.model.StudentCard entity) {
+  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, @PathParam("CARDID") Long cardId, Boolean active) {
 
     // Payload validation
     StudentCard studentCard = studentCardDAO.findById(cardId);
@@ -3672,17 +3660,17 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentCard == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
+    
+    if (!studentCard.getId().equals(cardId)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
 
     // Access
-    if (studentCard.getStudent().getId() != studentId) {
+    if (!studentCard.getStudent().getId().equals(studentId)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    if (studentCard.getActive() == entity.getActive()) {
-      return Response.status(Status.OK).build();
-    }
-
-    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, entity.getActive()))).build();
+    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, active))).build();
   }
   
 }
