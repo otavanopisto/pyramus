@@ -35,6 +35,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
@@ -61,6 +62,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
@@ -151,7 +153,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
-
+    StudentCardDAO studentCardDAO = DAOFactory.getInstance().getStudentCardDAO();
     Locale locale = pageRequestContext.getRequest().getLocale();
     
     User loggedUser = userDAO.findById(pageRequestContext.getLoggedUserId());
@@ -161,7 +163,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     
     List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
         studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
-
+        
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {
@@ -199,7 +201,8 @@ public class EditStudentViewController extends PyramusViewController2 implements
     Map<Long, String> studentTags = new HashMap<>();
     Map<Long, Boolean> studentHasCredits = new HashMap<>();
     Map<Long, Boolean> studentHasFiles = new HashMap<>();
-
+    Map<Long, StudentCard> studentCards = new HashMap<>();
+    
     List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
@@ -266,6 +269,12 @@ public class EditStudentViewController extends PyramusViewController2 implements
       }
       if (!studyPeriodsJSON.isEmpty()) {
         studentStudyPeriodsJSON.put(student.getId(), studyPeriodsJSON);
+      }
+      
+      StudentCard studentCard = studentCardDAO.findByStudent(student);
+      
+      if (studentCard != null) {
+        studentCards.put(student.getId(), studentCard);
       }
     }
     
@@ -373,6 +382,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("person", person);
+    pageRequestContext.getRequest().setAttribute("studentCards", studentCards);
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("activityTypes", studentActivityTypeDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);

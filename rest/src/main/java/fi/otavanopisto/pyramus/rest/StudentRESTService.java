@@ -42,6 +42,7 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
@@ -72,6 +73,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
@@ -133,6 +135,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermiss
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityInfo;
 import fi.otavanopisto.pyramus.rest.model.SpecEdTeacher;
+import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
@@ -243,6 +246,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StaffMemberDAO staffMemberDAO;
+  
+  @Inject
+  private StudentCardDAO studentCardDAO;
   
   private static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
   private static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
@@ -3595,5 +3601,74 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(variableList).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findStudentCard(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    User loggedUser = sessionController.getUser();
 
+      if (!loggedUser.getId().equals(student.getId()) && !loggedUser.hasRole(Role.ADMINISTRATOR)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    
+    StudentCard studentCard = studentCardDAO.findByStudent(student);
+    
+    fi.otavanopisto.pyramus.rest.model.StudentCard response = new fi.otavanopisto.pyramus.rest.model.StudentCard();
+    
+    if (studentCard != null) {
+      response.setId(studentCard.getId());
+      response.setActive(studentCard.getActive());
+      response.setExpiryDate(studentCard.getExpiryDate());
+      response.setFirstName(student.getFirstName());
+      response.setLastName(student.getLastName());
+      response.setStudyProgramme(student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null);
+      response.setType(StudentCardType.valueOf(studentCard.getType().name()));
+      response.setUserEntityId(studentId);
+    }
+    
+    return Response.ok(response).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard/{CARDID:[0-9]*}")  
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, @PathParam("CARDID") Long cardId, Boolean active) {
+
+    // Access
+    User loggedUser = sessionController.getUser();
+    
+    if (!loggedUser.hasRole(Role.STUDENT)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    Student student = studentController.findStudentById(loggedUser.getId());
+    
+    if (!student.getId().equals(studentId)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    // Payload validation
+    StudentCard studentCard = studentCardDAO.findById(cardId);
+    
+    if (studentCard == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!studentCard.getId().equals(cardId)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (!studentCard.getStudent().getId().equals(studentId)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, active))).build();
+  }
+  
 }

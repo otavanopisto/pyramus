@@ -109,6 +109,7 @@ import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
+import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.rest.model.UserRole;
@@ -988,6 +989,27 @@ public class ObjectFactory {
               : null;
               
           return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudyProgramme(entity.getId(), courseId, studyProgrammeId, studyProgrammeName, organization);
+        }
+      },
+      
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.students.StudentCard>() {
+        @Override
+        public Object map(fi.otavanopisto.pyramus.domainmodel.students.StudentCard entity) {
+          
+          Student student = entity.getStudent();
+          
+          StudentCardType type = entity.getType() != null ? StudentCardType.valueOf(entity.getType().name()) : null;
+          
+          return new fi.otavanopisto.pyramus.rest.model.StudentCard(
+              entity.getId(), 
+              student.getId(), 
+              student.getFirstName(), 
+              student.getLastName(), 
+              student.getStudyProgramme().getName(),
+              entity.getExpiryDate(), 
+              entity.getActive(), 
+              type);
+         
         }
       }
       

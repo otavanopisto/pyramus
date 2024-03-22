@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
@@ -58,6 +59,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
@@ -143,12 +146,13 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentCardDAO studentCardDAO = DAOFactory.getInstance().getStudentCardDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
     Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
     Person person = personDAO.findById(personId);
-
+    
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
     Sex sex = (Sex) requestContext.getEnum("gender", Sex.class);
@@ -281,6 +285,11 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       String studyEndText = requestContext.getString("studyEndText." + student.getId());
       String tagsText = requestContext.getString("tags." + student.getId());
       StudentFunding funding = (StudentFunding) requestContext.getEnum("funding." + student.getId(), StudentFunding.class);
+      
+      Date studentCardExpires = requestContext.getDate("expiryDate." + student.getId());
+      Boolean active = requestContext.getBoolean("active." + student.getId());
+      StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType." + student.getId(), StudentCardType.class);
+      
       
       Set<Tag> tagEntities = new HashSet<>();
       if (!StringUtils.isBlank(tagsText)) {
@@ -523,7 +532,36 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           ApplicationUtils.deleteApplication(application);
         }
       }
+      
+      // Student card
+      
+      if (studentCardType != null) {
+        StudentCard studentCard = studentCardDAO.findByStudent(student);
+  
+        Date expiryDate = null;
+        
+        // Set expiry date automatically same as study end date or study time end
+        if (student.getStudyEndDate() != null) {
+          expiryDate = student.getStudyEndDate();
+        }  else {
+          expiryDate = student.getStudyTimeEnd();
+        }
+        
+        if (studentCard != null) {
+          // If user has set the expiry date manually we have to use it
+          if (studentCardExpires != null && studentCard.getExpiryDate() != studentCardExpires) {
+            expiryDate = studentCardExpires;
+          }
+          studentCardDAO.update(studentCard, active, expiryDate, studentCardType);
+        } else {
+          if (studentCardExpires != null) {
+            expiryDate = studentCardExpires;
+          }
+          studentCardDAO.create(student, active, expiryDate, studentCardType);
+        }
+      }
     }
+    
 
     // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed
