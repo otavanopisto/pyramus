@@ -299,8 +299,11 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     for (Student student : students) {
 
       // Student card
-      studentCards.put(student.getId(), studentCardDAO.findByStudent(student));
+      StudentCard studentCard =  studentCardDAO.findByStudent(student);
       
+      if (studentCard != null) {
+        studentCards.put(student.getId(), studentCard);
+      }
       /**
        * Fetch courses this student is part of and sort the courses by course name
        */

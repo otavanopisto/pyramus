@@ -3654,6 +3654,19 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, @PathParam("CARDID") Long cardId, Boolean active) {
 
+    // Access
+    User loggedUser = sessionController.getUser();
+    
+    if (!loggedUser.hasRole(Role.STUDENT)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    Student student = studentController.findStudentById(loggedUser.getId());
+    
+    if (!student.getId().equals(studentId)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     // Payload validation
     StudentCard studentCard = studentCardDAO.findById(cardId);
     
@@ -3665,7 +3678,6 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    // Access
     if (!studentCard.getStudent().getId().equals(studentId)) {
       return Response.status(Status.FORBIDDEN).build();
     }

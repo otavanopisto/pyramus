@@ -271,8 +271,11 @@ public class EditStudentViewController extends PyramusViewController2 implements
         studentStudyPeriodsJSON.put(student.getId(), studyPeriodsJSON);
       }
       
-      studentCards.put(student.getId(), studentCardDAO.findByStudent(student));
+      StudentCard studentCard = studentCardDAO.findByStudent(student);
       
+      if (studentCard != null) {
+        studentCards.put(student.getId(), studentCard);
+      }
     }
     
     setJsDataVariable(pageRequestContext, "studentLodgingPeriods", studentLodgingPeriods.toString());
