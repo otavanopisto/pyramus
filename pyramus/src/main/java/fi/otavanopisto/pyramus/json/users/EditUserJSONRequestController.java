@@ -346,33 +346,42 @@ public class EditUserJSONRequestController extends JSONRequestController2 {
     boolean usernameBlank = StringUtils.isBlank(username);
     boolean passwordBlank = StringUtils.isBlank(password);
     
-    if (!usernameBlank||!passwordBlank) {
-      if (!passwordBlank) {
-        if (!password.equals(password2))
-          throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
-      }
-      
-      // TODO: Support for multiple internal authentication providers
-      List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
-      if (internalAuthenticationProviders.size() == 1) {
-        InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
-        if (internalAuthenticationProvider != null) {
-          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), staffMember.getPerson());
-          
-          if (internalAuthenticationProvider.canUpdateCredentials()) {
-            if (userIdentification == null) {
-              String externalId = internalAuthenticationProvider.createCredentials(username, password);
-              userIdentificationDAO.create(staffMember.getPerson(), internalAuthenticationProvider.getName(), externalId);
-            } else {
-              if ("-1".equals(userIdentification.getExternalId())) {
-                String externalId = internalAuthenticationProvider.createCredentials(username, password);
-                userIdentificationDAO.updateExternalId(userIdentification, externalId);
-              } else {
-                if (!StringUtils.isBlank(username))
+    if (!passwordBlank && !password.equals(password2)) {
+      throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+    }
+
+    // TODO: Support for multiple internal authentication providers
+    List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+    if (internalAuthenticationProviders.size() == 1) {
+      InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
+      if (internalAuthenticationProvider != null && internalAuthenticationProvider.canUpdateCredentials()) {
+        UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), staffMember.getPerson());
+        if (userIdentification == null) {
+          if (!usernameBlank && !passwordBlank) {
+            String externalId = internalAuthenticationProvider.createCredentials(username, password);
+            userIdentificationDAO.create(staffMember.getPerson(), internalAuthenticationProvider.getName(), externalId);
+          }
+        }
+        else {
+          if ("-1".equals(userIdentification.getExternalId())) {
+            String externalId = internalAuthenticationProvider.createCredentials(username, password);
+            userIdentificationDAO.updateExternalId(userIdentification, externalId);
+          }
+          else {
+            InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
+            InternalAuth internalAuth = internalAuthDAO.findById(Long.valueOf(userIdentification.getExternalId()));
+            if (internalAuth != null) {
+              if (usernameBlank && passwordBlank) {
+                internalAuthDAO.delete(internalAuth);
+                userIdentificationDAO.delete(userIdentification);
+              }
+              else {
+                if (!usernameBlank && !StringUtils.equals(username, internalAuth.getUsername())) {
                   internalAuthenticationProvider.updateUsername(userIdentification.getExternalId(), username);
-              
-                if (!StringUtils.isBlank(password))
+                }
+                if (!passwordBlank) {
                   internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), password);
+                }
               }
             }
           }

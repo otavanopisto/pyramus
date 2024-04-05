@@ -190,7 +190,6 @@ public class Servlet extends HttpServlet {
       if (platformErrorListener != null)
         platformErrorListener.onLoginRequiredException(request, response, lre);
       
-      Logging.logInfo("Login required for " + getCurrentUrl(request, true));
       if (requestController instanceof PageController) {
         HttpSession session = requestContext.getRequest().getSession(true);
         session.setAttribute("loginRedirectUrl", lre.getRedirectUrl());

@@ -3559,22 +3559,8 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
     
-    User loggedUser = sessionController.getUser();
-
-    if (loggedUser instanceof StaffMember) {
-      StaffMember staffMember = (StaffMember) loggedUser;
-      if (!staffMember.hasRole(Role.TRUSTED_SYSTEM)) {
-        if (!staffMember.hasRole(Role.ADMINISTRATOR) && !staffMember.hasRole(Role.MANAGER) && !staffMember.hasRole(Role.STUDY_PROGRAMME_LEADER)) {
-          boolean amICounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
-          if (!amICounselor) {
-            return Response.status(Status.FORBIDDEN).entity("Logged user does not have permission").build();
-          }
-        }
-      }
-    } else {
-      if (!loggedUser.getId().equals(student.getId())) {
-        return Response.status(Status.FORBIDDEN).build();
-      }
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_SUBJECTCHOICES, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
     
     List<String> variableList = new ArrayList<>();

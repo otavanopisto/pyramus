@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.otavanopisto.pyramus</groupId>
   <artifactId>bom</artifactId>
-  <version>0.7.212-SNAPSHOT</version>
+  <version>0.7.216-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -96,14 +96,11 @@
 
     <!-- Pyramus -->
 
-    <pyramus.version>0.7.212-SNAPSHOT</pyramus.version>
+    <pyramus.version>0.7.216-SNAPSHOT</pyramus.version>
 
     <!-- Webapp-permission -->
 
     <webapp-permission.version>1.0.3</webapp-permission.version>
-
-    <!-- JSR310 -->
-    <jackson-datatype-jsr310.version>2.5.4</jackson-datatype-jsr310.version>
   </properties>
 
   <dependencyManagement>
@@ -356,22 +353,6 @@
         <version>${webapp-permission.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-jsr310</artifactId>
-        <version>${jackson-datatype-jsr310.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      
       <!-- JUnit4 -->
 
       <dependency>

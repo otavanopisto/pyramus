@@ -45,6 +45,7 @@
         JSONRequest.request("users/searchusers.json", {
           parameters: {
             text: searchUsersForm.name.value,
+            enabled: true,
             page: page
           },
           onSuccess: function (jsonResponse) {

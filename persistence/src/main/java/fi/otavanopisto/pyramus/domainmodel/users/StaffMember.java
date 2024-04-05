@@ -24,7 +24,9 @@ import javax.persistence.Transient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
@@ -88,6 +90,7 @@ public class StaffMember extends User implements ArchivableEntity {
     return isEnabled() && CollectionUtils.isNotEmpty(getRoles());
   }
 
+  @Field (name = "enabled", store = Store.NO)
   public boolean isEnabled() {
     return enabled;
   }

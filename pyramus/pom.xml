@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.212-SNAPSHOT</version>
+    <version>0.7.216-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   <properties>
@@ -226,7 +226,7 @@
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
-      <version>2.7.2</version>
+      <version>2.7.3</version>
       <exclusions>
         <exclusion>
           <artifactId>xml-apis</artifactId>
@@ -235,6 +235,12 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.3</version>
+    </dependency>
+    
      <!-- Oltu -->
 
      <dependency>
@@ -250,11 +256,12 @@
          <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
      </dependency>
 
-    <!-- Jackson -->
+    <!-- Jackson - used in tests -->
 
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Pyramus -->
@@ -384,7 +391,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>31.1-jre</version>
+      <version>33.1.0-jre</version>
       <scope>test</scope>
     </dependency>
     
@@ -479,11 +486,11 @@
           <version>${mysql-connector-java.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
-		<dependency>
-		  <groupId>org.codehaus.plexus</groupId>
-		  <artifactId>plexus-utils</artifactId>
-		  <version>3.4.2</version>
-		</dependency>
+        <dependency>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
+          <version>3.4.2</version>
+        </dependency>
       </dependencies>
       <build>
 
@@ -677,10 +684,10 @@
             <version>1.6</version>
             <dependencies>
               <dependency>
-		        <groupId>org.codehaus.plexus</groupId>
-		  		<artifactId>plexus-utils</artifactId>
-		  		<version>3.4.2</version>
-			  </dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>3.4.2</version>
+              </dependency>
             </dependencies>
             <executions>
               <execution>

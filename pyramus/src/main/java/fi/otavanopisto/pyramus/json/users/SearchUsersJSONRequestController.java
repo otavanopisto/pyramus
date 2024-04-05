@@ -11,6 +11,7 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -32,7 +33,8 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
     if (page == null) {
       page = 0;
     }
-    
+
+    TSB enabled = TSB.from(requestContext.getString("enabled"));
     String text = requestContext.getString("text");
     Role role = (Role) requestContext.getEnum("role", Role.class);
     Set<Role> roles = null;
@@ -41,7 +43,7 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
       roles = Set.of(role);
     }
 
-    SearchResult<StaffMember> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, roles);
+    SearchResult<StaffMember> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, roles, enabled);
     List<Map<String, Object>> results = new ArrayList<>();
     List<StaffMember> users = searchResult.getResults();
     for (User user : users) {

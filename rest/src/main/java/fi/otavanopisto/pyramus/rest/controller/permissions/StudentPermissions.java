@@ -44,9 +44,16 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  @PermissionFeature(PyramusPermissionFeatures.ALLOW_COURSE_TEACHER)
   @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
   public static final String GET_STUDENT_COURSEACTIVITY = "GET_STUDENT_COURSEACTIVITY";
 
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
+  @PermissionFeature(PyramusPermissionFeatures.ALLOW_COURSE_TEACHER)
+  @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
+  public static final String GET_STUDENT_SUBJECTCHOICES = "GET_STUDENT_SUBJECTCHOICES";
+  
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
