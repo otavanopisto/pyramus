@@ -58,7 +58,6 @@ public class StudentCard {
   @GeneratedValue (strategy = GenerationType.IDENTITY) 
   private Long id;
   
-  @NotNull
   @OneToOne 
   private Student student;
   

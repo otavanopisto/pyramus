@@ -3627,7 +3627,7 @@ public class StudentRESTService extends AbstractRESTService {
     
     User loggedUser = sessionController.getUser();
 
-      if (!loggedUser.getId().equals(student.getId()) && !loggedUser.hasRole(Role.ADMINISTRATOR)) {
+      if (!loggedUser.getId().equals(student.getId())) {
         return Response.status(Status.FORBIDDEN).build();
       }
     
@@ -3661,9 +3661,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    Student student = studentController.findStudentById(loggedUser.getId());
-    
-    if (!student.getId().equals(studentId)) {
+    if (!loggedUser.getId().equals(studentId)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     
