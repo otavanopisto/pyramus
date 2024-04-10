@@ -10,7 +10,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.212-SNAPSHOT</version>
+    <version>0.7.216-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
@@ -107,6 +107,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

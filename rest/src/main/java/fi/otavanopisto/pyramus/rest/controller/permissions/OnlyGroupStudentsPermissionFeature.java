@@ -4,8 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -14,7 +12,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionFeatures;
-import fi.otavanopisto.pyramus.security.impl.UserContextResolver;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.PermissionFeatureHandler;
@@ -26,14 +23,10 @@ import fi.otavanopisto.security.PermissionFeatureHandler;
  */
 @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
 @RequestScoped
-public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHandler {
+public class OnlyGroupStudentsPermissionFeature extends AbstractPermissionFeature implements PermissionFeatureHandler {
 
   @Inject
   private Logger logger;
-  
-  @Inject
-  @Any
-  private Instance<UserContextResolver> userContextResolvers;
   
   @Inject
   private StudentDAO studentDAO;
@@ -62,21 +55,6 @@ public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHand
     }
     
     return allowed;
-  }
-  
-  /**
-   * Uses ContextResolvers to resolve user from ContextReference
-   * 
-   * @param contextReference
-   * @return user if found, else null
-   */
-  protected User resolveUser(ContextReference contextReference) {
-    for (UserContextResolver resolver : userContextResolvers) {
-      if (resolver.handlesContextReference(contextReference))
-        return resolver.resolveUser(contextReference);
-    }
-    
-    return null;
   }
   
 }

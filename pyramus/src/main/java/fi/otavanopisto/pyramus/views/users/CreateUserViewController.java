@@ -87,6 +87,8 @@ public class CreateUserViewController extends PyramusViewController implements B
     List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
     Collections.sort(studyProgrammes, Comparator.comparing(StudyProgramme::getName));
 
+    // If the staffmember is going to an existing user, credential fields are not needed
+    pageRequestContext.getRequest().setAttribute("createCredentials", studentId == null);
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
     pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
