@@ -1056,7 +1056,6 @@
             <div
                   id="coursesTabRelatedActionsHoverMenuContainer.${student.id}"
                   class="tabRelatedActionsContainer"></div>
-            <input type="hidden" name="studentCards" value="${studentCards[student.id]}"/>
             
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">

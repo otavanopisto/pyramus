@@ -999,13 +999,14 @@ public class ObjectFactory {
           Student student = entity.getStudent();
           
           StudentCardType type = entity.getType() != null ? StudentCardType.valueOf(entity.getType().name()) : null;
-          
+          String studyProgrammeName = student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null;
+
           return new fi.otavanopisto.pyramus.rest.model.StudentCard(
               entity.getId(), 
               student.getId(), 
               student.getFirstName(), 
               student.getLastName(), 
-              student.getStudyProgramme().getName(),
+              studyProgrammeName,
               entity.getExpiryDate(), 
               entity.getActive(), 
               type);

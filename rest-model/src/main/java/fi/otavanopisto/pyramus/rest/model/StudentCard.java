@@ -18,7 +18,6 @@ public class StudentCard {
   }
 
   public StudentCard() {
-    // TODO Auto-generated constructor stub
   }
 
   public String getFirstName() {

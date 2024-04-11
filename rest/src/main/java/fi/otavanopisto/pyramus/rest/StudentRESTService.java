@@ -135,7 +135,6 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermiss
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityInfo;
 import fi.otavanopisto.pyramus.rest.model.SpecEdTeacher;
-import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
@@ -3603,6 +3602,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/studentCard")
   @GET
+  @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
   public Response findStudentCard(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
@@ -3619,26 +3619,19 @@ public class StudentRESTService extends AbstractRESTService {
     
     StudentCard studentCard = studentCardDAO.findByStudent(student);
     
-    fi.otavanopisto.pyramus.rest.model.StudentCard response = new fi.otavanopisto.pyramus.rest.model.StudentCard();
-    
-    if (studentCard != null) {
-      response.setId(studentCard.getId());
-      response.setActive(studentCard.getActive());
-      response.setExpiryDate(studentCard.getExpiryDate());
-      response.setFirstName(student.getFirstName());
-      response.setLastName(student.getLastName());
-      response.setStudyProgramme(student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null);
-      response.setType(StudentCardType.valueOf(studentCard.getType().name()));
-      response.setUserEntityId(studentId);
+    if (studentCard == null) {
+      return Response.status(Status.NOT_FOUND).build();
     }
     
-    return Response.ok(response).build();
+    return Response.ok().entity(objectFactory.createModel(studentCard)).build();
+
   }
   
-  @Path("/students/{STUDENTID:[0-9]*}/studentCard/{CARDID:[0-9]*}")  
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard")  
   @PUT
+  @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
-  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, @PathParam("CARDID") Long cardId, Boolean active) {
+  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, Boolean active) {
 
     // Access
     User loggedUser = sessionController.getUser();
@@ -3652,14 +3645,11 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     // Payload validation
-    StudentCard studentCard = studentCardDAO.findById(cardId);
+    Student student = studentController.findStudentById(loggedUser.getId());
+    StudentCard studentCard = studentCardDAO.findByStudent(student);
     
     if (studentCard == null) {
       return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    if (!studentCard.getId().equals(cardId)) {
-      return Response.status(Status.BAD_REQUEST).build();
     }
 
     if (!studentCard.getStudent().getId().equals(studentId)) {
