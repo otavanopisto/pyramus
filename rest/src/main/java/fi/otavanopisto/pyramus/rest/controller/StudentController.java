@@ -410,7 +410,6 @@ public class StudentController {
   
   public CourseActivityInfo listCourseActivities(Student student, List<CourseStudent> courseStudents, boolean includeTransferCredits) {
     List<CourseActivity> courseActivities = new ArrayList<>();
-    List<CreditLink> linkedAssessments = creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment); 
     
     // Go through the courses
     
@@ -470,22 +469,6 @@ public class StudentController {
         assessment.setState(CourseActivityState.ONGOING);
         assessment.setCourseModuleId(courseModule.getId());
         
-        // Status override if course has been graded as linked credit
-        // TODO: Should all linked credits be treated as transfer credits?
-        
-        CreditLink linkedAssessment = linkedAssessments.stream()
-            .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
-            .findAny()
-            .orElse(null);
-        if (linkedAssessment != null) {
-          assessment.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
-          assessment.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
-          assessment.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
-          assessment.setDate(linkedAssessment.getCreated());
-          assessment.setGradeDate(linkedAssessment.getCreated());
-          assessment.setState(CourseActivityState.GRADED_PASS);
-        }
-
         // Status override if course has been graded
         
         CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndCourseModuleAndArchived(courseStudent, courseModule, Boolean.FALSE); 
@@ -576,7 +559,69 @@ public class StudentController {
         
         courseActivities.add(courseActivity);
       }
+
+      // Linked course assessments are considered as transferred credits
       
+      List<CreditLink> linkedAssessments = creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment); 
+      for (CreditLink creditLink : linkedAssessments) {
+        CourseAssessment courseAssessment = (CourseAssessment) creditLink.getCredit();
+        CourseModule courseModule = courseAssessment.getCourseModule();
+        Course course = courseAssessment.getCourseStudent().getCourse();
+        
+        // Course basic information
+        
+        CourseActivity courseActivity = new CourseActivity();
+        courseActivity.setCourseId(course.getId());
+        String courseName = course.getName();
+        if (!StringUtils.isEmpty(course.getNameExtension())) {
+          courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+        }
+        courseActivity.setCourseName(courseName);
+        
+        // Curriculums
+        
+        List<CourseActivityCurriculum> curriculums = new ArrayList<>();
+        for (Curriculum c : course.getCurriculums()) {
+          CourseActivityCurriculum cac = new CourseActivityCurriculum();
+          cac.setId(c.getId());
+          cac.setName(c.getName());
+          curriculums.add(cac);
+        }
+        courseActivity.setCurriculums(curriculums);
+
+        // Subject
+        
+        CourseActivitySubject subject = new CourseActivitySubject();
+        subject.setCourseModuleId(courseModule.getId());
+        if (courseModule.getCourseLength() != null) {
+          subject.setCourseLength(courseModule.getCourseLength().getUnits());
+          subject.setCourseLengthSymbol(courseModule.getCourseLength().getUnit().getSymbol());
+        }
+        subject.setCourseNumber(courseModule.getCourseNumber());
+        if (courseModule.getSubject() != null) {
+          subject.setSubjectCode(courseModule.getSubject().getCode());
+          subject.setSubjectName(courseModule.getSubject().getName());
+        }
+          
+        // Assessment
+        
+        CourseActivityAssessment assessment = new CourseActivityAssessment();
+        assessment.setCourseModuleId(courseModule.getId());
+        assessment.setDate(courseAssessment.getDate());
+        assessment.setState(CourseActivityState.TRANSFERRED);
+          
+        if (courseAssessment.getGrade() != null) {
+          assessment.setGrade(courseAssessment.getGrade().getName());
+          assessment.setGradeDate(courseAssessment.getDate());
+          assessment.setPassingGrade(courseAssessment.getGrade().getPassingGrade());
+          assessment.setText(courseAssessment.getVerbalAssessment());
+        }
+          
+        courseActivity.setSubjects(Arrays.asList(subject));
+        courseActivity.setAssessments(Arrays.asList(assessment));
+        courseActivities.add(courseActivity);
+      }
+
       // Linked transfer credits
 
       List<CreditLink> linkedTransferCredits = includeTransferCredits
