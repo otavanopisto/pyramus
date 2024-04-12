@@ -19,7 +19,7 @@ public class StudentCoursesTestsIT extends AbstractRESTServiceTest {
     given().headers(getAuthHeaders())
       .get("/students/students/{ID}/courses", TEST_STUDENT_ID)
       .then()
-      .body("id.size()", is(1))
+      .body("id.size()", is(2))
       .body("id[0]", is(1000) )
       .body("name[0]", is("Test Course #1" ))
       .body("created[0]", is( created1 ))

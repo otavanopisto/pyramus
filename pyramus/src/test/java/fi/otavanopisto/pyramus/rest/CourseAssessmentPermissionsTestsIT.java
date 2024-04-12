@@ -76,12 +76,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
       .body(courseAssessment)
       .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", TEST_STUDENTID, testCOURSE.getId());
     
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      // Accessible students restricted to groups of the logged user
-      assertOk(response, assessmentPermissions, CourseAssessmentPermissions.CREATE_COURSEASSESSMENT, 403);
-    } else {
-      assertOk(response, assessmentPermissions, CourseAssessmentPermissions.CREATE_COURSEASSESSMENT);
-    }
+    assertOk(response, assessmentPermissions, CourseAssessmentPermissions.CREATE_COURSEASSESSMENT);
 
     if (response.statusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -177,12 +172,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
       Response response = given().headers(getAuthHeaders())
         .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", testCOURSESTUDENT.getStudentId(), testCOURSE.getId(), testASSESSMENT.getId());
   
-      if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-        // Accessible students restricted to groups of the logged user
-        assertOk(response, assessmentPermissions, CourseAssessmentPermissions.FIND_COURSEASSESSMENT, 403);
-      } else {
-        assertOk(response, assessmentPermissions, CourseAssessmentPermissions.FIND_COURSEASSESSMENT);
-      }
+      assertOk(response, assessmentPermissions, CourseAssessmentPermissions.FIND_COURSEASSESSMENT);
     } finally {
       tools().deleteCourseAssessment(testCOURSE.getId(), TEST_STUDENTID, testASSESSMENT);
     }
@@ -242,12 +232,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", TEST_STUDENTID, testCOURSE.getId());
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      // Accessible students restricted to groups of the logged user
-      assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS, 403);
-    } else {
-      assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS);
-    }
+    assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS);
   }
   
   @Test
@@ -282,12 +267,7 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/courseAssessmentCount", TEST_STUDENTID);
     
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      // Accessible students restricted to groups of the logged user
-      assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS, 403);
-    } else {
-      assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS);
-    }
+    assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS);
   }
 
   @Test

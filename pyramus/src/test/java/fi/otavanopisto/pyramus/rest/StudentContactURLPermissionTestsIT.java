@@ -59,12 +59,7 @@ public class StudentContactURLPermissionTestsIT extends AbstractRESTPermissionsT
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/contactURLs", TEST_STUDENT_ID);
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTCONTACTURLS, 403);
-    }
-    else {
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTCONTACTURLS);
-    }
+    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTCONTACTURLS);
   }
   
   @Test
@@ -72,12 +67,7 @@ public class StudentContactURLPermissionTestsIT extends AbstractRESTPermissionsT
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/contactURLs/{ID}", TEST_STUDENT_ID, 3l);
     
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTCONTACTURL, 403);
-    }
-    else {
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTCONTACTURL);
-    }
+    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTCONTACTURL);
   }  
 
   @Test
