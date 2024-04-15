@@ -84,7 +84,11 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/phoneNumbers", TEST_STUDENT_ID);
 
-    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS);
+    }
   }
   
   @Test
@@ -113,7 +117,11 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, 3l);
     
-    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+    }
   }  
 
   @Test
