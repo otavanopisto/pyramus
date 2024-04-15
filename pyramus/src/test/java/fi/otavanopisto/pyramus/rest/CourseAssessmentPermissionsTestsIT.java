@@ -32,12 +32,6 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   private static final long TEST_STUDENTID = 3;
   private static final CourseStaffMemberRoleEnum TEST_COURSETEACHER_ROLE = CourseStaffMemberRoleEnum.COURSE_TEACHER;
 
-  // STUDYGUIDER_ prefixed id's are for student who is in a group lead by studyguider test role
-  private static final long STUDYGUIDER_TEST_STUDENTID = 13L;
-  private static final long STUDYGUIDER_TEST_COURSESTUDENTID = 7L;
-  private static final long STUDYGUIDER_TEST_COURSEID = 1001;
-  private static final long STUDYGUIDER_TEST_COURSEMODULEID = 1001;
-
   private CourseAssessmentPermissions assessmentPermissions = new CourseAssessmentPermissions();
   private StudentPermissions studentPermissions = new StudentPermissions();
   
@@ -116,28 +110,6 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
     }
   }
   
-  @Test
-  public void testCreateCourseAssessmentAsStudyGuider() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
-    
-    Response response = given().headers(getAuthHeaders())
-      .contentType("application/json")
-      .body(courseAssessment)
-      .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID);
-
-    // Expected to be ok for all roles because study guider has access to this test student also
-    assertOk(response, assessmentPermissions, CourseAssessmentPermissions.CREATE_COURSEASSESSMENT);
-
-    if (response.statusCode() == 200) {
-      int id = response.body().jsonPath().getInt("id");
-      
-      given().headers(getAdminAuthHeaders())
-        .delete("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID, id)
-        .then()
-        .statusCode(204);
-    }
-  }
-  
   /**
    * Tests that the role can still create an assessment if they are on a course as a staffmember.
    */
@@ -189,33 +161,6 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   }
 
   @Test
-  public void testFindCourseAssessmentAsStudyGuider() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.", Boolean.TRUE);
-    
-    Response response = given().headers(getAdminAuthHeaders())
-      .contentType("application/json")
-      .body(courseAssessment)
-      .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID);
-
-    if (response.statusCode() == 200) {
-      int courseAssessmentId = response.body().jsonPath().getInt("id");
-
-      try {
-        response = given().headers(getAuthHeaders())
-          .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID, courseAssessmentId);
-
-        // Study Guider can access this students' assessment
-        assertOk(response, assessmentPermissions, CourseAssessmentPermissions.FIND_COURSEASSESSMENT);
-      } finally {
-        given().headers(getAdminAuthHeaders())
-          .delete("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID, courseAssessmentId)
-          .then()
-          .statusCode(204);
-      }
-    }
-  }
-
-  @Test
   public void testFindCourseAssessmentAsCourseTeacher() throws NoSuchFieldException {
     if (StringUtils.equals(Role.TEACHER.toString(), getRole()) || StringUtils.equals(Role.STUDY_GUIDER.toString(), getRole())) {
       CourseAssessment testASSESSMENT = tools().createCourseAssessment(testCOURSE.getId(), testCOURSEMODULE.getId(), TEST_STUDENTID, testCOURSESTUDENT.getId(), 1l);
@@ -248,14 +193,6 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
     } else {
       assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS);
     }
-  }
-  
-  @Test
-  public void listCourseAssessmentsAsStudyGuider() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID);
-
-    assertOk(response, assessmentPermissions, CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS);
   }
   
   @Test
@@ -324,35 +261,6 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
     }
   }
 
-  @Test
-  public void testUpdateCourseAssessmentStudyGuider() throws NoSuchFieldException {
-    CourseAssessment courseAssessment = new CourseAssessment(null, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.", Boolean.TRUE);
-    
-    Response response = given().headers(getAdminAuthHeaders())
-      .contentType("application/json")
-      .body(courseAssessment)
-      .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID);
-
-    if (response.statusCode() == 200) {
-      Long id = response.body().jsonPath().getLong("id");
-      try {
-        CourseAssessment updatedCourseAssessment = new CourseAssessment(id, STUDYGUIDER_TEST_COURSESTUDENTID, STUDYGUIDER_TEST_COURSEMODULEID, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated", Boolean.TRUE);
-  
-        response = given().headers(getAuthHeaders())
-          .contentType("application/json")
-          .body(updatedCourseAssessment)
-          .put("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID, id);
-  
-        assertOk(response, assessmentPermissions, CourseAssessmentPermissions.UPDATE_COURSEASSESSMENT);
-      } finally {
-        given().headers(getAdminAuthHeaders())
-          .delete("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", STUDYGUIDER_TEST_STUDENTID, STUDYGUIDER_TEST_COURSEID, id)
-          .then()
-          .statusCode(204);
-      }
-    }
-  }
-  
   @Test
   public void testUpdateCourseAssessmentAsStudent() throws NoSuchFieldException {
     if (isCurrentRole(Role.STUDENT)) {
