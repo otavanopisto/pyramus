@@ -28,13 +28,7 @@ public class StudentCoursesTestsPermissionsIT extends AbstractRESTPermissionsTes
   
   @Test
   public void testPermissionsStudentListCourses() throws NoSuchFieldException {
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      assertOk(given().headers(getAuthHeaders())
-          .get("/students/students/{ID}/courses", TEST_STUDENT_ID), studentPermissions, StudentPermissions.LIST_COURSESTUDENTSBYSTUDENT, 403);
-    }
-    else {
-      assertOk(given().headers(getAuthHeaders())
-          .get("/students/students/{ID}/courses", TEST_STUDENT_ID), studentPermissions, StudentPermissions.LIST_COURSESTUDENTSBYSTUDENT, 200);
-    }
+    assertOk(given().headers(getAuthHeaders())
+        .get("/students/students/{ID}/courses", TEST_STUDENT_ID), studentPermissions, StudentPermissions.LIST_COURSESTUDENTSBYSTUDENT, 200);
   }
 }

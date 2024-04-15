@@ -9,12 +9,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import io.restassured.response.Response;
-
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
-import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
+import io.restassured.response.Response;
 
 @RunWith(Parameterized.class)
 public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTest {
@@ -22,7 +20,6 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
   private static final long COURSE_ID = 1000;
   private static final long STUDENT_ID = 13;
   private CoursePermissions coursePermissions = new CoursePermissions();
-  private StudentPermissions studentPermissions = new StudentPermissions();
   
   @Parameters
   public static List<Object[]> generateData() {
@@ -95,12 +92,7 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
     Response response = given().headers(getAuthHeaders())
         .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, 5l);
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      // Accessible students restricted to groups of the logged user
-      assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 403);
-    } else {
-      assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 200);
-    }
+    assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 200);
   }
   
   /**
