@@ -438,21 +438,6 @@ public class ApplicationUtils {
     return null;
   }
   
-  public static Curriculum resolveCurriculum(String curriculumValue) {
-    if (StringUtils.isBlank(curriculumValue)) {
-      return null;
-    }
-    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
-    switch (curriculumValue) {
-    case "ops2016":
-      return curriculumDAO.findById(1L); // OPS 2016
-    case "ops2021":
-      return curriculumDAO.findById(4L); // OPS 2021
-    default:
-      return null;
-    }
-  }
-  
   public static Sex resolveGender(String genderValue) {
     return StringUtils.equals("mies",  genderValue) ? Sex.MALE : StringUtils.equals("nainen",  genderValue) ? Sex.FEMALE : Sex.OTHER;
   }
@@ -1016,11 +1001,15 @@ public class ApplicationUtils {
     Curriculum curriculum = null;
     Date studyTimeEnd = null;
     String additionalInfo = null;
-    if (isInternetixLine(getFormValue(formData, "field-line"))) {
+    String line = getFormValue(formData, "field-line");
+    if (isInternetixLine(line)) {
       
-      // Curriculum for Internetix students in high school
+      // #1562: Curriculum for Internetix students in high school is always OPS 2021
       
-      curriculum = resolveCurriculum(getFormValue(formData, "field-internetix-curriculum"));
+      if (StringUtils.equals(line, LINE_AINEOPISKELU)) {
+        CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+        curriculum = curriculumDAO.findById(4L); // OPS 2021
+      }
       
       // Study time end plus one year
 

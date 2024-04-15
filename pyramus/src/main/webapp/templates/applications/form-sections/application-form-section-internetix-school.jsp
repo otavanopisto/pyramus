@@ -7,15 +7,6 @@
 
     <div class="application-line"></div>
 
-    <div class="form-section__field-container field-internetix-curriculum dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
-      <label for="field-internetix-curriculum" class="required">Opetussuunnitelma</label>
-      <select id="field-internetix-curriculum" name="field-internetix-curriculum" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
-        <option value="">-- Valitse --</option>
-        <option value="ops2016">OPS 2016</option>
-        <option value="ops2021">OPS 2021</option>
-      </select>
-    </div>
-
     <h2 class="form-section__header">Oppilaitostiedot</h2>
     <div class="form-section__field-container field-internetix-school">
       <label for="field-internetix-school" class="required">Opiskelu muussa oppilaitoksessa</label>
