@@ -1105,16 +1105,23 @@
                     
                     <div id="emailTable.${student.id}"></div>
                   </div>
+                  
                   <c:set var="studentCard" value="${studentCards[student.id]}" />
                 
+                  <c:if test="${!empty studentCard}">
+                    <c:set var="cardType" value="${studentCard.type}"/>
+                    <c:set var="expirationDate" value="${fn:escapeXml(studentCard.expiryDate.time)}"/>
+                    <c:set var="active" value="${studentCard.active}"/>
+                  </c:if>
+                  
                   <div class="genericFormSection">
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="integrations.slice.cardType"/>
                     </jsp:include>
                     <select name="studentCardType.${student.id}">
                       <option value=""><fmt:message key="generic.studentCardTypes.none"/></option>
-                      <option value="GREEN" ${studentCard.type == 'GREEN' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.green"/></option>
-                      <option value="BLUE" ${studentCard.type == 'BLUE' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.blue"/></option>
+                      <option value="GREEN" ${cardType == 'GREEN' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.green"/></option>
+                      <option value="BLUE" ${cardType == 'BLUE' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.blue"/></option>
                     </select>
                   </div>
                   
@@ -1122,7 +1129,7 @@
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="integrations.slice.expiryDate"/>
                     </jsp:include>            
-                    <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${studentCard.expiryDate.time}">
+                    <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${expirationDate}">
                   </div>
                   
                   <div class="genericFormSection">
@@ -1130,7 +1137,7 @@
                       <jsp:param name="titleLocale" value="integrations.slice.status"/>
                     </jsp:include>      
               	    <c:choose>
-                      <c:when test="${studentCard.active}"><input type="checkbox" name="active.${student.id}" value="true" checked="checked"/></c:when>
+                      <c:when test="${active}"><input type="checkbox" name="active.${student.id}" value="true" checked="checked"/></c:when>
                       <c:otherwise>
                         <input type="checkbox" name="active.${student.id}" value="true"/>
                       </c:otherwise>              
