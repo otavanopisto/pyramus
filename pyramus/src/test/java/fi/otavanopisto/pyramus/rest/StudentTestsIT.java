@@ -126,7 +126,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("studyEndReasonId[0]", is((Integer) null))
       .body("studyEndText[0]", is((String) null))
       .body("variables[0].size()", is(0))
-      .body("tags[0].size", is(0))
+      .body("tags[0].size()", is(0))
       .body("archived[0]", is(Boolean.FALSE))
 
       .body("id[1]", is(4) )
@@ -151,7 +151,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("studyEndReasonId[1]", is((Integer) null))
       .body("studyEndText[1]", is((String) null))
       .body("variables[1].size()", is(0))
-      .body("tags[1].size", is(0))
+      .body("tags[1].size()", is(0))
       .body("archived[1]", is(Boolean.FALSE));
   }
 
@@ -184,7 +184,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("studyEndReasonId[0]", is((Integer) null))
       .body("studyEndText[0]", is((String) null))
       .body("variables[0].size()", is(0))
-      .body("tags[0].size", is(0))
+      .body("tags[0].size()", is(0))
       .body("archived[0]", is(Boolean.FALSE));
   }
   
@@ -216,7 +216,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("studyEndReasonId", is((Integer) null))
       .body("studyEndText", is((String) null))
       .body("variables.size()", is(0))
-      .body("tags.size", is(0))
+      .body("tags.size()", is(0))
       .body("archived", is(Boolean.FALSE));
   }
   

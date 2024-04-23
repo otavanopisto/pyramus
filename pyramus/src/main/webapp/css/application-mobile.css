@@ -401,6 +401,18 @@ h3 {
   line-height: 1;
 }
 
+p {
+	margin: 1rem 0;
+}
+
+p:first-child {
+	margin: 0 0 1rem;
+}
+
+p:last-child:not(:first-child) {
+  margin: 1rem 0 0;
+}
+
 .form-section__header--nettilukio {
   color: #5dbdc5;
 }
@@ -427,6 +439,7 @@ h3 {
 
 a {
   color: #009fe3;
+  font-weight: 400;
 }
 
 strong,
@@ -553,6 +566,7 @@ span.email {
 
 .application-footer__contact-row {
   color: #fff;
+  font-weight: 400;
   line-height: 1;
   padding: 5px 0;
 }
@@ -604,3 +618,12 @@ span.email {
 .signatures-auth-sources img:hover {
   border: 2px solid #83f8f3;
 }
+
+.error-container {
+  color: #b94a48;
+  font-size: 0.9em;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.2em;
+}
+

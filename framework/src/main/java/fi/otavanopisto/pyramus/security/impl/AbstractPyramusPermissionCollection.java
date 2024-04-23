@@ -15,6 +15,7 @@ public class AbstractPyramusPermissionCollection extends AbstractPermissionColle
   public static final String STUDY_PROGRAMME_LEADER = "STUDY_PROGRAMME_LEADER";
 
   public static final String STUDENT = "STUDENT";
+  public static final String STUDENT_PARENT = "STUDENT_PARENT";
   
   public static final String TRUSTED_SYSTEM = "TRUSTED_SYSTEM";
 

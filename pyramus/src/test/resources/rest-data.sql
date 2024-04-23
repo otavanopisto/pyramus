@@ -56,7 +56,8 @@ values
   (13, 'Teacher', 1),
   (14, 'Study Programme Leader', 1),
   (15, 'Test Student #2', 1),
-  (16, 'Closed', 1);
+  (16, 'Closed', 1),
+  (17, 'Student Parent', 1);
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
@@ -92,7 +93,8 @@ values
   (11, 1, STR_TO_DATE('1 1 1980', '%d %m %Y'), 'FEMALE', '000010-0000', 'Teacher', false),
   (12, 1, STR_TO_DATE('1 1 1981', '%d %m %Y'), 'FEMALE', '000100-0000', 'SPLeader', false),
   (13, 1, STR_TO_DATE('1 1 1981', '%d %m %Y'), 'FEMALE', '000100-0000', 'Test Student #2', false),
-  (14, 1, STR_TO_DATE('1 1 1956', '%d %m %Y'), 'MALE', '010100-2000', 'Closed', false);
+  (14, 1, STR_TO_DATE('1 1 1956', '%d %m %Y'), 'MALE', '010100-2000', 'Closed', false),
+  (15, 1, STR_TO_DATE('1 1 1957', '%d %m %Y'), 'MALE', '010100-3000', 'Student Parent', false);
   
 insert into
   User (id, person_id, firstName, lastName, contactInfo, version, archived)
@@ -110,10 +112,16 @@ values
   (11, 11, 'Teacher', 'Teacher user', 13, 1, false),
   (12, 12, 'SPLeader', 'SPLeader user', 14, 1, false),
   (13, 13, 'Test Student2', 'User #4', 15, 1, false),
-  (14, 14, 'Test Closed', 'User #14', 16, 1, false);
+  (14, 14, 'Test Closed', 'User #14', 16, 1, false),
+  (15, 15, 'Test Student Parent', 'User #15', 17, 1, false);
 
 update Person p
 set p.defaultUser_id = p.id;
+  
+insert into
+  StudentParent (id, organization)
+values
+  (15, 1);
   
 insert into
   StaffMember (id, organization, title, enabled)
@@ -503,7 +511,9 @@ Old. Needed anymore?
 /** STUDY_PROGRAMME_LEADER ROLE**/
     (10, 'ff81d5b8500c773e7a1776a7963801e2', 'https://localhost:8443/oauth2ClientTest/success', 12, 1),
 /** CLOSED ROLE**/
-    (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1);    
+    (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1),
+/** STUDENT_PARENT ROLE**/
+    (12, 'ff81d5b8500c773e7a1776a796380115', 'https://localhost:8443/oauth2ClientTest/success', 15, 1);    
         
 insert into 
   CourseUser (id, course, version)
