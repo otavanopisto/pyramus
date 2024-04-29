@@ -135,6 +135,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     EntityManager entityManager = getEntityManager();
     application.setState(applicationState);
     application.setApplicantLastModified(new Date());
+    application.setLastModified(new Date());
     entityManager.persist(application);
     return application;
   }
@@ -152,6 +153,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     EntityManager entityManager = getEntityManager();
     application.setStudent(student);
     application.setCredentialToken(credentialToken);
+    application.setLastModified(new Date());
     entityManager.persist(application);
     return application;
   }
@@ -165,9 +167,18 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
+  public Application updateLastModified(Application application, User user) {
+    EntityManager entityManager = getEntityManager();
+    application.setLastModifier(user);
+    application.setLastModified(new Date());
+    entityManager.persist(application);
+    return application;
+  }
+  
   public Application updateApplicantEditable(Application application, Boolean applicantEditable) {
     EntityManager entityManager = getEntityManager();
     application.setApplicantEditable(applicantEditable);
+    application.setLastModified(new Date());
     entityManager.persist(application);
     return application;
   }
@@ -301,7 +312,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     criteria.select(root);
     criteria.where(
       criteriaBuilder.and(
-        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.created), date),
+        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.lastModified), date),
         criteriaBuilder.equal(root.get(Application_.line), line)
       )
     );
