@@ -2,6 +2,9 @@ package fi.otavanopisto.pyramus.dao.base;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -52,6 +55,23 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
     entityManager.persist(phoneNumber);
 
     return phoneNumber;
+  }
+
+  public PhoneNumber findDefaultPhoneNumber(ContactInfo contactInfo) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<PhoneNumber> criteria = criteriaBuilder.createQuery(PhoneNumber.class);
+    Root<PhoneNumber> root = criteria.from(PhoneNumber.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(PhoneNumber_.contactInfo), contactInfo),
+        criteriaBuilder.equal(root.get(PhoneNumber_.defaultNumber), Boolean.TRUE)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
   }
 
   @Override

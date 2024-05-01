@@ -206,11 +206,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (ApplicationUtils.isInternetixLine(getFormValue(formData, "field-line"))) {
         fields = new LinkedHashMap<>();
         sections.put("Koulutusaste", fields);
-        if (!StringUtils.isBlank(getFormValue(formData, "field-internetix-curriculum"))) {
-          fields.put("Opetussuunnitelma", StringUtils.equals(getFormValue(formData, "field-internetix-curriculum"), "ops2016")
-              ? "OPS 2016"
-              : "OPS 2021");
-        }
         boolean isContractSchool = false;
         fields = new LinkedHashMap<>();
         sections.put("Aineopiskelijan oppilaitos", fields);

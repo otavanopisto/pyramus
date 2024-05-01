@@ -2,8 +2,10 @@ package fi.otavanopisto.pyramus.webhooks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
@@ -17,6 +19,7 @@ public class WebhookDatas {
   public void init() {
     updatedStaffMemberIds = new ArrayList<>();
     updatedStudentIds = new ArrayList<>();
+    updatedStudentParentIds = new HashSet<>();
     updatedCourseIds = new ArrayList<>();
     updatedCourseStudentIds = new ArrayList<>();
     courseStudentStudentIdMap = new HashMap<>();
@@ -51,6 +54,18 @@ public class WebhookDatas {
   public List<Long> retrieveUpdatedStudentIds() {
     List<Long> result = new ArrayList<>(updatedStudentIds);
     updatedStudentIds.clear();
+    return result;
+  }
+  
+  /* StudentIds */
+  
+  public void addUpdatedStudentParentId(Long updatedStudentParentId) {
+    updatedStudentParentIds.add(updatedStudentParentId);
+  }
+  
+  public Set<Long> retrieveUpdatedStudentParentIds() {
+    Set<Long> result = updatedStudentParentIds;
+    updatedStudentParentIds = new HashSet<>();
     return result;
   }
   
@@ -132,6 +147,7 @@ public class WebhookDatas {
   
   private List<Long> updatedStaffMemberIds;
   private List<Long> updatedStudentIds;
+  private Set<Long> updatedStudentParentIds;
   private List<Long> updatedCourseIds;
   private List<Long> updatedCourseStudentIds;
   private Map<Long, Long> courseStudentStudentIdMap;

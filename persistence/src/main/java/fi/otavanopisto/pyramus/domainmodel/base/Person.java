@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -206,6 +209,31 @@ public class Person implements ContextReference {
     return !staffMembers.isEmpty() ? staffMembers.get(0) : null;
   }
 
+  /**
+   * Compares this person's birthday to the current date and returns
+   * 
+   * <ul>
+   *   <li>Boolean.TRUE if the student is under 18 years old</li>
+   *   <li>Boolean.FALSE if the student is over 18 years old</li>
+   *   <li>null otherwise - if f.ex. the birthday field is null</li>
+   * </ul>
+   * 
+   * @return
+   */
+  @Transient
+  public Boolean isUnderAge() {
+    Date person_bday = getBirthday();
+    
+    if (person_bday != null) {
+      LocalDate ld_birthday = Instant.ofEpochMilli(person_bday.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+      LocalDate ld_threshold = LocalDate.now().minusYears(18);
+
+      return ld_birthday.isAfter(ld_threshold);
+    }
+    
+    return null;
+  }
+  
   @Transient
   @Field(analyze = Analyze.NO, store = Store.NO)
   @SortableField

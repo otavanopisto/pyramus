@@ -2,6 +2,9 @@ package fi.otavanopisto.pyramus.dao.base;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -93,6 +96,23 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
     entityManager.persist(address);
 
     return address;
+  }
+
+  public Address findDefaultAddress(ContactInfo contactInfo) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Address> criteria = criteriaBuilder.createQuery(Address.class);
+    Root<Address> root = criteria.from(Address.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Address_.contactInfo), contactInfo),
+        criteriaBuilder.equal(root.get(Address_.defaultAddress), Boolean.TRUE)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
   }
 
   @Override

@@ -62,6 +62,7 @@ public class SaveLogEntryJSONRequestController extends JSONRequestController {
       
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
       ApplicationLog applicationLog = applicationLogDAO.create(application, ApplicationLogType.PLAINTEXT, logEntry, staffMember);
+      applicationDAO.updateLastModified(application, staffMember);
       
       requestContext.addResponseParameter("id", applicationLog.getId());
       requestContext.addResponseParameter("type", applicationLog.getType());

@@ -48,7 +48,9 @@ public enum Role {
   /**
    * Study programme leader (linjanvetäjä)
    */
-  STUDY_PROGRAMME_LEADER (9);
+  STUDY_PROGRAMME_LEADER (9),
+  
+  STUDENT_PARENT (10);
   
   /**
    * Constructor specifying the role.

@@ -63,6 +63,7 @@ public class LoginJSONRequestController extends JSONRequestController {
     for (InternalAuthenticationProvider provider : AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders()) {
       try {
         User user = provider.getUser(username, password);
+        
         if (user != null && !user.getArchived() && user.isAccountEnabled()) {
           
           // User has been authorized, so store him in the session

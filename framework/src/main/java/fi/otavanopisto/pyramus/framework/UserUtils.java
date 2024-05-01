@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -25,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
@@ -55,12 +57,37 @@ public class UserUtils {
    * @throws IllegalArgumentException if the given email is blank 
    */
   public static boolean isAllowedEmail(String emailAddress, ContactType contactType, Long personId) {
+    return isAllowedEmail(emailAddress, !contactType.getNonUnique(), personId);
+  }
+
+  /**
+   * Is email address allowed (not in use)
+   * 
+   * @param emailAddress address
+   * @param unique if the email has to be unique. if false, this method returns always true
+   * @return true if email is not in use
+   * @throws IllegalArgumentException if the given email is blank 
+   */
+  public static boolean isAllowedEmail(String emailAddress, boolean unique) {
+    return isAllowedEmail(emailAddress, unique, null);
+  }
+  
+  /**
+   * Is email address allowed (not in use by another person)
+   * 
+   * @param emailAddress address
+   * @param unique if the email has to be unique. if false, this method returns always true
+   * @param personId id of person receiving this address
+   * @return true if email may be used by the provided person
+   * @throws IllegalArgumentException if the given email is blank 
+   */
+  public static boolean isAllowedEmail(String emailAddress, boolean unique, Long personId) {
     if (StringUtils.isBlank(emailAddress)) {
       throw new IllegalArgumentException("Email address cannot be blank.");
     }
     
     // if Email is being put into non-unique field, it is always allowed    
-    if (contactType.getNonUnique()) {
+    if (!unique) {
       return true;
     }
     
@@ -68,15 +95,23 @@ public class UserUtils {
 
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
 
     StaffMember staffMember = staffMemberDAO.findByUniqueEmail(emailAddress);
+    StudentParent studentParent = studentParentDAO.findByUniqueEmail(emailAddress);
     List<Student> students = studentDAO.listBy(null, emailAddress, null, null, null, null);
+
+    // True, if email is not in use
+    if (staffMember == null && studentParent == null && students.isEmpty()) {
+      return true;
+    }
 
     if (personId != null) {
       // True, if found matches the person, or if not found at all 
       boolean allowed = true;
       
       allowed = allowed && (staffMember != null ? personId.equals(staffMember.getPerson().getId()) : true);
+      allowed = allowed && (studentParent != null ? personId.equals(studentParent.getPerson().getId()) : true);
       
       for (Student student : students) {
         if (student.getContactInfo().getEmails() != null) {
@@ -96,8 +131,31 @@ public class UserUtils {
       
       return allowed;
     } else {
-      // True, if email is not in use
-      return staffMember == null && students.isEmpty();
+      /**
+       * The email is being assigned to a user that likely doesn't exist yet (personId = null)
+       * so check if there is globally unique use of it already.
+       */
+      
+      // Doesn't this have the assumption that staffmembers/studentParents have only unique contacts?
+      if (staffMember != null || studentParent != null) {
+        return false;
+      }
+      
+      for (Student student : students) {
+        if (student.getContactInfo().getEmails() != null) {
+          for (Email email : student.getContactInfo().getEmails()) {
+            if (emailAddress.equalsIgnoreCase(email.getAddress())) {
+              // Not allowed if the email is in use in a non-unique field
+              
+              if (email.getContactType().isUniqueEmails()) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+      
+      return true;
     }
   }
   
@@ -154,6 +212,8 @@ public class UserUtils {
         return UserRole.STUDY_GUIDER;
       case STUDY_PROGRAMME_LEADER:
         return UserRole.STUDY_PROGRAMME_LEADER;
+      case STUDENT_PARENT:
+        return UserRole.STUDENT_PARENT;
         
       default:
         throw new RuntimeException(String.format("Unknown role %s", role));

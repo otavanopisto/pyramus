@@ -39,6 +39,10 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String LIST_STAFFMEMBERSBYPERSON = "LIST_STAFFMEMBERSBYPERSON";
   
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  public static final String LIST_STUDENTPARENTSBYPERSON = "LIST_STUDENTPARENTSBYPERSON";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_COURSESTUDENTSBYSTUDENT = "LIST_COURSESTUDENTSBYSTUDENT";
   
