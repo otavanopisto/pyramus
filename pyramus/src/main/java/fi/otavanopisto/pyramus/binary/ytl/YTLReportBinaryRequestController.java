@@ -235,7 +235,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
 
     StudentTOR tor;
     try {
-      tor = StudentTORController.constructStudentTOR(student);
+      tor = StudentTORController.constructStudentTOR(student, false);
     } catch (Exception ex) {
       tor = new StudentTOR();
       logger.log(Level.SEVERE, String.format("Failed to construct TOR for Student %d", student.getId()), ex);

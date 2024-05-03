@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.tor;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
@@ -26,10 +29,22 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
 
 public class StudentTORController {
 
-  public static StudentTOR constructStudentTOR(Student student) throws Exception {
+  /**
+   * Constructs table of records for given student. If subject summary fields
+   * (subject completed, mandatory course count and completed mandatory course count)
+   * are needed, set useCurriculum to true. If they're not needed, use false for
+   * less processing.
+   * 
+   * @param student Student
+   * @param useCurriculum set to true if subject summary fields are needed
+   * @return Student's TOR
+   * @throws Exception if something goes wrong
+   */
+  public static StudentTOR constructStudentTOR(Student student, boolean useCurriculum) throws Exception {
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
@@ -100,7 +115,28 @@ public class StudentTORController {
       }
     }
 
-    tor.postProcess();
+    TORCurriculum curriculum = null;
+    
+    if (useCurriculum) {
+      if (student.getCurriculum() != null) {
+        Long curriculumId = student.getCurriculum().getId();
+        
+        String curriculumFile = null;
+        switch (curriculumId.intValue()) {
+          case 3: curriculumFile = "curriculum_2018.json"; break;
+          case 4: curriculumFile = "curriculum_2021.json"; break;
+        }
+
+        if (curriculumFile != null) {
+          ObjectMapper objectMapper = new ObjectMapper();
+          String curriculumJsonLocation = "fi/otavanopisto/pyramus/tor/" + curriculumFile;
+          InputStream curriculumJson = StudentTORController.class.getClassLoader().getResourceAsStream(curriculumJsonLocation);
+          curriculum = objectMapper.readValue(curriculumJson, TORCurriculum.class);
+        }
+      }
+    }
+    
+    tor.postProcess(curriculum);
     return tor;
   }
   

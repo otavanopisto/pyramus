@@ -11,7 +11,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumModule;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 
 public class TORSubject extends Subject {
 
@@ -81,12 +86,25 @@ public class TORSubject extends Subject {
     this.meanGrade = meanGrade;
   }
   
-  protected void postProcess(TORProblems problems) {
+  public Boolean getCompleted() {
+    return completed;
+  }
+
+  public Integer getMandatoryCourseCompletedCount() {
+    return mandatoryCourseCompletedCount;
+  }
+
+  public Integer getMandatoryCourseCount() {
+    return mandatoryCourseCount;
+  }
+
+  protected void postProcess(TORCurriculum curriculum, TORProblems problems) {
     Collections.sort(courses, Comparator.comparing(TORCourse::getCourseNumber, Comparator.nullsLast(Integer::compareTo)));
     courses.forEach(course -> course.postProcess());
     
     calculateArithmeticMeanGrade();
     calculateWeightedMeanGrade(problems);
+    processCurriculum(curriculum, problems);
   }
   
   private void calculateArithmeticMeanGrade() {
@@ -127,6 +145,44 @@ public class TORSubject extends Subject {
     this.weightedMeanGrade = totalLength > 0 ? totalWeightedGrade / totalLength : null;
   }
   
+  /**
+   * Figures out if the subject is 'completed', as in if all the
+   * courses marked as mandatory in the curriculum are successfully
+   * completed.
+   * 
+   * @param curriculum
+   * @param problems
+   */
+  private void processCurriculum(TORCurriculum curriculum, TORProblems problems) {
+    if (curriculum != null && StringUtils.isNotBlank(getCode())) {
+      TORCurriculumSubject curriculumSubject = curriculum.getSubjectByCode(getCode());
+      if (curriculumSubject != null && CollectionUtils.isNotEmpty(curriculumSubject.getModules())) {
+        // Collect the course numbers of mandatory courses from curriculum
+        
+        Set<Integer> mandatoryCourseNumbers = curriculumSubject.getModules().stream()
+          .filter(TORCurriculumModule::isMandatory)
+          .map(TORCurriculumModule::getCourseNumber)
+          .collect(Collectors.toSet());
+        
+        // If the curriculum has mandatory courses for the subject we can fill in the extra fields.
+        
+        if (CollectionUtils.isNotEmpty(mandatoryCourseNumbers)) {
+          int numCompleted = 0;
+          for (Integer mandatoryCourseNumber : mandatoryCourseNumbers) {
+            TORCourse torCourse = findCourse(mandatoryCourseNumber);
+            if (torCourse != null && torCourse.isPassed()) {
+              numCompleted++;
+            }
+          }
+          
+          this.mandatoryCourseCount = mandatoryCourseNumbers.size();
+          this.mandatoryCourseCompletedCount = numCompleted;
+          this.completed = mandatoryCourseCount == mandatoryCourseCompletedCount;
+        }
+      }
+    }
+  }
+
   private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
     Set<Object> seen = ConcurrentHashMap.newKeySet();
     return t -> seen.add(keyExtractor.apply(t));
@@ -136,4 +192,8 @@ public class TORSubject extends Subject {
   private Double weightedMeanGrade;
   private Grade meanGrade;
   private List<TORCourse> courses = new ArrayList<>();
+  
+  private Boolean completed;
+  private Integer mandatoryCourseCompletedCount;
+  private Integer mandatoryCourseCount;
 }
