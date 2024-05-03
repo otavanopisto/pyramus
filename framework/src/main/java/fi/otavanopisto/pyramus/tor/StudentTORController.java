@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
@@ -119,12 +120,12 @@ public class StudentTORController {
     
     if (useCurriculum) {
       if (student.getCurriculum() != null) {
-        Long curriculumId = student.getCurriculum().getId();
+        String curriculumName = student.getCurriculum().getName();
         
         String curriculumFile = null;
-        switch (curriculumId.intValue()) {
-          case 3: curriculumFile = "curriculum_2018.json"; break;
-          case 4: curriculumFile = "curriculum_2021.json"; break;
+        switch (curriculumName) {
+          case PyramusConsts.OPS_2018: curriculumFile = "curriculum_2018.json"; break;
+          case PyramusConsts.OPS_2021: curriculumFile = "curriculum_2021.json"; break;
         }
 
         if (curriculumFile != null) {

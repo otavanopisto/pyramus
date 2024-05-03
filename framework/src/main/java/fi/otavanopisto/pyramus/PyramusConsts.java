@@ -10,6 +10,7 @@ public class PyramusConsts {
   
   // Curriculum names
   public static final String OPS_2016 = "OPS 2016";
+  public static final String OPS_2018 = "OPS 2018";
   public static final String OPS_2021 = "OPS 2021";
   
   // Subject education types
