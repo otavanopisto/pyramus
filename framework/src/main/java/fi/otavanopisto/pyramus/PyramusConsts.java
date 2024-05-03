@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.rest.util;
+package fi.otavanopisto.pyramus;
 
 public class PyramusConsts {
 
