@@ -711,7 +711,8 @@
 
               // If subject is completed, add some visual indication
               if (subject.completed) {
-                pccElement.appendChild(new Element("img", {src: GLOBAL_contextPath + '/gfx/input-checked.png'}));
+            	  var courseCountTextSpan = pccElement.appendChild(new Element("span", {className: "studentSubjectCreditsPassedCoursesCount__checked-wrapper"}));
+            	  courseCountTextSpan.appendChild(new Element("img", {src: GLOBAL_contextPath + '/gfx/input-checked.png'}));
               }
 
               var subMeanContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsMeanGradeContainer"}));
