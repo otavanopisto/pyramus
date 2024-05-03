@@ -1,0 +1,2591 @@
+{
+  "name": "OPS 2021",
+  "subjects": [
+    {
+      "name": "Äidinkieli ja kirjallisuus, suomi äidinkielenä",
+      "code": "ÄI",
+      "modules": [
+        {
+          "name": "Tekstien tulkinta ja kirjoittaminen",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli- ja tekstitietoisuus",
+          "courseNumber": 2,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Vuorovaikutus 1",
+          "courseNumber": 3,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kirjallisuus 1",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Tekstien tulkinta 1",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kirjoittaminen 1",
+          "courseNumber": 6,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Vuorovaikutus 2",
+          "courseNumber": 7,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kirjallisuus 2",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Vuorovaikutus 3",
+          "courseNumber": 9,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kirjoittaminen 2",
+          "courseNumber": 10,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tekstien tulkinta 2",
+          "courseNumber": 11,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Äidinkieli ja kirjallisuus, suomi toisena kielenä",
+      "code": "S2",
+      "modules": [
+        {
+          "name": "Tekstien tulkinta ja kirjoittaminen",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli- ja tekstitietoisuus",
+          "courseNumber": 2,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Vuorovaikutus 1",
+          "courseNumber": 3,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kirjallisuus 1",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Tekstien tulkinta 1",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kirjoittaminen 1",
+          "courseNumber": 6,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Vuorovaikutus 2",
+          "courseNumber": 7,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kirjallisuus 2",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Vuorovaikutus 3",
+          "courseNumber": 9,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kirjoittaminen 2",
+          "courseNumber": 10,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tekstien tulkinta 2",
+          "courseNumber": 11,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Äidinkieli ja kirjallisuus, muun kielen oppimäärä",
+      "code": "ÄIM",
+      "modules": [
+        {
+          "name": "",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 9,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 10,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "",
+          "courseNumber": 11,
+          "length": 2,
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "name": "Ruotsi, B1-oppimäärä",
+      "code": "RUB1",
+      "modules": [
+        {
+          "name": "Opiskelutaidot ja kieli-identiteetin rakentaminen",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Ruotsin kieli arjessani",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Kulttuuri ja mediat",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ympäristömme",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Opiskelu- ja työelämä",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Viesti ja vaikuta puhuen",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kestävä elämäntapa",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Johdatus lukion ruotsiin",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Abiruotsi",
+          "courseNumber": 9,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Englanti, A-oppimäärä",
+      "code": "ENA",
+      "modules": [
+        {
+          "name": "Opiskelutaidot ja kieli-identiteetin rakentaminen",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Englanti globaalina kielenä",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Englannin kieli ja kulttuuri luovan ilmaisun välineenä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Englannin kieli vaikuttamisen välineenä",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kestävä tulevaisuus ja tiede",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Englannin kieli jatko-opinnoissa ja työelämässä",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ympäristö ja kestävä elämäntapa",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Viesti ja vaikuta puhuen",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Johdatus lukion englantiin 1",
+          "courseNumber": 9,
+          "length": 1,
+          "mandatory": false
+        },
+        {
+          "name": "Johdatus lukion englantiin 2",
+          "courseNumber": 10,
+          "length": 1,
+          "mandatory": false
+        },
+        {
+          "name": "Englantia abeille",
+          "courseNumber": 11,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Espanja, A-oppimäärä",
+      "code": "EAA",
+      "modules": [
+        {
+          "name": "Opiskelutaidot ja kieli-identiteetin rakentaminen",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli vaikuttamisen välineenä",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kestävä tulevaisuus ja tiede",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli jatko-opinnoissa ja työelämässä",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ympäristö ja kestävä elämäntapa",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Viesti ja vaikuta puhuen",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Ranska, A-oppimäärä",
+      "code": "RAA",
+      "modules": [
+        {
+          "name": "Opiskelutaidot ja kieli-identiteetin rakentaminen",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli vaikuttamisen välineenä",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kestävä tulevaisuus ja tiede",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli jatko-opinnoissa ja työelämässä",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ympäristö ja kestävä elämäntapa",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Viesti ja vaikuta puhuen",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Ruotsi, A-oppimäärä",
+      "code": "RUA",
+      "modules": [
+        {
+          "name": "Opiskelutaidot ja kieli-identiteetin rakentaminen",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli vaikuttamisen välineenä",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kestävä tulevaisuus ja tiede",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli jatko-opinnoissa ja työelämässä",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ympäristö ja kestävä elämäntapa",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Viesti ja vaikuta puhuen",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Saksa, A-oppimäärä",
+      "code": "SAA",
+      "modules": [
+        {
+          "name": "Opiskelutaidot ja kieli-identiteetin rakentaminen",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli vaikuttamisen välineenä",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kestävä tulevaisuus ja tiede",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli jatko-opinnoissa ja työelämässä",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ympäristö ja kestävä elämäntapa",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Viesti ja vaikuta puhuen",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Venäjä, A-oppimäärä",
+      "code": "VEA",
+      "modules": [
+        {
+          "name": "Opiskelutaidot ja kieli-identiteetin rakentaminen",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli vaikuttamisen välineenä",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kestävä tulevaisuus ja tiede",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli jatko-opinnoissa ja työelämässä",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ympäristö ja kestävä elämäntapa",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Viesti ja vaikuta puhuen",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Ranska, B2-oppimäärä",
+      "code": "RAB2",
+      "modules": [
+        {
+          "name": "Perutason alkeet 3",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 1",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 2",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 3",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 4",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 5",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason jatko 1",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason jatko 2",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Saksa, B2-oppimäärä",
+      "code": "SAB2",
+      "modules": [
+        {
+          "name": "Perutason alkeet 3",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 1",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 2",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 3",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 4",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustaso 5",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason jatko 1",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason jatko 2",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Espanja, B3-oppimäärä",
+      "code": "EAB3",
+      "modules": [
+        {
+          "name": "Tutustutaan",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Arkielämää",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Opiskelu ja harrastukset",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kotona maailmalla",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Hyvinvoiva ihminen",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kulttuurien matkassa",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Omannäköinen tulevaisuus",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ajankohtaista mediassa",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Japani, B3-oppimäärä",
+      "code": "JPB3",
+      "modules": [
+        {
+          "name": "Tutustutaan",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Arkielämää",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Opiskelu ja harrastukset",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kotona maailmalla",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Hyvinvoiva ihminen",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kulttuurien matkassa",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Omannäköinen tulevaisuus",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ajankohtaista mediassa",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Saksa, B3-oppimäärä",
+      "code": "SAB3",
+      "modules": [
+        {
+          "name": "Tutustutaan",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Arkielämää",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Opiskelu ja harrastukset",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kotona maailmalla",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Hyvinvoiva ihminen",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kulttuurien matkassa",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Omannäköinen tulevaisuus",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ajankohtaista mediassa",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Venäjä, B3-oppimäärä",
+      "code": "VEB3",
+      "modules": [
+        {
+          "name": "Tutustutaan",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Arkielämää",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Opiskelu ja harrastukset",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kotona maailmalla",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Hyvinvoiva ihminen",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kulttuurien matkassa",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Omannäköinen tulevaisuus",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ajankohtaista mediassa",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Matematiikan yhteiset opintokokonaisuudet",
+      "code": "MAY",
+      "modules": [
+        {
+          "name": "Luvut ja yhtälöt",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Matematiikan nivelvaiheen opintojakso",
+          "courseNumber": 15,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Sovellukset matematiikan opiskelussa",
+          "courseNumber": 16,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Matematiikan pitkä oppimäärä",
+      "code": "MAA",
+      "modules": [
+        {
+          "name": "Funktiot ja yhtälöt 1",
+          "courseNumber": 2,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Geometria",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Analyyttinen geometria ja vektorit",
+          "courseNumber": 4,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Funktiot ja yhtälöt 2",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Derivaatta",
+          "courseNumber": 6,
+          "length": 3,
+          "mandatory": true
+        },
+        {
+          "name": "Integraalilaskenta",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Tilastot ja todennäköisyys",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Talousmatematiikka",
+          "courseNumber": 9,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "3D-geometria",
+          "courseNumber": 10,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Algoritmit ja lukuteoria",
+          "courseNumber": 11,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Analyysi ja jatkuva jakauma",
+          "courseNumber": 12,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Matematiikan lyhyt oppimäärä",
+      "code": "MAB",
+      "modules": [
+        {
+          "name": "Lausekkeet ja yhtälöt",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Geometria",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Matemaattisia malleja",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Tilastot ja todennäköisyys",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Talousmatematiikan alkeet",
+          "courseNumber": 6,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Talousmatematiikka",
+          "courseNumber": 7,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Matemaattinen analyysi",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tilastolliset ja todennäköisyysjakaumat",
+          "courseNumber": 9,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Matematiikkaa abeille",
+          "courseNumber": 10,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Biologia",
+      "code": "BI",
+      "modules": [
+        {
+          "name": "Elämä ja evoluutio",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ekologian perusteet",
+          "courseNumber": 2,
+          "length": 1,
+          "mandatory": false
+        },
+        {
+          "name": "Ihmisen vaikutukset ekosysteemeihin",
+          "courseNumber": 3,
+          "length": 1,
+          "mandatory": false
+        },
+        {
+          "name": "Solu ja perinnöllisyys",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ihmisen biologia",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Biotekniikka ja sen sovellukset",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Maantiede",
+      "code": "GE",
+      "modules": [
+        {
+          "name": "Maailma muutoksessa",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Sininen planeetta",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Yhteinen maailma",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Geomedia – tutki, osallistu ja vaikuta",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Fysiikka",
+      "code": "FY",
+      "modules": [
+        {
+          "name": "Fysiikka luonnontieteenä",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Fysiikka, ympäristö ja yhteiskunta",
+          "courseNumber": 2,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Energia ja lämpö",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Voima ja liike",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Jaksollinen liike ja aallot",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Sähkö",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Sähkömagnetismi ja valo",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Aine, säteily ja kvantittuminen",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Kemia",
+      "code": "KE",
+      "modules": [
+        {
+          "name": "Kemia ja minä",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Kemia ja kestävä tulevaisuus",
+          "courseNumber": 2,
+          "length": 1,
+          "mandatory": true
+        },
+        {
+          "name": "Molekyylit ja mallit",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kemiallinen reaktio",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kemiallinen energia ja kiertotalous",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kemiallinen tasapaino",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Filosofia",
+      "code": "FI",
+      "modules": [
+        {
+          "name": "Johdatus filosofiseen ajatteluun",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Etiikka",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Yhteiskuntafilosofia",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Totuus",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Historia",
+      "code": "HI",
+      "modules": [
+        {
+          "name": "Ihminen, ympäristö ja historia",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Itsenäisen Suomen historia",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Kansainväliset suhteet",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Eurooppalainen ihminen",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ruotsin itämaasta Suomeksi",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Maailman kulttuurit kohtaavat",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Yhteiskuntaoppi",
+      "code": "YH",
+      "modules": [
+        {
+          "name": "Suomalainen yhteiskunta",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Taloustieto",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Suomi, Eurooppa ja muuttuva maailma",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Lakitieto",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, evankelisluterilainen",
+      "code": "UE",
+      "modules": [
+        {
+          "name": "Uskonto ilmiönä – juutalaisuuden, kristinuskon ja islamin jäljillä",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Maailmanlaajuinen kristinusko",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto taiteissa ja populaarikulttuurissa",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, tiede ja media",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, ortodoksinen",
+      "code": "UO",
+      "modules": [
+        {
+          "name": "Uskonto ilmiönä – juutalaisuuden, kristinuskon ja islamin jäljillä",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Ortodoksisuus maailmassa",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ortodoksisuuden ja taiteen vuorovaikutus",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ortodoksisuus, tiede ja media",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, katolinen",
+      "code": "UK",
+      "modules": [
+        {
+          "name": "Uskonto ilmiönä – juutalaisuuden, kristinuskon ja islamin jäljillä",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Maailmanlaajuinen kristinusko",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto taiteissa ja kulttuurissa",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, tiede ja media",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, islam",
+      "code": "UI",
+      "modules": [
+        {
+          "name": "Uskonto ilmiönä – juutalaisuuden, kristinuskon ja islamin jäljillä",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Maailmanlaajuinen islam",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto taiteissa ja populaarikulttuurissa",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, tiede ja media",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, juutalainen",
+      "code": "UJ",
+      "modules": [
+        {
+          "name": "Uskonto ilmiönä – juutalaisuuden, kristinuskon ja islamin jäljillä",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Maailmanlaajuinen juutalaisuus",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto taiteissa ja populaarikulttuurissa",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, tiede ja media",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, muu",
+      "code": "UX",
+      "modules": [
+        {
+          "name": "Uskonto ilmiönä",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "UX2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto taiteissa ja populaarikulttuurissa",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonto, tiede ja media",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Elämänkatsomustieto",
+      "code": "ET",
+      "modules": [
+        {
+          "name": "Minä ja hyvä elämä",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": true
+        },
+        {
+          "name": "Minä ja yhteiskunta",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kulttuurit",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Katsomukset",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uskonnot ja uskonnottomuus",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tulevaisuus",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Psykologia",
+      "code": "PS",
+      "modules": [
+        {
+          "name": "Toimiva ja oppiva ihminen",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kehittyvä ihminen",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tietoa käsittelevä ihminen",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tunteet ja mielenterveys",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Yksilöllinen ja yhteisöllinen ihminen",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Mediapsykologia",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Terveystieto",
+      "code": "TE",
+      "modules": [
+        {
+          "name": "Terveys voimavarana",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Terveys ja ympäristö",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Terveys ja yhteiskunta",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Kuvataide",
+      "code": "KU",
+      "modules": [
+        {
+          "name": "Omat kuvat, jaetut kulttuurit",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Ympäristön tilat, paikat ja ilmiöt",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kuva viestii ja vaikuttaa",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Taiteen monet maailmat",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Taide ja luova ilmaisu",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Liikunta",
+      "code": "LI",
+      "modules": [
+        {
+          "name": "Oppiva liikkuja",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Aktiivinen elämä",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Uudet mahdollisuudet",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Yhdessä liikkuen",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Virkistystä liikunnasta",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Tietotekniikka",
+      "code": "AT",
+      "modules": [
+        {
+          "name": "Sähköinen ylioppilaskoe",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tekstinkäsittely",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Digitalisaatio ja digitaidot",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Taulukkolaskenta",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Websivuston tekeminen",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "code": "ME",
+      "modules": [
+        {
+          "name": "Sosiaalisen median perusteet",
+          "courseNumber": 1,
+          "length": 1,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Musiikki",
+      "code": "MU",
+      "modules": [
+        {
+          "name": "Intro – kaikki soimaan",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Syke – soiva ilmaisu",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Genre – globaali uteliaisuus",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Demo – luovasti yhdessä",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Opintojen ohjaus",
+      "code": "OP",
+      "modules": [
+        {
+          "name": "Minä opiskelijana",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Jatko-opinnot, työelämä ja tulevaisuus",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tutortoiminta",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Elämäntaidot",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Opiskelun tueksi",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Työelämä- ja yrittäjyysosaaminen",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Työelämätaidot käytäntöön",
+          "courseNumber": 7,
+          "length": 1,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Temaattiset opinnot",
+      "code": "TO",
+      "modules": [
+        {
+          "name": "Tutkiva työskentely",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Lukiodiplomit",
+      "code": "LD",
+      "modules": [
+        {
+          "name": "Kotitalouden lukiodiplomi",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Kuvataiteen lukiodiplomi",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Käsityön lukiodiplomi",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Liikunnan lukiodiplomi",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Median lukiodiplomi",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Musiikin lukiodiplomi",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Tanssin lukiodiplomi",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Teatterin lukiodiplomi",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Arabia, B3-oppimäärä",
+      "code": "ARB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Englanti, B3-oppimäärä",
+      "code": "ENB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Italia, B3-oppimäärä",
+      "code": "IAB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Kiina, B3-oppimäärä",
+      "code": "KIB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Muu vieras kieli, B3-oppimäärä",
+      "code": "KXB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Korea, B3-oppimäärä",
+      "code": "KOB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Latina, B3-oppimäärä",
+      "code": "LAB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Portugali, B3-oppimäärä",
+      "code": "POB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Ranska, B3-oppimäärä",
+      "code": "RAB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Ruotsi, B3-oppimäärä",
+      "code": "RUB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Saame, B3-oppimäärä (SMB3)",
+      "code": "SMB3",
+      "modules": [
+        {
+          "name": "Perustason alkeet 1",
+          "courseNumber": 1,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 2",
+          "courseNumber": 2,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 3",
+          "courseNumber": 3,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 4",
+          "courseNumber": 4,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 5",
+          "courseNumber": 5,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 6",
+          "courseNumber": 6,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 7",
+          "courseNumber": 7,
+          "length": 2,
+          "mandatory": false
+        },
+        {
+          "name": "Perustason alkeet 8",
+          "courseNumber": 8,
+          "length": 2,
+          "mandatory": false
+        }
+      ]
+    }
+  ]
+}
