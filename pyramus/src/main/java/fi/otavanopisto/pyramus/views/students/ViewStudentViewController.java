@@ -880,7 +880,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       studentParentsJSON.put(student.getId(), arr);
 
       try {
-        StudentTOR tor = StudentTORController.constructStudentTOR(student);
+        StudentTOR tor = StudentTORController.constructStudentTOR(student, true);
         subjectCredits.put(student.getId(), tor);
       } catch (Exception ex) {
         logger.log(Level.SEVERE, String.format("Failed to construct TOR for student %d", student.getId()), ex);

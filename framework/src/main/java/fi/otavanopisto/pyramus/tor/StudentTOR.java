@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
+
 public class StudentTOR {
 
   public void addSubject(TORSubject subject) {
@@ -52,9 +54,9 @@ public class StudentTOR {
       .sum();
   }
   
-  protected void postProcess() {
+  protected void postProcess(TORCurriculum curriculum) {
     Collections.sort(subjects, Comparator.comparing(TORSubject::getName));
-    subjects.forEach(subject -> subject.postProcess(problems));
+    subjects.forEach(subject -> subject.postProcess(curriculum, problems));
   }
   
   private final TORProblems problems = new TORProblems();

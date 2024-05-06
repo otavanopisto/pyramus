@@ -706,8 +706,15 @@
               }
 
               var pccElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
-              pccElement.update("" + subject.passedCoursesCount);
-              
+              var courseCountTextSpan = pccElement.appendChild(new Element("span"));
+              courseCountTextSpan.update(subject.mandatoryCourseCount ? subject.mandatoryCourseCompletedCount + "/" + subject.mandatoryCourseCount : subject.passedCoursesCount);
+
+              // If subject is completed, add some visual indication
+              if (subject.completed) {
+            	  var courseCountTextSpan = pccElement.appendChild(new Element("span", {className: "studentSubjectCreditsPassedCoursesCount__checked-wrapper"}));
+            	  courseCountTextSpan.appendChild(new Element("img", {src: GLOBAL_contextPath + '/gfx/input-checked.png'}));
+              }
+
               var subMeanContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsMeanGradeContainer"}));
               var subMeanComputedGrade = subMeanContainer.appendChild(new Element("div", {className: "studentSubjectCreditsComputedMeanGrade"}));
               var subMeanGrade = subMeanContainer.appendChild(new Element("div", {

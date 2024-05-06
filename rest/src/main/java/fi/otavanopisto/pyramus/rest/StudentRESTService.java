@@ -40,6 +40,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -143,7 +144,6 @@ import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
-import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
@@ -3478,7 +3478,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     double numCreditPoints = 0;
     try {
-      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student);
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, false);
       numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op, true);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
