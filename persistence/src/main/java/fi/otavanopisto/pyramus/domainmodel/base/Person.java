@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -593,14 +594,32 @@ public class Person implements ContextReference {
   @SortableField
   @Field(analyze = Analyze.NO, store = Store.NO)
   public String getActive() {
-    String result = Boolean.FALSE.toString();
+    return Boolean.toString(hasActiveStudents());
+  }
+
+  /**
+   * Returns whether this abstract student contains at least one non-archived student who hasn't got his
+   * study end date set or it has been set but it is in the future.
+   *  
+   * @return <code>true</code> if this abstract student contains at least one active student, otherwise <code>false</code>
+   */
+  @Transient
+  public boolean hasActiveStudents() {
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
-        result = Boolean.TRUE.toString();
-        break;
+        return true;
       }
     }
-    return result;
+    return false;
+  }
+
+  @Transient
+  public Date getLatestStudyEndDate() {
+    return getStudents().stream()
+      .map(Student::getStudyEndDate)
+      .filter(Objects::nonNull)
+      .max(Date::compareTo)
+      .orElse(null);
   }
 
   // TODO: Naming conventions pls
