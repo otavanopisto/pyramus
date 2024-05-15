@@ -1,11 +1,15 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -206,6 +210,31 @@ public class Person implements ContextReference {
     return !staffMembers.isEmpty() ? staffMembers.get(0) : null;
   }
 
+  /**
+   * Compares this person's birthday to the current date and returns
+   * 
+   * <ul>
+   *   <li>Boolean.TRUE if the student is under 18 years old</li>
+   *   <li>Boolean.FALSE if the student is over 18 years old</li>
+   *   <li>null otherwise - if f.ex. the birthday field is null</li>
+   * </ul>
+   * 
+   * @return
+   */
+  @Transient
+  public Boolean isUnderAge() {
+    Date person_bday = getBirthday();
+    
+    if (person_bday != null) {
+      LocalDate ld_birthday = Instant.ofEpochMilli(person_bday.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+      LocalDate ld_threshold = LocalDate.now().minusYears(18);
+
+      return ld_birthday.isAfter(ld_threshold);
+    }
+    
+    return null;
+  }
+  
   @Transient
   @Field(analyze = Analyze.NO, store = Store.NO)
   @SortableField
@@ -565,14 +594,32 @@ public class Person implements ContextReference {
   @SortableField
   @Field(analyze = Analyze.NO, store = Store.NO)
   public String getActive() {
-    String result = Boolean.FALSE.toString();
+    return Boolean.toString(hasActiveStudents());
+  }
+
+  /**
+   * Returns whether this abstract student contains at least one non-archived student who hasn't got his
+   * study end date set or it has been set but it is in the future.
+   *  
+   * @return <code>true</code> if this abstract student contains at least one active student, otherwise <code>false</code>
+   */
+  @Transient
+  public boolean hasActiveStudents() {
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
-        result = Boolean.TRUE.toString();
-        break;
+        return true;
       }
     }
-    return result;
+    return false;
+  }
+
+  @Transient
+  public Date getLatestStudyEndDate() {
+    return getStudents().stream()
+      .map(Student::getStudyEndDate)
+      .filter(Objects::nonNull)
+      .max(Date::compareTo)
+      .orElse(null);
   }
 
   // TODO: Naming conventions pls

@@ -89,6 +89,10 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
           if (!instance.isUnsatisfied()) {
             PermissionFeatureHandler permissionFeatureHandler = instance.get();
             allowed = permissionFeatureHandler.hasPermission(permission.getName(), userEntity, contextReference, allowed);
+            // With multiple features, allow when at least one of them is satisfied
+            if (allowed) {
+              break;
+            }
           } else
             logger.log(Level.SEVERE, String.format("Unsatisfied permission feature %s", feature.value()));
         }

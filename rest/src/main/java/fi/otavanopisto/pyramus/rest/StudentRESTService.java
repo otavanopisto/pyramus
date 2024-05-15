@@ -40,6 +40,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
@@ -87,6 +88,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.ContactLogAccess;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -145,7 +147,6 @@ import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
-import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
@@ -1616,7 +1617,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -1783,7 +1784,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).entity("Not found").build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2127,30 +2128,23 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     Course course = courseController.findCourseById(courseId);
-    
     if (course == null) {
       return Response.status(Status.NOT_FOUND).entity("Could not find course").build();
     }
-
+    
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
     if (course.getArchived()) {
       return Response.status(Status.NOT_FOUND).entity("Course is archived").build();
     }
 
     if (!sessionController.hasPermission(CourseAssessmentPermissions.CREATE_COURSEASSESSMENT, course)) {
       return Response.status(Status.FORBIDDEN).build();
-    } else {
-      // User has the required permission, check if it's restricted to limited group of students 
-      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
-        
-        if (staffMember != null) {
-          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
-            return Response.status(Status.FORBIDDEN).build();
-          }
-        } else {
-          return Response.status(Status.FORBIDDEN).build();
-        }
-      }
     }
     
     CourseStudent courseStudent = courseController.findCourseStudentById(entity.getCourseStudentId());
@@ -2282,22 +2276,16 @@ public class StudentRESTService extends AbstractRESTService {
     if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
+
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
     
     if (!(UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) || sessionController.hasPermission(CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS, course))) {
       return Response.status(Status.FORBIDDEN).build();
-    } else {
-      // User has the required permission, check if it's restricted to limited group of students 
-      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
-        
-        if (staffMember != null) {
-          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
-            return Response.status(Status.FORBIDDEN).build();
-          }
-        } else {
-          return Response.status(Status.FORBIDDEN).build();
-        }
-      }
     }
     
     List<CourseAssessment> courseAssessments = assessmentController.listByCourseAndStudent(course, student);
@@ -2322,22 +2310,16 @@ public class StudentRESTService extends AbstractRESTService {
     if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
+
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
     
     if (!(UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) || sessionController.hasPermission(CourseAssessmentPermissions.FIND_COURSEASSESSMENT, course))) {
       return Response.status(Status.FORBIDDEN).build();
-    } else {
-      // User has the required permission, check if it's restricted to limited group of students 
-      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
-        
-        if (staffMember != null) {
-          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
-            return Response.status(Status.FORBIDDEN).build();
-          }
-        } else {
-          return Response.status(Status.FORBIDDEN).build();
-        }
-      }
     }
 
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
@@ -2383,18 +2365,12 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (!sessionController.hasPermission(CourseAssessmentPermissions.UPDATE_COURSEASSESSMENT, course)) {
       return Response.status(Status.FORBIDDEN).build();
-    } else {
-      // User has the required permission, check if it's restricted to limited group of students 
-      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
-        
-        if (staffMember != null) {
-          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
-            return Response.status(Status.FORBIDDEN).build();
-          }
-        } else {
-          return Response.status(Status.FORBIDDEN).build();
-        }
+    }
+
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
       }
     }
     
@@ -2432,27 +2408,29 @@ public class StudentRESTService extends AbstractRESTService {
       ) {
     
     Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
     Course course = courseController.findCourseById(courseId);
+    if (course == null || course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
 
     if (Boolean.TRUE.equals(permanent) && !UserUtils.isAdmin(sessionController.getUser())) {
       // Allow permanent deletion only for admins
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    if (course == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (course.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
     if (!sessionController.hasPermission(CourseAssessmentPermissions.DELETE_COURSEASSESSMENT, course)) {
       return Response.status(Status.FORBIDDEN).build();
+    }
+
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
@@ -2534,23 +2512,28 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @DefaultValue("false") @QueryParam("archived") Boolean archived) {
     Student student = studentController.findStudentById(studentId);
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
 
     if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
     Course course = courseController.findCourseById(courseId);
-    
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
     if (course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     List<CourseAssessmentRequest> assessmentRequests = null;
@@ -2687,23 +2670,13 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     Student student = studentController.findStudentById(studentId);
-    if (student == null || student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
     }
 
     if (!(UserUtils.isOwnerOf(loggedUser, student.getPerson()) || sessionController.hasEnvironmentPermission(CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS))) {
       return Response.status(Status.FORBIDDEN).build();
-    } else {
-      // User has the required permission, check if it's restricted to limited group of students 
-      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-        if (loggedUser instanceof StaffMember) {        
-          if (!studentController.isStudentGuider((StaffMember) loggedUser, student)) {
-            return Response.status(Status.FORBIDDEN).build();
-          }
-        } else {
-          return Response.status(Status.FORBIDDEN).build();
-        }
-      }
     }
 
     Boolean passingGrade = onlyPassingGrades ? Boolean.TRUE : null;
@@ -2857,22 +2830,24 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response deleteCourseAssessmentRequest(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    Course course = courseController.findCourseById(courseId);
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    if (course == null) {
+    if (student == null || student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (course.getArchived()) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
     if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.DELETE_COURSEASSESSMENTREQUEST, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
+    }
+
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(id);
@@ -2913,7 +2888,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(studentStatus).build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_GUIDANCECOUNSELORS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentGroupPermissions.LIST_STUDENTS_GUIDANCECOUNSELORS, StudentPermissions.STUDENT_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -3370,31 +3345,33 @@ public class StudentRESTService extends AbstractRESTService {
     
     // Access check. Allowed for administrators, special education teachers, student's guidance counselors, student's teachers, or students themselves
     
-    boolean accessible = false;
     User loggedUser = sessionController.getUser();
-    StaffMember staffMember = userController.findStaffMemberById(loggedUser.getId());
-    if (staffMember == null) {
-      if (loggedUser.getId().equals(student.getId())) {
-        accessible = true;
+    boolean accessible = loggedUser.getId().equals(student.getId());
+    
+    if (!accessible && loggedUser instanceof StudentParent) {
+      StudentParent studentParent = (StudentParent) loggedUser;
+      accessible = studentParent.isActiveParentOf(student);
+    }
+    
+    if (!accessible && loggedUser instanceof StaffMember) {
+      StaffMember staffMember = (StaffMember) loggedUser;
+
+      if (!accessible) {
+        accessible = staffMember.hasRole(Role.ADMINISTRATOR);
       }
-      else {
-        return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
+      if (!accessible) {
+        accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
+      }
+      if (!accessible) {
+        accessible = studentController.amIGuidanceCounselor(studentId, staffMember);
+      }
+      if (!accessible) {
+        Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+        Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
+        accessible = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
       }
     }
-    if (!accessible) {
-      accessible = staffMember.hasRole(Role.ADMINISTRATOR);
-    }
-    if (!accessible) {
-      accessible = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
-    }
-    if (!accessible) {
-      accessible = studentController.amIGuidanceCounselor(studentId, staffMember);
-    }
-    if (!accessible) {
-      Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
-      Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
-      accessible = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
-    }
+    
     if (!accessible) {
       return Response.status(Status.FORBIDDEN).entity(String.format("User %d no access to student %d", loggedUser.getId(), studentId)).build();
     }
@@ -3432,22 +3409,31 @@ public class StudentRESTService extends AbstractRESTService {
     if (student == null) {
       return Response.status(Status.NOT_FOUND).entity("Student not found").build();
     }
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_GUIDANCE_RELATION, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_GUIDANCE_RELATION, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
-    if (staffMember == null) {
-      return Response.status(Status.NOT_FOUND).entity("Staff member not found").build();
+
+    boolean specEdTeacher = false;
+    boolean guidanceCounselor = false;
+    boolean courseTeacher = false;
+    boolean studentParent = (sessionController.getUser() instanceof StudentParent && ((StudentParent) sessionController.getUser()).isActiveParentOf(student));
+
+    if (sessionController.getUser() instanceof StaffMember) {
+      StaffMember staffMember = (StaffMember) sessionController.getUser();
+      
+      specEdTeacher = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
+      guidanceCounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
+      
+      Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+      Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
+      courseTeacher = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
     }
-    boolean specEdTeacher = "1".equals(staffMember.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
-    boolean guidanceCounselor = studentController.amIGuidanceCounselor(studentId, staffMember);
-    Set<Long> studentCourseIds = courseController.listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
-    Set<Long> staffMemberCourseIds = courseController.listCoursesByStaffMember(staffMember).stream().map(Course::getId).collect(Collectors.toSet());
-    boolean courseTeacher = studentCourseIds.stream().filter(staffMemberCourseIds::contains).count() > 0;
+
     StudentGuidanceRelation relation = new StudentGuidanceRelation();
     relation.setSpecEdTeacher(specEdTeacher);
     relation.setGuidanceCounselor(guidanceCounselor);
     relation.setCourseTeacher(courseTeacher);
+    relation.setStudentParent(studentParent);
     return Response.ok(relation).build();
   }
 
@@ -3465,7 +3451,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).entity("Not found").build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     
@@ -3498,7 +3484,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     double numCreditPoints = 0;
     try {
-      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student);
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, false);
       numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op, true);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
@@ -3512,21 +3498,19 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/amICounselor")
   @GET
+  @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
   public Response amICounselor(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
     
-    if (studentStatus != Status.OK)
+    if (studentStatus != Status.OK) {
       return Response.ok(false).build();
-    
-    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
-    
-    if (staffMember == null) {
-      return Response.status(Status.NOT_FOUND).entity("Staff member not found").build();
     }
     
-    Boolean amICounselor = studentController.amIGuidanceCounselor(student.getId(), staffMember);
+    Boolean amICounselor = sessionController.getUser() instanceof StaffMember
+        ? studentController.amIGuidanceCounselor(student.getId(), (StaffMember) sessionController.getUser())
+        : Boolean.FALSE;
     
     return Response.ok(amICounselor).build();
   }
@@ -3542,7 +3526,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Status.NOT_FOUND;
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Status.FORBIDDEN;
     }
 
@@ -3559,7 +3543,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_SUBJECTCHOICES, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_SUBJECTCHOICES, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     

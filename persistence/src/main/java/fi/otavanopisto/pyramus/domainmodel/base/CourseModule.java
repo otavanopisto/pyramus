@@ -81,7 +81,8 @@ public class CourseModule {
   @GeneratedValue(strategy = GenerationType.IDENTITY)  
   private Long id;
 
-  @ManyToOne
+  @ManyToOne // Don't mark this as lazy as the type cannot be determined 
+             // and you end up with Narrowing proxy warnings
   @JoinColumn(name="course", nullable = false)
   @NotNull
   private CourseBase course;

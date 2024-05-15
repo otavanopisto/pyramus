@@ -125,7 +125,7 @@ body {
   margin: 10px 10px 20px;
 }
 
-.application-description__line-header,
+.application-description__line-header, 
 .application-description__credentials-header,
 .application-description__edit-header {
   font-size: 26px;

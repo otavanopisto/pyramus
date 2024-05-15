@@ -35,7 +35,6 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
-import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
@@ -66,9 +65,6 @@ public class CompositeRESTService {
 
   @Inject
   private UserController userController;
-
-  @Inject
-  private StudentController studentController;
 
   @Path("/gradingScales")
   @GET
@@ -103,6 +99,13 @@ public class CompositeRESTService {
     if (!sessionController.hasPermission(CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS, course)) {
       return Response.status(Status.FORBIDDEN).build();
     }
+
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
     
     List<CourseStudent> courseStudents;
     if (courseStudentIds != null) {
@@ -126,13 +129,7 @@ public class CompositeRESTService {
     List<CompositeAssessmentRequest> assessmentRequests = new ArrayList<CompositeAssessmentRequest>();
     
     if (CollectionUtils.isNotEmpty(courseStudents)) {
-      boolean isStudyGuider = sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
       for (CourseStudent courseStudent : courseStudents) {
-        if (isStudyGuider) {
-          StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
-          if (staffMember == null || !studentController.isStudentGuider(staffMember, courseStudent.getStudent()))
-          continue;
-        }
         
         boolean passing = course.getCourseModules().size() > 0;
         Date evaluationDate = null;

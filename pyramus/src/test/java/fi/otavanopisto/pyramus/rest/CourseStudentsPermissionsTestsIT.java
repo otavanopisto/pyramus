@@ -103,35 +103,6 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
     }
   }
   
-  /**
-   * Positive test case for study guider where study guider can find the coursestudent
-   */
-  @Test
-  public void testPermissionsFindCourseStudentStudyGuider() throws NoSuchFieldException  {
-    // Student 13 is in the same group as the test study guider
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
-    
-    Response createResponse = given().headers(getAdminAuthHeaders())
-        .contentType("application/json")
-        .body(entity)
-        .post("/courses/courses/{COURSEID}/students", COURSE_ID);
-      
-    Long id = createResponse.body().jsonPath().getLong("id");
-    if (createResponse.getStatusCode() == 200) {
-      try {
-        Response response = given().headers(getAuthHeaders())
-            .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
-    
-        assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 200);
-      } finally {
-        given().headers(getAdminAuthHeaders())
-          .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
-          .then()
-          .statusCode(204);
-      }
-    }
-  }
-  
   @Test
   public void testPermissionsUpdateCourseStudent() throws NoSuchFieldException  {
     CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);

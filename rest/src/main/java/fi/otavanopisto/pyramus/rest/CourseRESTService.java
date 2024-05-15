@@ -38,6 +38,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
@@ -89,7 +90,6 @@ import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.rest.model.course.CourseAssessmentPrice;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
-import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
@@ -994,11 +994,11 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    // #689 Study guiders should only be able to access their own students. Since the FIND_STUDENT
-    // permission already checks that, let's validate the student of this course student against it
-    
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, courseStudent.getStudent(), Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+      if (!courseController.isCourseStaffMember(course, staffMember)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
 
     return Response.status(Status.OK).entity(objectFactory.createModel(courseStudent)).build();

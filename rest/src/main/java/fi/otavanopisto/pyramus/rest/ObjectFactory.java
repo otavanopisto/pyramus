@@ -94,8 +94,11 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
@@ -124,6 +127,9 @@ public class ObjectFactory {
   @Inject
   private Logger logger;
 
+  @Inject
+  private CommonController commonController;
+  
   @Inject
   private SchoolController schoolController;
 
@@ -848,6 +854,79 @@ public class ObjectFactory {
             Long billingDetailsId = entity.getBillingDetails() != null ? entity.getBillingDetails().getId() : null;
             
             return new fi.otavanopisto.pyramus.rest.model.CourseStudent(entity.getId(), courseId, studentId, toOffsetDateTime(entity.getEnrolmentTime()), entity.getArchived(), participantTypeId, courseEnrolmentTypeId, entity.getLodging(), optionality, billingDetailsId);
+          }
+        },
+        
+        new Mapper<StudentParent>() {
+          
+          public Object map(StudentParent entity) {
+           List<String> tags = new ArrayList<>();
+            
+            Set<Tag> entityTags = entity.getTags();
+            if (entityTags != null) {
+              for (Tag entityTag : entityTags) {
+                tags.add(entityTag.getText());
+              }
+            }    
+            
+            List<UserVariable> entityVariables = userController.listUserVariablesByUser(entity);
+
+            Map<String, String> variables = new HashMap<>();
+            for (UserVariable entityVariable : entityVariables) {
+              variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
+            };
+            
+            EnumSet<UserRole> userRoles = EnumSet.noneOf(UserRole.class);
+            if (entity.getRoles() != null) {
+              entity.getRoles().forEach(role -> userRoles.add(UserRole.valueOf(role.name())));
+            }
+
+            String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
+            Long personId = entity.getPerson() != null ? entity.getPerson().getId() : null;
+            Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
+            
+            return new fi.otavanopisto.pyramus.rest.model.StudentParent(entity.getId(), personId, organizationId, additionalContactInfo, 
+                entity.getFirstName(), entity.getLastName(), userRoles, tags, variables);
+          }
+        },
+        
+        new Mapper<StudentParentChild>() {
+          
+          public Object map(StudentParentChild entity) {
+            Student student = entity.getStudent();
+            
+            String studyProgrammeName = student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null;
+            
+            String defaultEmail = null;
+            String defaultPhoneNumber = null;
+            fi.otavanopisto.pyramus.rest.model.Address defaultAddress = null;
+            
+            if (student.getContactInfo() != null) {
+              Email email = commonController.findDefaultEmailByContactInfo(student.getContactInfo());
+              defaultEmail = email != null ? email.getAddress() : null;
+              
+              PhoneNumber phoneNumber = commonController.findDefaultPhoneNumberByContactInfo(student.getContactInfo());
+              defaultPhoneNumber = phoneNumber != null ? phoneNumber.getNumber() : null;
+              
+              Address address = commonController.findDefaultAddressByContactInfo(student.getContactInfo());
+              if (address != null) {
+                Long contactTypeId = address.getContactType() != null ? address.getContactType().getId() : null;
+                defaultAddress = new fi.otavanopisto.pyramus.rest.model.Address(address.getId(), contactTypeId, address.getDefaultAddress(), address.getName(), 
+                    address.getStreetAddress(), address.getPostalCode(), address.getCity(), address.getCountry());
+              }
+            }
+
+            return new fi.otavanopisto.pyramus.rest.model.StudentParentChild(
+                student.getId(),
+                student.getPersonId(),
+                student.getFirstName(),
+                student.getLastName(),
+                student.getNickname(),
+                studyProgrammeName, 
+                defaultEmail, 
+                defaultPhoneNumber, 
+                defaultAddress
+            );
           }
         },
         

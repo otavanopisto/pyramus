@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
@@ -34,7 +35,6 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
-import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 
 @Dependent
 @Stateless

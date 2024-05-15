@@ -488,7 +488,7 @@ public class StudentController {
           assessment.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
           assessment.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());
           assessment.setDate(linkedAssessment.getCreated());
-          assessment.setGradeDate(linkedAssessment.getCreated());
+          assessment.setGradeDate(linkedAssessment.getCredit().getDate());
           assessment.setState(CourseActivityState.GRADED_PASS);
         }
 

@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.domainmodel.base;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -107,7 +108,7 @@ public class Subject implements ArchivableEntity {
   private String name;
   
   @IndexedEmbedded
-  @ManyToOne
+  @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="educationType")
   private EducationType educationType;
   

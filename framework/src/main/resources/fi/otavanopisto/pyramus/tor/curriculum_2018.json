@@ -1,0 +1,566 @@
+{
+  "name": "OPS 2018",
+  "subjects": [
+    {
+      "name": "Äidinkieli ja kirjallisuus",
+      "code": "äi",
+      "modules": [
+        {
+          "name": "Suomen kielen ja kirjallisuuden perusteet",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Monimuotoiset tekstit",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Tekstien tuottaminen ja tulkitseminen",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kieli ja kulttuuri",
+          "courseNumber": 4,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Puhe- ja vuorovaikutustaidot",
+          "courseNumber": 5,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Median maailma",
+          "courseNumber": 6,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Kauno- ja tietokirjallisuuden lukeminen",
+          "courseNumber": 7,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Tekstien tulkinta",
+          "courseNumber": 8,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Tekstien tuottaminen",
+          "courseNumber": 9,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Nykykulttuurin ilmiöitä ja kirjallisuutta",
+          "courseNumber": 10,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Suomi toisena kielenä ja kirjallisuus",
+      "code": "s2",
+      "modules": [
+        {
+          "name": "Opiskelutaitojen vahvistaminen",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Luonnontieteen tekstit tutummiksi",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Yhteiskunnallisten aineiden tekstit tutummiksi",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Median tekstejä ja kuvia",
+          "courseNumber": 4,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Tiedonhankintataitojen syventäminen",
+          "courseNumber": 5,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Uutistekstit",
+          "courseNumber": 6,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Mielipiteen ilmaiseminen ja perusteleminen",
+          "courseNumber": 7,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kaunokirjalliset tekstit tutuiksi",
+          "courseNumber": 8,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kulttuurinen moninaisuus - moninainen kulttuuri",
+          "courseNumber": 9,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Ajankohtaiset ilmiöt SUomessa ja maailmassa",
+          "courseNumber": 10,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Suomea verkossa",
+          "courseNumber": 11,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Opitun vahvistaminen ja suullinen kielitaito",
+          "courseNumber": 12,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Suomen kielen perusteinen varmentaminen",
+          "courseNumber": 14,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Ruotsi",
+      "code": "rub",
+      "modules": [
+        {
+          "name": "Kielitaidon alkeet: Lähtökohtia ruotsin opiskelulle",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kielitaidon alkeet: Perusviestintää arkipäivän sosiaalisissa tilanteissa",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kielitaidon alkeet: Vuorovaikutus asiointitilanteissa",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kielitaidon alkeet: Selviytyminen muodollisemmista tilanteista ",
+          "courseNumber": 4,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kielitaidon alkeet: Palvelu- ja viranomaistilanteet",
+          "courseNumber": 5,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kielitaidon alkeet: Ajankohtaiset ilmiöt",
+          "courseNumber": 6,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kehittyvä kielitaito: Miksi Suomessa puhutaan ruotsia?",
+          "courseNumber": 7,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Kehittyvä kielitaito: Avaimet elinikäiseen kieltenopiskeluun",
+          "courseNumber": 8,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Työkaluja ruotsin opiskeluun",
+          "courseNumber": 9,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Englanti",
+      "code": "ena",
+      "modules": [
+        {
+          "name": "Kehittyvä kielitaito: Työelämässä toimiminen ja muita muodollisia tilanteita",
+          "courseNumber": 1,
+          "length": 28,
+
+          "mandatory": true
+        },
+        {
+          "name": "Kehittyvä kielitaito: Palvelu- ja viranomaistilanteet ja osallistuva kansalainen",
+          "courseNumber": 2,
+          "length": 28,
+
+          "mandatory": true
+        },
+        {
+          "name": "Kehittyvä kielitaito: Kertomuksia minusta ja ympäristöstäni",
+          "courseNumber": 3,
+          "length": 28,
+
+          "mandatory": true
+        },
+        {
+          "name": "Kehittyvä kielitaito: Ajankohtaiset ilmiöt",
+          "courseNumber": 4,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kulttuurikohtaamisia",
+          "courseNumber": 5,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Globaalienglanti",
+          "courseNumber": 6,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Liikkuvuus ja kansainvälisyys",
+          "courseNumber": 7,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Avaimet elinikäiseen kieltenopiskeluun",
+          "courseNumber": 8,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Peruskoulun niveltävä kurssi 1",
+          "courseNumber": 9,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Peruskoulun niveltävä kurssi 2",
+          "courseNumber": 10,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Suullisen kielitaidon kurssi",
+          "courseNumber": 11,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Matematiikka",
+      "code": "ma",
+      "modules": [
+        {
+          "name": "Luvut ja laskutoimitukset I",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Luvut ja laskutoimitukset II",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Lausekkeet",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Yhtälöt",
+          "courseNumber": 4,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Geometria",
+          "courseNumber": 5,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Prosentit",
+          "courseNumber": 6,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Funktiot ja tilastot",
+          "courseNumber": 7,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Geometria ja trigonometria",
+          "courseNumber": 8,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Lausekkeita ja yhtälöitä",
+          "courseNumber": 9,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Uskonto",
+      "code": "ue",
+      "modules": [
+        {
+          "name": "Uskonnot maailmassa",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Valinnainen",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Elämänkatsomustieto",
+      "code": "et",
+      "modules": [
+        {
+          "name": "Katsomukset ja ihmisoikeudet",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "name": "Historia",
+      "code": "hi",
+      "modules": [
+        {
+          "name": "Suomen historian käännekohdat",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Teollisuusyhteiskunnan synnystä nykyaikaan",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Antiikista uuden ajan murrokseen",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Yhteiskuntaoppi",
+      "code": "yh",
+      "modules": [
+        {
+          "name": "Yhteiskuntajärjestelmä sekä julkiset palvelut",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Työelämän tuntemus ja oma talous",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "name": "Fysiikka",
+      "code": "fy",
+      "modules": [
+        {
+          "name": "Fysiikka omassa elämässä ja elinympäristössä",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Fysiikka maailmankuvan rakentajana",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Fysiikka yhteiskunnassa",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Kemia",
+      "code": "ke",
+      "modules": [
+        {
+          "name": "Kemia omassa elämässä ja elinympäristössä",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kemia maailmankuvan rakentajana",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Kemia yhteiskunnassa",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Biologia",
+      "code": "bi",
+      "modules": [
+        {
+          "name": "Mitä elämä on?",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kaupunkiekologia ja kestävä tulevaisuus",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Ihminen",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Maantieto",
+      "code": "ge",
+      "modules": [
+        {
+          "name": "Muuttuva maapallo ja kestävä tulevaisuus",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Kotiplaneettamme Maa",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Maapallo ihmisen elinympäristönä",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Eurooppa",
+          "courseNumber": 4,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "name": "Terveystieto",
+      "code": "te",
+      "modules": [
+        {
+          "name": "Terve elämä",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "name": "Opinto-ohjaus ja työelämätaidot",
+      "code": "ot",
+      "modules": [
+        {
+          "name": "Jatko-opinnot ja ammatinvalinta",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Työelämäosaaminen",
+          "courseNumber": 2,
+          "length": 28,
+          "mandatory": true
+        },
+        {
+          "name": "Minä oppijana",
+          "courseNumber": 3,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Elämäntaitokurssi",
+          "courseNumber": 4,
+          "length": 28,
+          "mandatory": false
+        }
+      ]
+    }
+  ]
+}
