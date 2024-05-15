@@ -64,6 +64,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -740,8 +741,8 @@ public class StudentController {
     return studentCardDAO.findByStudent(student);
   }
   
-  public StudentCard updateStudentCardActive(StudentCard studentCard, Boolean active) {
-    return studentCardDAO.updateActive(studentCard, active);
+  public StudentCard updateStudentCardActive(StudentCard studentCard, StudentCardActivity activity) {
+    return studentCardDAO.updateActive(studentCard, activity);
   }
 }
 

@@ -109,6 +109,7 @@ import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
+import fi.otavanopisto.pyramus.rest.model.StudentCardActivity;
 import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
@@ -1000,7 +1001,8 @@ public class ObjectFactory {
           
           StudentCardType type = entity.getType() != null ? StudentCardType.valueOf(entity.getType().name()) : null;
           String studyProgrammeName = student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null;
-
+          StudentCardActivity activity = entity.getActivity() != null ? StudentCardActivity.valueOf(entity.getActivity().name()) : null;
+          
           return new fi.otavanopisto.pyramus.rest.model.StudentCard(
               entity.getId(), 
               student.getId(), 
@@ -1008,7 +1010,7 @@ public class ObjectFactory {
               student.getLastName(), 
               studyProgrammeName,
               entity.getExpiryDate(), 
-              entity.getActive(), 
+              activity, 
               type);
          
         }

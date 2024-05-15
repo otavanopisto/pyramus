@@ -74,6 +74,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
@@ -3631,7 +3632,7 @@ public class StudentRESTService extends AbstractRESTService {
   @PUT
   @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
-  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, Boolean active) {
+  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, StudentCardActivity activity) {
 
     // Access
     User loggedUser = sessionController.getUser();
@@ -3656,7 +3657,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, active))).build();
+    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, activity))).build();
   }
   
 }

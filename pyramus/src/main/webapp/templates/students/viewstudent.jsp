@@ -2990,7 +2990,7 @@
                         <jsp:param name="titleLocale" value="integrations.slice.status"/>
                       </jsp:include>      
                       <c:choose>
-                        <c:when test="${studentCards[student.id].active}">
+                        <c:when test="${studentCards[student.id].activity eq 'ACTIVE'}">
                           <fmt:message key="integrations.slice.active"/>
                         </c:when>
                         <c:otherwise>

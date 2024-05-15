@@ -37,12 +37,12 @@ public class StudentCard {
     this.type = type;
   }
 
-  public Boolean getActive() {
-    return active;
+  public StudentCardActivity getActivity() {
+    return activity;
   }
 
-  public void setActive(Boolean active) {
-    this.active = active;
+  public void setActivity(StudentCardActivity activity) {
+    this.activity = activity;
   }
 
   public Date getExpiryDate() {
@@ -52,7 +52,14 @@ public class StudentCard {
   public void setExpiryDate(Date expiryDate) {
     this.expiryDate = expiryDate;
   }
+  
+  public Date getCancellationDate() {
+    return cancellationDate;
+  }
 
+  public void setCancellationDate(Date cancellationDate) {
+    this.cancellationDate = cancellationDate;
+  }
 
   @Id 
   @GeneratedValue (strategy = GenerationType.IDENTITY) 
@@ -68,10 +75,14 @@ public class StudentCard {
 
   @NotNull
   @Column(nullable = false)
-  private Boolean active = false;
+  @Enumerated (EnumType.STRING)
+  private StudentCardActivity activity;
   
   @NotNull
   @Temporal(value = TemporalType.DATE)
   @Column (nullable = false)
   private Date expiryDate;
+  
+  @Temporal(value = TemporalType.DATE)
+  private Date cancellationDate;
 }

@@ -1111,7 +1111,7 @@
                   <c:if test="${!empty studentCard}">
                     <c:set var="cardType" value="${studentCard.type}"/>
                     <c:set var="expirationDate" value="${fn:escapeXml(studentCard.expiryDate.time)}"/>
-                    <c:set var="active" value="${studentCard.active}"/>
+                    <c:set var="activity" value="${studentCard.activity}"/>
                   </c:if>
                   
                   <div class="genericFormSection">
@@ -1131,13 +1131,13 @@
                     </jsp:include>            
                     <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${expirationDate}">
                   </div>
-                  
+                  <h1>${studentCard.activity}</h1>
                   <div class="genericFormSection">
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="integrations.slice.status"/>
                     </jsp:include>      
               	    <c:choose>
-                      <c:when test="${active}"><input type="checkbox" name="active.${student.id}" value="true" checked="checked"/></c:when>
+                      <c:when test="${activity eq 'ACTIVE'}"><input type="checkbox" name="active.${student.id}" value="true" checked="checked"/></c:when>
                       <c:otherwise>
                         <input type="checkbox" name="active.${student.id}" value="true"/>
                       </c:otherwise>              

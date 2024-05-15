@@ -3,13 +3,14 @@
 
   <sql>
     create table StudentCard (
-        id bigint not null auto_increment,
-        active bit not null,
+       id bigint not null auto_increment,
+        activity varchar(255) not null,
+        cancellationDate date,
         expiryDate date not null,
         type varchar(255) not null,
         student_id bigint,
         primary key (id)
-    )
+    );
   </sql>
   <sql>
     alter table StudentCard 

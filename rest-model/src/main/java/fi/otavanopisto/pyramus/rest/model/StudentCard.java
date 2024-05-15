@@ -5,7 +5,7 @@ import java.util.Date;
 public class StudentCard {
   
   public StudentCard(Long id, Long userEntityId, String firstName, String lastName, String studyProgramme,
-      Date expiryDate, Boolean active, StudentCardType type) {
+      Date expiryDate, StudentCardActivity activity, StudentCardType type) {
     super();
     this.id = id;
     this.userEntityId = userEntityId;
@@ -13,7 +13,7 @@ public class StudentCard {
     this.lastName = lastName;
     this.studyProgramme = studyProgramme;
     this.expiryDate = expiryDate;
-    this.active = active;
+    this.activity = activity;
     this.type = type;
   }
 
@@ -68,14 +68,6 @@ public class StudentCard {
     this.expiryDate = expiryDate;
   }
 
-  public Boolean getActive() {
-    return active;
-  }
-
-  public void setActive(Boolean active) {
-    this.active = active;
-  }
-
   public StudentCardType getType() {
     return type;
   }
@@ -84,12 +76,20 @@ public class StudentCard {
     this.type = type;
   }
 
+  public StudentCardActivity getActivity() {
+    return activity;
+  }
+
+  public void setActivity(StudentCardActivity activity) {
+    this.activity = activity;
+  }
+
   private Long id;
   private Long userEntityId;
   private String firstName;
   private String lastName;
   private String studyProgramme;
   private Date expiryDate;
-  private Boolean active;
+  private StudentCardActivity activity;
   private StudentCardType type; 
 }
