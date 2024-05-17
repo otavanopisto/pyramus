@@ -2,7 +2,6 @@ package fi.otavanopisto.pyramus.json.students;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,20 +16,23 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
-import fi.otavanopisto.pyramus.rest.model.StudentCardActivity;
 import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 
-@WebServlet("/studentCard")
+@Transactional
+@WebServlet("/api/slice")
 public class StudentCardServlet extends HttpServlet {
 
 
@@ -44,7 +46,7 @@ public class StudentCardServlet extends HttpServlet {
   
   @Inject
   private StudentController studentController;
-
+  
   public StudentCardServlet() {
     super();
   }
@@ -53,61 +55,64 @@ public class StudentCardServlet extends HttpServlet {
     String authHeader = request.getHeader("Authorization");
     String sliceAuth = SettingUtils.getSettingValue("slice.auth");
     
-    if (!StringUtils.equals(authHeader, sliceAuth)) {
+    if (StringUtils.isBlank(sliceAuth) || !StringUtils.equals(authHeader, sliceAuth)) {
       logger.log(Level.WARNING, "Could not authorize");
       response.sendError(HttpServletResponse.SC_FORBIDDEN);
       return;
     }
     
-    List<StudentCard> studentCards = studentCardDAO.listStudentCardsByExpiryDateInFuture();
+    Calendar cal = Calendar.getInstance();
     
-    List<fi.otavanopisto.pyramus.rest.model.StudentCard> studentCardList = new ArrayList<fi.otavanopisto.pyramus.rest.model.StudentCard>();
+    // substract 14 days
+    cal.add(Calendar.DATE, -14);
+
+    // convert to date
+    Date twoWeeksBefore = cal.getTime();
     
+    // List active & cancelled student cards where expiration date is within the past two weeks or in the future
+    List<StudentCard> studentCards = studentCardDAO.listStudentCardsByExpiryDateAndActive(twoWeeksBefore);
     
+    List<fi.otavanopisto.pyramus.rest.model.SliceStudentCardRestModel> studentCardList = new ArrayList<fi.otavanopisto.pyramus.rest.model.SliceStudentCardRestModel>();
+
     for (StudentCard studentCard : studentCards) {
       // Student cards with activity "cancelled" need still to be listed two weeks after cancellation
       if (studentCard.getActivity().equals(fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity.CANCELLED)) {
-       // get Calendar instance
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-  
-        // substract 14 days
-        // If we give 14 there it will give 15 days back
-        cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH)-13);
-  
-        // convert to date
-        Date twoWeeksBefore = cal.getTime();
-        
         if (studentCard.getCancellationDate().before(twoWeeksBefore)) {
           continue;
         }
       }
       
-      fi.otavanopisto.pyramus.rest.model.StudentCard restModel = new fi.otavanopisto.pyramus.rest.model.StudentCard();
+      fi.otavanopisto.pyramus.rest.model.SliceStudentCardRestModel restModel = new fi.otavanopisto.pyramus.rest.model.SliceStudentCardRestModel();
       
       Student student = studentController.findStudentById(studentCard.getStudent().getId());
+
+      Email email = student.getContactInfo().getEmails().stream().filter(e -> Boolean.TRUE.equals(e.getDefaultAddress())).findFirst().orElse(null);
       
-      restModel.setId(studentCard.getId());
-      restModel.setUserEntityId(studentCard.getStudent().getId());
-      restModel.setActivity(StudentCardActivity.valueOf(studentCard.getActivity().name()));
-      restModel.setExpiryDate(studentCard.getExpiryDate());
       restModel.setFirstName(student.getFirstName());
       restModel.setLastName(student.getLastName());
+      restModel.setBirthday(student.getPerson().getBirthday());
+      restModel.setEmail(email != null ? email.getAddress() : null);
       restModel.setType(StudentCardType.valueOf(studentCard.getType().name()));
-      restModel.setStudyProgramme(student.getStudyProgramme().getName());
+      
+      if (studentCard.getCancellationDate() != null && studentCard.getActivity().equals(StudentCardActivity.CANCELLED)) {
+        if (studentCard.getCancellationDate().before(studentCard.getExpiryDate())) {
+          restModel.setExpiryDate(studentCard.getCancellationDate());
+        }
+      } else {
+        restModel.setExpiryDate(studentCard.getExpiryDate());
+      }
        
       studentCardList.add(restModel);
     }
     
-    ObjectMapper mapper = new ObjectMapper();
-    StringWriter writer = new StringWriter();
-    mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-    mapper.writeValue(writer, studentCardList);
-    
-    String requestStr = writer.toString();
-    
     response.setContentType("application/json");
     PrintWriter out = response.getWriter();
+    
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+    mapper.writeValue(out, studentCardList);
+    
+    String requestStr = out.toString();
 
     out.print(requestStr);
     out.flush();

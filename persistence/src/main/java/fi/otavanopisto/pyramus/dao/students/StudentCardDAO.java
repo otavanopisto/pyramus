@@ -32,10 +32,11 @@ public class StudentCardDAO extends PyramusEntityDAO<StudentCard> {
     return studentCard;
   }
   
-  public StudentCard updateActive(StudentCard studentCard, StudentCardActivity activity){
+  public StudentCard updateActive(StudentCard studentCard, StudentCardActivity activity, Date cancellationDate){
     EntityManager entityManager = getEntityManager();
     
     studentCard.setActivity(activity);
+    studentCard.setCancellationDate(cancellationDate);
     entityManager.persist(studentCard);
     return studentCard;
   }
@@ -81,35 +82,20 @@ public class StudentCardDAO extends PyramusEntityDAO<StudentCard> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public List<StudentCard> listStudentCardsByExpiryDateInFuture() {
+  public List<StudentCard> listStudentCardsByExpiryDateAndActive(Date twoWeeksBefore) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentCard> criteria = criteriaBuilder.createQuery(StudentCard.class);
     Root<StudentCard> root = criteria.from(StudentCard.class);
     
-    // Select student cards where expiration date is today or in future and student card activity is not 'inactive'
+    // Select student cards where expiration date is within the past two weeks or in the future and student card activity is not 'inactive'
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.greaterThanOrEqualTo(root.get(StudentCard_.EXPIRY_DATE), new Date()),
-            criteriaBuilder.notEqual(root.get(StudentCard_.ACTIVITY), StudentCardActivity.INACTIVE)
+            criteriaBuilder.greaterThanOrEqualTo(root.get(StudentCard_.expiryDate), twoWeeksBefore),
+            criteriaBuilder.notEqual(root.get(StudentCard_.activity), StudentCardActivity.INACTIVE)
         ));
-    
-    return entityManager.createQuery(criteria).getResultList();
-  }
-  
-  public List<StudentCard> listStudentCards(Date twoWeeksBefore) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<StudentCard> criteria = criteriaBuilder.createQuery(StudentCard.class);
-    Root<StudentCard> root = criteria.from(StudentCard.class);
-    
-    criteria.select(root);
-    criteria.where(
-        criteriaBuilder.between(root.get(StudentCard_.expiryDate), twoWeeksBefore, new Date())
-        );
     
     return entityManager.createQuery(criteria).getResultList();
   }

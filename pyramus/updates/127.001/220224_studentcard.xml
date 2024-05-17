@@ -8,15 +8,18 @@
         cancellationDate date,
         expiryDate date not null,
         type varchar(255) not null,
-        student_id bigint,
+        student bigint,
         primary key (id)
     );
   </sql>
   <sql>
     alter table StudentCard 
        add constraint FKpvvuoslyef2wag5el0kmb3313 
-       foreign key (student_id) 
+       foreign key (student) 
        references Student (id);
   </sql>
-  
+  <sql>
+  alter table StudentCard 
+       add constraint UK_72wkaog5lhiwd9r65ase2i0dx unique (student);
+  </sql>
 </update>

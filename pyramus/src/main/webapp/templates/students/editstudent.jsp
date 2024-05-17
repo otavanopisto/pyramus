@@ -1103,7 +1103,9 @@
                       <jsp:param name="titleLocale" value="students.editStudent.emailTableEmailsTitle"/>
                     </jsp:include>
                     
-                    <div id="emailTable.${student.id}"></div>
+                    <c:forEach var="email" items="${student.contactInfo.emails}">
+                      <div>${fn:escapeXml(email.address)}</div>
+                    </c:forEach>
                   </div>
                   
                   <c:set var="studentCard" value="${studentCards[student.id]}" />
@@ -1131,7 +1133,6 @@
                     </jsp:include>            
                     <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${expirationDate}">
                   </div>
-                  <h1>${studentCard.activity}</h1>
                   <div class="genericFormSection">
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="integrations.slice.status"/>

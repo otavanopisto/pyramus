@@ -741,8 +741,8 @@ public class StudentController {
     return studentCardDAO.findByStudent(student);
   }
   
-  public StudentCard updateStudentCardActive(StudentCard studentCard, StudentCardActivity activity) {
-    return studentCardDAO.updateActive(studentCard, activity);
+  public StudentCard updateStudentCardActive(StudentCard studentCard, StudentCardActivity activity, Date cancellationDate) {
+    return studentCardDAO.updateActive(studentCard, activity, cancellationDate);
   }
 }
 

@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -66,6 +67,7 @@ public class StudentCard {
   private Long id;
   
   @OneToOne 
+  @JoinColumn(name="student", unique = true)
   private Student student;
   
   @NotNull

@@ -3616,7 +3616,7 @@ public class StudentRESTService extends AbstractRESTService {
   @PUT
   @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
-  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, StudentCardActivity activity) {
+  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, Boolean active) {
 
     // Access
     User loggedUser = sessionController.getUser();
@@ -3637,11 +3637,19 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!studentCard.getStudent().getId().equals(studentId)) {
-      return Response.status(Status.FORBIDDEN).build();
+    Date cancellationDate = null;
+    StudentCardActivity activity = studentCard.getActivity();
+    
+    if (studentCard.getActivity().equals(StudentCardActivity.ACTIVE) && active == Boolean.FALSE) {
+      cancellationDate = new Date();
+      
+      activity = StudentCardActivity.CANCELLED;
+    } else {
+      if (active == Boolean.TRUE){
+        activity = StudentCardActivity.ACTIVE;
+      }
     }
-
-    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, activity))).build();
+    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, activity, cancellationDate))).build();
   }
   
 }
