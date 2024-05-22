@@ -70,8 +70,7 @@ public class StudentCard {
   @JoinColumn(name="student", unique = true)
   private Student student;
   
-  @NotNull
-  @Column (nullable = false)
+  @Column
   @Enumerated (EnumType.STRING)
   private StudentCardType type;
 
@@ -80,9 +79,7 @@ public class StudentCard {
   @Enumerated (EnumType.STRING)
   private StudentCardActivity activity;
   
-  @NotNull
   @Temporal(value = TemporalType.DATE)
-  @Column (nullable = false)
   private Date expiryDate;
   
   @Temporal(value = TemporalType.DATE)

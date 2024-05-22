@@ -536,38 +536,38 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       
       // Student card
       
-      if (studentCardType != null) {
-        StudentCard studentCard = studentCardDAO.findByStudent(student);
-  
-        Date expiryDate = null;
-        Date cancellationDate = null;
-        StudentCardActivity activity = StudentCardActivity.ACTIVE;
-        // Set expiry date automatically same as study end date or study time end
-        if (student.getStudyEndDate() != null) {
-          expiryDate = student.getStudyEndDate();
-        }  else {
-          expiryDate = student.getStudyTimeEnd();
+      StudentCard studentCard = studentCardDAO.findByStudent(student);
+
+      Date expiryDate = null;
+      Date cancellationDate = null;
+      
+      StudentCardActivity activity = StudentCardActivity.ACTIVE;
+      // Set expiry date automatically same as study end date or study time end or null
+      if (student.getStudyEndDate() != null) {
+        expiryDate = student.getStudyEndDate();
+      }  else {
+        expiryDate = student.getStudyTimeEnd() != null ? student.getStudyTimeEnd() : null;
+      }
+      
+      if (studentCard != null) {
+        cancellationDate = studentCard.getCancellationDate();
+        
+        // If user has set the expiry date manually we have to use it
+        if (studentCardExpires != null && studentCard.getExpiryDate() != studentCardExpires) {
+          expiryDate = studentCardExpires;
         }
         
-        if (studentCard != null) {
-          cancellationDate = studentCard.getCancellationDate();
+        // If boolean active has changed from true to false we need to set activity to CANCELLED instead of INACTIVE
+        if (!active) {
+          if (studentCard.getActivity().equals(StudentCardActivity.ACTIVE) || studentCard.getActivity().equals(StudentCardActivity.CANCELLED)) {
+            activity = StudentCardActivity.CANCELLED;
           
-          // If user has set the expiry date manually we have to use it
-          if (studentCardExpires != null && studentCard.getExpiryDate() != studentCardExpires) {
-            expiryDate = studentCardExpires;
-          }
-          
-          // If boolean active has changed from true to false we need to set activity to CANCELLED instead of INACTIVE
-          if (!active) {
-            if (studentCard.getActivity().equals(StudentCardActivity.ACTIVE) || studentCard.getActivity().equals(StudentCardActivity.CANCELLED)) {
-              activity = StudentCardActivity.CANCELLED;
-              
-              if (studentCard.getCancellationDate() == null) {
-                cancellationDate = new Date();
-              }
+            if (studentCard.getCancellationDate() == null) {
+              cancellationDate = new Date();
             }
           }
-          studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
+        }
+        studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
         } else {
           if (studentCardExpires != null) {
             expiryDate = studentCardExpires;
@@ -579,7 +579,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           
           studentCardDAO.create(student, activity, expiryDate, studentCardType);
         }
-      }
+      
     }
     
 
