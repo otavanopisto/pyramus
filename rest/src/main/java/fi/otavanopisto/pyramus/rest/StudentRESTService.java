@@ -3608,6 +3608,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (studentCard.getExpiryDate() == null || studentCard.getType() == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
     return Response.ok().entity(objectFactory.createModel(studentCard)).build();
 
   }

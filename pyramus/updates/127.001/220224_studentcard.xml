@@ -6,15 +6,15 @@
        id bigint not null auto_increment,
         activity varchar(255) not null,
         cancellationDate date,
-        expiryDate date not null,
-        type varchar(255) not null,
+        expiryDate date,
+        type varchar(255),
         student bigint,
         primary key (id)
     );
   </sql>
   <sql>
     alter table StudentCard 
-       add constraint FKpvvuoslyef2wag5el0kmb3313 
+       add constraint FKijf5ysv7w2dpdtmt68vpltuq1 
        foreign key (student) 
        references Student (id);
   </sql>

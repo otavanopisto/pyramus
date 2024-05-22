@@ -94,7 +94,9 @@ public class StudentCardDAO extends PyramusEntityDAO<StudentCard> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.greaterThanOrEqualTo(root.get(StudentCard_.expiryDate), twoWeeksBefore),
-            criteriaBuilder.notEqual(root.get(StudentCard_.activity), StudentCardActivity.INACTIVE)
+            criteriaBuilder.notEqual(root.get(StudentCard_.activity), StudentCardActivity.INACTIVE),
+            criteriaBuilder.isNotNull(root.get(StudentCard_.activity)),
+            criteriaBuilder.isNotNull(root.get(StudentCard_.type))
         ));
     
     return entityManager.createQuery(criteria).getResultList();
