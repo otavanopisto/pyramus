@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.EnumUtils;
 
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
@@ -56,6 +57,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.MatriculationPermissi
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance;
+import fi.otavanopisto.pyramus.rest.model.MatriculationExamStudentStatus;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.security.LoggedIn;
@@ -142,6 +144,32 @@ public class MatriculationRESTService extends AbstractRESTService {
     
     boolean upperSecondarySchoolCurriculum = matriculationEligibilityController.hasGroupEligibility(student);
     return Response.ok(new MatriculationEligibilities(upperSecondarySchoolCurriculum)).build();
+  }
+
+  @Path("/students/{STUDENTID}/exams")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentsExams(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    User loggedUser = sessionController.getUser();
+    if (!loggedUser.getId().equals(studentId)) {
+      if (!((loggedUser instanceof StudentParent) && (((StudentParent) loggedUser).isActiveParentOf(student)))) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    }
+    
+    List<MatriculationExamEnrollment> studentEnrollments = matriculationExamEnrollmentDao.listByStudent(student);
+
+    return Response.ok(
+        studentEnrollments.stream()
+          .map(enrollment -> restModel(enrollment.getExam(), enrollment.getStudent()))
+          .collect(Collectors.toList())
+      ).build();
   }
 
   @Path("/exams")
@@ -337,10 +365,14 @@ public class MatriculationRESTService extends AbstractRESTService {
       isVisible(matriculationExam, student) && matriculationEligibilityController.hasGroupEligibility(student);
   }
 
-  
   private fi.otavanopisto.pyramus.rest.model.MatriculationExam restModel(MatriculationExam exam, Student student) {
+    fi.otavanopisto.pyramus.rest.model.MatriculationExamTerm term = exam.getExamTerm() != null
+        ? EnumUtils.getEnum(fi.otavanopisto.pyramus.rest.model.MatriculationExamTerm.class, exam.getExamTerm().name()) : null;
+    
     fi.otavanopisto.pyramus.rest.model.MatriculationExam result = new fi.otavanopisto.pyramus.rest.model.MatriculationExam();
     result.setId(exam.getId());
+    result.setTerm(term);
+    result.setYear(exam.getExamYear());
     result.setStarts(exam.getStarts().getTime());
     result.setEnds(exam.getEnds().getTime());
     
@@ -357,18 +389,22 @@ public class MatriculationRESTService extends AbstractRESTService {
         logger.severe(String.format("Maximum exam date could'nt be resolved for exam %d", exam.getId()));
       }
       
-      result.setEligible(isEligible(student, exam));
+      boolean eligible = isEligible(student, exam);
       result.setCompulsoryEducationEligible(compulsoryEducationEligible);
 
       // Add information about enrollment if already done so
       
       MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
-      result.setEnrolled(examEnrollment != null);
+      
+      MatriculationExamStudentStatus studentStatus = examEnrollment == null 
+          ? (eligible ? MatriculationExamStudentStatus.ELIGIBLE : MatriculationExamStudentStatus.NOT_ELIGIBLE)
+          : (examEnrollment.isApprovedByGuider() ? MatriculationExamStudentStatus.APPROVED : MatriculationExamStudentStatus.SUBMITTED);
+      
+      result.setStudentStatus(studentStatus);
       result.setEnrollmentDate((examEnrollment != null && examEnrollment.getEnrollmentDate() != null) ? 
           examEnrollment.getEnrollmentDate().getTime() : null);
     } else {
-      result.setEligible(false);
-      result.setEnrolled(false);
+      result.setStudentStatus(MatriculationExamStudentStatus.NOT_ELIGIBLE);
       result.setEnrollmentDate(null);
     }
     return result;
