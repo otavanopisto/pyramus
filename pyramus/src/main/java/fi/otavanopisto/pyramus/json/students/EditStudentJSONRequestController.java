@@ -555,7 +555,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         
         // If user has set the expiry date manually we have to use it
         if (studentCardExpires != null) {
-          if (studentCard.getExpiryDate() != null && !DateUtils.isSameDay(studentCard.getExpiryDate(), studentCardExpires) || studentCard.getExpiryDate() == null) {
+          if ((studentCard.getExpiryDate() != null && !DateUtils.isSameDay(studentCard.getExpiryDate(), studentCardExpires)) || studentCard.getExpiryDate() == null) {
           expiryDate = studentCardExpires;
           }
         }
