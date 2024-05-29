@@ -15,6 +15,11 @@
       <groupId>fi.otavanopisto</groupId>
       <artifactId>webapp-permission</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
   </dependencies>
   
 </project>

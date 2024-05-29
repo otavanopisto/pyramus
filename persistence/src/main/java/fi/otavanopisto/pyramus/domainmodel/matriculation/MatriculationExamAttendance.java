@@ -13,6 +13,7 @@ import javax.persistence.TableGenerator;
 import org.hibernate.search.annotations.DocumentId;
 
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 
 @Entity
 public class MatriculationExamAttendance {

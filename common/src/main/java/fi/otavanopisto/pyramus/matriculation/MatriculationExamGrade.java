@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.domainmodel.matriculation;
+package fi.otavanopisto.pyramus.matriculation;
 
 public enum MatriculationExamGrade {
   IMPROBATUR,
