@@ -40,7 +40,7 @@ public class SliceBinaryRequestController extends BinaryRequestController {
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.STUDY_PROGRAMME_LEADER, UserRole.STUDY_GUIDER, UserRole.TEACHER };
+    return new UserRole[] { UserRole.ADMINISTRATOR};
   }
 
 }

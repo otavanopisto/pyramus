@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.StaleObjectStateException;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -543,18 +544,20 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       
       StudentCardActivity activity = StudentCardActivity.ACTIVE;
       // Set expiry date automatically same as study end date or study time end or null
-      if (student.getStudyEndDate() != null) {
-        expiryDate = student.getStudyEndDate();
+      if (studyEndDate != null) {
+        expiryDate = studyEndDate;
       }  else {
-        expiryDate = student.getStudyTimeEnd() != null ? student.getStudyTimeEnd() : null;
+        expiryDate = studyTimeEnd != null ? studyTimeEnd : null;
       }
       
       if (studentCard != null) {
         cancellationDate = studentCard.getCancellationDate();
         
         // If user has set the expiry date manually we have to use it
-        if (studentCardExpires != null && studentCard.getExpiryDate() != studentCardExpires) {
+        if (studentCardExpires != null) {
+          if (studentCard.getExpiryDate() != null && !DateUtils.isSameDay(studentCard.getExpiryDate(), studentCardExpires) || studentCard.getExpiryDate() == null) {
           expiryDate = studentCardExpires;
+          }
         }
         
         // If boolean active has changed from true to false we need to set activity to CANCELLED instead of INACTIVE
