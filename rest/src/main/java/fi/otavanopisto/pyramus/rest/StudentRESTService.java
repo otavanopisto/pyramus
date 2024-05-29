@@ -3608,6 +3608,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    // Return the student card only if the expiration date and type are not null
     if (studentCard.getExpiryDate() == null || studentCard.getType() == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -3616,7 +3617,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   }
   
-  @Path("/students/{STUDENTID:[0-9]*}/studentCard")  
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard/active")  
   @PUT
   @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
