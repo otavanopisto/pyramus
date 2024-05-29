@@ -818,7 +818,7 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxMetaspaceSize=512m</cargo.jvmargs>
+                  <cargo.jvmargs>--add-opens java.base/java.util=ALL-UNNAMED -Xms64m -Xmx1152m</cargo.jvmargs>
                   <cargo.datasource.datasource.pyramus>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
@@ -1260,7 +1260,7 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxMetaspaceSize=512m</cargo.jvmargs>
+                  <cargo.jvmargs>--add-opens java.base/java.util=ALL-UNNAMED -Xms64m -Xmx1152m</cargo.jvmargs>
                   <cargo.datasource.datasource.pyramus>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
