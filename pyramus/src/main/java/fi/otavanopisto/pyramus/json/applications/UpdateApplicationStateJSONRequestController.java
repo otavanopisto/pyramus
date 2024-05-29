@@ -69,11 +69,21 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         return;
       }
       
-      // Fix for situations where two handlers would simultaneously start to process the same application
+      // Fix for situations where two handlers would simultaneously start to process the same application or application is already handled
       
-      if (applicationState == ApplicationState.PROCESSING && application.getState() != ApplicationState.PENDING) {
-        fail(requestContext, "Hakemus on jo otettu käsittelyyn. Lataa sivu uudelleen.");
-        return;
+      if (applicationState == ApplicationState.PROCESSING) {
+        switch (application.getState()) {
+        case PROCESSING:
+          fail(requestContext, "Hakemus on jo otettu käsittelyyn. Lataa sivu uudelleen.");
+          return;
+        case TRANSFERRED_AS_STUDENT:
+        case REGISTERED_AS_STUDENT:
+        case REGISTRATION_CHECKED:
+          fail(requestContext, "Hakija on jo järjestelmässä. Lataa sivu uudelleen.");
+          return;
+        default:
+          break;
+        }
       }
       
       // Only do anything if the application state actually changes
