@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 @Entity
 public class MatriculationExam {

@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 @Stateless
 public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {

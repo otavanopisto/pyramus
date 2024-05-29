@@ -17,13 +17,13 @@ import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 

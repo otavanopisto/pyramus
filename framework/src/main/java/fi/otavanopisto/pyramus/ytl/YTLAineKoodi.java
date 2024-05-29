@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 
 public class YTLAineKoodi {
   

@@ -11,13 +11,13 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamGrade;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 @Stateless
 public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<MatriculationExamAttendance> {

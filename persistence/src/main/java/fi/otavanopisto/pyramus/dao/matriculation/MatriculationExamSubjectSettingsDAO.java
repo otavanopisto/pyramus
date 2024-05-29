@@ -10,10 +10,10 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings_;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 
 @Stateless
 public class MatriculationExamSubjectSettingsDAO extends PyramusEntityDAO<MatriculationExamSubjectSettings> {

@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 
 @Entity
 @Table(uniqueConstraints={
