@@ -21,11 +21,14 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
@@ -81,7 +84,11 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setApprovedByGuider(approvedByGuider);
     result.setEnrollmentDate(enrollmentDate);
     
-    return persist(result);
+    result = persist(result);
+    
+    createLogEntry(getEntityManager(), result, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, state);
+    
+    return result;
   }
 
   public MatriculationExamEnrollment update(
@@ -102,9 +109,9 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String message,
     boolean canPublishName,
     Student student,
-    MatriculationExamEnrollmentState state,
     MatriculationExamEnrollmentDegreeStructure degreeStructure,
-    boolean approvedByGuider
+    boolean approvedByGuider,
+    User modifier
   ) {
     enrollment.setName(name);
     enrollment.setSsn(ssn);
@@ -122,11 +129,14 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setMessage(message);
     enrollment.setCanPublishName(canPublishName);
     enrollment.setStudent(student);
-    enrollment.setState(state);
     enrollment.setDegreeStructure(degreeStructure);
     enrollment.setApprovedByGuider(approvedByGuider);
     
-    return persist(enrollment);
+    enrollment = persist(enrollment);
+    
+    createLogEntry(getEntityManager(), enrollment, modifier, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_UPDATED, null);
+    
+    return enrollment;
   }
   
   public List<MatriculationExamEnrollment> listByState(
@@ -290,9 +300,27 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     return persist(enrollment);
   }
 
+  public MatriculationExamEnrollment updateState(MatriculationExamEnrollment enrollment, MatriculationExamEnrollmentState state, User modifier) {
+    enrollment.setState(state);
+    createLogEntry(getEntityManager(), enrollment, modifier, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, state);
+    return persist(enrollment);
+  }
+
   public enum MatriculationExamEnrollmentSorting {
     NONE,
     DATE,
     STATE
   }
+  
+  private void createLogEntry(EntityManager em, MatriculationExamEnrollment enrollment, User modifier, 
+      MatriculationExamEnrollmentChangeLogType changeType, MatriculationExamEnrollmentState newState) {
+    MatriculationExamEnrollmentChangeLog logEntry = new MatriculationExamEnrollmentChangeLog();
+    logEntry.setEnrollment(enrollment);
+    logEntry.setModifier(modifier);
+    logEntry.setTimestamp(new Date());
+    logEntry.setChangeType(changeType);
+    logEntry.setNewState(newState);
+    em.persist(logEntry);
+  }
+
 }

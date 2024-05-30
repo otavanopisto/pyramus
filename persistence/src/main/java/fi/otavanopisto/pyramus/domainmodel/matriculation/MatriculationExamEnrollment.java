@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.search.annotations.DocumentId;
 
@@ -297,7 +299,8 @@ public class MatriculationExamEnrollment {
   @Enumerated(EnumType.STRING)
   private MatriculationExamEnrollmentDegreeStructure degreeStructure;
   
-  @Column
+  @Column(nullable = false)
+  @Temporal(value = TemporalType.TIMESTAMP)
   private Date enrollmentDate;
 
 }
