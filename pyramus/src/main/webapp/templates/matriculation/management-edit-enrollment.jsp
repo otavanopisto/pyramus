@@ -303,6 +303,17 @@
         }
       }
     </script>
+
+    <style type="text/css">
+      .changeLogEntryRow {
+        margin: 4px 0px;
+      }
+      .newEnrollmentState {
+        background-color: #E1EFF8;
+        padding: 1px 5px;
+        border-radius: 8px;
+      }
+    </style>
   </head> 
   <body onload="onLoad(event);">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
@@ -322,7 +333,29 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollmentDate"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollmentDate.help"/>
                 </jsp:include>
-                <div><fmt:formatDate type="date" value="${enrollmentDate}"/></div>
+                <div><fmt:formatDate type="both" value="${enrollmentDate}"/></div>
+              </div>
+
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.changeLog.title"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.changeLog.title.help"/>
+                </jsp:include>
+                <div>
+                  <c:forEach var="changeLogEntry" items="${changeLog}">
+                    <div class="changeLogEntryRow">
+                      <fmt:formatDate type="both" value="${changeLogEntry.timestamp}"/>
+                      ${changeLogEntry.modifier.fullName}
+                      <fmt:message key="generic.matriculation.changeLogTypes.${changeLogEntry.changeType}"/>
+                      
+                      <c:if test="${changeLogEntry.newState != null}">
+                        <span class="newEnrollmentState">
+                          <fmt:message key="generic.matriculation.enrollmentStates.${changeLogEntry.newState}"/>
+                        </span>
+                      </c:if>
+                    </div>
+                  </c:forEach>
+                </div>
               </div>
 
               <div class="genericFormSection">  
@@ -524,9 +557,11 @@
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.state.help"/>
                 </jsp:include>            
                 <select class="required" name="state">
-                  <option ${state=='PENDING' ? 'selected="selected"' : ''} value="PENDING">Jätetty</option>
-                  <option ${state=='APPROVED' ? 'selected="selected"' : ''} value="APPROVED">Hyväksytty</option>
-                  <option ${state=='REJECTED' ? 'selected="selected"' : ''} value="REJECTED">Hylätty</option>
+                  <option ${state=='PENDING' ? 'selected="selected"' : ''} ${!allowedStates.contains('PENDING') ? 'disabled="disabled"' : ''} value="PENDING"><fmt:message key="generic.matriculation.enrollmentStates.PENDING"/></option>
+                  <option ${state=='SUPPLEMENTATION_REQUEST' ? 'selected="selected"' : ''} ${!allowedStates.contains('SUPPLEMENTATION_REQUEST') ? 'disabled="disabled"' : ''} value="SUPPLEMENTATION_REQUEST"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"/></option>
+                  <option ${state=='APPROVED' ? 'selected="selected"' : ''} ${!allowedStates.contains('APPROVED') ? 'disabled="disabled"' : ''} value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
+                  <option ${state=='REJECTED' ? 'selected="selected"' : ''} ${!allowedStates.contains('REJECTED') ? 'disabled="disabled"' : ''} value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
+                  <option ${state=='CONFIRMED' ? 'selected="selected"' : ''} ${!allowedStates.contains('CONFIRMED') ? 'disabled="disabled"' : ''} value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/></option>
                 </select>
               </div>
             </div>

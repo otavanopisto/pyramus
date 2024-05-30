@@ -2,9 +2,11 @@ package fi.otavanopisto.pyramus.views.matriculation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -18,6 +20,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
@@ -31,24 +34,26 @@ import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamGrade;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 public class EditEnrollmentViewController extends PyramusViewController {
   
@@ -82,9 +87,15 @@ public class EditEnrollmentViewController extends PyramusViewController {
     }
     
     StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+    EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
 
     MatriculationExamEnrollmentState enrollmentState = MatriculationExamEnrollmentState.valueOf(
         pageRequestContext.getString("state"));
+    
+    if (!allowedStates.contains(enrollmentState)) {
+      pageRequestContext.addMessage(Severity.ERROR, "Cannot change state to the requested one");
+      return;
+    }
     
     enrollment = enrollmentDAO.update(
       enrollment,
@@ -104,10 +115,14 @@ public class EditEnrollmentViewController extends PyramusViewController {
       ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
-      enrollmentState,
       MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
-      pageRequestContext.getBoolean("approvedByGuider")
+      pageRequestContext.getBoolean("approvedByGuider"),
+      loggedUser
     );
+
+    if (enrollmentState != enrollment.getState()) {
+      enrollment = enrollmentDAO.updateState(enrollment, enrollmentState, loggedUser);
+    }
     
     Integer enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");
     if (enrolledAttendances == null) {
@@ -299,22 +314,32 @@ public class EditEnrollmentViewController extends PyramusViewController {
 
   private void doGet(PageRequestContext pageRequestContext) {
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-edit-enrollment.jsp");
-    
+
     Long id = pageRequestContext.getLong("enrollment");
     if (id == null) {
       pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
       return;
     }
-    MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
+    MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    MatriculationExamEnrollmentChangeLogDAO enrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
     if (enrollment == null) {
       pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
       return;
     }
+
+    StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+    
+    EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
+    Set<String> allowedStatesStrSet = allowedStates.stream().map(MatriculationExamEnrollmentState::name).collect(Collectors.toSet());
+    
+    List<MatriculationExamEnrollmentChangeLog> changeLog = enrollmentChangeLogDAO.listByEnrollment(enrollment);
     
     pageRequestContext.getRequest().setAttribute("enrollment", enrollment);
+    pageRequestContext.getRequest().setAttribute("changeLog", changeLog);
     pageRequestContext.getRequest().setAttribute("name", enrollment.getName());
     pageRequestContext.getRequest().setAttribute("ssn", enrollment.getSsn());
     pageRequestContext.getRequest().setAttribute("email", enrollment.getEmail());
@@ -333,6 +358,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("state", enrollment.getState().name());
     pageRequestContext.getRequest().setAttribute("degreeStructure", enrollment.getDegreeStructure().name());
     pageRequestContext.getRequest().setAttribute("enrollmentDate", enrollment.getEnrollmentDate());
+    pageRequestContext.getRequest().setAttribute("allowedStates", allowedStatesStrSet);
     
     List<MatriculationExamAttendance> attendances = attendanceDAO.listByEnrollment(enrollment);
     
@@ -398,6 +424,46 @@ public class EditEnrollmentViewController extends PyramusViewController {
         throw new RuntimeException(ex);
       }
     }
+  }
+
+  /**
+   * Returns the allowed states the student can be set to by the given user
+   * and their privileges.
+   * 
+   * @param loggedUser
+   * @param currentState
+   * @return
+   */
+  private EnumSet<MatriculationExamEnrollmentState> getAllowedStates(StaffMember loggedUser,
+      MatriculationExamEnrollmentState currentState) {
+    EnumSet<MatriculationExamEnrollmentState> allowedStates;
+    if (loggedUser.hasAnyRole(Role.ADMINISTRATOR, Role.STUDY_PROGRAMME_LEADER)) {
+      allowedStates = EnumSet.allOf(MatriculationExamEnrollmentState.class);
+    }
+    else {
+      // Limit the states the study guiders etc with less permissions can change the enrollment to
+      // By default, add the current state so the form can be saved without changing state
+      allowedStates = EnumSet.of(currentState);
+
+      switch (currentState) {
+        case PENDING:
+          allowedStates.add(MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST);
+          allowedStates.add(MatriculationExamEnrollmentState.APPROVED);
+          allowedStates.add(MatriculationExamEnrollmentState.REJECTED);
+        break;
+        
+        case SUPPLEMENTATION_REQUEST:
+          allowedStates.add(MatriculationExamEnrollmentState.APPROVED);
+          allowedStates.add(MatriculationExamEnrollmentState.REJECTED);
+        break;
+        
+        default:
+          // Any other state does not allow modification if the user doesn't have sufficient privileges.
+        break;
+      }
+    }
+    
+    return allowedStates;
   }
 
   public UserRole[] getAllowedRoles() {

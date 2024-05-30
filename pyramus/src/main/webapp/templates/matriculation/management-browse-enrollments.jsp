@@ -99,9 +99,11 @@
             editable: false,
             paramName: 'state',
             options: [
-              { text: "Jätetty", value: "PENDING" },
-              { text: "Hyväksytty", value: "APPROVED" },
-              { text: "Hylätty", value: "REJECTED" }
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.PENDING"), value: "PENDING" },
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"), value: "SUPPLEMENTATION_REQUEST" },
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.APPROVED"), value: "APPROVED" },
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.REJECTED"), value: "REJECTED" },
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.CONFIRMED"), value: "CONFIRMED" }
             ]
           }, {
             header : 'Pakollisia kursseja',
@@ -191,9 +193,11 @@
             </jsp:include>
             <select id="enrollmentState" name="enrollmentState">
               <option value=""></option>
-              <option value="PENDING">Jätetty</option>
-              <option value="APPROVED">Hyväksytty</option>
-              <option value="REJECTED">Hylätty</option>
+              <option value="PENDING"><fmt:message key="generic.matriculation.enrollmentStates.PENDING"/></option>
+              <option value="SUPPLEMENTATION_REQUEST"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"/></option>
+              <option value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
+              <option value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
+              <option value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.PENDING"/></option>
             </select>
           </div>
   
