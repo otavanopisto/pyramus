@@ -20,10 +20,12 @@ import javax.persistence.criteria.Subquery;
 
 import fi.otavanopisto.pyramus.dao.Predicates;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
@@ -34,6 +36,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment_;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
@@ -362,6 +365,34 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     if (passingGrade != null) {
       Join<CourseAssessment, Grade> gradeJoin = root.join(CourseAssessment_.grade);
       predicates.add(criteriaBuilder.equal(gradeJoin.get(Grade_.passingGrade), passingGrade));
+    }
+    
+    criteria.select(criteriaBuilder.count(root));
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    return entityManager.createQuery(criteria).getSingleResult();
+  }
+  
+  public Long countCourseAssessments(Person person, TSB passingGrade) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+    Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
+    Join<CourseStudent, Student> studentJoin = courseStudentJoin.join(CourseStudent_.student);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    predicates.add(criteriaBuilder.equal(studentJoin.get(Student_.person), person));
+    predicates.add(criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE));
+
+    if (passingGrade.isBoolean()) {
+      Join<CourseAssessment, Grade> gradeJoin = root.join(CourseAssessment_.grade);
+      predicates.add(criteriaBuilder.equal(gradeJoin.get(Grade_.passingGrade), passingGrade.booleanValue()));
     }
     
     criteria.select(criteriaBuilder.count(root));

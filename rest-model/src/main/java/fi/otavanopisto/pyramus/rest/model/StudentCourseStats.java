@@ -18,6 +18,15 @@ public class StudentCourseStats {
     this.numberCreditPoints = numberCreditPoints;
   }
 
+  public boolean isPersonHasCourseAssessments() {
+    return personHasCourseAssessments;
+  }
+
+  public void setPersonHasCourseAssessments(boolean personHasCourseAssessments) {
+    this.personHasCourseAssessments = personHasCourseAssessments;
+  }
+
   private int numberCompletedCourses;
   private double numberCreditPoints;
+  private boolean personHasCourseAssessments;
 }

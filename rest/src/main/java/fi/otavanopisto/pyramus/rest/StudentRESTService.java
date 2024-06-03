@@ -45,6 +45,7 @@ import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -3438,7 +3439,6 @@ public class StudentRESTService extends AbstractRESTService {
       @PathParam("STUDENTID") Long studentId,
       @QueryParam("educationTypeCode") String educationTypeCode,
       @QueryParam("educationSubtypeCode") String educationSubtypeCode) {
-    StudentCourseStats response = new StudentCourseStats();
     
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -3462,7 +3462,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     // TODO StudentTOR might be able to solve this more elegantly
-    
+
     int numCompletedCourses = assessmentController.getAcceptedCourseCount(
         student,
         null,
@@ -3483,9 +3483,14 @@ public class StudentRESTService extends AbstractRESTService {
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
     }
+
+    boolean personHasCourseAssessments = assessmentController.countCourseAssessments(student.getPerson(), TSB.TRUE) > 0;
+
+    StudentCourseStats response = new StudentCourseStats();
     
     response.setNumberCompletedCourses(numCompletedCourses);
     response.setNumberCreditPoints(numCreditPoints);
+    response.setPersonHasCourseAssessments(personHasCourseAssessments);
     
     return Response.ok(response).build();
   }
