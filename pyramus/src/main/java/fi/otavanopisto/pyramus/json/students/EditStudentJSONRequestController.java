@@ -551,7 +551,12 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       }
       
       if (studentCard != null) {
+        
         cancellationDate = studentCard.getCancellationDate();
+        
+        if (studentCard.getExpiryDate() != null) {
+          expiryDate = studentCard.getExpiryDate();
+        }
         
         // If user has set the expiry date manually we have to use it
         if (studentCardExpires != null) {
@@ -568,6 +573,8 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
             if (studentCard.getCancellationDate() == null) {
               cancellationDate = new Date();
             }
+          } else {
+            activity = studentCard.getActivity();
           }
         }
         studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
