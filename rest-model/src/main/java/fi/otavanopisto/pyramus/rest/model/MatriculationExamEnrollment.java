@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class MatriculationExamEnrollment {
@@ -140,11 +141,11 @@ public class MatriculationExamEnrollment {
     this.studentId = studentId;
   }
 
-  public String getState() {
+  public MatriculationExamStudentStatus getState() {
     return state;
   }
 
-  public void setState(String state) {
+  public void setState(MatriculationExamStudentStatus state) {
     this.state = state;
   }
   
@@ -156,11 +157,11 @@ public class MatriculationExamEnrollment {
     this.attendances = attendances;
   }
 
-  public String getEnrollmentDate() {
+  public OffsetDateTime getEnrollmentDate() {
     return enrollmentDate;
   }
 
-  public void setEnrollmentDate(String enrollmentDate) {
+  public void setEnrollmentDate(OffsetDateTime enrollmentDate) {
     this.enrollmentDate = enrollmentDate;
   }
 
@@ -206,9 +207,9 @@ public class MatriculationExamEnrollment {
   private String message;
   private boolean canPublishName;
   private Long studentId;
-  private String state;
+  private MatriculationExamStudentStatus state;
   private List<MatriculationExamAttendance> attendances;
-  private String enrollmentDate;
+  private OffsetDateTime enrollmentDate;
   private Long examId;
   private String degreeStructure;
 }

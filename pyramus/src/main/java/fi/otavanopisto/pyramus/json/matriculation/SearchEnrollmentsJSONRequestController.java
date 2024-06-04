@@ -16,9 +16,9 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO.MatriculationExamEnrollmentSorting;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
 public class SearchEnrollmentsJSONRequestController extends JSONRequestController {
 

@@ -1,5 +1,11 @@
 package fi.otavanopisto.pyramus.rest.util;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Date;
+
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
 
 public class PyramusRestUtils {
@@ -53,4 +59,23 @@ public class PyramusRestUtils {
     
     return null;
   }
+  
+  /**
+   * Converts Date to OffsetDateTime
+   * 
+   * @param date
+   * @return
+   */
+  public static OffsetDateTime toOffsetDateTime(Date date) {
+    if (date == null) {
+      return null;
+    }
+    // If (as) date is java.sql.Date then toInstant() would cause UnsupportedOperationException
+    Date tmpDate = new Date(date.getTime()); 
+    Instant instant = tmpDate.toInstant();
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(instant);
+    return tmpDate.toInstant().atOffset(offset);
+  }
+
 }

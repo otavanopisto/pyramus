@@ -12,10 +12,10 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog_;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
 @Stateless
 public class MatriculationExamEnrollmentChangeLogDAO extends PyramusEntityDAO<MatriculationExamEnrollmentChangeLog> {

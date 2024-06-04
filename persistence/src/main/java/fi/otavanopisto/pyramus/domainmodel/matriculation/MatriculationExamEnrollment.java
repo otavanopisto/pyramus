@@ -20,8 +20,9 @@ import javax.persistence.TemporalType;
 import org.hibernate.search.annotations.DocumentId;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
-@Entity
+@Entity // TODO constraint student+exam
 public class MatriculationExamEnrollment {
 
   /**

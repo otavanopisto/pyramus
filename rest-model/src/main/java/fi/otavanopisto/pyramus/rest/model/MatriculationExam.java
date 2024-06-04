@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
+
 public class MatriculationExam {
 
   public Long getId() {
@@ -24,14 +26,6 @@ public class MatriculationExam {
 
   public void setEnds(Long ends) {
     this.ends = ends;
-  }
-
-  public Long getEnrollmentDate() {
-    return enrollmentDate;
-  }
-
-  public void setEnrollmentDate(Long enrollmentDate) {
-    this.enrollmentDate = enrollmentDate;
   }
 
   public boolean isCompulsoryEducationEligible() {
@@ -66,6 +60,14 @@ public class MatriculationExam {
     this.term = term;
   }
 
+  public MatriculationExamEnrollment getEnrollment() {
+    return enrollment;
+  }
+
+  public void setEnrollment(MatriculationExamEnrollment enrollment) {
+    this.enrollment = enrollment;
+  }
+
   private Long id;
   private Integer year;
   private MatriculationExamTerm term;
@@ -73,5 +75,5 @@ public class MatriculationExam {
   private Long ends;
   private boolean compulsoryEducationEligible;
   private MatriculationExamStudentStatus studentStatus;
-  private Long enrollmentDate;
+  private MatriculationExamEnrollment enrollment;
 }

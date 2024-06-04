@@ -37,7 +37,6 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttend
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
@@ -51,6 +50,7 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;

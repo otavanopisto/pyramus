@@ -15,6 +15,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
 @Entity
 public class MatriculationExamEnrollmentChangeLog {

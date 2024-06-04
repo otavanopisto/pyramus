@@ -37,17 +37,17 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.BinaryRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
 import fi.otavanopisto.pyramus.tor.TORSubject;
@@ -84,7 +84,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     YTLSiirtotiedosto ytl = new YTLSiirtotiedosto(tutkintokerta, koulunumero);
 
     List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listDistinctByAttendanceTerms(exam,
-        MatriculationExamEnrollmentState.APPROVED, exam.getExamYear(), exam.getExamTerm(), MatriculationExamAttendanceStatus.ENROLLED);
+        MatriculationExamEnrollmentState.CONFIRMED, exam.getExamYear(), exam.getExamTerm(), MatriculationExamAttendanceStatus.ENROLLED);
     enrollments = processCandidateNumbers(enrollments);
     enrollments.forEach(enrollment -> ytl.addKokelas(enrollmentToKokelas(enrollment, m)));
     

@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
+import static fi.otavanopisto.pyramus.rest.util.PyramusRestUtils.toOffsetDateTime;
+
 import java.lang.reflect.ParameterizedType;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -78,6 +80,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
@@ -1068,6 +1071,21 @@ public class ObjectFactory {
               
           return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudyProgramme(entity.getId(), courseId, studyProgrammeId, studyProgrammeName, organization);
         }
+      },
+      
+      new Mapper<MatriculationExamEnrollmentChangeLog>() {
+        @Override
+        public Object map(MatriculationExamEnrollmentChangeLog entity) {
+          fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationExamEnrollmentChangeLog restModel = 
+              new fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationExamEnrollmentChangeLog();
+          restModel.setId(entity.getId());
+          restModel.setEnrollmentId(entity.getEnrollment() != null ? entity.getEnrollment().getId() : null);
+          restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
+          restModel.setTimestamp(toOffsetDateTime(entity.getTimestamp()));
+          restModel.setChangeType(entity.getChangeType());
+          restModel.setNewState(entity.getNewState());
+          return restModel;
+        }
       }
       
     );
@@ -1097,18 +1115,6 @@ public class ObjectFactory {
     } 
     
     return mappers.get(object.getClass()).map(object);
-  }
-
-  private OffsetDateTime toOffsetDateTime(Date date) {
-    if (date == null) {
-      return null;
-    }
-    // If (as) date is java.sql.Date then toInstant() would cause UnsupportedOperationException
-    Date tmpDate = new Date(date.getTime()); 
-    Instant instant = tmpDate.toInstant();
-    ZoneId systemId = ZoneId.systemDefault();
-    ZoneOffset offset = systemId.getRules().getOffset(instant);
-    return tmpDate.toInstant().atOffset(offset);
   }
 
   private OffsetDateTime fromDateToOffsetDateTime(Date date) {
