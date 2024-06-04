@@ -1102,10 +1102,8 @@
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="students.editStudent.emailTableEmailsTitle"/>
                     </jsp:include>
-                    
-                    <c:forEach var="email" items="${student.contactInfo.emails}">
-                      <div>${fn:escapeXml(email.address)}</div>
-                    </c:forEach>
+                    <c:set var="email" value="${student.contactInfo.emails[0]}"/>
+                    <div>${fn:escapeXml(email.address)}</div>
                   </div>
                   
                   <c:set var="studentCard" value="${studentCards[student.id]}" />
@@ -1119,23 +1117,26 @@
                   <div class="genericFormSection">
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="integrations.slice.cardType"/>
+                      <jsp:param name="helpLocale" value="integrations.slice.cardTypeHelp"/>
                     </jsp:include>
                     <select name="studentCardType.${student.id}">
                       <option value=""><fmt:message key="generic.studentCardTypes.none"/></option>
-                      <option value="GREEN" ${cardType == 'GREEN' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.green"/></option>
                       <option value="BLUE" ${cardType == 'BLUE' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.blue"/></option>
+                      <option value="GREEN" ${cardType == 'GREEN' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.green"/></option>
                     </select>
                   </div>
                   
                   <div class="genericFormSection">   
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="integrations.slice.expiryDate"/>
+                      <jsp:param name="helpLocale" value="integrations.slice.expiryDateHelp"/>
                     </jsp:include>            
                     <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${expirationDate}">
                   </div>
                   <div class="genericFormSection">
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="integrations.slice.status"/>
+                      <jsp:param name="helpLocale" value="integrations.slice.statusHelp"/>
                     </jsp:include>      
               	    <c:choose>
                       <c:when test="${activity eq 'ACTIVE'}"><input type="checkbox" name="active.${student.id}" value="true" checked="checked"/></c:when>

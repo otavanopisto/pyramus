@@ -3000,7 +3000,6 @@
                         </div>
                       </div>
                     </c:if>
-                    
                     <div class="genericFormSection">
                       <jsp:include
                         page="/templates/generic/fragments/formtitle.jsp">
@@ -3010,22 +3009,8 @@
                           value="students.viewStudent.emailHelp" />
                       </jsp:include>
                       <div class="genericViewFormDataText">
-                        <c:forEach var="email"
-                          items="${student.contactInfo.emails}">
-                          <c:choose>
-                            <c:when test="${not empty email.contactType}">
-                              <div>
-                                <a href="mailto:${email.address}">${email.address}</a>
-                                (${fn:toLowerCase(email.contactType.name)})
-                              </div>
-                            </c:when>
-                            <c:otherwise>
-                              <div>
-                                <a href="mailto:${email.address}">${email.address}</a>
-                              </div>
-                            </c:otherwise>
-                          </c:choose>
-                        </c:forEach>
+                        <c:set var="email" value="${student.contactInfo.emails[0]}"/>
+                        <div>${fn:escapeXml(email.address)}</div>
                       </div>
                     </div>
                     
