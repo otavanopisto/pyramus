@@ -1052,10 +1052,6 @@
 	      <!-- Integrations starts -->
 	      
           <div id="integrations" class="tabContent">    
-            <div id="integrationsRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
-            <div
-                  id="coursesTabRelatedActionsHoverMenuContainer.${student.id}"
-                  class="tabRelatedActionsContainer"></div>
             
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">

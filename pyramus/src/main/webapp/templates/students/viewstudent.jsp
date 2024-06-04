@@ -2933,9 +2933,6 @@
               <!--  Student Integration Info Starts -->
                 
               <div id="integrations.${student.id}" class="tabContent">
-                <div
-                  id="coursesTabRelatedActionsHoverMenuContainer.${student.id}"
-                  class="tabRelatedActionsContainer"></div>
                   
                 <div class="genericFormSection">
               	  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
