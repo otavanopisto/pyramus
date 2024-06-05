@@ -1,6 +1,9 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,18 +17,32 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.SettingUtils;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityCurriculumMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilitySubjectMapping;
+import fi.otavanopisto.pyramus.rest.model.MatriculationExamStudentStatus;
 
 /**
  * Controller for determining 
@@ -35,6 +52,7 @@ import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilitySubjec
  */
 @ApplicationScoped
 public class MatriculationEligibilityController {
+  private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
   private static final String SETTING_ELIGIBLE_GROUPS = "matriculation.eligibleGroups";
   private static final String ANY_CURRICULUM = "any";
   
@@ -50,11 +68,26 @@ public class MatriculationEligibilityController {
   private MatriculationEligibilityMapping matriculationEligibilityMapping; 
   
   @Inject
+  private MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO;
+  
+  @Inject
+  private MatriculationExamEnrollmentChangeLogDAO matriculationExamEnrollmentChangeLogDAO;
+  
+  @Inject
+  private MatriculationExamDAO matriculationExamDAO;
+  
+  @Inject
   private StudentGroupDAO studentGroupDAO;
   
   @Inject
   private StudentGroupStudentDAO studentGroupStudentDAO;
   
+  @Inject
+  private UserVariableDAO userVariableDAO;
+  
+  @Inject
+  private UserVariableKeyDAO userVariableKeyDAO;
+
   /**
    * Post construct method. 
    *  
@@ -219,6 +252,95 @@ public class MatriculationEligibilityController {
     return false;
   }
 
+  public List<MatriculationExamEnrollmentChangeLog> listEnrollmentChangeLog(MatriculationExamEnrollment enrollment) {
+    return matriculationExamEnrollmentChangeLogDAO.listByEnrollment(enrollment);
+  }
   
+  public boolean isVisible(MatriculationExam matriculationExam, User user) {
+    if (matriculationExam == null || matriculationExam.getStarts() == null || matriculationExam.getEnds() == null || !matriculationExam.isEnrollmentActive()) {
+      // If dates are not set, exam enrollment is not active
+      return false;
+    }
+
+    // TODO: custom date affects all exams...
+
+    UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
+    String personalExamEnrollmentExpiryStr = userVariableKey != null ? userVariableDAO.findByUserAndKey(user, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE) : null;
+    Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
+
+    Date enrollmentStarts = matriculationExam.getStarts();
+    Date enrollmentEnds = personalExamEnrollmentExpiry == null ? matriculationExam.getEnds() : 
+      new Date(Math.max(matriculationExam.getEnds().getTime(), personalExamEnrollmentExpiry.getTime()));
+
+    Date currentDate = new Date();
+    return currentDate.after(enrollmentStarts) && currentDate.before(enrollmentEnds);
+  }
+
+  public boolean isEligible(Student student, MatriculationExam matriculationExam) {
+    return student == null ? false :
+      isVisible(matriculationExam, student) && hasGroupEligibility(student);
+  }
+
+  public List<MatriculationExam> listExamsByStudent(Student student, MatriculationExamListFilter filter) {
+    List<MatriculationExam> allExams = matriculationExamDAO.listAll();
+    List<MatriculationExam> examsByStudent = new ArrayList<>();
+    
+    for (MatriculationExam exam : allExams) {
+      boolean isEnrolled = matriculationExamEnrollmentDAO.findLatestByExamAndStudent(exam, student) != null;
+
+      // If the filter is asking for the past (aka enrolled) to be listed and the student is enrolled, add to list
+      if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.PAST) && isEnrolled) {
+        examsByStudent.add(exam);
+        continue;
+      }      
+      
+      boolean isEligible = isEligible(student, exam);
+      
+      // If the filter is asking for eligible exams to be listed and the student is eligible but not enrolled, add to list
+      if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.ELIGIBLE) && isEligible && !isEnrolled) {
+        examsByStudent.add(exam);
+        continue;
+      }
+    }
+    
+    return examsByStudent;
+  }
+
+  public MatriculationExamStudentStatus translateState(MatriculationExamEnrollmentState state) {
+    switch (state) {
+      case PENDING:
+        return MatriculationExamStudentStatus.PENDING;
+      case SUPPLEMENTATION_REQUEST:
+        return MatriculationExamStudentStatus.SUPPLEMENTATION_REQUEST;
+      case APPROVED:
+        return MatriculationExamStudentStatus.APPROVED;
+      case REJECTED:
+        return MatriculationExamStudentStatus.REJECTED;
+      case CONFIRMED:
+        return MatriculationExamStudentStatus.CONFIRMED;
+      default:
+        throw new IllegalArgumentException();
+    }
+  }
+
+  public MatriculationExamEnrollmentState translateState(MatriculationExamStudentStatus state) {
+    switch (state) {
+      case PENDING:
+        return MatriculationExamEnrollmentState.PENDING;
+      case SUPPLEMENTATION_REQUEST:
+        return MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST;
+      case APPROVED:
+        return MatriculationExamEnrollmentState.APPROVED;
+      case REJECTED:
+        return MatriculationExamEnrollmentState.REJECTED;
+      case CONFIRMED:
+        return MatriculationExamEnrollmentState.CONFIRMED;
+      case ELIGIBLE:
+      case NOT_ELIGIBLE:
+      default:
+        throw new IllegalArgumentException();
+    }
+  }
+
 }
 

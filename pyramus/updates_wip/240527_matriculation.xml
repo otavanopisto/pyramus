@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    alter table MatriculationExamEnrollment modify column enrollmentDate datetime not null;
+  </sql>
+
+  <sql>
+    create table MatriculationExamEnrollmentChangeLog (
+       id bigint not null auto_increment,
+        changeType varchar(255) not null,
+        newState varchar(255),
+        timestamp datetime not null,
+        enrollment_id bigint,
+        modifier_id bigint,
+        primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table MatriculationExamEnrollmentChangeLog 
+       add constraint FK4u1t9e87q0cojswbs9vxkoac 
+       foreign key (enrollment_id) 
+       references MatriculationExamEnrollment (id);
+  </sql>
+
+  <sql>
+    alter table MatriculationExamEnrollmentChangeLog 
+       add constraint FKsdpo12r9qeqxbpjxdqybf6ebj 
+       foreign key (modifier_id) 
+       references User (id);
+  </sql>
+
+</update>
