@@ -285,7 +285,7 @@ h1.genericPageHeader{
 
 /* View Student - Basic Info */
 
-#studentViewBasicInfoWrapper .genericFormTitle, #studentViewContactInfoWrapper .genericFormTitle, #studentViewEducationInfoWrapper .genericFormTitle, #studentViewAdditionalInfoWrapper .genericFormTitle, #studentViewStaffMemberBasicInfoWrapper .genericFormTitle, #studentViewStaffMemberContactInfoWrapper .genericFormTitle{
+#studentViewBasicInfoWrapper .genericFormTitle, #studentViewContactInfoWrapper .genericFormTitle, #studentViewEducationInfoWrapper .genericFormTitle, #studentViewAdditionalInfoWrapper .genericFormTitle, #studentViewStaffMemberBasicInfoWrapper .genericFormTitle, #studentViewIntegrationInfoWrapper .genericFormTitle, #studentViewStaffMemberContactInfoWrapper .genericFormTitle{
   float:left;
   margin-right:10px;
   background-color:#f2f2f2;

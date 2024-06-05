@@ -128,6 +128,7 @@ import fi.otavanopisto.pyramus.dao.resources.WorkResourceDAO;
 import fi.otavanopisto.pyramus.dao.security.EnvironmentRolePermissionDAO;
 import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -298,6 +299,10 @@ public class DAOFactory {
   
   public StudentStudyPeriodDAO getStudentStudyPeriodDAO() {
     return (StudentStudyPeriodDAO) findByClass(StudentStudyPeriodDAO.class);
+  }
+  
+  public StudentCardDAO getStudentCardDAO() {
+    return (StudentCardDAO) findByClass(StudentCardDAO.class);
   }
   
   public StudentParentDAO getStudentParentDAO() {
