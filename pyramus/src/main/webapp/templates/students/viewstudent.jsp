@@ -2197,9 +2197,7 @@
               <div class="tabLabelsContainer" id="tabs.${student.id}">
                 <a class="tabLabel" href="#basic.${student.id}"> <fmt:message
                     key="students.viewStudent.basicTabLabel" />
-                    <a class="tabLabel" href="#integrations.${student.id}"> <fmt:message
-                    key="students.viewStudent.integrationTabLabel" />
-                </a> <a class="tabLabel" href="#courses.${student.id}">
+                     <a class="tabLabel" href="#courses.${student.id}">
                   <fmt:message
                     key="students.viewStudent.coursesTabLabel" />
                 </a> <a class="tabLabel" href="#grades.${student.id}"> <fmt:message
@@ -2215,6 +2213,9 @@
                 </a> <a class="tabLabel" href="#studentFiles.${student.id}">
                   <fmt:message
                     key="students.viewStudent.studentFilesTabLabel" />
+                </a>
+                <a class="tabLabel" href="#integrations.${student.id}"> <fmt:message
+                    key="students.viewStudent.integrationTabLabel" />
                 </a>
                 <ix:extensionHook name="students.viewStudent.tabLabels" studentId="${student.id}"/>
               </div>
