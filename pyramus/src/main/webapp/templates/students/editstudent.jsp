@@ -938,10 +938,6 @@
             <a class="tabLabel" href="#basic">
               <fmt:message key="students.editStudent.studentBasicInfoTabLabel"/>
             </a>
-            
-            <a class="tabLabel" href="#integrations">
-              <fmt:message key="students.editStudent.studentIntegrationInfoTabLabel"/>
-            </a>
 
             <c:if test="${hasInternalAuthenticationStrategies and allowEditCredentials}">
               <a class="tabLabel" href="#credentials">
@@ -963,6 +959,10 @@
                 <c:if test="${student.hasFinishedStudies}">*</c:if>
               </a>
             </c:forEach>
+            
+            <a class="tabLabel" href="#integrations">
+              <fmt:message key="students.editStudent.studentIntegrationInfoTabLabel"/>
+            </a>
             <ix:extensionHook name="students.editStudent.tabLabels"/>
           </div>
           
