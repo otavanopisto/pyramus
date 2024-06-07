@@ -43,8 +43,9 @@ public class StudentCardServlet extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String authHeader = request.getHeader("Authorization");
-    String sliceAuth = SettingUtils.getSettingValue("slice.auth");
-    
+    String sliceAuth = SettingUtils.getSettingValue(SliceController.SLICEAUTH_SETTINGKEY);
+    sliceAuth = StringUtils.isNotBlank(sliceAuth) ? "Basic " + sliceAuth : null;
+
     if (StringUtils.isBlank(sliceAuth) || !StringUtils.equals(authHeader, sliceAuth)) {
       logger.log(Level.WARNING, "Could not authorize");
       response.sendError(HttpServletResponse.SC_FORBIDDEN);

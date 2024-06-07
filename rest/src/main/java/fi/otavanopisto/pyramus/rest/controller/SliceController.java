@@ -21,6 +21,8 @@ import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 @Stateless
 public class SliceController {
   
+  public static final String SLICEAUTH_SETTINGKEY = "slice.auth";
+  
   @Inject
   private StudentController studentController;
   
