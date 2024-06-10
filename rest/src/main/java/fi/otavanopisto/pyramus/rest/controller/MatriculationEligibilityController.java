@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,12 +17,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityCurriculumMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityMapping;
@@ -35,6 +42,8 @@ import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilitySubjec
  */
 @ApplicationScoped
 public class MatriculationEligibilityController {
+
+  private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
   private static final String SETTING_ELIGIBLE_GROUPS = "matriculation.eligibleGroups";
   private static final String ANY_CURRICULUM = "any";
   
@@ -55,6 +64,12 @@ public class MatriculationEligibilityController {
   @Inject
   private StudentGroupStudentDAO studentGroupStudentDAO;
   
+  @Inject
+  private UserVariableDAO userVariableDAO;
+
+  @Inject
+  private UserVariableKeyDAO userVariableKeyDAO;
+
   /**
    * Post construct method. 
    *  
@@ -219,6 +234,30 @@ public class MatriculationEligibilityController {
     return false;
   }
 
-  
+  public boolean isVisible(MatriculationExam matriculationExam, User user) {
+    if (matriculationExam == null || matriculationExam.getStarts() == null || matriculationExam.getEnds() == null || !matriculationExam.isEnrollmentActive()) {
+      // If dates are not set, exam enrollment is not active
+      return false;
+    }
+
+    // TODO: custom date affects all exams...
+
+    UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
+    String personalExamEnrollmentExpiryStr = userVariableKey != null ? userVariableDAO.findByUserAndKey(user, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE) : null;
+    Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
+
+    Date enrollmentStarts = matriculationExam.getStarts();
+    Date enrollmentEnds = personalExamEnrollmentExpiry == null ? matriculationExam.getEnds() : 
+      new Date(Math.max(matriculationExam.getEnds().getTime(), personalExamEnrollmentExpiry.getTime()));
+
+    Date currentDate = new Date();
+    return currentDate.after(enrollmentStarts) && currentDate.before(enrollmentEnds);
+  }
+
+  public boolean isEligible(Student student, MatriculationExam matriculationExam) {
+    return student == null ? false :
+      isVisible(matriculationExam, student) && hasGroupEligibility(student);
+  }
+
 }
 
