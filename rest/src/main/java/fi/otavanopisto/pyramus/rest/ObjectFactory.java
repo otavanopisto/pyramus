@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
+import static fi.otavanopisto.pyramus.rest.util.PyramusRestUtils.toOffsetDateTime;
+
 import java.lang.reflect.ParameterizedType;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -1122,18 +1124,6 @@ public class ObjectFactory {
     } 
     
     return mappers.get(object.getClass()).map(object);
-  }
-
-  private OffsetDateTime toOffsetDateTime(Date date) {
-    if (date == null) {
-      return null;
-    }
-    // If (as) date is java.sql.Date then toInstant() would cause UnsupportedOperationException
-    Date tmpDate = new Date(date.getTime()); 
-    Instant instant = tmpDate.toInstant();
-    ZoneId systemId = ZoneId.systemDefault();
-    ZoneOffset offset = systemId.getRules().getOffset(instant);
-    return tmpDate.toInstant().atOffset(offset);
   }
 
   private OffsetDateTime fromDateToOffsetDateTime(Date date) {
