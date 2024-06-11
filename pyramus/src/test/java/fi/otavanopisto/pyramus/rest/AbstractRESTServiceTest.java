@@ -14,7 +14,8 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.junit.Before;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
@@ -56,7 +57,7 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
           @Override
           public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
             com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            objectMapper.registerModule(new JSR310Module());
+            objectMapper.registerModule(new JavaTimeModule());
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             return objectMapper;
           }

@@ -19,7 +19,7 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.junit.jupiter.api.BeforeAll;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 import fi.otavanopisto.pyramus.Common;
@@ -48,7 +48,7 @@ public abstract class AbstractRESTPermissionsTestJUnit5 extends AbstractIntegrat
           @Override
           public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
             com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            objectMapper.registerModule(new JSR310Module());
+            objectMapper.registerModule(new JavaTimeModule());
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             return objectMapper;
           }
