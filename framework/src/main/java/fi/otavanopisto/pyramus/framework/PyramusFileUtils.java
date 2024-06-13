@@ -24,7 +24,7 @@ public class PyramusFileUtils {
 
   public static Long getLastMovedEntityId() {
     String lastEntityId = SettingUtils.getSettingValue("files.lastMovedEntityId");
-    return lastEntityId == null || !NumberUtils.isNumber(lastEntityId) ? 0L : Long.valueOf(lastEntityId);
+    return lastEntityId == null || !NumberUtils.isCreatable(lastEntityId) ? 0L : Long.valueOf(lastEntityId);
   }
   
   public static void setLastMovedEntityId(Long id) {
