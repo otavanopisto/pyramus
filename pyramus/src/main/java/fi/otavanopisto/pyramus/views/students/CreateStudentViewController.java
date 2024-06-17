@@ -1,8 +1,10 @@
 package fi.otavanopisto.pyramus.views.students;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -79,9 +81,26 @@ public class CreateStudentViewController extends PyramusViewController implement
       setJsDataVariable(pageRequestContext, "createstudent_addresses", addresses);
       setJsDataVariable(pageRequestContext, "createstudent_phones", phones);
     }
-
-    List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
+    
+    List<StudyProgramme> studyProgrammesByOrganization = UserUtils.canAccessAllOrganizations(loggedUser) ? 
         studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), Archived.UNARCHIVED);
+    List<StudyProgramme> studyProgrammes = new ArrayList<StudyProgramme>();
+    
+    // Filter list to show only study programmes where the user has access to
+    for (StudyProgramme studyProgramme : studyProgrammesByOrganization) {
+      StaffMember staffMember = staffMemberDAO.findById(loggedUser.getId());
+      
+      Set<StudyProgramme> staffStudyProgrammes = staffMember.getStudyProgrammes();
+      
+      for (StudyProgramme staffStudyProgramme : staffStudyProgrammes) {
+        if (!staffStudyProgramme.getName().equals(studyProgramme.getName())) {
+          continue;
+        }
+        
+        studyProgrammes.add(studyProgramme);
+        
+      }
+    }
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
 
     List<Nationality> nationalities = nationalityDAO.listUnarchived();
