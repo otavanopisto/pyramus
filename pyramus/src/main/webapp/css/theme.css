@@ -55,7 +55,7 @@ h1.genericPageHeader{
 
 .pyramus-validation-error-trafficlight {
   background-color: #fd5050;
-	border-radius: 3px;
+  border-radius: 3px;
   color: #FFF;
   cursor: pointer;
   display: inline-block;
@@ -65,7 +65,7 @@ h1.genericPageHeader{
 }
 
 .pyramus-validation-error-list {
-	margin: 4px 0px;
+  margin: 4px 0px;
 }
 
 .pyramus-validation-error-list-row {
