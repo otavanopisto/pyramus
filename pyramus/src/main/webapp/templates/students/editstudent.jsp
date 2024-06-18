@@ -923,9 +923,27 @@
       </fmt:message>
       
       <span id="koski-status" class="koski-status">KOSKI</span>
+      <span id="pyramus-validation-status" class="pyramus-validation-error-trafficlight" ${(empty studentValidations) ? 'style="display: none;"' : ''}>PYRAMUS</span>
     </h1>
 
     <div id="koski-status-details" style="display: none;">
+    </div>
+
+    <div id="pyramus-validation" class="pyramus-validation-error-list" ${(empty studentValidations) ? 'style="display: none;"' : ''}>
+      <c:forEach var="validationWarning" items="${studentValidations}">
+        <div class="pyramus-validation-error-list-row">
+          <c:choose>
+            <c:when test="${validationWarning.student.studyProgramme == null}">
+              <fmt:message key="students.viewStudent.noStudyProgrammeTabLabel" />
+            </c:when>
+            <c:otherwise>
+              ${validationWarning.student.studyProgramme.name}
+            </c:otherwise>
+          </c:choose> <c:if test="${validationWarning.student.hasFinishedStudies}">*</c:if>
+            
+          <fmt:message key="generic.pyramusStudentValidationErrors.${validationWarning.type}" />
+        </div>
+      </c:forEach>
     </div>
 
     <div id="editStudentEditFormContainer"> 
