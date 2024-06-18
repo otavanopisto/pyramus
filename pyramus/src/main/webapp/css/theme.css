@@ -53,6 +53,31 @@ h1.genericPageHeader{
   display: inline-block;
 }
 
+.pyramus-validation-error-trafficlight {
+  background-color: #fd5050;
+	border-radius: 3px;
+  color: #FFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 10px;
+  padding: 2px 4px;
+}
+
+.pyramus-validation-error-list {
+	margin: 4px 0px;
+}
+
+.pyramus-validation-error-list-row {
+  background-image: url('../gfx/icons/16x16/apps/attention.png');
+  background-repeat: no-repeat;
+  background-position: left;
+  min-width: 16px;
+  min-height: 16px;
+  padding-left: 20px;
+  padding-top: 4px;
+}
+
 .draftSavedContainer {
   display: inline-block;
   position: absolute;
