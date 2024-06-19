@@ -115,6 +115,8 @@ import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
+import fi.otavanopisto.pyramus.rest.model.StudentCardActivity;
+import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.rest.model.UserRole;
@@ -1085,6 +1087,28 @@ public class ObjectFactory {
           restModel.setChangeType(entity.getChangeType());
           restModel.setNewState(entity.getNewState());
           return restModel;
+        }
+      },
+
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.students.StudentCard>() {
+        @Override
+        public Object map(fi.otavanopisto.pyramus.domainmodel.students.StudentCard entity) {
+          
+          Student student = entity.getStudent();
+          
+          StudentCardType type = entity.getType() != null ? StudentCardType.valueOf(entity.getType().name()) : null;
+          String studyProgrammeName = student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null;
+          StudentCardActivity activity = entity.getActivity() != null ? StudentCardActivity.valueOf(entity.getActivity().name()) : null;
+          
+          return new fi.otavanopisto.pyramus.rest.model.StudentCard(
+              entity.getId(), 
+              student.getId(), 
+              student.getFirstName(), 
+              student.getLastName(), 
+              studyProgrammeName,
+              entity.getExpiryDate(), 
+              activity, 
+              type);
         }
       }
       

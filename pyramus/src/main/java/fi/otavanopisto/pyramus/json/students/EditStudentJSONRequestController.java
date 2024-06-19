@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.StaleObjectStateException;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -31,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
@@ -58,6 +60,9 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
@@ -143,12 +148,13 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentCardDAO studentCardDAO = DAOFactory.getInstance().getStudentCardDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
     Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
     Person person = personDAO.findById(personId);
-
+    
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
     Sex sex = (Sex) requestContext.getEnum("gender", Sex.class);
@@ -281,6 +287,11 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       String studyEndText = requestContext.getString("studyEndText." + student.getId());
       String tagsText = requestContext.getString("tags." + student.getId());
       StudentFunding funding = (StudentFunding) requestContext.getEnum("funding." + student.getId(), StudentFunding.class);
+      
+      Date studentCardExpires = requestContext.getDate("expiryDate." + student.getId());
+      Boolean active = requestContext.getBoolean("active." + student.getId());
+      StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType." + student.getId(), StudentCardType.class);
+      
       
       Set<Tag> tagEntities = new HashSet<>();
       if (!StringUtils.isBlank(tagsText)) {
@@ -523,7 +534,64 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           ApplicationUtils.deleteApplication(application);
         }
       }
+      
+      // Student card
+      
+      StudentCard studentCard = studentCardDAO.findByStudent(student);
+
+      Date expiryDate = null;
+      Date cancellationDate = null;
+      
+      StudentCardActivity activity = StudentCardActivity.ACTIVE;
+      // Set expiry date automatically same as study end date or study time end or null
+      if (studyEndDate != null) {
+        expiryDate = studyEndDate;
+      }  else {
+        expiryDate = studyTimeEnd != null ? studyTimeEnd : null;
+      }
+      
+      if (studentCard != null) {
+        
+        cancellationDate = studentCard.getCancellationDate();
+        
+        if (studentCard.getExpiryDate() != null) {
+          expiryDate = studentCard.getExpiryDate();
+        }
+        
+        // If user has set the expiry date manually we have to use it
+        if (studentCardExpires != null) {
+          if ((studentCard.getExpiryDate() != null && !DateUtils.isSameDay(studentCard.getExpiryDate(), studentCardExpires)) || studentCard.getExpiryDate() == null) {
+          expiryDate = studentCardExpires;
+          }
+        }
+        
+        // If boolean active has changed from true to false we need to set activity to CANCELLED instead of INACTIVE
+        if (!active) {
+          if (studentCard.getActivity().equals(StudentCardActivity.ACTIVE) || studentCard.getActivity().equals(StudentCardActivity.CANCELLED)) {
+            activity = StudentCardActivity.CANCELLED;
+          
+            if (studentCard.getCancellationDate() == null) {
+              cancellationDate = new Date();
+            }
+          } else {
+            activity = studentCard.getActivity();
+          }
+        }
+        studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
+        } else {
+          if (studentCardExpires != null) {
+            expiryDate = studentCardExpires;
+          }
+          
+          if (!active) {
+            activity = StudentCardActivity.INACTIVE;
+          }
+          
+          studentCardDAO.create(student, activity, expiryDate, studentCardType);
+        }
+      
     }
+    
 
     // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed

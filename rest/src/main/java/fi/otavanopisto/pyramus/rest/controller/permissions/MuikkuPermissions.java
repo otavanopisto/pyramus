@@ -7,7 +7,6 @@ import fi.otavanopisto.pyramus.security.impl.CourseRoleArchetype;
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
-import fi.otavanopisto.pyramus.security.impl.PyramusPermissionFeatures;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
 

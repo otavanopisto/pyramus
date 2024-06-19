@@ -52,6 +52,7 @@ import fi.otavanopisto.pyramus.rest.model.MatriculationExamStudentStatus;
  */
 @ApplicationScoped
 public class MatriculationEligibilityController {
+
   private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
   private static final String SETTING_ELIGIBLE_GROUPS = "matriculation.eligibleGroups";
   private static final String ANY_CURRICULUM = "any";
@@ -84,7 +85,7 @@ public class MatriculationEligibilityController {
   
   @Inject
   private UserVariableDAO userVariableDAO;
-  
+
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
 

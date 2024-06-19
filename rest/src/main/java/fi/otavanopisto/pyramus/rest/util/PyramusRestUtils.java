@@ -59,7 +59,7 @@ public class PyramusRestUtils {
     
     return null;
   }
-  
+
   /**
    * Converts Date to OffsetDateTime
    * 

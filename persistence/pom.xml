@@ -6,7 +6,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.218-SNAPSHOT</version>
+    <version>0.7.220-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
@@ -127,8 +127,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.10.1</version>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>17</source>
+          <target>17</target>
           <annotationProcessors>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</annotationProcessors>
           <annotationProcessorPaths>
             <path>

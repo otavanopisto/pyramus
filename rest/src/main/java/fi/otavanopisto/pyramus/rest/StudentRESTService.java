@@ -43,6 +43,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.TSB;
@@ -74,6 +75,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
@@ -245,6 +248,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StaffMemberDAO staffMemberDAO;
+  
+  @Inject
+  private StudentCardDAO studentCardDAO;
   
   private static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
   private static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
@@ -3584,5 +3590,76 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(variableList).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findStudentCard(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    User loggedUser = sessionController.getUser();
 
+      if (!loggedUser.getId().equals(student.getId())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    
+    StudentCard studentCard = studentCardDAO.findByStudent(student);
+    
+    if (studentCard == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    // Return the student card only if the expiration date and type are not null
+    if (studentCard.getExpiryDate() == null || studentCard.getType() == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(studentCard)).build();
+
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard/active")  
+  @PUT
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, Boolean active) {
+
+    // Access
+    User loggedUser = sessionController.getUser();
+    
+    if (!loggedUser.hasRole(Role.STUDENT)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    if (!loggedUser.getId().equals(studentId)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    // Payload validation
+    Student student = studentController.findStudentById(loggedUser.getId());
+    StudentCard studentCard = studentCardDAO.findByStudent(student);
+    
+    if (studentCard == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    Date cancellationDate = null;
+    StudentCardActivity activity = studentCard.getActivity();
+    
+    if (studentCard.getActivity().equals(StudentCardActivity.ACTIVE) && active == Boolean.FALSE) {
+      cancellationDate = new Date();
+      
+      activity = StudentCardActivity.CANCELLED;
+    } else {
+      if (active == Boolean.TRUE){
+        activity = StudentCardActivity.ACTIVE;
+      }
+    }
+    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, activity, cancellationDate))).build();
+  }
+  
 }

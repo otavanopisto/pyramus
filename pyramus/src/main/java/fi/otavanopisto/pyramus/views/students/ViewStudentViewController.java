@@ -40,6 +40,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -76,6 +77,7 @@ import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -184,6 +186,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     PersonVariableKeyDAO personVariableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    StudentCardDAO studentCardDAO = DAOFactory.getInstance().getStudentCardDAO();
     StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
     StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
 
@@ -199,6 +202,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     StaffMember staffMember = staffMemberDAO.findByPerson(person);
     pageRequestContext.getRequest().setAttribute("staffMember", staffMember);
     
+    Map<Long, StudentCard> studentCards = new HashMap<>();
     List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
         studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
     
@@ -303,6 +307,13 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     }
     
     for (Student student : students) {
+
+      // Student card
+      StudentCard studentCard =  studentCardDAO.findByStudent(student);
+      
+      if (studentCard != null) {
+        studentCards.put(student.getId(), studentCard);
+      }
       /**
        * Fetch courses this student is part of and sort the courses by course name
        */
@@ -921,6 +932,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     setJsDataVariable(pageRequestContext, "studentVariables", studentVariablesJSON.toString());
     setJsDataVariable(pageRequestContext, "studentParents", studentParentsJSON.toString());
     
+    pageRequestContext.getRequest().setAttribute("studentCards", studentCards);
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("courses", courseStudents);
     pageRequestContext.getRequest().setAttribute("contactEntries", contactEntries);
