@@ -137,6 +137,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseActivityInfo;
+import fi.otavanopisto.pyramus.rest.model.MessageRecipientList;
 import fi.otavanopisto.pyramus.rest.model.SpecEdTeacher;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
@@ -1829,6 +1830,96 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
 
+  @Path("/students/contactLogEntries/batch")
+  @POST
+  @RESTPermit(handling = Handling.INLINE)
+  public Response createStudentContactLogEntryBatch(fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER })) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    List<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry> contactLogEntries = new ArrayList<fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry>();
+    
+    if (entity.getRecipients() != null) {
+      
+      User loggedUser = sessionController.getUser();
+      StaffMember creator = userController.findStaffMemberById(loggedUser.getId());
+      
+      StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
+      
+      // User recipients
+      if (entity.getRecipients().getUserRecipients() != null) {
+        for (Long studentId : entity.getRecipients().getUserRecipients()) {
+          Student student = studentController.findStudentById(studentId);
+          
+          ContactLogAccess access = studentController.resolveContactLogAccess(student);
+          
+          if(!access.equals(ContactLogAccess.ALL) && !access.equals(ContactLogAccess.OWN)) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+          
+          StudentContactLogEntry contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
+              toDate(entity.getEntryDate()), loggedUser.getFirstName() + " " + loggedUser.getLastName(), creator);
+  
+          contactLogEntries.add((fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry) objectFactory.createModel(contactLogEntry));
+        }
+      }
+      
+      // User group recipients
+      if (entity.getRecipients().getUserGroupRecipients() != null) {
+        for (Long groupId : entity.getRecipients().getUserGroupRecipients()) {
+          StudentGroup studentGroup = studentGroupController.findStudentGroupById(groupId);
+          
+          Set<StudentGroupStudent> studentGroupStudents = studentGroup.getStudents();
+          
+          for (StudentGroupStudent studentGroupStudent : studentGroupStudents) {
+            Student student = studentGroupStudent.getStudent();
+            
+            ContactLogAccess access = studentController.resolveContactLogAccess(student);
+            
+            if(!access.equals(ContactLogAccess.ALL) && !access.equals(ContactLogAccess.OWN)) {
+              return Response.status(Status.FORBIDDEN).build();
+            }
+            
+            StudentContactLogEntry contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
+                toDate(entity.getEntryDate()), loggedUser.getFirstName() + " " + loggedUser.getLastName(), creator);
+    
+            contactLogEntries.add((fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry) objectFactory.createModel(contactLogEntry));
+          }
+        }
+      }
+      
+      // Workspace recipients
+      
+      if (entity.getRecipients().getWorkspaceRecipients() != null) {
+        for (Long workspaceId : entity.getRecipients().getWorkspaceRecipients()) {
+          Course course = courseController.findCourseById(workspaceId);
+          List<CourseStudent> courseStudents = courseController.listCourseStudentsByCourse(course);
+          
+          for (CourseStudent courseStudent: courseStudents) {
+            Student student = courseStudent.getStudent();
+            
+            ContactLogAccess access = studentController.resolveContactLogAccess(student);
+            
+            if(!access.equals(ContactLogAccess.ALL) && !access.equals(ContactLogAccess.OWN)) {
+              return Response.status(Status.FORBIDDEN).build();
+            }
+            
+            StudentContactLogEntry contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
+                toDate(entity.getEntryDate()), loggedUser.getFirstName() + " " + loggedUser.getLastName(), creator);
+    
+            contactLogEntries.add((fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry) objectFactory.createModel(contactLogEntry));
+          }
+        }
+      }
+    }
+    
+    return Response.ok(contactLogEntries).build();
+  }
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries")
   @GET
   @RESTPermit(handling = Handling.INLINE)
