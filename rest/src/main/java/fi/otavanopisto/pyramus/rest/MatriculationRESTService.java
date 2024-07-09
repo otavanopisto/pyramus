@@ -23,14 +23,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
-import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
-import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
@@ -46,8 +43,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
@@ -66,8 +61,6 @@ import fi.otavanopisto.security.LoggedIn;
 @Stateful
 @RequestScoped
 public class MatriculationRESTService extends AbstractRESTService {
-
-  private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
 
   @Inject
   private Logger logger;
@@ -92,12 +85,6 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject
   private MatriculationExamAttendanceDAO matriculationExamAttendanceDao;
-
-  @Inject
-  private UserVariableDAO userVariableDAO;
-
-  @Inject
-  private UserVariableKeyDAO userVariableKeyDAO;
 
   @Inject
   private StudentController studentController;
@@ -151,11 +138,11 @@ public class MatriculationRESTService extends AbstractRESTService {
     User loggedUser = sessionController.getUser();
     Student student = loggedUser instanceof Student ? (Student) loggedUser : null;
     List<MatriculationExam> exams = matriculationExamDao.listAll();
-    Stream<MatriculationExam> examStream = exams.stream().filter(exam -> isVisible(exam, loggedUser));
+    Stream<MatriculationExam> examStream = exams.stream().filter(exam -> matriculationEligibilityController.isVisible(exam, loggedUser));
 
     if (onlyEligible) {
       if (student != null) {
-        examStream = examStream.filter(exam -> isEligible(student, exam));
+        examStream = examStream.filter(exam -> matriculationEligibilityController.isEligible(student, exam));
       } else {
         // Caller is not student so they can't be eligible to enroll any exams
         return Response.ok(Collections.emptyList()).build();
@@ -235,7 +222,7 @@ public class MatriculationRESTService extends AbstractRESTService {
 
     MatriculationExam exam = matriculationExamDao.findById(enrollment.getExamId());
 
-    if (exam == null || !isEligible(student, exam)) {
+    if (exam == null || !matriculationEligibilityController.isEligible(student, exam)) {
       return Response.status(Status.BAD_REQUEST)
           .entity("Exam enrollment is closed")
           .build();
@@ -312,32 +299,6 @@ public class MatriculationRESTService extends AbstractRESTService {
     return Response.ok(enrollment).build();
   }
 
-  private boolean isVisible(MatriculationExam matriculationExam, User user) {
-    if (matriculationExam == null || matriculationExam.getStarts() == null || matriculationExam.getEnds() == null || !matriculationExam.isEnrollmentActive()) {
-      // If dates are not set, exam enrollment is not active
-      return false;
-    }
-
-    // TODO: custom date affects all exams...
-
-    UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
-    String personalExamEnrollmentExpiryStr = userVariableKey != null ? userVariableDAO.findByUserAndKey(user, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE) : null;
-    Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
-
-    Date enrollmentStarts = matriculationExam.getStarts();
-    Date enrollmentEnds = personalExamEnrollmentExpiry == null ? matriculationExam.getEnds() : 
-      new Date(Math.max(matriculationExam.getEnds().getTime(), personalExamEnrollmentExpiry.getTime()));
-
-    Date currentDate = new Date();
-    return currentDate.after(enrollmentStarts) && currentDate.before(enrollmentEnds);
-  }
-
-  private boolean isEligible(Student student, MatriculationExam matriculationExam) {
-    return student == null ? false :
-      isVisible(matriculationExam, student) && matriculationEligibilityController.hasGroupEligibility(student);
-  }
-
-  
   private fi.otavanopisto.pyramus.rest.model.MatriculationExam restModel(MatriculationExam exam, Student student) {
     fi.otavanopisto.pyramus.rest.model.MatriculationExam result = new fi.otavanopisto.pyramus.rest.model.MatriculationExam();
     result.setId(exam.getId());
@@ -357,7 +318,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         logger.severe(String.format("Maximum exam date could'nt be resolved for exam %d", exam.getId()));
       }
       
-      result.setEligible(isEligible(student, exam));
+      result.setEligible(matriculationEligibilityController.isEligible(student, exam));
       result.setCompulsoryEducationEligible(compulsoryEducationEligible);
 
       // Add information about enrollment if already done so
