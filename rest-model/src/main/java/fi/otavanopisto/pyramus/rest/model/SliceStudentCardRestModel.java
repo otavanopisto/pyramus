@@ -66,10 +66,19 @@ public class SliceStudentCardRestModel {
     this.type = type;
   }
 
+  public Long getUid() {
+    return uid;
+  }
+
+  public void setUid(Long uid) {
+    this.uid = uid;
+  }
+
+  private Long uid;
   private String firstName;
   private String lastName;
   private Date birthday;
   private String email;
   private Date expiryDate;
-  private StudentCardType type; 
+  private StudentCardType type;
 }
