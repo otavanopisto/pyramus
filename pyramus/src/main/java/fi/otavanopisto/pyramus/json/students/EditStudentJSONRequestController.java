@@ -531,7 +531,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
         Application application = applicationDAO.findByStudent(student);
         if (application != null) {
-          ApplicationUtils.deleteApplication(application);
+          ApplicationUtils.deleteApplication(requestContext.getLoggedUserId(), application, "studies ended");
         }
       }
       

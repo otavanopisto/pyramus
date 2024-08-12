@@ -35,7 +35,7 @@ public class ArchiveStudentJSONRequestController extends JSONRequestController {
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
     Application application = applicationDAO.findByStudent(student);
     if (application != null) {
-      ApplicationUtils.deleteApplication(application);
+      ApplicationUtils.deleteApplication(requestContext.getLoggedUserId(), application, "archive student");
     }
   }
 
