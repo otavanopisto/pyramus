@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.rest.model.UserRoleClass;
 
 public class MatriculationExamEnrollmentChangeLog {
 
@@ -55,9 +56,18 @@ public class MatriculationExamEnrollmentChangeLog {
     this.newState = newState;
   }
 
+  public UserRoleClass getModifierRoleClass() {
+    return modifierRoleClass;
+  }
+
+  public void setModifierRoleClass(UserRoleClass modifierRoleClass) {
+    this.modifierRoleClass = modifierRoleClass;
+  }
+
   private Long id;
   private Long enrollmentId;
   private Long modifierId;
+  private UserRoleClass modifierRoleClass;
   private OffsetDateTime timestamp;
   private MatriculationExamEnrollmentChangeLogType changeType;
   private MatriculationExamEnrollmentState newState;

@@ -1083,6 +1083,7 @@ public class ObjectFactory {
           restModel.setId(entity.getId());
           restModel.setEnrollmentId(entity.getEnrollment() != null ? entity.getEnrollment().getId() : null);
           restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
+          restModel.setModifierRoleClass(PyramusRestUtils.getUserRoleClass(entity.getModifier()));
           restModel.setTimestamp(toOffsetDateTime(entity.getTimestamp()));
           restModel.setChangeType(entity.getChangeType());
           restModel.setNewState(entity.getNewState());
