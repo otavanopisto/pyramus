@@ -80,6 +80,15 @@ public class MatriculationExamAttendance {
     this.funding = funding;
   }
 
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  private Long id;
   private Long enrollmentId;
   private MatriculationExamSubject subject;
   private Boolean mandatory;

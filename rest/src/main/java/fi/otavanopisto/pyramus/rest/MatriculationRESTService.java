@@ -336,10 +336,10 @@ public class MatriculationRESTService extends AbstractRESTService {
 //    }
 //  }
 
-  @Path("/exams/{EXAMID}/enrollments")
+  @Path("/students/{STUDENTID}/exams/{EXAMID}/enrollment")
   @POST
   @RESTPermit(handling = Handling.INLINE)
-  public Response enrollToExam(@PathParam("EXAMID") Long examId, fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment enrollment) {
+  public Response saveOrUpdateExamEnrollment(@PathParam("STUDENTID") Long studentId, @PathParam("EXAMID") Long examId, fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment enrollment) {
     if (!Objects.equals(examId, enrollment.getExamId()) && examId != null) {
       return Response.status(Status.BAD_REQUEST).entity("Exam ids do not match").build();
     }
@@ -360,8 +360,25 @@ public class MatriculationRESTService extends AbstractRESTService {
     if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, student)) {
       return Response.status(Status.FORBIDDEN).build();
     }
-
-    EnumSet<MatriculationExamStudentStatus> allowedStates = EnumSet.of(MatriculationExamStudentStatus.PENDING);
+    
+    // Find the enrollment by exam and student, if it exists, we are updating
+    MatriculationExamEnrollment existingEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+    
+    // If we're modifying, validate the payload's enrollmentId
+    if (existingEnrollment != null && !Objects.equals(existingEnrollment.getId(), enrollment.getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Enrollment ids do not match").build();
+    }
+    
+    /*
+     * If we're creating a new enrollment, only allowed status is PENDING
+     * If we're modifying an existing enrollment, allowed status' are x y and z
+     * 
+     * TODOOOOOO
+     */
+    EnumSet<MatriculationExamStudentStatus> allowedStates = existingEnrollment == null 
+        ? EnumSet.of(MatriculationExamStudentStatus.PENDING)
+        : EnumSet.of(MatriculationExamStudentStatus.PENDING, MatriculationExamStudentStatus.SUPPLEMENTATION_REQUEST);
+    
     if (!allowedStates.contains(enrollment.getState())) {
       return Response.status(Status.BAD_REQUEST)
           .entity("Can only send pending enrollments via REST")
@@ -378,51 +395,131 @@ public class MatriculationRESTService extends AbstractRESTService {
       }
     }
     
+    MatriculationExamEnrollment enrollmentEntity;
+    
     try {
-      MatriculationExamEnrollmentState enrollmentState = matriculationEligibilityController.translateState(enrollment.getState());
-      
-      MatriculationExamEnrollment enrollmentEntity = matriculationExamEnrollmentDao.create(
-        exam,
-        enrollment.getName(),
-        enrollment.getSsn(),
-        enrollment.getEmail(),
-        enrollment.getPhone(),
-        enrollment.getAddress(),
-        enrollment.getPostalCode(),
-        enrollment.getCity(),
-        enrollment.getNationalStudentNumber(),
-        enrollment.getGuider(),
-        SchoolType.valueOf(enrollment.getEnrollAs()),
-        DegreeType.valueOf(enrollment.getDegreeType()),
-        enrollment.getNumMandatoryCourses(),
-        enrollment.isRestartExam(),
-        enrollment.getLocation(),
-        enrollment.getMessage(),
-        enrollment.isCanPublishName(),
-        student,
-        enrollmentState,
-        MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-        false,
-        new Date());
+      if (existingEnrollment == null) {
+        /*
+         * Create new enrollment
+         */
+        MatriculationExamEnrollmentState enrollmentState = matriculationEligibilityController.translateState(enrollment.getState());
+        
+        enrollmentEntity = matriculationExamEnrollmentDao.create(
+          exam,
+          enrollment.getName(),
+          enrollment.getSsn(),
+          enrollment.getEmail(),
+          enrollment.getPhone(),
+          enrollment.getAddress(),
+          enrollment.getPostalCode(),
+          enrollment.getCity(),
+          enrollment.getNationalStudentNumber(),
+          enrollment.getGuider(),
+          SchoolType.valueOf(enrollment.getEnrollAs()),
+          DegreeType.valueOf(enrollment.getDegreeType()),
+          enrollment.getNumMandatoryCourses(),
+          enrollment.isRestartExam(),
+          enrollment.getLocation(),
+          enrollment.getMessage(),
+          enrollment.isCanPublishName(),
+          student,
+          enrollmentState,
+          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
+          false,
+          new Date());
+  
+        for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
+          MatriculationExam matriculationExam = enrollmentEntity.getExam();
+          // NOTE for ENROLLED the default values are taken from the exam properties if they don't exist in the payload
+          Integer year = attendance.getYear() != null ? attendance.getYear() : 
+            attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamYear() : null;
+          MatriculationExamTerm term = attendance.getTerm() != null ? attendance.getTerm() : 
+            attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamTerm() : null;
+  
+          matriculationExamAttendanceDao.create(
+            enrollmentEntity,
+            attendance.getSubject(),
+            attendance.getMandatory(),
+            attendance.getRepeat(),
+            year,
+            term,
+            attendance.getStatus(),
+            attendance.getFunding(),
+            attendance.getGrade());
+        }
+      }
+      else {
+        /*
+         * Modify existing enrollment
+         */
+        
+        enrollmentEntity = matriculationExamEnrollmentDao.update(
+          existingEnrollment,
+          enrollment.getName(),
+          enrollment.getSsn(),
+          enrollment.getEmail(),
+          enrollment.getPhone(),
+          enrollment.getAddress(),
+          enrollment.getPostalCode(),
+          enrollment.getCity(),
+          enrollment.getGuider(),
+          SchoolType.valueOf(enrollment.getEnrollAs()),
+          DegreeType.valueOf(enrollment.getDegreeType()),
+          enrollment.getNumMandatoryCourses(),
+          enrollment.isRestartExam(),
+          enrollment.getLocation(),
+          enrollment.getMessage(),
+          enrollment.isCanPublishName(),
+          student,
+          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
+          false,
+          student);
+  
+        for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
+          Long attendanceId = attendance.getId();
+          
+          MatriculationExamAttendance existingAttendance = attendanceId != null ? matriculationExamAttendanceDao.findById(attendanceId) : null;
+          
+          MatriculationExam matriculationExam = enrollmentEntity.getExam();
+          // NOTE for ENROLLED the default values are taken from the exam properties if they don't exist in the payload
+          Integer year = attendance.getYear() != null ? attendance.getYear() : 
+            attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamYear() : null;
+          MatriculationExamTerm term = attendance.getTerm() != null ? attendance.getTerm() : 
+            attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamTerm() : null;
+  
+          if (existingAttendance == null) {
+            /*
+             * No existing attendance, create new
+             */
+            matriculationExamAttendanceDao.create(
+              enrollmentEntity,
+              attendance.getSubject(),
+              attendance.getMandatory(),
+              attendance.getRepeat(),
+              year,
+              term,
+              attendance.getStatus(),
+              attendance.getFunding(),
+              attendance.getGrade());
+          }
+          else {
+            /*
+             * Found existing attendance, modify it
+             */
 
-      for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
-        MatriculationExam matriculationExam = enrollmentEntity.getExam();
-        // NOTE for ENROLLED the default values are taken from the exam properties if they don't exist in the payload
-        Integer year = attendance.getYear() != null ? attendance.getYear() : 
-          attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamYear() : null;
-        MatriculationExamTerm term = attendance.getTerm() != null ? attendance.getTerm() : 
-          attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamTerm() : null;
-
-        matriculationExamAttendanceDao.create(
-          enrollmentEntity,
-          attendance.getSubject(),
-          attendance.getMandatory(),
-          attendance.getRepeat(),
-          year,
-          term,
-          attendance.getStatus(),
-          attendance.getFunding(),
-          attendance.getGrade());
+            matriculationExamAttendanceDao.update(
+              existingAttendance,
+              enrollmentEntity,
+              attendance.getSubject(),
+              attendance.getMandatory(),
+              attendance.getRepeat(),
+              year,
+              term,
+              attendance.getStatus(),
+              attendance.getFunding(),
+              attendance.getGrade());
+          }
+        }
       }
     } catch (IllegalArgumentException ex) {
       return Response.status(Status.BAD_REQUEST)
@@ -430,7 +527,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           .build();
     }
 
-    return Response.ok(enrollment).build();
+    return Response.ok(restModel(enrollmentEntity)).build();
   }
 
   private fi.otavanopisto.pyramus.rest.model.MatriculationExam restModel(MatriculationExam exam, Student student) {
@@ -564,6 +661,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     }
     
     fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance result = new fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance();
+    result.setId(attendance.getId());
     result.setEnrollmentId(attendance.getEnrollment().getId());
     result.setFunding(attendance.getFunding());
     result.setGrade(grade);
