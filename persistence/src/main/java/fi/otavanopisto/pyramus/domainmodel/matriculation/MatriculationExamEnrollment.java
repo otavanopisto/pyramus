@@ -13,16 +13,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.search.annotations.DocumentId;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
-@Entity // TODO constraint student+exam
+@Entity
+@Table (
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "exam_id", "student_id"})
+    }
+)
 public class MatriculationExamEnrollment {
 
   /**

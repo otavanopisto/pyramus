@@ -31,4 +31,9 @@
        references User (id);
   </sql>
 
+  <sql>
+    alter table MatriculationExamEnrollment 
+       add constraint UKc71vfhujqlp43m8jo099gaarp unique (exam_id, student_id);
+  </sql>
+
 </update>
