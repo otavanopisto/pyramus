@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.views.students;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -202,6 +203,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     Map<Long, Boolean> studentHasCredits = new HashMap<>();
     Map<Long, Boolean> studentHasFiles = new HashMap<>();
     Map<Long, StudentCard> studentCards = new HashMap<>();
+    List<ViewStudentValidationWarning> studentValidations = new ArrayList<>();
     
     List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
@@ -276,6 +278,8 @@ public class EditStudentViewController extends PyramusViewController2 implements
       if (studentCard != null) {
         studentCards.put(student.getId(), studentCard);
       }
+      
+      studentValidations.addAll(ViewStudentTools.validate(student));
     }
     
     setJsDataVariable(pageRequestContext, "studentLodgingPeriods", studentLodgingPeriods.toString());
@@ -404,6 +408,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("allowEditCredentials", UserUtils.allowEditCredentials(loggedUser, person));
     pageRequestContext.getRequest().setAttribute("studyApprovers", studyApprovers);
+    pageRequestContext.getRequest().setAttribute("studentValidations", studentValidations);
     
     pageRequestContext.setIncludeJSP("/templates/students/editstudent.jsp");
   }

@@ -258,6 +258,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     Map<Long, StudentTOR> subjectCredits = new HashMap<>();
     Map<Long, List<MatriculationExamEnrollment>> studentMatriculationEnrollments = new HashMap<>();
     Map<Long, Boolean> studentHasParents = new HashMap<>();
+    List<ViewStudentValidationWarning> studentValidations = new ArrayList<>();
     
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
@@ -889,6 +890,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
       studentHasParents.put(student.getId(), studentParentRegistrations.size() > 0 || studentParents.size() > 0);
       studentParentsJSON.put(student.getId(), arr);
+      
+      studentValidations.addAll(ViewStudentTools.validate(student));
 
       try {
         StudentTOR tor = StudentTORController.constructStudentTOR(student, true);
@@ -950,6 +953,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("studentStudyPeriods", studentStudyPeriods);
     pageRequestContext.getRequest().setAttribute("studentMatriculationEnrollments", studentMatriculationEnrollments);
     pageRequestContext.getRequest().setAttribute("studentHasParents", studentHasParents);
+    pageRequestContext.getRequest().setAttribute("studentValidations", studentValidations);
     
     pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 

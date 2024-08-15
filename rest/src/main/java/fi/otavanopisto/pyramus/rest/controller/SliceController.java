@@ -67,6 +67,7 @@ public class SliceController {
 
     Email email = student.getContactInfo().getEmails().stream().filter(e -> Boolean.TRUE.equals(e.getDefaultAddress())).findFirst().orElse(null);
     
+    restModel.setUid(studentCard.getId());
     restModel.setFirstName(student.getFirstName());
     restModel.setLastName(student.getLastName());
     restModel.setBirthday(student.getPerson().getBirthday());
