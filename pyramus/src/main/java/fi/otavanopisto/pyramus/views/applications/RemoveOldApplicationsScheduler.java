@@ -28,24 +28,24 @@ public class RemoveOldApplicationsScheduler {
     // #4226: aineopiskelu, mk, aikuislukio: year after registration
     List<Application> applications = applicationDAO.listByOlderAndLine(date, "aineopiskelu");
     for (Application application : applications) {
-      ApplicationUtils.deleteApplication(application);
+      ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
     applications = applicationDAO.listByOlderAndLine(date, "mk");
     for (Application application : applications) {
-      ApplicationUtils.deleteApplication(application);
+      ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
     applications = applicationDAO.listByOlderAndLine(date, "aikuislukio");
     for (Application application : applications) {
-      ApplicationUtils.deleteApplication(application);
+      ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
     // #4226: nettilukio, nettipk: year after registration if not transferred as student
     applications = applicationDAO.listByOlderAndLineAndNullStudent(date, "nettilukio");
     for (Application application : applications) {
-      ApplicationUtils.deleteApplication(application);
+      ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
     applications = applicationDAO.listByOlderAndLineAndNullStudent(date, "nettipk");
     for (Application application : applications) {
-      ApplicationUtils.deleteApplication(application);
+      ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
   }
   

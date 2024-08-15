@@ -49,4 +49,29 @@ public class DateUtils {
     return earlierCandidate != null ? date.after(earlierCandidate) : true;
   }
   
+  /**
+   * Returns true if date is within the timeframe specified by start and end dates. The start
+   * or end dates can be null, in which case they are not compared against. I.e. if only
+   * start date is specified, the date is only checked to be after the start date.
+   * 
+   * @param date the date
+   * @param start start date of the timeframe
+   * @param end end date of the timeframe
+   * @return true, if the date is between the start and end dates or exactly equal to either one
+   */
+  public static boolean isWithin(Date date, Date start, Date end) {
+    if (date == null) {
+      throw new IllegalArgumentException();
+    }
+    
+    if (start != null && date.compareTo(start) < 0) {
+      return false;
+    }
+    
+    if (end != null && date.compareTo(end) > 0) {
+      return false;
+    }
+    
+    return true;
+  }
 }

@@ -913,11 +913,14 @@ public class ApplicationUtils {
     return createPyramusStudent(application, person, staffMember);
   }
   
-  public static void deleteApplication(Application application) {
-    logger.info(String.format("Removing application %d to line %s created at %tF)",
+  public static void deleteApplication(Long userId, Application application, String source) {
+    logger.info(String.format("User %s removes application %s (%d) to line %s created at %tF originating from %s)",
+        userId == null ? "?" : userId.toString(), 
+        application.getApplicationId(),
         application.getId(),
         application.getLine(),
-        application.getCreated()));
+        application.getCreated(),
+        source));
     // Delete signatures
     ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
     List<ApplicationSignatures> applicationSignatures = applicationSignaturesDAO.listByApplication(application);
@@ -955,6 +958,10 @@ public class ApplicationUtils {
   }
 
   public static Student createPyramusStudent(Application application, Person person, StaffMember staffMember) {
+    
+    logger.log(Level.INFO, String.format("User %s creating student from application %s (%d)",
+        staffMember == null ? "?" : staffMember.getId().toString(), application.getApplicationId(), application.getId()));    
+
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
