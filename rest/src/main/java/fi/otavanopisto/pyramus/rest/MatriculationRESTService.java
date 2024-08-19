@@ -363,6 +363,10 @@ public class MatriculationRESTService extends AbstractRESTService {
     
     // Find the enrollment by exam and student, if it exists, we are updating
     MatriculationExamEnrollment existingEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+
+    /*
+     * Validation
+     */
     
     // If we're modifying, validate the payload's enrollmentId
     if (existingEnrollment != null && !Objects.equals(existingEnrollment.getId(), enrollment.getId())) {
@@ -393,7 +397,37 @@ public class MatriculationRESTService extends AbstractRESTService {
       if (attendance.getStatus() == null) {
         return Response.status(Status.BAD_REQUEST).entity("Attendance missing status").build();
       }
+      
+      /*
+       * Validate term and year. For finished and planned attendances they just need to exist,
+       * while for enrolled they either need to match the exam's term and year or need to be null,
+       * in which case they will be set to the exam's values automatically.
+       */
+      switch (attendance.getStatus()) {
+        case FINISHED:
+        case PLANNED:
+          if (attendance.getTerm() == null) {
+            return Response.status(Status.BAD_REQUEST).entity("Attendance missing term").build();
+          }
+          if (attendance.getYear() == null) {
+            return Response.status(Status.BAD_REQUEST).entity("Attendance missing year").build();
+          }
+        break;
+        
+        case ENROLLED:
+          if (attendance.getTerm() != null && !Objects.equals(attendance.getTerm(), exam.getExamTerm())) {
+            return Response.status(Status.BAD_REQUEST).entity("Enrolled attendance term doesn't match the exam's term").build();
+          }
+          if (attendance.getYear() != null && !Objects.equals(attendance.getYear(), exam.getExamYear())) {
+            return Response.status(Status.BAD_REQUEST).entity("Enrolled attendance year doesn't match the exam's year").build();
+          }
+        break;
+      }
     }
+
+    /*
+     * Create or modify the entities
+     */
     
     MatriculationExamEnrollment enrollmentEntity;
     
