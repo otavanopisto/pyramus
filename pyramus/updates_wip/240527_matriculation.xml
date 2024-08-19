@@ -36,4 +36,14 @@
        add constraint UKc71vfhujqlp43m8jo099gaarp unique (exam_id, student_id);
   </sql>
 
+  <sql>
+    update MatriculationExamEnrollment 
+    set state = 'CONFIRMED'
+    where approvedByGuider = true and state = 'APPROVED';
+  </sql>
+
+  <sql>
+    alter table MatriculationExamEnrollment drop column approvedByGuider;
+  </sql>
+
 </update>

@@ -225,7 +225,7 @@ public class MatriculationRESTService extends AbstractRESTService {
   @PUT
   @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
-  public Response setStudentsExamEnrollmentState(@PathParam("STUDENTID") Long studentId, @PathParam("EXAM") Long examId, MatriculationExamEnrollmentState newState) {
+  public Response setStudentsExamEnrollmentState(@PathParam("STUDENTID") Long studentId, @PathParam("EXAMID") Long examId, MatriculationExamEnrollmentState newState) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -459,7 +459,6 @@ public class MatriculationRESTService extends AbstractRESTService {
           student,
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-          false,
           new Date());
   
         for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
@@ -506,7 +505,6 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.isCanPublishName(),
           student,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-          false,
           student);
   
         for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {

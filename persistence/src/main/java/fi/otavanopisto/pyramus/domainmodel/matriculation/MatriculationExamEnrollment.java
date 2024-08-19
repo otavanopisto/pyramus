@@ -205,14 +205,6 @@ public class MatriculationExamEnrollment {
     this.degreeType = degreeType;
   }
 
-  public boolean isApprovedByGuider() {
-    return approvedByGuider;
-  }
-
-  public void setApprovedByGuider(boolean approvedByGuider) {
-    this.approvedByGuider = approvedByGuider;
-  }
-
   public MatriculationExam getExam() {
     return exam;
   }
@@ -290,9 +282,6 @@ public class MatriculationExamEnrollment {
   @Column(nullable = false)
   private boolean canPublishName;
 
-  @Column(nullable = false)
-  private boolean approvedByGuider;
-  
   @ManyToOne
   private Student student;
   

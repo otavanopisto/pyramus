@@ -56,7 +56,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       Student student,
       MatriculationExamEnrollmentState state,
       MatriculationExamEnrollmentDegreeStructure degreeStructure,
-      boolean approvedByGuider,
       Date enrollmentDate
   ) {
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
@@ -81,7 +80,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setStudent(student);
     result.setState(state);
     result.setDegreeStructure(degreeStructure);
-    result.setApprovedByGuider(approvedByGuider);
     result.setEnrollmentDate(enrollmentDate);
     
     result = persist(result);
@@ -110,7 +108,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     boolean canPublishName,
     Student student,
     MatriculationExamEnrollmentDegreeStructure degreeStructure,
-    boolean approvedByGuider,
     User modifier
   ) {
     enrollment.setName(name);
@@ -130,7 +127,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setCanPublishName(canPublishName);
     enrollment.setStudent(student);
     enrollment.setDegreeStructure(degreeStructure);
-    enrollment.setApprovedByGuider(approvedByGuider);
     
     enrollment = persist(enrollment);
     

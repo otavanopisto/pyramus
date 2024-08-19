@@ -545,14 +545,6 @@
             <div class="genericViewInfoWapper">
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.approvedByGuider"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.approvedByGuider.help"/>
-                </jsp:include>            
-                <input type="checkbox" name="approvedByGuider" value="true" ${enrollment.approvedByGuider ? 'checked="checked"' : ''}/>
-              </div>
-
-              <div class="genericFormSection">
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.state"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.state.help"/>
                 </jsp:include>            

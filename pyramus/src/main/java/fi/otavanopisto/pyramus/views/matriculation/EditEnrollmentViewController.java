@@ -116,7 +116,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
       MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
-      pageRequestContext.getBoolean("approvedByGuider"),
       loggedUser
     );
 

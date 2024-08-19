@@ -44,7 +44,6 @@
                 results[i].state,
                 results[i].numMandatoryCourses,
                 results[i].guider,
-                results[i].approvedByGuider ? 1 : 0,
                 '']);
             }
             resultsTable.reattachToDom();
@@ -120,13 +119,6 @@
             editable: false,
             paramName: 'guider'
           }, {
-            header : 'Ohjaajan hyväksymä',
-            width: 100,
-            left: 8 + 300 + 8 + 250 + 8 + 150 + 8 + 130 + 8 + 200,
-            dataType: 'checkbox',
-            editable: false,
-            paramName: 'approvedByGuider'
-          }, {
             width : 22,
             right : 8,
             dataType : 'button',
@@ -197,7 +189,7 @@
               <option value="SUPPLEMENTATION_REQUEST"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"/></option>
               <option value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
               <option value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
-              <option value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.PENDING"/></option>
+              <option value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/></option>
             </select>
           </div>
   
