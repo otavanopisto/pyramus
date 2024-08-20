@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -43,6 +44,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
@@ -80,6 +82,9 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject
   private MatriculationExamEnrollmentDAO matriculationExamEnrollmentDao;
+
+  @Inject
+  private MatriculationExamEnrollmentChangeLogDAO matriculationExamEnrollmentChangeLogDAO;
 
   @Inject
   private MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO;
@@ -255,7 +260,11 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).entity("Matriculation exam enrollment can only be confirmed via this operation.").build();
     }
 
-    examEnrollment = matriculationExamEnrollmentDao.updateState(examEnrollment, newState, loggedUser);
+    // Update enrollment state
+    examEnrollment = matriculationExamEnrollmentDao.updateState(examEnrollment, newState);
+    
+    // Make a log entry for state change with new state
+    matriculationExamEnrollmentChangeLogDAO.create(examEnrollment, loggedUser, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, newState);
     
     return Response.ok(restModel(examEnrollment)).build();
   }
@@ -340,16 +349,20 @@ public class MatriculationRESTService extends AbstractRESTService {
   @POST
   @RESTPermit(handling = Handling.INLINE)
   public Response saveOrUpdateExamEnrollment(@PathParam("STUDENTID") Long studentId, @PathParam("EXAMID") Long examId, fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment enrollment) {
-    if (!Objects.equals(examId, enrollment.getExamId()) && examId != null) {
+    if (examId == null || !Objects.equals(examId, enrollment.getExamId())) {
       return Response.status(Status.BAD_REQUEST).entity("Exam ids do not match").build();
     }
 
-    Student student = studentDao.findById(enrollment.getStudentId());
+    if (studentId == null || !Objects.equals(studentId, enrollment.getStudentId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Student ids do not match").build();
+    }
+
+    Student student = studentDao.findById(studentId);
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
     }
 
-    MatriculationExam exam = matriculationExamDao.findById(enrollment.getExamId());
+    MatriculationExam exam = matriculationExamDao.findById(examId);
 
     if (exam == null || !matriculationEligibilityController.isEligible(student, exam)) {
       return Response.status(Status.BAD_REQUEST)
@@ -379,11 +392,14 @@ public class MatriculationRESTService extends AbstractRESTService {
      * 
      * TODOOOOOO
      */
-    EnumSet<MatriculationExamStudentStatus> allowedStates = existingEnrollment == null 
-        ? EnumSet.of(MatriculationExamStudentStatus.PENDING)
-        : EnumSet.of(MatriculationExamStudentStatus.PENDING, MatriculationExamStudentStatus.SUPPLEMENTATION_REQUEST);
     
-    if (!allowedStates.contains(enrollment.getState())) {
+    MatriculationExamEnrollmentState enrollmentState = matriculationEligibilityController.translateState(enrollment.getState());
+
+    EnumSet<MatriculationExamEnrollmentState> allowedStates = existingEnrollment == null 
+        ? EnumSet.of(MatriculationExamEnrollmentState.PENDING)
+        : EnumSet.of(MatriculationExamEnrollmentState.PENDING, MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST);
+    
+    if (!allowedStates.contains(enrollmentState)) {
       return Response.status(Status.BAD_REQUEST)
           .entity("Can only send pending enrollments via REST")
           .build();
@@ -436,7 +452,6 @@ public class MatriculationRESTService extends AbstractRESTService {
         /*
          * Create new enrollment
          */
-        MatriculationExamEnrollmentState enrollmentState = matriculationEligibilityController.translateState(enrollment.getState());
         
         enrollmentEntity = matriculationExamEnrollmentDao.create(
           exam,
@@ -461,6 +476,8 @@ public class MatriculationRESTService extends AbstractRESTService {
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
           new Date());
   
+        matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, null);
+        
         for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
           MatriculationExam matriculationExam = enrollmentEntity.getExam();
           // NOTE for ENROLLED the default values are taken from the exam properties if they don't exist in the payload
@@ -486,6 +503,9 @@ public class MatriculationRESTService extends AbstractRESTService {
          * Modify existing enrollment
          */
         
+        MatriculationExamEnrollmentChangeLogType changeLogChangeType = MatriculationExamEnrollmentChangeLogType.ENROLLMENT_UPDATED;
+        MatriculationExamEnrollmentState changeLogNewState = null;
+        
         enrollmentEntity = matriculationExamEnrollmentDao.update(
           existingEnrollment,
           enrollment.getName(),
@@ -504,9 +524,15 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.getMessage(),
           enrollment.isCanPublishName(),
           student,
-          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-          student);
+          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()));
   
+        if (enrollmentState != enrollmentEntity.getState()) {
+          changeLogNewState = enrollmentState;
+          enrollmentEntity = matriculationExamEnrollmentDao.updateState(enrollmentEntity, enrollmentState);
+        }
+        
+        matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, changeLogChangeType, changeLogNewState);
+        
         for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
           Long attendanceId = attendance.getId();
           

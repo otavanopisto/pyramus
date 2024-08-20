@@ -50,6 +50,7 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
@@ -80,6 +81,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
+    MatriculationExamEnrollmentChangeLogDAO matriculationExamEnrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
     MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
     if (enrollment == null) {
       pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
@@ -96,7 +98,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
       pageRequestContext.addMessage(Severity.ERROR, "Cannot change state to the requested one");
       return;
     }
-    
+
+    MatriculationExamEnrollmentChangeLogType changeLogChangeType = MatriculationExamEnrollmentChangeLogType.ENROLLMENT_UPDATED;
+    MatriculationExamEnrollmentState changeLogNewState = null;
+
     enrollment = enrollmentDAO.update(
       enrollment,
       ObjectUtils.firstNonNull(pageRequestContext.getString("name"), ""),
@@ -115,14 +120,16 @@ public class EditEnrollmentViewController extends PyramusViewController {
       ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
-      MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
-      loggedUser
+      MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure"))
     );
 
     if (enrollmentState != enrollment.getState()) {
-      enrollment = enrollmentDAO.updateState(enrollment, enrollmentState, loggedUser);
+      changeLogNewState = enrollmentState;
+      enrollment = enrollmentDAO.updateState(enrollment, enrollmentState);
     }
     
+    matriculationExamEnrollmentChangeLogDAO.create(enrollment, loggedUser, changeLogChangeType, changeLogNewState);
+
     Integer enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");
     if (enrolledAttendances == null) {
       enrolledAttendances = 0;

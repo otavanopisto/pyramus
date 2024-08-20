@@ -21,14 +21,11 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
-import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
@@ -82,11 +79,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setDegreeStructure(degreeStructure);
     result.setEnrollmentDate(enrollmentDate);
     
-    result = persist(result);
-    
-    createLogEntry(getEntityManager(), result, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, state);
-    
-    return result;
+    return persist(result);
   }
 
   public MatriculationExamEnrollment update(
@@ -107,8 +100,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String message,
     boolean canPublishName,
     Student student,
-    MatriculationExamEnrollmentDegreeStructure degreeStructure,
-    User modifier
+    MatriculationExamEnrollmentDegreeStructure degreeStructure
   ) {
     enrollment.setName(name);
     enrollment.setSsn(ssn);
@@ -128,11 +120,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setStudent(student);
     enrollment.setDegreeStructure(degreeStructure);
     
-    enrollment = persist(enrollment);
-    
-    createLogEntry(getEntityManager(), enrollment, modifier, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_UPDATED, null);
-    
-    return enrollment;
+    return persist(enrollment);
   }
   
   public List<MatriculationExamEnrollment> listByState(
@@ -296,9 +284,8 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     return persist(enrollment);
   }
 
-  public MatriculationExamEnrollment updateState(MatriculationExamEnrollment enrollment, MatriculationExamEnrollmentState state, User modifier) {
+  public MatriculationExamEnrollment updateState(MatriculationExamEnrollment enrollment, MatriculationExamEnrollmentState state) {
     enrollment.setState(state);
-    createLogEntry(getEntityManager(), enrollment, modifier, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, state);
     return persist(enrollment);
   }
 
@@ -308,15 +295,4 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     STATE
   }
   
-  private void createLogEntry(EntityManager em, MatriculationExamEnrollment enrollment, User modifier, 
-      MatriculationExamEnrollmentChangeLogType changeType, MatriculationExamEnrollmentState newState) {
-    MatriculationExamEnrollmentChangeLog logEntry = new MatriculationExamEnrollmentChangeLog();
-    logEntry.setEnrollment(enrollment);
-    logEntry.setModifier(modifier);
-    logEntry.setTimestamp(new Date());
-    logEntry.setChangeType(changeType);
-    logEntry.setNewState(newState);
-    em.persist(logEntry);
-  }
-
 }
