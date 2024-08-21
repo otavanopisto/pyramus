@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.views.matriculation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -127,8 +128,15 @@ public class EditEnrollmentViewController extends PyramusViewController {
       changeLogNewState = enrollmentState;
       enrollment = enrollmentDAO.updateState(enrollment, enrollmentState);
     }
+
+    StaffMember handler = pageRequestContext.getLong("handler") != null ? staffMemberDAO.findById(pageRequestContext.getLong("handler")) : null;
+    enrollment = enrollmentDAO.updateHandler(enrollment, handler);
+
+    String handlerNotes = StringUtils.isNotBlank(pageRequestContext.getString("handlerNotes")) ? pageRequestContext.getString("handlerNotes") : null;
+    enrollment = enrollmentDAO.updateHandlerNotes(enrollment, handlerNotes);
     
-    matriculationExamEnrollmentChangeLogDAO.create(enrollment, loggedUser, changeLogChangeType, changeLogNewState);
+    String changeLogMessage = StringUtils.isNotBlank(pageRequestContext.getString("changeLogMessage")) ? pageRequestContext.getString("changeLogMessage") : null;
+    matriculationExamEnrollmentChangeLogDAO.create(enrollment, loggedUser, changeLogChangeType, changeLogNewState, changeLogMessage);
 
     Integer enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");
     if (enrolledAttendances == null) {
@@ -337,6 +345,23 @@ public class EditEnrollmentViewController extends PyramusViewController {
       return;
     }
 
+    EnumSet<Role> activeStaffMemberRoles = EnumSet.of(Role.ADMINISTRATOR, Role.STUDY_PROGRAMME_LEADER, Role.MANAGER, Role.STUDY_GUIDER, Role.TEACHER);
+
+    List<StaffMember> enrollmentHandlers = staffMemberDAO.listActiveStaffMembersByRole(activeStaffMemberRoles);
+    StaffMember selectedHandler = enrollment.getHandler() != null ? enrollment.getHandler() : null;
+    if (selectedHandler != null) {
+      Long selectedStudyApproverId = selectedHandler.getId();
+      
+      boolean isSelectedInList = enrollmentHandlers.stream()
+        .map(StaffMember::getId)
+        .anyMatch(selectedStudyApproverId::equals);
+      
+      if (!isSelectedInList) {
+        enrollmentHandlers.add(selectedHandler);
+      }
+    }
+    enrollmentHandlers.sort(Comparator.comparing(StaffMember::getLastName).thenComparing(StaffMember::getFirstName));
+
     StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
     
     EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
@@ -365,6 +390,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("degreeStructure", enrollment.getDegreeStructure().name());
     pageRequestContext.getRequest().setAttribute("enrollmentDate", enrollment.getEnrollmentDate());
     pageRequestContext.getRequest().setAttribute("allowedStates", allowedStatesStrSet);
+    pageRequestContext.getRequest().setAttribute("handlers", enrollmentHandlers);
     
     List<MatriculationExamAttendance> attendances = attendanceDAO.listByEnrollment(enrollment);
     

@@ -14,6 +14,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -167,6 +168,24 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     return entityManager.createQuery(criteria).getResultList();
   }
   
+  public List<StaffMember> listActiveStaffMembersByRole(Set<Role> activeStaffMemberRoles) {
+    EntityManager entityManager = getEntityManager(); 
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<StaffMember> root = criteria.from(StaffMember.class);
+    SetJoin<StaffMember, Role> roleJoin = root.join(StaffMember_.roles);
+    criteria.select(root).distinct(true);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(StaffMember_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(StaffMember_.enabled), Boolean.TRUE),
+            roleJoin.in(activeStaffMemberRoles)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public StaffMember findByUniqueEmail(String email) {
     EntityManager entityManager = getEntityManager(); 
     

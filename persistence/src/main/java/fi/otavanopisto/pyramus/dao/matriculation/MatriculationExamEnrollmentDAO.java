@@ -25,6 +25,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnroll
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
@@ -284,6 +285,16 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     return persist(enrollment);
   }
 
+  public MatriculationExamEnrollment updateHandler(MatriculationExamEnrollment enrollment, StaffMember handler) {
+    enrollment.setHandler(handler);
+    return persist(enrollment);
+  }
+  
+  public MatriculationExamEnrollment updateHandlerNotes(MatriculationExamEnrollment enrollment, String handlerNotes) {
+    enrollment.setHandlerNotes(handlerNotes);
+    return persist(enrollment);
+  }
+  
   public MatriculationExamEnrollment updateState(MatriculationExamEnrollment enrollment, MatriculationExamEnrollmentState state) {
     enrollment.setState(state);
     return persist(enrollment);
@@ -294,5 +305,5 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     DATE,
     STATE
   }
-  
+
 }

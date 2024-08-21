@@ -21,13 +21,14 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 public class MatriculationExamEnrollmentChangeLogDAO extends PyramusEntityDAO<MatriculationExamEnrollmentChangeLog> {
 
   public MatriculationExamEnrollmentChangeLog create(MatriculationExamEnrollment enrollment, User modifier, 
-      MatriculationExamEnrollmentChangeLogType changeType, MatriculationExamEnrollmentState newState) {
+      MatriculationExamEnrollmentChangeLogType changeType, MatriculationExamEnrollmentState newState, String message) {
     MatriculationExamEnrollmentChangeLog logEntry = new MatriculationExamEnrollmentChangeLog();
     logEntry.setEnrollment(enrollment);
     logEntry.setModifier(modifier);
     logEntry.setTimestamp(new Date());
     logEntry.setChangeType(changeType);
     logEntry.setNewState(newState);
+    logEntry.setMessage(message);
     return persist(logEntry);
   }
   

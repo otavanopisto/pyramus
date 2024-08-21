@@ -10,6 +10,7 @@
        id bigint not null auto_increment,
         changeType varchar(255) not null,
         newState varchar(255),
+        message longtext,
         timestamp datetime not null,
         enrollment_id bigint,
         modifier_id bigint,
@@ -31,6 +32,21 @@
        references User (id);
   </sql>
 
+  <sql>
+    alter table MatriculationExamEnrollment add column handlerNotes longtext;
+  </sql>
+
+  <sql>
+    alter table MatriculationExamEnrollment add column handler_id bigint;
+  </sql>
+
+  <sql>
+    alter table MatriculationExamEnrollment 
+       add constraint FKkbutaanvpn1smr9lohk5dby4j 
+       foreign key (handler_id) 
+       references StaffMember (id);
+  </sql>
+  
   <sql>
     alter table MatriculationExamEnrollment 
        add constraint UKc71vfhujqlp43m8jo099gaarp unique (exam_id, student_id);

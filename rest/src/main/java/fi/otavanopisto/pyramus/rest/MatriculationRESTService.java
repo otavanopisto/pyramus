@@ -264,7 +264,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     examEnrollment = matriculationExamEnrollmentDao.updateState(examEnrollment, newState);
     
     // Make a log entry for state change with new state
-    matriculationExamEnrollmentChangeLogDAO.create(examEnrollment, loggedUser, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, newState);
+    matriculationExamEnrollmentChangeLogDAO.create(examEnrollment, loggedUser, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, newState, null);
     
     return Response.ok(restModel(examEnrollment)).build();
   }
@@ -476,7 +476,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
           new Date());
   
-        matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, null);
+        matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, null, null);
         
         for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
           MatriculationExam matriculationExam = enrollmentEntity.getExam();
@@ -531,7 +531,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollmentEntity = matriculationExamEnrollmentDao.updateState(enrollmentEntity, enrollmentState);
         }
         
-        matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, changeLogChangeType, changeLogNewState);
+        matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, changeLogChangeType, changeLogNewState, null);
         
         for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
           Long attendanceId = attendance.getId();

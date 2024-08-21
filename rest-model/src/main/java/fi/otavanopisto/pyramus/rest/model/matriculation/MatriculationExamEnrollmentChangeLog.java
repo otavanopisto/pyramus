@@ -64,6 +64,14 @@ public class MatriculationExamEnrollmentChangeLog {
     this.modifierRoleClass = modifierRoleClass;
   }
 
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
   private Long id;
   private Long enrollmentId;
   private Long modifierId;
@@ -71,4 +79,5 @@ public class MatriculationExamEnrollmentChangeLog {
   private OffsetDateTime timestamp;
   private MatriculationExamEnrollmentChangeLogType changeType;
   private MatriculationExamEnrollmentState newState;
+  private String message;
 }

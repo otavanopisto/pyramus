@@ -1087,6 +1087,7 @@ public class ObjectFactory {
           restModel.setTimestamp(toOffsetDateTime(entity.getTimestamp()));
           restModel.setChangeType(entity.getChangeType());
           restModel.setNewState(entity.getNewState());
+          restModel.setMessage(entity.getMessage());
           return restModel;
         }
       },

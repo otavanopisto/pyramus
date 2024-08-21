@@ -22,6 +22,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.search.annotations.DocumentId;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
 @Entity
@@ -221,6 +222,22 @@ public class MatriculationExamEnrollment {
     this.degreeStructure = degreeStructure;
   }
 
+  public StaffMember getHandler() {
+    return handler;
+  }
+
+  public void setHandler(StaffMember handler) {
+    this.handler = handler;
+  }
+
+  public String getHandlerNotes() {
+    return handlerNotes;
+  }
+
+  public void setHandlerNotes(String handlerNotes) {
+    this.handlerNotes = handlerNotes;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -300,4 +317,10 @@ public class MatriculationExamEnrollment {
   @Temporal(value = TemporalType.TIMESTAMP)
   private Date enrollmentDate;
 
+  @ManyToOne
+  private StaffMember handler;
+  
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
+  private String handlerNotes;
 }
