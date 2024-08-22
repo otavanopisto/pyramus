@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -617,6 +618,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         return Response.ok(new StudentMatriculationEligibilityOPS2021(result.isEligible(), result.getRequiredPassingGradeCourseCreditPoints(), result.getPassingGradeCourseCreditPoints())).build();
       }
     } catch (Exception e) {
+      logger.log(Level.SEVERE, "Could not resolve matriculation eligibility", e);
       return Response.status(Status.BAD_REQUEST).entity("Could not resolve matriculation eligibility").build();
     }
   }
