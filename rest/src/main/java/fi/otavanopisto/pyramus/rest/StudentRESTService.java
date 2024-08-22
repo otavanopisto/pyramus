@@ -1775,6 +1775,7 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{ID:[0-9]*}/matriculationEligibility")
   @GET
   @RESTPermit(handling = Handling.INLINE)
+  @Deprecated
   public Response getStudentMatriculationEligibility(@PathParam("ID") Long studentId, @QueryParam ("subjectCode") String subjectCode) {
     if (StringUtils.isBlank(subjectCode)) {
       return Response.status(Status.BAD_REQUEST).entity("Subject is required").build();

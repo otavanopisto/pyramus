@@ -5,6 +5,7 @@ package fi.otavanopisto.pyramus.rest.controller;
  * 
  * @author Antti Leppä
  */
+@Deprecated
 public class StudentMatriculationEligibilityResult {
 
   private int requirePassingGrades;

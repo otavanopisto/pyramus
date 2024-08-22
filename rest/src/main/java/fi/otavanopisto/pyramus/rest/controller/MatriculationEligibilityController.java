@@ -43,6 +43,9 @@ import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityCurric
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilitySubjectMapping;
 import fi.otavanopisto.pyramus.rest.model.MatriculationExamStudentStatus;
+import fi.otavanopisto.pyramus.tor.StudentTOR;
+import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.TORSubject;
 
 /**
  * Controller for determining 
@@ -88,7 +91,7 @@ public class MatriculationEligibilityController {
 
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
-
+  
   /**
    * Post construct method. 
    *  
@@ -112,6 +115,7 @@ public class MatriculationEligibilityController {
    * @param subjectCode subject code
    * @return matriculation eligibility into given subject for a student
    */
+  @Deprecated
   public StudentMatriculationEligibilityResult getStudentMatriculationEligible(Student student, String subjectCode) {
     Curriculum curriculum = student.getCurriculum();
     if (curriculum == null) {
@@ -192,6 +196,104 @@ public class MatriculationEligibilityController {
     return new StudentMatriculationEligibilityResult(requirePassingGrades, acceptedCourseCount, acceptedTransferCreditCount, acceptedCourseCount + acceptedTransferCreditCount >= requirePassingGrades);
   }
   
+  /**
+   * Resolves matriculation eligibility into given subject for a student
+   * 
+   * @param student student
+   * @param subjectCode subject code
+   * @return matriculation eligibility into given subject for a student
+   */
+  public StudentMatriculationEligibilityResultOPS2021 getStudentMatriculationEligibleOPS2021(Student student, String subjectCode) throws Exception {
+    Curriculum curriculum = student.getCurriculum();
+    if (curriculum == null) {
+      if (logger.isLoggable(Level.SEVERE)) {
+        logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, student %d is missing curriculum", student.getId()));
+      }
+      
+      return null;
+    }
+    
+    Subject subject = commonController.findSubjectByCode(subjectCode);
+    if (subject == null) {
+      if (logger.isLoggable(Level.SEVERE)) {
+        logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, subject %s is missing", subjectCode));
+      }
+      
+      return null;
+    }
+    
+    MatriculationEligibilitySubjectMapping mapping = getMatriculationMapping(curriculum.getName(), subject);
+    if (mapping == null) {
+      mapping = getMatriculationMapping(ANY_CURRICULUM, subject);
+    }
+    
+    if (mapping == null) {
+      if (logger.isLoggable(Level.SEVERE)) {
+        logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, no mapping for curriculum %s, subjectCode %s", curriculum == null ? "NULL" : curriculum.getName(), subjectCode));
+      }
+      
+      return null;
+    }
+    
+    String educationTypeCode = mapping.getEducationType();
+    String educationSubtypeCode = mapping.getEducationSubtype();
+    
+    EducationType educationType = null;
+    EducationSubtype educationSubtype = null;
+    
+    if (StringUtils.isNotBlank(educationTypeCode)) {
+      educationType = commonController.findEducationTypeByCode(educationTypeCode);
+      if (educationType == null) {
+        if (logger.isLoggable(Level.SEVERE)) {
+          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationType %s", educationTypeCode));
+        }
+        
+        return null;
+      }
+    }
+    
+    if (StringUtils.isNotBlank(educationSubtypeCode)) {
+      educationSubtype = commonController.findEducationSubtypeByCode(educationType, educationSubtypeCode);
+      if (educationSubtype == null) {
+        if (logger.isLoggable(Level.SEVERE)) {
+          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationSubtype %s", educationSubtypeCode));
+        }
+
+        return null;
+      }
+    }
+
+    /* 
+     * Constructing the whole TOR primarily for just one subject is a bit of a 
+     * sledgehammer move but StudentTOR will handle the improved grades etc 
+     * difficult stuff so we don't need to try replicate it here.
+     */
+    StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, true);
+    
+    TORSubject torSubject = studentTOR.findSubject(subjectCode);
+    
+    Double mandatoryCreditPointCount = torSubject.getMandatoryCreditPointCount();
+    Double mandatoryCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompleted();
+
+    // There's a single case of included subjects atm MAA/MAB include MAY
+    if (CollectionUtils.isNotEmpty(mapping.getIncludedSubjects())) {
+      for (String includedSubjectCode : mapping.getIncludedSubjects()) {
+        TORSubject includedSubject = studentTOR.findSubject(includedSubjectCode);
+        
+        if (includedSubject != null) {
+          mandatoryCreditPointCount += includedSubject.getMandatoryCreditPointCount();
+          mandatoryCreditPointsCompleted += includedSubject.getMandatoryCreditPointsCompleted();
+        } else {
+          logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
+        }
+      }
+    }
+    
+    return new StudentMatriculationEligibilityResultOPS2021(
+        mandatoryCreditPointCount,
+        mandatoryCreditPointsCompleted,
+        mandatoryCreditPointsCompleted >= mandatoryCreditPointCount);
+  }
   
   /**
    * Finds a matriculation eligibility subject mapping by curriculum and subject

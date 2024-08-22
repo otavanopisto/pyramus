@@ -51,11 +51,15 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
+import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
+import fi.otavanopisto.pyramus.rest.controller.StudentMatriculationEligibilityResultOPS2021;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.MatriculationExamStudentStatus;
+import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibilityOPS2021;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -586,6 +590,35 @@ public class MatriculationRESTService extends AbstractRESTService {
     }
 
     return Response.ok(restModel(enrollmentEntity)).build();
+  }
+
+  @Path("/students/{ID:[0-9]*}/matriculationEligibility")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentMatriculationEligibility(@PathParam("ID") Long studentId, @QueryParam ("subjectCode") String subjectCode) {
+    if (StringUtils.isBlank(subjectCode)) {
+      return Response.status(Status.BAD_REQUEST).entity("Subject is required").build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Not found").build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    try {
+      StudentMatriculationEligibilityResultOPS2021 result = matriculationEligibilityController.getStudentMatriculationEligibleOPS2021(student, subjectCode);
+      if (result == null) {
+        return Response.status(Status.BAD_REQUEST).entity("Could not resolve matriculation eligibility").build();
+      } else {
+        return Response.ok(new StudentMatriculationEligibilityOPS2021(result.isEligible(), result.getRequiredPassingGradeCourseCreditPoints(), result.getPassingGradeCourseCreditPoints())).build();
+      }
+    } catch (Exception e) {
+      return Response.status(Status.BAD_REQUEST).entity("Could not resolve matriculation eligibility").build();
+    }
   }
 
   private fi.otavanopisto.pyramus.rest.model.MatriculationExam restModel(MatriculationExam exam, Student student) {

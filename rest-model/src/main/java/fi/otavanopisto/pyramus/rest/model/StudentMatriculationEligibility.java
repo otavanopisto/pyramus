@@ -5,6 +5,7 @@ package fi.otavanopisto.pyramus.rest.model;
  * 
  * @author Antti Leppä
  */
+@Deprecated
 public class StudentMatriculationEligibility {
 
   private Boolean eligible;
