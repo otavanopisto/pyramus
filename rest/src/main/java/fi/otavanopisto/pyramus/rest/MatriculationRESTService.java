@@ -619,7 +619,7 @@ public class MatriculationRESTService extends AbstractRESTService {
       }
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Could not resolve matriculation eligibility", e);
-      return Response.status(Status.BAD_REQUEST).entity("Could not resolve matriculation eligibility").build();
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Could not resolve matriculation eligibility").build();
     }
   }
 

@@ -204,6 +204,14 @@ public class MatriculationEligibilityController {
    * @return matriculation eligibility into given subject for a student
    */
   public StudentMatriculationEligibilityResultOPS2021 getStudentMatriculationEligibleOPS2021(Student student, String subjectCode) throws Exception {
+    if (subjectCode == null) {
+      if (logger.isLoggable(Level.SEVERE)) {
+        logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, subjectCode was null"));
+      }
+      
+      return null;
+    }
+    
     Curriculum curriculum = student.getCurriculum();
     if (curriculum == null) {
       if (logger.isLoggable(Level.SEVERE)) {
@@ -235,33 +243,33 @@ public class MatriculationEligibilityController {
       return null;
     }
     
-    String educationTypeCode = mapping.getEducationType();
-    String educationSubtypeCode = mapping.getEducationSubtype();
+//    String educationTypeCode = mapping.getEducationType();
+//    String educationSubtypeCode = mapping.getEducationSubtype();
+//    
+//    EducationType educationType = null;
+//    EducationSubtype educationSubtype = null;
     
-    EducationType educationType = null;
-    EducationSubtype educationSubtype = null;
-    
-    if (StringUtils.isNotBlank(educationTypeCode)) {
-      educationType = commonController.findEducationTypeByCode(educationTypeCode);
-      if (educationType == null) {
-        if (logger.isLoggable(Level.SEVERE)) {
-          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationType %s", educationTypeCode));
-        }
-        
-        return null;
-      }
-    }
-    
-    if (StringUtils.isNotBlank(educationSubtypeCode)) {
-      educationSubtype = commonController.findEducationSubtypeByCode(educationType, educationSubtypeCode);
-      if (educationSubtype == null) {
-        if (logger.isLoggable(Level.SEVERE)) {
-          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationSubtype %s", educationSubtypeCode));
-        }
-
-        return null;
-      }
-    }
+//    if (StringUtils.isNotBlank(educationTypeCode)) {
+//      educationType = commonController.findEducationTypeByCode(educationTypeCode);
+//      if (educationType == null) {
+//        if (logger.isLoggable(Level.SEVERE)) {
+//          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationType %s", educationTypeCode));
+//        }
+//        
+//        return null;
+//      }
+//    }
+//    
+//    if (StringUtils.isNotBlank(educationSubtypeCode)) {
+//      educationSubtype = commonController.findEducationSubtypeByCode(educationType, educationSubtypeCode);
+//      if (educationSubtype == null) {
+//        if (logger.isLoggable(Level.SEVERE)) {
+//          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationSubtype %s", educationSubtypeCode));
+//        }
+//
+//        return null;
+//      }
+//    }
 
     /* 
      * Constructing the whole TOR primarily for just one subject is a bit of a 
@@ -271,28 +279,36 @@ public class MatriculationEligibilityController {
     StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, true);
     
     TORSubject torSubject = studentTOR.findSubject(subjectCode);
-    
-    Double mandatoryCreditPointCount = torSubject.getMandatoryCreditPointCount();
-    Double mandatoryCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompleted();
 
-    // There's a single case of included subjects atm MAA/MAB include MAY
-    if (CollectionUtils.isNotEmpty(mapping.getIncludedSubjects())) {
-      for (String includedSubjectCode : mapping.getIncludedSubjects()) {
-        TORSubject includedSubject = studentTOR.findSubject(includedSubjectCode);
-        
-        if (includedSubject != null) {
-          mandatoryCreditPointCount += includedSubject.getMandatoryCreditPointCount();
-          mandatoryCreditPointsCompleted += includedSubject.getMandatoryCreditPointsCompleted();
-        } else {
-          logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
+    if (torSubject != null) {
+      Double mandatoryCreditPointCount = torSubject.getMandatoryCreditPointCount();
+      Double mandatoryCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompleted();
+  
+      // There's a single case of included subjects atm MAA/MAB include MAY
+      if (CollectionUtils.isNotEmpty(mapping.getIncludedSubjects())) {
+        for (String includedSubjectCode : mapping.getIncludedSubjects()) {
+          TORSubject includedSubject = studentTOR.findSubject(includedSubjectCode);
+          
+          if (includedSubject != null) {
+            mandatoryCreditPointCount += includedSubject.getMandatoryCreditPointCount();
+            mandatoryCreditPointsCompleted += includedSubject.getMandatoryCreditPointsCompleted();
+          } else {
+            logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
+          }
         }
       }
+      
+      return new StudentMatriculationEligibilityResultOPS2021(
+          mandatoryCreditPointCount,
+          mandatoryCreditPointsCompleted,
+          mandatoryCreditPointsCompleted >= mandatoryCreditPointCount);
     }
-    
-    return new StudentMatriculationEligibilityResultOPS2021(
-        mandatoryCreditPointCount,
-        mandatoryCreditPointsCompleted,
-        mandatoryCreditPointsCompleted >= mandatoryCreditPointCount);
+    else {
+      return new StudentMatriculationEligibilityResultOPS2021(
+          123d,
+          0d,
+          false);
+    }
   }
   
   /**
