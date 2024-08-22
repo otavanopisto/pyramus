@@ -98,10 +98,6 @@ public class TORSubject extends Subject {
     return mandatoryCourseCount;
   }
   
-  public Double getMandatoryCreditPointCount() {
-    return mandatoryCreditPointCount;
-  }
-  
   public Double getMandatoryCreditPointsCompleted() {
     return mandatoryCreditPointsCompleted;
   }
@@ -178,14 +174,6 @@ public class TORSubject extends Subject {
           int numCompleted = 0;
           double sumCompletedCreditPoints = 0d;
 
-          // TODO Curriculum has no indication what unit type the length is and also it is in integer format
-          //      while it probably should be a decimal number, as that's what the course credit points are.
-          int sumMandatoryCourseLengths = 
-              curriculumSubject.getModules().stream()
-              .filter(TORCurriculumModule::isMandatory)
-              .mapToInt(TORCurriculumModule::getLength)
-              .sum();
-          
           for (Integer mandatoryCourseNumber : mandatoryCourseNumbers) {
             TORCourse torCourse = findCourse(mandatoryCourseNumber);
             if (torCourse != null && torCourse.isPassed()) {
@@ -199,7 +187,6 @@ public class TORSubject extends Subject {
           
           this.mandatoryCourseCount = mandatoryCourseNumbers.size();
           this.mandatoryCourseCompletedCount = numCompleted;
-          this.mandatoryCreditPointCount = (double) sumMandatoryCourseLengths;
           this.mandatoryCreditPointsCompleted = sumCompletedCreditPoints;
           this.completed = mandatoryCourseCount == mandatoryCourseCompletedCount;
         }
@@ -220,6 +207,5 @@ public class TORSubject extends Subject {
   private Boolean completed;
   private Integer mandatoryCourseCompletedCount;
   private Integer mandatoryCourseCount;
-  private Double mandatoryCreditPointCount;
   private Double mandatoryCreditPointsCompleted;
 }

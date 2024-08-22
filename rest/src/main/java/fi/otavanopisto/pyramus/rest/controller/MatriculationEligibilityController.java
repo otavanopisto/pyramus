@@ -46,6 +46,8 @@ import fi.otavanopisto.pyramus.rest.model.MatriculationExamStudentStatus;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
 import fi.otavanopisto.pyramus.tor.TORSubject;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 
 /**
  * Controller for determining 
@@ -212,8 +214,7 @@ public class MatriculationEligibilityController {
       return null;
     }
     
-    Curriculum curriculum = student.getCurriculum();
-    if (curriculum == null) {
+    if (student.getCurriculum() == null) {
       if (logger.isLoggable(Level.SEVERE)) {
         logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, student %d is missing curriculum", student.getId()));
       }
@@ -221,8 +222,7 @@ public class MatriculationEligibilityController {
       return null;
     }
     
-    Subject subject = commonController.findSubjectByCode(subjectCode);
-    if (subject == null) {
+    if (commonController.findSubjectByCode(subjectCode) == null) {
       if (logger.isLoggable(Level.SEVERE)) {
         logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, subject %s is missing", subjectCode));
       }
@@ -230,82 +230,74 @@ public class MatriculationEligibilityController {
       return null;
     }
     
-    MatriculationEligibilitySubjectMapping mapping = getMatriculationMapping(curriculum.getName(), subject);
-    if (mapping == null) {
-      mapping = getMatriculationMapping(ANY_CURRICULUM, subject);
-    }
-    
-    if (mapping == null) {
+    /*
+     * TORCurriculum is used to fetch the number of mandatory credit points in
+     * the subject of interest here.
+     */
+    TORCurriculum torCurriculum = StudentTORController.getCurriculum(student);
+    TORCurriculumSubject curriculumSubject = torCurriculum != null ? torCurriculum.getSubjectByCode(subjectCode) : null;
+
+    if (curriculumSubject == null) {
       if (logger.isLoggable(Level.SEVERE)) {
-        logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, no mapping for curriculum %s, subjectCode %s", curriculum == null ? "NULL" : curriculum.getName(), subjectCode));
+        logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, couldn't find subject %s from curriculum", subjectCode));
       }
       
       return null;
     }
-    
-//    String educationTypeCode = mapping.getEducationType();
-//    String educationSubtypeCode = mapping.getEducationSubtype();
-//    
-//    EducationType educationType = null;
-//    EducationSubtype educationSubtype = null;
-    
-//    if (StringUtils.isNotBlank(educationTypeCode)) {
-//      educationType = commonController.findEducationTypeByCode(educationTypeCode);
-//      if (educationType == null) {
-//        if (logger.isLoggable(Level.SEVERE)) {
-//          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationType %s", educationTypeCode));
-//        }
-//        
-//        return null;
-//      }
-//    }
-//    
-//    if (StringUtils.isNotBlank(educationSubtypeCode)) {
-//      educationSubtype = commonController.findEducationSubtypeByCode(educationType, educationSubtypeCode);
-//      if (educationSubtype == null) {
-//        if (logger.isLoggable(Level.SEVERE)) {
-//          logger.log(Level.SEVERE, String.format("Failed to resolve matriculation eligibility, could not find educationSubtype %s", educationSubtypeCode));
-//        }
-//
-//        return null;
-//      }
-//    }
 
+    /*
+     * Figure out the number of mandatory credit points in the subject. This is a
+     * sum of the length of the mandatory modules in the subject itself and the 
+     * sum of the lengths of all the included subjects.
+     */
+    Double subjectMandatoryCreditPointCount = (double) curriculumSubject.getMandatoryModuleLengthSum();
+    
+    if (CollectionUtils.isNotEmpty(curriculumSubject.getIncludedSubjects())) {
+      for (String includedSubjectCode : curriculumSubject.getIncludedSubjects()) {
+        TORCurriculumSubject includedCurriculumSubject = torCurriculum.getSubjectByCode(includedSubjectCode);
+        if (includedCurriculumSubject != null) {
+          subjectMandatoryCreditPointCount += includedCurriculumSubject.getMandatoryModuleLengthSum();
+        } else {
+          logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
+        }
+      }
+    }
+    
     /* 
      * Constructing the whole TOR primarily for just one subject is a bit of a 
      * sledgehammer move but StudentTOR will handle the improved grades etc 
      * difficult stuff so we don't need to try replicate it here.
      */
-    StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, true);
+    StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, torCurriculum);
     
     TORSubject torSubject = studentTOR.findSubject(subjectCode);
 
     if (torSubject != null) {
-      Double mandatoryCreditPointCount = torSubject.getMandatoryCreditPointCount();
       Double mandatoryCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompleted();
   
       // There's a single case of included subjects atm MAA/MAB include MAY
-      if (CollectionUtils.isNotEmpty(mapping.getIncludedSubjects())) {
-        for (String includedSubjectCode : mapping.getIncludedSubjects()) {
+      if (CollectionUtils.isNotEmpty(curriculumSubject.getIncludedSubjects())) {
+        for (String includedSubjectCode : curriculumSubject.getIncludedSubjects()) {
+          /*
+           * If StudentTOR has the included subject, add the completed mandatory credit points to the tally.
+           * If it doesn't, then the student probably just has no completed credits of the subject.
+           */
           TORSubject includedSubject = studentTOR.findSubject(includedSubjectCode);
-          
           if (includedSubject != null) {
-            mandatoryCreditPointCount += includedSubject.getMandatoryCreditPointCount();
             mandatoryCreditPointsCompleted += includedSubject.getMandatoryCreditPointsCompleted();
-          } else {
-            logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
           }
         }
       }
       
       return new StudentMatriculationEligibilityResultOPS2021(
-          mandatoryCreditPointCount,
+          subjectMandatoryCreditPointCount,
           mandatoryCreditPointsCompleted,
-          mandatoryCreditPointsCompleted >= mandatoryCreditPointCount);
+          mandatoryCreditPointsCompleted >= subjectMandatoryCreditPointCount);
     }
     else {
+      // TORSubject was null - it likely has no completed credits -> return zero
       return new StudentMatriculationEligibilityResultOPS2021(
-          123d,
+          subjectMandatoryCreditPointCount,
           0d,
           false);
     }
