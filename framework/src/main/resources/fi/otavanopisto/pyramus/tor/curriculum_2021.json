@@ -970,6 +970,7 @@
     {
       "name": "Matematiikan pitkä oppimäärä",
       "code": "MAA",
+      "included-subjects": ["MAY"],
       "modules": [
         {
           "name": "Funktiot ja yhtälöt 1",
@@ -1042,6 +1043,7 @@
     {
       "name": "Matematiikan lyhyt oppimäärä",
       "code": "MAB",
+      "included-subjects": ["MAY"],
       "modules": [
         {
           "name": "Lausekkeet ja yhtälöt",
