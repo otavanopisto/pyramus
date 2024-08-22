@@ -189,7 +189,7 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+    MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
     if (examEnrollment == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -217,7 +217,7 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+    MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
     if (examEnrollment == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -246,7 +246,7 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+    MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
     if (examEnrollment == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -380,7 +380,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     }
     
     // Find the enrollment by exam and student, if it exists, we are updating
-    MatriculationExamEnrollment existingEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+    MatriculationExamEnrollment existingEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
 
     /*
      * Validation
@@ -648,7 +648,7 @@ public class MatriculationRESTService extends AbstractRESTService {
 
       // Add information about enrollment if already done so
       
-      MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+      MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
       
       MatriculationExamStudentStatus studentStatus = examEnrollment == null 
           ? (matriculationEligibilityController.isEligible(student, exam) ? MatriculationExamStudentStatus.ELIGIBLE : MatriculationExamStudentStatus.NOT_ELIGIBLE)

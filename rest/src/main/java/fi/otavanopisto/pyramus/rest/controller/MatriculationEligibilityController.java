@@ -397,7 +397,7 @@ public class MatriculationEligibilityController {
     List<MatriculationExam> examsByStudent = new ArrayList<>();
     
     for (MatriculationExam exam : allExams) {
-      boolean isEnrolled = matriculationExamEnrollmentDAO.findLatestByExamAndStudent(exam, student) != null;
+      boolean isEnrolled = matriculationExamEnrollmentDAO.findByExamAndStudent(exam, student) != null;
 
       // If the filter is asking for the past (aka enrolled) to be listed and the student is enrolled, add to list
       if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.PAST) && isEnrolled) {
