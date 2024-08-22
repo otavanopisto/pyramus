@@ -708,10 +708,14 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   private fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance restModel(MatriculationExamAttendance attendance) {
     MatriculationExamGrade grade = null;
+    OffsetDateTime gradeDate = null;
     
     // Grade comes from either the student project (for ENROLLED) or the grade field
     if (attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED) {
       if (attendance.getProjectAssessment() != null && attendance.getProjectAssessment().getGrade() != null && StringUtils.isNotBlank(attendance.getProjectAssessment().getGrade().getName())) {
+        if (attendance.getProjectAssessment().getDate() != null) {
+          gradeDate = PyramusRestUtils.toOffsetDateTime(attendance.getProjectAssessment().getDate());
+        }
         /*
          * Grades don't follow the enum naming so we have to translate them - maybe the values 
          * for enrolled should also be refactored one day to the MatriculationExamAttendance table.
@@ -758,6 +762,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setEnrollmentId(attendance.getEnrollment().getId());
     result.setFunding(attendance.getFunding());
     result.setGrade(grade);
+    result.setGradeDate(gradeDate);
     result.setMandatory(attendance.isMandatory());
     result.setRepeat(attendance.isRetry());
     result.setStatus(attendance.getStatus());

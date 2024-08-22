@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.OffsetDateTime;
+
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
@@ -88,6 +90,14 @@ public class MatriculationExamAttendance {
     this.id = id;
   }
 
+  public OffsetDateTime getGradeDate() {
+    return gradeDate;
+  }
+
+  public void setGradeDate(OffsetDateTime gradeDate) {
+    this.gradeDate = gradeDate;
+  }
+
   private Long id;
   private Long enrollmentId;
   private MatriculationExamSubject subject;
@@ -98,6 +108,7 @@ public class MatriculationExamAttendance {
   private MatriculationExamAttendanceStatus status;
   private MatriculationExamAttendanceFunding funding;
   private MatriculationExamGrade grade;
+  private OffsetDateTime gradeDate;
 
 }
 
