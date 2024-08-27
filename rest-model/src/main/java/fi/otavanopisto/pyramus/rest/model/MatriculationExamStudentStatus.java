@@ -10,6 +10,8 @@ public enum MatriculationExamStudentStatus {
   PENDING,
   // Form was submitted and reviewed but was returned for supplementation
   SUPPLEMENTATION_REQUEST,
+  // Student has supplemented the form after supplementation request
+  SUPPLEMENTED,
   // Enrollment has been approved (implies the form was also submitted before)
   APPROVED,
   // Enrollment has been rejected (implies the form was also submitted before)

@@ -102,6 +102,31 @@ public class TORSubject extends Subject {
     return mandatoryCreditPointsCompleted;
   }
 
+  public Double getMandatoryCreditPointsCompletedWithIncludedSubjects(StudentTOR studentTOR,
+      TORCurriculum torCurriculum) {
+    Double sum = getMandatoryCreditPointsCompleted();
+    if (sum == null) {
+      return null;
+    }
+    
+    TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(getCode());
+    if (torCurriculumSubject != null) {
+      if (CollectionUtils.isNotEmpty(torCurriculumSubject.getIncludedSubjects())) {
+        for (String includedSubject : torCurriculumSubject.getIncludedSubjects()) {
+          TORSubject torSubject = studentTOR.findSubject(includedSubject);
+          if (torSubject != null) {
+            Double includedSubjectCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompleted();
+            if (includedSubjectCreditPointsCompleted != null) {
+              sum += includedSubjectCreditPointsCompleted;
+            }
+          }
+        }
+      }
+    }
+    
+    return sum;
+  }
+  
   protected void postProcess(TORCurriculum curriculum, TORProblems problems) {
     Collections.sort(courses, Comparator.comparing(TORCourse::getCourseNumber, Comparator.nullsLast(Integer::compareTo)));
     courses.forEach(course -> course.postProcess());

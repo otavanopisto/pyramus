@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.tor.curriculum;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TORCurriculumSubject {
@@ -54,6 +56,27 @@ public class TORCurriculumSubject {
         .filter(TORCurriculumModule::isMandatory)
         .mapToInt(TORCurriculumModule::getLength)
         .sum();
+  }
+
+  /**
+   * Returns sum of module lengths for modules that are marked as mandatory.
+   * Includes the lengths of mandatory modules from included subjects.
+   * 
+   * @return
+   */
+  public int getMandatoryModuleLengthSumWithIncludedModules(TORCurriculum torCurriculum) {
+    int sum = getMandatoryModuleLengthSum();
+    
+    if (CollectionUtils.isNotEmpty(this.includedSubjects)) {
+      for (String includedSubjectCode : this.includedSubjects) { 
+        TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(includedSubjectCode);
+        if (torCurriculumSubject != null) {
+          sum += torCurriculumSubject.getMandatoryModuleLengthSum();
+        }
+      }
+    }
+    
+    return sum;
   }
   
   private String name;

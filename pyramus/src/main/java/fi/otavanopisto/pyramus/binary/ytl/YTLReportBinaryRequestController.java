@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.binary.ytl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,12 +11,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -71,7 +67,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
 
   public void process(BinaryRequestContext binaryRequestContext) {
-    List<YTLAineKoodi> m = readMapping();
+    List<YTLAineKoodi> m = YTLController.readMapping();
     
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamDAO matriculationExamDAO = DAOFactory.getInstance().getMatriculationExamDAO();
@@ -199,7 +195,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     
     attendances.forEach(attendance -> {
       MatriculationExamSubject examSubject = attendance.getSubject();
-      YTLAineKoodi ytlAineKoodi = examSubjectToYTLAineKoodi(examSubject, mapping);
+      YTLAineKoodi ytlAineKoodi = YTLController.examSubjectToYTLAineKoodi(examSubject, mapping);
 
       String aineKoodi = ytlAineKoodi.getYhdistettyAineKoodi();
       boolean maksuton = MAKSUTTOMAT.contains(attendance.getFunding());
@@ -223,7 +219,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     
     String äidinkielenKoe = null;
     if (äidinkieli != null) {
-      YTLAineKoodi ytlÄidinkieli = examSubjectToYTLAineKoodi(äidinkieli.getSubject(), mapping);
+      YTLAineKoodi ytlÄidinkieli = YTLController.examSubjectToYTLAineKoodi(äidinkieli.getSubject(), mapping);
       if (ytlÄidinkieli != null) {
         äidinkielenKoe = ytlÄidinkieli.getYtlAine();
       } else {
@@ -246,7 +242,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     for (MatriculationExamAttendance attendance : attendances) {
       MatriculationExamSubject examSubject = attendance.getSubject();
       
-      YTLAineKoodi ytlAineKoodi = examSubjectToYTLAineKoodi(examSubject, mapping);
+      YTLAineKoodi ytlAineKoodi = YTLController.examSubjectToYTLAineKoodi(examSubject, mapping);
       if (ytlAineKoodi != null) {
         // Äidinkielelle on oma lokeronsa, ei lisätä pakolliseksi/ylimääräiseksi
         if (!isÄidinkieli(attendance)) {
@@ -269,7 +265,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     List<SuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
     
     for (String suoritetutKurssitAine : suoritetutKurssitAineet) {
-      List<YTLAineKoodi> ytlAineKoodit = ytlSubjectToYTLAineKoodi(suoritetutKurssitAine, mapping);
+      List<YTLAineKoodi> ytlAineKoodit = YTLController.ytlSubjectToYTLAineKoodi(suoritetutKurssitAine, mapping);
       for (YTLAineKoodi ytlAineKoodi : ytlAineKoodit) {
         lataaSuoritetutKurssit(student, tor, ytlAineKoodi, suoritetutKurssit);
       }
@@ -354,19 +350,6 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     return null;
   }
 
-  private YTLAineKoodi examSubjectToYTLAineKoodi(MatriculationExamSubject examSubject, List<YTLAineKoodi> mapping) {
-    return mapping.stream()
-      .filter(ainekoodi -> (ainekoodi.getMatriculationExamSubject() == examSubject))
-      .findFirst()
-      .orElse(null);
-  }
-  
-  private List<YTLAineKoodi> ytlSubjectToYTLAineKoodi(String ytlSubject, List<YTLAineKoodi> mapping) {
-    return mapping.stream()
-      .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYtlAine(), ytlSubject))
-      .collect(Collectors.toList());
-  }
-  
   private boolean isÄidinkieli(MatriculationExamAttendance attendance) {
     MatriculationExamSubject subject = attendance.getSubject();
     return 
@@ -374,19 +357,6 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         subject == MatriculationExamSubject.S2;
   }
 
-  private List<YTLAineKoodi> readMapping() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    
-    try {
-      InputStream json = getClass().getClassLoader().getResourceAsStream("fi/otavanopisto/pyramus/ytl/ytl_ainekoodit.json");
-      return objectMapper.readValue(json, new TypeReference<List<YTLAineKoodi>>(){});
-    } catch (IOException e) {
-      logger.log(Level.SEVERE, "Could not read YTL Mapping file", e);
-    }
-    
-    return new ArrayList<>();
-  }
-  
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }

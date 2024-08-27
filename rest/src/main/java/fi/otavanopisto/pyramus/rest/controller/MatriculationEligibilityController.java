@@ -3,8 +3,10 @@ package fi.otavanopisto.pyramus.rest.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,32 +15,52 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
+import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
+import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
+import fi.otavanopisto.pyramus.dao.projects.StudentProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
+import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
+import fi.otavanopisto.pyramus.domainmodel.projects.Project;
+import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
+import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
+import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.SettingUtils;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityCurriculumMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilitySubjectMapping;
@@ -93,6 +115,25 @@ public class MatriculationEligibilityController {
 
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
+
+  @Inject
+  private ProjectAssessmentDAO projectAssessmentDAO;
+
+  @Inject
+  private StudentProjectDAO studentProjectDAO;
+  
+  @Inject
+  private StudentProjectModuleDAO studentProjectModuleDAO;
+  
+  @Inject
+  private StudentProjectSubjectCourseDAO studentProjectSubjectCourseDAO;
+  
+  @Inject
+  private MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO;
+  
+  @Inject
+  private MatriculationExamAttendanceDAO matriculationExamAttendanceDAO;
+
   
   /**
    * Post construct method. 
@@ -250,18 +291,18 @@ public class MatriculationEligibilityController {
      * sum of the length of the mandatory modules in the subject itself and the 
      * sum of the lengths of all the included subjects.
      */
-    Double subjectMandatoryCreditPointCount = (double) curriculumSubject.getMandatoryModuleLengthSum();
+    Double subjectMandatoryCreditPointCount = (double) curriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum);
     
-    if (CollectionUtils.isNotEmpty(curriculumSubject.getIncludedSubjects())) {
-      for (String includedSubjectCode : curriculumSubject.getIncludedSubjects()) {
-        TORCurriculumSubject includedCurriculumSubject = torCurriculum.getSubjectByCode(includedSubjectCode);
-        if (includedCurriculumSubject != null) {
-          subjectMandatoryCreditPointCount += includedCurriculumSubject.getMandatoryModuleLengthSum();
-        } else {
-          logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
-        }
-      }
-    }
+//    if (CollectionUtils.isNotEmpty(curriculumSubject.getIncludedSubjects())) {
+//      for (String includedSubjectCode : curriculumSubject.getIncludedSubjects()) {
+//        TORCurriculumSubject includedCurriculumSubject = torCurriculum.getSubjectByCode(includedSubjectCode);
+//        if (includedCurriculumSubject != null) {
+//          subjectMandatoryCreditPointCount += includedCurriculumSubject.getMandatoryModuleLengthSum();
+//        } else {
+//          logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
+//        }
+//      }
+//    }
     
     /* 
      * Constructing the whole TOR primarily for just one subject is a bit of a 
@@ -273,22 +314,22 @@ public class MatriculationEligibilityController {
     TORSubject torSubject = studentTOR.findSubject(subjectCode);
 
     if (torSubject != null) {
-      Double mandatoryCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompleted();
+      Double mandatoryCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum);
   
-      // There's a single case of included subjects atm MAA/MAB include MAY
-      if (CollectionUtils.isNotEmpty(curriculumSubject.getIncludedSubjects())) {
-        for (String includedSubjectCode : curriculumSubject.getIncludedSubjects()) {
-          /*
-           * If StudentTOR has the included subject, add the completed mandatory credit points to the tally.
-           * If it doesn't, then the student probably just has no completed credits of the subject.
-           */
-          TORSubject includedSubject = studentTOR.findSubject(includedSubjectCode);
-          if (includedSubject != null) {
-            mandatoryCreditPointsCompleted += includedSubject.getMandatoryCreditPointsCompleted();
-          }
-        }
-      }
-      
+//      // There's a single case of included subjects atm MAA/MAB include MAY
+//      if (CollectionUtils.isNotEmpty(curriculumSubject.getIncludedSubjects())) {
+//        for (String includedSubjectCode : curriculumSubject.getIncludedSubjects()) {
+//          /*
+//           * If StudentTOR has the included subject, add the completed mandatory credit points to the tally.
+//           * If it doesn't, then the student probably just has no completed credits of the subject.
+//           */
+//          TORSubject includedSubject = studentTOR.findSubject(includedSubjectCode);
+//          if (includedSubject != null) {
+//            mandatoryCreditPointsCompleted += includedSubject.getMandatoryCreditPointsCompleted();
+//          }
+//        }
+//      }
+//      
       return new StudentMatriculationEligibilityResultOPS2021(
           subjectMandatoryCreditPointCount,
           mandatoryCreditPointsCompleted,
@@ -416,6 +457,128 @@ public class MatriculationEligibilityController {
     
     return examsByStudent;
   }
+  
+//  /**
+//   * Sets the state for enrollment and creates relevant change log entry.
+//   * 
+//   * If the enrollment is being set to CONFIRMED, also sets up the student projects.
+//   * 
+//   * MAKE SURE MatriculationExamAttendances are persisted prior as they may need to 
+//   * be read if the state is CONFIRMED.
+//   * 
+//   * @param enrollment
+//   * @param state
+//   * @param modifier
+//   * @return
+//   */
+//  public MatriculationExamEnrollment setEnrollmentState(MatriculationExamEnrollment enrollment, MatriculationExamEnrollmentState state, User modifier) {
+//    // If state is being set to CONFIRMED, set up the student projects
+//    if (state == MatriculationExamEnrollmentState.CONFIRMED) {
+//      List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDAO.listByEnrollment(enrollment);
+//      for (MatriculationExamAttendance attendance : attendances) {
+//        
+//        // STUDENT CANNOT CREATE THESE
+//        
+//        // createOrUpdateStudentProject(attendance, enrollment.getStudent(), attendance.getSubject(), attendance.isMandatory(), modifier);
+//      }
+//    }
+//    
+//    // Update state
+//    enrollment = matriculationExamEnrollmentDAO.updateState(enrollment, state);
+//
+//    // Make a log entry for state change with new state
+//    matriculationExamEnrollmentChangeLogDAO.create(enrollment, modifier, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, state, null);
+//    
+//    return enrollment;
+//  }
+//
+//  /**
+//   * Creates or updates StudentProject and ProjectAssessment for given 
+//   * MatriculationExamAttendance.
+//   * 
+//   * This should be used when the MatriculationExamEnrollment reaches
+//   * a state where it is finalized and ready to be sent forwards.
+//   * 
+//   * @param examAttendance
+//   * @param student
+//   * @param subject
+//   * @param mandatory
+//   * @param loggedUser
+//   */
+//  public void createOrUpdateStudentProject(MatriculationExamAttendance examAttendance, Student student, MatriculationExamSubject subject, boolean mandatory, StaffMember loggedUser) {
+//    MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(examAttendance.getEnrollment().getExam(), subject);
+//    if (subjectSettings == null || subjectSettings.getProject() == null) {
+//      // We cannot really do anything if the settings aren't in place
+//      return;
+//    }
+//    
+//    CourseOptionality projectOptionality = mandatory ? CourseOptionality.MANDATORY : CourseOptionality.OPTIONAL;
+//    
+//    Project project = subjectSettings.getProject();
+//    StudentProject studentProject;
+//    
+//    if (examAttendance != null && 
+//        examAttendance.getProjectAssessment() != null && 
+//        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getArchived()) &&
+//        examAttendance.getProjectAssessment().getStudentProject() != null &&
+//        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getStudentProject().getArchived())) {
+//      // Use the studentproject from the projectassessment if it exists
+//      studentProject = examAttendance.getProjectAssessment().getStudentProject();
+//    } else {
+//      // Resolve studentProject from the project in the settings
+//      List<StudentProject> studentProjects = studentProjectDAO.listBy(student, project, TSB.IGNORE);
+//
+//      // Find first non-archived project
+//      studentProject = studentProjects.stream()
+//          .filter(studentProject1 -> BooleanUtils.isFalse(studentProject1.getArchived()))
+//          .findFirst()
+//          .orElse(null);
+//      
+//      if (studentProject == null) {
+//        // No unarchived student project was found so try to use any other
+//        studentProject = studentProjects.isEmpty() ? null : studentProjects.get(0);
+//        
+//        if (studentProject != null && BooleanUtils.isTrue(studentProject.getArchived())) {
+//          studentProjectDAO.unarchive(studentProject);
+//        }
+//      }
+//    }
+//    
+//    if (studentProject == null) {
+//      // No matching student project was found so create a new one
+//      studentProject = studentProjectDAO.create(student, project.getName(), project.getDescription(), 
+//          project.getOptionalStudiesLength().getUnits(), project.getOptionalStudiesLength().getUnit(), projectOptionality, loggedUser, project);
+//      
+//      Set<Tag> tags = new HashSet<>();
+//      for (Tag tag : project.getTags()) {
+//        tags.add(tag);
+//      }
+//      studentProjectDAO.updateTags(studentProject, tags);
+//      
+//      List<ProjectModule> projectModules = project.getProjectModules();
+//      for (ProjectModule projectModule : projectModules) {
+//        studentProjectModuleDAO.create(studentProject, projectModule.getModule(), null,
+//            CourseOptionality.getOptionality(projectModule.getOptionality().getValue()));
+//      }
+//
+//      List<ProjectSubjectCourse> projectSubjectCourses = project.getProjectSubjectCourses();
+//      for (ProjectSubjectCourse projectSubjectCourse : projectSubjectCourses) {
+//        studentProjectSubjectCourseDAO.create(studentProject, projectSubjectCourse.getSubject(), projectSubjectCourse.getCourseNumber(), null,
+//            CourseOptionality.getOptionality(projectSubjectCourse.getOptionality().getValue()));
+//      }
+//    } else {
+//      studentProject = studentProjectDAO.updateOptionality(studentProject, projectOptionality);
+//    }
+//
+//    MatriculationExam matriculationExam = examAttendance.getEnrollment().getExam();
+//    
+//    if (matriculationExam != null && matriculationExam.getSignupGrade() != null && subjectSettings.getExamDate() != null && examAttendance.getProjectAssessment() == null) {
+//      // Add the exam date
+//      ProjectAssessment projectAssessment = projectAssessmentDAO.create(studentProject, loggedUser, matriculationExam.getSignupGrade(), subjectSettings.getExamDate(), "");
+//      // Link the project assessment to this exam atten dance
+//      matriculationExamAttendanceDAO.updateProjectAssessment(examAttendance, projectAssessment);
+//    }
+//  }
 
   public MatriculationExamStudentStatus translateState(MatriculationExamEnrollmentState state) {
     switch (state) {
@@ -423,6 +586,8 @@ public class MatriculationEligibilityController {
         return MatriculationExamStudentStatus.PENDING;
       case SUPPLEMENTATION_REQUEST:
         return MatriculationExamStudentStatus.SUPPLEMENTATION_REQUEST;
+      case SUPPLEMENTED:
+        return MatriculationExamStudentStatus.SUPPLEMENTED;
       case APPROVED:
         return MatriculationExamStudentStatus.APPROVED;
       case REJECTED:
@@ -440,6 +605,8 @@ public class MatriculationEligibilityController {
         return MatriculationExamEnrollmentState.PENDING;
       case SUPPLEMENTATION_REQUEST:
         return MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST;
+      case SUPPLEMENTED:
+        return MatriculationExamEnrollmentState.SUPPLEMENTED;
       case APPROVED:
         return MatriculationExamEnrollmentState.APPROVED;
       case REJECTED:

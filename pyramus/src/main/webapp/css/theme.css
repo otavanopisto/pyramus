@@ -2493,6 +2493,13 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   vertical-align: top;
 }
 
+.matriculationEnrollmentStateInline {
+  background-color: #E1EFF8;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;  
+  padding: 1px 5px;
+}
+
 .studentAddFileChooseTypeLink {
   background-color: #2E5EC5;
   border: 1px solid #FFFFFF;

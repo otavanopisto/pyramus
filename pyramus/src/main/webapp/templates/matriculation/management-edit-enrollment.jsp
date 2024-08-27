@@ -308,11 +308,6 @@
       .changeLogEntryRow {
         margin: 4px 0px;
       }
-      .newEnrollmentState {
-        background-color: #E1EFF8;
-        padding: 1px 5px;
-        border-radius: 8px;
-      }
     </style>
   </head> 
   <body onload="onLoad(event);">
@@ -327,6 +322,29 @@
       <div id="enrollment" class="tabContent">
         <form method="post">
           <div>
+            <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.handler"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.handler.help"/>
+                </jsp:include>
+                <select name="handler" id="handlerSelect">
+                  <option></option>
+                  <c:forEach var="handlerStaffMember" items="${handlers}">
+                    <option ${handlerStaffMember.id == enrollment.handler.id ? 'selected="selected"' : ''} value="${handlerStaffMember.id}">${fn:escapeXml(handlerStaffMember.lastName)}, ${fn:escapeXml(handlerStaffMember.firstName)}</option>
+                  </c:forEach>
+                </select> <button type="button" onclick="document.getElementById('handlerSelect').value = '${loggedUserId}';"><fmt:message key="matriculation.editEnrollment.setAsHandlerButtonLabel"/></button>
+              </div>
+              
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.handlerNotes"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.handlerNotes.help"/>
+                </jsp:include>
+                <textarea name="handlerNotes" cols="80" rows="6">${fn:escapeXml(enrollment.handlerNotes)}</textarea>
+              </div>
+            </div>
+
             <div class="genericViewInfoWapper">
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
@@ -349,13 +367,13 @@
                       <fmt:message key="generic.matriculation.changeLogTypes.${changeLogEntry.changeType}"/>
                       
                       <c:if test="${changeLogEntry.newState != null}">
-                        <span class="newEnrollmentState">
+                        <span class="matriculationEnrollmentStateInline">
                           <fmt:message key="generic.matriculation.enrollmentStates.${changeLogEntry.newState}"/>
                         </span>
                       </c:if>
                       
                       <c:if test="${changeLogEntry.message != null}">
-                        <span class="newEnrollmentState">
+                        <span class="matriculationEnrollmentStateInline">
                           ${fn:escapeXml(changeLogEntry.message)}
                         </span>
                       </c:if>
@@ -551,49 +569,25 @@
             <div class="genericViewInfoWapper">
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.changeLogMessage"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.changeLogMessage.help"/>
-                </jsp:include>
-                <textarea name="changeLogMessage" cols="80" rows="4"></textarea>
-              </div>
-              
-              <div class="genericFormSection">
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.state"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.state.help"/>
                 </jsp:include>            
                 <select class="required" name="state">
                   <option ${state=='PENDING' ? 'selected="selected"' : ''} ${!allowedStates.contains('PENDING') ? 'disabled="disabled"' : ''} value="PENDING"><fmt:message key="generic.matriculation.enrollmentStates.PENDING"/></option>
                   <option ${state=='SUPPLEMENTATION_REQUEST' ? 'selected="selected"' : ''} ${!allowedStates.contains('SUPPLEMENTATION_REQUEST') ? 'disabled="disabled"' : ''} value="SUPPLEMENTATION_REQUEST"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"/></option>
+                  <option ${state=='SUPPLEMENTED' ? 'selected="selected"' : ''} ${!allowedStates.contains('SUPPLEMENTED') ? 'disabled="disabled"' : ''} value="SUPPLEMENTED"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTED"/></option>
                   <option ${state=='APPROVED' ? 'selected="selected"' : ''} ${!allowedStates.contains('APPROVED') ? 'disabled="disabled"' : ''} value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
                   <option ${state=='REJECTED' ? 'selected="selected"' : ''} ${!allowedStates.contains('REJECTED') ? 'disabled="disabled"' : ''} value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
                   <option ${state=='CONFIRMED' ? 'selected="selected"' : ''} ${!allowedStates.contains('CONFIRMED') ? 'disabled="disabled"' : ''} value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/></option>
                 </select>
               </div>
-            </div>
 
-            <h3><fmt:message key="matriculation.editEnrollment.handlerInfoHeader"/></h3>
-              
-            <div class="genericViewInfoWapper">
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.handler"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.handler.help"/>
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.changeLogMessage"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.changeLogMessage.help"/>
                 </jsp:include>
-                <select name="handler" id="handlerSelect">
-                  <option></option>
-                  <c:forEach var="handlerStaffMember" items="${handlers}">
-                    <option ${handlerStaffMember.id == enrollment.handler.id ? 'selected="selected"' : ''} value="${handlerStaffMember.id}">${fn:escapeXml(handlerStaffMember.lastName)}, ${fn:escapeXml(handlerStaffMember.firstName)}</option>
-                  </c:forEach>
-                </select> <button type="button" onclick="document.getElementById('handlerSelect').value = '${loggedUserId}';"><fmt:message key="matriculation.editEnrollment.setAsHandlerButtonLabel"/></button>
-              </div>
-              
-              <div class="genericFormSection">
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.handlerNotes"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.handlerNotes.help"/>
-                </jsp:include>
-                <textarea name="handlerNotes" cols="80" rows="6">${fn:escapeXml(enrollment.handlerNotes)}</textarea>
+                <textarea name="changeLogMessage" cols="80" rows="4"></textarea>
               </div>
             </div>
 

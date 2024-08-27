@@ -407,7 +407,7 @@ public class MatriculationRESTService extends AbstractRESTService {
 
     EnumSet<MatriculationExamEnrollmentState> allowedStates = existingEnrollment == null 
         ? EnumSet.of(MatriculationExamEnrollmentState.PENDING)
-        : EnumSet.of(MatriculationExamEnrollmentState.PENDING, MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST);
+        : EnumSet.of(MatriculationExamEnrollmentState.SUPPLEMENTED);
     
     if (!allowedStates.contains(enrollmentState)) {
       return Response.status(Status.BAD_REQUEST)

@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
+import fi.otavanopisto.pyramus.binary.ytl.YTLController;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
@@ -37,6 +38,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
@@ -70,6 +72,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
@@ -92,11 +95,18 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.TORCourse;
+import fi.otavanopisto.pyramus.tor.TORSubject;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumModule;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
+import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -954,6 +964,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("studentMatriculationEnrollments", studentMatriculationEnrollments);
     pageRequestContext.getRequest().setAttribute("studentHasParents", studentHasParents);
     pageRequestContext.getRequest().setAttribute("studentValidations", studentValidations);
+    pageRequestContext.getRequest().setAttribute("matriculationExamEnrollments", constructMatriculationTabContent(person));
     
     pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 
@@ -971,6 +982,147 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     return Messages.getInstance().getText(locale, "students.viewStudent.breadcrumb");
   }
 
+  private List<MatriculationEnrollmentBean> constructMatriculationTabContent(Person p) {
+    MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
+    List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listByPerson(p);
+    List<MatriculationEnrollmentBean> enrollmentBeans = new ArrayList<>(enrollments.size());
+
+    // xd
+    List<YTLAineKoodi> mapping = YTLController.readMapping();
+    
+    for (MatriculationExamEnrollment enrollment : enrollments) {
+      List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDAO.listByEnrollmentAndStatus(enrollment, MatriculationExamAttendanceStatus.ENROLLED);
+      List<MatriculationAttendanceBean> attendanceBeans = new ArrayList<>();
+
+      try {
+        TORCurriculum torCurriculum = StudentTORController.getCurriculum(enrollment.getStudent());
+        StudentTOR studentTOR = StudentTORController.constructStudentTOR(enrollment.getStudent(), torCurriculum);
+        
+        for (MatriculationExamAttendance attendance : attendances) {
+          List<MatriculationAttendanceModuleBean> modules = new ArrayList<>();
+          
+          if (attendance.getSubject() != null) {
+            String subjectCode = YTLController.examSubjectToSubjectCode(attendance.getSubject(), mapping);
+            System.out.println(subjectCode);
+            
+            if (subjectCode != null) {
+              TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(subjectCode);
+              TORSubject torSubject = studentTOR.findSubject(subjectCode);
+
+              Double sumMandatoryModuleLength = (double) torCurriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum);
+              Double sumCompletedMandatoryModuleLength = torSubject != null ? sumCompletedMandatoryModuleLength = torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum) : 0d;
+              
+              for (TORCurriculumModule torCurriculumModule : torCurriculumSubject.getModules()) {
+                String moduleName = torCurriculumSubject.getCode() + torCurriculumModule.getCourseNumber() + " " + torCurriculumModule.getName();
+
+                Date gradeDate = null;
+                String gradeName = null;
+                
+                if (torSubject != null) {
+                  TORCourse torCourse = torSubject.findCourse(torCurriculumModule.getCourseNumber());
+                  if (torCourse != null && torCourse.getLatestCredit() != null) {
+                    gradeDate = torCourse.getLatestCredit().getDate();
+                    gradeName = torCourse.getLatestCredit().getGradeName();
+                  }
+                }
+                
+                modules.add(new MatriculationAttendanceModuleBean(moduleName, gradeName, gradeDate));
+              }
+              
+              String subjectName = torCurriculumSubject.getName();
+              attendanceBeans.add(new MatriculationAttendanceBean(attendance, subjectName, sumMandatoryModuleLength, sumCompletedMandatoryModuleLength, modules));
+            }
+          }
+        }
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+      enrollmentBeans.add(new MatriculationEnrollmentBean(enrollment, attendanceBeans));
+    }
+    
+    return enrollmentBeans;
+  }
+  
+  public class MatriculationEnrollmentBean {
+    private final MatriculationExamEnrollment enrollment;
+    private final List<MatriculationAttendanceBean> attendances;
+    
+    public MatriculationEnrollmentBean(MatriculationExamEnrollment enrollment, List<MatriculationAttendanceBean> attendances) {
+      this.enrollment = enrollment;
+      this.attendances = attendances;
+    }
+    
+    public MatriculationExamEnrollment getEnrollment() {
+      return enrollment;
+    }
+
+    public List<MatriculationAttendanceBean> getAttendances() {
+      return attendances;
+    }
+  }
+  
+  public class MatriculationAttendanceBean {
+    private final MatriculationExamAttendance attendance;
+    private final List<MatriculationAttendanceModuleBean> modules;
+    private final Double sumMandatoryModuleLength;
+    private final Double sumCompletedMandatoryModuleLength;
+    private final String subjectName;
+
+    public MatriculationAttendanceBean(MatriculationExamAttendance attendance, String subjectName, Double sumMandatoryModuleLength, Double sumCompletedMandatoryModuleLength, List<MatriculationAttendanceModuleBean> modules) {
+      this.attendance = attendance;
+      this.subjectName = subjectName;
+      this.sumMandatoryModuleLength = sumMandatoryModuleLength;
+      this.sumCompletedMandatoryModuleLength = sumCompletedMandatoryModuleLength;
+      this.modules = modules;
+    }
+    
+    public MatriculationExamAttendance getAttendance() {
+      return attendance;
+    }
+
+    public Double getSumMandatoryModuleLength() {
+      return sumMandatoryModuleLength;
+    }
+
+    public Double getSumCompletedMandatoryModuleLength() {
+      return sumCompletedMandatoryModuleLength;
+    }
+
+    public List<MatriculationAttendanceModuleBean> getModules() {
+      return modules;
+    }
+
+    public String getSubjectName() {
+      return subjectName;
+    }
+  }
+  
+  public class MatriculationAttendanceModuleBean {
+    private final String name;
+    private final String gradeName;
+    private final Date gradeDate;
+
+    public MatriculationAttendanceModuleBean(String name, String gradeName, Date gradeDate) {
+      this.name = name;
+      this.gradeName = gradeName;
+      this.gradeDate = gradeDate;
+    }
+    
+    public String getName() {
+      return name;
+    }
+
+    public String getGradeName() {
+      return gradeName;
+    }
+
+    public Date getGradeDate() {
+      return gradeDate;
+    }
+  }
   
   public class StudentProjectBean {
     private final StudentProject studentProject;

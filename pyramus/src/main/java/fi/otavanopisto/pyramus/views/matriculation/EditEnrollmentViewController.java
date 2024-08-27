@@ -167,10 +167,11 @@ public class EditEnrollmentViewController extends PyramusViewController {
         examAttendance = attendanceDAO.update(examAttendance, enrollment, subject, mandatory, repeat,
             examAttendance.getYear(), examAttendance.getTerm(), examAttendance.getStatus(), funding, examAttendance.getGrade());
       }
-      
-      if (enrollmentState == MatriculationExamEnrollmentState.APPROVED) {
-        createOrUpdateStudentProject(examAttendance, enrollment.getStudent(), subject, mandatory, loggedUser);
-      }
+
+      // TODO Not needed anymore?
+//      if (enrollmentState == MatriculationExamEnrollmentState.CONFIRMED) {
+//        createOrUpdateStudentProject(examAttendance, enrollment.getStudent(), subject, mandatory, loggedUser);
+//      }
     }
     
     Integer finishedAttendances = pageRequestContext.getInteger("finishedAttendances.rowCount");
@@ -244,6 +245,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
       Boolean.FALSE.equals(mandatory) ? "OPTIONAL" : null;
   }
   
+  // TODO Not needed anymore?
+  @Deprecated
   private void createOrUpdateStudentProject(MatriculationExamAttendance examAttendance, Student student, MatriculationExamSubject subject, boolean mandatory, StaffMember loggedUser) {
     ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();

@@ -2188,6 +2188,10 @@
           </a>
         </c:forEach>
         
+        <c:if test="${!empty matriculationExamEnrollments}">
+          <a class="tabLabel" href="#matriculation"><fmt:message key="students.viewStudent.matriculationTab" /></a>
+        </c:if>
+
         <c:if test="${!empty staffMember}">
           <a class="tabLabel tabLabelUserId" href="#staffMember"><fmt:message key="students.viewStudent.staffMemberTab" /></a>
         </c:if>
@@ -3418,6 +3422,65 @@
           </div>
         </div>
       </c:forEach>
+
+      <c:if test="${!empty matriculationExamEnrollments}">
+        <div id="matriculation" class="tabContent tabContentNestedTabs">
+          <c:forEach var="matriculation" items="${matriculationExamEnrollments}" varStatus="enrollmentLoop">
+            <c:choose>
+              <c:when test="${matriculation.enrollment.exam.examTerm == 'SPRING'}">
+                <c:set var="matriculationExamEnrollmentTerm">
+                  <fmt:message key="terms.seasons.spring"/>
+                </c:set>
+              </c:when>
+              <c:when test="${matriculation.enrollment.exam.examTerm == 'AUTUMN'}">
+                <c:set var="matriculationExamEnrollmentTerm">
+                  <fmt:message key="terms.seasons.autumn"/>
+                </c:set>
+              </c:when>
+              <c:otherwise>
+                <c:set var="matriculationExamEnrollmentTerm">???</c:set>
+              </c:otherwise>
+            </c:choose>
+            
+            <div style="margin: 8px 0px;">
+              <b style="font-size: 1.2em">${matriculation.enrollment.exam.examYear} ${matriculationExamEnrollmentTerm}</b>
+              <span style="margin: 0px 4px;">${matriculation.enrollment.student.studyProgramme.name}</span>
+              <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${matriculation.enrollment.state}"/></span>
+            </div>
+
+            <c:forEach var="attendanceBean" items="${matriculation.attendances}">
+              <div class="viewStudentProject">
+                <div class="viewStudentProjectHeader">
+                  <div>
+                    <b>${attendanceBean.subjectName}</b>
+                  </div>
+                  <div>
+                    Pakolliset: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} opintopistettä
+                  </div>
+                </div>
+                
+                <div class="viewStudentStudentProjectTableContainer" style="display: none;">
+                  <table border="0" cellpadding="4px" class="ixTableRowHoverEffect" style="width: 100%">
+                    <tr>
+                      <th align="left" style="width: 70%">Modulin nimi</th>
+                      <th align="center" style="width: 10%">Arvosana</th>
+                      <th align="center" style="width: 20%">Arviointipvm</th>
+                    </tr>
+                    
+                    <c:forEach var="subjectModule" items="${attendanceBean.modules}">
+                      <tr class="ixTableRow">
+                        <td align="left">${subjectModule.name}</td>
+                        <td align="center">${subjectModule.gradeName}</td>
+                        <td align="center">${subjectModule.gradeDate}</td>
+                      </tr>
+                    </c:forEach>
+                  </table>
+                </div>
+              </div>
+            </c:forEach>
+          </c:forEach>
+        </div>
+      </c:if>
       
       <c:if test="${!empty staffMember}">
         <div id="staffMember" class="tabContent tabContentNestedTabs">

@@ -14,8 +14,10 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO.MatriculationExamEnrollmentSorting;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
@@ -25,6 +27,7 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
   public void process(JSONRequestContext requestContext) {
     MatriculationExamDAO examDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamEnrollmentDAO dao = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     Integer resultsPerPage = NumberUtils.createInteger(requestContext.getRequest().getParameter("maxResults"));
     if (resultsPerPage == null) {
@@ -40,13 +43,15 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
     MatriculationExam exam = examId != null ? examDAO.findById(examId) : null;
     
     String nameQuery = requestContext.getString("name");
+    Long handlerId = requestContext.getLong("handler");
     Boolean below20courses = requestContext.getBoolean("below20courses");
     String stateStr = requestContext.getString("state");
     String sortingStr = requestContext.getString("sort");
     MatriculationExamEnrollmentState state = StringUtils.isNotBlank(stateStr) ? MatriculationExamEnrollmentState.valueOf(stateStr) : null;
     MatriculationExamEnrollmentSorting sorting = StringUtils.isNotBlank(sortingStr) ? MatriculationExamEnrollmentSorting.valueOf(sortingStr) : null;
+    StaffMember handler = handlerId != null ? staffMemberDAO.findById(handlerId) : null;
 
-    List<MatriculationExamEnrollment> enrollments = dao.listBy(nameQuery, exam, state, BooleanUtils.isTrue(below20courses), page * resultsPerPage, resultsPerPage, sorting);
+    List<MatriculationExamEnrollment> enrollments = dao.listBy(nameQuery, handler, exam, state, BooleanUtils.isTrue(below20courses), page * resultsPerPage, resultsPerPage, sorting);
     
     List<Map<String, Object>> results = new ArrayList<>();
     for (MatriculationExamEnrollment enrollment : enrollments) {
