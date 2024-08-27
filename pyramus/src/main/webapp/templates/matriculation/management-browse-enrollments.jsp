@@ -44,6 +44,7 @@
                 results[i].state,
                 results[i].numMandatoryCourses,
                 results[i].guider,
+                results[i].handler,
                 '']);
             }
             resultsTable.reattachToDom();
@@ -100,6 +101,7 @@
             options: [
               { text: getLocale().getText("generic.matriculation.enrollmentStates.PENDING"), value: "PENDING" },
               { text: getLocale().getText("generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"), value: "SUPPLEMENTATION_REQUEST" },
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.SUPPLEMENTED"), value: "SUPPLEMENTED" },
               { text: getLocale().getText("generic.matriculation.enrollmentStates.APPROVED"), value: "APPROVED" },
               { text: getLocale().getText("generic.matriculation.enrollmentStates.REJECTED"), value: "REJECTED" },
               { text: getLocale().getText("generic.matriculation.enrollmentStates.CONFIRMED"), value: "CONFIRMED" }
@@ -118,6 +120,13 @@
             dataType : 'text',
             editable: false,
             paramName: 'guider'
+          }, {
+            header : 'Käsittelijä',
+            width: 200,
+            left: 8 + 300 + 8 + 250 + 8 + 150 + 8 + 130 + 8 + 200,
+            dataType : 'text',
+            editable: false,
+            paramName: 'handler'
           }, {
             width : 22,
             right : 8,

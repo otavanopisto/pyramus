@@ -63,6 +63,7 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
       result.put("state", enrollment.getState());
       result.put("numMandatoryCourses", enrollment.getNumMandatoryCourses());
       result.put("guider", enrollment.getGuider());
+      result.put("handler", enrollment.getHandler() != null ? enrollment.getHandler().getFullName() : "");
       
       results.add(result);
     }
