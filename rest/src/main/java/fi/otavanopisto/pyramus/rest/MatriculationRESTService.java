@@ -264,14 +264,19 @@ public class MatriculationRESTService extends AbstractRESTService {
     if (newState != MatriculationExamEnrollmentState.CONFIRMED) {
       return Response.status(Status.FORBIDDEN).entity("Matriculation exam enrollment can only be confirmed via this operation.").build();
     }
+    else {
+      // TODO ????
+//      // Update enrollment state
+//      examEnrollment = matriculationEligibilityController.setEnrollmentState(examEnrollment, newState, loggedUser);
+     
+      // Update enrollment state
+      examEnrollment = matriculationExamEnrollmentDao.updateState(examEnrollment, newState);
+      
+      // Make a log entry for state change with new state
+      matriculationExamEnrollmentChangeLogDAO.create(examEnrollment, loggedUser, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, newState, null);
 
-    // Update enrollment state
-    examEnrollment = matriculationExamEnrollmentDao.updateState(examEnrollment, newState);
-    
-    // Make a log entry for state change with new state
-    matriculationExamEnrollmentChangeLogDAO.create(examEnrollment, loggedUser, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, newState, null);
-    
-    return Response.ok(restModel(examEnrollment)).build();
+      return Response.ok(restModel(examEnrollment)).build();
+    }
   }
 
 //  @Path("/exams")
