@@ -1004,12 +1004,12 @@ public class ViewStudentViewController extends PyramusViewController2 implements
           
           if (attendance.getSubject() != null) {
             String subjectCode = YTLController.examSubjectToSubjectCode(attendance.getSubject(), mapping);
-            System.out.println(subjectCode);
             
             if (subjectCode != null) {
               TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(subjectCode);
               TORSubject torSubject = studentTOR.findSubject(subjectCode);
 
+              // These count the included subjects also
               Double sumMandatoryModuleLength = (double) torCurriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum);
               Double sumCompletedMandatoryModuleLength = torSubject != null ? sumCompletedMandatoryModuleLength = torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum) : 0d;
               
@@ -1027,8 +1027,41 @@ public class ViewStudentViewController extends PyramusViewController2 implements
                   }
                 }
                 
-                modules.add(new MatriculationAttendanceModuleBean(moduleName, gradeName, gradeDate));
+                modules.add(new MatriculationAttendanceModuleBean(subjectCode, torCurriculumModule.getCourseNumber(), moduleName, gradeName, gradeDate));
               }
+
+              /*
+               * If the subject has included subjects, we still have to collect the modules separately here.
+               * Some summary functions already count them in, but due to lack of connections, we can't ask
+               * the subject to list all included modules.
+               */
+              if (CollectionUtils.isNotEmpty(torCurriculumSubject.getIncludedSubjects())) {
+                for (String includedSubject : torCurriculumSubject.getIncludedSubjects()) {
+                  TORCurriculumSubject inclTorCurriculumSubject = torCurriculum.getSubjectByCode(includedSubject);
+                  TORSubject inclTorSubject = studentTOR.findSubject(includedSubject);
+
+                  for (TORCurriculumModule torCurriculumModule : inclTorCurriculumSubject.getModules()) {
+                    String moduleName = inclTorCurriculumSubject.getCode() + torCurriculumModule.getCourseNumber() + " " + torCurriculumModule.getName();
+
+                    Date gradeDate = null;
+                    String gradeName = null;
+                    
+                    if (inclTorSubject != null) {
+                      TORCourse torCourse = inclTorSubject.findCourse(torCurriculumModule.getCourseNumber());
+                      if (torCourse != null && torCourse.getLatestCredit() != null) {
+                        gradeDate = torCourse.getLatestCredit().getDate();
+                        gradeName = torCourse.getLatestCredit().getGradeName();
+                      }
+                    }
+                    
+                    modules.add(new MatriculationAttendanceModuleBean(includedSubject, torCurriculumModule.getCourseNumber(), moduleName, gradeName, gradeDate));
+                  }
+                }
+              }
+              
+              // Sort modules by course number and subject code
+              modules.sort(Comparator.comparing(MatriculationAttendanceModuleBean::getCourseNumber)
+                  .thenComparing(Comparator.nullsFirst(Comparator.comparing(MatriculationAttendanceModuleBean::getSubjectCode))));
               
               String subjectName = torCurriculumSubject.getName();
               attendanceBeans.add(new MatriculationAttendanceBean(attendance, subjectName, sumMandatoryModuleLength, sumCompletedMandatoryModuleLength, modules));
@@ -1045,7 +1078,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     
     return enrollmentBeans;
   }
-  
+
   public class MatriculationEnrollmentBean {
     private final MatriculationExamEnrollment enrollment;
     private final List<MatriculationAttendanceBean> attendances;
@@ -1104,8 +1137,12 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     private final String name;
     private final String gradeName;
     private final Date gradeDate;
+    private final String subjectCode;
+    private final int courseNumber;
 
-    public MatriculationAttendanceModuleBean(String name, String gradeName, Date gradeDate) {
+    public MatriculationAttendanceModuleBean(String subjectCode, int courseNumber, String name, String gradeName, Date gradeDate) {
+      this.subjectCode = subjectCode;
+      this.courseNumber = courseNumber;
       this.name = name;
       this.gradeName = gradeName;
       this.gradeDate = gradeDate;
@@ -1121,6 +1158,14 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
     public Date getGradeDate() {
       return gradeDate;
+    }
+
+    public String getSubjectCode() {
+      return subjectCode;
+    }
+
+    public int getCourseNumber() {
+      return courseNumber;
     }
   }
   
