@@ -101,6 +101,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
@@ -919,6 +920,10 @@ public class ObjectFactory {
               }
             }
 
+            LocalDate studyStartDate = DateUtils.toLocalDate(student.getStudyStartDate());
+            LocalDate studyTimeEnd = DateUtils.toLocalDate(student.getStudyTimeEnd());
+            LocalDate studyEndDate = DateUtils.toLocalDate(student.getStudyEndDate());
+            
             return new fi.otavanopisto.pyramus.rest.model.StudentParentChild(
                 student.getId(),
                 student.getPersonId(),
@@ -928,7 +933,10 @@ public class ObjectFactory {
                 studyProgrammeName, 
                 defaultEmail, 
                 defaultPhoneNumber, 
-                defaultAddress
+                defaultAddress,
+                studyStartDate,
+                studyTimeEnd,
+                studyEndDate
             );
           }
         },
