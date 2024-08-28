@@ -3446,6 +3446,11 @@
               <b style="font-size: 1.2em">${matriculation.enrollment.exam.examYear} ${matriculationExamEnrollmentTerm}</b>
               <span style="margin: 0px 4px;">${matriculation.enrollment.student.studyProgramme.name}</span>
               <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${matriculation.enrollment.state}"/></span>
+              <span>
+                <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?enrollment=${matriculation.enrollment.id}">
+                  <img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png" class="iconButton" />
+                </a>
+              </span>
             </div>
 
             <c:forEach var="attendanceBean" items="${matriculation.attendances}">
