@@ -196,7 +196,9 @@ public class MatriculationRESTService extends AbstractRESTService {
 
     User loggedUser = sessionController.getUser();
     if (!loggedUser.getId().equals(studentId)) {
-      return Response.status(Status.NOT_FOUND).build();
+      if (!((loggedUser instanceof StudentParent) && (((StudentParent) loggedUser).isActiveParentOf(student)))) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
     }
     
     return Response.ok(restModel(examEnrollment)).build();
