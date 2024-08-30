@@ -387,23 +387,15 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.name"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.name.help"/>
                 </jsp:include>            
-                <input type="text" name="name" value="${fn:escapeXml(name)}" size="50"/>
+                ${fn:escapeXml(name)}
               </div>
-  
-<!--               <div class="genericFormSection">   -->
-<%--                 <jsp:include page="/templates/generic/fragments/formtitle.jsp"> --%>
-<%--                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.ssn"/> --%>
-<%--                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.ssn.help"/> --%>
-<%--                 </jsp:include>             --%>
-<%--                 <input type="text" name="ssn" value="${fn:escapeXml(ssn)}" size="15"/> --%>
-<!--               </div> -->
   
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.email"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.email.help"/>
                 </jsp:include>            
-                <input type="text" name="email" value="${fn:escapeXml(email)}" size="40"/>
+                ${fn:escapeXml(email)}
               </div>
   
               <div class="genericFormSection">  
@@ -411,31 +403,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.phone"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.phone.help"/>
                 </jsp:include>            
-                <input type="text" name="phone" value="${fn:escapeXml(phone)}" size="20"/>
-              </div>
-  
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.address"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.address.help"/>
-                </jsp:include>            
-                <input type="text" name="address" value="${fn:escapeXml(address)}" size="40"/>
-              </div>
-  
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalCode"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalCode.help"/>
-                </jsp:include>            
-                <input type="text" name="postalCode" value="${fn:escapeXml(postalCode)}" size="10"/>
-              </div>
-  
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalOffice"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalOffice.help"/>
-                </jsp:include>            
-                <input type="text" name="postalOffice" value="${fn:escapeXml(postalOffice)}" size="40"/>
+                ${fn:escapeXml(phone)}
               </div>
             </div>
 

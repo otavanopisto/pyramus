@@ -42,6 +42,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.security.ContextReference;
 
@@ -81,6 +82,15 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
     for (Email email : getContactInfo().getEmails()) {
       if (email.getDefaultAddress())
         return email;
+    }
+    return null;
+  }
+  
+  @Transient  
+  public PhoneNumber getPrimaryPhoneNumber() {
+    for (PhoneNumber phoneNumber : getContactInfo().getPhoneNumbers()) {
+      if (phoneNumber.getDefaultNumber())
+        return phoneNumber;
     }
     return null;
   }

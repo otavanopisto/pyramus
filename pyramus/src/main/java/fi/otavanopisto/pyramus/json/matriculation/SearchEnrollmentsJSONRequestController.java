@@ -15,6 +15,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO.MatriculationExamEnrollmentSorting;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -57,9 +58,11 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
     for (MatriculationExamEnrollment enrollment : enrollments) {
       Map<String, Object> result = new HashMap<>();
       
+      Email primaryEmail = enrollment.getStudent().getPrimaryEmail();
+      
       result.put("id", enrollment.getId());
-      result.put("name", enrollment.getName());
-      result.put("email", enrollment.getEmail());
+      result.put("name", enrollment.getStudent().getFullName());
+      result.put("email", primaryEmail != null ? primaryEmail.getAddress() : null);
       result.put("state", enrollment.getState());
       result.put("numMandatoryCourses", enrollment.getNumMandatoryCourses());
       result.put("guider", enrollment.getGuider());

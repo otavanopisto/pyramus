@@ -474,13 +474,6 @@ public class MatriculationRESTService extends AbstractRESTService {
         
         enrollmentEntity = matriculationExamEnrollmentDao.create(
           exam,
-          enrollment.getName(),
-          "", //enrollment.getSsn(),
-          enrollment.getEmail(),
-          enrollment.getPhone(),
-          enrollment.getAddress(),
-          enrollment.getPostalCode(),
-          enrollment.getCity(),
           enrollment.getNationalStudentNumber(),
           enrollment.getGuider(),
           SchoolType.valueOf(enrollment.getEnrollAs()),
@@ -527,13 +520,6 @@ public class MatriculationRESTService extends AbstractRESTService {
         
         enrollmentEntity = matriculationExamEnrollmentDao.update(
           existingEnrollment,
-          enrollment.getName(),
-          "", //enrollment.getSsn(),
-          enrollment.getEmail(),
-          enrollment.getPhone(),
-          enrollment.getAddress(),
-          enrollment.getPostalCode(),
-          enrollment.getCity(),
           enrollment.getGuider(),
           SchoolType.valueOf(enrollment.getEnrollAs()),
           DegreeType.valueOf(enrollment.getDegreeType()),
@@ -705,13 +691,6 @@ public class MatriculationRESTService extends AbstractRESTService {
     }
     result.setId(examEnrollment.getId());
     result.setExamId(examEnrollment.getExam().getId());
-    result.setName(examEnrollment.getName());
-    // result.setSsn(examEnrollment.getSsn());
-    result.setEmail(examEnrollment.getEmail());
-    result.setPhone(examEnrollment.getPhone());
-    result.setAddress(examEnrollment.getAddress());
-    result.setPostalCode(examEnrollment.getPostalCode());
-    result.setCity(examEnrollment.getCity());
     result.setNationalStudentNumber(examEnrollment.getNationalStudentNumber());
     result.setGuider(examEnrollment.getGuider());
     result.setEnrollAs(examEnrollment.getEnrollAs().name());

@@ -105,13 +105,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
 
     enrollment = enrollmentDAO.update(
       enrollment,
-      ObjectUtils.firstNonNull(pageRequestContext.getString("name"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("ssn"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("email"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("phone"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("address"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("postalCode"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("postalOffice"), ""),
       ObjectUtils.firstNonNull(pageRequestContext.getString("guidanceCounselor"), ""),
       SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
       DegreeType.valueOf(pageRequestContext.getString("degreeType")),
@@ -371,16 +364,16 @@ public class EditEnrollmentViewController extends PyramusViewController {
     Set<String> allowedStatesStrSet = allowedStates.stream().map(MatriculationExamEnrollmentState::name).collect(Collectors.toSet());
     
     List<MatriculationExamEnrollmentChangeLog> changeLog = enrollmentChangeLogDAO.listByEnrollment(enrollment);
+
+    String fullName = enrollment.getStudent().getFullName();
+    String email = enrollment.getStudent().getPrimaryEmail() != null ? enrollment.getStudent().getPrimaryEmail().getAddress() : null;
+    String phoneNumber = enrollment.getStudent().getPrimaryPhoneNumber() != null ? enrollment.getStudent().getPrimaryPhoneNumber().getNumber() : null;
     
     pageRequestContext.getRequest().setAttribute("enrollment", enrollment);
     pageRequestContext.getRequest().setAttribute("changeLog", changeLog);
-    pageRequestContext.getRequest().setAttribute("name", enrollment.getName());
-//    pageRequestContext.getRequest().setAttribute("ssn", enrollment.getSsn());
-    pageRequestContext.getRequest().setAttribute("email", enrollment.getEmail());
-    pageRequestContext.getRequest().setAttribute("phone", enrollment.getPhone());
-    pageRequestContext.getRequest().setAttribute("address", enrollment.getAddress());
-    pageRequestContext.getRequest().setAttribute("postalCode", enrollment.getPostalCode());
-    pageRequestContext.getRequest().setAttribute("postalOffice", enrollment.getCity());
+    pageRequestContext.getRequest().setAttribute("name", fullName);
+    pageRequestContext.getRequest().setAttribute("email", email);
+    pageRequestContext.getRequest().setAttribute("phone", phoneNumber);
     pageRequestContext.getRequest().setAttribute("nationalStudentNumber", enrollment.getNationalStudentNumber());
     pageRequestContext.getRequest().setAttribute("guidanceCounselor", enrollment.getGuider());
     pageRequestContext.getRequest().setAttribute("enrollAs", enrollment.getEnrollAs().name());
