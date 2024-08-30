@@ -5,14 +5,17 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -100,6 +103,7 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
@@ -940,6 +944,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       studentDAO.auditView(personId, null, "View student");
     }
 
+    constructMatriculationTabContent(person, pageRequestContext);
+    
     setJsDataVariable(pageRequestContext, "studentAssessments", studentAssessmentsJSON.toString());
     setJsDataVariable(pageRequestContext, "linkedCourseAssessments", linkedCourseAssessments.toString());
     setJsDataVariable(pageRequestContext, "linkedTransferCredits", linkedTransferCredits.toString());
@@ -968,7 +974,6 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("studentMatriculationEnrollments", studentMatriculationEnrollments);
     pageRequestContext.getRequest().setAttribute("studentHasParents", studentHasParents);
     pageRequestContext.getRequest().setAttribute("studentValidations", studentValidations);
-    pageRequestContext.getRequest().setAttribute("matriculationExamEnrollments", constructMatriculationTabContent(person));
     
     pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 
@@ -986,7 +991,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     return Messages.getInstance().getText(locale, "students.viewStudent.breadcrumb");
   }
 
-  private List<MatriculationEnrollmentBean> constructMatriculationTabContent(Person person) {
+  private void constructMatriculationTabContent(Person person, PageRequestContext pageRequestContext) {
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     MatriculationGradeDAO matriculationGradeDAO = DAOFactory.getInstance().getMatriculationGradeDAO();
@@ -995,7 +1000,10 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
     // xd
     List<YTLAineKoodi> mapping = YTLController.readMapping();
-    
+
+    // Keep track of year+term combinations used
+    Set<String> usedTerms = new HashSet<>();
+
     for (MatriculationExamEnrollment enrollment : enrollments) {
       List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDAO.listByEnrollmentAndStatus(enrollment, MatriculationExamAttendanceStatus.ENROLLED);
       List<MatriculationAttendanceBean> attendanceBeans = new ArrayList<>();
@@ -1084,11 +1092,32 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      
+
+      if (enrollment.getExam() != null && enrollment.getExam().getExamTerm() != null && enrollment.getExam().getExamYear() != null) {
+        usedTerms.add(enrollment.getExam().getExamTerm().name() + enrollment.getExam().getExamYear());
+      }
+
       enrollmentBeans.add(new MatriculationEnrollmentBean(enrollment, attendanceBeans));
     }
-    
-    return enrollmentBeans;
+
+    Messages messages = Messages.getInstance();
+    Locale locale = pageRequestContext.getRequest().getLocale();
+    List<TermOption> termOptions = new ArrayList<>();
+    for (int yearind = Calendar.getInstance().get(Calendar.YEAR) + 4; yearind >= 2016; yearind--) {
+      String value;
+      boolean enabled;
+
+      value = MatriculationExamTerm.AUTUMN.name() + String.valueOf(yearind);
+      enabled = !usedTerms.contains(value);
+      termOptions.add(new TermOption(yearind, MatriculationExamTerm.AUTUMN.name(), messages.getText(locale, "terms.seasons.autumn") + " " + String.valueOf(yearind), enabled));
+
+      value = MatriculationExamTerm.SPRING.name() + String.valueOf(yearind);
+      enabled = !usedTerms.contains(value);
+      termOptions.add(new TermOption(yearind, MatriculationExamTerm.SPRING.name(), messages.getText(locale, "terms.seasons.spring") + " " + String.valueOf(yearind), enabled));
+    }
+
+    pageRequestContext.getRequest().setAttribute("termOptions", termOptions);   
+    pageRequestContext.getRequest().setAttribute("matriculationExamEnrollments", enrollmentBeans);
   }
 
   public class MatriculationEnrollmentBean {
@@ -1301,5 +1330,34 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     return localizedSubject;
   }
   
+  public class TermOption {
+    public TermOption(int year, String term, String displayText, boolean enabled) {
+      this.year = year;
+      this.term = term;
+      this.displayText = displayText;
+      this.enabled = enabled;
+    }
+    
+    public String getDisplayText() {
+      return displayText;
+    }
+
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    public String getTerm() {
+      return term;
+    }
+
+    public int getYear() {
+      return year;
+    }
+
+    private final int year;
+    private final String term;
+    private final String displayText;
+    private final boolean enabled;
+  }
 }
 

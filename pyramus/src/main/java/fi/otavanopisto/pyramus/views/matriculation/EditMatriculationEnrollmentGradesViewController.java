@@ -170,21 +170,4 @@ public class EditMatriculationEnrollmentGradesViewController extends PyramusView
     return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }
 
-  public class TermOption {
-    public TermOption(String value, String displayText) {
-      this.value = value;
-      this.displayText = displayText;
-    }
-    
-    public String getValue() {
-      return value;
-    }
-
-    public String getDisplayText() {
-      return displayText;
-    }
-
-    private final String value;
-    private final String displayText;
-  }
 }

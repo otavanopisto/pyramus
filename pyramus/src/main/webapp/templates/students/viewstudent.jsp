@@ -2129,6 +2129,25 @@
         });
       }
       
+      function addOldMatriculationGrades(event) {
+        Event.stop(event);
+        var selectElement = document.getElementById("addOldMatriculationGradesSelect");
+        var pid = selectElement.getAttribute("data-pid");
+        var term = selectElement.value.substring(0, 6);
+        var year = selectElement.value.substring(6, 10);
+        window.location.replace('${pageContext.request.contextPath}/matriculation/editgrades.page?person=' + pid + '&term=' + term + '&year=' + year);
+      }
+      
+      function onOldMatriculationGradesSelectChange(event) {
+        var element = Event.element(event);
+        var buttonElement = document.getElementById("addOldMatriculationGradesButton");
+        if (element.value) {
+          buttonElement.removeAttribute("disabled");
+        }
+        else {
+          buttonElement.setAttribute("disabled", "disabled");
+        }
+      }
     </script>
     
     <ix:extensionHook name="students.viewStudent.head" />
@@ -3425,6 +3444,22 @@
 
       <c:if test="${!empty matriculationExamEnrollments}">
         <div id="matriculation" class="tabContent tabContentNestedTabs">
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="students.viewStudent.matriculationAddOldMatriculationGrades"/>
+              <jsp:param name="helpLocale" value="students.viewStudent.matriculationAddOldMatriculationGrades.help"/>
+            </jsp:include>
+
+            <select id="addOldMatriculationGradesSelect" data-pid="${person.id}" onchange="onOldMatriculationGradesSelectChange(event);">
+              <option></option>
+              <c:forEach var="termOption" items="${termOptions}">
+                <option value="${termOption.term}${termOption.year}" data-term="" ${!termOption.enabled ? 'disabled="disabled"' : ''} >${termOption.displayText}</option>
+              </c:forEach>
+            </select>
+            
+            <button id="addOldMatriculationGradesButton" onclick="addOldMatriculationGrades(event);" disabled="disabled"><fmt:message key="students.viewStudent.matriculationAddOldMatriculationGrades"/></button>
+          </div>
+                
           <c:forEach var="matriculation" items="${matriculationExamEnrollments}" varStatus="enrollmentLoop">
             <c:choose>
               <c:when test="${matriculation.enrollment.exam.examTerm == 'SPRING'}">
@@ -3472,7 +3507,7 @@
                     </c:if>
                   </div>
                   <div>
-                    Pakolliset: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} opintopistettä
+                    <fmt:message key="students.viewStudent.matriculationMandatory"/>: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} opintopistettä
                   </div>
                 </div>
                 
@@ -3488,7 +3523,7 @@
                       <tr class="ixTableRow">
                         <td align="left">${subjectModule.name}</td>
                         <td align="center">${subjectModule.gradeName}</td>
-                        <td align="center">${subjectModule.gradeDate}</td>
+                        <td align="center"><fmt:formatDate value="${subjectModule.gradeDate}"/></td>
                       </tr>
                     </c:forEach>
                   </table>
