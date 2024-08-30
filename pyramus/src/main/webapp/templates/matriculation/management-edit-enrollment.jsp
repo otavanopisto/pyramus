@@ -390,13 +390,13 @@
                 <input type="text" name="name" value="${fn:escapeXml(name)}" size="50"/>
               </div>
   
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.ssn"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.ssn.help"/>
-                </jsp:include>            
-                <input type="text" name="ssn" value="${fn:escapeXml(ssn)}" size="15"/>
-              </div>
+<!--               <div class="genericFormSection">   -->
+<%--                 <jsp:include page="/templates/generic/fragments/formtitle.jsp"> --%>
+<%--                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.ssn"/> --%>
+<%--                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.ssn.help"/> --%>
+<%--                 </jsp:include>             --%>
+<%--                 <input type="text" name="ssn" value="${fn:escapeXml(ssn)}" size="15"/> --%>
+<!--               </div> -->
   
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">

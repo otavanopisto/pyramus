@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.util.ixtable;
 
+import java.util.Date;
+
 import fi.internetix.smvc.controllers.RequestContext;
 
 public class PyramusIxTableRowFacade {
@@ -19,6 +21,14 @@ public class PyramusIxTableRowFacade {
 
   public Long getLong(String field) {
     return getRequestContext().getLong(getRowFieldName(row, field));
+  }
+
+  public String getString(String field) {
+    return getRequestContext().getString(getRowFieldName(row, field));
+  }
+
+  public Date getDate(String field) {
+    return getRequestContext().getDate(getRowFieldName(row, field));
   }
 
   private String getRowFieldName(int row, String field) {

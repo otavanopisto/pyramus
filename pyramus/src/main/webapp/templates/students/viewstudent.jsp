@@ -3447,7 +3447,7 @@
               <span style="margin: 0px 4px;">${matriculation.enrollment.student.studyProgramme.name}</span>
               <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${matriculation.enrollment.state}"/></span>
               <span>
-                <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?enrollment=${matriculation.enrollment.id}">
+                <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?person=${person.id}&term=${matriculation.enrollment.exam.examTerm}&year=${matriculation.enrollment.exam.examYear}">
                   <img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png" class="iconButton" />
                 </a>
               </span>
@@ -3458,6 +3458,18 @@
                 <div class="viewStudentProjectHeader">
                   <div>
                     <b>${attendanceBean.subjectName}</b>
+                    
+                    <c:if test="${not empty attendanceBean.grade}">
+                      <span class="viewStudentProjectHeaderAssessment">
+                        <span class="viewStudentProjectHeaderAssessmentDate">
+                          <fmt:parseDate  value="${attendanceBean.gradeDate}"  type="date" pattern="yyyy-MM-dd" var="parsedDate" />
+                          <fmt:formatDate value="${parsedDate}" />
+                        </span>
+                        <span class="viewStudentProjectHeaderAssessmentGrade">
+                          <fmt:message key="generic.matriculation.examGrades.${attendanceBean.grade}"/>
+                        </span>
+                      </span>
+                    </c:if>
                   </div>
                   <div>
                     Pakolliset: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} opintopistettä

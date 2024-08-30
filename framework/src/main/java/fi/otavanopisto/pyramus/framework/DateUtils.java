@@ -89,4 +89,16 @@ public class DateUtils {
   public static LocalDate toLocalDate(Date date) {
     return date != null ? Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate() : null;
   }
+
+  /**
+   * Converts LocalDate to Date with current timezone.
+   * 
+   * If localDate is null, returns null.
+   * 
+   * @param localDate
+   * @return Date
+   */
+  public static Date toDate(LocalDate localDate) {
+    return localDate != null ? Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()) : null;
+  }
 }

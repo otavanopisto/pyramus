@@ -134,7 +134,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         enrollment, MatriculationExamAttendanceStatus.ENROLLED);
 
     Person person = student.getPerson();
-    String hetu = enrollment.getSsn();
+    String hetu = person.getSocialSecurityNumber(); // enrollment.getSsn();
     
     if (hetu == null) {
       hetu = person.getSocialSecurityNumber();

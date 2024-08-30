@@ -375,7 +375,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("enrollment", enrollment);
     pageRequestContext.getRequest().setAttribute("changeLog", changeLog);
     pageRequestContext.getRequest().setAttribute("name", enrollment.getName());
-    pageRequestContext.getRequest().setAttribute("ssn", enrollment.getSsn());
+//    pageRequestContext.getRequest().setAttribute("ssn", enrollment.getSsn());
     pageRequestContext.getRequest().setAttribute("email", enrollment.getEmail());
     pageRequestContext.getRequest().setAttribute("phone", enrollment.getPhone());
     pageRequestContext.getRequest().setAttribute("address", enrollment.getAddress());

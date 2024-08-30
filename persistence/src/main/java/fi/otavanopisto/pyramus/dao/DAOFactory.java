@@ -109,6 +109,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.plugins.PluginDAO;
@@ -230,6 +231,10 @@ public class DAOFactory {
   
   public MatriculationExamSubjectSettingsDAO getMatriculationExamSubjectSettingsDAO() {
     return (MatriculationExamSubjectSettingsDAO) findByClass(MatriculationExamSubjectSettingsDAO.class);
+  }
+
+  public MatriculationGradeDAO getMatriculationGradeDAO() {
+    return (MatriculationGradeDAO) findByClass(MatriculationGradeDAO.class);
   }
 
   /* Student */

@@ -81,6 +81,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
@@ -1096,6 +1097,24 @@ public class ObjectFactory {
           restModel.setChangeType(entity.getChangeType());
           restModel.setNewState(entity.getNewState());
           restModel.setMessage(entity.getMessage());
+          return restModel;
+        }
+      },
+
+      new Mapper<MatriculationGrade>() {
+        @Override
+        public Object map(MatriculationGrade entity) {
+          fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationGrade restModel = 
+              new fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationGrade();
+          restModel.setId(entity.getId());
+          restModel.setPersonId(entity.getPerson() != null ? entity.getPerson().getId() : null);
+          restModel.setSubject(entity.getSubject());
+          restModel.setYear(entity.getYear());
+          restModel.setTerm(entity.getTerm());
+          restModel.setGrade(entity.getGrade());
+          restModel.setGradeDate(entity.getGradeDate());
+          restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
+          restModel.setLastModified(entity.getLastModified());
           return restModel;
         }
       },

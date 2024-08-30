@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.views.students;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,6 +41,7 @@ import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
@@ -74,6 +76,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
@@ -96,6 +99,7 @@ import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
@@ -982,10 +986,11 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     return Messages.getInstance().getText(locale, "students.viewStudent.breadcrumb");
   }
 
-  private List<MatriculationEnrollmentBean> constructMatriculationTabContent(Person p) {
+  private List<MatriculationEnrollmentBean> constructMatriculationTabContent(Person person) {
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
-    List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listByPerson(p);
+    MatriculationGradeDAO matriculationGradeDAO = DAOFactory.getInstance().getMatriculationGradeDAO();
+    List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listByPerson(person);
     List<MatriculationEnrollmentBean> enrollmentBeans = new ArrayList<>(enrollments.size());
 
     // xd
@@ -1062,9 +1067,16 @@ public class ViewStudentViewController extends PyramusViewController2 implements
               // Sort modules by course number and subject code
               modules.sort(Comparator.comparing(MatriculationAttendanceModuleBean::getCourseNumber)
                   .thenComparing(Comparator.nullsFirst(Comparator.comparing(MatriculationAttendanceModuleBean::getSubjectCode))));
+
+              MatriculationGrade matriculationGrade = matriculationGradeDAO.findBy(person, attendance.getYear(), attendance.getTerm(), attendance.getSubject());
+              
+              MatriculationExamGrade grade = matriculationGrade != null ? matriculationGrade.getGrade() : null;
+              LocalDate gradeDate = matriculationGrade != null ? matriculationGrade.getGradeDate() : null;
               
               String subjectName = torCurriculumSubject.getName();
-              attendanceBeans.add(new MatriculationAttendanceBean(attendance, subjectName, sumMandatoryModuleLength, sumCompletedMandatoryModuleLength, modules));
+              attendanceBeans.add(new MatriculationAttendanceBean(attendance, subjectName, 
+                  sumMandatoryModuleLength, sumCompletedMandatoryModuleLength, modules,
+                  grade, gradeDate));
             }
           }
         }
@@ -1103,13 +1115,17 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     private final Double sumMandatoryModuleLength;
     private final Double sumCompletedMandatoryModuleLength;
     private final String subjectName;
+    private final MatriculationExamGrade grade;
+    private final LocalDate gradeDate;
 
-    public MatriculationAttendanceBean(MatriculationExamAttendance attendance, String subjectName, Double sumMandatoryModuleLength, Double sumCompletedMandatoryModuleLength, List<MatriculationAttendanceModuleBean> modules) {
+    public MatriculationAttendanceBean(MatriculationExamAttendance attendance, String subjectName, Double sumMandatoryModuleLength, Double sumCompletedMandatoryModuleLength, List<MatriculationAttendanceModuleBean> modules, MatriculationExamGrade grade, LocalDate gradeDate) {
       this.attendance = attendance;
       this.subjectName = subjectName;
       this.sumMandatoryModuleLength = sumMandatoryModuleLength;
       this.sumCompletedMandatoryModuleLength = sumCompletedMandatoryModuleLength;
       this.modules = modules;
+      this.grade = grade;
+      this.gradeDate = gradeDate;
     }
     
     public MatriculationExamAttendance getAttendance() {
@@ -1130,6 +1146,14 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
     public String getSubjectName() {
       return subjectName;
+    }
+
+    public MatriculationExamGrade getGrade() {
+      return grade;
+    }
+
+    public LocalDate getGradeDate() {
+      return gradeDate;
     }
   }
   

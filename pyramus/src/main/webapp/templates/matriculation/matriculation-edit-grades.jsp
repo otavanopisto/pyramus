@@ -96,23 +96,28 @@
             paramName: 'gradeDate'
           }, {
             dataType: 'hidden',
-            paramName: 'attendanceId'
+            paramName: 'gradeId'
           }]
         });
 
-        var examsJSON = JSDATA["attendances"].evalJSON();
-        var examsArr = [];
-        if (examsJSON) {
-          for (var i = 0; i < examsJSON.length; i++) {
-            examsArr.push([
-              examsJSON[i].subject,
-              examsJSON[i].grade,
-              examsJSON[i].gradeDate,
-              examsJSON[i].attendanceId
+        var gradesJSON = JSDATA["grades"].evalJSON();
+        var gradesArr = [];
+        if (gradesJSON) {
+          for (var i = 0; i < gradesJSON.length; i++) {
+            gradesArr.push([
+              gradesJSON[i].subject,
+              gradesJSON[i].grade,
+              gradesJSON[i].gradeDate,
+              gradesJSON[i].gradeId
             ]);
           }
         }
-        gradesTable.addRows(examsArr);
+        gradesTable.addRows(gradesArr);
+        
+        document.getElementById("addGradeTableRow").addEventListener('click', function() {
+          var rowId = gradesTable.addRow(['', '', '', '-1']);
+          gradesTable.setCellEditable(rowId, gradesTable.getNamedColumnIndex('subject'), true);
+        });
       };
     </script>
     
@@ -128,45 +133,56 @@
         <a class="tabLabel" href="#grades"><fmt:message key="matriculation.editGrades.pageTitle"/></a>
       </div>
 
-      <div id="grades" class="tabContent">      
-        <div class="genericFormSection">
-          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-            <jsp:param name="titleLocale" value="matriculation.editGrades.studentTitle"/>
-            <jsp:param name="helpLocale" value="matriculation.editGrades.studentTitle.help"/>
-          </jsp:include>
-          
-          ${fn:escapeXml(enrollment.student.fullName)}
-        </div>
-  
-        <div class="genericFormSection">
-          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-            <jsp:param name="titleLocale" value="matriculation.editGrades.termTitle"/>
-            <jsp:param name="helpLocale" value="matriculation.editGrades.termTitle.help"/>
-          </jsp:include>
-          
-          <c:set var="selectedTerm">${enrollment.exam.examTerm}${enrollment.exam.examYear}</c:set>
-          
-          <select>
-            <option></option>
-            <c:forEach var="termOption" items="${termOptions}">
-              <option value="${termOption.value}" ${termOption.value == selectedTerm ? 'selected="selected"' : ''} >${termOption.displayText}</option>
-            </c:forEach>
-          </select>
-        </div>
-
-        <div class="genericTableAddRowContainer">
-          <span class="genericTableAddRowLinkContainer" id="addPlannedTableRow"><fmt:message key="matriculation.editGrades.grades.addRow"/></span>
-        </div>
-
-        <div class="genericFormSection">
-          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-            <jsp:param name="titleLocale" value="matriculation.editGrades.gradesTitle"/>
-            <jsp:param name="helpLocale" value="matriculation.editGrades.gradesTitle.help"/>
-          </jsp:include>
-          
-          <div id="enrolledAttendanceGradesTableContainer"></div>
-        </div>
+      <div id="grades" class="tabContent">
+        <form method="post">
+          <input name="person" type="hidden" value="${person.id}"/>
         
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.editGrades.studentTitle"/>
+              <jsp:param name="helpLocale" value="matriculation.editGrades.studentTitle.help"/>
+            </jsp:include>
+            
+            ${fn:escapeXml(person.latestStudent.fullName)}
+          </div>
+    
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.editGrades.termTitle"/>
+              <jsp:param name="helpLocale" value="matriculation.editGrades.termTitle.help"/>
+            </jsp:include>
+            
+            <div>
+              <c:choose>
+                <c:when test="${term == 'AUTUMN'}">
+                  <fmt:message key="terms.seasons.autumn"/>
+                </c:when>
+                <c:when test="${term == 'SPRING'}">
+                  <fmt:message key="terms.seasons.spring"/>
+                </c:when>
+                <c:otherwise>
+                  ???
+                </c:otherwise>
+              </c:choose>
+              ${year}
+            </div>
+          </div>
+  
+          <div class="genericTableAddRowContainer">
+            <span class="genericTableAddRowLinkContainer" id="addGradeTableRow"><fmt:message key="matriculation.editGrades.grades.addRow"/></span>
+          </div>
+  
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.editGrades.gradesTitle"/>
+              <jsp:param name="helpLocale" value="matriculation.editGrades.gradesTitle.help"/>
+            </jsp:include>
+            
+            <div id="enrolledAttendanceGradesTableContainer"></div>
+          </div>
+          
+          <button>Tallenna</button>
+        </form>
       </div>
     </div>
        

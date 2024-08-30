@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
@@ -39,6 +40,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttend
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
@@ -90,6 +92,9 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject
   private MatriculationExamEnrollmentChangeLogDAO matriculationExamEnrollmentChangeLogDAO;
+  
+  @Inject
+  private MatriculationGradeDAO matriculationExamGradeDAO;
 
   @Inject
   private MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO;
@@ -470,7 +475,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         enrollmentEntity = matriculationExamEnrollmentDao.create(
           exam,
           enrollment.getName(),
-          enrollment.getSsn(),
+          "", //enrollment.getSsn(),
           enrollment.getEmail(),
           enrollment.getPhone(),
           enrollment.getAddress(),
@@ -523,7 +528,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         enrollmentEntity = matriculationExamEnrollmentDao.update(
           existingEnrollment,
           enrollment.getName(),
-          enrollment.getSsn(),
+          "", //enrollment.getSsn(),
           enrollment.getEmail(),
           enrollment.getPhone(),
           enrollment.getAddress(),
@@ -632,6 +637,23 @@ public class MatriculationRESTService extends AbstractRESTService {
     }
   }
 
+  @Path("/students/{ID:[0-9]*}/results")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentMatriculationResults(@PathParam("ID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Not found").build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<MatriculationGrade> personsMatriculationGrades = matriculationExamGradeDAO.listBy(student.getPerson());
+    return Response.ok(objectFactory.createModel(personsMatriculationGrades)).build();
+  }
+
   private fi.otavanopisto.pyramus.rest.model.MatriculationExam restModel(MatriculationExam exam, Student student) {
     fi.otavanopisto.pyramus.rest.model.MatriculationExam result = new fi.otavanopisto.pyramus.rest.model.MatriculationExam();
     result.setId(exam.getId());
@@ -684,7 +706,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setId(examEnrollment.getId());
     result.setExamId(examEnrollment.getExam().getId());
     result.setName(examEnrollment.getName());
-    result.setSsn(examEnrollment.getSsn());
+    // result.setSsn(examEnrollment.getSsn());
     result.setEmail(examEnrollment.getEmail());
     result.setPhone(examEnrollment.getPhone());
     result.setAddress(examEnrollment.getAddress());

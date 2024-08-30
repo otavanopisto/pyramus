@@ -62,7 +62,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
 
     result.setExam(exam);
     result.setName(name);
-    result.setSsn(ssn);
+//    result.setSsn(ssn);
     result.setEmail(email);
     result.setPhone(phone);
     result.setAddress(address);
@@ -106,7 +106,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     MatriculationExamEnrollmentDegreeStructure degreeStructure
   ) {
     enrollment.setName(name);
-    enrollment.setSsn(ssn);
+//    enrollment.setSsn(ssn);
     enrollment.setEmail(email);
     enrollment.setPhone(phone);
     enrollment.setAddress(address);
