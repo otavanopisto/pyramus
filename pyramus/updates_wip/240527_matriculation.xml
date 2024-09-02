@@ -2,6 +2,12 @@
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
 
   <sql>
+    update MatriculationExamEnrollment
+    set enrollmentDate = '2000-01-01'
+    where enrollmentDate is null;
+  </sql>
+
+  <sql>
     alter table MatriculationExamEnrollment modify column enrollmentDate datetime not null;
   </sql>
 
