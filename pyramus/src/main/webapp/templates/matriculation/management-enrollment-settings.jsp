@@ -23,17 +23,8 @@
       };
 
       function setupSubjectSettingsTable() {
-        var projectData = JSDATA["projectData"].evalJSON();
         var subjectData = JSDATA["subjectData"].evalJSON();
 
-        var projects = [];
-        for (var i = 0; i < projectData.length; i++) {
-          projects.push({
-            text: projectData[i].name,
-            value: projectData[i].id
-          });
-        }
-    
         var subjectSettingsTable = new IxTable($('subjectSettingsTableContainer'), {
           id: 'subjectSettingsTable',
           rowHoverEffect: true,
@@ -45,16 +36,8 @@
             editable: false,
             paramName: 'subjectCode'
           }, {
-            header : 'Projekti',
-            left :  8 + 120 + 8,
-            width: 200,
-            dataType : 'select',
-            editable: true,
-            paramName: 'projectId',
-            options: projects
-          }, {
             header : 'Koepäivämäärä',
-            left: 8 + 120 + 8 + 200 + 8, 
+            left: 8 + 120 + 8, 
             width: 150,
             dataType: 'date',
             editable: true,
@@ -67,7 +50,6 @@
         for (var i = 0; i < subjectData.length; i++) {
           rows.push([
             subjectData[i].subjectCode,
-            subjectData[i].projectId,
             subjectData[i].examDate,
           ]);
         }

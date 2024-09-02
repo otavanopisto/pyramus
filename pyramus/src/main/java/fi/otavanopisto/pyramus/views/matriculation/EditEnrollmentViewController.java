@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,32 +17,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
-import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
-import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
-import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
-import fi.otavanopisto.pyramus.dao.projects.StudentProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.TSB;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
-import fi.otavanopisto.pyramus.domainmodel.base.Tag;
-import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
-import fi.otavanopisto.pyramus.domainmodel.projects.Project;
-import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
-import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
-import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -160,11 +143,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
         examAttendance = attendanceDAO.update(examAttendance, enrollment, subject, mandatory, repeat,
             examAttendance.getYear(), examAttendance.getTerm(), examAttendance.getStatus(), funding, examAttendance.getGrade());
       }
-
-      // TODO Not needed anymore?
-//      if (enrollmentState == MatriculationExamEnrollmentState.CONFIRMED) {
-//        createOrUpdateStudentProject(examAttendance, enrollment.getStudent(), subject, mandatory, loggedUser);
-//      }
     }
     
     Integer finishedAttendances = pageRequestContext.getInteger("finishedAttendances.rowCount");
@@ -238,90 +216,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
       Boolean.FALSE.equals(mandatory) ? "OPTIONAL" : null;
   }
   
-  // TODO Not needed anymore?
-  @Deprecated
-  private void createOrUpdateStudentProject(MatriculationExamAttendance examAttendance, Student student, MatriculationExamSubject subject, boolean mandatory, StaffMember loggedUser) {
-    ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
-    StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
-    StudentProjectModuleDAO studentProjectModuleDAO = DAOFactory.getInstance().getStudentProjectModuleDAO();
-    StudentProjectSubjectCourseDAO studentProjectSubjectCourseDAO = DAOFactory.getInstance().getStudentProjectSubjectCourseDAO();
-    MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
-    MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
-
-    MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(examAttendance.getEnrollment().getExam(), subject);
-    if (subjectSettings == null || subjectSettings.getProject() == null) {
-      // We cannot really do anything if the settings aren't in place
-      return;
-    }
-    
-    CourseOptionality projectOptionality = mandatory ? CourseOptionality.MANDATORY : CourseOptionality.OPTIONAL;
-    
-    Project project = subjectSettings.getProject();
-    StudentProject studentProject;
-    
-    if (examAttendance != null && 
-        examAttendance.getProjectAssessment() != null && 
-        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getArchived()) &&
-        examAttendance.getProjectAssessment().getStudentProject() != null &&
-        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getStudentProject().getArchived())) {
-      // Use the studentproject from the projectassessment if it exists
-      studentProject = examAttendance.getProjectAssessment().getStudentProject();
-    } else {
-      // Resolve studentProject from the project in the settings
-      List<StudentProject> studentProjects = studentProjectDAO.listBy(student, project, TSB.IGNORE);
-
-      // Find first non-archived project
-      studentProject = studentProjects.stream()
-          .filter(studentProject1 -> BooleanUtils.isFalse(studentProject1.getArchived()))
-          .findFirst()
-          .orElse(null);
-      
-      if (studentProject == null) {
-        // No unarchived student project was found so try to use any other
-        studentProject = studentProjects.isEmpty() ? null : studentProjects.get(0);
-        
-        if (studentProject != null && BooleanUtils.isTrue(studentProject.getArchived())) {
-          studentProjectDAO.unarchive(studentProject);
-        }
-      }
-    }
-    
-    if (studentProject == null) {
-      // No matching student project was found so create a new one
-      studentProject = studentProjectDAO.create(student, project.getName(), project.getDescription(), 
-          project.getOptionalStudiesLength().getUnits(), project.getOptionalStudiesLength().getUnit(), projectOptionality, loggedUser, project);
-      
-      Set<Tag> tags = new HashSet<>();
-      for (Tag tag : project.getTags()) {
-        tags.add(tag);
-      }
-      studentProjectDAO.updateTags(studentProject, tags);
-      
-      List<ProjectModule> projectModules = project.getProjectModules();
-      for (ProjectModule projectModule : projectModules) {
-        studentProjectModuleDAO.create(studentProject, projectModule.getModule(), null,
-            CourseOptionality.getOptionality(projectModule.getOptionality().getValue()));
-      }
-
-      List<ProjectSubjectCourse> projectSubjectCourses = project.getProjectSubjectCourses();
-      for (ProjectSubjectCourse projectSubjectCourse : projectSubjectCourses) {
-        studentProjectSubjectCourseDAO.create(studentProject, projectSubjectCourse.getSubject(), projectSubjectCourse.getCourseNumber(), null,
-            CourseOptionality.getOptionality(projectSubjectCourse.getOptionality().getValue()));
-      }
-    } else {
-      studentProject = studentProjectDAO.updateOptionality(studentProject, projectOptionality);
-    }
-
-    MatriculationExam matriculationExam = examAttendance.getEnrollment().getExam();
-    
-    if (matriculationExam != null && matriculationExam.getSignupGrade() != null && subjectSettings.getExamDate() != null && examAttendance.getProjectAssessment() == null) {
-      // Add the exam date
-      ProjectAssessment projectAssessment = projectAssessmentDAO.create(studentProject, loggedUser, matriculationExam.getSignupGrade(), subjectSettings.getExamDate(), "");
-      // Link the project assessment to this exam atten dance
-      matriculationExamAttendanceDAO.updateProjectAssessment(examAttendance, projectAssessment);
-    }
-  }
-
   private void doGet(PageRequestContext pageRequestContext) {
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-edit-enrollment.jsp");
 
