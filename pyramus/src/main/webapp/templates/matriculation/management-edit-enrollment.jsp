@@ -313,7 +313,10 @@
   <body onload="onLoad(event);">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
 
-    <h1 class="genericPageHeader">Muokkaa YO-ilmoittautumisia</h1>
+    <h1 class="genericPageHeader">
+      Muokkaa YO-ilmoittautumisia
+      <a href="${pageContext.request.contextPath}/students/viewstudent.page?person=${enrollment.student.person.id}" class="pyramusViewLink pyramusStudentLink">Siirry opiskelijan tietoihin</a>
+    </h1>
     
     <div class="genericFormContainer">
       <div class="tabLabelsContainer" id="tabs">

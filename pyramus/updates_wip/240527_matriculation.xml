@@ -91,4 +91,30 @@
        references Person (id);
   </sql>
 
+  <sql>
+    alter table MatriculationExamSubjectSettings drop column project_id;
+  </sql>
+    
+  <sql>
+    alter table MatriculationExamEnrollment drop column name;
+  </sql>
+  <sql>
+    alter table MatriculationExamEnrollment drop column ssn;
+  </sql>
+  <sql>
+    alter table MatriculationExamEnrollment drop column email;
+  </sql>
+  <sql>
+    alter table MatriculationExamEnrollment drop column phone;
+  </sql>
+  <sql>
+    alter table MatriculationExamEnrollment drop column address;
+  </sql>
+  <sql>
+    alter table MatriculationExamEnrollment drop column postalCode;
+  </sql>
+  <sql>
+    alter table MatriculationExamEnrollment drop column city;
+  </sql>
+
 </update>
