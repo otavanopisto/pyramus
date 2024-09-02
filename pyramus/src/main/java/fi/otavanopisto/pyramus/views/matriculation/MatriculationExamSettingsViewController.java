@@ -9,12 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.grading.GradeDAO;
-import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
-import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
-import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
 import fi.otavanopisto.pyramus.framework.DateUtils;
@@ -41,10 +37,6 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
   private void doGet(PageRequestContext pageRequestContext) {
     MatriculationExamDAO dao = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
-    GradingScaleDAO gradingScaleDAO = DAOFactory.getInstance().getGradingScaleDAO();
-
-    List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
-    pageRequestContext.getRequest().setAttribute("gradingScales", gradingScales);
 
     MatriculationExam exam;
     if ("new".equals(pageRequestContext.getString("examId"))) {
@@ -77,14 +69,11 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
   private void doPost(PageRequestContext pageRequestContext) {
     MatriculationExamDAO dao = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
-    GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     
     Date starts = DateUtils.startOfDay(pageRequestContext.getDate("starts"));
     Date ends = DateUtils.endOfDay(pageRequestContext.getDate("ends"));
     boolean enrollmentActive = Boolean.TRUE.equals(pageRequestContext.getBoolean("enrollmentActive"));
     
-    Long signupGradeId = pageRequestContext.getLong("signupGradeId");
-    Grade signupGrade = signupGradeId != null ? gradeDAO.findById(signupGradeId) : null;
     Integer examYear = pageRequestContext.getInteger("examYear");
     MatriculationExamTerm examTerm = StringUtils.isNotBlank(pageRequestContext.getString("examTerm")) ? 
         MatriculationExamTerm.valueOf(pageRequestContext.getString("examTerm")) : null;
@@ -92,11 +81,11 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     MatriculationExam exam;
     if ("new".equals(pageRequestContext.getString("examId"))) {
       // Create new
-      exam = dao.create(starts, ends, signupGrade, examYear, examTerm, enrollmentActive);
+      exam = dao.create(starts, ends, examYear, examTerm, enrollmentActive);
     } else {
       Long examId = pageRequestContext.getLong("examId");
       exam = dao.findById(examId);
-      exam = dao.update(exam, starts, ends, signupGrade, examYear, examTerm, enrollmentActive);
+      exam = dao.update(exam, starts, ends, examYear, examTerm, enrollmentActive);
     }
     
     Long subjectTableRowCount = pageRequestContext.getLong("subjectSettingsTable.rowCount");

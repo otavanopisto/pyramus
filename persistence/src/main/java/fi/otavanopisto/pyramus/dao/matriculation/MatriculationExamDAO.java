@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.ejb.Stateless;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
-import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
@@ -15,7 +14,6 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
   public MatriculationExam create(
       Date starts,
       Date ends, 
-      Grade signupGrade,
       Integer examYear,
       MatriculationExamTerm examTerm, 
       boolean enrollmentActive
@@ -23,7 +21,6 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     MatriculationExam exam = new MatriculationExam();
     exam.setStarts(starts);
     exam.setEnds(ends);
-    exam.setSignupGrade(signupGrade);
     exam.setExamYear(examYear);
     exam.setExamTerm(examTerm);
     exam.setEnrollmentActive(enrollmentActive);
@@ -35,14 +32,12 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
       MatriculationExam exam,
       Date starts,
       Date ends, 
-      Grade signupGrade,
       Integer examYear,
       MatriculationExamTerm examTerm,
       boolean enrollmentActive
   ) {
     exam.setStarts(starts);
     exam.setEnds(ends);
-    exam.setSignupGrade(signupGrade);
     exam.setExamYear(examYear);
     exam.setExamTerm(examTerm);
     exam.setEnrollmentActive(enrollmentActive);

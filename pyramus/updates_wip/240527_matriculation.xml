@@ -92,6 +92,13 @@
   </sql>
 
   <sql>
+    alter table MatriculationExam drop foreign key FKsvv2o3706wmr3xm936yacvlb9;
+  </sql>
+  <sql>
+    alter table MatriculationExam drop column signupGrade_id;
+  </sql>
+
+  <sql>
     alter table MatriculationExamSubjectSettings drop foreign key FKornlanpb0c6n1weyt279b72p8;
   </sql>
   <sql>

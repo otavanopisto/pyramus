@@ -118,30 +118,6 @@
 
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="matriculation.settings.signupGradeTitle"/>
-            </jsp:include>
-            <select name="signupGradeId">
-              <option value=""></option>
-            
-              <c:forEach var="gradingScale" items="${gradingScales}">
-                <optgroup label="${fn:escapeXml(gradingScale.name)}">
-                  <c:forEach var="grade" items="${gradingScale.grades}">
-                    <c:choose>
-                      <c:when test="${exam.signupGrade.id eq grade.id}">
-                        <option value="${grade.id}" selected="selected">${fn:escapeXml(grade.name)}</option>
-                      </c:when>
-                      <c:otherwise>
-                        <option value="${grade.id}">${fn:escapeXml(grade.name)}</option>
-                      </c:otherwise>
-                    </c:choose>
-                  </c:forEach>
-                </optgroup>
-              </c:forEach>
-            </select>
-          </div>
-
-          <div class="genericFormSection">  
-            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="matriculation.settings.subjectList"/>
             </jsp:include>                                           
             <div id="subjectSettingsTableContainer"></div>
