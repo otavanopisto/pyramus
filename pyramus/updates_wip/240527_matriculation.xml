@@ -92,6 +92,9 @@
   </sql>
 
   <sql>
+    alter table MatriculationExamSubjectSettings drop foreign key FKornlanpb0c6n1weyt279b72p8;
+  </sql>
+  <sql>
     alter table MatriculationExamSubjectSettings drop column project_id;
   </sql>
     
