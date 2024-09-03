@@ -2207,7 +2207,7 @@
           </a>
         </c:forEach>
         
-        <c:if test="${!empty matriculationExamEnrollments}">
+        <c:if test="${!empty matriculationExamTerms}">
           <a class="tabLabel" href="#matriculation"><fmt:message key="students.viewStudent.matriculationTab" /></a>
         </c:if>
 
@@ -3442,7 +3442,7 @@
         </div>
       </c:forEach>
 
-      <c:if test="${!empty matriculationExamEnrollments}">
+      <c:if test="${!empty matriculationExamTerms}">
         <div id="matriculation" class="tabContent tabContentNestedTabs">
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
@@ -3460,14 +3460,14 @@
             <button id="addOldMatriculationGradesButton" onclick="addOldMatriculationGrades(event);" disabled="disabled"><fmt:message key="students.viewStudent.matriculationAddOldMatriculationGrades"/></button>
           </div>
                 
-          <c:forEach var="matriculation" items="${matriculationExamEnrollments}" varStatus="enrollmentLoop">
+          <c:forEach var="examTerm" items="${matriculationExamTerms}">
             <c:choose>
-              <c:when test="${matriculation.enrollment.exam.examTerm == 'SPRING'}">
+              <c:when test="${examTerm.term == 'SPRING'}">
                 <c:set var="matriculationExamEnrollmentTerm">
                   <fmt:message key="terms.seasons.spring"/>
                 </c:set>
               </c:when>
-              <c:when test="${matriculation.enrollment.exam.examTerm == 'AUTUMN'}">
+              <c:when test="${examTerm.term == 'AUTUMN'}">
                 <c:set var="matriculationExamEnrollmentTerm">
                   <fmt:message key="terms.seasons.autumn"/>
                 </c:set>
@@ -3478,17 +3478,21 @@
             </c:choose>
             
             <div style="margin: 8px 0px;">
-              <b style="font-size: 1.2em">${matriculation.enrollment.exam.examYear} ${matriculationExamEnrollmentTerm}</b>
-              <span style="margin: 0px 4px;">${matriculation.enrollment.student.studyProgramme.name}</span>
-              <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${matriculation.enrollment.state}"/></span>
+              <b style="font-size: 1.2em">${examTerm.year} ${matriculationExamEnrollmentTerm}</b>
+              <c:if test="${not empty examTerm.studyProgrammeName}">
+                <span style="margin: 0px 4px;">${examTerm.studyProgrammeName}</span>
+              </c:if>
+              <c:if test="${not empty matriculation.state}">
+                <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${matriculation.state}"/></span>
+              </c:if>
               <span>
-                <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?person=${person.id}&term=${matriculation.enrollment.exam.examTerm}&year=${matriculation.enrollment.exam.examYear}">
+                <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?person=${person.id}&term=${examTerm.term}&year=${examTerm.year}">
                   <img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png" class="iconButton" />
                 </a>
               </span>
             </div>
 
-            <c:forEach var="attendanceBean" items="${matriculation.attendances}">
+            <c:forEach var="attendanceBean" items="${examTerm.attendances}">
               <div class="viewStudentProject">
                 <div class="viewStudentProjectHeader">
                   <div>
