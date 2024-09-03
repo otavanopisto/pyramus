@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -19,6 +21,10 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 @Entity
+@Table(uniqueConstraints = {
+    // One grade for a person from a subject at a single year & term time
+    @UniqueConstraint(columnNames = {"person_id", "subject", "year", "term"})
+})
 public class MatriculationGrade {
 
   /**

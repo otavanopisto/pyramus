@@ -98,6 +98,11 @@
   </sql>
 
   <sql>
+    alter table MatriculationGrade 
+     add constraint UK4o8y39l70l255bk65qamw6s5m unique (person_id, subject, year, term);
+  </sql>
+  
+  <sql>
     alter table MatriculationExam drop foreign key FKsvv2o3706wmr3xm936yacvlb9;
   </sql>
   <sql>
