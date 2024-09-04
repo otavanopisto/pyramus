@@ -13,6 +13,7 @@ import fi.otavanopisto.pyramus.domainmodel.plugins.Plugin;
 import fi.otavanopisto.pyramus.domainmodel.plugins.Plugin_;
 
 @Stateless
+@Deprecated
 public class PluginDAO extends PyramusEntityDAO<Plugin> {
 
   public Plugin create(String artifactId, String groupId, String version, Boolean enabled) {

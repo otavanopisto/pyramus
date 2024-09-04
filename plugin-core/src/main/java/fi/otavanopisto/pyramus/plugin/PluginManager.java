@@ -26,6 +26,7 @@ import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledTaskInterval;
 /** The class responsible for managing plugins.
  * 
  */
+@Deprecated
 public class PluginManager {
   
   /** Returns the (singleton) instance of the plugin manager.
@@ -110,6 +111,8 @@ public class PluginManager {
    * @param version The version of the plugin to load.
    */
   public void loadPlugin(String groupId, String artifactId, String version) {
+    if (true) return;
+    
 //    String groupId = loadInfo.getGroupId();
 //    String artifactId = loadInfo.getArtifactId();
 //    String version = loadInfo.getVersion();

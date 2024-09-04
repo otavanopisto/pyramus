@@ -11,6 +11,7 @@ import fi.otavanopisto.pyramus.domainmodel.plugins.PluginRepository;
 import fi.otavanopisto.pyramus.domainmodel.plugins.PluginRepository_;
 
 @Stateless
+@Deprecated
 public class PluginRepositoryDAO extends PyramusEntityDAO<PluginRepository> {
 
   public PluginRepository create(String url, String repositoryId) {

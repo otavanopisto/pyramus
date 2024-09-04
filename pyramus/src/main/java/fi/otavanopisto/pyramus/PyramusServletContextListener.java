@@ -206,13 +206,13 @@ public class PyramusServletContextListener implements ServletContextListener {
       
       PluginDAO pluginDAO = DAOFactory.getInstance().getPluginDAO();
       List<Plugin> enabledPlugins = pluginDAO.listByEnabled(Boolean.TRUE);
-      for (Plugin plugin : enabledPlugins) {
-        try {
-          pluginManager.loadPlugin(plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion());
-        } catch (Exception e) {
-          Logging.logException("Failed to load plugin: " + plugin.getGroupId() + "." + plugin.getArtifactId() + ":" + plugin.getVersion(), e);
-        }
-      }
+//      for (Plugin plugin : enabledPlugins) {
+//        try {
+//          pluginManager.loadPlugin(plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion());
+//        } catch (Exception e) {
+//          Logging.logException("Failed to load plugin: " + plugin.getGroupId() + "." + plugin.getArtifactId() + ":" + plugin.getVersion(), e);
+//        }
+//      }
       
       pluginManager.registerPlugins();
             
