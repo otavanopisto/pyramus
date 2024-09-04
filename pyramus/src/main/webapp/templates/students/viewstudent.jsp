@@ -3477,7 +3477,7 @@
               </c:otherwise>
             </c:choose>
             
-            <div style="margin: 8px 0px;">
+            <div class="viewStudentMatriculationTermHeaderRow">
               <b style="font-size: 1.2em">${examTerm.year} ${matriculationExamEnrollmentTerm}</b>
               <c:if test="${not empty examTerm.studyProgrammeName}">
                 <span style="margin: 0px 4px;">${examTerm.studyProgrammeName}</span>

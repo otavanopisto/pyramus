@@ -478,6 +478,11 @@ h1.genericPageHeader{
   margin-left: 8px;
 }
 
+.viewStudentMatriculationTermHeaderRow {
+  align-items: center;
+  display: flex;
+  margin: 8px 0px;
+}
 
 /* Manage Course Assessments */
 
