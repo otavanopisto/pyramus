@@ -193,28 +193,24 @@ public class TORSubject extends Subject {
           .map(TORCurriculumModule::getCourseNumber)
           .collect(Collectors.toSet());
         
-        // If the curriculum has mandatory courses for the subject we can fill in the extra fields.
-        
-        if (CollectionUtils.isNotEmpty(mandatoryCourseNumbers)) {
-          int numCompleted = 0;
-          double sumCompletedCreditPoints = 0d;
+        int numCompleted = 0;
+        double sumCompletedCreditPoints = 0d;
 
-          for (Integer mandatoryCourseNumber : mandatoryCourseNumbers) {
-            TORCourse torCourse = findCourse(mandatoryCourseNumber);
-            if (torCourse != null && torCourse.isPassed()) {
-              numCompleted++;
-              
-              if (torCourse.getLengthUnit() == TORCourseLengthUnit.op && torCourse.getCourseLength() != null) {
-                sumCompletedCreditPoints += torCourse.getCourseLength();
-              }
+        for (Integer mandatoryCourseNumber : mandatoryCourseNumbers) {
+          TORCourse torCourse = findCourse(mandatoryCourseNumber);
+          if (torCourse != null && torCourse.isPassed()) {
+            numCompleted++;
+            
+            if (torCourse.getLengthUnit() == TORCourseLengthUnit.op && torCourse.getCourseLength() != null) {
+              sumCompletedCreditPoints += torCourse.getCourseLength();
             }
           }
-          
-          this.mandatoryCourseCount = mandatoryCourseNumbers.size();
-          this.mandatoryCourseCompletedCount = numCompleted;
-          this.mandatoryCreditPointsCompleted = sumCompletedCreditPoints;
-          this.completed = mandatoryCourseCount == mandatoryCourseCompletedCount;
         }
+        
+        this.mandatoryCourseCount = mandatoryCourseNumbers.size();
+        this.mandatoryCourseCompletedCount = numCompleted;
+        this.mandatoryCreditPointsCompleted = sumCompletedCreditPoints;
+        this.completed = mandatoryCourseCount == mandatoryCourseCompletedCount;
       }
     }
   }
