@@ -196,6 +196,7 @@
               <option value=""></option>
               <option value="PENDING"><fmt:message key="generic.matriculation.enrollmentStates.PENDING"/></option>
               <option value="SUPPLEMENTATION_REQUEST"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"/></option>
+              <option value="SUPPLEMENTED"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTED"/></option>
               <option value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
               <option value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
               <option value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/></option>
