@@ -24,7 +24,6 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnroll
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.SettingUtils;
@@ -194,8 +193,22 @@ public class MatriculationEligibilityController {
     return matriculationExamEnrollmentChangeLogDAO.listByEnrollment(enrollment);
   }
   
-  public boolean isVisible(MatriculationExam matriculationExam, User user) {
-    if (matriculationExam == null || matriculationExam.getStarts() == null || matriculationExam.getEnds() == null || !matriculationExam.isEnrollmentActive()) {
+  /**
+   * Returns true if the student may enroll to given exam.
+   * 
+   * In order to be able to enroll
+   * - The exam needs to have enrollment active
+   * - The exam needs to have specified both the enrollment start and end dates
+   * - The current date must be later than the exam's enrollment start date but 
+   *   earlier than the either the end date or the student's end date override.
+   * - The student needs to be part of a group that has matriculation set active.
+   * 
+   * @param student
+   * @param matriculationExam
+   * @return
+   */
+  public boolean isEnrollableByStudent(MatriculationExam matriculationExam, Student student) {
+    if (student == null || matriculationExam == null || !matriculationExam.isEnrollmentActive() || matriculationExam.getStarts() == null || matriculationExam.getEnds() == null) {
       // If dates are not set, exam enrollment is not active
       return false;
     }
@@ -203,7 +216,7 @@ public class MatriculationEligibilityController {
     // TODO: custom date affects all exams...
 
     UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
-    String personalExamEnrollmentExpiryStr = userVariableKey != null ? userVariableDAO.findByUserAndKey(user, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE) : null;
+    String personalExamEnrollmentExpiryStr = userVariableKey != null ? userVariableDAO.findByUserAndKey(student, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE) : null;
     Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
 
     Date enrollmentStarts = matriculationExam.getStarts();
@@ -211,12 +224,13 @@ public class MatriculationEligibilityController {
       new Date(Math.max(matriculationExam.getEnds().getTime(), personalExamEnrollmentExpiry.getTime()));
 
     Date currentDate = new Date();
-    return currentDate.after(enrollmentStarts) && currentDate.before(enrollmentEnds);
-  }
+    if (currentDate.before(enrollmentStarts) || currentDate.after(enrollmentEnds)) {
+      // Current date either before start or after end, return false
+      return false;
+    }
 
-  public boolean isEligible(Student student, MatriculationExam matriculationExam) {
-    return student == null ? false :
-      isVisible(matriculationExam, student) && hasGroupEligibility(student);
+    // Everything fine so far, check for the group eligibility
+    return hasGroupEligibility(student);
   }
 
   public List<MatriculationExam> listExamsByStudent(Student student, MatriculationExamListFilter filter) {
@@ -224,18 +238,18 @@ public class MatriculationEligibilityController {
     List<MatriculationExam> examsByStudent = new ArrayList<>();
     
     for (MatriculationExam exam : allExams) {
-      boolean isEnrolled = matriculationExamEnrollmentDAO.findByExamAndStudent(exam, student) != null;
+      boolean isEligible = isEnrollableByStudent(exam, student);
 
-      // If the filter is asking for the past (aka enrolled) to be listed and the student is enrolled, add to list
-      if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.PAST) && isEnrolled) {
+      // If the filter is asking for eligible exams to be listed and the student is eligible, add to list
+      if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.ELIGIBLE) && isEligible) {
         examsByStudent.add(exam);
         continue;
-      }      
+      }
+
+      boolean isEnrolled = matriculationExamEnrollmentDAO.findByExamAndStudent(exam, student) != null;
       
-      boolean isEligible = isEligible(student, exam);
-      
-      // If the filter is asking for eligible exams to be listed and the student is eligible but not enrolled, add to list
-      if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.ELIGIBLE) && isEligible && !isEnrolled) {
+      // If the filter is asking for the past (aka enrolled) to be listed and the student is enrolled but is not eligible, add to list
+      if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.PAST) && isEnrolled && !isEligible) {
         examsByStudent.add(exam);
         continue;
       }

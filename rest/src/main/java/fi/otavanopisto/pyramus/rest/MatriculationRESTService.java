@@ -307,7 +307,7 @@ public class MatriculationRESTService extends AbstractRESTService {
 
     MatriculationExam exam = matriculationExamDao.findById(examId);
 
-    if (exam == null || !matriculationEligibilityController.isEligible(student, exam)) {
+    if (exam == null || !matriculationEligibilityController.isEnrollableByStudent(exam, student)) {
       return Response.status(Status.BAD_REQUEST)
           .entity("Exam enrollment is closed")
           .build();
@@ -592,7 +592,7 @@ public class MatriculationRESTService extends AbstractRESTService {
       MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
       
       MatriculationExamStudentStatus studentStatus = examEnrollment == null 
-          ? (matriculationEligibilityController.isEligible(student, exam) ? MatriculationExamStudentStatus.ELIGIBLE : MatriculationExamStudentStatus.NOT_ELIGIBLE)
+          ? (matriculationEligibilityController.isEnrollableByStudent(exam, student) ? MatriculationExamStudentStatus.ELIGIBLE : MatriculationExamStudentStatus.NOT_ELIGIBLE)
           : matriculationEligibilityController.translateState(examEnrollment.getState());
       result.setStudentStatus(studentStatus);
       
