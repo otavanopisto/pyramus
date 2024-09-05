@@ -124,7 +124,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
   
   public List<MatriculationExamEnrollment> listBy(
       String nameQuery,
-      StaffMember handler,
       MatriculationExam exam, 
       MatriculationExamEnrollmentState state,
       boolean below20courses,
@@ -168,9 +167,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       }
     }
     
-    if (handler != null) {
-      predicates.add(criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.handler), handler));
-    }
     if (exam != null) {
       predicates.add(criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam));
     }
