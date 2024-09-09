@@ -362,26 +362,31 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.changeLog.title"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.changeLog.title.help"/>
                 </jsp:include>
+                
                 <div>
-                  <c:forEach var="changeLogEntry" items="${changeLog}">
-                    <div class="changeLogEntryRow">
-                      <fmt:formatDate type="both" value="${changeLogEntry.timestamp}"/>
-                      ${changeLogEntry.modifier.fullName}
-                      <fmt:message key="generic.matriculation.changeLogTypes.${changeLogEntry.changeType}"/>
-                      
-                      <c:if test="${changeLogEntry.newState != null}">
-                        <span class="matriculationEnrollmentStateInline">
-                          <fmt:message key="generic.matriculation.enrollmentStates.${changeLogEntry.newState}"/>
-                        </span>
-                      </c:if>
-                      
-                      <c:if test="${changeLogEntry.message != null}">
-                        <span class="matriculationEnrollmentStateInline">
-                          ${fn:escapeXml(changeLogEntry.message)}
-                        </span>
-                      </c:if>
-                    </div>
-                  </c:forEach>
+                  <table>
+                    <c:forEach var="changeLogEntry" items="${changeLog}">
+                      <tr class="changeLogEntryRow">
+                        <td align="right"><fmt:formatDate type="date" dateStyle="short" value="${changeLogEntry.timestamp}"/></td>
+                        <td align="right"><fmt:formatDate type="time" timeStyle="short" value="${changeLogEntry.timestamp}"/></td>
+                        <td>${changeLogEntry.modifier.fullName}</td>
+                        <td><fmt:message key="generic.matriculation.changeLogTypes.${changeLogEntry.changeType}"/></td>
+                        <td>
+                          <c:if test="${changeLogEntry.newState != null}">
+                            <span class="matriculationEnrollmentStateInline">
+                              <fmt:message key="generic.matriculation.enrollmentStates.${changeLogEntry.newState}"/>
+                            </span>
+                          </c:if>
+                          
+                          <c:if test="${changeLogEntry.message != null}">
+                            <span class="matriculationEnrollmentStateInline">
+                              ${fn:escapeXml(changeLogEntry.message)}
+                            </span>
+                          </c:if>
+                        </td>
+                      </tr>
+                    </c:forEach>
+                  </table>
                 </div>
               </div>
 
