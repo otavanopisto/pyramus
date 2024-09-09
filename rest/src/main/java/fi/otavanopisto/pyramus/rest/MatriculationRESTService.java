@@ -55,6 +55,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
+import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentMatriculationEligibilityResultOPS2021;
@@ -81,6 +82,9 @@ public class MatriculationRESTService extends AbstractRESTService {
   @Inject
   private SessionController sessionController;
 
+  @Inject
+  private CommonController commonController;
+  
   @Inject
   private RESTSecurity restSecurity;
 
@@ -523,6 +527,10 @@ public class MatriculationRESTService extends AbstractRESTService {
   public Response getStudentMatriculationEligibility(@PathParam("ID") Long studentId, @QueryParam ("subjectCode") String subjectCode) {
     if (StringUtils.isBlank(subjectCode)) {
       return Response.status(Status.BAD_REQUEST).entity("Subject is required").build();
+    }
+    
+    if (commonController.findSubjectByCode(subjectCode) == null) {
+      return Response.status(Status.NOT_FOUND).entity(String.format("Subject %s does not exist.", subjectCode)).build();
     }
     
     Student student = studentController.findStudentById(studentId);
