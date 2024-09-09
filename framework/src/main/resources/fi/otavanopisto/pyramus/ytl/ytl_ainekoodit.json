@@ -56,12 +56,10 @@
     "ytlAine": "B",
     "ytlOppimäärä": "B",
     "aine": "ruotsi, keskipitkä oppimäärä",
-    "aineKoodi": "RUB",
+    "aineKoodi": "RUB1",
     "matriculationExamSubject": "RUB",
-      "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "RUB" },
-      { "educationType": "2", "subjectCode": "RUB1" },
-      { "educationType": "2", "subjectCode": "RUB3" }
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "RUB1" }
     ]
   },
   {
