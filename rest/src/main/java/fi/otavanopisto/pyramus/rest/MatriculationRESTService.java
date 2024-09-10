@@ -653,6 +653,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     OffsetDateTime gradeDate = null;
     
     // Grade comes from either the student project (for ENROLLED) or the grade field
+    // This is legacy handling from when the matriculation grades were saved in ProjectAssessments
     if (attendance.getStatus() == MatriculationExamAttendanceStatus.ENROLLED) {
       if (attendance.getProjectAssessment() != null && attendance.getProjectAssessment().getGrade() != null && StringUtils.isNotBlank(attendance.getProjectAssessment().getGrade().getName())) {
         /*
@@ -688,6 +689,8 @@ public class MatriculationRESTService extends AbstractRESTService {
           break;
           default:
             // Null should suffice if the grade is unknown - UNKNOWN seems to only make things more confusing
+            // There are also two more grades in the enum which are not mapped as the project link is removed
+            // so those grades should not come from ProjectAssessments anyways.
             // grade = MatriculationExamGrade.UNKNOWN;
           break;
         }

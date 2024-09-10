@@ -66,6 +66,8 @@
           {value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "Eximia cum laude approbatur"},
           {value: "LAUDATUR", text: "Laudatur"},
           {value: "UNKNOWN", text: "Ei tiedossa"},
+          {value: "NO_RIGHT_TO_PARTICIPATE", text: "Ei osallistumisoikeutta"},
+          {value: "INVALIDATED", text: "Mitätöity"},
           {value: "K", text: "Keskeytynyt"}
         ];
 
