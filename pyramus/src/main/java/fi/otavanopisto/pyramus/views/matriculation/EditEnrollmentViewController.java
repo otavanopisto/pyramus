@@ -369,12 +369,9 @@ public class EditEnrollmentViewController extends PyramusViewController {
 
       switch (currentState) {
         case PENDING:
-          allowedStates.add(MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST);
-          allowedStates.add(MatriculationExamEnrollmentState.APPROVED);
-          allowedStates.add(MatriculationExamEnrollmentState.REJECTED);
-        break;
-        
         case SUPPLEMENTATION_REQUEST:
+        case SUPPLEMENTED:
+          allowedStates.add(MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST);
           allowedStates.add(MatriculationExamEnrollmentState.APPROVED);
           allowedStates.add(MatriculationExamEnrollmentState.REJECTED);
         break;
