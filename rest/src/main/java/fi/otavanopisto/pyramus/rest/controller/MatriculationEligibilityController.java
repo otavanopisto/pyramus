@@ -233,6 +233,18 @@ public class MatriculationEligibilityController {
     return hasGroupEligibility(student);
   }
 
+  /**
+   * Lists exams by given student based on the filter.
+   * 
+   * Filter types and effects of them:
+   * - ELIGIBLE: Lists exams that are currently open for enrollments and the student is eligible to enroll to them
+   * - PAST: Lists exams that the student has previously enrolled to
+   * - ALL: Lists exams matching either of the previous filters
+   * 
+   * @param student
+   * @param filter
+   * @return
+   */
   public List<MatriculationExam> listExamsByStudent(Student student, MatriculationExamListFilter filter) {
     List<MatriculationExam> allExams = matriculationExamDAO.listAll();
     List<MatriculationExam> examsByStudent = new ArrayList<>();
