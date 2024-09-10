@@ -238,7 +238,7 @@ public class MatriculationEligibilityController {
    * 
    * Filter types and effects of them:
    * - ELIGIBLE: Lists exams that are currently open for enrollments and the student is eligible to enroll to them
-   * - PAST: Lists exams that the student has previously enrolled to
+   * - PAST: Lists exams that the student has previously enrolled to excluding exams covered by ELIGIBLE filter
    * - ALL: Lists exams matching either of the previous filters
    * 
    * @param student
