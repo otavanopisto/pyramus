@@ -3482,8 +3482,8 @@
               <c:if test="${not empty examTerm.studyProgrammeName}">
                 <span style="margin: 0px 4px;">${examTerm.studyProgrammeName}</span>
               </c:if>
-              <c:if test="${not empty matriculation.state}">
-                <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${matriculation.state}"/></span>
+              <c:if test="${not empty examTerm.state}">
+                <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${examTerm.state}"/></span>
               </c:if>
               <span>
                 <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?person=${person.id}&term=${examTerm.term}&year=${examTerm.year}">
