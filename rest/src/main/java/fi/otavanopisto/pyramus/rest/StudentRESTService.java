@@ -1883,7 +1883,6 @@ public class StudentRESTService extends AbstractRESTService {
       }
       
       cLE = (fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients) objectFactory.createModel(contactLogEntry);
-      cLE.setEntryDate(entity.getEntryDate());
       cLE.setRecipients(recipients);
         
     }
