@@ -1832,16 +1832,16 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/contactLogEntries/batch")
   @POST
   @RESTPermit(handling = Handling.INLINE)
-  public Response createMultipleStudentContactLogEntries(fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry entity) {
+  public Response createMultipleStudentContactLogEntries(fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER })) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT })) {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry cLE = null;
+    fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients cLE = null;
     
     if (entity.getRecipients() != null) {
       
@@ -1854,9 +1854,14 @@ public class StudentRESTService extends AbstractRESTService {
       StudentContactLogEntry contactLogEntry = null;
       for (Long recipient : entity.getRecipients()) {
         Student student = studentController.findStudentById(recipient);
-        StaffMember staff = userController.findStaffMemberById(recipient);
+        
+        Status studentStatus = checkStudent(student);
+        if (studentStatus != Status.OK)
+          return Response.status(studentStatus).build();
         
         if (student == null) {
+          StaffMember staff = userController.findStaffMemberById(recipient);
+
           if (staff != null) {
             continue;
           }
@@ -1877,7 +1882,7 @@ public class StudentRESTService extends AbstractRESTService {
       
       }
       
-      cLE = (fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry) objectFactory.createModel(contactLogEntry);
+      cLE = (fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients) objectFactory.createModel(contactLogEntry);
       cLE.setEntryDate(entity.getEntryDate());
       cLE.setRecipients(recipients);
         

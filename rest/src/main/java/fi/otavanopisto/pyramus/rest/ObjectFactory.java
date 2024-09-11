@@ -755,6 +755,18 @@ public class ObjectFactory {
           }
         },
         
+        new Mapper<StudentContactLogEntry>() {
+          @Override
+          public fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients map(StudentContactLogEntry entity) {
+            StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
+            Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
+            @SuppressWarnings("unchecked")
+            List<StudentContactLogEntryCommentRestModel> comments = (List<StudentContactLogEntryCommentRestModel>) createModel(studentContactLogEntryCommentController.listContactLogEntryCommentsByEntry(entity));
+
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients(entity.getId(), entity.getText(), creatorId, entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, comments, entity.getArchived(), null);
+          }
+        },
+        
         new Mapper<StudentContactLogEntryComment>() {
           @Override
           public Object map(StudentContactLogEntryComment entity) {
