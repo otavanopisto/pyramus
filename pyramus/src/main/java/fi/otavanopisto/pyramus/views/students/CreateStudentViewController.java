@@ -87,19 +87,15 @@ public class CreateStudentViewController extends PyramusViewController implement
     List<StudyProgramme> studyProgrammes = new ArrayList<StudyProgramme>();
     
     StaffMember staffMember = staffMemberDAO.findById(loggedUser.getId());
-
+    Set<StudyProgramme> staffStudyProgrammes = staffMember.getStudyProgrammes();
+    
     // Filter list to show only study programmes where the user has access to
     for (StudyProgramme studyProgramme : studyProgrammesByOrganization) {
-      
-      Set<StudyProgramme> staffStudyProgrammes = staffMember.getStudyProgrammes();
-      
       for (StudyProgramme staffStudyProgramme : staffStudyProgrammes) {
         if (!staffStudyProgramme.getId().equals(studyProgramme.getId())) {
           continue;
         }
-        
         studyProgrammes.add(studyProgramme);
-        
       }
     }
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
