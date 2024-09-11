@@ -86,14 +86,15 @@ public class CreateStudentViewController extends PyramusViewController implement
         studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), Archived.UNARCHIVED);
     List<StudyProgramme> studyProgrammes = new ArrayList<StudyProgramme>();
     
+    StaffMember staffMember = staffMemberDAO.findById(loggedUser.getId());
+
     // Filter list to show only study programmes where the user has access to
     for (StudyProgramme studyProgramme : studyProgrammesByOrganization) {
-      StaffMember staffMember = staffMemberDAO.findById(loggedUser.getId());
       
       Set<StudyProgramme> staffStudyProgrammes = staffMember.getStudyProgrammes();
       
       for (StudyProgramme staffStudyProgramme : staffStudyProgrammes) {
-        if (!staffStudyProgramme.getName().equals(studyProgramme.getName())) {
+        if (!staffStudyProgramme.getId().equals(studyProgramme.getId())) {
           continue;
         }
         
