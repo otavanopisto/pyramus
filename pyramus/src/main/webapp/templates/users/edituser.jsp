@@ -479,6 +479,23 @@
         }));
         </c:if>     
       }
+      
+      function selectAll(){  
+        var ele=document.getElementsByName('studyProgrammes');  
+        for(var i=0; i<ele.length; i++){  
+          if(ele[i].type=='checkbox')  
+            ele[i].checked=true;  
+        }  
+      }  
+      
+      function deSelectAll(){  
+        var ele=document.getElementsByName('studyProgrammes');  
+        for(var i=0; i<ele.length; i++){  
+            if(ele[i].type=='checkbox')  
+              ele[i].checked=false;  
+              
+        } 
+      }
     </script>
   </head>
 
@@ -729,6 +746,8 @@
                   </tr>
                 </c:forEach>
               </table>
+              <input type="button" onclick='selectAll()' value="<fmt:message key="users.editUser.stydyProgrammes.selectAll"/>"/>  
+              <input type="button" onclick='deSelectAll()' value="<fmt:message key="users.editUser.stydyProgrammes.deSelectAll"/>"/>    
             </div>
           </div>
 
