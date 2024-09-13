@@ -28,29 +28,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Maven Aether -->
-
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-aether-provider</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.sonatype.aether</groupId>
-      <artifactId>aether-connector-wagon</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>sisu-inject-plexus</artifactId>
-          <groupId>org.sonatype.sisu</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-http-lightweight</artifactId>
-    </dependency>
-    
     <!-- Pyramus -->
 
     <dependency>
