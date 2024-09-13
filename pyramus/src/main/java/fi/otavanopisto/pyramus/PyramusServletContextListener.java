@@ -27,15 +27,11 @@ import fi.internetix.smvc.logging.Logging;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.SystemDAO;
 import fi.otavanopisto.pyramus.dao.base.MagicKeyDAO;
-import fi.otavanopisto.pyramus.dao.plugins.PluginDAO;
-import fi.otavanopisto.pyramus.dao.plugins.PluginRepositoryDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.webhooks.WebhookDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.MagicKey;
 import fi.otavanopisto.pyramus.domainmodel.base.MagicKeyScope;
-import fi.otavanopisto.pyramus.domainmodel.plugins.Plugin;
-import fi.otavanopisto.pyramus.domainmodel.plugins.PluginRepository;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.webhooks.Webhook;
@@ -199,20 +195,7 @@ public class PyramusServletContextListener implements ServletContextListener {
   @SuppressWarnings("unchecked")
   private void loadPlugins() {
     try {
-      PluginRepositoryDAO pluginRepositoryDAO = DAOFactory.getInstance().getPluginRepositoryDAO();
-      List<PluginRepository> pluginRepositories = pluginRepositoryDAO.listAll();
-      
-      PluginManager pluginManager = PluginManager.initialize(getClass().getClassLoader(), pluginRepositories);
-      
-      PluginDAO pluginDAO = DAOFactory.getInstance().getPluginDAO();
-      List<Plugin> enabledPlugins = pluginDAO.listByEnabled(Boolean.TRUE);
-//      for (Plugin plugin : enabledPlugins) {
-//        try {
-//          pluginManager.loadPlugin(plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion());
-//        } catch (Exception e) {
-//          Logging.logException("Failed to load plugin: " + plugin.getGroupId() + "." + plugin.getArtifactId() + ":" + plugin.getVersion(), e);
-//        }
-//      }
+      PluginManager pluginManager = PluginManager.initialize(getClass().getClassLoader());
       
       pluginManager.registerPlugins();
             
