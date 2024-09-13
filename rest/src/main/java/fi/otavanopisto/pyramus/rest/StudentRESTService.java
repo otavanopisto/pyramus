@@ -1,6 +1,9 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1877,12 +1880,28 @@ public class StudentRESTService extends AbstractRESTService {
         }
         
         contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
-            toDate(entity.getEntryDate()), loggedUser.getFirstName() + " " + loggedUser.getLastName(), creator);
+            toDate(entity.getEntryDate()), loggedUser.getFullName(), creator);
 
       
       }
+      fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType entryType = fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType.valueOf(contactLogEntry.getType().name());
       
-      cLE = (fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients) objectFactory.createModel(contactLogEntry);
+      Date tmpDate = new Date(contactLogEntry.getEntryDate().getTime()); 
+      Instant instant = tmpDate.toInstant();
+      ZoneId systemId = ZoneId.systemDefault();
+      ZoneOffset offset = systemId.getRules().getOffset(instant);
+      OffsetDateTime entryDate = tmpDate.toInstant().atOffset(offset);
+      
+      Long creatorId = contactLogEntry.getCreator() != null ? contactLogEntry.getCreator().getId() : null;
+
+      cLE = new fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients();
+      cLE.setId(contactLogEntry.getId());
+      cLE.setType(entryType);
+      cLE.setText(contactLogEntry.getText());
+      cLE.setEntryDate(entryDate);
+      cLE.setCreatorId(creatorId);
+      cLE.setCreatorName(contactLogEntry.getCreatorName());
+      cLE.setArchived(contactLogEntry.getArchived());
       cLE.setRecipients(recipients);
         
     }
