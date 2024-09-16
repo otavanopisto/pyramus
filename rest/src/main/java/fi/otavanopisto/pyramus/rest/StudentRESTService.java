@@ -1885,12 +1885,8 @@ public class StudentRESTService extends AbstractRESTService {
       
       }
       fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType entryType = fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType.valueOf(contactLogEntry.getType().name());
-      
-      Date tmpDate = new Date(contactLogEntry.getEntryDate().getTime()); 
-      Instant instant = tmpDate.toInstant();
-      ZoneId systemId = ZoneId.systemDefault();
-      ZoneOffset offset = systemId.getRules().getOffset(instant);
-      OffsetDateTime entryDate = tmpDate.toInstant().atOffset(offset);
+
+      OffsetDateTime entryDate = OffsetDateTime.ofInstant(contactLogEntry.getEntryDate().toInstant(), ZoneId.systemDefault());
       
       Long creatorId = contactLogEntry.getCreator() != null ? contactLogEntry.getCreator().getId() : null;
 
