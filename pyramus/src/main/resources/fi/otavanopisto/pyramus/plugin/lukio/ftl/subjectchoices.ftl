@@ -13,7 +13,7 @@
     <@include_page path="/templates/generic/locale_support.jsp"/>
     <title>Ainevalinnat</title>
     <#-- TODO: Apply context path somehow (${...requestContext...} doesnt work) -->
-    <script type="text/javascript" src="/plugin/static/lukio/subjectchoices.js"></script>
+    <script type="text/javascript" src="/scripts/gui/students/subjectchoices.js"></script>
     </script>
   </head>
   <body onload="onLoad(event);" ix:enabledrafting="true">
