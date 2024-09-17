@@ -123,11 +123,14 @@ public class MatriculationEligibilityController {
     }
 
     /*
-     * Figure out the number of mandatory credit points in the subject. This is a
+     * Figure out the number of mandatory credit points in the subject. This is 
+     * either explicitly set on the curriculum subject or it is calculated as the
      * sum of the length of the mandatory modules in the subject itself and the 
      * sum of the lengths of all the included subjects.
      */
-    Double subjectMandatoryCreditPointCount = (double) curriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum);
+    Double subjectMandatoryCreditPointCount = curriculumSubject.getMatriculationRequiredStudies() != null
+        ? curriculumSubject.getMatriculationRequiredStudies()
+        : (double) curriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum);
     
     /* 
      * Constructing the whole TOR primarily for just one subject is a bit of a 

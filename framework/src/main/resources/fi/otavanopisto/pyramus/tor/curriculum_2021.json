@@ -730,6 +730,7 @@
     {
       "name": "Espanja, B3-oppimäärä",
       "code": "EAB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Tutustutaan",
@@ -784,6 +785,7 @@
     {
       "name": "Japani, B3-oppimäärä",
       "code": "JPB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Tutustutaan",
@@ -838,6 +840,7 @@
     {
       "name": "Saksa, B3-oppimäärä",
       "code": "SAB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Tutustutaan",
@@ -892,6 +895,7 @@
     {
       "name": "Venäjä, B3-oppimäärä",
       "code": "VEB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Tutustutaan",
@@ -1668,6 +1672,7 @@
     {
       "name": "Psykologia",
       "code": "PS",
+      "matriculationRequiredStudies": 4,
       "modules": [
         {
           "name": "Toimiva ja oppiva ihminen",
@@ -1710,6 +1715,7 @@
     {
       "name": "Terveystieto",
       "code": "TE",
+      "matriculationRequiredStudies": 4,
       "modules": [
         {
           "name": "Terveys voimavarana",
@@ -1998,6 +2004,7 @@
     {
       "name": "Arabia, B3-oppimäärä",
       "code": "ARB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2052,6 +2059,7 @@
     {
       "name": "Englanti, B3-oppimäärä",
       "code": "ENB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2106,6 +2114,7 @@
     {
       "name": "Italia, B3-oppimäärä",
       "code": "IAB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2160,6 +2169,7 @@
     {
       "name": "Kiina, B3-oppimäärä",
       "code": "KIB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2214,6 +2224,7 @@
     {
       "name": "Muu vieras kieli, B3-oppimäärä",
       "code": "KXB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2268,6 +2279,7 @@
     {
       "name": "Korea, B3-oppimäärä",
       "code": "KOB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2322,6 +2334,7 @@
     {
       "name": "Latina, B3-oppimäärä",
       "code": "LAB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2376,6 +2389,7 @@
     {
       "name": "Portugali, B3-oppimäärä",
       "code": "POB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2430,6 +2444,7 @@
     {
       "name": "Ranska, B3-oppimäärä",
       "code": "RAB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2484,6 +2499,7 @@
     {
       "name": "Ruotsi, B3-oppimäärä",
       "code": "RUB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",
@@ -2538,6 +2554,7 @@
     {
       "name": "Saame, B3-oppimäärä (SMB3)",
       "code": "SMB3",
+      "matriculationRequiredStudies": 6,
       "modules": [
         {
           "name": "Perustason alkeet 1",

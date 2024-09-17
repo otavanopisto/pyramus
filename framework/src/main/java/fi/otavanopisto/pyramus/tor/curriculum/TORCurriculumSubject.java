@@ -79,8 +79,17 @@ public class TORCurriculumSubject {
     return sum;
   }
   
+  public Double getMatriculationRequiredStudies() {
+    return matriculationRequiredStudies;
+  }
+
+  public void setMatriculationRequiredStudies(Double matriculationRequiredStudies) {
+    this.matriculationRequiredStudies = matriculationRequiredStudies;
+  }
+
   private String name;
   private String code;
+  private Double matriculationRequiredStudies;
   private List<TORCurriculumModule> modules;
   @JsonProperty(value = "included-subjects", required = false)
   private List<String> includedSubjects;
