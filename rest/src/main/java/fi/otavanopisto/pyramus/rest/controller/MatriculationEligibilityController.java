@@ -142,12 +142,19 @@ public class MatriculationEligibilityController {
     TORSubject torSubject = studentTOR.findSubject(subjectCode);
 
     if (torSubject != null) {
-      Double mandatoryCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum);
+      /*
+       * If the matriculationRequiredStudies is set, we take the total number of
+       * completed credit points, otherwise take the number of credit points from
+       * completed and mandatory courses.
+       */
+      Double creditPointsCompleted = curriculumSubject.getMatriculationRequiredStudies() != null
+          ? torSubject.getCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum)
+          : torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum);
   
       return new StudentMatriculationEligibilityResultOPS2021(
           subjectMandatoryCreditPointCount,
-          mandatoryCreditPointsCompleted,
-          mandatoryCreditPointsCompleted >= subjectMandatoryCreditPointCount);
+          creditPointsCompleted,
+          creditPointsCompleted >= subjectMandatoryCreditPointCount);
     }
     else {
       // TORSubject was null - it likely has no completed credits -> return zero
