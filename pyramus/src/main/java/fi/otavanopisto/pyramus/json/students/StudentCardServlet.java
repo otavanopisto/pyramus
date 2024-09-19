@@ -52,6 +52,8 @@ public class StudentCardServlet extends HttpServlet {
       return;
     }
     
+    logger.info("Fetching student card list.");
+
     List<SliceStudentCardRestModel> studentCardList = sliceController.listStudentCards();
     
     response.setContentType("application/json");

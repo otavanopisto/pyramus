@@ -1,10 +1,12 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -44,9 +46,30 @@ public class KoskiScheduler {
   @Resource
   private UserTransaction userTransaction;
   
+  private ScheduledFuture<?> scheduledTask;
+  
   @PostConstruct
   private void postConstruct() {
-    scheduledExecutorService.scheduleWithFixedDelay(this::synchronize, INITIAL_DELAY_SECONDS, DELAY_SECONDS, TimeUnit.SECONDS);
+    scheduledTask = scheduledExecutorService.scheduleWithFixedDelay(this::synchronize, INITIAL_DELAY_SECONDS, DELAY_SECONDS, TimeUnit.SECONDS);
+  }
+  
+  /**
+   * Container @PreDestroy method.
+   * 
+   * Attempts to cancel the scheduled task initialized in @PostConstruct.
+   * If the task is not cancelled, it seems to linger in the container after
+   * undeploy. This may cause multiple timers to be running if the application 
+   * is then redeployed (which starts a new timer task).
+   * 
+   * However the lingering timers do not work as they are lacking CDI context
+   * and they just keep spamming exceptions about it.
+   */
+  @PreDestroy
+  private void preDestroy() {
+    if (scheduledTask != null) {
+      scheduledTask.cancel(false);
+      scheduledTask = null;
+    }
   }
   
   private void synchronize() {
