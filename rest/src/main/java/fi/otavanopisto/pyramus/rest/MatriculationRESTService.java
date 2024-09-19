@@ -278,10 +278,6 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).entity("Matriculation exam enrollment can only be confirmed via this operation.").build();
     }
     else {
-      // TODO ????
-//      // Update enrollment state
-//      examEnrollment = matriculationEligibilityController.setEnrollmentState(examEnrollment, newState, loggedUser);
-     
       // Update enrollment state
       examEnrollment = matriculationExamEnrollmentDao.updateState(examEnrollment, newState);
       
@@ -328,23 +324,31 @@ public class MatriculationRESTService extends AbstractRESTService {
      * Validation
      */
     
-    // If we're modifying, validate the payload's enrollmentId
-    if (existingEnrollment != null && !Objects.equals(existingEnrollment.getId(), enrollment.getId())) {
-      return Response.status(Status.BAD_REQUEST).entity("Enrollment ids do not match").build();
+    if (existingEnrollment != null) {
+      // Validate enrollment id in payload
+      if (!Objects.equals(existingEnrollment.getId(), enrollment.getId())) {
+        return Response.status(Status.BAD_REQUEST).entity("Enrollment ids do not match").build();
+      }
+      
+      // Validate that the existing enrollment is in state where modification is allowed
+      EnumSet<MatriculationExamEnrollmentState> allowedModificationStates = EnumSet.of(
+          MatriculationExamEnrollmentState.PENDING, 
+          MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST,
+          MatriculationExamEnrollmentState.SUPPLEMENTED);
+      if (!allowedModificationStates.contains(existingEnrollment.getState())) {
+        return Response.status(Status.BAD_REQUEST).entity("Enrollment state doesn't allow modification").build();
+      }
     }
     
     /*
      * If we're creating a new enrollment, only allowed status is PENDING
-     * If we're modifying an existing enrollment, allowed status' are x y and z
-     * 
-     * TODOOOOOO
+     * If we're modifying an existing enrollment, allowed status' are PENDING or SUPPLEMENTED
      */
-    
     MatriculationExamEnrollmentState enrollmentState = matriculationEligibilityController.translateState(enrollment.getState());
 
     EnumSet<MatriculationExamEnrollmentState> allowedStates = existingEnrollment == null 
         ? EnumSet.of(MatriculationExamEnrollmentState.PENDING)
-        : EnumSet.of(MatriculationExamEnrollmentState.SUPPLEMENTED);
+        : EnumSet.of(MatriculationExamEnrollmentState.PENDING, MatriculationExamEnrollmentState.SUPPLEMENTED);
     
     if (!allowedStates.contains(enrollmentState)) {
       return Response.status(Status.BAD_REQUEST)
@@ -465,6 +469,9 @@ public class MatriculationRESTService extends AbstractRESTService {
         }
         
         matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, changeLogChangeType, changeLogNewState, null);
+
+        // List of attendances already in database
+        List<MatriculationExamAttendance> storedAttendances = matriculationExamAttendanceDao.listByEnrollment(enrollmentEntity);
         
         for (fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance attendance : enrollment.getAttendances()) {
           Long attendanceId = attendance.getId();
@@ -509,7 +516,13 @@ public class MatriculationRESTService extends AbstractRESTService {
               attendance.getStatus(),
               attendance.getFunding(),
               attendance.getGrade());
+            
+            storedAttendances.removeIf(storedAttendance -> Objects.equals(storedAttendance.getId(), attendanceId));
           }
+        }
+        
+        for (int i = storedAttendances.size() - 1; i >= 0; i--) {
+          matriculationExamAttendanceDao.delete(storedAttendances.get(i));
         }
       }
     } catch (IllegalArgumentException ex) {
