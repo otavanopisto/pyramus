@@ -270,6 +270,7 @@ public abstract class KoskiStudentHandler {
       }
     } else {
       // Student.archived=true -> mitätöity
+      logger.info(String.format("Invalidating an archived student %d as part of update.", student.getId()));
       tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(new Date(), OpiskeluoikeudenTila.mitatoity));
     }
     
