@@ -11,7 +11,11 @@ public class ViewStudentValidationWarning {
     // Student's studyEndDate is set before studyStartDate
     STUDYENDDATE_BEFORE_STARTDATE,
     // Some StudyPeriod for the Student is not within the timeframe of studyStartDate to studyEndDate
-    STUDYPERIOD_OUTSIDE_STUDYTIME
+    STUDYPERIOD_OUTSIDE_STUDYTIME,
+    // Default user is not set
+    DEFAULT_USER_NOT_SET,
+    // Default user is archived
+    DEFAULT_USER_ARCHIVED
   }
   
   public enum ViewStudentValidationWarningSeverity {
