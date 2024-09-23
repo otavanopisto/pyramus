@@ -41,6 +41,20 @@ public class ViewStudentTools {
             ViewStudentValidationWarningSeverity.ERROR));
       }
     }
+    
+    /*
+     * Validate that default student is both set and doesn't point to an archived student.
+     */
+    if (student.getPerson() == null || student.getPerson().getDefaultUser() == null) {
+      warnings.add(new ViewStudentValidationWarning(student, ViewStudentValidationType.DEFAULT_USER_NOT_SET,
+          ViewStudentValidationWarningSeverity.ERROR));
+    }
+    else {
+      if (student.getPerson().getDefaultUser().getArchived() == null || Boolean.TRUE.equals(student.getPerson().getDefaultUser().getArchived())) {
+        warnings.add(new ViewStudentValidationWarning(student, ViewStudentValidationType.DEFAULT_USER_ARCHIVED,
+            ViewStudentValidationWarningSeverity.ERROR));
+      }
+    }
 
     return warnings;
   }
