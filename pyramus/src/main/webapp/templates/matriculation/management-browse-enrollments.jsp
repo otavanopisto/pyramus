@@ -107,7 +107,7 @@
               { text: getLocale().getText("generic.matriculation.enrollmentStates.CONFIRMED"), value: "CONFIRMED" }
             ]
           }, {
-            header : 'Pakollisia kursseja',
+            header : 'Pakollisia opintoja',
             width: 130,
             left: 8 + 300 + 8 + 250 + 8 + 150,
             dataType : 'text',
