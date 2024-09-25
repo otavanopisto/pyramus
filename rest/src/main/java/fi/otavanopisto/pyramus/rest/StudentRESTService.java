@@ -1,6 +1,9 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1829,6 +1832,78 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
 
+  @Path("/students/contactLogEntries/batch")
+  @POST
+  @RESTPermit(handling = Handling.INLINE)
+  public Response createMultipleStudentContactLogEntries(fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT })) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients cLE = null;
+    
+    if (entity.getRecipients() != null) {
+      
+      List<Long> recipients = new ArrayList<>();
+      
+      User loggedUser = sessionController.getUser();
+      StaffMember creator = userController.findStaffMemberById(loggedUser.getId());
+      
+      StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
+      StudentContactLogEntry contactLogEntry = null;
+      for (Long recipient : entity.getRecipients()) {
+        Student student = studentController.findStudentById(recipient);
+        
+        Status studentStatus = checkStudent(student);
+        if (studentStatus != Status.OK)
+          return Response.status(studentStatus).build();
+        
+        if (student == null) {
+          StaffMember staff = userController.findStaffMemberById(recipient);
+
+          if (staff != null) {
+            continue;
+          }
+          return Response.status(Status.BAD_REQUEST).build();
+        }
+        
+        recipients.add(recipient);
+        
+        ContactLogAccess access = studentController.resolveContactLogAccess(student);
+        
+        if(!access.equals(ContactLogAccess.ALL) && !access.equals(ContactLogAccess.OWN)) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+        
+        contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
+            toDate(entity.getEntryDate()), loggedUser.getFullName(), creator);
+
+      
+      }
+      fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType entryType = fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType.valueOf(contactLogEntry.getType().name());
+
+      OffsetDateTime entryDate = OffsetDateTime.ofInstant(contactLogEntry.getEntryDate().toInstant(), ZoneId.systemDefault());
+      
+      Long creatorId = contactLogEntry.getCreator() != null ? contactLogEntry.getCreator().getId() : null;
+
+      cLE = new fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients();
+      cLE.setId(contactLogEntry.getId());
+      cLE.setType(entryType);
+      cLE.setText(contactLogEntry.getText());
+      cLE.setEntryDate(entryDate);
+      cLE.setCreatorId(creatorId);
+      cLE.setCreatorName(contactLogEntry.getCreatorName());
+      cLE.setArchived(contactLogEntry.getArchived());
+      cLE.setRecipients(recipients);
+        
+    }
+    return Response.ok(cLE).build();
+    
+  }
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries")
   @GET
   @RESTPermit(handling = Handling.INLINE)
