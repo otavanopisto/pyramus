@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.oo;
+package fi.otavanopisto.pyramus.views.students;
 
 import java.util.Date;
 
@@ -27,7 +27,7 @@ public class InternetixMarkerViewController extends PyramusViewController implem
     pageRequestContext.getRequest().setAttribute("startDate", startDate.getTime());
     pageRequestContext.getRequest().setAttribute("endDate", endDate.getTime());
     
-    pageRequestContext.setIncludeFtl("/plugin/oo/studentmarker.ftl");
+    pageRequestContext.setIncludeJSP("/templates/students/studentmarker.jsp");
   }
 
   @Override
