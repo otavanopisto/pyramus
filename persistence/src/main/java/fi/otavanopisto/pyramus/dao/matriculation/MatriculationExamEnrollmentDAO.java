@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -16,31 +17,28 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.Predicates;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 @Stateless
 public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<MatriculationExamEnrollment> {
 
   public MatriculationExamEnrollment create(
       MatriculationExam exam,
-      String name,
-      String ssn,
-      String email,
-      String phone,
-      String address,
-      String postalCode,
-      String city,
       Long nationalStudentNumber,
       String guider,
       SchoolType enrollAs,
@@ -53,19 +51,11 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       Student student,
       MatriculationExamEnrollmentState state,
       MatriculationExamEnrollmentDegreeStructure degreeStructure,
-      boolean approvedByGuider,
       Date enrollmentDate
   ) {
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
 
     result.setExam(exam);
-    result.setName(name);
-    result.setSsn(ssn);
-    result.setEmail(email);
-    result.setPhone(phone);
-    result.setAddress(address);
-    result.setPostalCode(postalCode);
-    result.setCity(city);
     result.setNationalStudentNumber(nationalStudentNumber);
     result.setGuider(guider);
     result.setEnrollAs(enrollAs);
@@ -78,7 +68,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setStudent(student);
     result.setState(state);
     result.setDegreeStructure(degreeStructure);
-    result.setApprovedByGuider(approvedByGuider);
     result.setEnrollmentDate(enrollmentDate);
     
     return persist(result);
@@ -86,13 +75,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
 
   public MatriculationExamEnrollment update(
     MatriculationExamEnrollment enrollment,
-    String name,
-    String ssn,
-    String email,
-    String phone,
-    String address,
-    String postalCode,
-    String city,
     String guider,
     SchoolType enrollAs,
     DegreeType degreeType,
@@ -102,17 +84,8 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String message,
     boolean canPublishName,
     Student student,
-    MatriculationExamEnrollmentState state,
-    MatriculationExamEnrollmentDegreeStructure degreeStructure,
-    boolean approvedByGuider
+    MatriculationExamEnrollmentDegreeStructure degreeStructure
   ) {
-    enrollment.setName(name);
-    enrollment.setSsn(ssn);
-    enrollment.setEmail(email);
-    enrollment.setPhone(phone);
-    enrollment.setAddress(address);
-    enrollment.setPostalCode(postalCode);
-    enrollment.setCity(city);
     enrollment.setGuider(guider);
     enrollment.setEnrollAs(enrollAs);
     enrollment.setDegreeType(degreeType);
@@ -122,9 +95,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setMessage(message);
     enrollment.setCanPublishName(canPublishName);
     enrollment.setStudent(student);
-    enrollment.setState(state);
     enrollment.setDegreeStructure(degreeStructure);
-    enrollment.setApprovedByGuider(approvedByGuider);
     
     return persist(enrollment);
   }
@@ -164,25 +135,34 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
     Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    Join<MatriculationExamEnrollment, Student> studentJoin = root.join(MatriculationExamEnrollment_.student);
+    Join<MatriculationExamEnrollment, StaffMember> handlerJoin = root.join(MatriculationExamEnrollment_.handler, JoinType.LEFT);
     
     List<Predicate> predicates = new ArrayList<>();
     
-    if (StringUtils.isNotEmpty(nameQuery)) {
+    if (StringUtils.isNotBlank(nameQuery)) {
       String[] split = nameQuery.split(" ");
-      Predicates namePredicates = Predicates.newInstance();
       
       for (String s : split) {
-        if (StringUtils.isNotBlank(s)) {
-          namePredicates.add(criteriaBuilder.like(root.get(MatriculationExamEnrollment_.name), "%" + s + "%"));
-        }
-      }
+        Predicates namePredicates = Predicates.newInstance();
       
-      if (!namePredicates.isEmpty()) {
-        if (namePredicates.size() == 1) {
-          predicates.add(namePredicates.array()[0]);
+        if (StringUtils.isNotBlank(s)) {
+          namePredicates.add(criteriaBuilder.like(root.get(MatriculationExamEnrollment_.guider), "%" + s + "%"));
+
+          namePredicates.add(criteriaBuilder.like(studentJoin.get(Student_.firstName), "%" + s + "%"));
+          namePredicates.add(criteriaBuilder.like(studentJoin.get(Student_.lastName), "%" + s + "%"));
+
+          namePredicates.add(criteriaBuilder.like(handlerJoin.get(StaffMember_.firstName), "%" + s + "%"));
+          namePredicates.add(criteriaBuilder.like(handlerJoin.get(StaffMember_.lastName), "%" + s + "%"));
         }
-        else if (namePredicates.size() > 1) {
-          predicates.add(criteriaBuilder.and(namePredicates.array()));
+      
+        if (!namePredicates.isEmpty()) {
+          if (namePredicates.size() == 1) {
+            predicates.add(namePredicates.array()[0]);
+          }
+          else if (namePredicates.size() > 1) {
+            predicates.add(criteriaBuilder.or(namePredicates.array()));
+          }
         }
       }
     }
@@ -249,6 +229,22 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .getResultList();
   }
 
+  public List<MatriculationExamEnrollment> listByPerson(Person person) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    Join<MatriculationExamEnrollment, Student> studentJoin = root.join(MatriculationExamEnrollment_.student);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(studentJoin.get(Student_.person), person)
+    );
+    criteria.orderBy(criteriaBuilder.desc(root.get(MatriculationExamEnrollment_.enrollmentDate)));
+
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public List<MatriculationExamEnrollment> listByStudent(Student student) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -263,7 +259,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public MatriculationExamEnrollment findLatestByExamAndStudent(MatriculationExam exam, Student student) {
+  public MatriculationExamEnrollment findByExamAndStudent(MatriculationExam exam, Student student) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
@@ -275,18 +271,26 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
         criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.student), student)
       )
     );
-    criteria.orderBy(criteriaBuilder.desc(root.get(MatriculationExamEnrollment_.enrollmentDate)));
-    List<MatriculationExamEnrollment> resultList = 
-        entityManager.createQuery(criteria).getResultList();
-    if (resultList.size() == 0) {
-      return null;
-    } else {
-      return resultList.get(0);
-    }
+    return getSingleResult(entityManager.createQuery(criteria));
   }
 
   public MatriculationExamEnrollment updateCandidateNumber(MatriculationExamEnrollment enrollment, int candidateNumber) {
     enrollment.setCandidateNumber(candidateNumber);
+    return persist(enrollment);
+  }
+
+  public MatriculationExamEnrollment updateHandler(MatriculationExamEnrollment enrollment, StaffMember handler) {
+    enrollment.setHandler(handler);
+    return persist(enrollment);
+  }
+  
+  public MatriculationExamEnrollment updateHandlerNotes(MatriculationExamEnrollment enrollment, String handlerNotes) {
+    enrollment.setHandlerNotes(handlerNotes);
+    return persist(enrollment);
+  }
+  
+  public MatriculationExamEnrollment updateState(MatriculationExamEnrollment enrollment, MatriculationExamEnrollmentState state) {
+    enrollment.setState(state);
     return persist(enrollment);
   }
 
@@ -295,4 +299,5 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     DATE,
     STATE
   }
+
 }

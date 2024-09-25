@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.domainmodel.matriculation;
+package fi.otavanopisto.pyramus.matriculation;
 
 public enum MatriculationExamGrade {
   IMPROBATUR,
@@ -9,5 +9,7 @@ public enum MatriculationExamGrade {
   EXIMIA_CUM_LAUDE_APPROBATUR,
   LAUDATUR,
   UNKNOWN,
+  NO_RIGHT_TO_PARTICIPATE,
+  INVALIDATED,
   K
 }

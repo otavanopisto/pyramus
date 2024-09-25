@@ -46,6 +46,22 @@ public class StudentTORController {
    * @throws Exception if something goes wrong
    */
   public static StudentTOR constructStudentTOR(Student student, boolean useCurriculum) throws Exception {
+    TORCurriculum curriculum = useCurriculum ? getCurriculum(student) : null;
+    return constructStudentTOR(student, curriculum);
+  }
+
+  /**
+   * Constructs table of records for given student. If subject summary fields
+   * (subject completed, mandatory course count and completed mandatory course count)
+   * are needed, set useCurriculum to true. If they're not needed, use false for
+   * less processing.
+   * 
+   * @param student Student
+   * @param curriculum set if subject summary fields are needed, can be null if not
+   * @return Student's TOR
+   * @throws Exception if something goes wrong
+   */
+  public static StudentTOR constructStudentTOR(Student student, TORCurriculum curriculum) throws Exception {
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
@@ -116,29 +132,36 @@ public class StudentTORController {
       }
     }
 
-    TORCurriculum curriculum = null;
-    
-    if (useCurriculum) {
-      if (student.getCurriculum() != null) {
-        String curriculumName = student.getCurriculum().getName();
-        
-        String curriculumFile = null;
-        switch (curriculumName) {
-          case PyramusConsts.OPS_2018: curriculumFile = "curriculum_2018.json"; break;
-          case PyramusConsts.OPS_2021: curriculumFile = "curriculum_2021.json"; break;
-        }
+    tor.postProcess(curriculum);
+    return tor;
+  }
+  
+  /**
+   * Returns TORCurriculum for student or null if one cannot be resolved.
+   * 
+   * @param student
+   * @return
+   * @throws Exception if parsing curriculum json fails
+   */
+  public static TORCurriculum getCurriculum(Student student) throws Exception {
+    if (student.getCurriculum() != null) {
+      String curriculumName = student.getCurriculum().getName();
+      
+      String curriculumFile = null;
+      switch (curriculumName) {
+        case PyramusConsts.OPS_2018: curriculumFile = "curriculum_2018.json"; break;
+        case PyramusConsts.OPS_2021: curriculumFile = "curriculum_2021.json"; break;
+      }
 
-        if (curriculumFile != null) {
-          ObjectMapper objectMapper = new ObjectMapper();
-          String curriculumJsonLocation = "fi/otavanopisto/pyramus/tor/" + curriculumFile;
-          InputStream curriculumJson = StudentTORController.class.getClassLoader().getResourceAsStream(curriculumJsonLocation);
-          curriculum = objectMapper.readValue(curriculumJson, TORCurriculum.class);
-        }
+      if (curriculumFile != null) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String curriculumJsonLocation = "fi/otavanopisto/pyramus/tor/" + curriculumFile;
+        InputStream curriculumJson = StudentTORController.class.getClassLoader().getResourceAsStream(curriculumJsonLocation);
+        return objectMapper.readValue(curriculumJson, TORCurriculum.class);
       }
     }
     
-    tor.postProcess(curriculum);
-    return tor;
+    return null;
   }
   
   /**

@@ -49,6 +49,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -107,7 +108,6 @@ import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.LanguageController;
-import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.MunicipalityController;
 import fi.otavanopisto.pyramus.rest.controller.NationalityController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
@@ -119,7 +119,6 @@ import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.otavanopisto.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
-import fi.otavanopisto.pyramus.rest.controller.StudentMatriculationEligibilityResult;
 import fi.otavanopisto.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeController;
@@ -145,7 +144,6 @@ import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
-import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
@@ -233,9 +231,6 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private SessionController sessionController;
 
-  @Inject
-  private MatriculationEligibilityController matriculationEligibilityController;
-  
   @Inject
   private ObjectFactory objectFactory;
   
@@ -1772,31 +1767,6 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.noContent().entity("Could not find educational level").build();
     }
     return Response.ok(educationalLevel.getName()).build();
-  }
-
-  @Path("/students/{ID:[0-9]*}/matriculationEligibility")
-  @GET
-  @RESTPermit(handling = Handling.INLINE)
-  public Response getStudentMatriculationEligibility(@PathParam("ID") Long studentId, @QueryParam ("subjectCode") String subjectCode) {
-    if (StringUtils.isBlank(subjectCode)) {
-      return Response.status(Status.BAD_REQUEST).entity("Subject is required").build();
-    }
-    
-    Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).entity("Not found").build();
-    }
-    
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-
-    StudentMatriculationEligibilityResult result = matriculationEligibilityController.getStudentMatriculationEligible(student, subjectCode);
-    if (result == null) {
-      return Response.status(Status.BAD_REQUEST).entity("Could not resolve matriculation eligibility").build();
-    } else {
-      return Response.ok(new StudentMatriculationEligibility(result.getEligible(), result.getRequirePassingGrades(), result.getAcceptedCourseCount(), result.getAcceptedTransferCreditCount())).build();
-    }
   }
 
   @Path("/students/{ID:[0-9]*}/contactLogEntries")
@@ -3519,7 +3489,6 @@ public class StudentRESTService extends AbstractRESTService {
       @PathParam("STUDENTID") Long studentId,
       @QueryParam("educationTypeCode") String educationTypeCode,
       @QueryParam("educationSubtypeCode") String educationSubtypeCode) {
-    StudentCourseStats response = new StudentCourseStats();
     
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -3543,7 +3512,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     // TODO StudentTOR might be able to solve this more elegantly
-    
+
     int numCompletedCourses = assessmentController.getAcceptedCourseCount(
         student,
         null,
@@ -3564,9 +3533,14 @@ public class StudentRESTService extends AbstractRESTService {
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
     }
+
+    boolean personHasCourseAssessments = assessmentController.countCourseAssessments(student.getPerson(), TSB.TRUE) > 0;
+
+    StudentCourseStats response = new StudentCourseStats();
     
     response.setNumberCompletedCourses(numCompletedCourses);
     response.setNumberCreditPoints(numCreditPoints);
+    response.setPersonHasCourseAssessments(personHasCourseAssessments);
     
     return Response.ok(response).build();
   }

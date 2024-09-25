@@ -9,21 +9,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.grading.GradeDAO;
-import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
-import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
-import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
-import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
-import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -43,11 +37,6 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
   private void doGet(PageRequestContext pageRequestContext) {
     MatriculationExamDAO dao = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
-    ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
-    GradingScaleDAO gradingScaleDAO = DAOFactory.getInstance().getGradingScaleDAO();
-
-    List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
-    pageRequestContext.getRequest().setAttribute("gradingScales", gradingScales);
 
     MatriculationExam exam;
     if ("new".equals(pageRequestContext.getString("examId"))) {
@@ -69,39 +58,22 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
       
       JSONObject subjectJSON = new JSONObject();
       subjectJSON.put("subjectCode", subject);
-      subjectJSON.put("projectId", (subset != null && subset.getProject() != null) ? subset.getProject().getId() : null);
       subjectJSON.put("examDate", (subset != null && subset.getExamDate() != null) ? subset.getExamDate().getTime() : null);
       subjectsJSON.add(subjectJSON);
     }
     setJsDataVariable(pageRequestContext, "subjectData", subjectsJSON.toString());
 
-    List<Project> projects = projectDAO.listUnarchived();
-    projects.sort(Comparator.comparing(Project::getName));
-    
-    JSONArray projectsJSON = new JSONArray();
-    for (Project project : projects) {
-      JSONObject projectJSON = new JSONObject();
-      projectJSON.put("id", project.getId());
-      projectJSON.put("name", project.getName());
-      projectsJSON.add(projectJSON);
-    }
-    setJsDataVariable(pageRequestContext, "projectData", projectsJSON.toString());
-    
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-enrollment-settings.jsp");
   }
   
   private void doPost(PageRequestContext pageRequestContext) {
     MatriculationExamDAO dao = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
-    ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
-    GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     
     Date starts = DateUtils.startOfDay(pageRequestContext.getDate("starts"));
     Date ends = DateUtils.endOfDay(pageRequestContext.getDate("ends"));
     boolean enrollmentActive = Boolean.TRUE.equals(pageRequestContext.getBoolean("enrollmentActive"));
     
-    Long signupGradeId = pageRequestContext.getLong("signupGradeId");
-    Grade signupGrade = signupGradeId != null ? gradeDAO.findById(signupGradeId) : null;
     Integer examYear = pageRequestContext.getInteger("examYear");
     MatriculationExamTerm examTerm = StringUtils.isNotBlank(pageRequestContext.getString("examTerm")) ? 
         MatriculationExamTerm.valueOf(pageRequestContext.getString("examTerm")) : null;
@@ -109,26 +81,24 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     MatriculationExam exam;
     if ("new".equals(pageRequestContext.getString("examId"))) {
       // Create new
-      exam = dao.create(starts, ends, signupGrade, examYear, examTerm, enrollmentActive);
+      exam = dao.create(starts, ends, examYear, examTerm, enrollmentActive);
     } else {
       Long examId = pageRequestContext.getLong("examId");
       exam = dao.findById(examId);
-      exam = dao.update(exam, starts, ends, signupGrade, examYear, examTerm, enrollmentActive);
+      exam = dao.update(exam, starts, ends, examYear, examTerm, enrollmentActive);
     }
     
     Long subjectTableRowCount = pageRequestContext.getLong("subjectSettingsTable.rowCount");
     for (int i = 0; i < subjectTableRowCount; i++) {
       String colPrefix = "subjectSettingsTable." + i;
       MatriculationExamSubject subject = MatriculationExamSubject.valueOf(pageRequestContext.getString(colPrefix + ".subjectCode"));
-      Long projectId = pageRequestContext.getLong(colPrefix + ".projectId");
-      Project project = projectId != null ? projectDAO.findById(projectId) : null;
       Date examDate = pageRequestContext.getDate(colPrefix + ".examDate");
       
       MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(exam, subject);
       if (subjectSettings == null) {
-        matriculationExamSubjectSettingsDAO.create(exam, subject, project, examDate);
+        matriculationExamSubjectSettingsDAO.create(exam, subject, examDate);
       } else {
-        matriculationExamSubjectSettingsDAO.update(subjectSettings, project, examDate);
+        matriculationExamSubjectSettingsDAO.update(subjectSettings, examDate);
       }
     }
     

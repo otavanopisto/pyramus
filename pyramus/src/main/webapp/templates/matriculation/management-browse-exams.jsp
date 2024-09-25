@@ -55,6 +55,13 @@
             editable: false,
             paramName: 'ends'
           }, {
+            header : 'Ilmoittautuminen aktiivinen',
+            width: 100,
+            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
+            dataType : 'checkbox',
+            editable: false,
+            paramName: 'enrollmentActive'
+          }, {
             dataType: 'hidden',
             paramName: 'examId'
           }, {
@@ -80,6 +87,7 @@
               examsJSON[i].examTerm,
               examsJSON[i].starts,
               examsJSON[i].ends,
+              examsJSON[i].enrollmentActive,
               examsJSON[i].id,
               ''
             ]);

@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
-import fi.otavanopisto.pyramus.domainmodel.projects.Project;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 
 @Entity
 @Table(uniqueConstraints={
@@ -43,14 +43,6 @@ public class MatriculationExamSubjectSettings {
     this.examDate = examDate;
   }
 
-  public Project getProject() {
-    return project;
-  }
-
-  public void setProject(Project project) {
-    this.project = project;
-  }
-
   public MatriculationExam getExam() {
     return exam;
   }
@@ -70,9 +62,6 @@ public class MatriculationExamSubjectSettings {
   @Enumerated(EnumType.STRING)
   private MatriculationExamSubject subject;
 
-  @ManyToOne
-  private Project project;
-  
   @Temporal(TemporalType.TIMESTAMP)
   private Date examDate;
 }

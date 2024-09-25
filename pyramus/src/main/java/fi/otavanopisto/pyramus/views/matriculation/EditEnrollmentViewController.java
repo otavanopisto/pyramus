@@ -2,11 +2,12 @@ package fi.otavanopisto.pyramus.views.matriculation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,39 +17,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
-import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
-import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
-import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
-import fi.otavanopisto.pyramus.dao.projects.StudentProjectSubjectCourseDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.TSB;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
-import fi.otavanopisto.pyramus.domainmodel.base.Tag;
-import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamGrade;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
-import fi.otavanopisto.pyramus.domainmodel.projects.Project;
-import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
-import fi.otavanopisto.pyramus.domainmodel.projects.ProjectSubjectCourse;
-import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 public class EditEnrollmentViewController extends PyramusViewController {
   
@@ -75,6 +65,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
+    MatriculationExamEnrollmentChangeLogDAO matriculationExamEnrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
     MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
     if (enrollment == null) {
       pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
@@ -82,19 +73,21 @@ public class EditEnrollmentViewController extends PyramusViewController {
     }
     
     StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+    EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
 
     MatriculationExamEnrollmentState enrollmentState = MatriculationExamEnrollmentState.valueOf(
         pageRequestContext.getString("state"));
     
+    if (!allowedStates.contains(enrollmentState)) {
+      pageRequestContext.addMessage(Severity.ERROR, "Cannot change state to the requested one");
+      return;
+    }
+
+    MatriculationExamEnrollmentChangeLogType changeLogChangeType = MatriculationExamEnrollmentChangeLogType.ENROLLMENT_UPDATED;
+    MatriculationExamEnrollmentState changeLogNewState = null;
+
     enrollment = enrollmentDAO.update(
       enrollment,
-      ObjectUtils.firstNonNull(pageRequestContext.getString("name"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("ssn"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("email"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("phone"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("address"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("postalCode"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("postalOffice"), ""),
       ObjectUtils.firstNonNull(pageRequestContext.getString("guidanceCounselor"), ""),
       SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
       DegreeType.valueOf(pageRequestContext.getString("degreeType")),
@@ -104,11 +97,23 @@ public class EditEnrollmentViewController extends PyramusViewController {
       ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
-      enrollmentState,
-      MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
-      pageRequestContext.getBoolean("approvedByGuider")
+      MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure"))
     );
+
+    if (enrollmentState != enrollment.getState()) {
+      changeLogNewState = enrollmentState;
+      enrollment = enrollmentDAO.updateState(enrollment, enrollmentState);
+    }
+
+    StaffMember handler = pageRequestContext.getLong("handler") != null ? staffMemberDAO.findById(pageRequestContext.getLong("handler")) : null;
+    enrollment = enrollmentDAO.updateHandler(enrollment, handler);
+
+    String handlerNotes = StringUtils.isNotBlank(pageRequestContext.getString("handlerNotes")) ? pageRequestContext.getString("handlerNotes") : null;
+    enrollment = enrollmentDAO.updateHandlerNotes(enrollment, handlerNotes);
     
+    String changeLogMessage = StringUtils.isNotBlank(pageRequestContext.getString("changeLogMessage")) ? pageRequestContext.getString("changeLogMessage") : null;
+    matriculationExamEnrollmentChangeLogDAO.create(enrollment, loggedUser, changeLogChangeType, changeLogNewState, changeLogMessage);
+
     Integer enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");
     if (enrolledAttendances == null) {
       enrolledAttendances = 0;
@@ -137,10 +142,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
         examAttendance = attendanceDAO.findById(attendanceId);
         examAttendance = attendanceDAO.update(examAttendance, enrollment, subject, mandatory, repeat,
             examAttendance.getYear(), examAttendance.getTerm(), examAttendance.getStatus(), funding, examAttendance.getGrade());
-      }
-      
-      if (enrollmentState == MatriculationExamEnrollmentState.APPROVED) {
-        createOrUpdateStudentProject(examAttendance, enrollment.getStudent(), subject, mandatory, loggedUser);
       }
     }
     
@@ -215,113 +216,58 @@ public class EditEnrollmentViewController extends PyramusViewController {
       Boolean.FALSE.equals(mandatory) ? "OPTIONAL" : null;
   }
   
-  private void createOrUpdateStudentProject(MatriculationExamAttendance examAttendance, Student student, MatriculationExamSubject subject, boolean mandatory, StaffMember loggedUser) {
-    ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
-    StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
-    StudentProjectModuleDAO studentProjectModuleDAO = DAOFactory.getInstance().getStudentProjectModuleDAO();
-    StudentProjectSubjectCourseDAO studentProjectSubjectCourseDAO = DAOFactory.getInstance().getStudentProjectSubjectCourseDAO();
-    MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
-    MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
-
-    MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(examAttendance.getEnrollment().getExam(), subject);
-    if (subjectSettings == null || subjectSettings.getProject() == null) {
-      // We cannot really do anything if the settings aren't in place
-      return;
-    }
-    
-    CourseOptionality projectOptionality = mandatory ? CourseOptionality.MANDATORY : CourseOptionality.OPTIONAL;
-    
-    Project project = subjectSettings.getProject();
-    StudentProject studentProject;
-    
-    if (examAttendance != null && 
-        examAttendance.getProjectAssessment() != null && 
-        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getArchived()) &&
-        examAttendance.getProjectAssessment().getStudentProject() != null &&
-        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getStudentProject().getArchived())) {
-      // Use the studentproject from the projectassessment if it exists
-      studentProject = examAttendance.getProjectAssessment().getStudentProject();
-    } else {
-      // Resolve studentProject from the project in the settings
-      List<StudentProject> studentProjects = studentProjectDAO.listBy(student, project, TSB.IGNORE);
-
-      // Find first non-archived project
-      studentProject = studentProjects.stream()
-          .filter(studentProject1 -> BooleanUtils.isFalse(studentProject1.getArchived()))
-          .findFirst()
-          .orElse(null);
-      
-      if (studentProject == null) {
-        // No unarchived student project was found so try to use any other
-        studentProject = studentProjects.isEmpty() ? null : studentProjects.get(0);
-        
-        if (studentProject != null && BooleanUtils.isTrue(studentProject.getArchived())) {
-          studentProjectDAO.unarchive(studentProject);
-        }
-      }
-    }
-    
-    if (studentProject == null) {
-      // No matching student project was found so create a new one
-      studentProject = studentProjectDAO.create(student, project.getName(), project.getDescription(), 
-          project.getOptionalStudiesLength().getUnits(), project.getOptionalStudiesLength().getUnit(), projectOptionality, loggedUser, project);
-      
-      Set<Tag> tags = new HashSet<>();
-      for (Tag tag : project.getTags()) {
-        tags.add(tag);
-      }
-      studentProjectDAO.updateTags(studentProject, tags);
-      
-      List<ProjectModule> projectModules = project.getProjectModules();
-      for (ProjectModule projectModule : projectModules) {
-        studentProjectModuleDAO.create(studentProject, projectModule.getModule(), null,
-            CourseOptionality.getOptionality(projectModule.getOptionality().getValue()));
-      }
-
-      List<ProjectSubjectCourse> projectSubjectCourses = project.getProjectSubjectCourses();
-      for (ProjectSubjectCourse projectSubjectCourse : projectSubjectCourses) {
-        studentProjectSubjectCourseDAO.create(studentProject, projectSubjectCourse.getSubject(), projectSubjectCourse.getCourseNumber(), null,
-            CourseOptionality.getOptionality(projectSubjectCourse.getOptionality().getValue()));
-      }
-    } else {
-      studentProject = studentProjectDAO.updateOptionality(studentProject, projectOptionality);
-    }
-
-    MatriculationExam matriculationExam = examAttendance.getEnrollment().getExam();
-    
-    if (matriculationExam != null && matriculationExam.getSignupGrade() != null && subjectSettings.getExamDate() != null && examAttendance.getProjectAssessment() == null) {
-      // Add the exam date
-      ProjectAssessment projectAssessment = projectAssessmentDAO.create(studentProject, loggedUser, matriculationExam.getSignupGrade(), subjectSettings.getExamDate(), "");
-      // Link the project assessment to this exam atten dance
-      matriculationExamAttendanceDAO.updateProjectAssessment(examAttendance, projectAssessment);
-    }
-  }
-
   private void doGet(PageRequestContext pageRequestContext) {
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-edit-enrollment.jsp");
-    
+
     Long id = pageRequestContext.getLong("enrollment");
     if (id == null) {
       pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
       return;
     }
-    MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
+    MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    MatriculationExamEnrollmentChangeLogDAO enrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
     if (enrollment == null) {
       pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
       return;
     }
+
+    EnumSet<Role> activeStaffMemberRoles = EnumSet.of(Role.ADMINISTRATOR, Role.STUDY_PROGRAMME_LEADER, Role.MANAGER, Role.STUDY_GUIDER, Role.TEACHER);
+
+    List<StaffMember> enrollmentHandlers = staffMemberDAO.listActiveStaffMembersByRole(activeStaffMemberRoles);
+    StaffMember selectedHandler = enrollment.getHandler() != null ? enrollment.getHandler() : null;
+    if (selectedHandler != null) {
+      Long selectedStudyApproverId = selectedHandler.getId();
+      
+      boolean isSelectedInList = enrollmentHandlers.stream()
+        .map(StaffMember::getId)
+        .anyMatch(selectedStudyApproverId::equals);
+      
+      if (!isSelectedInList) {
+        enrollmentHandlers.add(selectedHandler);
+      }
+    }
+    enrollmentHandlers.sort(Comparator.comparing(StaffMember::getLastName).thenComparing(StaffMember::getFirstName));
+
+    StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+    
+    EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
+    Set<String> allowedStatesStrSet = allowedStates.stream().map(MatriculationExamEnrollmentState::name).collect(Collectors.toSet());
+    
+    List<MatriculationExamEnrollmentChangeLog> changeLog = enrollmentChangeLogDAO.listByEnrollment(enrollment);
+
+    String fullName = enrollment.getStudent().getFullName();
+    String email = enrollment.getStudent().getPrimaryEmail() != null ? enrollment.getStudent().getPrimaryEmail().getAddress() : null;
+    String phoneNumber = enrollment.getStudent().getPrimaryPhoneNumber() != null ? enrollment.getStudent().getPrimaryPhoneNumber().getNumber() : null;
     
     pageRequestContext.getRequest().setAttribute("enrollment", enrollment);
-    pageRequestContext.getRequest().setAttribute("name", enrollment.getName());
-    pageRequestContext.getRequest().setAttribute("ssn", enrollment.getSsn());
-    pageRequestContext.getRequest().setAttribute("email", enrollment.getEmail());
-    pageRequestContext.getRequest().setAttribute("phone", enrollment.getPhone());
-    pageRequestContext.getRequest().setAttribute("address", enrollment.getAddress());
-    pageRequestContext.getRequest().setAttribute("postalCode", enrollment.getPostalCode());
-    pageRequestContext.getRequest().setAttribute("postalOffice", enrollment.getCity());
+    pageRequestContext.getRequest().setAttribute("changeLog", changeLog);
+    pageRequestContext.getRequest().setAttribute("name", fullName);
+    pageRequestContext.getRequest().setAttribute("email", email);
+    pageRequestContext.getRequest().setAttribute("phone", phoneNumber);
     pageRequestContext.getRequest().setAttribute("nationalStudentNumber", enrollment.getNationalStudentNumber());
     pageRequestContext.getRequest().setAttribute("guidanceCounselor", enrollment.getGuider());
     pageRequestContext.getRequest().setAttribute("enrollAs", enrollment.getEnrollAs().name());
@@ -333,6 +279,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("state", enrollment.getState().name());
     pageRequestContext.getRequest().setAttribute("degreeStructure", enrollment.getDegreeStructure().name());
     pageRequestContext.getRequest().setAttribute("enrollmentDate", enrollment.getEnrollmentDate());
+    pageRequestContext.getRequest().setAttribute("allowedStates", allowedStatesStrSet);
+    pageRequestContext.getRequest().setAttribute("handlers", enrollmentHandlers);
     
     List<MatriculationExamAttendance> attendances = attendanceDAO.listByEnrollment(enrollment);
     
@@ -398,6 +346,43 @@ public class EditEnrollmentViewController extends PyramusViewController {
         throw new RuntimeException(ex);
       }
     }
+  }
+
+  /**
+   * Returns the allowed states the student can be set to by the given user
+   * and their privileges.
+   * 
+   * @param loggedUser
+   * @param currentState
+   * @return
+   */
+  private EnumSet<MatriculationExamEnrollmentState> getAllowedStates(StaffMember loggedUser,
+      MatriculationExamEnrollmentState currentState) {
+    EnumSet<MatriculationExamEnrollmentState> allowedStates;
+    if (loggedUser.hasAnyRole(Role.ADMINISTRATOR, Role.STUDY_PROGRAMME_LEADER)) {
+      allowedStates = EnumSet.allOf(MatriculationExamEnrollmentState.class);
+    }
+    else {
+      // Limit the states the study guiders etc with less permissions can change the enrollment to
+      // By default, add the current state so the form can be saved without changing state
+      allowedStates = EnumSet.of(currentState);
+
+      switch (currentState) {
+        case PENDING:
+        case SUPPLEMENTATION_REQUEST:
+        case SUPPLEMENTED:
+          allowedStates.add(MatriculationExamEnrollmentState.SUPPLEMENTATION_REQUEST);
+          allowedStates.add(MatriculationExamEnrollmentState.APPROVED);
+          allowedStates.add(MatriculationExamEnrollmentState.REJECTED);
+        break;
+        
+        default:
+          // Any other state does not allow modification if the user doesn't have sufficient privileges.
+        break;
+      }
+    }
+    
+    return allowedStates;
   }
 
   public UserRole[] getAllowedRoles() {

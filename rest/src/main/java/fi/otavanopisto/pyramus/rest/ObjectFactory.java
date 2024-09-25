@@ -80,6 +80,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
@@ -100,6 +102,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
@@ -918,6 +921,10 @@ public class ObjectFactory {
               }
             }
 
+            LocalDate studyStartDate = DateUtils.toLocalDate(student.getStudyStartDate());
+            LocalDate studyTimeEnd = DateUtils.toLocalDate(student.getStudyTimeEnd());
+            LocalDate studyEndDate = DateUtils.toLocalDate(student.getStudyEndDate());
+            
             return new fi.otavanopisto.pyramus.rest.model.StudentParentChild(
                 student.getId(),
                 student.getPersonId(),
@@ -927,7 +934,10 @@ public class ObjectFactory {
                 studyProgrammeName, 
                 defaultEmail, 
                 defaultPhoneNumber, 
-                defaultAddress
+                defaultAddress,
+                studyStartDate,
+                studyTimeEnd,
+                studyEndDate
             );
           }
         },
@@ -1074,6 +1084,41 @@ public class ObjectFactory {
         }
       },
       
+      new Mapper<MatriculationExamEnrollmentChangeLog>() {
+        @Override
+        public Object map(MatriculationExamEnrollmentChangeLog entity) {
+          fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationExamEnrollmentChangeLog restModel = 
+              new fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationExamEnrollmentChangeLog();
+          restModel.setId(entity.getId());
+          restModel.setEnrollmentId(entity.getEnrollment() != null ? entity.getEnrollment().getId() : null);
+          restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
+          restModel.setModifierRoleClass(PyramusRestUtils.getUserRoleClass(entity.getModifier()));
+          restModel.setTimestamp(toOffsetDateTime(entity.getTimestamp()));
+          restModel.setChangeType(entity.getChangeType());
+          restModel.setNewState(entity.getNewState());
+          restModel.setMessage(entity.getMessage());
+          return restModel;
+        }
+      },
+
+      new Mapper<MatriculationGrade>() {
+        @Override
+        public Object map(MatriculationGrade entity) {
+          fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationGrade restModel = 
+              new fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationGrade();
+          restModel.setId(entity.getId());
+          restModel.setPersonId(entity.getPerson() != null ? entity.getPerson().getId() : null);
+          restModel.setSubject(entity.getSubject());
+          restModel.setYear(entity.getYear());
+          restModel.setTerm(entity.getTerm());
+          restModel.setGrade(entity.getGrade());
+          restModel.setGradeDate(entity.getGradeDate());
+          restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
+          restModel.setLastModified(entity.getLastModified());
+          return restModel;
+        }
+      },
+
       new Mapper<fi.otavanopisto.pyramus.domainmodel.students.StudentCard>() {
         @Override
         public Object map(fi.otavanopisto.pyramus.domainmodel.students.StudentCard entity) {
@@ -1093,7 +1138,6 @@ public class ObjectFactory {
               entity.getExpiryDate(), 
               activity, 
               type);
-         
         }
       }
       

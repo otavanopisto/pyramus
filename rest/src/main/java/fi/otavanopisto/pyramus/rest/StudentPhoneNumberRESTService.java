@@ -60,7 +60,7 @@ public class StudentPhoneNumberRESTService extends AbstractRESTService {
       return Response.status(studentStatus).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPHONENUMBERS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPHONENUMBERS, UserPermissions.STUDENT_PARENT }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -205,7 +205,7 @@ public class StudentPhoneNumberRESTService extends AbstractRESTService {
       return Status.NOT_FOUND;
     }
     
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
       return Status.FORBIDDEN;
     }
 

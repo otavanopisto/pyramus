@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class MatriculationExamEnrollment {
@@ -10,62 +11,6 @@ public class MatriculationExamEnrollment {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getSsn() {
-    return ssn;
-  }
-
-  public void setSsn(String ssn) {
-    this.ssn = ssn;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getPhone() {
-    return phone;
-  }
-
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
-
-  public String getAddress() {
-    return address;
-  }
-
-  public void setAddress(String address) {
-    this.address = address;
-  }
-
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
-  }
-
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
   }
 
   public Long getNationalStudentNumber() {
@@ -140,11 +85,11 @@ public class MatriculationExamEnrollment {
     this.studentId = studentId;
   }
 
-  public String getState() {
+  public MatriculationExamStudentStatus getState() {
     return state;
   }
 
-  public void setState(String state) {
+  public void setState(MatriculationExamStudentStatus state) {
     this.state = state;
   }
   
@@ -156,11 +101,11 @@ public class MatriculationExamEnrollment {
     this.attendances = attendances;
   }
 
-  public String getEnrollmentDate() {
+  public OffsetDateTime getEnrollmentDate() {
     return enrollmentDate;
   }
 
-  public void setEnrollmentDate(String enrollmentDate) {
+  public void setEnrollmentDate(OffsetDateTime enrollmentDate) {
     this.enrollmentDate = enrollmentDate;
   }
 
@@ -189,13 +134,6 @@ public class MatriculationExamEnrollment {
   }
 
   private Long id;
-  private String name;
-  private String ssn;
-  private String email;
-  private String phone;
-  private String address;
-  private String postalCode;
-  private String city;
   private Long nationalStudentNumber;
   private String guider;
   private String enrollAs;
@@ -206,9 +144,9 @@ public class MatriculationExamEnrollment {
   private String message;
   private boolean canPublishName;
   private Long studentId;
-  private String state;
+  private MatriculationExamStudentStatus state;
   private List<MatriculationExamAttendance> attendances;
-  private String enrollmentDate;
+  private OffsetDateTime enrollmentDate;
   private Long examId;
   private String degreeStructure;
 }

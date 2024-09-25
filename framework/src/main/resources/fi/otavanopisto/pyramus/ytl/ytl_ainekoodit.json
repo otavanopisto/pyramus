@@ -56,12 +56,10 @@
     "ytlAine": "B",
     "ytlOppimäärä": "B",
     "aine": "ruotsi, keskipitkä oppimäärä",
-    "aineKoodi": "RUB",
+    "aineKoodi": "RUB1",
     "matriculationExamSubject": "RUB",
-      "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "RUB" },
-      { "educationType": "2", "subjectCode": "RUB1" },
-      { "educationType": "2", "subjectCode": "RUB3" }
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "RUB1" }
     ]
   },
   {
@@ -78,10 +76,10 @@
     "ytlAine": "E",
     "ytlOppimäärä": "C",
     "aine": "englanti, lyhyt oppimäärä",
-    "aineKoodi": "ENC",
+    "aineKoodi": "ENB3",
     "matriculationExamSubject": "ENC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ENC" }
+      { "educationType": "2", "subjectCode": "ENB3" }
     ]
   },
   {
@@ -98,10 +96,10 @@
     "ytlAine": "F",
     "ytlOppimäärä": "C",
     "aine": "ranska, lyhyt oppimäärä",
-    "aineKoodi": "RAC",
+    "aineKoodi": "RAB3",
     "matriculationExamSubject": "RAC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "RAC" }
+      { "educationType": "2", "subjectCode": "RAB3" }
     ]
   },
   {
@@ -118,10 +116,10 @@
     "ytlAine": "P",
     "ytlOppimäärä": "C",
     "aine": "espanja, lyhyt oppimäärä",
-    "aineKoodi": "ESC",
+    "aineKoodi": "ESB3",
     "matriculationExamSubject": "ESC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ESC" }
+      { "educationType": "2", "subjectCode": "ESB3" }
     ]
   },
   {
@@ -138,10 +136,10 @@
     "ytlAine": "S",
     "ytlOppimäärä": "C",
     "aine": "saksa, lyhyt oppimäärä",
-    "aineKoodi": "SAC",
+    "aineKoodi": "SAB3",
     "matriculationExamSubject": "SAC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "SAC" }
+      { "educationType": "2", "subjectCode": "SAB3" }
     ]
   },
   {
@@ -158,40 +156,40 @@
     "ytlAine": "V",
     "ytlOppimäärä": "C",
     "aine": "venäjä, lyhyt oppimäärä",
-    "aineKoodi": "VEC",
+    "aineKoodi": "VEB3",
     "matriculationExamSubject": "VEC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "VEC" }
+      { "educationType": "2", "subjectCode": "VEB3" }
     ]
   },
   {
     "ytlAine": "T",
     "ytlOppimäärä": "C",
     "aine": "italia, lyhyt oppimäärä",
-    "aineKoodi": "ITC",
+    "aineKoodi": "ITB3",
     "matriculationExamSubject": "ITC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ITC" }
+      { "educationType": "2", "subjectCode": "ITB3" }
     ]
   },
   {
     "ytlAine": "G",
     "ytlOppimäärä": "C",
     "aine": "portugali, lyhyt oppimäärä",
-    "aineKoodi": "POC",
+    "aineKoodi": "POB3",
     "matriculationExamSubject": "POC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "POC" }
+      { "educationType": "2", "subjectCode": "POB3" }
     ]
   },
   {
     "ytlAine": "L",
     "ytlOppimäärä": "C",
     "aine": "latina, lyhyt oppimäärä",
-    "aineKoodi": "LAC",
+    "aineKoodi": "LAB3",
     "matriculationExamSubject": "LAC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "LAC" }
+      { "educationType": "2", "subjectCode": "LAB3" }
     ]
   },
   {
