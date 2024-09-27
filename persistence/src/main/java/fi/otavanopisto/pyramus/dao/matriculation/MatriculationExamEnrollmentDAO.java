@@ -46,6 +46,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       int numMandatoryCourses,
       boolean restartExam,
       String location,
+      String contactInfoChange,
       String message,
       boolean canPublishName,
       Student student,
@@ -63,6 +64,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setNumMandatoryCourses(numMandatoryCourses);
     result.setRestartExam(restartExam);
     result.setLocation(location);
+    result.setContactInfoChange(contactInfoChange);
     result.setMessage(message);
     result.setCanPublishName(canPublishName);
     result.setStudent(student);
@@ -81,6 +83,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     int numMandatoryCourses,
     boolean restartExam,
     String location,
+    String contactInfoChange,
     String message,
     boolean canPublishName,
     Student student,
@@ -92,6 +95,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setNumMandatoryCourses(numMandatoryCourses);
     enrollment.setRestartExam(restartExam);
     enrollment.setLocation(location);
+    enrollment.setContactInfoChange(contactInfoChange);
     enrollment.setMessage(message);
     enrollment.setCanPublishName(canPublishName);
     enrollment.setStudent(student);

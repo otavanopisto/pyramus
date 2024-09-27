@@ -94,6 +94,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),
       pageRequestContext.getBoolean("restartExam"),
       ObjectUtils.firstNonNull(pageRequestContext.getString("location"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("contactInfoChange"), ""),
       ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),

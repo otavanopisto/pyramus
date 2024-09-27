@@ -496,6 +496,14 @@
   
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.contactInfoChange"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.contactInfoChange.help"/>
+                </jsp:include>            
+                <textarea name="contactInfoChange" cols="80" rows="5">${fn:escapeXml(enrollment.contactInfoChange)}</textarea>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.message"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.message.help"/>
                 </jsp:include>            
