@@ -182,6 +182,14 @@ public class MatriculationExamEnrollment {
     this.handlerNotes = handlerNotes;
   }
 
+  public String getContactInfoChange() {
+    return contactInfoChange;
+  }
+
+  public void setContactInfoChange(String contactInfoChange) {
+    this.contactInfoChange = contactInfoChange;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -213,6 +221,11 @@ public class MatriculationExamEnrollment {
   
   @Column
   private String location;
+  
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
+  @Column
+  private String contactInfoChange;
   
   @Lob
   @Basic (fetch = FetchType.LAZY)

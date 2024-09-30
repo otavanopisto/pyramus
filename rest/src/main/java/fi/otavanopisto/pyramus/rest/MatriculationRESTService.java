@@ -413,6 +413,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.getNumMandatoryCourses(),
           enrollment.isRestartExam(),
           enrollment.getLocation(),
+          enrollment.getContactInfoChange(),
           enrollment.getMessage(),
           enrollment.isCanPublishName(),
           student,
@@ -458,6 +459,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.getNumMandatoryCourses(),
           enrollment.isRestartExam(),
           enrollment.getLocation(),
+          enrollment.getContactInfoChange(),
           enrollment.getMessage(),
           enrollment.isCanPublishName(),
           student,
@@ -643,6 +645,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setNumMandatoryCourses(examEnrollment.getNumMandatoryCourses());
     result.setRestartExam(examEnrollment.isRestartExam());
     result.setLocation(examEnrollment.getLocation());
+    result.setContactInfoChange(examEnrollment.getContactInfoChange());
     result.setMessage(examEnrollment.getMessage());
     result.setCanPublishName(examEnrollment.isCanPublishName());
     result.setStudentId(examEnrollment.getStudent().getId());
