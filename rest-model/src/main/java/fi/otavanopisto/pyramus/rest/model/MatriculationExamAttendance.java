@@ -1,4 +1,13 @@
 package fi.otavanopisto.pyramus.rest.model;
+
+import java.time.OffsetDateTime;
+
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
+
 public class MatriculationExamAttendance {
 
   public Long getEnrollmentId() {
@@ -9,11 +18,11 @@ public class MatriculationExamAttendance {
     this.enrollmentId = enrollmentId;
   }
 
-  public String getSubject() {
+  public MatriculationExamSubject getSubject() {
     return subject;
   }
 
-  public void setSubject(String subject) {
+  public void setSubject(MatriculationExamSubject subject) {
     this.subject = subject;
   }
 
@@ -41,65 +50,65 @@ public class MatriculationExamAttendance {
     this.year = year;
   }
 
-  public String getTerm() {
+  public MatriculationExamTerm getTerm() {
     return term;
   }
 
-  public void setTerm(String term) {
+  public void setTerm(MatriculationExamTerm term) {
     this.term = term;
   }
 
-  public String getStatus() {
+  public MatriculationExamAttendanceStatus getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(MatriculationExamAttendanceStatus status) {
     this.status = status;
   }
 
-  public String getGrade() {
+  public MatriculationExamGrade getGrade() {
     return grade;
   }
 
-  public void setGrade(String grade) {
+  public void setGrade(MatriculationExamGrade grade) {
     this.grade = grade;
   }
 
-  public Boolean getArchived() {
-    return archived;
-  }
-
-  public void setArchived(Boolean archived) {
-    this.archived = archived;
-  }
-
-  public Long getVersion() {
-    return version;
-  }
-
-  public void setVersion(Long version) {
-    this.version = version;
-  }
-
-  public String getFunding() {
+  public MatriculationExamAttendanceFunding getFunding() {
     return funding;
   }
 
-  public void setFunding(String funding) {
+  public void setFunding(MatriculationExamAttendanceFunding funding) {
     this.funding = funding;
   }
 
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public OffsetDateTime getGradeDate() {
+    return gradeDate;
+  }
+
+  public void setGradeDate(OffsetDateTime gradeDate) {
+    this.gradeDate = gradeDate;
+  }
+
+  private Long id;
   private Long enrollmentId;
-  private String subject;
+  private MatriculationExamSubject subject;
   private Boolean mandatory;
   private Boolean repeat;
   private Integer year;
-  private String term;
-  private String status;
-  private String funding;
-  private String grade;
-  private Boolean archived = Boolean.FALSE;
-  private Long version;
+  private MatriculationExamTerm term;
+  private MatriculationExamAttendanceStatus status;
+  private MatriculationExamAttendanceFunding funding;
+  private MatriculationExamGrade grade;
+  private OffsetDateTime gradeDate;
 
 }
 

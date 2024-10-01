@@ -8,19 +8,25 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 public class ArchiveStudentJSONRequestController extends JSONRequestController {
   
   public void process(JSONRequestContext requestContext) {
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    
+    StaffMember loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
+    
     Long studentId = requestContext.getLong("student");
     Student student = studentDAO.findById(studentId);
-    studentDAO.archive(student);
+    studentDAO.archive(student, loggedUser);
     
     // Archive the student projects of archived student
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();

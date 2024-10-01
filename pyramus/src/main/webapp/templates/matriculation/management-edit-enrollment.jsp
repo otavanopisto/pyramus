@@ -81,6 +81,8 @@
           {value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "Eximia cum laude approbatur"},
           {value: "LAUDATUR", text: "Laudatur"},
           {value: "UNKNOWN", text: "Ei tiedossa"},
+          {value: "NO_RIGHT_TO_PARTICIPATE", text: "Ei osallistumisoikeutta"},
+          {value: "INVALIDATED", text: "Mitätöity"},
           {value: "K", text: "Keskeytynyt"}
         ];
         var fundingOptions = [
@@ -303,11 +305,20 @@
         }
       }
     </script>
+
+    <style type="text/css">
+      .changeLogEntryRow {
+        margin: 4px 0px;
+      }
+    </style>
   </head> 
   <body onload="onLoad(event);">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
 
-    <h1 class="genericPageHeader">Muokkaa YO-ilmoittautumisia</h1>
+    <h1 class="genericPageHeader">
+      Muokkaa YO-ilmoittautumisia
+      <a href="${pageContext.request.contextPath}/students/viewstudent.page?person=${enrollment.student.person.id}" class="pyramusViewLink pyramusStudentLink">Siirry opiskelijan tietoihin</a>
+    </h1>
     
     <div class="genericFormContainer">
       <div class="tabLabelsContainer" id="tabs">
@@ -317,12 +328,68 @@
         <form method="post">
           <div>
             <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.handler"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.handler.help"/>
+                </jsp:include>
+                <select name="handler" id="handlerSelect">
+                  <option></option>
+                  <c:forEach var="handlerStaffMember" items="${handlers}">
+                    <option ${handlerStaffMember.id == enrollment.handler.id ? 'selected="selected"' : ''} value="${handlerStaffMember.id}">${fn:escapeXml(handlerStaffMember.lastName)}, ${fn:escapeXml(handlerStaffMember.firstName)}</option>
+                  </c:forEach>
+                </select> <button type="button" onclick="document.getElementById('handlerSelect').value = '${loggedUserId}';"><fmt:message key="matriculation.editEnrollment.setAsHandlerButtonLabel"/></button>
+              </div>
+              
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.handlerNotes"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.handlerNotes.help"/>
+                </jsp:include>
+                <textarea name="handlerNotes" cols="80" rows="6">${fn:escapeXml(enrollment.handlerNotes)}</textarea>
+              </div>
+            </div>
+
+            <div class="genericViewInfoWapper">
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollmentDate"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollmentDate.help"/>
                 </jsp:include>
-                <div><fmt:formatDate type="date" value="${enrollmentDate}"/></div>
+                <div><fmt:formatDate type="both" value="${enrollmentDate}"/></div>
+              </div>
+
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.changeLog.title"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.changeLog.title.help"/>
+                </jsp:include>
+                
+                <div>
+                  <table>
+                    <c:forEach var="changeLogEntry" items="${changeLog}">
+                      <tr class="changeLogEntryRow">
+                        <td align="right"><fmt:formatDate type="date" dateStyle="short" value="${changeLogEntry.timestamp}"/></td>
+                        <td align="right"><fmt:formatDate type="time" timeStyle="short" value="${changeLogEntry.timestamp}"/></td>
+                        <td>${changeLogEntry.modifier.fullName}</td>
+                        <td><fmt:message key="generic.matriculation.changeLogTypes.${changeLogEntry.changeType}"/></td>
+                        <td>
+                          <c:if test="${changeLogEntry.newState != null}">
+                            <span class="matriculationEnrollmentStateInline">
+                              <fmt:message key="generic.matriculation.enrollmentStates.${changeLogEntry.newState}"/>
+                            </span>
+                          </c:if>
+                          
+                          <c:if test="${changeLogEntry.message != null}">
+                            <span class="matriculationEnrollmentStateInline">
+                              ${fn:escapeXml(changeLogEntry.message)}
+                            </span>
+                          </c:if>
+                        </td>
+                      </tr>
+                    </c:forEach>
+                  </table>
+                </div>
               </div>
 
               <div class="genericFormSection">  
@@ -330,15 +397,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.name"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.name.help"/>
                 </jsp:include>            
-                <input type="text" name="name" value="${name}" size="50"/>
-              </div>
-  
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.ssn"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.ssn.help"/>
-                </jsp:include>            
-                <input type="text" name="ssn" value="${ssn}" size="15"/>
+                ${fn:escapeXml(name)}
               </div>
   
               <div class="genericFormSection">  
@@ -346,7 +405,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.email"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.email.help"/>
                 </jsp:include>            
-                <input type="text" name="email" value="${email}" size="40"/>
+                ${fn:escapeXml(email)}
               </div>
   
               <div class="genericFormSection">  
@@ -354,31 +413,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.phone"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.phone.help"/>
                 </jsp:include>            
-                <input type="text" name="phone" value="${phone}" size="20"/>
-              </div>
-  
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.address"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.address.help"/>
-                </jsp:include>            
-                <input type="text" name="address" value="${address}" size="40"/>
-              </div>
-  
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalCode"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalCode.help"/>
-                </jsp:include>            
-                <input type="text" name="postalCode" value="${postalCode}" size="10"/>
-              </div>
-  
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalOffice"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalOffice.help"/>
-                </jsp:include>            
-                <input type="text" name="postalOffice" value="${postalOffice}" size="40"/>
+                ${fn:escapeXml(phone)}
               </div>
             </div>
 
@@ -400,7 +435,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.nationalStudentNumber.help"/>
                 </jsp:include>            
-                <input type="text" name="nationalStudentNumber" value="${nationalStudentNumber}">
+                <input type="text" name="nationalStudentNumber" value="${fn:escapeXml(nationalStudentNumber)}">
               </div>
   
               <div class="genericFormSection">
@@ -408,7 +443,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.guidanceCounselor"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.guidanceCounselor.help"/>
                 </jsp:include>            
-                <input type="text" name="guidanceCounselor" value="${guidanceCounselor}" size="40"/>
+                <input type="text" name="guidanceCounselor" value="${fn:escapeXml(guidanceCounselor)}" size="40"/>
               </div>
   
               <div class="genericFormSection">
@@ -428,7 +463,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.numMandatoryCourses"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.numMandatoryCourses.help"/>
                 </jsp:include>            
-                <input type="number" name="numMandatoryCourses" value="${numMandatoryCourses}">
+                <input type="number" name="numMandatoryCourses" value="${fn:escapeXml(numMandatoryCourses)}">
               </div>
   
               <div class="genericFormSection">
@@ -456,7 +491,15 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.location"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.location.help"/>
                 </jsp:include>            
-                <input type="text" name="location" value="${location}">
+                <input type="text" name="location" value="${fn:escapeXml(location)}">
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.contactInfoChange"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.contactInfoChange.help"/>
+                </jsp:include>            
+                <textarea name="contactInfoChange" cols="80" rows="5">${fn:escapeXml(enrollment.contactInfoChange)}</textarea>
               </div>
   
               <div class="genericFormSection">
@@ -464,7 +507,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.message"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.message.help"/>
                 </jsp:include>            
-                <textarea name="message" cols="80" rows="8">${message}</textarea>
+                <textarea name="message" cols="80" rows="8">${fn:escapeXml(message)}</textarea>
               </div>
   
               <div class="genericFormSection">
@@ -512,22 +555,25 @@
             <div class="genericViewInfoWapper">
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.approvedByGuider"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.approvedByGuider.help"/>
-                </jsp:include>            
-                <input type="checkbox" name="approvedByGuider" value="true" ${enrollment.approvedByGuider ? 'checked="checked"' : ''}/>
-              </div>
-
-              <div class="genericFormSection">
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.state"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.state.help"/>
                 </jsp:include>            
                 <select class="required" name="state">
-                  <option ${state=='PENDING' ? 'selected="selected"' : ''} value="PENDING">Jätetty</option>
-                  <option ${state=='APPROVED' ? 'selected="selected"' : ''} value="APPROVED">Hyväksytty</option>
-                  <option ${state=='REJECTED' ? 'selected="selected"' : ''} value="REJECTED">Hylätty</option>
+                  <option ${state=='PENDING' ? 'selected="selected"' : ''} ${!allowedStates.contains('PENDING') ? 'disabled="disabled"' : ''} value="PENDING"><fmt:message key="generic.matriculation.enrollmentStates.PENDING"/></option>
+                  <option ${state=='SUPPLEMENTATION_REQUEST' ? 'selected="selected"' : ''} ${!allowedStates.contains('SUPPLEMENTATION_REQUEST') ? 'disabled="disabled"' : ''} value="SUPPLEMENTATION_REQUEST"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"/></option>
+                  <option ${state=='SUPPLEMENTED' ? 'selected="selected"' : ''} ${!allowedStates.contains('SUPPLEMENTED') ? 'disabled="disabled"' : ''} value="SUPPLEMENTED"><fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTED"/></option>
+                  <option ${state=='APPROVED' ? 'selected="selected"' : ''} ${!allowedStates.contains('APPROVED') ? 'disabled="disabled"' : ''} value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
+                  <option ${state=='REJECTED' ? 'selected="selected"' : ''} ${!allowedStates.contains('REJECTED') ? 'disabled="disabled"' : ''} value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
+                  <option ${state=='CONFIRMED' ? 'selected="selected"' : ''} ${!allowedStates.contains('CONFIRMED') ? 'disabled="disabled"' : ''} value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/></option>
                 </select>
+              </div>
+
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.changeLogMessage"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.changeLogMessage.help"/>
+                </jsp:include>
+                <textarea name="changeLogMessage" cols="80" rows="4"></textarea>
               </div>
             </div>
 

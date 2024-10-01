@@ -2129,6 +2129,25 @@
         });
       }
       
+      function addOldMatriculationGrades(event) {
+        Event.stop(event);
+        var selectElement = document.getElementById("addOldMatriculationGradesSelect");
+        var pid = selectElement.getAttribute("data-pid");
+        var term = selectElement.value.substring(0, 6);
+        var year = selectElement.value.substring(6, 10);
+        window.location.replace('${pageContext.request.contextPath}/matriculation/editgrades.page?person=' + pid + '&term=' + term + '&year=' + year);
+      }
+      
+      function onOldMatriculationGradesSelectChange(event) {
+        var element = Event.element(event);
+        var buttonElement = document.getElementById("addOldMatriculationGradesButton");
+        if (element.value) {
+          buttonElement.removeAttribute("disabled");
+        }
+        else {
+          buttonElement.setAttribute("disabled", "disabled");
+        }
+      }
     </script>
     
     <ix:extensionHook name="students.viewStudent.head" />
@@ -2188,6 +2207,10 @@
           </a>
         </c:forEach>
         
+        <c:if test="${!empty matriculationExamTerms}">
+          <a class="tabLabel" href="#matriculation"><fmt:message key="students.viewStudent.matriculationTab" /></a>
+        </c:if>
+
         <c:if test="${!empty staffMember}">
           <a class="tabLabel tabLabelUserId" href="#staffMember"><fmt:message key="students.viewStudent.staffMemberTab" /></a>
         </c:if>
@@ -3418,6 +3441,102 @@
           </div>
         </div>
       </c:forEach>
+
+      <c:if test="${!empty matriculationExamTerms}">
+        <div id="matriculation" class="tabContent tabContentNestedTabs">
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="students.viewStudent.matriculationAddOldMatriculationGrades"/>
+              <jsp:param name="helpLocale" value="students.viewStudent.matriculationAddOldMatriculationGrades.help"/>
+            </jsp:include>
+
+            <select id="addOldMatriculationGradesSelect" data-pid="${person.id}" onchange="onOldMatriculationGradesSelectChange(event);">
+              <option></option>
+              <c:forEach var="termOption" items="${termOptions}">
+                <option value="${termOption.term}${termOption.year}" data-term="" ${!termOption.enabled ? 'disabled="disabled"' : ''} >${termOption.displayText}</option>
+              </c:forEach>
+            </select>
+            
+            <button id="addOldMatriculationGradesButton" onclick="addOldMatriculationGrades(event);" disabled="disabled"><fmt:message key="students.viewStudent.matriculationAddOldMatriculationGrades"/></button>
+          </div>
+                
+          <c:forEach var="examTerm" items="${matriculationExamTerms}">
+            <c:choose>
+              <c:when test="${examTerm.term == 'SPRING'}">
+                <c:set var="matriculationExamEnrollmentTerm">
+                  <fmt:message key="terms.seasons.spring"/>
+                </c:set>
+              </c:when>
+              <c:when test="${examTerm.term == 'AUTUMN'}">
+                <c:set var="matriculationExamEnrollmentTerm">
+                  <fmt:message key="terms.seasons.autumn"/>
+                </c:set>
+              </c:when>
+              <c:otherwise>
+                <c:set var="matriculationExamEnrollmentTerm">???</c:set>
+              </c:otherwise>
+            </c:choose>
+            
+            <div class="viewStudentMatriculationTermHeaderRow">
+              <b style="font-size: 1.2em">${examTerm.year} ${matriculationExamEnrollmentTerm}</b>
+              <c:if test="${not empty examTerm.studyProgrammeName}">
+                <span style="margin: 0px 4px;">${examTerm.studyProgrammeName}</span>
+              </c:if>
+              <c:if test="${not empty examTerm.state}">
+                <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${examTerm.state}"/></span>
+              </c:if>
+              <span>
+                <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?person=${person.id}&term=${examTerm.term}&year=${examTerm.year}">
+                  <img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png" class="iconButton" />
+                </a>
+              </span>
+            </div>
+
+            <c:forEach var="attendanceBean" items="${examTerm.attendances}">
+              <div class="viewStudentProject">
+                <div class="viewStudentProjectHeader">
+                  <div>
+                    <b>${attendanceBean.subjectName}</b>
+                    
+                    <c:if test="${not empty attendanceBean.grade}">
+                      <span class="viewStudentProjectHeaderAssessment">
+                        <span class="viewStudentProjectHeaderAssessmentDate">
+                          <fmt:parseDate  value="${attendanceBean.gradeDate}"  type="date" pattern="yyyy-MM-dd" var="parsedDate" />
+                          <fmt:formatDate value="${parsedDate}" />
+                        </span>
+                        <span class="viewStudentProjectHeaderAssessmentGrade">
+                          <fmt:message key="generic.matriculation.examGrades.${attendanceBean.grade}"/>
+                        </span>
+                      </span>
+                    </c:if>
+                  </div>
+                  <div>
+                    <fmt:message key="students.viewStudent.matriculationMandatory"/>: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} opintopistettä
+                  </div>
+                </div>
+                
+                <div class="viewStudentStudentProjectTableContainer" style="display: none;">
+                  <table border="0" cellpadding="4px" class="ixTableRowHoverEffect" style="width: 100%">
+                    <tr>
+                      <th align="left" style="width: 70%">Modulin nimi</th>
+                      <th align="center" style="width: 10%">Arvosana</th>
+                      <th align="center" style="width: 20%">Arviointipvm</th>
+                    </tr>
+                    
+                    <c:forEach var="subjectModule" items="${attendanceBean.modules}">
+                      <tr class="ixTableRow">
+                        <td align="left">${subjectModule.name}</td>
+                        <td align="center">${subjectModule.gradeName}</td>
+                        <td align="center"><fmt:formatDate value="${subjectModule.gradeDate}"/></td>
+                      </tr>
+                    </c:forEach>
+                  </table>
+                </div>
+              </div>
+            </c:forEach>
+          </c:forEach>
+        </div>
+      </c:if>
       
       <c:if test="${!empty staffMember}">
         <div id="staffMember" class="tabContent tabContentNestedTabs">

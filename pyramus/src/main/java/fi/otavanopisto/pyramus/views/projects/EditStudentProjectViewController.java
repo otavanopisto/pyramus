@@ -126,7 +126,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       
       for (CourseStudent courseStudent : projectCourseCourseStudents) {
         JSONObject courseStudentJson = new JSONObject();
-        courseStudentJson.put("courseStudentParticipationType", courseStudent.getParticipationType().getName());
+        courseStudentJson.put("courseStudentParticipationType", courseStudent.getParticipationType() != null ? courseStudent.getParticipationType().getName() : null);
 //        courseStudents.remove(courseStudent);
         moduleCourseStudents.add(courseStudentJson);
       }

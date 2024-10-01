@@ -260,6 +260,24 @@ h1.genericPageHeader{
   font-weight:bold;
 }
 
+.pyramusViewLink {
+  align-items; center;
+  color: #fff;
+  background-color: #739de7;
+  border-radius: 10px;
+  display: flex;
+  float: right;
+  font-size: 12px;
+  padding: 4px 6px;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.pyramusStudentLink:before {
+  content: url(../gfx/eye.png);
+  padding-right: 4px;
+  vertical-align: middle;
+}
 
 .createModuleFormSectionEducationType, .editModuleFormSectionEducationType, .createCourseFormSectionEducationType, .editCourseFormSectionEducationType {
   clear:both;
@@ -460,6 +478,11 @@ h1.genericPageHeader{
   margin-left: 8px;
 }
 
+.viewStudentMatriculationTermHeaderRow {
+  align-items: center;
+  display: flex;
+  margin: 8px 0px;
+}
 
 /* Manage Course Assessments */
 
@@ -2491,6 +2514,13 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   display: inline-block;
   width: 49%;
   vertical-align: top;
+}
+
+.matriculationEnrollmentStateInline {
+  background-color: #E1EFF8;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;  
+  padding: 1px 5px;
 }
 
 .studentAddFileChooseTypeLink {

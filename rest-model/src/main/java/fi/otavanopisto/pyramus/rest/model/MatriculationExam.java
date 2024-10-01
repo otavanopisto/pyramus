@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
+
 public class MatriculationExam {
 
   public Long getId() {
@@ -26,30 +28,6 @@ public class MatriculationExam {
     this.ends = ends;
   }
 
-  public boolean isEligible() {
-    return eligible;
-  }
-
-  public void setEligible(boolean eligible) {
-    this.eligible = eligible;
-  }
-
-  public boolean isEnrolled() {
-    return enrolled;
-  }
-
-  public void setEnrolled(boolean enrolled) {
-    this.enrolled = enrolled;
-  }
-
-  public Long getEnrollmentDate() {
-    return enrollmentDate;
-  }
-
-  public void setEnrollmentDate(Long enrollmentDate) {
-    this.enrollmentDate = enrollmentDate;
-  }
-
   public boolean isCompulsoryEducationEligible() {
     return compulsoryEducationEligible;
   }
@@ -58,12 +36,44 @@ public class MatriculationExam {
     this.compulsoryEducationEligible = compulsoryEducationEligible;
   }
 
+  public MatriculationExamStudentStatus getStudentStatus() {
+    return studentStatus;
+  }
+
+  public void setStudentStatus(MatriculationExamStudentStatus studentStatus) {
+    this.studentStatus = studentStatus;
+  }
+
+  public Integer getYear() {
+    return year;
+  }
+
+  public void setYear(Integer year) {
+    this.year = year;
+  }
+
+  public MatriculationExamTerm getTerm() {
+    return term;
+  }
+
+  public void setTerm(MatriculationExamTerm term) {
+    this.term = term;
+  }
+
+  public MatriculationExamEnrollment getEnrollment() {
+    return enrollment;
+  }
+
+  public void setEnrollment(MatriculationExamEnrollment enrollment) {
+    this.enrollment = enrollment;
+  }
+
   private Long id;
+  private Integer year;
+  private MatriculationExamTerm term;
   private Long starts;
   private Long ends;
-  private boolean eligible;
   private boolean compulsoryEducationEligible;
-  private boolean enrolled;
-  private Long enrollmentDate;
+  private MatriculationExamStudentStatus studentStatus;
+  private MatriculationExamEnrollment enrollment;
 }
-

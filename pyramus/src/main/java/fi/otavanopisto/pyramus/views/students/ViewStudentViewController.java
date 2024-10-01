@@ -3,7 +3,10 @@ package fi.otavanopisto.pyramus.views.students;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -25,7 +28,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.I18N.Messages;
+import fi.otavanopisto.pyramus.binary.ytl.YTLController;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
@@ -37,7 +42,9 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
@@ -70,7 +77,9 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
@@ -92,11 +101,22 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.TORCourse;
+import fi.otavanopisto.pyramus.tor.TORSubject;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumModule;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
+import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -926,6 +946,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       studentDAO.auditView(personId, null, "View student");
     }
 
+    constructMatriculationTabContent(person, pageRequestContext);
+    
     setJsDataVariable(pageRequestContext, "studentAssessments", studentAssessmentsJSON.toString());
     setJsDataVariable(pageRequestContext, "linkedCourseAssessments", linkedCourseAssessments.toString());
     setJsDataVariable(pageRequestContext, "linkedTransferCredits", linkedTransferCredits.toString());
@@ -971,6 +993,349 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     return Messages.getInstance().getText(locale, "students.viewStudent.breadcrumb");
   }
 
+  /**
+   * Loads all the matriculation tab data for the view.
+   * 
+   * The persons latest(/active) student is used for curriculum and study degree purposes.
+   * The student must have
+   * - OPS 2021
+   * - Lukio education type (in study programme category)
+   * 
+   * @param person
+   * @param pageRequestContext
+   */
+  private void constructMatriculationTabContent(Person person, PageRequestContext pageRequestContext) {
+    Student latestStudent = person.getLatestStudent();
+    String code = latestStudent.getStudyProgramme() != null &&
+        latestStudent.getStudyProgramme().getCategory() !=  null &&
+        latestStudent.getStudyProgramme().getCategory().getEducationType() != null &&
+        latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() != null
+        ? latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() : null;
+    boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+    
+    if (!isHighSchoolStudent ||
+        latestStudent == null ||
+        latestStudent.getCurriculum() == null ||
+        !PyramusConsts.OPS_2021.equals(latestStudent.getCurriculum().getName())) {
+      return;
+    }
+
+    TORCurriculum torCurriculum;
+    try {
+      torCurriculum = StudentTORController.getCurriculum(latestStudent);
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, String.format("Couldn't load TORCurriculum for student %d", latestStudent.getId()), e);
+      return;
+    }
+
+    StudentTOR studentTOR;
+    try {
+      studentTOR = StudentTORController.constructStudentTOR(latestStudent, torCurriculum);
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, String.format("Couldn't load StudentTOR for student %d", latestStudent.getId()), e);
+      return;
+    }
+
+    MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
+    MatriculationGradeDAO matriculationGradeDAO = DAOFactory.getInstance().getMatriculationGradeDAO();
+    List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listByPerson(person);
+
+    // This is used for subject code mappings
+    List<YTLAineKoodi> mapping = YTLController.readMapping();
+
+    // Map a term (year+term) to a bean containing the term's enrollments and grades
+    Map<String, MatriculationEnrollmentBean> termBeans = new HashMap<>();
+
+    /*
+     * Populate MatriculationExamEnrollments to termBeans. We skip the grades
+     * at this point as it makes it easier to go through the MatriculationGrades.
+     */
+    for (MatriculationExamEnrollment enrollment : enrollments) {
+      if (enrollment.getExam() == null || enrollment.getExam().getExamTerm() == null || enrollment.getExam().getExamYear() == null) {
+        // Skip enrollment that doesn't have term or year defined - although they always should
+        continue;
+      }
+      
+      String term = enrollment.getExam().getExamTerm().name() + enrollment.getExam().getExamYear();
+      
+      String studyProgrammeName = enrollment.getStudent() != null && enrollment.getStudent().getStudyProgramme() != null ? enrollment.getStudent().getStudyProgramme().getName() : null;
+      MatriculationEnrollmentBean termBean = new MatriculationEnrollmentBean(enrollment.getExam().getExamYear(), enrollment.getExam().getExamTerm(), enrollment.getState(), studyProgrammeName);
+      termBeans.put(term, termBean);
+
+      List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDAO.listByEnrollmentAndStatus(enrollment, MatriculationExamAttendanceStatus.ENROLLED);
+      
+      for (MatriculationExamAttendance attendance : attendances) {
+        MatriculationAttendanceBean attendanceBean = assembleAttendance(attendance.getSubject(), torCurriculum, studentTOR, mapping);
+        if (attendanceBean != null) {
+          termBean.addAttendance(attendanceBean);
+        }
+      }
+    }
+
+    /*
+     * List the MatriculationGrades for the person and add them to the
+     * termBeans list. If there is a bean already, attach the grade to that.
+     */
+    List<MatriculationGrade> personGrades = matriculationGradeDAO.listBy(person);
+    for (MatriculationGrade matriculationGrade : personGrades) {
+      String term = matriculationGrade.getTerm().name() + matriculationGrade.getYear();
+      MatriculationExamGrade grade = matriculationGrade != null ? matriculationGrade.getGrade() : null;
+      LocalDate gradeDate = matriculationGrade != null ? matriculationGrade.getGradeDate() : null;
+      
+      MatriculationEnrollmentBean termBean = termBeans.get(term);
+      if (termBean == null) {
+        // If we have to make a new term bean based on MatriculationGrade, the following fields will be null - take into account
+        String studyProgrammeName = null;
+        MatriculationExamEnrollmentState state = null;
+        termBeans.put(term, termBean = new MatriculationEnrollmentBean(matriculationGrade.getYear(), matriculationGrade.getTerm(), state , studyProgrammeName));
+      }
+      
+      MatriculationAttendanceBean attendanceBean = termBean.findAttendance(matriculationGrade.getSubject());
+      if (attendanceBean == null) {
+        attendanceBean = assembleAttendance(matriculationGrade.getSubject(), torCurriculum, studentTOR, mapping);
+        if (attendanceBean != null) {
+          termBean.addAttendance(attendanceBean);
+        }
+      }
+      
+      if (attendanceBean != null) {
+        attendanceBean.setGrade(grade);
+        attendanceBean.setGradeDate(gradeDate);
+      }
+    }
+
+    Messages messages = Messages.getInstance();
+    Locale locale = pageRequestContext.getRequest().getLocale();
+    List<TermOption> termOptions = new ArrayList<>();
+    for (int yearind = Calendar.getInstance().get(Calendar.YEAR) + 4; yearind >= 2016; yearind--) {
+      String value;
+      boolean enabled;
+
+      value = MatriculationExamTerm.AUTUMN.name() + String.valueOf(yearind);
+      enabled = !termBeans.containsKey(value);
+      termOptions.add(new TermOption(yearind, MatriculationExamTerm.AUTUMN.name(), messages.getText(locale, "terms.seasons.autumn") + " " + String.valueOf(yearind), enabled));
+
+      value = MatriculationExamTerm.SPRING.name() + String.valueOf(yearind);
+      enabled = !termBeans.containsKey(value);
+      termOptions.add(new TermOption(yearind, MatriculationExamTerm.SPRING.name(), messages.getText(locale, "terms.seasons.spring") + " " + String.valueOf(yearind), enabled));
+    }
+
+    Collection<MatriculationEnrollmentBean> enrollmentBeans = termBeans.values();
+    
+    pageRequestContext.getRequest().setAttribute("termOptions", termOptions);   
+    pageRequestContext.getRequest().setAttribute("matriculationExamTerms", enrollmentBeans);
+  }
+
+  private MatriculationAttendanceBean assembleAttendance(MatriculationExamSubject subject, TORCurriculum torCurriculum, StudentTOR studentTOR, List<YTLAineKoodi> mapping) {
+    List<MatriculationAttendanceModuleBean> modules = new ArrayList<>();
+    
+    String subjectCode = YTLController.examSubjectToSubjectCode(subject, mapping);
+    
+    if (subjectCode == null) {
+      logger.log(Level.WARNING, String.format("Couldn't map subject %s", subject));
+      return null;
+    }
+
+    // torCurriculumSubject may be null if the student has matriculation attendance to a subject that's not in the curriculum
+    TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(subjectCode);
+
+    // torSubject may be null if the student has no credits from the subject
+    TORSubject torSubject = studentTOR.findSubject(subjectCode);
+    
+    // These count the included subjects also
+    Double sumMandatoryModuleLength = torCurriculumSubject != null ? (double) torCurriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum) : 0d;
+    Double sumCompletedMandatoryModuleLength = torSubject != null ? sumCompletedMandatoryModuleLength = torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum) : 0d;
+
+    if (torCurriculumSubject != null) {
+      for (TORCurriculumModule torCurriculumModule : torCurriculumSubject.getModules()) {
+        String moduleName = torCurriculumSubject.getCode() + torCurriculumModule.getCourseNumber() + " " + torCurriculumModule.getName();
+  
+        Date gradeDate = null;
+        String gradeName = null;
+        
+        if (torSubject != null) {
+          TORCourse torCourse = torSubject.findCourse(torCurriculumModule.getCourseNumber());
+          if (torCourse != null && torCourse.getLatestCredit() != null) {
+            gradeDate = torCourse.getLatestCredit().getDate();
+            gradeName = torCourse.getLatestCredit().getGradeName();
+          }
+        }
+        
+        modules.add(new MatriculationAttendanceModuleBean(subjectCode, torCurriculumModule.getCourseNumber(), moduleName, gradeName, gradeDate));
+      }
+  
+      /*
+       * If the subject has included subjects, we still have to collect the modules separately here.
+       * Some summary functions already count them in, but due to lack of connections, we can't ask
+       * the subject to list all included modules.
+       */
+      if (CollectionUtils.isNotEmpty(torCurriculumSubject.getIncludedSubjects())) {
+        for (String includedSubject : torCurriculumSubject.getIncludedSubjects()) {
+          TORCurriculumSubject inclTorCurriculumSubject = torCurriculum.getSubjectByCode(includedSubject);
+          TORSubject inclTorSubject = studentTOR.findSubject(includedSubject);
+  
+          for (TORCurriculumModule torCurriculumModule : inclTorCurriculumSubject.getModules()) {
+            String moduleName = inclTorCurriculumSubject.getCode() + torCurriculumModule.getCourseNumber() + " " + torCurriculumModule.getName();
+  
+            Date gradeDate = null;
+            String gradeName = null;
+            
+            if (inclTorSubject != null) {
+              TORCourse torCourse = inclTorSubject.findCourse(torCurriculumModule.getCourseNumber());
+              if (torCourse != null && torCourse.getLatestCredit() != null) {
+                gradeDate = torCourse.getLatestCredit().getDate();
+                gradeName = torCourse.getLatestCredit().getGradeName();
+              }
+            }
+            
+            modules.add(new MatriculationAttendanceModuleBean(includedSubject, torCurriculumModule.getCourseNumber(), moduleName, gradeName, gradeDate));
+          }
+        }
+      }
+    }
+    
+    // Sort modules by course number and subject code
+    modules.sort(Comparator.comparing(MatriculationAttendanceModuleBean::getCourseNumber)
+        .thenComparing(Comparator.nullsFirst(Comparator.comparing(MatriculationAttendanceModuleBean::getSubjectCode))));
+
+    String subjectName = torCurriculumSubject != null ? torCurriculumSubject.getName() : subjectCode;
+    return new MatriculationAttendanceBean(subject, subjectName, sumMandatoryModuleLength, sumCompletedMandatoryModuleLength, modules);
+  }
+
+  public class MatriculationEnrollmentBean {
+    private final List<MatriculationAttendanceBean> attendances;
+    private final int year;
+    private final MatriculationExamTerm term;
+    private final String studyProgrammeName;
+    private final MatriculationExamEnrollmentState state;
+    
+    public MatriculationEnrollmentBean(int year, MatriculationExamTerm term, MatriculationExamEnrollmentState state, String studyProgrammeName) {
+      this.year = year;
+      this.term = term;
+      this.state = state;
+      this.attendances = new ArrayList<>();
+      this.studyProgrammeName = studyProgrammeName;
+    }
+
+    public List<MatriculationAttendanceBean> getAttendances() {
+      return attendances;
+    }
+
+    public void addAttendance(MatriculationAttendanceBean attendance) {
+      this.attendances.add(attendance);
+    }
+    
+    public MatriculationAttendanceBean findAttendance(MatriculationExamSubject subject) {
+      return this.attendances.stream().filter(attendance -> attendance.getSubject() == subject).findFirst().orElse(null);
+    }
+    
+    public int getYear() {
+      return year;
+    }
+
+    public MatriculationExamTerm getTerm() {
+      return term;
+    }
+
+    public String getStudyProgrammeName() {
+      return studyProgrammeName;
+    }
+
+    public MatriculationExamEnrollmentState getState() {
+      return state;
+    }
+  }
+  
+  public class MatriculationAttendanceBean {
+    private final List<MatriculationAttendanceModuleBean> modules;
+    private final Double sumMandatoryModuleLength;
+    private final Double sumCompletedMandatoryModuleLength;
+    private final MatriculationExamSubject subject;
+    private final String subjectName;
+    private MatriculationExamGrade grade;
+    private LocalDate gradeDate;
+
+    public MatriculationAttendanceBean(MatriculationExamSubject subject, String subjectName, Double sumMandatoryModuleLength, Double sumCompletedMandatoryModuleLength, List<MatriculationAttendanceModuleBean> modules) {
+      this.subject = subject;
+      this.subjectName = subjectName;
+      this.sumMandatoryModuleLength = sumMandatoryModuleLength;
+      this.sumCompletedMandatoryModuleLength = sumCompletedMandatoryModuleLength;
+      this.modules = modules;
+    }
+    
+    public Double getSumMandatoryModuleLength() {
+      return sumMandatoryModuleLength;
+    }
+
+    public Double getSumCompletedMandatoryModuleLength() {
+      return sumCompletedMandatoryModuleLength;
+    }
+
+    public List<MatriculationAttendanceModuleBean> getModules() {
+      return modules;
+    }
+
+    public String getSubjectName() {
+      return subjectName;
+    }
+
+    public MatriculationExamGrade getGrade() {
+      return grade;
+    }
+
+    public void setGrade(MatriculationExamGrade grade) {
+      this.grade = grade;
+    }
+
+    public LocalDate getGradeDate() {
+      return gradeDate;
+    }
+
+    public void setGradeDate(LocalDate gradeDate) {
+      this.gradeDate = gradeDate;
+    }
+
+    public MatriculationExamSubject getSubject() {
+      return subject;
+    }
+  }
+  
+  public class MatriculationAttendanceModuleBean {
+    private final String name;
+    private final String gradeName;
+    private final Date gradeDate;
+    private final String subjectCode;
+    private final int courseNumber;
+
+    public MatriculationAttendanceModuleBean(String subjectCode, int courseNumber, String name, String gradeName, Date gradeDate) {
+      this.subjectCode = subjectCode;
+      this.courseNumber = courseNumber;
+      this.name = name;
+      this.gradeName = gradeName;
+      this.gradeDate = gradeDate;
+    }
+    
+    public String getName() {
+      return name;
+    }
+
+    public String getGradeName() {
+      return gradeName;
+    }
+
+    public Date getGradeDate() {
+      return gradeDate;
+    }
+
+    public String getSubjectCode() {
+      return subjectCode;
+    }
+
+    public int getCourseNumber() {
+      return courseNumber;
+    }
+  }
   
   public class StudentProjectBean {
     private final StudentProject studentProject;
@@ -1080,5 +1445,34 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     return localizedSubject;
   }
   
+  public class TermOption {
+    public TermOption(int year, String term, String displayText, boolean enabled) {
+      this.year = year;
+      this.term = term;
+      this.displayText = displayText;
+      this.enabled = enabled;
+    }
+    
+    public String getDisplayText() {
+      return displayText;
+    }
+
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    public String getTerm() {
+      return term;
+    }
+
+    public int getYear() {
+      return year;
+    }
+
+    private final int year;
+    private final String term;
+    private final String displayText;
+    private final boolean enabled;
+  }
 }
 

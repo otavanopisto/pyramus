@@ -23,17 +23,8 @@
       };
 
       function setupSubjectSettingsTable() {
-        var projectData = JSDATA["projectData"].evalJSON();
         var subjectData = JSDATA["subjectData"].evalJSON();
 
-        var projects = [];
-        for (var i = 0; i < projectData.length; i++) {
-          projects.push({
-            text: projectData[i].name,
-            value: projectData[i].id
-          });
-        }
-    
         var subjectSettingsTable = new IxTable($('subjectSettingsTableContainer'), {
           id: 'subjectSettingsTable',
           rowHoverEffect: true,
@@ -45,16 +36,8 @@
             editable: false,
             paramName: 'subjectCode'
           }, {
-            header : 'Projekti',
-            left :  8 + 120 + 8,
-            width: 200,
-            dataType : 'select',
-            editable: true,
-            paramName: 'projectId',
-            options: projects
-          }, {
             header : 'Koepäivämäärä',
-            left: 8 + 120 + 8 + 200 + 8, 
+            left: 8 + 120 + 8, 
             width: 150,
             dataType: 'date',
             editable: true,
@@ -67,7 +50,6 @@
         for (var i = 0; i < subjectData.length; i++) {
           rows.push([
             subjectData[i].subjectCode,
-            subjectData[i].projectId,
             subjectData[i].examDate,
           ]);
         }
@@ -132,30 +114,6 @@
               <jsp:param name="titleLocale" value="matriculation.settings.endDate"/>
             </jsp:include>                                           
             <input type="text" name="ends" class="ixDateField" value="${exam.ends.time}"/>
-          </div>
-
-          <div class="genericFormSection">  
-            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="matriculation.settings.signupGradeTitle"/>
-            </jsp:include>
-            <select name="signupGradeId">
-              <option value=""></option>
-            
-              <c:forEach var="gradingScale" items="${gradingScales}">
-                <optgroup label="${fn:escapeXml(gradingScale.name)}">
-                  <c:forEach var="grade" items="${gradingScale.grades}">
-                    <c:choose>
-                      <c:when test="${exam.signupGrade.id eq grade.id}">
-                        <option value="${grade.id}" selected="selected">${fn:escapeXml(grade.name)}</option>
-                      </c:when>
-                      <c:otherwise>
-                        <option value="${grade.id}">${fn:escapeXml(grade.name)}</option>
-                      </c:otherwise>
-                    </c:choose>
-                  </c:forEach>
-                </optgroup>
-              </c:forEach>
-            </select>
           </div>
 
           <div class="genericFormSection">  
