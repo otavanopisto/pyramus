@@ -134,6 +134,10 @@ public class AssessmentController {
     return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText, archived, handled);
   }
   
+  public CourseAssessmentRequest updateCourseAssessmentRequestLock(CourseAssessmentRequest courseAssessmentRequest, Boolean locked) {
+    return courseAssessmentRequestDAO.updateLocked(courseAssessmentRequest, locked);
+  }
+  
   public CourseAssessmentRequest findCourseAssessmentRequestById(Long id){
     return courseAssessmentRequestDAO.findById(id);
   }

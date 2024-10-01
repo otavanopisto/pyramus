@@ -2824,6 +2824,59 @@ public class StudentRESTService extends AbstractRESTService {
         
     return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/{ID:[0-9]*}/lock")
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateCourseAssessmentRequestLock(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, 
+      fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest entity) {
+    
+    Student student = studentController.findStudentById(studentId);
+    Course course = courseController.findCourseById(courseId);
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(id);
+
+    if (courseAssessmentRequest == null){
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!course.getId().equals(courseAssessmentRequest.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Course ids mismatch.").build();
+    }
+    
+    if (!student.getId().equals(courseAssessmentRequest.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Student ids mismatch.").build();
+    }
+
+    if (!courseAssessmentRequest.getCourseStudent().getId().equals(entity.getCourseStudentId())) {
+      return Response.status(Status.BAD_REQUEST).entity("CourseAssessmentRequest ids mismatch.").build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.UPDATE_COURSEASSESSMENTREQUEST, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequestLock(
+      courseAssessmentRequest,
+      entity.getLocked());
+        
+    return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
+  }
 
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessmentRequests/{ID}")
   @DELETE

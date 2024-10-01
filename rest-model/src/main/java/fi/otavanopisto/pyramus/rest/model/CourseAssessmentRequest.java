@@ -66,10 +66,19 @@ public class CourseAssessmentRequest {
     this.handled = handled;
   }
 
+  public Boolean getLocked() {
+    return locked;
+  }
+
+  public void setLocked(Boolean locked) {
+    this.locked = locked;
+  }
+
   private Long id;
   private Long courseStudentId;
   private OffsetDateTime created;
   private String requestText;
   private Boolean archived;
   private Boolean handled;
+  private Boolean locked;
 }
