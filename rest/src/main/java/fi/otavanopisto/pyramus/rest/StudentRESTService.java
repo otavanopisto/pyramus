@@ -1,9 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -2876,7 +2874,8 @@ public class StudentRESTService extends AbstractRESTService {
   public Response updateCourseAssessmentRequestLock(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, 
       fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest entity) {
     
-    Student student = studentController.findStudentById(studentId);
+    CourseStudent courseStudent = courseController.findCourseStudentById(studentId);
+    Student student = studentController.findStudentById(courseStudent.getStudent().getId());
     Course course = courseController.findCourseById(courseId);
     CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(id);
 
@@ -2919,8 +2918,21 @@ public class StudentRESTService extends AbstractRESTService {
     CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequestLock(
       courseAssessmentRequest,
       entity.getLocked());
-        
-    return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
+    
+    OffsetDateTime created = OffsetDateTime.ofInstant(updatedCourseAssessmentRequest.getCreated().toInstant(), ZoneId.systemDefault());
+
+    fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest r = new fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest(
+        updatedCourseAssessmentRequest.getId(), 
+        updatedCourseAssessmentRequest.getCourseStudent().getId(), 
+        created, 
+        updatedCourseAssessmentRequest.getRequestText(),
+        updatedCourseAssessmentRequest.getHandled(), 
+        updatedCourseAssessmentRequest.getArchived()
+        );
+    
+    r.setLocked(updatedCourseAssessmentRequest.getLocked());
+    
+    return Response.ok(r).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessmentRequests/{ID}")
