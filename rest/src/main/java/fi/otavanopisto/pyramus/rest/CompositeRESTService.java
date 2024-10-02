@@ -148,6 +148,7 @@ public class CompositeRESTService {
         
         CourseAssessmentRequest courseAssessmentRequest = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
+        assessmentRequest.setId(courseAssessmentRequest == null ? null : courseAssessmentRequest.getId());
         assessmentRequest.setCourseStudentId(courseStudent.getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest == null ? null : courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseStudent.getEnrolmentTime());
