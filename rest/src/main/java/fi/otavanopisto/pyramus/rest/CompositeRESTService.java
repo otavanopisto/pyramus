@@ -220,6 +220,7 @@ public class CompositeRESTService {
         }
         
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
+        assessmentRequest.setId(courseAssessmentRequest.getId());
         assessmentRequest.setCourseStudentId(courseAssessmentRequest.getCourseStudent().getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseAssessmentRequest.getCourseStudent().getEnrolmentTime());
