@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.json.oo;
+package fi.otavanopisto.pyramus.json.students;
 
 import java.util.Date;
 
