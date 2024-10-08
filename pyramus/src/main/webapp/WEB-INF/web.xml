@@ -128,21 +128,9 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  <servlet>
-    <servlet-name>ResourceDelegate</servlet-name>
-    <servlet-class>fi.otavanopisto.pyramus.plugin.ResourceDelegateServlet</servlet-class>
-    <init-param>
-      <param-name>ClassPath</param-name>
-      <param-value>fi/otavanopisto/pyramus/plugin/static</param-value>
-    </init-param>
-  </servlet>
   <servlet-mapping>
     <servlet-name>freemarker</servlet-name>
     <url-pattern>*.ftl</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>ResourceDelegate</servlet-name>
-    <url-pattern>/plugin/static/*</url-pattern>
   </servlet-mapping>
   <listener>
     <listener-class>freemarker.ext.jsp.EventForwarding</listener-class>

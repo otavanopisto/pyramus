@@ -195,7 +195,6 @@
             <ul id="GUI_MENU_systemItemContainer" class="GUI_MENU_itemContainer">
               <li class="GUI_MENU_top"></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/systemsettings.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.manageSystemSettings"/></a></li>
-              <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/plugins.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.plugins"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/initialdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importInitialData"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importcsv.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importCSV"/></a></li>
               <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importData"/></a></li>

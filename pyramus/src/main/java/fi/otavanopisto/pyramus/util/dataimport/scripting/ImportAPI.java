@@ -23,8 +23,6 @@ import fi.otavanopisto.pyramus.util.dataimport.scripting.api.ModuleAPI;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.api.MunicipalityAPI;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.api.NationalityAPI;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.api.PersonAPI;
-import fi.otavanopisto.pyramus.util.dataimport.scripting.api.PluginAPI;
-import fi.otavanopisto.pyramus.util.dataimport.scripting.api.PluginRepositoryAPI;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.api.SchoolAPI;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.api.SchoolFieldAPI;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.api.SettingAPI;
@@ -155,14 +153,6 @@ public class ImportAPI {
   
   public ClientApplicationAuthorizationCodeAPI getClientApplicationAuthorizationCodes() {
     return new ClientApplicationAuthorizationCodeAPI(loggedUserId);
-  }
-  
-  public PluginAPI getPlugins() {
-    return new PluginAPI(loggedUserId);
-  }
-
-  public PluginRepositoryAPI getPluginRepositories() {
-    return new PluginRepositoryAPI(loggedUserId);
   }
   
   public StaffMemberAPI getStaffMembers() {
