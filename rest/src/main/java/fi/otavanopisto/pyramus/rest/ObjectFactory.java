@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
+import static fi.otavanopisto.pyramus.rest.util.PyramusRestUtils.toOffsetDateTime;
+
 import java.lang.reflect.ParameterizedType;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -78,6 +80,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
@@ -98,6 +102,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
@@ -112,6 +117,8 @@ import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
+import fi.otavanopisto.pyramus.rest.model.StudentCardActivity;
+import fi.otavanopisto.pyramus.rest.model.StudentCardType;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.rest.model.UserRole;
@@ -914,6 +921,10 @@ public class ObjectFactory {
               }
             }
 
+            LocalDate studyStartDate = DateUtils.toLocalDate(student.getStudyStartDate());
+            LocalDate studyTimeEnd = DateUtils.toLocalDate(student.getStudyTimeEnd());
+            LocalDate studyEndDate = DateUtils.toLocalDate(student.getStudyEndDate());
+            
             return new fi.otavanopisto.pyramus.rest.model.StudentParentChild(
                 student.getId(),
                 student.getPersonId(),
@@ -923,7 +934,10 @@ public class ObjectFactory {
                 studyProgrammeName, 
                 defaultEmail, 
                 defaultPhoneNumber, 
-                defaultAddress
+                defaultAddress,
+                studyStartDate,
+                studyTimeEnd,
+                studyEndDate
             );
           }
         },
@@ -1068,6 +1082,63 @@ public class ObjectFactory {
               
           return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudyProgramme(entity.getId(), courseId, studyProgrammeId, studyProgrammeName, organization);
         }
+      },
+      
+      new Mapper<MatriculationExamEnrollmentChangeLog>() {
+        @Override
+        public Object map(MatriculationExamEnrollmentChangeLog entity) {
+          fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationExamEnrollmentChangeLog restModel = 
+              new fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationExamEnrollmentChangeLog();
+          restModel.setId(entity.getId());
+          restModel.setEnrollmentId(entity.getEnrollment() != null ? entity.getEnrollment().getId() : null);
+          restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
+          restModel.setModifierRoleClass(PyramusRestUtils.getUserRoleClass(entity.getModifier()));
+          restModel.setTimestamp(toOffsetDateTime(entity.getTimestamp()));
+          restModel.setChangeType(entity.getChangeType());
+          restModel.setNewState(entity.getNewState());
+          restModel.setMessage(entity.getMessage());
+          return restModel;
+        }
+      },
+
+      new Mapper<MatriculationGrade>() {
+        @Override
+        public Object map(MatriculationGrade entity) {
+          fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationGrade restModel = 
+              new fi.otavanopisto.pyramus.rest.model.matriculation.MatriculationGrade();
+          restModel.setId(entity.getId());
+          restModel.setPersonId(entity.getPerson() != null ? entity.getPerson().getId() : null);
+          restModel.setSubject(entity.getSubject());
+          restModel.setYear(entity.getYear());
+          restModel.setTerm(entity.getTerm());
+          restModel.setGrade(entity.getGrade());
+          restModel.setGradeDate(entity.getGradeDate());
+          restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
+          restModel.setLastModified(entity.getLastModified());
+          return restModel;
+        }
+      },
+
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.students.StudentCard>() {
+        @Override
+        public Object map(fi.otavanopisto.pyramus.domainmodel.students.StudentCard entity) {
+          
+          Student student = entity.getStudent();
+          
+          StudentCardType type = entity.getType() != null ? StudentCardType.valueOf(entity.getType().name()) : null;
+          String studyProgrammeName = student.getStudyProgramme() != null ? student.getStudyProgramme().getName() : null;
+          StudentCardActivity activity = entity.getActivity() != null ? StudentCardActivity.valueOf(entity.getActivity().name()) : null;
+          
+          return new fi.otavanopisto.pyramus.rest.model.StudentCard(
+              entity.getId(), 
+              student.getId(), 
+              student.getFirstName(), 
+              student.getLastName(), 
+              studyProgrammeName,
+              entity.getExpiryDate(), 
+              activity, 
+              type);
+        }
       }
       
     );
@@ -1097,18 +1168,6 @@ public class ObjectFactory {
     } 
     
     return mappers.get(object.getClass()).map(object);
-  }
-
-  private OffsetDateTime toOffsetDateTime(Date date) {
-    if (date == null) {
-      return null;
-    }
-    // If (as) date is java.sql.Date then toInstant() would cause UnsupportedOperationException
-    Date tmpDate = new Date(date.getTime()); 
-    Instant instant = tmpDate.toInstant();
-    ZoneId systemId = ZoneId.systemDefault();
-    ZoneOffset offset = systemId.getRules().getOffset(instant);
-    return tmpDate.toInstant().atOffset(offset);
   }
 
   private OffsetDateTime fromDateToOffsetDateTime(Date date) {

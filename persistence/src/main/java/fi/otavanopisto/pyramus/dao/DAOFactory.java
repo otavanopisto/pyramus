@@ -106,8 +106,10 @@ import fi.otavanopisto.pyramus.dao.help.HelpPageDAO;
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.plugins.PluginDAO;
@@ -128,6 +130,7 @@ import fi.otavanopisto.pyramus.dao.resources.WorkResourceDAO;
 import fi.otavanopisto.pyramus.dao.security.EnvironmentRolePermissionDAO;
 import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -214,6 +217,10 @@ public class DAOFactory {
     return (MatriculationExamEnrollmentDAO) findByClass(MatriculationExamEnrollmentDAO.class);
   }
 
+  public MatriculationExamEnrollmentChangeLogDAO getMatriculationExamEnrollmentChangeLogDAO() {
+    return (MatriculationExamEnrollmentChangeLogDAO) findByClass(MatriculationExamEnrollmentChangeLogDAO.class);
+  }
+
   public MatriculationExamAttendanceDAO getMatriculationExamAttendanceDAO() {
     return (MatriculationExamAttendanceDAO) findByClass(MatriculationExamAttendanceDAO.class);
   }
@@ -224,6 +231,10 @@ public class DAOFactory {
   
   public MatriculationExamSubjectSettingsDAO getMatriculationExamSubjectSettingsDAO() {
     return (MatriculationExamSubjectSettingsDAO) findByClass(MatriculationExamSubjectSettingsDAO.class);
+  }
+
+  public MatriculationGradeDAO getMatriculationGradeDAO() {
+    return (MatriculationGradeDAO) findByClass(MatriculationGradeDAO.class);
   }
 
   /* Student */
@@ -298,6 +309,10 @@ public class DAOFactory {
   
   public StudentStudyPeriodDAO getStudentStudyPeriodDAO() {
     return (StudentStudyPeriodDAO) findByClass(StudentStudyPeriodDAO.class);
+  }
+  
+  public StudentCardDAO getStudentCardDAO() {
+    return (StudentCardDAO) findByClass(StudentCardDAO.class);
   }
   
   public StudentParentDAO getStudentParentDAO() {

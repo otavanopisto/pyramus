@@ -229,4 +229,14 @@
       </select>
     </div>
 
+    <div class="form-section__field-container field-student-card dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,mk" style="display:none;">
+      <label for="field-student-card" class="required">Haluan digitaalisen opiskelijakortin</label>
+      <select id="field-student-card" name="field-student-card" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <option value="">-- Valitse --</option>
+        <option value="kylla">Kyllä</option>
+        <option value="ei">Ei</option>
+      </select>
+      <span class="field-help">Käytössä on <a href="https://slice.fi/fi" target="_blank">Slice.fi</a>, joka on digitaalinen opiskelijakortti ja opiskelijaetupalvelu. Vastaamalla kyllä annat meille luvan toimittaa palvelulle seuraavat tiedot: nimi, sähköpostiosoite, syntymäaika, opinto-oikeuden tai opintojen päättymispäivä.</span>
+    </div>
+
   </section>

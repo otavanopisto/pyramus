@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.LocalDate;
+
 import fi.otavanopisto.security.ContextReference;
 
 public class StudentParentChild implements ContextReference {
@@ -9,7 +11,8 @@ public class StudentParentChild implements ContextReference {
   }
   
   public StudentParentChild(Long studentId, Long personId, String firstName, String lastName, String nickname,
-      String studyProgrammeName, String defaultEmail, String defaultPhoneNumber, Address defaultAddress) {
+      String studyProgrammeName, String defaultEmail, String defaultPhoneNumber, Address defaultAddress,
+      LocalDate studyStartDate, LocalDate studyTimeEnd, LocalDate studyEndDate) {
     super();
     this.studentId = studentId;
     this.personId = personId;
@@ -20,6 +23,9 @@ public class StudentParentChild implements ContextReference {
     this.defaultEmail = defaultEmail;
     this.defaultPhoneNumber = defaultPhoneNumber;
     this.defaultAddress = defaultAddress;
+    this.studyStartDate = studyStartDate;
+    this.studyTimeEnd = studyTimeEnd;
+    this.studyEndDate = studyEndDate;
   }
 
   public Long getStudentId() {
@@ -94,6 +100,30 @@ public class StudentParentChild implements ContextReference {
     this.defaultAddress = defaultAddress;
   }
 
+  public LocalDate getStudyStartDate() {
+    return studyStartDate;
+  }
+
+  public void setStudyStartDate(LocalDate studyStartDate) {
+    this.studyStartDate = studyStartDate;
+  }
+
+  public LocalDate getStudyTimeEnd() {
+    return studyTimeEnd;
+  }
+
+  public void setStudyTimeEnd(LocalDate studyTimeEnd) {
+    this.studyTimeEnd = studyTimeEnd;
+  }
+
+  public LocalDate getStudyEndDate() {
+    return studyEndDate;
+  }
+
+  public void setStudyEndDate(LocalDate studyEndDate) {
+    this.studyEndDate = studyEndDate;
+  }
+
   private Long studentId;
   private Long personId;
   private String firstName;
@@ -103,5 +133,7 @@ public class StudentParentChild implements ContextReference {
   private String defaultEmail;
   private String defaultPhoneNumber;
   private Address defaultAddress;
-  
+  private LocalDate studyStartDate;
+  private LocalDate studyTimeEnd;
+  private LocalDate studyEndDate;
 }

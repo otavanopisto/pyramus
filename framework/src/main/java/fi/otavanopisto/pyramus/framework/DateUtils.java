@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.framework;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -49,4 +52,53 @@ public class DateUtils {
     return earlierCandidate != null ? date.after(earlierCandidate) : true;
   }
   
+  /**
+   * Returns true if date is within the timeframe specified by start and end dates. The start
+   * or end dates can be null, in which case they are not compared against. I.e. if only
+   * start date is specified, the date is only checked to be after the start date.
+   * 
+   * @param date the date
+   * @param start start date of the timeframe
+   * @param end end date of the timeframe
+   * @return true, if the date is between the start and end dates or exactly equal to either one
+   */
+  public static boolean isWithin(Date date, Date start, Date end) {
+    if (date == null) {
+      throw new IllegalArgumentException();
+    }
+    
+    if (start != null && date.compareTo(start) < 0) {
+      return false;
+    }
+    
+    if (end != null && date.compareTo(end) > 0) {
+      return false;
+    }
+    
+    return true;
+  }
+
+  /**
+   * Converts Date to LocalDate with current timezone.
+   * 
+   * If date is null, returns null.
+   * 
+   * @param date Date
+   * @return LocalDate
+   */
+  public static LocalDate toLocalDate(Date date) {
+    return date != null ? Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate() : null;
+  }
+
+  /**
+   * Converts LocalDate to Date with current timezone.
+   * 
+   * If localDate is null, returns null.
+   * 
+   * @param localDate
+   * @return Date
+   */
+  public static Date toDate(LocalDate localDate) {
+    return localDate != null ? Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()) : null;
+  }
 }

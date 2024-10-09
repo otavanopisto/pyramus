@@ -3,8 +3,8 @@ package fi.otavanopisto.pyramus.rest;
 import static io.restassured.RestAssured.certificate;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -24,7 +24,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
@@ -53,7 +54,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
           @Override
           public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
             com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            objectMapper.registerModule(new JSR310Module());
+            objectMapper.registerModule(new JavaTimeModule());
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             return objectMapper;
           }

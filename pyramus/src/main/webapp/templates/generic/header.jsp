@@ -34,7 +34,7 @@
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/students/searchstudents.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchStudents"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/students/createstudentgroup.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createStudentGroup"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/students/searchstudentgroups.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.searchStudentGroups"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/oo/internetixmarker.page" class="GUI_MENU_itemLink">Internetix-suoritusten hallinnointi</a></li>
+          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/students/internetixmarker.page" class="GUI_MENU_itemLink">Internetix-suoritusten hallinnointi</a></li>
           <ix:extensionHook name="generic.navigation.studentsMenu"/>
         </ul>
       </li>

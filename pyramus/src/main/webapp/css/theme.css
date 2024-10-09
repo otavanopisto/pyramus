@@ -53,6 +53,31 @@ h1.genericPageHeader{
   display: inline-block;
 }
 
+.pyramus-validation-error-trafficlight {
+  background-color: #fd5050;
+  border-radius: 3px;
+  color: #FFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 10px;
+  padding: 2px 4px;
+}
+
+.pyramus-validation-error-list {
+  margin: 4px 0px;
+}
+
+.pyramus-validation-error-list-row {
+  background-image: url('../gfx/icons/16x16/apps/attention.png');
+  background-repeat: no-repeat;
+  background-position: left;
+  min-width: 16px;
+  min-height: 16px;
+  padding-left: 20px;
+  padding-top: 4px;
+}
+
 .draftSavedContainer {
   display: inline-block;
   position: absolute;
@@ -235,6 +260,24 @@ h1.genericPageHeader{
   font-weight:bold;
 }
 
+.pyramusViewLink {
+  align-items; center;
+  color: #fff;
+  background-color: #739de7;
+  border-radius: 10px;
+  display: flex;
+  float: right;
+  font-size: 12px;
+  padding: 4px 6px;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.pyramusStudentLink:before {
+  content: url(../gfx/eye.png);
+  padding-right: 4px;
+  vertical-align: middle;
+}
 
 .createModuleFormSectionEducationType, .editModuleFormSectionEducationType, .createCourseFormSectionEducationType, .editCourseFormSectionEducationType {
   clear:both;
@@ -285,7 +328,7 @@ h1.genericPageHeader{
 
 /* View Student - Basic Info */
 
-#studentViewBasicInfoWrapper .genericFormTitle, #studentViewContactInfoWrapper .genericFormTitle, #studentViewEducationInfoWrapper .genericFormTitle, #studentViewAdditionalInfoWrapper .genericFormTitle, #studentViewStaffMemberBasicInfoWrapper .genericFormTitle, #studentViewStaffMemberContactInfoWrapper .genericFormTitle{
+#studentViewBasicInfoWrapper .genericFormTitle, #studentViewContactInfoWrapper .genericFormTitle, #studentViewEducationInfoWrapper .genericFormTitle, #studentViewAdditionalInfoWrapper .genericFormTitle, #studentViewStaffMemberBasicInfoWrapper .genericFormTitle, #studentViewIntegrationInfoWrapper .genericFormTitle, #studentViewStaffMemberContactInfoWrapper .genericFormTitle{
   float:left;
   margin-right:10px;
   background-color:#f2f2f2;
@@ -435,6 +478,11 @@ h1.genericPageHeader{
   margin-left: 8px;
 }
 
+.viewStudentMatriculationTermHeaderRow {
+  align-items: center;
+  display: flex;
+  margin: 8px 0px;
+}
 
 /* Manage Course Assessments */
 
@@ -2466,6 +2514,13 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   display: inline-block;
   width: 49%;
   vertical-align: top;
+}
+
+.matriculationEnrollmentStateInline {
+  background-color: #E1EFF8;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;  
+  padding: 1px 5px;
 }
 
 .studentAddFileChooseTypeLink {

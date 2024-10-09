@@ -54,6 +54,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
@@ -84,6 +85,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
@@ -911,11 +913,14 @@ public class ApplicationUtils {
     return createPyramusStudent(application, person, staffMember);
   }
   
-  public static void deleteApplication(Application application) {
-    logger.info(String.format("Removing application %d to line %s created at %tF)",
+  public static void deleteApplication(Long userId, Application application, String source) {
+    logger.info(String.format("User %s removes application %s (%d) to line %s created at %tF originating from %s)",
+        userId == null ? "?" : userId.toString(), 
+        application.getApplicationId(),
         application.getId(),
         application.getLine(),
-        application.getCreated()));
+        application.getCreated(),
+        source));
     // Delete signatures
     ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
     List<ApplicationSignatures> applicationSignatures = applicationSignaturesDAO.listByApplication(application);
@@ -953,6 +958,10 @@ public class ApplicationUtils {
   }
 
   public static Student createPyramusStudent(Application application, Person person, StaffMember staffMember) {
+    
+    logger.log(Level.INFO, String.format("User %s creating student from application %s (%d)",
+        staffMember == null ? "?" : staffMember.getId().toString(), application.getApplicationId(), application.getId()));    
+
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -1274,9 +1283,16 @@ public class ApplicationUtils {
           notification,
           null);
     }
+
+    // #1579: Slice integration
     
+    if (StringUtils.equals("kylla", getFormValue(formData, "field-student-card"))) {
+      StudentCardDAO studentCardDAO = DAOFactory.getInstance().getStudentCardDAO();
+      studentCardDAO.create(student, StudentCardActivity.ACTIVE, null, null);
+    }
+
     // Attachments
-    
+
     List<ApplicationAttachment> attachments = applicationAttachmentDAO.listByApplicationId(application.getApplicationId());
     if (!attachments.isEmpty()) {
       String attachmentsFolder = SettingUtils.getSettingValue("applications.storagePath");

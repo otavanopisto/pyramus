@@ -706,8 +706,15 @@
               }
 
               var pccElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
-              pccElement.update("" + subject.passedCoursesCount);
-              
+              var courseCountTextSpan = pccElement.appendChild(new Element("span"));
+              courseCountTextSpan.update(subject.mandatoryCourseCount ? subject.mandatoryCourseCompletedCount + "/" + subject.mandatoryCourseCount : subject.passedCoursesCount);
+
+              // If subject is completed, add some visual indication
+              if (subject.completed) {
+            	  var courseCountTextSpan = pccElement.appendChild(new Element("span", {className: "studentSubjectCreditsPassedCoursesCount__checked-wrapper"}));
+            	  courseCountTextSpan.appendChild(new Element("img", {src: GLOBAL_contextPath + '/gfx/input-checked.png'}));
+              }
+
               var subMeanContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsMeanGradeContainer"}));
               var subMeanComputedGrade = subMeanContainer.appendChild(new Element("div", {className: "studentSubjectCreditsComputedMeanGrade"}));
               var subMeanGrade = subMeanContainer.appendChild(new Element("div", {
@@ -2122,6 +2129,25 @@
         });
       }
       
+      function addOldMatriculationGrades(event) {
+        Event.stop(event);
+        var selectElement = document.getElementById("addOldMatriculationGradesSelect");
+        var pid = selectElement.getAttribute("data-pid");
+        var term = selectElement.value.substring(0, 6);
+        var year = selectElement.value.substring(6, 10);
+        window.location.replace('${pageContext.request.contextPath}/matriculation/editgrades.page?person=' + pid + '&term=' + term + '&year=' + year);
+      }
+      
+      function onOldMatriculationGradesSelectChange(event) {
+        var element = Event.element(event);
+        var buttonElement = document.getElementById("addOldMatriculationGradesButton");
+        if (element.value) {
+          buttonElement.removeAttribute("disabled");
+        }
+        else {
+          buttonElement.setAttribute("disabled", "disabled");
+        }
+      }
     </script>
     
     <ix:extensionHook name="students.viewStudent.head" />
@@ -2137,9 +2163,27 @@
     </fmt:message>
     
     <span id="koski-status" class="koski-status">KOSKI</span>
+    <span id="pyramus-validation-status" class="pyramus-validation-error-trafficlight" ${(empty studentValidations) ? 'style="display: none;"' : ''}>PYRAMUS</span>
   </h1>
   
   <div id="koski-status-details" style="display: none;">
+  </div>
+  
+  <div id="pyramus-validation" class="pyramus-validation-error-list" ${(empty studentValidations) ? 'style="display: none;"' : ''}>
+    <c:forEach var="validationWarning" items="${studentValidations}">
+      <div class="pyramus-validation-error-list-row">
+        <c:choose>
+          <c:when test="${validationWarning.student.studyProgramme == null}">
+            <fmt:message key="students.viewStudent.noStudyProgrammeTabLabel" />
+          </c:when>
+          <c:otherwise>
+            ${validationWarning.student.studyProgramme.name}
+          </c:otherwise>
+        </c:choose> <c:if test="${validationWarning.student.hasFinishedStudies}">*</c:if>
+          
+        <fmt:message key="generic.pyramusStudentValidationErrors.${validationWarning.type}" />
+      </div>
+    </c:forEach>
   </div>
 
   <div id="extensionHoverMenuLinks" style="display: none;">
@@ -2163,6 +2207,10 @@
           </a>
         </c:forEach>
         
+        <c:if test="${!empty matriculationExamTerms}">
+          <a class="tabLabel" href="#matriculation"><fmt:message key="students.viewStudent.matriculationTab" /></a>
+        </c:if>
+
         <c:if test="${!empty staffMember}">
           <a class="tabLabel tabLabelUserId" href="#staffMember"><fmt:message key="students.viewStudent.staffMemberTab" /></a>
         </c:if>
@@ -2190,7 +2238,7 @@
               <div class="tabLabelsContainer" id="tabs.${student.id}">
                 <a class="tabLabel" href="#basic.${student.id}"> <fmt:message
                     key="students.viewStudent.basicTabLabel" />
-                </a> <a class="tabLabel" href="#courses.${student.id}">
+                     <a class="tabLabel" href="#courses.${student.id}">
                   <fmt:message
                     key="students.viewStudent.coursesTabLabel" />
                 </a> <a class="tabLabel" href="#grades.${student.id}"> <fmt:message
@@ -2206,6 +2254,9 @@
                 </a> <a class="tabLabel" href="#studentFiles.${student.id}">
                   <fmt:message
                     key="students.viewStudent.studentFilesTabLabel" />
+                </a>
+                <a class="tabLabel" href="#integrations.${student.id}"> <fmt:message
+                    key="students.viewStudent.integrationTabLabel" />
                 </a>
                 <ix:extensionHook name="students.viewStudent.tabLabels" studentId="${student.id}"/>
               </div>
@@ -2920,6 +2971,161 @@
                 <div class="columnClear"></div>
 
               </div>
+              
+              <!--  Student Integration Info Starts -->
+                
+              <div id="integrations.${student.id}" class="tabContent">
+                  
+                <div class="genericFormSection">
+              	  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="integrations.slice.title"/>
+              	  </jsp:include>
+                </div>
+                <div class="genericViewInfoWapper ${secureInfoClass}"
+                  id="studentViewIntegrationInfoWrapper">
+                  <c:if test="${!empty studentCards[student.id]}">
+                  
+                    <div class="genericFormSection"
+                      title="${secureInfoTitle}">
+                      <jsp:include
+                        page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale"
+                          value="students.viewStudent.firstNameTitle" />
+                        <jsp:param name="helpLocale"
+                          value="students.viewStudent.firstNameHelp" />
+                      </jsp:include>
+                      <div class="genericViewFormDataText">
+                      ${student.firstName}</div>                       	
+                    </div>
+                    
+                    <div class="genericFormSection"
+                      title="${secureInfoTitle}">
+                      <jsp:include
+                        page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale"
+                          value="students.viewStudent.lastNameTitle" />
+                        <jsp:param name="helpLocale"
+                          value="students.viewStudent.LastNameHelp" />
+                      </jsp:include>
+                      <div class="genericViewFormDataText">${student.lastName}</div>
+                    </div>
+                    
+                    <c:if test="${!empty student.studyProgramme}">
+                      <div class="genericFormSection">
+                        <jsp:include
+                          page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale"
+                            value="students.viewStudent.studyProgrammeTitle" />
+                          <jsp:param name="helpLocale"
+                            value="students.viewStudent.studyProgrammeHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">${student.studyProgramme.name}</div>
+                      </div>
+                    </c:if>
+                    
+                    <c:if test="${!empty person.birthday}">
+                      <div class="genericFormSection"
+                        title="${secureInfoTitle}">
+                        <jsp:include
+                          page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale"
+                            value="students.viewStudent.birthdayTitle" />
+                          <jsp:param name="helpLocale"
+                            value="students.viewStudent.birthdayHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">
+                          <fmt:formatDate
+                            value="${person.birthday}" />
+                        </div>
+                      </div>
+                    </c:if>
+                    <div class="genericFormSection">
+                      <jsp:include
+                        page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale"
+                          value="students.viewStudent.emailTitle" />
+                        <jsp:param name="helpLocale"
+                          value="students.viewStudent.emailHelp" />
+                      </jsp:include>
+                      <div class="genericViewFormDataText">
+                        <c:set var="email" value="${student.contactInfo.emails[0]}"/>
+                        <div>${fn:escapeXml(email.address)}</div>
+                      </div>
+                    </div>
+                    
+                    
+                    <div class="genericFormSection">   
+                      <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale" value="integrations.slice.expiryDate"/>
+              	      </jsp:include>   
+              	      <div class="genericViewFormDataText">
+              	      
+              	        <c:choose>
+                          <c:when test="${!empty studentCards[student.id].expiryDate}">
+                            <fmt:formatDate value="${studentCards[student.id].expiryDate}" />
+                          </c:when>
+                          <c:otherwise>
+                            <div>
+                              <fmt:message key="integrations.slice.emptyField"/>
+                            </div>
+                          </c:otherwise>
+                        </c:choose>
+                      </div>
+                    </div>
+                    
+                    <div class="genericFormSection">   
+                      <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    	  <jsp:param name="titleLocale" value="integrations.slice.cardType"/>
+              	      </jsp:include>            
+                      <div class="genericViewFormDataText">
+                       
+                        <c:choose>
+                          <c:when test="${!empty studentCards[student.id].type}">
+                            <c:choose>
+                              <c:when test="${studentCards[student.id].type == 'BLUE'}">
+                                <fmt:message key="generic.studentCardTypes.blue"/>
+                              </c:when>
+                              <c:when test="${studentCards[student.id].type == 'GREEN'}">
+                                <fmt:message key="generic.studentCardTypes.green"/>
+                              </c:when>
+                              <c:otherwise>
+                                <div>
+                                  <fmt:message key="integrations.slice.emptyField"/>
+                                </div>
+                              </c:otherwise>
+                            </c:choose>
+                          </c:when>
+                          <c:otherwise>
+                            <div>
+                              <fmt:message key="integrations.slice.emptyField"/>
+                            </div>
+                          </c:otherwise>
+                        </c:choose>
+                      </div>
+                    </div>
+                    
+                    <div class="genericFormSection">    
+                         
+                      <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale" value="integrations.slice.status"/>
+                      </jsp:include>      
+                      <c:choose>
+                        <c:when test="${studentCards[student.id].activity eq 'ACTIVE'}">
+                          <fmt:message key="integrations.slice.active"/>
+                        </c:when>
+                        <c:otherwise>
+                          <fmt:message key="integrations.slice.inActive"/>
+                        </c:otherwise>              
+                      </c:choose>
+                    </div>
+                  </c:if>
+                  
+                  <c:if test="${empty studentCards[student.id]}">
+                    <fmt:message key="integrations.slice.inActive"/>
+                  </c:if>                            
+                </div> 
+              </div>
+              <!--  Student Integration Info Ends -->
 
               <div id="courses.${student.id}" class="tabContent">
                 <div
@@ -3235,6 +3441,102 @@
           </div>
         </div>
       </c:forEach>
+
+      <c:if test="${!empty matriculationExamTerms}">
+        <div id="matriculation" class="tabContent tabContentNestedTabs">
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="students.viewStudent.matriculationAddOldMatriculationGrades"/>
+              <jsp:param name="helpLocale" value="students.viewStudent.matriculationAddOldMatriculationGrades.help"/>
+            </jsp:include>
+
+            <select id="addOldMatriculationGradesSelect" data-pid="${person.id}" onchange="onOldMatriculationGradesSelectChange(event);">
+              <option></option>
+              <c:forEach var="termOption" items="${termOptions}">
+                <option value="${termOption.term}${termOption.year}" data-term="" ${!termOption.enabled ? 'disabled="disabled"' : ''} >${termOption.displayText}</option>
+              </c:forEach>
+            </select>
+            
+            <button id="addOldMatriculationGradesButton" onclick="addOldMatriculationGrades(event);" disabled="disabled"><fmt:message key="students.viewStudent.matriculationAddOldMatriculationGrades"/></button>
+          </div>
+                
+          <c:forEach var="examTerm" items="${matriculationExamTerms}">
+            <c:choose>
+              <c:when test="${examTerm.term == 'SPRING'}">
+                <c:set var="matriculationExamEnrollmentTerm">
+                  <fmt:message key="terms.seasons.spring"/>
+                </c:set>
+              </c:when>
+              <c:when test="${examTerm.term == 'AUTUMN'}">
+                <c:set var="matriculationExamEnrollmentTerm">
+                  <fmt:message key="terms.seasons.autumn"/>
+                </c:set>
+              </c:when>
+              <c:otherwise>
+                <c:set var="matriculationExamEnrollmentTerm">???</c:set>
+              </c:otherwise>
+            </c:choose>
+            
+            <div class="viewStudentMatriculationTermHeaderRow">
+              <b style="font-size: 1.2em">${examTerm.year} ${matriculationExamEnrollmentTerm}</b>
+              <c:if test="${not empty examTerm.studyProgrammeName}">
+                <span style="margin: 0px 4px;">${examTerm.studyProgrammeName}</span>
+              </c:if>
+              <c:if test="${not empty examTerm.state}">
+                <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${examTerm.state}"/></span>
+              </c:if>
+              <span>
+                <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?person=${person.id}&term=${examTerm.term}&year=${examTerm.year}">
+                  <img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png" class="iconButton" />
+                </a>
+              </span>
+            </div>
+
+            <c:forEach var="attendanceBean" items="${examTerm.attendances}">
+              <div class="viewStudentProject">
+                <div class="viewStudentProjectHeader">
+                  <div>
+                    <b>${attendanceBean.subjectName}</b>
+                    
+                    <c:if test="${not empty attendanceBean.grade}">
+                      <span class="viewStudentProjectHeaderAssessment">
+                        <span class="viewStudentProjectHeaderAssessmentDate">
+                          <fmt:parseDate  value="${attendanceBean.gradeDate}"  type="date" pattern="yyyy-MM-dd" var="parsedDate" />
+                          <fmt:formatDate value="${parsedDate}" />
+                        </span>
+                        <span class="viewStudentProjectHeaderAssessmentGrade">
+                          <fmt:message key="generic.matriculation.examGrades.${attendanceBean.grade}"/>
+                        </span>
+                      </span>
+                    </c:if>
+                  </div>
+                  <div>
+                    <fmt:message key="students.viewStudent.matriculationMandatory"/>: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} opintopistettä
+                  </div>
+                </div>
+                
+                <div class="viewStudentStudentProjectTableContainer" style="display: none;">
+                  <table border="0" cellpadding="4px" class="ixTableRowHoverEffect" style="width: 100%">
+                    <tr>
+                      <th align="left" style="width: 70%">Modulin nimi</th>
+                      <th align="center" style="width: 10%">Arvosana</th>
+                      <th align="center" style="width: 20%">Arviointipvm</th>
+                    </tr>
+                    
+                    <c:forEach var="subjectModule" items="${attendanceBean.modules}">
+                      <tr class="ixTableRow">
+                        <td align="left">${subjectModule.name}</td>
+                        <td align="center">${subjectModule.gradeName}</td>
+                        <td align="center"><fmt:formatDate value="${subjectModule.gradeDate}"/></td>
+                      </tr>
+                    </c:forEach>
+                  </table>
+                </div>
+              </div>
+            </c:forEach>
+          </c:forEach>
+        </div>
+      </c:if>
       
       <c:if test="${!empty staffMember}">
         <div id="staffMember" class="tabContent tabContentNestedTabs">

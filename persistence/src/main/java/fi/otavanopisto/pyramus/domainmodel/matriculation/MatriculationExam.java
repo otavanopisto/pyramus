@@ -9,13 +9,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
-import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 @Entity
 public class MatriculationExam {
@@ -51,14 +50,6 @@ public class MatriculationExam {
 
   public void setVersion(Long version) {
     this.version = version;
-  }
-
-  public Grade getSignupGrade() {
-    return signupGrade;
-  }
-
-  public void setSignupGrade(Grade signupGrade) {
-    this.signupGrade = signupGrade;
   }
 
   public Integer getExamYear() {
@@ -108,9 +99,6 @@ public class MatriculationExam {
   @Enumerated(EnumType.STRING)
   private MatriculationExamTerm examTerm;
 
-  @ManyToOne
-  private Grade signupGrade;
-  
   @Version
   @Column(nullable = false)
   private Long version;

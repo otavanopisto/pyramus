@@ -1,6 +1,9 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,10 +43,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.Archived;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -72,6 +78,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
@@ -100,7 +108,6 @@ import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.LanguageController;
-import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.MunicipalityController;
 import fi.otavanopisto.pyramus.rest.controller.NationalityController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
@@ -112,7 +119,6 @@ import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.otavanopisto.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
-import fi.otavanopisto.pyramus.rest.controller.StudentMatriculationEligibilityResult;
 import fi.otavanopisto.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeController;
@@ -138,12 +144,10 @@ import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
-import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
-import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
@@ -228,9 +232,6 @@ public class StudentRESTService extends AbstractRESTService {
   private SessionController sessionController;
 
   @Inject
-  private MatriculationEligibilityController matriculationEligibilityController;
-  
-  @Inject
   private ObjectFactory objectFactory;
   
   @Inject
@@ -244,6 +245,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StaffMemberDAO staffMemberDAO;
+  
+  @Inject
+  private StudentCardDAO studentCardDAO;
   
   private static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
   private static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
@@ -1765,31 +1769,6 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(educationalLevel.getName()).build();
   }
 
-  @Path("/students/{ID:[0-9]*}/matriculationEligibility")
-  @GET
-  @RESTPermit(handling = Handling.INLINE)
-  public Response getStudentMatriculationEligibility(@PathParam("ID") Long studentId, @QueryParam ("subjectCode") String subjectCode) {
-    if (StringUtils.isBlank(subjectCode)) {
-      return Response.status(Status.BAD_REQUEST).entity("Subject is required").build();
-    }
-    
-    Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).entity("Not found").build();
-    }
-    
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-
-    StudentMatriculationEligibilityResult result = matriculationEligibilityController.getStudentMatriculationEligible(student, subjectCode);
-    if (result == null) {
-      return Response.status(Status.BAD_REQUEST).entity("Could not resolve matriculation eligibility").build();
-    } else {
-      return Response.ok(new StudentMatriculationEligibility(result.getEligible(), result.getRequirePassingGrades(), result.getAcceptedCourseCount(), result.getAcceptedTransferCreditCount())).build();
-    }
-  }
-
   @Path("/students/{ID:[0-9]*}/contactLogEntries")
   @POST
   @RESTPermit(handling = Handling.INLINE)
@@ -1823,6 +1802,78 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(contactLogEntry)).build();
   }
 
+  @Path("/students/contactLogEntries/batch")
+  @POST
+  @RESTPermit(handling = Handling.INLINE)
+  public Response createMultipleStudentContactLogEntries(fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT })) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients cLE = null;
+    
+    if (entity.getRecipients() != null) {
+      
+      List<Long> recipients = new ArrayList<>();
+      
+      User loggedUser = sessionController.getUser();
+      StaffMember creator = userController.findStaffMemberById(loggedUser.getId());
+      
+      StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
+      StudentContactLogEntry contactLogEntry = null;
+      for (Long recipient : entity.getRecipients()) {
+        Student student = studentController.findStudentById(recipient);
+        
+        Status studentStatus = checkStudent(student);
+        if (studentStatus != Status.OK)
+          return Response.status(studentStatus).build();
+        
+        if (student == null) {
+          StaffMember staff = userController.findStaffMemberById(recipient);
+
+          if (staff != null) {
+            continue;
+          }
+          return Response.status(Status.BAD_REQUEST).build();
+        }
+        
+        recipients.add(recipient);
+        
+        ContactLogAccess access = studentController.resolveContactLogAccess(student);
+        
+        if(!access.equals(ContactLogAccess.ALL) && !access.equals(ContactLogAccess.OWN)) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+        
+        contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
+            toDate(entity.getEntryDate()), loggedUser.getFullName(), creator);
+
+      
+      }
+      fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType entryType = fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType.valueOf(contactLogEntry.getType().name());
+
+      OffsetDateTime entryDate = OffsetDateTime.ofInstant(contactLogEntry.getEntryDate().toInstant(), ZoneId.systemDefault());
+      
+      Long creatorId = contactLogEntry.getCreator() != null ? contactLogEntry.getCreator().getId() : null;
+
+      cLE = new fi.otavanopisto.pyramus.rest.model.StudentContactLogWithRecipients();
+      cLE.setId(contactLogEntry.getId());
+      cLE.setType(entryType);
+      cLE.setText(contactLogEntry.getText());
+      cLE.setEntryDate(entryDate);
+      cLE.setCreatorId(creatorId);
+      cLE.setCreatorName(contactLogEntry.getCreatorName());
+      cLE.setArchived(contactLogEntry.getArchived());
+      cLE.setRecipients(recipients);
+        
+    }
+    return Response.ok(cLE).build();
+    
+  }
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries")
   @GET
   @RESTPermit(handling = Handling.INLINE)
@@ -3438,7 +3489,6 @@ public class StudentRESTService extends AbstractRESTService {
       @PathParam("STUDENTID") Long studentId,
       @QueryParam("educationTypeCode") String educationTypeCode,
       @QueryParam("educationSubtypeCode") String educationSubtypeCode) {
-    StudentCourseStats response = new StudentCourseStats();
     
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -3462,7 +3512,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     // TODO StudentTOR might be able to solve this more elegantly
-    
+
     int numCompletedCourses = assessmentController.getAcceptedCourseCount(
         student,
         null,
@@ -3478,14 +3528,19 @@ public class StudentRESTService extends AbstractRESTService {
 
     double numCreditPoints = 0;
     try {
-      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student);
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, false);
       numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op, true);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
     }
+
+    boolean personHasCourseAssessments = assessmentController.countCourseAssessments(student.getPerson(), TSB.TRUE) > 0;
+
+    StudentCourseStats response = new StudentCourseStats();
     
     response.setNumberCompletedCourses(numCompletedCourses);
     response.setNumberCreditPoints(numCreditPoints);
+    response.setPersonHasCourseAssessments(personHasCourseAssessments);
     
     return Response.ok(response).build();
   }
@@ -3579,5 +3634,76 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(variableList).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findStudentCard(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+    
+    User loggedUser = sessionController.getUser();
 
+      if (!loggedUser.getId().equals(student.getId())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    
+    StudentCard studentCard = studentCardDAO.findByStudent(student);
+    
+    if (studentCard == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    // Return the student card only if the expiration date and type are not null
+    if (studentCard.getExpiryDate() == null || studentCard.getType() == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(studentCard)).build();
+
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/studentCard/active")  
+  @PUT
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateStudentCardActive(@PathParam("STUDENTID") Long studentId, Boolean active) {
+
+    // Access
+    User loggedUser = sessionController.getUser();
+    
+    if (!loggedUser.hasRole(Role.STUDENT)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    if (!loggedUser.getId().equals(studentId)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    // Payload validation
+    Student student = studentController.findStudentById(loggedUser.getId());
+    StudentCard studentCard = studentCardDAO.findByStudent(student);
+    
+    if (studentCard == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    Date cancellationDate = null;
+    StudentCardActivity activity = studentCard.getActivity();
+    
+    if (studentCard.getActivity().equals(StudentCardActivity.ACTIVE) && active == Boolean.FALSE) {
+      cancellationDate = new Date();
+      
+      activity = StudentCardActivity.CANCELLED;
+    } else {
+      if (active == Boolean.TRUE){
+        activity = StudentCardActivity.ACTIVE;
+      }
+    }
+    return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, activity, cancellationDate))).build();
+  }
+  
 }

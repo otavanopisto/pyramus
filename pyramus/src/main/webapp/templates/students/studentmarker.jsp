@@ -1,12 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+  pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <@include_page path="/templates/generic/head_generic.jsp"/>
-    <@include_page path="/templates/generic/table_support.jsp"/>
-    <@include_page path="/templates/generic/jsonrequest_support.jsp"/>
-    <@include_page path="/templates/generic/jsonform_support.jsp"/>
-    <@include_page path="/templates/generic/scriptaculous_support.jsp"/>
-    <@include_page path="/templates/generic/searchnavigation_support.jsp"/>
+    <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/jsonform_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/searchnavigation_support.jsp"></jsp:include>
     
     <style>
       .submitBtn[disabled="disabled"] {
@@ -206,7 +211,7 @@
       
       function updateView(event) {
         $('internetix_progress').setStyle({ visibility: 'visible'});
-        JSONRequest.request("oo/internetixmarkerlist.json", {
+        JSONRequest.request("students/internetixmarkerlist.json", {
           parameters: {
             startDate: $('startDate').value,
             endDate: $('endDate').value,
@@ -276,7 +281,7 @@
     </style>
   </head>
   <body onload="onLoad(event);">
-    <@include_page path="/templates/generic/header.jsp"/> 
+    <jsp:include page="/templates/generic/header.jsp"></jsp:include> 
 
     <form action="saveinternetixmarkerlist.json" method="post" ix:jsonform="true" ix:useglasspane="true">
       <div id="searchBar" class="searchBar">

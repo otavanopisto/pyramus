@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
@@ -62,6 +63,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -147,6 +150,9 @@ public class StudentController {
   
   @Inject
   private UserController userController;
+  
+  @Inject
+  private StudentCardDAO studentCardDAO;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -774,6 +780,14 @@ public class StudentController {
     } else {
       return ContactLogAccess.OWN;
     }
+  }
+  
+  public StudentCard getStudentCard(Student student) {
+    return studentCardDAO.findByStudent(student);
+  }
+  
+  public StudentCard updateStudentCardActive(StudentCard studentCard, StudentCardActivity activity, Date cancellationDate) {
+    return studentCardDAO.updateActive(studentCard, activity, cancellationDate);
   }
 }
 

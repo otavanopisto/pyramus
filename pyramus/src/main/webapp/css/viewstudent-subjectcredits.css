@@ -48,11 +48,26 @@
 }
 
 .studentSubjectCreditsPassedCoursesCount {
+	align-items: center;
+	display: flex;
   flex-basis: 100px;
   flex-grow: 0;
   flex-shrink: 0;
   padding: 4px 8px;
   text-align: center;
+}
+
+.studentSubjectCreditsPassedCoursesCount__checked-wrapper {
+	align-items: center;
+	background: #afffb8;
+	border-radius: 100%;
+	display: flex;
+	flex-basis: 16px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	height: 16px;
+	margin: 0 0 0 5px;
+	justify-content: center;
 }
 
 .studentSubjectCreditsMeanGradeContainer {

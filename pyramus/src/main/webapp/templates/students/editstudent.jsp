@@ -923,9 +923,27 @@
       </fmt:message>
       
       <span id="koski-status" class="koski-status">KOSKI</span>
+      <span id="pyramus-validation-status" class="pyramus-validation-error-trafficlight" ${(empty studentValidations) ? 'style="display: none;"' : ''}>PYRAMUS</span>
     </h1>
 
     <div id="koski-status-details" style="display: none;">
+    </div>
+
+    <div id="pyramus-validation" class="pyramus-validation-error-list" ${(empty studentValidations) ? 'style="display: none;"' : ''}>
+      <c:forEach var="validationWarning" items="${studentValidations}">
+        <div class="pyramus-validation-error-list-row">
+          <c:choose>
+            <c:when test="${validationWarning.student.studyProgramme == null}">
+              <fmt:message key="students.viewStudent.noStudyProgrammeTabLabel" />
+            </c:when>
+            <c:otherwise>
+              ${validationWarning.student.studyProgramme.name}
+            </c:otherwise>
+          </c:choose> <c:if test="${validationWarning.student.hasFinishedStudies}">*</c:if>
+            
+          <fmt:message key="generic.pyramusStudentValidationErrors.${validationWarning.type}" />
+        </div>
+      </c:forEach>
     </div>
 
     <div id="editStudentEditFormContainer"> 
@@ -959,6 +977,10 @@
                 <c:if test="${student.hasFinishedStudies}">*</c:if>
               </a>
             </c:forEach>
+            
+            <a class="tabLabel" href="#integrations">
+              <fmt:message key="students.editStudent.studentIntegrationInfoTabLabel"/>
+            </a>
             <ix:extensionHook name="students.editStudent.tabLabels"/>
           </div>
           
@@ -1045,6 +1067,107 @@
             <ix:extensionHook name="students.editStudent.tabs.basic"/>
           </div>
 
+	      <!-- Integrations starts -->
+	      
+          <div id="integrations" class="tabContent">    
+            
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="integrations.slice.title"/>
+              </jsp:include>
+            </div>
+            
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.editStudent.firstNameTitle"/>
+              </jsp:include>            
+              ${person.latestStudent.firstName}
+            </div>
+            
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.editStudent.lastNameTitle"/>
+              </jsp:include>            
+              ${person.latestStudent.lastName}
+            </div>
+            
+            <div class="genericFormSection">   
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.editStudent.birthdayTitle"/>
+                <jsp:param name="helpLocale" value="students.editStudent.birthdayHelp"/>
+              </jsp:include>  
+                <fmt:formatDate value="${person.birthday}" />
+            </div>
+            
+            <div class="genericFormSection">   
+              <c:forEach var="student" items="${students}">
+                <div class="genericViewInfoWapper ${secureInfoClass}"
+                  id="studentViewIntegrationInfoWrapper">
+              
+                  <div class="genericFormSection">           
+                    <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                      <jsp:param name="titleLocale" value="students.editStudent.studyProgrammeTitle"/>
+                      <jsp:param name="helpLocale" value="students.editStudent.studyProgrammeHelp"/>
+                    </jsp:include>            
+                    <div>${student.studyProgramme.name}<c:if test="${student.hasFinishedStudies}">*</c:if></div>
+                  </div>
+                  <div class="genericFormSection"> </div>
+                  <div class="genericFormSection">               
+                    <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                      <jsp:param name="titleLocale" value="students.editStudent.emailTableEmailsTitle"/>
+                    </jsp:include>
+                    <c:set var="email" value="${student.contactInfo.emails[0]}"/>
+                    <div>${fn:escapeXml(email.address)}</div>
+                  </div>
+                  
+                  <c:set var="studentCard" value="${studentCards[student.id]}" />
+                
+                  <c:if test="${!empty studentCard}">
+                    <c:set var="cardType" value="${studentCard.type}"/>
+                    <c:set var="expirationDate" value="${fn:escapeXml(studentCard.expiryDate.time)}"/>
+                    <c:set var="activity" value="${studentCard.activity}"/>
+                  </c:if>
+                  
+                  <div class="genericFormSection">
+                    <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                      <jsp:param name="titleLocale" value="integrations.slice.cardType"/>
+                      <jsp:param name="helpLocale" value="integrations.slice.cardTypeHelp"/>
+                    </jsp:include>
+                    <select name="studentCardType.${student.id}">
+                      <option value=""><fmt:message key="generic.studentCardTypes.none"/></option>
+                      <option value="BLUE" ${cardType == 'BLUE' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.blue"/></option>
+                      <option value="GREEN" ${cardType == 'GREEN' ? 'selected="selected"' : ''}><fmt:message key="generic.studentCardTypes.green"/></option>
+                    </select>
+                  </div>
+                  
+                  <div class="genericFormSection">   
+                    <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                      <jsp:param name="titleLocale" value="integrations.slice.expiryDate"/>
+                      <jsp:param name="helpLocale" value="integrations.slice.expiryDateHelp"/>
+                    </jsp:include>            
+                    <input type="text" name="expiryDate.${student.id}" class="ixDateField" value="${expirationDate}">
+                  </div>
+                  <div class="genericFormSection">
+                    <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                      <jsp:param name="titleLocale" value="integrations.slice.status"/>
+                      <jsp:param name="helpLocale" value="integrations.slice.statusHelp"/>
+                    </jsp:include>      
+              	    <c:choose>
+                      <c:when test="${activity eq 'ACTIVE'}"><input type="checkbox" name="active.${student.id}" value="true" checked="checked"/></c:when>
+                      <c:otherwise>
+                        <input type="checkbox" name="active.${student.id}" value="true"/>
+                      </c:otherwise>              
+              	    </c:choose>
+                    
+              	    <fmt:message key="integrations.slice.active"/>
+                  </div>
+                </div>
+              </c:forEach>
+	        </div> 
+          </div>
+          
+          <!-- Integrations ends  -->
+          
           <c:if test="${hasInternalAuthenticationStrategies and allowEditCredentials}">
             <div id="credentials" class="tabContent">    
               <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
@@ -1092,7 +1215,7 @@
                 </jsp:include>            
                 <div>${student.studyProgramme.name}<c:if test="${student.studyProgramme.archived}"> *</c:if></div>
               </div>
-  
+              
               <div class="genericFormSection">           
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.curriculumTitle"/>

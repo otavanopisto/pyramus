@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.binary.ytl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,12 +11,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -37,17 +33,17 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.BinaryRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
 import fi.otavanopisto.pyramus.tor.TORSubject;
@@ -71,7 +67,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
 
   public void process(BinaryRequestContext binaryRequestContext) {
-    List<YTLAineKoodi> m = readMapping();
+    List<YTLAineKoodi> m = YTLController.readMapping();
     
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamDAO matriculationExamDAO = DAOFactory.getInstance().getMatriculationExamDAO();
@@ -84,7 +80,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     YTLSiirtotiedosto ytl = new YTLSiirtotiedosto(tutkintokerta, koulunumero);
 
     List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listDistinctByAttendanceTerms(exam,
-        MatriculationExamEnrollmentState.APPROVED, exam.getExamYear(), exam.getExamTerm(), MatriculationExamAttendanceStatus.ENROLLED);
+        MatriculationExamEnrollmentState.CONFIRMED, exam.getExamYear(), exam.getExamTerm(), MatriculationExamAttendanceStatus.ENROLLED);
     enrollments = processCandidateNumbers(enrollments);
     enrollments.forEach(enrollment -> ytl.addKokelas(enrollmentToKokelas(enrollment, m)));
     
@@ -138,7 +134,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         enrollment, MatriculationExamAttendanceStatus.ENROLLED);
 
     Person person = student.getPerson();
-    String hetu = enrollment.getSsn();
+    String hetu = person.getSocialSecurityNumber(); // enrollment.getSsn();
     
     if (hetu == null) {
       hetu = person.getSocialSecurityNumber();
@@ -199,7 +195,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     
     attendances.forEach(attendance -> {
       MatriculationExamSubject examSubject = attendance.getSubject();
-      YTLAineKoodi ytlAineKoodi = examSubjectToYTLAineKoodi(examSubject, mapping);
+      YTLAineKoodi ytlAineKoodi = YTLController.examSubjectToYTLAineKoodi(examSubject, mapping);
 
       String aineKoodi = ytlAineKoodi.getYhdistettyAineKoodi();
       boolean maksuton = MAKSUTTOMAT.contains(attendance.getFunding());
@@ -223,7 +219,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     
     String äidinkielenKoe = null;
     if (äidinkieli != null) {
-      YTLAineKoodi ytlÄidinkieli = examSubjectToYTLAineKoodi(äidinkieli.getSubject(), mapping);
+      YTLAineKoodi ytlÄidinkieli = YTLController.examSubjectToYTLAineKoodi(äidinkieli.getSubject(), mapping);
       if (ytlÄidinkieli != null) {
         äidinkielenKoe = ytlÄidinkieli.getYtlAine();
       } else {
@@ -235,7 +231,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
 
     StudentTOR tor;
     try {
-      tor = StudentTORController.constructStudentTOR(student);
+      tor = StudentTORController.constructStudentTOR(student, false);
     } catch (Exception ex) {
       tor = new StudentTOR();
       logger.log(Level.SEVERE, String.format("Failed to construct TOR for Student %d", student.getId()), ex);
@@ -246,7 +242,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     for (MatriculationExamAttendance attendance : attendances) {
       MatriculationExamSubject examSubject = attendance.getSubject();
       
-      YTLAineKoodi ytlAineKoodi = examSubjectToYTLAineKoodi(examSubject, mapping);
+      YTLAineKoodi ytlAineKoodi = YTLController.examSubjectToYTLAineKoodi(examSubject, mapping);
       if (ytlAineKoodi != null) {
         // Äidinkielelle on oma lokeronsa, ei lisätä pakolliseksi/ylimääräiseksi
         if (!isÄidinkieli(attendance)) {
@@ -269,7 +265,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     List<SuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
     
     for (String suoritetutKurssitAine : suoritetutKurssitAineet) {
-      List<YTLAineKoodi> ytlAineKoodit = ytlSubjectToYTLAineKoodi(suoritetutKurssitAine, mapping);
+      List<YTLAineKoodi> ytlAineKoodit = YTLController.ytlSubjectToYTLAineKoodi(suoritetutKurssitAine, mapping);
       for (YTLAineKoodi ytlAineKoodi : ytlAineKoodit) {
         lataaSuoritetutKurssit(student, tor, ytlAineKoodi, suoritetutKurssit);
       }
@@ -354,19 +350,6 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     return null;
   }
 
-  private YTLAineKoodi examSubjectToYTLAineKoodi(MatriculationExamSubject examSubject, List<YTLAineKoodi> mapping) {
-    return mapping.stream()
-      .filter(ainekoodi -> (ainekoodi.getMatriculationExamSubject() == examSubject))
-      .findFirst()
-      .orElse(null);
-  }
-  
-  private List<YTLAineKoodi> ytlSubjectToYTLAineKoodi(String ytlSubject, List<YTLAineKoodi> mapping) {
-    return mapping.stream()
-      .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYtlAine(), ytlSubject))
-      .collect(Collectors.toList());
-  }
-  
   private boolean isÄidinkieli(MatriculationExamAttendance attendance) {
     MatriculationExamSubject subject = attendance.getSubject();
     return 
@@ -374,19 +357,6 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         subject == MatriculationExamSubject.S2;
   }
 
-  private List<YTLAineKoodi> readMapping() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    
-    try {
-      InputStream json = getClass().getClassLoader().getResourceAsStream("fi/otavanopisto/pyramus/ytl/ytl_ainekoodit.json");
-      return objectMapper.readValue(json, new TypeReference<List<YTLAineKoodi>>(){});
-    } catch (IOException e) {
-      logger.log(Level.SEVERE, "Could not read YTL Mapping file", e);
-    }
-    
-    return new ArrayList<>();
-  }
-  
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }

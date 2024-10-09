@@ -1,6 +1,17 @@
 package fi.otavanopisto.pyramus.rest.util;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Date;
+
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRoleEnum;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.rest.model.UserRoleClass;
 
 public class PyramusRestUtils {
 
@@ -53,4 +64,38 @@ public class PyramusRestUtils {
     
     return null;
   }
+
+  /**
+   * Converts Date to OffsetDateTime
+   * 
+   * @param date
+   * @return
+   */
+  public static OffsetDateTime toOffsetDateTime(Date date) {
+    if (date == null) {
+      return null;
+    }
+    // If (as) date is java.sql.Date then toInstant() would cause UnsupportedOperationException
+    Date tmpDate = new Date(date.getTime()); 
+    Instant instant = tmpDate.toInstant();
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(instant);
+    return tmpDate.toInstant().atOffset(offset);
+  }
+
+  /**
+   * Returns UserRoleClass for given User. If user is null, returns null.
+   * 
+   * @param user user
+   * @return UserRoleClass for given user
+   */
+  public static UserRoleClass getUserRoleClass(User user) {
+    if (user != null) {
+      return user instanceof StaffMember ? UserRoleClass.STAFF : 
+        user instanceof Student ? UserRoleClass.STUDENT : 
+        user instanceof StudentParent ? UserRoleClass.STUDENT_PARENT : null;
+    }
+    return null;
+  }
+  
 }

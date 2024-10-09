@@ -13,13 +13,24 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.search.annotations.DocumentId;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
 @Entity
+@Table (
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "exam_id", "student_id"})
+    }
+)
 public class MatriculationExamEnrollment {
 
   /**
@@ -31,62 +42,6 @@ public class MatriculationExamEnrollment {
     return id;
   }
   
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getSsn() {
-    return ssn;
-  }
-
-  public void setSsn(String ssn) {
-    this.ssn = ssn;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getPhone() {
-    return phone;
-  }
-
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
-
-  public String getAddress() {
-    return address;
-  }
-
-  public void setAddress(String address) {
-    this.address = address;
-  }
-
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
-  }
-
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
-  }
-
   public Long getNationalStudentNumber() {
     return nationalStudentNumber;
   }
@@ -195,14 +150,6 @@ public class MatriculationExamEnrollment {
     this.degreeType = degreeType;
   }
 
-  public boolean isApprovedByGuider() {
-    return approvedByGuider;
-  }
-
-  public void setApprovedByGuider(boolean approvedByGuider) {
-    this.approvedByGuider = approvedByGuider;
-  }
-
   public MatriculationExam getExam() {
     return exam;
   }
@@ -219,6 +166,30 @@ public class MatriculationExamEnrollment {
     this.degreeStructure = degreeStructure;
   }
 
+  public StaffMember getHandler() {
+    return handler;
+  }
+
+  public void setHandler(StaffMember handler) {
+    this.handler = handler;
+  }
+
+  public String getHandlerNotes() {
+    return handlerNotes;
+  }
+
+  public void setHandlerNotes(String handlerNotes) {
+    this.handlerNotes = handlerNotes;
+  }
+
+  public String getContactInfoChange() {
+    return contactInfoChange;
+  }
+
+  public void setContactInfoChange(String contactInfoChange) {
+    this.contactInfoChange = contactInfoChange;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -227,27 +198,6 @@ public class MatriculationExamEnrollment {
  
   @ManyToOne
   private MatriculationExam exam;
-  
-  @Column
-  private String name;
-  
-  @Column
-  private String ssn;
-  
-  @Column
-  private String email;
-  
-  @Column
-  private String phone;
-  
-  @Column
-  private String address;
-  
-  @Column
-  private String postalCode;
-  
-  @Column
-  private String city;
   
   @Column
   private Long nationalStudentNumber;
@@ -275,14 +225,16 @@ public class MatriculationExamEnrollment {
   @Lob
   @Basic (fetch = FetchType.LAZY)
   @Column
+  private String contactInfoChange;
+  
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
+  @Column
   private String message;
   
   @Column(nullable = false)
   private boolean canPublishName;
 
-  @Column(nullable = false)
-  private boolean approvedByGuider;
-  
   @ManyToOne
   private Student student;
   
@@ -297,7 +249,14 @@ public class MatriculationExamEnrollment {
   @Enumerated(EnumType.STRING)
   private MatriculationExamEnrollmentDegreeStructure degreeStructure;
   
-  @Column
+  @Column(nullable = false)
+  @Temporal(value = TemporalType.TIMESTAMP)
   private Date enrollmentDate;
 
+  @ManyToOne
+  private StaffMember handler;
+  
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
+  private String handlerNotes;
 }
