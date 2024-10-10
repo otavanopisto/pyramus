@@ -163,6 +163,16 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     
     return courseAssessmentRequest;
   }
+  
+  public CourseAssessmentRequest updateLocked(CourseAssessmentRequest courseAssessmentRequest, Boolean locked) {
+    EntityManager entityManager = getEntityManager();
+
+    courseAssessmentRequest.setLocked(locked);
+
+    entityManager.persist(courseAssessmentRequest);
+    
+    return courseAssessmentRequest;
+  }
 
   public CourseAssessmentRequest updateHandled(CourseAssessmentRequest courseAssessmentRequest, Boolean handled) {
     EntityManager entityManager = getEntityManager();

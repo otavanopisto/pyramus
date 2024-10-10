@@ -148,6 +148,7 @@ public class CompositeRESTService {
         
         CourseAssessmentRequest courseAssessmentRequest = assessmentController.findLatestCourseAssessmentRequestByCourseStudent(courseStudent);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
+        assessmentRequest.setId(courseAssessmentRequest == null ? null : courseAssessmentRequest.getId());
         assessmentRequest.setCourseStudentId(courseStudent.getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest == null ? null : courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseStudent.getEnrolmentTime());
@@ -164,6 +165,7 @@ public class CompositeRESTService {
         assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
         assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
         assessmentRequest.setUserId(courseStudent.getStudent().getId());
+        assessmentRequest.setLocked(courseAssessmentRequest == null ? false : courseAssessmentRequest.getLocked());
         assessmentRequests.add(assessmentRequest);
       }
     }
@@ -220,6 +222,7 @@ public class CompositeRESTService {
         }
         
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
+        assessmentRequest.setId(courseAssessmentRequest.getId());
         assessmentRequest.setCourseStudentId(courseAssessmentRequest.getCourseStudent().getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseAssessmentRequest.getCourseStudent().getEnrolmentTime());
@@ -236,6 +239,7 @@ public class CompositeRESTService {
         assessmentRequest.setLastName(courseAssessmentRequest.getCourseStudent().getStudent().getLastName());
         assessmentRequest.setStudyProgramme(courseAssessmentRequest.getCourseStudent().getStudent().getStudyProgramme().getName());
         assessmentRequest.setUserId(courseAssessmentRequest.getCourseStudent().getStudent().getId());
+        assessmentRequest.setLocked(courseAssessmentRequest.getLocked());
         assessmentRequests.add(assessmentRequest);
       }
     }
