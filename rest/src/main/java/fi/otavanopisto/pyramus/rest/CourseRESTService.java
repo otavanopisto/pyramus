@@ -1868,4 +1868,55 @@ public class CourseRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  
+  @Path("/courses/{COURSEID:[0-9]*}/courseStudents/{COURSESTUDENTID:[0-9]*}/assessmentRequest/lock")
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateCourseAssessmentRequestLock(@PathParam("COURSESTUDENTID") Long courseStudentId, @PathParam("COURSEID") Long courseId, 
+      fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest entity) {
+    
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseStudent courseStudent = courseController.findCourseStudentById(courseStudentId);
+    Student student = courseStudent.getStudent();
+    Course course = courseController.findCourseById(courseId);
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(entity.getId());
+
+    if (courseAssessmentRequest == null){
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!course.getId().equals(courseAssessmentRequest.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Course ids mismatch.").build();
+    }
+    
+    if (!student.getId().equals(courseAssessmentRequest.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Student ids mismatch.").build();
+    }
+
+    if (!courseAssessmentRequest.getCourseStudent().getId().equals(entity.getCourseStudentId())) {
+      return Response.status(Status.BAD_REQUEST).entity("CourseAssessmentRequest ids mismatch.").build();
+    }
+    
+    if (sessionController.hasEnvironmentPermission(CourseAssessmentPermissions.LOCK_COURSEASSESSMENTREQUEST)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequestLock(
+      courseAssessmentRequest,
+      entity.getLocked());
+
+    return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
+  }
+  
 }

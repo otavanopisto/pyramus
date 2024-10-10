@@ -2927,7 +2927,8 @@ public class StudentRESTService extends AbstractRESTService {
         created, 
         updatedCourseAssessmentRequest.getRequestText(),
         updatedCourseAssessmentRequest.getHandled(), 
-        updatedCourseAssessmentRequest.getArchived()
+        updatedCourseAssessmentRequest.getArchived(),
+        updatedCourseAssessmentRequest.getLocked()
         );
     
     r.setLocked(updatedCourseAssessmentRequest.getLocked());

@@ -8,7 +8,7 @@ public class CourseAssessmentRequest {
     super();
   }
 
-  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, String requestText, boolean archived, boolean handled) {
+  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, String requestText, boolean archived, boolean handled, boolean locked) {
     super();
     this.id = id;
     this.courseStudentId = courseStudentId;
@@ -16,6 +16,7 @@ public class CourseAssessmentRequest {
     this.requestText = requestText;
     this.archived = archived;
     this.handled = handled;
+    this.locked = locked;
   }
 
   public Long getId() {
