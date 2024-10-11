@@ -3,5 +3,6 @@
 
   <sql>drop table PluginRepository;</sql>
   <sql>drop table Plugin;</sql>
+  <sql>delete from hibernate_sequences where sequence_name in ('Plugin', 'PluginRepository');</sql>
 
 </update>
