@@ -435,11 +435,6 @@ INSERT INTO
   MagicKey (created, name, id, version, scope) 
 VALUES ('2014-09-08 12:33:50', '0793c5ee-3283-4628-b3b9-746da4e96d5f', 4, 0, 'APPLICATION');
 
-INSERT INTO
-  PluginRepository (id, url, repositoryId)
-VALUES 
-  (1, 'https://nexus.muikkuverkko.fi/repository/otavanopisto-snapshots/', '');
-
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseModule';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'CourseModule', COALESCE(MAX(id) + 1, 1) FROM CourseModule;
@@ -638,9 +633,6 @@ INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)
 DELETE FROM hibernate_sequences WHERE sequence_name = 'MagicKey';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
   SELECT 'MagicKey', COALESCE(MAX(id) + 1, 1) FROM MagicKey;
-DELETE FROM hibernate_sequences WHERE sequence_name = 'PluginRepository';
-INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 
-  SELECT 'PluginRepository', COALESCE(MAX(id) + 1, 1) FROM PluginRepository;
 DELETE FROM hibernate_sequences WHERE sequence_name = 'InternalAuth';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value)  
   SELECT 'InternalAuth', COALESCE(MAX(id) + 1, 1) FROM InternalAuth;
