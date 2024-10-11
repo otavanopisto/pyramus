@@ -84,11 +84,11 @@ public class CompositeAssessmentRequest {
     this.evaluationDate = evaluationDate;
   }
 
-  public Boolean getPassing() {
+  public boolean getPassing() {
     return passing;
   }
 
-  public void setPassing(Boolean passing) {
+  public void setPassing(boolean passing) {
     this.passing = passing;
   }
 
@@ -100,6 +100,23 @@ public class CompositeAssessmentRequest {
     this.courseStudentId = courseStudentId;
   }
 
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public boolean getLocked() {
+    return locked;
+  }
+
+  public void setLocked(boolean locked) {
+    this.locked = locked;
+  }
+
+  private Long id;
   private Long courseStudentId;
   private Long userId;
   private String firstName;
@@ -111,6 +128,7 @@ public class CompositeAssessmentRequest {
   private Date courseEnrollmentDate;
   private Date assessmentRequestDate;
   private Date evaluationDate;
-  private Boolean passing;
+  private boolean passing;
+  private boolean locked;
 
 }
