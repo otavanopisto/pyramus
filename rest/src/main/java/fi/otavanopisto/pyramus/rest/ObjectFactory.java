@@ -412,7 +412,6 @@ public class ObjectFactory {
             OffsetDateTime created = toOffsetDateTime(entity.getCreated());
             fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest assessmentRequest = new fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest(entity.getId(), entity.getCourseStudent().getId(), created, entity.getRequestText(), entity.getArchived(), entity.getHandled(), entity.getLocked());
             
-            assessmentRequest.setLocked(entity.getLocked());
             return assessmentRequest;
           }
         },
