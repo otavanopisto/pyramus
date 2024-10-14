@@ -345,6 +345,12 @@
         <version>${pyramus.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>fi.otavanopisto.pyramus</groupId>
+        <artifactId>muikku-plugin</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
       <!-- Webapp-permission -->
 
       <dependency>
