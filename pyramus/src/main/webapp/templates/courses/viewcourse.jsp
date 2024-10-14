@@ -323,7 +323,7 @@
             iconURL: GLOBAL_contextPath + '/gfx/eye.png',
             text: extensionHoverMenuLink.innerHTML,
             link: GLOBAL_contextPath + extensionHoverMenuLink.href,
-            target: GLOBAL_contextPath + extensionHoverMenuLink.target
+            target: extensionHoverMenuLink.target
           }));
         }
         
