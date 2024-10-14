@@ -1,1 +1,1 @@
-<a href="${muikkuWorkspaceUrl}">Työtila Muikussa</a>
+<a href="${muikkuWorkspaceUrl}" target="_blank">Kurssi Muikussa</a>

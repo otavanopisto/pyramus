@@ -322,7 +322,8 @@
           basicRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
             iconURL: GLOBAL_contextPath + '/gfx/eye.png',
             text: extensionHoverMenuLink.innerHTML,
-            link: GLOBAL_contextPath + extensionHoverMenuLink.href
+            link: GLOBAL_contextPath + extensionHoverMenuLink.href,
+            target: extensionHoverMenuLink.target
           }));
         }
         
