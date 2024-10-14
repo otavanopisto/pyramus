@@ -95,7 +95,12 @@ IxHoverMenuLinkItem = Class.create(IxHoverMenuItem,
     Event.observe(this.domNode, "click", this._itemClickListener);
   },
   _onItemClick: function (event) {
-    window.location.href = this._options.link;
+    if (this._options.target) {
+      window.open(this._options.link, this._options.target);
+    }
+    else {
+      window.location.href = this._options.link;
+    }
   }
 });
 
