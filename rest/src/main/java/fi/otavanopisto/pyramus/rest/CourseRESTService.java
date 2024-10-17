@@ -1908,7 +1908,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("CourseAssessmentRequest ids mismatch.").build();
     }
     
-    if (!sessionController.hasEnvironmentPermission(CourseAssessmentPermissions.LOCK_COURSEASSESSMENTREQUEST)) {
+    if (!sessionController.hasPermission(CourseAssessmentPermissions.LOCK_COURSEASSESSMENTREQUEST, course)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     
