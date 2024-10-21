@@ -68,10 +68,13 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     boolean allowed = false;
     Set<Role> environmentRoles = getUserEntityEnvironmentRoles(userEntity);
 
-    if (PermissionScope.COURSE.equals(permission.getScope()) && (contextReference != null)) {
-      Course course = resolveCourse(contextReference);
+    if (PermissionScope.COURSE.equals(permission.getScope())) {
+      Course course = contextReference != null ? resolveCourse(contextReference) : null;
       if (course != null) {
         allowed = hasCourseAccess(course, userEntity, environmentRoles, permission);
+      }
+      else {
+        logger.warning(String.format("Course-scoped permission %s does not have course as context reference.", permission.getName()));
       }
     }
     

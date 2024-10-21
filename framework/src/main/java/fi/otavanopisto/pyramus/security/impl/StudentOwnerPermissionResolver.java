@@ -1,8 +1,10 @@
 package fi.otavanopisto.pyramus.security.impl;
 
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -12,6 +14,9 @@ import fi.otavanopisto.security.User;
 @ApplicationScoped
 public class StudentOwnerPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
 
+  @Inject
+  private Logger logger; 
+  
   @Override
   public boolean handlesPermission(Permission permission) {
     if (permission != null)
@@ -25,13 +30,10 @@ public class StudentOwnerPermissionResolver extends AbstractPermissionResolver i
     fi.otavanopisto.pyramus.domainmodel.users.User user1 = getUser(user);
     fi.otavanopisto.pyramus.domainmodel.users.User user2 = resolveUser(contextReference);
     
-//    System.out.println("Ownercheck: " + 
-//        user1 + (user1 != null ? "(" + user1.getId() + ")" : "") + 
-//        " vs " + 
-//        user2 + (user2 != null ? "(" + user2.getId() + ")" : "") +
-//        " @ " + 
-//        contextReference);
-    
+    if (user2 == null) {
+      logger.warning(String.format("STUDENT_OWNER-scoped permission %s does not have User as context reference.", permission.getName()));
+    }
+
     if (user1 != null && user2 != null) {
       // Users must match
       if (user1.getId().equals(user2.getId())) {
