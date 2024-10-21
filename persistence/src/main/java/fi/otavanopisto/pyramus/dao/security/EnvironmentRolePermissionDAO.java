@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -80,4 +81,18 @@ public class EnvironmentRolePermissionDAO extends PyramusEntityDAO<EnvironmentRo
   public void delete(EnvironmentRolePermission environmentUserRolePermission) {
     super.delete(environmentUserRolePermission);
   }
+  
+  public void deleteByPermission(Permission permission) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaDelete<EnvironmentRolePermission> criteria = criteriaBuilder.createCriteriaDelete(EnvironmentRolePermission.class);
+    Root<EnvironmentRolePermission> root = criteria.from(EnvironmentRolePermission.class);
+    criteria.where(
+      criteriaBuilder.equal(root.get(EnvironmentRolePermission_.permission), permission)
+    );
+    
+    entityManager.createQuery(criteria).executeUpdate();
+  }
+  
 }

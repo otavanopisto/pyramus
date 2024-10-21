@@ -37,6 +37,14 @@ public class Permission {
     this.name = name;
   }
 
+  public boolean isReset() {
+    return reset;
+  }
+
+  public void setReset(boolean reset) {
+    this.reset = reset;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Permission")  
   @TableGenerator(name="Permission", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -50,4 +58,6 @@ public class Permission {
   @NotNull
   @Column (nullable = false)
   private String scope;
+  
+  private boolean reset;
 }
