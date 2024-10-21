@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>alter table Permission add column reset bit not null;</sql>
+  <sql>update Permission set reset = false;</sql>
+  <sql>
+    update Permission 
+    set reset = true 
+    where name in (
+      'CREATE_COURSEASSESSMENT',
+      'CREATE_COURSEASSESSMENTREQUEST',
+      'DELETE_COURSEASSESSMENT',
+      'DELETE_COURSEASSESSMENTREQUEST',
+      'FIND_COURSEASSESSMENT',
+      'FIND_COURSEASSESSMENTREQUEST',
+      'LIST_COURSEASSESSMENTREQUESTS',
+      'LIST_STUDENT_COURSEASSESSMENTS',
+      'UPDATE_COURSEASSESSMENT',
+      'UPDATE_COURSEASSESSMENTREQUEST');
+  </sql>
+
+</update>
