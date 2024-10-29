@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.security.impl;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -18,6 +19,9 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 @Singleton
 @Startup
 public class PermissionCollector {
+  
+  @Inject
+  private Logger logger;
   
   @Inject
   @Any
@@ -61,9 +65,18 @@ public class PermissionCollector {
       e.printStackTrace();
     }
   }
-  
+
   @PostConstruct
   private void collectPermissions() {
+    // Clean the permissions that are set to be reset
+    List<Permission> permissionsSetToReset = permissionDAO.listPermissionsSetToReset();
+    for (Permission permission : permissionsSetToReset) {
+      logger.info(String.format("Reseting permission %s", permission.getName()));
+      environmentRolePermissionDAO.deleteByPermission(permission);
+      permissionDAO.delete(permission);
+    }
+
+    // Go through the collections and set up the permissions and environment role permissions
     for (PyramusPermissionCollection collection : permissionCollections) {
       List<String> permissions = collection.listPermissions();
 
