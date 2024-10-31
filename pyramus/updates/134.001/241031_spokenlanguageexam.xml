@@ -35,6 +35,4 @@
        references Grade (id);
   </sql>
 
-  <sql>
-  </sql>
 </update>
