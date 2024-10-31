@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -110,7 +111,7 @@ public class KoskiClient {
       Builder request = prepareRequest(client, uri);
       
       String oppijaStr = request.get(String.class);
-      ObjectMapper objectMapper = new ObjectMapper();
+      ObjectMapper objectMapper = getObjectMapper();
       OppijaReturnVal returnVal = objectMapper.readValue(oppijaStr, OppijaReturnVal.class);
       return returnVal;
     } finally {
@@ -129,7 +130,7 @@ public class KoskiClient {
       Builder request = prepareRequest(client, uri);
       
       String oppijaStr = request.get(String.class);
-      ObjectMapper objectMapper = new ObjectMapper();
+      ObjectMapper objectMapper = getObjectMapper();
       Oppija oppija = objectMapper.readValue(oppijaStr, Oppija.class);
       return oppija;
     } finally {
@@ -270,7 +271,7 @@ public class KoskiClient {
   
   private boolean updatePersonToKoski(Oppija oppija, Person person, String personOid) {
     try {
-      ObjectMapper mapper = new ObjectMapper();
+      ObjectMapper mapper = getObjectMapper();
       StringWriter writer = new StringWriter();
       mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
       mapper.writeValue(writer, oppija);
@@ -371,7 +372,7 @@ public class KoskiClient {
   }
 
   private String errorResponseMessage(String errorJSON) {
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = getObjectMapper();
     try {
       TypeReference<List<KoskiErrorMessageBody>> typeRef = new TypeReference<List<KoskiErrorMessageBody>>() {};
       List<KoskiErrorMessageBody> messageBodies = mapper.readValue(errorJSON, typeRef);
@@ -456,6 +457,12 @@ public class KoskiClient {
     }
     
     return request;
+  }
+  
+  private ObjectMapper getObjectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    return objectMapper;
   }
 
 }

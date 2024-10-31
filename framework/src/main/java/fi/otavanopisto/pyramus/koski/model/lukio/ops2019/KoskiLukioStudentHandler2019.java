@@ -1,17 +1,24 @@
 package fi.otavanopisto.pyramus.koski.model.lukio.ops2019;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.grading.SpokenLanguageExamDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.SpokenLanguageExam;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
@@ -19,7 +26,10 @@ import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
+import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoKehittyvanKielitaidonTasot;
+import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
+import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
@@ -36,6 +46,9 @@ public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandl
 
   @Inject
   private Logger logger;
+  
+  @Inject
+  private SpokenLanguageExamDAO spokenLanguageExamDAO;
 
   public Opiskeluoikeus oppimaaranOpiskeluoikeus(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
     if (handler != HANDLER_TYPE) {
@@ -98,6 +111,43 @@ public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandl
     opiskeluoikeus.addSuoritus(suoritus);
     
     oppiaineet.forEach(oppiaine -> suoritus.addOsasuoritus(oppiaine));
+
+    // Suullisen kielitaidon kokeet
+    
+    List<SpokenLanguageExam> spokenLanguageExams = spokenLanguageExamDAO.listByStudent(student);
+    
+    for (SpokenLanguageExam spokenLanguageExam : spokenLanguageExams) {
+      Kielivalikoima kieli = null;
+      
+      if (spokenLanguageExam.getCredit() instanceof CourseAssessment) {
+        CourseAssessment ca = (CourseAssessment) spokenLanguageExam.getCredit();
+        if (ca.getSubject() != null && StringUtils.isNotBlank(ca.getSubject().getCode())) {
+          kieli = EnumUtils.getEnum(Kielivalikoima.class, ca.getSubject().getCode().substring(0, 2));
+        }
+      }
+      else if (spokenLanguageExam.getCredit() instanceof TransferCredit) {
+        TransferCredit tc = (TransferCredit) spokenLanguageExam.getCredit();
+        if (tc.getSubject() != null && StringUtils.isNotBlank(tc.getSubject().getCode())) {
+          kieli = EnumUtils.getEnum(Kielivalikoima.class, tc.getSubject().getCode().substring(0, 2));
+        }
+      }
+      
+      if (kieli == null) {
+        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.GENERIC_ERROR, new Date(), "Suullisen kielitaidon kokeen kieltä ei pystytty määrittämään.");
+        continue;
+      }
+      
+      ArviointiasteikkoYleissivistava arvosana = getArvosana(spokenLanguageExam.getGrade());
+      ArviointiasteikkoKehittyvanKielitaidonTasot taitotaso = EnumUtils.getEnum(ArviointiasteikkoKehittyvanKielitaidonTasot.class, spokenLanguageExam.getSkillLevel().name());
+      LocalDate paiva = spokenLanguageExam.getTimestamp().toLocalDate();
+      
+      SuullisenKielitaidonKoe2019 suko = new SuullisenKielitaidonKoe2019(
+          kieli,
+          arvosana, 
+          taitotaso, 
+          paiva);
+      suoritus.addSuullisenKielitaidonKoe(suko);
+    }
     
     return opiskeluoikeus;
   }
