@@ -96,6 +96,12 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
     
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- Commons -->
 
     <dependency>

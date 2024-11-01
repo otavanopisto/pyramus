@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table SpokenLanguageExam (
+       id bigint not null auto_increment,
+        skillLevel varchar(255) not null,
+        timestamp datetime not null,
+        verbalAssessment longtext,
+        assessor_id bigint,
+        credit bigint,
+        grade bigint,
+        primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table SpokenLanguageExam 
+       add constraint FKs2s1y7htlxhsyg7dl52gvj626 
+       foreign key (assessor_id) 
+       references StaffMember (id);
+  </sql>
+
+  <sql>
+    alter table SpokenLanguageExam 
+       add constraint FKct6stc7ygis26o6nb9032sht0 
+       foreign key (credit) 
+       references Credit (id);
+  </sql>
+
+  <sql>
+    alter table SpokenLanguageExam 
+       add constraint FK2a792q2u66nk5a34mftmaejk3 
+       foreign key (grade) 
+       references Grade (id);
+  </sql>
+
+</update>

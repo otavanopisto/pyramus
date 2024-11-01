@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.koski.model.lukio.ops2019;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
@@ -24,5 +27,14 @@ public class LukionSuoritus2019 extends LukionSuoritus {
     return oppimaara;
   }
   
+  public void addSuullisenKielitaidonKoe(SuullisenKielitaidonKoe2019 suullisenKielitaidonKoe) {
+    suullisenKielitaidonKokeet.add(suullisenKielitaidonKoe);
+  }
+
+  public List<SuullisenKielitaidonKoe2019> getSuullisenKielitaidonKokeet() {
+    return suullisenKielitaidonKokeet;
+  }
+
   private final KoodistoViite<LukionOppimaara> oppimaara = new KoodistoViite<>();
+  private final List<SuullisenKielitaidonKoe2019> suullisenKielitaidonKokeet = new ArrayList<>();
 }

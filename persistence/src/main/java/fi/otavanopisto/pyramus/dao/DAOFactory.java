@@ -95,6 +95,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradeDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
+import fi.otavanopisto.pyramus.dao.grading.SpokenLanguageExamDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditTemplateCourseDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditTemplateDAO;
@@ -617,6 +618,10 @@ public class DAOFactory {
 
   public CreditVariableKeyDAO getCreditVariableKeyDAO() {
     return (CreditVariableKeyDAO) findByClass(CreditVariableKeyDAO.class);
+  }
+  
+  public SpokenLanguageExamDAO getSpokenLanguageExamDAO() {
+    return (SpokenLanguageExamDAO) findByClass(SpokenLanguageExamDAO.class);
   }
 
   /* Base */

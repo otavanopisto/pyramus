@@ -27,6 +27,7 @@ public class KoskiKoodisto {
     registerEnum(AikuistenPerusopetuksenAlkuvaiheenOppiaineet.class);
     registerEnum(AikuistenPerusopetuksenKurssit2015.class);
     registerEnum(AikuistenPerusopetuksenPaattovaiheenKurssit2017.class);
+    registerEnum(ArviointiasteikkoKehittyvanKielitaidonTasot.class);
     registerEnum(ArviointiasteikkoYleissivistava.class);
     registerEnum(Kieli.class);
     registerEnum(Kielivalikoima.class);

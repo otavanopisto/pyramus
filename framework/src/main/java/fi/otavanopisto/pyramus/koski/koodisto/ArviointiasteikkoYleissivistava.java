@@ -36,6 +36,12 @@ public enum ArviointiasteikkoYleissivistava implements
     return lookup.get(value);
   }
   
+  /**
+   * Returns enum based on the string value. Used in deserialization process.
+   * 
+   * @param value the string value
+   * @return the enum
+   */
   public static ArviointiasteikkoYleissivistava reverseLookup(String value) {
     return get(value);
   }
