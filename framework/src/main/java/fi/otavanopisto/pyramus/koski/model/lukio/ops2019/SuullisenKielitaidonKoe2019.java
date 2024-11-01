@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.koski.model.lukio.ops2019;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
@@ -10,6 +11,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SuullisenKielitaidonKoe2019 {
 
   public SuullisenKielitaidonKoe2019() {

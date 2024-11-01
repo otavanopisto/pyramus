@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.koski.koodisto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import fi.otavanopisto.pyramus.koski.KoodistoEnum;
 
 @KoodistoEnum("arviointiasteikkokehittyvankielitaidontasot")
@@ -33,6 +36,27 @@ public enum ArviointiasteikkoKehittyvanKielitaidonTasot {
   public String getValue() {
     return value;
   }
+
+  public static ArviointiasteikkoKehittyvanKielitaidonTasot get(String value) {
+    return lookup.get(value);
+  }
   
+  /**
+   * Returns enum based on the string value. Used in deserialization process.
+   * 
+   * @param value the string value
+   * @return the enum
+   */
+  public static ArviointiasteikkoKehittyvanKielitaidonTasot reverseLookup(String value) {
+    return get(value);
+  }
+
   private String value;
+  private static Map<String, ArviointiasteikkoKehittyvanKielitaidonTasot> lookup = new HashMap<>();
+
+  static {
+    for (ArviointiasteikkoKehittyvanKielitaidonTasot v : values())
+      lookup.put(v.getValue(), v);
+  }
+  
 }
