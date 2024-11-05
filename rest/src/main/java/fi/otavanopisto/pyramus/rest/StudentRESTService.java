@@ -2737,10 +2737,9 @@ public class StudentRESTService extends AbstractRESTService {
   public Response findCourseAssessmentRequestById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
     
     Student student = studentController.findStudentById(studentId);
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
 
     Course course = courseController.findCourseById(courseId);
     
@@ -2774,10 +2773,9 @@ public class StudentRESTService extends AbstractRESTService {
   public Response findLatestCourseAssessmentRequestByWorkspaceAndStudent(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
     
     Student student = studentController.findStudentById(studentId);
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
 
     Course course = courseController.findCourseById(courseId);
     

@@ -49,7 +49,7 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
   
   @Scope (PermissionScope.COURSE)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
-  @DefaultCoursePermissionRoles ({ CourseRoleArchetype.STUDENT })
+  @DefaultCoursePermissionRoles ({ CourseRoleArchetype.TEACHER, CourseRoleArchetype.STUDENT })
   public static final String UPDATE_COURSEASSESSMENTREQUEST = "UPDATE_COURSEASSESSMENTREQUEST";
   
   @Scope (PermissionScope.COURSE)
