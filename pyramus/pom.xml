@@ -11,7 +11,7 @@
     <relativePath>../</relativePath>
   </parent>
   <properties>
-    <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
+    <mysql-connector-java.version>9.1.0</mysql-connector-java.version>
   </properties>
   <dependencies>
 
@@ -476,7 +476,7 @@
         <it.port.https>8443</it.port.https>
         <it.host>dev.pyramus.fi</it.host>
         <it.database.name>testpyramusdb</it.database.name>
-        <it.jdbc.driver>com.mysql.jdbc.Driver</it.jdbc.driver>
+        <it.jdbc.driver>com.mysql.cj.jdbc.Driver</it.jdbc.driver>
         <it.jdbc.url>jdbc:mysql://127.0.0.1:5555/testpyramusdb</it.jdbc.url>
         <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
@@ -493,8 +493,8 @@
       <dependencies>
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
+          <groupId>com.mysql</groupId>
+          <artifactId>mysql-connector-j</artifactId>
           <version>${mysql-connector-java.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
@@ -523,8 +523,8 @@
               <verbose>true</verbose>
               <images>
                 <image>
-                  <alias>mysql</alias>
-                  <name>mysql:5.7</name>
+                  <alias>mariadb</alias>
+                  <name>mariadb</name>
                   <run>
                     <env>
                       <MYSQL_USER>sa</MYSQL_USER>
@@ -533,7 +533,7 @@
                       <MYSQL_DATABASE>testpyramusdb</MYSQL_DATABASE>
                     </env>
                     <wait>
-                      <log>MySQL init process done. Ready for start up.</log>
+                      <log>Ready for start up.</log>
                       <time>25000</time>
                     </wait>
                     <ports>
@@ -660,8 +660,8 @@
             <version>2.5.0</version>
             <dependencies>
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector-java.version}</version>
               </dependency>
             </dependencies>
@@ -765,8 +765,8 @@
             <dependencies>
               <!-- specify the dependent jdbc driver here -->
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector-java.version}</version>
               </dependency>
             </dependencies>
@@ -812,8 +812,8 @@
                 </zipUrlInstaller>
                 <dependencies>
                   <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
+                    <groupId>com.mysql</groupId>
+                    <artifactId>mysql-connector-j</artifactId>
                   </dependency>
                 </dependencies>
               </container>
@@ -929,7 +929,7 @@
         <it.port.https>8443</it.port.https>
         <it.host>dev.pyramus.fi</it.host>
         <it.database.name>testpyramusdb</it.database.name>
-        <it.jdbc.driver>com.mysql.jdbc.Driver</it.jdbc.driver>
+        <it.jdbc.driver>com.mysql.cj.jdbc.Driver</it.jdbc.driver>
         <it.jdbc.url>jdbc:mysql://127.0.0.1:5555/testpyramusdb</it.jdbc.url>
         <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
@@ -948,8 +948,8 @@
       <dependencies>
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
+          <groupId>com.mysql</groupId>
+          <artifactId>mysql-connector-j</artifactId>
           <version>${mysql-connector-java.version}</version>
         </dependency>
       </dependencies>
@@ -973,8 +973,8 @@
               <verbose>true</verbose>
               <images>
                 <image>
-                  <alias>mysql</alias>
-                  <name>mysql:5.7</name>
+                  <alias>mariadb</alias>
+                  <name>mariadb</name>
                   <run>
                     <env>
                       <MYSQL_USER>sa</MYSQL_USER>
@@ -983,7 +983,7 @@
                       <MYSQL_DATABASE>testpyramusdb</MYSQL_DATABASE>
                     </env>
                     <wait>
-                      <log>MySQL init process done. Ready for start up.</log>
+                      <log>Ready for start up.</log>
                       <time>25000</time>
                     </wait>
                     <ports>
@@ -1109,8 +1109,8 @@
             <version>2.5.0</version>
             <dependencies>
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector-java.version}</version>
               </dependency>
             </dependencies>
@@ -1207,8 +1207,8 @@
             <dependencies>
               <!-- specify the dependent jdbc driver here -->
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector-java.version}</version>
               </dependency>
             </dependencies>
@@ -1254,8 +1254,8 @@
                 </zipUrlInstaller>
                 <dependencies>
                   <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
+                    <groupId>com.mysql</groupId>
+                    <artifactId>mysql-connector-j</artifactId>
                   </dependency>
                 </dependencies>
               </container>
