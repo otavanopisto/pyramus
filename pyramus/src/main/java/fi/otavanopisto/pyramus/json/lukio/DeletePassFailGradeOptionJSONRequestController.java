@@ -3,6 +3,9 @@ package fi.otavanopisto.pyramus.json.lukio;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.spi.CDI;
+
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -15,6 +18,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.koski.KoskiController;
 
 public class DeletePassFailGradeOptionJSONRequestController extends JSONRequestController {
 
@@ -40,6 +44,12 @@ public class DeletePassFailGradeOptionJSONRequestController extends JSONRequestC
         studentVariableDAO.delete(studentVariable);
       } else {
         studentVariable.setValue(StringUtils.join(newChoices, ","));
+      }
+
+      // If the saved list contained the removed value, mark the student for update
+      if (ArrayUtils.contains(choices, value)) {
+        KoskiController koskiController = CDI.current().select(KoskiController.class).get();
+        koskiController.markForUpdate(student);
       }
     }
   }

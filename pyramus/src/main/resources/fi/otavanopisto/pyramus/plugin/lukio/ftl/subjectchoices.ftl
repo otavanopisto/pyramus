@@ -23,6 +23,7 @@
     <div id="manageStudyProgrammesFormContainer"> 
 	    <div class="genericFormContainer"> 
 	      <form action="savesubjectchoices.json" method="post" ix:jsonform="true" ix:useglasspane="true">
+	        <input type="hidden" name="studentId" value="${studentId}"/>
 	  
 	        <div class="tabLabelsContainer" id="tabs">
 	          <a class="tabLabel" href="#manageSubjectChoices">
