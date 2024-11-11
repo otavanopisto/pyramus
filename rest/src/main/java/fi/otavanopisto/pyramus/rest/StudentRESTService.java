@@ -2617,7 +2617,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    if (!(UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) || sessionController.hasEnvironmentPermission(CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS))) {
+    if (!(UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) || sessionController.hasEnvironmentPermission(CourseAssessmentPermissions.FIND_LATESTCOURSEASSESSMENTREQUEST))) {
       return Response.status(Status.FORBIDDEN).build();
     }
     List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByStudent(student);
