@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.framework;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -101,4 +102,18 @@ public class DateUtils {
   public static Date toDate(LocalDate localDate) {
     return localDate != null ? Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()) : null;
   }
+  
+  /**
+   * Converts Date to LocalDateTime with current timezone.
+   * 
+   * If date is null, returns null.
+   * 
+   * @param date Date
+   * @return LocalDateTime
+   */
+  public static LocalDateTime toLocalDateTime(Date date) {
+    return date != null ? Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
+  }
+
+  
 }
