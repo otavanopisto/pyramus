@@ -131,8 +131,9 @@ public class ListCourseStudentVariablesJSONRequestController extends JSONRequest
           if (laskutusValue == null && student.getSchool() != null && !contractSchool)
             laskutusValue = "STUDENT";
         }
-        
-        if (!todistusValue || showChecked) {
+
+        // Jos showChecked=true (näytä kuitatut), näytetään ne, joilla todistusvalue=true ja vastaavasti jos false
+        if (todistusValue == showChecked) {
           JSONObject obj = new JSONObject();
   
           String schoolName = "";
