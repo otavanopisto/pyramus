@@ -782,7 +782,7 @@ public class ObjectFactory {
           @Override
           public Object map(StudentGroupUser entity) {
             Long staffMemberId = entity.getStaffMember() != null ? entity.getStaffMember().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(entity.getId(), staffMemberId);
+            return new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(entity.getId(), staffMemberId, entity.isGroupAdvisor(), entity.isStudyAdvisor(), entity.getMessageRecipient());
           }
         },
         

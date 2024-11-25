@@ -280,7 +280,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       Long studentGroupStudentId = response.body().jsonPath().getLong("id");
 
       try {
-        fi.otavanopisto.pyramus.rest.model.StudentGroupUser studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID);
+        fi.otavanopisto.pyramus.rest.model.StudentGroupUser studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID, false, false, false);
         response = given().headers(getAuthHeaders())
             .contentType("application/json")
             .body(studentGroupUser)
@@ -367,7 +367,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       Long studentGroupStudentId = response.body().jsonPath().getLong("id");
 
       try {
-        fi.otavanopisto.pyramus.rest.model.StudentGroupUser studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID);
+        fi.otavanopisto.pyramus.rest.model.StudentGroupUser studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID, false, false, false);
         response = given().headers(getAuthHeaders())
             .contentType("application/json")
             .body(studentGroupUser)
@@ -378,7 +378,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
           // Message recipient test
           
           
-          studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID2);
+          studentGroupUser = new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(null, COUNCELOR_STAFF_ID2, false, false, false);
           response = given().headers(getAuthHeaders())
               .contentType("application/json")
               .body(studentGroupUser)

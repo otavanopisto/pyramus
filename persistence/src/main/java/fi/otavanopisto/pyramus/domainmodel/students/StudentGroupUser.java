@@ -53,12 +53,28 @@ public class StudentGroupUser {
     return version;
   }
 
-  public Boolean getMessageRecipient() {
+  public boolean getMessageRecipient() {
     return messageRecipient;
   }
 
-  public void setMessageRecipient(Boolean messageRecipient) {
+  public void setMessageRecipient(boolean messageRecipient) {
     this.messageRecipient = messageRecipient;
+  }
+
+  public boolean isGroupAdvisor() {
+    return groupAdvisor;
+  }
+
+  public void setGroupAdvisor(boolean groupAdvisor) {
+    this.groupAdvisor = groupAdvisor;
+  }
+
+  public boolean isStudyAdvisor() {
+    return studyAdvisor;
+  }
+
+  public void setStudyAdvisor(boolean studyAdvisor) {
+    this.studyAdvisor = studyAdvisor;
   }
 
   @Id 
@@ -75,8 +91,14 @@ public class StudentGroupUser {
   @IndexedEmbedded(includeEmbeddedObjectId = true)
   private StaffMember staffMember;  
 
-  @Column
-  private Boolean messageRecipient;
+  @Column (nullable = false)
+  private boolean groupAdvisor;
+
+  @Column (nullable = false)
+  private boolean studyAdvisor;
+  
+  @Column (nullable = false)
+  private boolean messageRecipient;
 
   @Version
   @Column(nullable = false)

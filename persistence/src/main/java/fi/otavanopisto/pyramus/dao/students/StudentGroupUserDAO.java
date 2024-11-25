@@ -39,10 +39,13 @@ public class StudentGroupUserDAO extends PyramusEntityDAO<StudentGroupUser> {
   @Inject
   private Event<StudentGroupStaffMemberRemovedEvent> staffMemberRemovedEvent;
   
-  public StudentGroupUser create(StudentGroup studentGroup, StaffMember staffMember, Boolean messageRecipient, User updatingUser) {
+  public StudentGroupUser create(StudentGroup studentGroup, StaffMember staffMember, boolean groupAdvisor, boolean studyAdvisor, 
+      boolean messageRecipient, User updatingUser) {
     EntityManager entityManager = getEntityManager();
     StudentGroupUser sgu = new StudentGroupUser();
     sgu.setStaffMember(staffMember);
+    sgu.setGroupAdvisor(groupAdvisor);
+    sgu.setStudyAdvisor(studyAdvisor);
     sgu.setMessageRecipient(messageRecipient);
     
     entityManager.persist(sgu);
@@ -59,7 +62,9 @@ public class StudentGroupUserDAO extends PyramusEntityDAO<StudentGroupUser> {
     return sgu;
   }
 
-  public StudentGroupUser update(StudentGroupUser studentGroupUser, Boolean messageRecipient) {
+  public StudentGroupUser update(StudentGroupUser studentGroupUser, boolean groupAdvisor, boolean studyAdvisor, boolean messageRecipient) {
+    studentGroupUser.setGroupAdvisor(groupAdvisor);
+    studentGroupUser.setStudyAdvisor(studyAdvisor);
     studentGroupUser.setMessageRecipient(messageRecipient);
     return persist(studentGroupUser);
   }
