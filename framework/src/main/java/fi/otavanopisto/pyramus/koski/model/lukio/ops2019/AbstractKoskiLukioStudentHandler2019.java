@@ -249,7 +249,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       }
     }
 
-    String[] religionSubjects = new String[] { "UE", "UO" };
+    String[] religionSubjects = new String[] { "UE", "UO", "UI" };
     
     if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
       // Only the religion that student has selected is reported
