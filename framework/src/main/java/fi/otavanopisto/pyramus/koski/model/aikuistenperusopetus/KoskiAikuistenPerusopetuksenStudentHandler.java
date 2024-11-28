@@ -230,7 +230,8 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       }
     }
 
-    String[] religionSubjects = new String[] { "ue", "uo" };
+    // et muissa aineissa, ei käänny KT:ksi
+    String[] religionSubjects = new String[] { "ue", "uo", "ui" };
     
     if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
       // Only the religion that student has selected is reported
