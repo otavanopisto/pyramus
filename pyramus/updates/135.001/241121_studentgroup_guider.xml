@@ -10,7 +10,7 @@
   </sql>
 
   <sql>
-    update StudentGroupUser set groupAdvisor = false, studyAdvisor = false;
+    update StudentGroupUser set groupAdvisor = true, studyAdvisor = false;
   </sql>
 
   <sql>
