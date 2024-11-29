@@ -44,6 +44,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -170,9 +171,11 @@ public class MatriculationRESTService extends AbstractRESTService {
 
     User loggedUser = sessionController.getUser();
     if (!loggedUser.getId().equals(studentId)) {
-      if (!((loggedUser instanceof StaffMember) && (studentController.isStudentGuider((StaffMember) loggedUser, student)))) {
-        if (!((loggedUser instanceof StudentParent) && (((StudentParent) loggedUser).isActiveParentOf(student)))) {
-          return Response.status(Status.NOT_FOUND).build();
+      if (!loggedUser.hasAnyRole(Role.ADMINISTRATOR, Role.MANAGER, Role.STUDY_PROGRAMME_LEADER)) {
+        if (!((loggedUser instanceof StaffMember) && (studentController.isStudentGuider((StaffMember) loggedUser, student)))) {
+          if (!((loggedUser instanceof StudentParent) && (((StudentParent) loggedUser).isActiveParentOf(student)))) {
+            return Response.status(Status.NOT_FOUND).build();
+          }
         }
       }
     }
