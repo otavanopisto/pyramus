@@ -82,6 +82,7 @@ function updateTable(event) {
           if (educationType === 'peruskoulu') {
             selectController.addOption(selectHandlerInstance, "ue", "ue (Uskonto, evankelisluterilainen)");
             selectController.addOption(selectHandlerInstance, "uo", "uo (Uskonto, ortodoksinen)");
+            selectController.addOption(selectHandlerInstance, "ui", "ui (Uskonto, islam)");
             selectController.addOption(selectHandlerInstance, "et", "et (Elämänkatsomustieto)");
           } else {
             selectController.addOption(selectHandlerInstance, "UE", "UE (Uskonto, evankelisluterilainen)");
@@ -136,6 +137,8 @@ function updateTable(event) {
             selectController.addOption(selectHandlerInstance, "ARB3", "Arabia (ARB3)");
             selectController.addOption(selectHandlerInstance, "JPB3", "Japani (JPB3)");
             selectController.addOption(selectHandlerInstance, "KOB3", "Korea (KOB3)");
+            selectController.addOption(selectHandlerInstance, "KIA", "Kiinan kieli (KIA)");
+            selectController.addOption(selectHandlerInstance, "KIB3", "Kiinan kieli (KIB3)");
             selectController.addOption(selectHandlerInstance, "KXB3", "Muu kieli (KXB3)");
           }
         break;

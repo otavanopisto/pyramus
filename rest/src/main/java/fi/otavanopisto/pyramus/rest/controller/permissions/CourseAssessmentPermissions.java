@@ -66,6 +66,10 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   @DefaultCoursePermissionRoles ({ CourseRoleArchetype.TEACHER, CourseRoleArchetype.STUDENT })
   public static final String FIND_COURSEASSESSMENTREQUEST = "FIND_COURSEASSESSMENTREQUEST";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ TRUSTED_SYSTEM })
+  public static final String FIND_LATESTCOURSEASSESSMENTREQUEST = "FIND_LATESTCOURSEASSESSMENTREQUEST";
   
   @Scope (PermissionScope.COURSE)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })

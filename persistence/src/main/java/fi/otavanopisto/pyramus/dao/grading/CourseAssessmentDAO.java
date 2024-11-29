@@ -77,6 +77,22 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     return courseAssessment;
   }
   
+  public List<CourseAssessment> listByCourseIncludeArchived(Course course) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+    Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.course), course)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }  
+  
   /**
    * Lists all student's course assessments excluding archived ones
    * 

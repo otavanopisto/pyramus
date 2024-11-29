@@ -2386,6 +2386,10 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   margin-left:8px;
 }
 
+#manageSpokenLanguageExamsFormContainer .genericFormSection {
+  margin-left:8px;
+}
+
 /* manage transfer credits */
 
 #manageTransferCredits .genericFormSection {

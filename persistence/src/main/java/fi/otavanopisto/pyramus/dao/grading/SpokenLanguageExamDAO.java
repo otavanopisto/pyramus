@@ -44,7 +44,7 @@ public class SpokenLanguageExamDAO extends PyramusEntityDAO<SpokenLanguageExam> 
     return persist(entity);
   }
 
-  public SpokenLanguageExam findBy(TransferCredit credit) {
+  public SpokenLanguageExam findBy(Credit credit) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -98,6 +98,16 @@ public class SpokenLanguageExamDAO extends PyramusEntityDAO<SpokenLanguageExam> 
     );
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public SpokenLanguageExam update(SpokenLanguageExam spokenLanguageExam, Grade grade, SpokenLanguageExamSkillLevel skillLevel,
+      String verbalAssessment, LocalDateTime timestamp, StaffMember assessor) {
+    spokenLanguageExam.setGrade(grade);
+    spokenLanguageExam.setSkillLevel(skillLevel);
+    spokenLanguageExam.setVerbalAssessment(verbalAssessment);
+    spokenLanguageExam.setTimestamp(timestamp);
+    spokenLanguageExam.setAssessor(assessor);
+    return persist(spokenLanguageExam);
   }
 
 }

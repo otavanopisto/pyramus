@@ -7,11 +7,11 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.228-SNAPSHOT</version>
+    <version>0.7.230-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   <properties>
-    <mysql-connector-java.version>5.1.49</mysql-connector-java.version>
+    <mariadb-java-client.version>3.5.0</mariadb-java-client.version>
   </properties>
   <dependencies>
 
@@ -476,8 +476,8 @@
         <it.port.https>8443</it.port.https>
         <it.host>dev.pyramus.fi</it.host>
         <it.database.name>testpyramusdb</it.database.name>
-        <it.jdbc.driver>com.mysql.jdbc.Driver</it.jdbc.driver>
-        <it.jdbc.url>jdbc:mysql://127.0.0.1:5555/testpyramusdb</it.jdbc.url>
+        <it.jdbc.driver>org.mariadb.jdbc.Driver</it.jdbc.driver>
+        <it.jdbc.url>jdbc:mariadb://127.0.0.1:5555/testpyramusdb</it.jdbc.url>
         <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
         <it.jdbc.password>sa</it.jdbc.password>
@@ -491,11 +491,11 @@
       </properties>
 
       <dependencies>
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-          <version>${mysql-connector-java.version}</version>
+          <groupId>org.mariadb.jdbc</groupId>
+          <artifactId>mariadb-java-client</artifactId>
+          <version>${mariadb-java-client.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
         <dependency>
@@ -523,8 +523,8 @@
               <verbose>true</verbose>
               <images>
                 <image>
-                  <alias>mysql</alias>
-                  <name>mysql:5.6</name>
+                  <alias>mariadb</alias>
+                  <name>mariadb</name>
                   <run>
                     <env>
                       <MYSQL_USER>sa</MYSQL_USER>
@@ -533,7 +533,7 @@
                       <MYSQL_DATABASE>testpyramusdb</MYSQL_DATABASE>
                     </env>
                     <wait>
-                      <log>MySQL init process done. Ready for start up.</log>
+                      <log>Ready for start up.</log>
                       <time>25000</time>
                     </wait>
                     <ports>
@@ -596,7 +596,7 @@
             </configuration>
             <executions>
               <execution>
-                <id>Ensure MySQL startup</id>
+                <id>Ensure MariaDB startup</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>run</goal>
@@ -659,10 +659,11 @@
             <artifactId>hibernate53-ddl-maven-plugin</artifactId>
             <version>2.5.0</version>
             <dependencies>
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client.version}</version>
               </dependency>
             </dependencies>
             <configuration>
@@ -764,10 +765,11 @@
             <version>1.5</version>
             <dependencies>
               <!-- specify the dependent jdbc driver here -->
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client.version}</version>
               </dependency>
             </dependencies>
 
@@ -811,9 +813,10 @@
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
                 <dependencies>
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
                   <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
                   </dependency>
                 </dependencies>
               </container>
@@ -929,8 +932,8 @@
         <it.port.https>8443</it.port.https>
         <it.host>dev.pyramus.fi</it.host>
         <it.database.name>testpyramusdb</it.database.name>
-        <it.jdbc.driver>com.mysql.jdbc.Driver</it.jdbc.driver>
-        <it.jdbc.url>jdbc:mysql://127.0.0.1:5555/testpyramusdb</it.jdbc.url>
+        <it.jdbc.driver>org.mariadb.jdbc.Driver</it.jdbc.driver>
+        <it.jdbc.url>jdbc:mariadb://127.0.0.1:5555/testpyramusdb</it.jdbc.url>
         <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
         <it.jdbc.password>sa</it.jdbc.password>
@@ -946,11 +949,11 @@
       </properties>
 
       <dependencies>
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-          <version>${mysql-connector-java.version}</version>
+          <groupId>org.mariadb.jdbc</groupId>
+          <artifactId>mariadb-java-client</artifactId>
+          <version>${mariadb-java-client.version}</version>
         </dependency>
       </dependencies>
       <build>
@@ -973,8 +976,8 @@
               <verbose>true</verbose>
               <images>
                 <image>
-                  <alias>mysql</alias>
-                  <name>mysql:5.6</name>
+                  <alias>mariadb</alias>
+                  <name>mariadb</name>
                   <run>
                     <env>
                       <MYSQL_USER>sa</MYSQL_USER>
@@ -983,7 +986,7 @@
                       <MYSQL_DATABASE>testpyramusdb</MYSQL_DATABASE>
                     </env>
                     <wait>
-                      <log>MySQL init process done. Ready for start up.</log>
+                      <log>Ready for start up.</log>
                       <time>25000</time>
                     </wait>
                     <ports>
@@ -1046,7 +1049,7 @@
             </configuration>
             <executions>
               <execution>
-                <id>Ensure MySQL startup</id>
+                <id>Ensure MariaDB startup</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>run</goal>
@@ -1108,10 +1111,11 @@
             <artifactId>hibernate53-ddl-maven-plugin</artifactId>
             <version>2.5.0</version>
             <dependencies>
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client.version}</version>
               </dependency>
             </dependencies>
             <configuration>
@@ -1206,10 +1210,11 @@
             <version>1.5</version>
             <dependencies>
               <!-- specify the dependent jdbc driver here -->
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client.version}</version>
               </dependency>
             </dependencies>
 
@@ -1253,9 +1258,10 @@
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
                 <dependencies>
+<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
                   <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
                   </dependency>
                 </dependencies>
               </container>

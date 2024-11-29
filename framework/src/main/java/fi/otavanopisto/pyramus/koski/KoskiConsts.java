@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 public class KoskiConsts {
 
   public static final List<String> LUKIO2019_DIAARIT = Arrays.asList(new String[] { "OPH-2263-2019", "OPH-2267-2019" });
+  public static final Set<String> SPOKEN_LANGUAGE_EXAM_COURSECODES = Set.of("ENA8", "FIM8", "FINA8", "FINB16", "RUA8", "RUB16", "RUÄ8", "SMA8", "VKA8");
 
   public static class Setting {
     public static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";

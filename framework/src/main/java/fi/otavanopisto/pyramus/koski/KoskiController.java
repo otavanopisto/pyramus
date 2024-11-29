@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.koski;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -14,9 +15,12 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PersonStudentComparator;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.exception.NoLatestStudentException;
 import fi.otavanopisto.pyramus.koski.model.Henkilo;
@@ -50,6 +54,9 @@ public class KoskiController {
   @Inject
   private KoskiAikuistenPerusopetuksenStudentHandler aikuistenPerusopetuksenHandler;
 
+  @Inject
+  private KoskiPersonLogDAO koskiPersonLogDAO;
+  
   @Inject 
   private PersonVariableDAO personVariableDAO;
   
@@ -143,6 +150,36 @@ public class KoskiController {
     }
   }
 
+  /**
+   * Marks given student to be added to the update queue.
+   * 
+   * @param student the student
+   */
+  public void markForUpdate(Student student) {
+    if (student == null) {
+      logger.severe("Null student passed to method.");
+      return;
+    }
+    if (student.getPerson() == null) {
+      logger.severe(String.format("Given student %d has no person.", student.getId()));
+      return;
+    }
+    
+    markForUpdate(student.getPerson());
+  }
+  
+  private void markForUpdate(Person person) {
+    try {
+      if (settings.hasReportedStudents(person)) {
+        List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(person);
+        entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
+        koskiPersonLogDAO.create(person, KoskiPersonState.PENDING, new Date());
+      }
+    } catch (Exception ex) {
+      logger.log(Level.SEVERE, "Couldn't clear person log.", ex);
+    }
+  }
+  
   private Student resolveLatestStudent(Person person) {
     Student student = person.getLatestStudent();
     if (student != null) {
