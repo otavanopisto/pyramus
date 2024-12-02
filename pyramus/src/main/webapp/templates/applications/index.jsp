@@ -129,7 +129,7 @@
         <a href="https://www.nettiperuskoulu.fi" target="top" class="application-footer__external-link">www.nettiperuskoulu.fi</a>
         <a href="https://otavanopisto.muikkuverkko.fi" target="top" class="application-footer__external-link">otavanopisto.muikkuverkko.fi</a>
         <a href="https://otavia.fi/opiskelija-ja-opintotietorekisterin-tietosuojaseloste/" target="_blank" class="application-footer__external-link">Tietosuojaseloste</a>
-        <a href="https://docs.google.com/document/d/1EXS3TroGTNAq9N8bV1pK6W2byKntZpHudBHH3NBGgXY/edit?usp=sharing" target="_blank" class="application-footer__external-link">Saavutettavuusseloste</a>
+        <a href="https://drive.google.com/file/d/1oInmHuCFM33niWgaLMVBBkJIGIlNt8eF/view?usp=drive_link" target="_blank" class="application-footer__external-link">Saavutettavuusseloste</a>
       </div>
     </footer>
   </body>
