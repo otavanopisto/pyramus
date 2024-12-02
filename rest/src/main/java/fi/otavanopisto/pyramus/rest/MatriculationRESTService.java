@@ -31,8 +31,8 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
-import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
@@ -174,7 +174,9 @@ public class MatriculationRESTService extends AbstractRESTService {
       if (!loggedUser.hasAnyRole(Role.ADMINISTRATOR, Role.MANAGER, Role.STUDY_PROGRAMME_LEADER)) {
         if (!((loggedUser instanceof StaffMember) && (studentController.isStudentGuider((StaffMember) loggedUser, student)))) {
           if (!((loggedUser instanceof StudentParent) && (((StudentParent) loggedUser).isActiveParentOf(student)))) {
-            return Response.status(Status.NOT_FOUND).build();
+            if (!((loggedUser instanceof StaffMember) && (studentController.isCourseTeacher((StaffMember) loggedUser, student)))) {
+              return Response.status(Status.NOT_FOUND).build();
+            }
           }
         }
       }

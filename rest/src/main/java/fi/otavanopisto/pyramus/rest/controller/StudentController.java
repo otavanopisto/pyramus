@@ -188,6 +188,20 @@ public class StudentController {
     return studentDAO.isStudyGuider(staffMember, student);
   }
   
+  /**
+   * Returns true if the given StaffMember and Student have any
+   * common courses they are members of.
+   * 
+   * The Course or CourseStudent cannot be archived to count.
+   * 
+   * @param staffMember StaffMember
+   * @param student Student
+   * @return true if there are common courses, false if not
+   */
+  public boolean isCourseTeacher(StaffMember staffMember, Student student) {
+    return studentDAO.haveCommonCourses(staffMember, student);
+  }
+  
   public List<Student> listStudentByPerson(Person person) {
     List<Student> students = studentDAO.listByPerson(person);
     return students;
