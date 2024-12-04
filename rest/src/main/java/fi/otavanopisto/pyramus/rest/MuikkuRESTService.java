@@ -558,8 +558,11 @@ public class MuikkuRESTService {
       else if (user instanceof StaffMember) {
         StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, (StaffMember) user);
         if (studentGroupUser == null) {
-          Boolean messageRecipient = Boolean.FALSE;
-          studentGroupController.createStudentGroupStaffMember(studentGroup, (StaffMember) user, messageRecipient, loggedUser);
+          // These are not supported by the API atm
+          boolean groupAdvisor = false;
+          boolean studyAdvisor = false;
+          boolean messageRecipient = false;
+          studentGroupController.createStudentGroupStaffMember(studentGroup, (StaffMember) user, groupAdvisor, studyAdvisor, messageRecipient, loggedUser);
         }
       }
     }

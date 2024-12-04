@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    alter table StudentGroupUser add column groupAdvisor bit not null;
+  </sql>
+
+  <sql>
+    alter table StudentGroupUser add column studyAdvisor bit not null;
+  </sql>
+
+  <sql>
+    update StudentGroupUser set groupAdvisor = true, studyAdvisor = false;
+  </sql>
+
+  <sql>
+    update StudentGroupUser set messageRecipient = false where messageRecipient is null;
+  </sql>
+  
+  <sql>
+    alter table StudentGroupUser modify messageRecipient bit not null;
+  </sql>
+
+</update>

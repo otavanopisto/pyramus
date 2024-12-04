@@ -6,10 +6,13 @@ public class StudentGroupUser {
     super();
   }
 
-  public StudentGroupUser(Long id, Long staffMemberId) {
+  public StudentGroupUser(Long id, Long staffMemberId, boolean groupAdvisor, boolean studyAdvisor, boolean messageReceiver) {
     this();
     this.id = id;
-    this.setStaffMemberId(staffMemberId);
+    this.staffMemberId = staffMemberId;
+    this.groupAdvisor = groupAdvisor;
+    this.studyAdvisor = studyAdvisor;
+    this.messageReceiver = messageReceiver;
   }
 
   public Long getId() {
@@ -28,6 +31,33 @@ public class StudentGroupUser {
     this.staffMemberId = staffMemberId;
   }
 
+  public boolean isGroupAdvisor() {
+    return groupAdvisor;
+  }
+
+  public void setGroupAdvisor(boolean groupAdvisor) {
+    this.groupAdvisor = groupAdvisor;
+  }
+
+  public boolean isStudyAdvisor() {
+    return studyAdvisor;
+  }
+
+  public void setStudyAdvisor(boolean studyAdvisor) {
+    this.studyAdvisor = studyAdvisor;
+  }
+
+  public boolean isMessageReceiver() {
+    return messageReceiver;
+  }
+
+  public void setMessageReceiver(boolean messageReceiver) {
+    this.messageReceiver = messageReceiver;
+  }
+
   private Long id;
   private Long staffMemberId;
+  private boolean groupAdvisor;
+  private boolean studyAdvisor;
+  private boolean messageReceiver;
 }

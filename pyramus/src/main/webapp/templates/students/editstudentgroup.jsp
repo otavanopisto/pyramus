@@ -135,14 +135,28 @@
             editable: false,
             paramName: 'userName'
           }, {
-            header : '<fmt:message key="students.editStudentGroup.usersTableMessageRecipientHeader"/>',
+            header : '<fmt:message key="students.editStudentGroup.usersTableGroupAdvisorHeader"/>',
             left : 8 + 250 + 8,
-            width: 32,
+            width: 100,
+            dataType : 'checkbox',
+            editable: true,
+            paramName: 'groupAdvisor'
+          }, {
+            header : '<fmt:message key="students.editStudentGroup.usersTableStudyAdvisorHeader"/>',
+            left : 8 + 250 + 8 + 100 + 8,
+            width: 100,
+            dataType : 'checkbox',
+            editable: true,
+            paramName: 'studyAdvisor'
+          }, {
+            header : '<fmt:message key="students.editStudentGroup.usersTableMessageRecipientHeader"/>',
+            left : 8 + 250 + 8 + 100 + 8 + 100 + 8,
+            width: 100,
             dataType : 'checkbox',
             editable: true,
             paramName: 'messageRecipient'
           }, {
-            left: 8 + 250 + 8 + 32 + 8,
+            left: 8 + 250 + 8 + 100 + 8 + 100 + 8 + 100 + 8,
             width: 30,
             dataType: 'button',
             imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
@@ -160,6 +174,8 @@
           usersTable.addRow([
             ${user.staffMember.id},
             '${fn:escapeXml(user.staffMember.fullName)}',
+            '${user.groupAdvisor == true ? 1 : 0}',
+            '${user.studyAdvisor == true ? 1 : 0}',
             '${user.messageRecipient == true ? 1 : 0}',
             '',
             ${user.id}
@@ -191,7 +207,7 @@
                 var userName = event.results.users[i].name;
                 var index = getUserRowIndex(userId);
                 if (index == -1) {
-                  usersTable.addRow([userId, userName, '', '', '']);
+                  usersTable.addRow([userId, userName, '', '', '', '', '']);
                 } 
               }
               usersTable.reattachToDom();
@@ -455,10 +471,17 @@
               <textarea ix:cktoolbar="studentGroupDescription" name="description" ix:ckeditor="true">${studentGroup.description}</textarea>
             </div>
 
-            <div class="genericTableAddRowContainer">
-              <span class="genericTableAddRowLinkContainer" onclick="openSearchUsersDialog();"><fmt:message key="students.editStudentGroup.addPersonLink"/></span>
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.editStudentGroup.usersTableTitle"/>
+                <jsp:param name="helpLocale" value="students.editStudentGroup.usersTableHelp"/>
+              </jsp:include>
+
+              <div class="genericTableAddRowContainer">
+                <span class="genericTableAddRowLinkContainer" onclick="openSearchUsersDialog();"><fmt:message key="students.editStudentGroup.addPersonLink"/></span>
+              </div>
+              <div id="usersTable"> </div>
             </div>
-            <div id="usersTable"> </div>
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
