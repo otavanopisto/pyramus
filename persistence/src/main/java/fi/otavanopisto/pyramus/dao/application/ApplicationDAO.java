@@ -327,7 +327,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     criteria.select(root);
     criteria.where(
       criteriaBuilder.and(
-        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.created), date),
+        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.lastModified), date),
         criteriaBuilder.equal(root.get(Application_.line), line),
         criteriaBuilder.isNull(root.get(Application_.student))
       )

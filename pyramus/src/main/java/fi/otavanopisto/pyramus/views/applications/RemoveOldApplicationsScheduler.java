@@ -38,7 +38,7 @@ public class RemoveOldApplicationsScheduler {
     for (Application application : applications) {
       ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
-    // #4226: nettilukio, nettipk: year after registration if not transferred as student
+    // #4226: nettilukio, nettipk: year after latest modification if not transferred as student
     applications = applicationDAO.listByOlderAndLineAndNullStudent(date, "nettilukio");
     for (Application application : applications) {
       ApplicationUtils.deleteApplication(null, application, "old application cleanup");
