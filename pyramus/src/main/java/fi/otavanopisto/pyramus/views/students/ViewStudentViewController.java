@@ -15,9 +15,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import javax.enterprise.inject.spi.CDI;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,6 +104,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
+import fi.otavanopisto.pyramus.koski.KoskiController;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
@@ -210,6 +215,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
     StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
 
+    KoskiController koskiController = CDI.current().select(KoskiController.class).get();
+
     Long loggedUserId = pageRequestContext.getLoggedUserId();
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     
@@ -278,6 +285,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     Map<Long, StudentTOR> subjectCredits = new HashMap<>();
     Map<Long, List<MatriculationExamEnrollment>> studentMatriculationEnrollments = new HashMap<>();
     Map<Long, Boolean> studentHasParents = new HashMap<>();
+    Map<Long, Set<String>> koskiStudentOIDs = new HashMap<>();
     List<ViewStudentValidationWarning> studentValidations = new ArrayList<>();
     
     JSONObject linkedCourseAssessments = new JSONObject();
@@ -291,7 +299,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     
     List<Report> studentReports = reportDAO.listByContextType(ReportContextType.Student);
     Collections.sort(studentReports, new StringAttributeComparator("getName"));
-    
+
     for (Report report : studentReports) {
       JSONObject obj = new JSONObject();
       obj.put("id", report.getId().toString());
@@ -841,9 +849,16 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         obj.put("lastModified", file.getLastModified().getTime());
         arr.add(obj);
       }
-      if (!arr.isEmpty())
+      if (!arr.isEmpty()) {
         studentFiles.put(student.getId(), arr);
-
+      }
+      
+      // Separate list of Student's OIDs
+      Set<String> studentOIDs = koskiController.listStudentOIDs(student);
+      if (CollectionUtils.isNotEmpty(studentOIDs)) {
+        koskiStudentOIDs.put(student.getId(), studentOIDs);
+      }
+      
       JSONArray variables = new JSONArray();
       for (UserVariable userVariable : userVariableDAO.listByUserAndUserEditable(student, true)) {
         JSONObject variable = new JSONObject();
@@ -853,7 +868,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         variable.put("value", userVariable.getValue() != null ? userVariable.getValue() : "");
         variables.add(variable);
       }
-
+      
       if (!variables.isEmpty())
         studentVariablesJSON.put(student.getId(), variables);
       
@@ -976,6 +991,10 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("studentMatriculationEnrollments", studentMatriculationEnrollments);
     pageRequestContext.getRequest().setAttribute("studentHasParents", studentHasParents);
     pageRequestContext.getRequest().setAttribute("studentValidations", studentValidations);
+    
+    pageRequestContext.getRequest().setAttribute("koskiPersonURL", koskiController.getVirkailijaUrl());
+    pageRequestContext.getRequest().setAttribute("koskiPersonOID", personVariableDAO.findByPersonAndKey(person, KoskiConsts.VariableNames.KOSKI_HENKILO_OID));
+    pageRequestContext.getRequest().setAttribute("koskiStudentOIDs", koskiStudentOIDs);
     
     pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 
