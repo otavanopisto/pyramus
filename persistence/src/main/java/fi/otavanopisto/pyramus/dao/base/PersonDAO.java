@@ -619,12 +619,12 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
       throw new PersistenceException(e);
     }
   }
-  
+
   /**
    * Returns an analyzer to be used for Person searches.
    * Specifically returns a PerFieldAnalyzerWrapper that
    * has StandardAnalyzer as the default analyzer and 
-   * KeywordAnalyzer's set to fields that are unanalyzed.
+   * KeywordAnalyzers set to fields that are unanalyzed.
    * 
    * Most importantly this fixes the issues with the email
    * fields as tokenization of the query text causes no
@@ -635,12 +635,12 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
    */
   private Analyzer getPersonSearchAnalyzer() {
     Map<String, Analyzer> keywordFieldAnalyzers = new HashMap<>();
-    keywordFieldAnalyzers.put("staffMemberEmails", new KeywordAnalyzer());
-    keywordFieldAnalyzers.put("inactiveEmails", new KeywordAnalyzer());
-    keywordFieldAnalyzers.put("activeEmails", new KeywordAnalyzer());
-    keywordFieldAnalyzers.put("staffMemberEmails", new KeywordAnalyzer());
-    keywordFieldAnalyzers.put("koskiPersonOID", new KeywordAnalyzer());
-    keywordFieldAnalyzers.put("koskiStudentOIDs", new KeywordAnalyzer());
+    Analyzer keyWordAnalyzer = new KeywordAnalyzer();
+    keywordFieldAnalyzers.put("inactiveEmails", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("activeEmails", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("staffMemberEmails", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("koskiPersonOID", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("koskiStudentOIDs", keyWordAnalyzer);
     
     return new PerFieldAnalyzerWrapper(new StandardAnalyzer(), keywordFieldAnalyzers);
   }
