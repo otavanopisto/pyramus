@@ -149,6 +149,15 @@ public class KoskiController {
         return null;
     }
   }
+  
+  /**
+   * Returns URL prefix to Koski environment, if such is set.
+   * 
+   * @return URL prefix to Koski environment, if such is set
+   */
+  public String getVirkailijaUrl() {
+    return settings.getVirkailijaUrl();
+  }
 
   /**
    * Marks given student to be added to the update queue.

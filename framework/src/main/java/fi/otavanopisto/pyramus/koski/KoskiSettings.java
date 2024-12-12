@@ -341,6 +341,10 @@ public class KoskiSettings {
         ? perusopetuksenSuoritusTapa.get(studyProgrammeId) : defaultValue;
   }
   
+  public String getVirkailijaUrl() {
+    return getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_VIRKAILIJAURL);
+  }
+  
   private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();

@@ -32,12 +32,13 @@ public class KoskiStartupInitializer {
     ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_AUTH);
     ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_BASEURL);
     ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_CSRF);
+    ensureSettingKeyExists(KoskiConsts.Setting.KOSKI_SETTINGKEY_VIRKAILIJAURL);
     
     if (personVariableKeyDAO.findByVariableKey(KoskiConsts.VariableNames.KOSKI_HENKILO_OID) == null) {
-      personVariableKeyDAO.create(KoskiConsts.VariableNames.KOSKI_HENKILO_OID, "Koski: henkilön oid", VariableType.TEXT, true);
+      personVariableKeyDAO.create(KoskiConsts.VariableNames.KOSKI_HENKILO_OID, "Koski: henkilön oid", VariableType.TEXT, false);
     }
     
-    ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID, "Koski: opiskeluoikeuden oid", VariableType.TEXT, true);
+    ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID, "Koski: opiskeluoikeuden oid", VariableType.TEXT, false);
     ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_INTERNETIX_STUDYPERMISSION_ID, "Koski: aineopiskeluoikeuden oid", VariableType.TEXT, false);
     ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID, "Koski: sisältyvän opiskeluoikeuden oid", VariableType.TEXT, true);
     ensureUserVariableExists(KoskiConsts.VariableNames.KOSKI_SKIPPED_STUDENT, "Ohita Koski-integraatiossa", VariableType.TEXT, true);
