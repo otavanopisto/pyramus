@@ -2175,6 +2175,7 @@
     
     <span id="koski-status" class="koski-status">KOSKI</span>
     <span id="pyramus-validation-status" class="pyramus-validation-error-trafficlight" ${(empty studentValidations) ? 'style="display: none;"' : ''}>PYRAMUS</span>
+    <a href="${pageContext.request.contextPath}/students/editstudent.page?person=${person.id}" class="pyramusViewLink pyramusViewLinkEdit"><fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentLabel"/></a>
   </h1>
   
   <div id="koski-status-details" style="display: none;">

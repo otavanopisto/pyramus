@@ -261,7 +261,7 @@ h1.genericPageHeader{
 }
 
 .pyramusViewLink {
-  align-items; center;
+  align-items: center;
   color: #fff;
   background-color: #739de7;
   border-radius: 10px;
@@ -273,8 +273,14 @@ h1.genericPageHeader{
   vertical-align: middle;
 }
 
-.pyramusStudentLink:before {
+.pyramusViewLinkEye:before {
   content: url(../gfx/eye.png);
+  padding-right: 4px;
+  vertical-align: middle;
+}
+
+.pyramusViewLinkEdit:before {
+  content: url(../gfx/accessories-text-editor.png);
   padding-right: 4px;
   vertical-align: middle;
 }

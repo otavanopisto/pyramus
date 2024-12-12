@@ -345,6 +345,7 @@
       <fmt:message key="courses.viewCourse.pageTitle">
         <fmt:param value="${course.name}"/>
       </fmt:message>
+      <a href="${pageContext.request.contextPath}/courses/editcourse.page?course=${course.id}" class="pyramusViewLink pyramusViewLinkEdit"><fmt:message key="courses.viewCourse.editCourseRelatedActionLabel"/></a>
     </h1>
   
     <div class="genericFormContainer">
