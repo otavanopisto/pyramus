@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.domainmodel.base.search;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
@@ -14,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -25,11 +26,12 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
  */
 public class PersonKoskiStudentOIDFieldIndexer implements FieldBridge {
 
+  @Inject
+  private UserVariableDAO userVariableDAO;
+  
   @Override
   public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
     if (value instanceof Person) {
-      UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
-
       Person person = (Person) value;
       
       for (Student student : person.getStudents()) {
