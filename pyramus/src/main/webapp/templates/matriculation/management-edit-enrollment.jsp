@@ -317,7 +317,7 @@
 
     <h1 class="genericPageHeader">
       Muokkaa YO-ilmoittautumisia
-      <a href="${pageContext.request.contextPath}/students/viewstudent.page?person=${enrollment.student.person.id}" class="pyramusViewLink pyramusStudentLink">Siirry opiskelijan tietoihin</a>
+      <a href="${pageContext.request.contextPath}/students/viewstudent.page?person=${enrollment.student.person.id}" class="pyramusViewLink pyramusViewLinkEye">Siirry opiskelijan tietoihin</a>
     </h1>
     
     <div class="genericFormContainer">
