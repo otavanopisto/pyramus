@@ -288,11 +288,18 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       String tagsText = requestContext.getString("tags." + student.getId());
       StudentFunding funding = (StudentFunding) requestContext.getEnum("funding." + student.getId(), StudentFunding.class);
       
+      // Student card helper variables
+      
       Date studentCardExpires = requestContext.getDate("expiryDate." + student.getId());
       Boolean active = requestContext.getBoolean("active." + student.getId());
       StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType." + student.getId(), StudentCardType.class);
+      StudentCard studentCard = studentCardDAO.findByStudent(student);
+      boolean cardExpiryChanged = studentCard != null && dateChanged(studentCard.getExpiryDate(), studentCardExpires);
+      boolean studyEndDateChanged = studentCard != null && dateChanged(student.getStudyEndDate(), studyEndDate);
+      boolean studyTimeEndChanged = studentCard != null && dateChanged(student.getStudyTimeEnd(), studyTimeEnd);
       
-      
+      // Tags
+
       Set<Tag> tagEntities = new HashSet<>();
       if (!StringUtils.isBlank(tagsText)) {
         List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
@@ -535,61 +542,39 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         }
       }
       
-      // Student card
+      // Student card; figure out expiry date
       
-      StudentCard studentCard = studentCardDAO.findByStudent(student);
-
       Date expiryDate = null;
-      Date cancellationDate = null;
-      
-      StudentCardActivity activity = StudentCardActivity.ACTIVE;
-      // Set expiry date automatically same as study end date or study time end or null
-      if (studyEndDate != null) {
-        expiryDate = studyEndDate;
-      }  else {
-        expiryDate = studyTimeEnd != null ? studyTimeEnd : null;
+      if (cardExpiryChanged) {
+        expiryDate = studentCardExpires; // card expiry date has been modified
+      }
+      else if (studyEndDateChanged) {
+        expiryDate = studyEndDate; // student's study end date has been modified
+      }
+      else if (studyTimeEndChanged) {
+        expiryDate = studyTimeEnd; // student's study end time has been modified
+      }
+      else if (studentCard != null) {
+        expiryDate = studentCard.getExpiryDate(); // no changes 
       }
       
-      if (studentCard != null) {
+      // Create or update card
+      
+      if (studentCard == null) {
+        studentCardDAO.create(student, active ? StudentCardActivity.ACTIVE : StudentCardActivity.INACTIVE, expiryDate, studentCardType);
+      }
+      else {
+
+        // Cancel active cards, if applicable
         
-        cancellationDate = studentCard.getCancellationDate();
-        
-        if (studentCard.getExpiryDate() != null) {
-          expiryDate = studentCard.getExpiryDate();
-        }
-        
-        // If user has set the expiry date manually we have to use it
-        if (studentCardExpires != null) {
-          if ((studentCard.getExpiryDate() != null && !DateUtils.isSameDay(studentCard.getExpiryDate(), studentCardExpires)) || studentCard.getExpiryDate() == null) {
-          expiryDate = studentCardExpires;
-          }
-        }
-        
-        // If boolean active has changed from true to false we need to set activity to CANCELLED instead of INACTIVE
-        if (!active) {
-          if (studentCard.getActivity().equals(StudentCardActivity.ACTIVE) || studentCard.getActivity().equals(StudentCardActivity.CANCELLED)) {
-            activity = StudentCardActivity.CANCELLED;
-          
-            if (studentCard.getCancellationDate() == null) {
-              cancellationDate = new Date();
-            }
-          } else {
-            activity = studentCard.getActivity();
-          }
+        StudentCardActivity activity = studentCard.getActivity();
+        Date cancellationDate = studentCard.getCancellationDate();
+        if (!active && activity == StudentCardActivity.ACTIVE) {
+          activity = StudentCardActivity.CANCELLED;
+          cancellationDate = new Date();
         }
         studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
-        } else {
-          if (studentCardExpires != null) {
-            expiryDate = studentCardExpires;
-          }
-          
-          if (!active) {
-            activity = StudentCardActivity.INACTIVE;
-          }
-          
-          studentCardDAO.create(student, activity, expiryDate, studentCardType);
-        }
-      
+      }
     }
     
 
@@ -600,6 +585,10 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     personDAO.forceReindex(person);
         
     requestContext.setRedirectURL(requestContext.getReferer(true));
+  }
+  
+  private boolean dateChanged(Date d1, Date d2) {
+    return d1 == null ? d2 == null ? false : true : !DateUtils.isSameDay(d1, d2);
   }
 
 }
