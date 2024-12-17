@@ -542,17 +542,20 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         }
       }
       
-      // Student card; figure out expiry date
+      // Figure out the new student card expiry date
       
       Date expiryDate = studentCard == null ? null : studentCard.getExpiryDate();
       if (cardExpiryChanged) {
-        expiryDate = studentCardExpires; // card expiry date has been modified
+        // Use new card expiry date since it has been explicitly modified
+        expiryDate = studentCardExpires;
       }
-      else if (studyEndDateChanged && studyEndDate != null) {
-        expiryDate = studyEndDate; // study end date has been modified (if removed, card expiry date remains)
+      else if (studyEndDateChanged) {
+        // Use new study end date but if it has been removed, fall back to study time end date
+        expiryDate = studyEndDate != null ? studyEndDate : studyTimeEnd;
       }
       else if (studyTimeEndChanged && studyTimeEnd != null) {
-        expiryDate = studyTimeEnd; // study time end has been modified (if removed, card expiry date remains)
+        // Use new study time end date but if it has been removed, keep card expiry date as-is
+        expiryDate = studyTimeEnd;
       }
       
       // Create or update card
