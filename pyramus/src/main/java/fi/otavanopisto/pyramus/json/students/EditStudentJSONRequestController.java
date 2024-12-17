@@ -295,8 +295,8 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType." + student.getId(), StudentCardType.class);
       StudentCard studentCard = studentCardDAO.findByStudent(student);
       boolean cardExpiryChanged = studentCard != null && dateChanged(studentCard.getExpiryDate(), studentCardExpires);
-      boolean studyEndDateChanged = studentCard != null && dateChanged(student.getStudyEndDate(), studyEndDate);
-      boolean studyTimeEndChanged = studentCard != null && dateChanged(student.getStudyTimeEnd(), studyTimeEnd);
+      boolean studyEndDateChanged = dateChanged(student.getStudyEndDate(), studyEndDate);
+      boolean studyTimeEndChanged = dateChanged(student.getStudyTimeEnd(), studyTimeEnd);
       
       // Tags
 
@@ -565,7 +565,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       }
       else {
 
-        // Cancel active cards, if applicable
+        // Cancel an active card, if applicable
         
         StudentCardActivity activity = studentCard.getActivity();
         Date cancellationDate = studentCard.getCancellationDate();
