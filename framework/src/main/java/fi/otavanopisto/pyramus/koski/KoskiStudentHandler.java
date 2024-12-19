@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
@@ -121,6 +122,9 @@ public abstract class KoskiStudentHandler {
   @Inject
   private StudentStudyPeriodDAO studentStudyPeriodDAO;
   
+  @Inject
+  private PersonDAO personDAO;
+  
   public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
   public abstract void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
   public abstract Set<KoskiStudentId> listOids(Student student);
@@ -130,6 +134,7 @@ public abstract class KoskiStudentHandler {
 
     if (StringUtils.isBlank(studyOid)) {
       userVariableDAO.setUserVariable(student, KOSKI_STUDYPERMISSION_ID, oid);
+      personDAO.forceReindex(student.getPerson());
     } else {
       // Validate the oid is the same
       if (!StringUtils.equals(studyOid, oid))
@@ -142,6 +147,7 @@ public abstract class KoskiStudentHandler {
     
     if (StringUtils.equals(storedStudyOid, oid)) {
       userVariableDAO.setUserVariable(student, KOSKI_STUDYPERMISSION_ID, "");
+      personDAO.forceReindex(student.getPerson());
     } else {
       logger.severe(String.format("removeOid failed for student %d with oid %s", student.getId(), oid));
     }
@@ -164,6 +170,7 @@ public abstract class KoskiStudentHandler {
       try {
         String variableValue = CollectionUtils.isNotEmpty(oids) ? mapper.writeValueAsString(oids) : "";
         userVariableDAO.setUserVariable(student, KOSKI_INTERNETIX_STUDYPERMISSION_ID, variableValue);
+        personDAO.forceReindex(student.getPerson());
       } catch (Exception ex) {
         logger.severe(String.format("Serialization failed for student %s", student.getId()));
       }
@@ -184,6 +191,7 @@ public abstract class KoskiStudentHandler {
     try {
       String variableValue = CollectionUtils.isNotEmpty(oids) ? mapper.writeValueAsString(oids) : "";
       userVariableDAO.setUserVariable(student, KOSKI_INTERNETIX_STUDYPERMISSION_ID, variableValue);
+      personDAO.forceReindex(student.getPerson());
     } catch (Exception ex) {
       logger.severe(String.format("Serialization failed for student %s", student.getId()));
     }

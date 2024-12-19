@@ -35,7 +35,6 @@ import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
-import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
@@ -58,8 +57,6 @@ import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 @ApplicationScoped
 public class KoskiClient {
 
-  private static final String KOSKI_HENKILO_OID = KoskiConsts.VariableNames.KOSKI_HENKILO_OID;
-  
   @Inject
   private Logger logger;
   
@@ -72,9 +69,6 @@ public class KoskiClient {
   @Inject
   private SettingDAO settingDAO;
 
-  @Inject 
-  private PersonVariableDAO personVariableDAO;
-  
   @Inject
   private StudentDAO studentDAO;
   
@@ -156,7 +150,7 @@ public class KoskiClient {
     
     logger.log(Level.INFO, String.format("Invalidating OIDs %s for person %d", studyPermitOids, person.getId()));
     
-    String oppijaOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
+    String oppijaOid = koskiController.getPersonOID(person);
     Oppija oppija = findOppijaByOid(oppijaOid);
 
     // Remove non-compatible entities
@@ -244,7 +238,7 @@ public class KoskiClient {
         return;
       }
   
-      String personOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
+      String personOid = koskiController.getPersonOID(person);
       
       if (StringUtils.isBlank(person.getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
         logger.warning(String.format("Can not update person (%d) without SSN or OID.", person.getId()));
@@ -294,7 +288,7 @@ public class KoskiClient {
             
             if (StringUtils.isEmpty(personOid)) {
               // If the oid was empty in db, save the given one
-              personVariableDAO.setPersonVariable(person, KOSKI_HENKILO_OID, servedPersonOid);
+              koskiController.setPersonOID(person, servedPersonOid);
             } else {
               // Validate the oid is the same
               if (!StringUtils.equals(personOid, servedPersonOid))

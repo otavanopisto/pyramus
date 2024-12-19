@@ -34,6 +34,8 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -44,6 +46,8 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
 
+import fi.otavanopisto.pyramus.domainmodel.base.search.PersonKoskiPersonOIDFieldIndexer;
+import fi.otavanopisto.pyramus.domainmodel.base.search.PersonKoskiStudentOIDFieldIndexer;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -55,6 +59,10 @@ import fi.otavanopisto.security.ContextReference;
 
 @Entity
 @Indexed
+@ClassBridges({
+  @ClassBridge(name = "koskiPersonOID", analyze = Analyze.NO, impl = PersonKoskiPersonOIDFieldIndexer.class),
+  @ClassBridge(name = "koskiStudentOIDs", analyze = Analyze.NO, impl = PersonKoskiStudentOIDFieldIndexer.class)
+})
 @FullTextFilterDefs (
   @FullTextFilterDef (
      name="StudentIdFilter",
