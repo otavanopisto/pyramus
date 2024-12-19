@@ -1027,6 +1027,7 @@ public class MuikkuRESTService {
     item.setDate(courseAssessment.getDate());
     if (courseAssessment.getGrade() != null) {
       item.setGrade(courseAssessment.getGrade().getName());
+      item.setPassing(courseAssessment.getGrade().getPassingGrade());    
     }
     item.setStatus(StudyActivityItemStatus.GRADED);
     item.setSubject(courseAssessment.getSubject().getCode());
@@ -1043,6 +1044,7 @@ public class MuikkuRESTService {
     item.setDate(transferCredit.getDate());
     if (transferCredit.getGrade() != null) {
       item.setGrade(transferCredit.getGrade().getName());
+      item.setPassing(transferCredit.getGrade().getPassingGrade());    
     }
     item.setStatus(StudyActivityItemStatus.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());

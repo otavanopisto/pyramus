@@ -76,12 +76,21 @@ public class StudyActivityItemRestModel {
     this.transferCreditMandatory = transferCreditMandatory;
   }
 
+  public boolean isPassing() {
+    return passing;
+  }
+
+  public void setPassing(boolean passing) {
+    this.passing = passing;
+  }
+
   private String subject;
   private String subjectName;
   private Long courseId;
   private Integer courseNumber;
   private String courseName;
   private String grade;
+  private boolean passing;
   private StudyActivityItemStatus status;
   private Date date;
   private Boolean transferCreditMandatory;
