@@ -2,7 +2,9 @@ package fi.otavanopisto.pyramus.dao.base;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -17,6 +19,9 @@ import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -171,23 +176,6 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     return searchPersonsBasic(resultsPerPage, page, queryText, studentFilter, null, null, organizations, staffStudyProgrammes);
   }
   
-  /**
-   * Changes @ -signs to ? wildcard for string. 
-   * 
-   * Without the wildcard users cannot be found with exact match of email. This is because
-   * we construct the query by hand and lucene tokenizes the email and creates a BooleanQuery
-   * for the email fields (which apparently doesn't work).
-   * 
-   * Wildcard changes the search so that instead of BooleanQuery you get WildcardQuery which
-   * seems to work with the untokenized email fields
-   * 
-   * @param queryText
-   * @return
-   */
-  private String lucenizeEmailSearchTerm(String queryText) {
-    return queryText.replace('@', '?');
-  }
-  
   @SuppressWarnings("unchecked")
   public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, PersonFilter studentFilter, StudyProgramme studyProgramme, StudentGroup studentGroup, Set<Organization> organizations, Set<StudyProgramme> staffStudyProgrammes) {
     int firstResult = page * resultsPerPage;
@@ -212,8 +200,10 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeNicknames", "inactiveNicknames");
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "staffMemberTitles");
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeLastNames", "inactiveLastNames", "staffMemberLastNames");
-          addTokenizedSearchCriteria(queryBuilder, false, lucenizeEmailSearchTerm(queryText), "activeEmails", "inactiveEmails", "staffMemberEmails");
+          addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeEmails", "inactiveEmails", "staffMemberEmails");
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeTags", "inactiveTags", "staffMemberTags");
+          addTokenizedSearchCriteria(queryBuilder, false, queryText, "koskiPersonOID");
+          addTokenizedSearchCriteria(queryBuilder, false, queryText, "koskiStudentOIDs");
           queryBuilder.append(")");
         }
         
@@ -247,9 +237,10 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "inactiveFirstNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "inactiveNicknames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "inactiveLastNames", queryText, false);
-          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", lucenizeEmailSearchTerm(queryText), false);
+          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "inactiveTags", queryText, false);
-          
+          addTokenizedSearchCriteria(queryBuilder, false, queryText, "koskiPersonOID");
+          addTokenizedSearchCriteria(queryBuilder, false, queryText, "koskiStudentOIDs");
           queryBuilder.append(")");
         }
 
@@ -276,9 +267,10 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "activeFirstNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "activeNicknames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "activeLastNames", queryText, false);
-          addTokenizedSearchCriteria(queryBuilder, "activeEmails", lucenizeEmailSearchTerm(queryText), false);
+          addTokenizedSearchCriteria(queryBuilder, "activeEmails", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "activeTags", queryText, false);
-          
+          addTokenizedSearchCriteria(queryBuilder, false, queryText, "koskiPersonOID");
+          addTokenizedSearchCriteria(queryBuilder, false, queryText, "koskiStudentOIDs");
           queryBuilder.append(")");
         }
 
@@ -300,7 +292,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "staffMemberFirstNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "staffMemberLastNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "staffMemberTitles", queryText, false);
-          addTokenizedSearchCriteria(queryBuilder, "staffMemberEmails", lucenizeEmailSearchTerm(queryText), false);
+          addTokenizedSearchCriteria(queryBuilder, "staffMemberEmails", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "staffMemberTags", queryText, false);
           
           queryBuilder.append(")");
@@ -360,7 +352,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
       
       Query luceneQuery;
       
-      QueryParser parser = new QueryParser("", new StandardAnalyzer());
+      QueryParser parser = new QueryParser("", getPersonSearchAnalyzer());
       luceneQuery = parser.parse(queryString);
       
       FullTextQuery query = (FullTextQuery) fullTextEntityManager
@@ -436,7 +428,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(education))
           addTokenizedSearchCriteria(queryBuilder, true, education, "inactiveEducations", "activeEducations");
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteriaEmail(queryBuilder, true, lucenizeEmailSearchTerm(email), "inactiveEmails", "activeEmails", "staffMemberEmails");
+          addTokenizedSearchCriteriaEmail(queryBuilder, true, email, "inactiveEmails", "activeEmails", "staffMemberEmails");
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, true, addressCity, "inactiveCities", "activeCities", "staffMemberCities");
         if (!StringUtils.isBlank(addressCountry))
@@ -484,7 +476,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(education))
           addTokenizedSearchCriteria(queryBuilder, "inactiveEducations", education, true);
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", lucenizeEmailSearchTerm(email), true);
+          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", email, true);
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, "inactiveCities", addressCity, true);
         if (!StringUtils.isBlank(addressCountry))
@@ -530,7 +522,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(tags))
           addTokenizedSearchCriteria(queryBuilder, "activeTags", tags, true);
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, "activeEmails", lucenizeEmailSearchTerm(email), true);
+          addTokenizedSearchCriteria(queryBuilder, "activeEmails", email, true);
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, "activeCities", addressCity, true);
         if (!StringUtils.isBlank(addressCountry))
@@ -566,7 +558,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(tags))
           addTokenizedSearchCriteria(queryBuilder, true, tags, "staffMemberTags");
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteriaEmail(queryBuilder, true, lucenizeEmailSearchTerm(email), "staffMemberEmails");
+          addTokenizedSearchCriteriaEmail(queryBuilder, true, email, "staffMemberEmails");
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, true, addressCity, "staffMemberCities");
         if (!StringUtils.isBlank(addressCountry))
@@ -599,10 +591,10 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     try {
       String queryString = queryBuilder.toString();
       Query luceneQuery;
-      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       } else {
+        QueryParser parser = new QueryParser("", getPersonSearchAnalyzer());
         luceneQuery = parser.parse(queryString);
       }
 
@@ -627,5 +619,30 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
       throw new PersistenceException(e);
     }
   }
-  
+
+  /**
+   * Returns an analyzer to be used for Person searches.
+   * Specifically returns a PerFieldAnalyzerWrapper that
+   * has StandardAnalyzer as the default analyzer and 
+   * KeywordAnalyzers set to fields that are unanalyzed.
+   * 
+   * Most importantly this fixes the issues with the email
+   * fields as tokenization of the query text causes no
+   * emails to ever be matched. Setting KeywordAnalyzer
+   * for those fields prevents the query from being altered.
+   * 
+   * @return an analyzer to use with Person searches
+   */
+  private Analyzer getPersonSearchAnalyzer() {
+    Map<String, Analyzer> keywordFieldAnalyzers = new HashMap<>();
+    Analyzer keyWordAnalyzer = new KeywordAnalyzer();
+    keywordFieldAnalyzers.put("inactiveEmails", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("activeEmails", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("staffMemberEmails", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("koskiPersonOID", keyWordAnalyzer);
+    keywordFieldAnalyzers.put("koskiStudentOIDs", keyWordAnalyzer);
+    
+    return new PerFieldAnalyzerWrapper(new StandardAnalyzer(), keywordFieldAnalyzers);
+  }
+
 }

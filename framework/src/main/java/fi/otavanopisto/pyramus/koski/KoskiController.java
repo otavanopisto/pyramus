@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -58,8 +59,35 @@ public class KoskiController {
   private KoskiPersonLogDAO koskiPersonLogDAO;
   
   @Inject 
-  private PersonVariableDAO personVariableDAO;
+  private PersonDAO personDAO;
   
+  @Inject 
+  private PersonVariableDAO personVariableDAO;
+
+  /**
+   * Returns Person's Koski OID. This should be checked
+   * with StringUtils.isNotBlank before using.
+   * 
+   * @param person Person
+   * @return Person's Koski OID
+   */
+  public String getPersonOID(Person person) {
+    return personVariableDAO.findByPersonAndKey(person, KoskiConsts.VariableNames.KOSKI_HENKILO_OID);
+  }
+  
+  /**
+   * Sets Person's Koski OID and forces redindexing of
+   * the Person so that they can be found with the saved
+   * OID.
+   * 
+   * @param person Person
+   * @param oid OID to save for Person
+   */
+  public void setPersonOID(Person person, String oid) {
+    personVariableDAO.setPersonVariable(person, KoskiConsts.VariableNames.KOSKI_HENKILO_OID, oid);
+    personDAO.forceReindex(person);
+  }
+
   /**
    * Lists student OIDs with the currently active handler for it (i.e. the ones that should currently be in use)
    */
