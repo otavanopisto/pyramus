@@ -2354,6 +2354,39 @@
                     </c:when>
                   </c:choose>
 
+                  <c:if test="${!empty koskiPersonOID}">
+                    <div class="genericFormSection">
+                      <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale" value="koski.generic.personOIDTitle" />
+                        <jsp:param name="helpLocale" value="koski.generic.personOIDHelp" />
+                      </jsp:include>
+                      <div class="genericViewFormDataText">
+                        <c:choose>
+                          <c:when test="${!empty koskiPersonURL}">
+                            <a href="${koskiPersonURL}${koskiPersonOID}" target="_blank">${koskiPersonOID}</a>
+                          </c:when>
+                          <c:otherwise>
+                            ${koskiPersonOID}
+                          </c:otherwise>
+                        </c:choose>
+                      </div>
+                    </div>
+                  </c:if>
+
+                  <c:if test="${!empty koskiStudentOIDs[student.id]}">
+                    <div class="genericFormSection">
+                      <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale" value="koski.generic.studentOIDTitle" />
+                        <jsp:param name="helpLocale" value="koski.generic.studentOIDHelp" />
+                      </jsp:include>
+                      <div class="genericViewFormDataText">
+                        <c:forEach var="studentOID" items="${koskiStudentOIDs[student.id]}">
+                          ${studentOID}<br/>
+                        </c:forEach>
+                      </div>
+                    </div>
+                  </c:if>
+
                   <div class="genericFormSection"
                     title="${secureInfoTitle}">
                     <jsp:include

@@ -17,6 +17,7 @@ public class KoskiConsts {
     public static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
     public static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";
     public static final String KOSKI_SETTINGKEY_CSRF = "koski.csrf";
+    public static final String KOSKI_SETTINGKEY_VIRKAILIJAURL = "koski.virkailijaUrl";
   }
   
   public static class VariableNames {
