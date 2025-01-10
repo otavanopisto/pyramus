@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -55,6 +56,7 @@ import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -203,6 +205,18 @@ public class MuikkuRESTService {
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
     courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
     for (CourseAssessment courseAssessment : courseAssessments) {
+
+      // #1640: Course must not have OPS or has to match student's OPS 
+      
+      Set<Curriculum> curriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
+      boolean eligible = student.getCurriculum() == null || curriculums.isEmpty();
+      if (!eligible) {
+        eligible = curriculums.stream().filter(c -> c.getId().equals(student.getCurriculum().getId())).findFirst().orElse(null) != null;
+        if (!eligible) {
+          continue;
+        }
+      }
+
       String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
       StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
       if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
@@ -239,6 +253,17 @@ public class MuikkuRESTService {
     List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
     for (CourseStudent courseStudent : courseStudents) {
       Course course = courseStudent.getCourse();
+
+      // #1640: Course must not have OPS or has to match student's OPS 
+      
+      Set<Curriculum> curriculums = courseStudent.getCourse().getCurriculums();
+      boolean eligible = student.getCurriculum() == null || curriculums.isEmpty();
+      if (!eligible) {
+        eligible = curriculums.stream().filter(c -> c.getId().equals(student.getCurriculum().getId())).findFirst().orElse(null) != null;
+        if (!eligible) {
+          continue;
+        }
+      }
       
       /**
        * Courses get split potentially into multiple ActivityItemKeys if they have
