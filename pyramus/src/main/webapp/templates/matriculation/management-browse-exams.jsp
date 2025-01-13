@@ -22,6 +22,7 @@
         var tabControl = new IxProtoTabs($('tabs'));
         var searchResultsTable = new IxTable($('searchResultsTableContainer'), {
           id: 'searchResultsTable',
+          rowHoverEffect: true,
           columns : [{
             header : 'Vuosi',
             left: 8,
@@ -62,6 +63,20 @@
             editable: false,
             paramName: 'enrollmentActive'
           }, {
+            header : 'Lomakkeita (vah/hyl/yht)',
+            width: 100,
+            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
+            dataType : 'text',
+            editable: false,
+            paramName: 'enrollmentCounts'
+          }, {
+            header : 'Vahvistettuja koe-ilmoittautumisia',
+            width: 120,
+            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
+            dataType : 'text',
+            editable: false,
+            paramName: 'attendanceCounts'
+          }, {
             dataType: 'hidden',
             paramName: 'examId'
           }, {
@@ -88,6 +103,8 @@
               examsJSON[i].starts,
               examsJSON[i].ends,
               examsJSON[i].enrollmentActive,
+              examsJSON[i].confirmedEnrollments + "/" + examsJSON[i].rejectedEnrollments + "/" + examsJSON[i].totalEnrollments,
+              examsJSON[i].enrolledConfirmedAttendances,
               examsJSON[i].id,
               ''
             ]);

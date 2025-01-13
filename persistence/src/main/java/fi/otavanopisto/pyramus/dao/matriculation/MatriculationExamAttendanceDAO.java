@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.matriculation;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -12,6 +13,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
@@ -20,6 +22,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
@@ -126,6 +129,39 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  /**
+   * Returns number of MatriculationExamAttendances that are under the
+   * given exam and have any of the given states both for the enrollment
+   * and the attendance.
+   * 
+   * @param exam exam
+   * @param enrollmentStates wanted enrollment states
+   * @param attendanceStatus wanted attendance status'
+   * @return number of enrollments
+   */
+  public Long countEnrollments(MatriculationExam exam, EnumSet<MatriculationExamEnrollmentState> enrollmentStates,
+      EnumSet<MatriculationExamAttendanceStatus> attendanceStatus) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<MatriculationExamAttendance> root = criteria.from(MatriculationExamAttendance.class);
+    Join<MatriculationExamAttendance, MatriculationExamEnrollment> enrollment = root.join(MatriculationExamAttendance_.enrollment);
+    
+    criteria.select(criteriaBuilder.count(root));
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(enrollment.get(MatriculationExamEnrollment_.exam), exam),
+            enrollment.get(MatriculationExamEnrollment_.state).in(enrollmentStates),
+            root.get(MatriculationExamAttendance_.status).in(attendanceStatus)
+        )
+    );
+    
+    return entityManager
+      .createQuery(criteria)
+      .getSingleResult();
+  }
+  
   public MatriculationExamAttendance update(MatriculationExamAttendance attendance,
       MatriculationExamEnrollment enrollment,
       MatriculationExamSubject subject,
