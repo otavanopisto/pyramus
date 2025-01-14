@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.dao.matriculation;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -278,6 +279,34 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
+  /**
+   * Returns number of MatriculationExamEnrollments that are under the
+   * given exam and have any of the given states.
+   * 
+   * @param exam exam
+   * @param enrollmentStates wanted enrollment states
+   * @return number of enrollments
+   */
+  public Long countEnrollments(MatriculationExam exam, EnumSet<MatriculationExamEnrollmentState> enrollmentStates) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    
+    criteria.select(criteriaBuilder.count(root));
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam),
+            root.get(MatriculationExamEnrollment_.state).in(enrollmentStates)
+        )
+    );
+    
+    return entityManager
+      .createQuery(criteria)
+      .getSingleResult();
+  }
+  
   public MatriculationExamEnrollment updateCandidateNumber(MatriculationExamEnrollment enrollment, int candidateNumber) {
     enrollment.setCandidateNumber(candidateNumber);
     return persist(enrollment);
