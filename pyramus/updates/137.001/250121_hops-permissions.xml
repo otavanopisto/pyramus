@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>insert into RolePermission (id,permission_id, role) select (select max(rp.id) + 1 from RolePermission rp), id, 'TEACHER' from permission where name='GET_STUDENT_SUBJECTCHOICES';</sql>
+  <sql>insert into RolePermission (id,permission_id, role) select (select max(rp.id) + 1 from RolePermission rp), id, 'TEACHER' from permission where name='GET_STUDENT_COURSEACTIVITY';</sql>
+
+</update>

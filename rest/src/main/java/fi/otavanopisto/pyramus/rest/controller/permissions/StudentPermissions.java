@@ -47,14 +47,12 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String LIST_COURSESTUDENTSBYSTUDENT = "LIST_COURSESTUDENTSBYSTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
-  @PermissionFeature(PyramusPermissionFeatures.ALLOW_COURSE_TEACHER)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER, TRUSTED_SYSTEM })
   @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
   public static final String GET_STUDENT_COURSEACTIVITY = "GET_STUDENT_COURSEACTIVITY";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
-  @PermissionFeature(PyramusPermissionFeatures.ALLOW_COURSE_TEACHER)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER, TRUSTED_SYSTEM })
   @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
   public static final String GET_STUDENT_SUBJECTCHOICES = "GET_STUDENT_SUBJECTCHOICES";
   
