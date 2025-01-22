@@ -1,21 +1,30 @@
 
 .studentSubjectCreditsSubject {
-  align-items:center;
   background-color: #fff;
   border: 1px solid #E5ECFC;
   border-radius: 5px;
-  display: flex;
-  flex-flow: row wrap;
   margin: 0 0 10px;
   padding: 4px 10px;
 }
 
-.studentSubjectCreditsSubjectName {
+.studentSubjectCreditsSubjectCaption {
+  align-items: center;
   border-bottom: 1px solid #E5ECFC;
-  flex-basis: 100%;
-  flex-grow: 1;
-  flex-shrink: 0;
+  display: flex;
+  flex-flow: row nowrap;
   font-weight: bold;
+}
+
+.studentSubjectCreditsSubjectGrades {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.studentSubjectCreditsSubjectName {
+  flex-basis: 100%;
+  flex-grow: 0;
+  flex-shrink: 1;
   margin-bottom: 2px;
   padding: 6px 0;
 }
@@ -23,9 +32,10 @@
 .studentSubjectCreditsCreditsContainer {
   display: flex;
   flex-flow: row nowrap;
-  flex-basis: auto;
-  flex-grow: 1;
-  flex-shrink: 0;
+  flex-basis: 100%;
+  flex-grow: 0;
+  flex-shrink: 1;
+  overflow-x: auto;
   padding: 4px 0;
 }
 
@@ -48,13 +58,28 @@
 }
 
 .studentSubjectCreditsPassedCoursesCount {
-	align-items: center;
-	display: flex;
+  align-items: center;
+  display: flex;
   flex-basis: 100px;
+  flex-flow: column nowrap;
   flex-grow: 0;
   flex-shrink: 0;
   padding: 4px 8px;
   text-align: center;
+}
+
+.studentSubjectCreditsPassedCoursesCount > span {
+  flex-basis: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.studentSubjectCreditsPassedCoursesCount > span.completedSubject::after {
+  background: #afffb8;
+  border-radius: 100%;
+	content: url('../gfx/input-checked.png');
+  margin: 0 0 0 5px;
+  position: absolute;
 }
 
 .studentSubjectCreditsPassedCoursesCount__checked-wrapper {

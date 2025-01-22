@@ -519,6 +519,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
               obj.put("courseLength", courseLength.getUnits().toString());
               if (courseLength.getUnit() != null) {
                 obj.put("courseLengthUnitName", courseLength.getUnit().getName());
+                obj.put("courseLengthUnitSymbol", courseLength.getUnit().getSymbol());
               }
             }
             
@@ -607,6 +608,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         obj.put("creditDate", courseAssessment.getDate().getTime());
         obj.put("courseLength", courseAssessment.getCourseLength().getUnits().toString());
         obj.put("courseLengthUnitName", courseAssessment.getCourseLength().getUnit().getName());
+        obj.put("courseLengthUnitSymbol", courseAssessment.getCourseLength().getUnit().getSymbol());
         
         obj.put("gradeName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
@@ -670,6 +672,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         obj.put("creditDate", transferCredit.getDate().getTime());
         obj.put("courseLength", transferCredit.getCourseLength().getUnits().toString());
         obj.put("courseLengthUnitName", transferCredit.getCourseLength().getUnit().getName());
+        obj.put("courseLengthUnitSymbol", transferCredit.getCourseLength().getUnit().getSymbol());
         
         obj.put("gradeName", transferCredit.getGrade() != null ? transferCredit.getGrade().getName() : null);
         obj.put("gradingScaleName", transferCredit.getGrade() != null ? transferCredit.getGrade().getGradingScale().getName() : null);
