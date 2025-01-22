@@ -77,7 +77,7 @@
 .studentSubjectCreditsPassedCoursesCount > span.completedSubject::after {
   background: #afffb8;
   border-radius: 100%;
-	content: url('../gfx/input-checked.png');
+  content: url('../gfx/input-checked.png');
   margin: 0 0 0 5px;
   position: absolute;
 }

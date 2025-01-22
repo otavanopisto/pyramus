@@ -758,8 +758,7 @@
               
               pccElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
               for (const [key, value] of courseLengthMap) {
-                var clRow = pccElement.appendChild(new Element("span"));
-                clRow.update(value + key);
+                pccElement.appendChild(new Element("span").update(value + key));
               }
               
               var subMeanContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsMeanGradeContainer"}));
