@@ -3,5 +3,8 @@
 
   <sql>insert into RolePermission (id,permission_id, role) select (select max(rp.id) + 1 from RolePermission rp), id, 'TEACHER' from permission where name='GET_STUDENT_SUBJECTCHOICES';</sql>
   <sql>insert into RolePermission (id,permission_id, role) select (select max(rp.id) + 1 from RolePermission rp), id, 'TEACHER' from permission where name='GET_STUDENT_COURSEACTIVITY';</sql>
+  <sql>insert into EnvironmentRolePermission (select rp.id from RolePermission rp, Permission p where rp.permission_id=p.id and p.name='GET_STUDENT_SUBJECTCHOICES' and rp.role='TEACHER');</sql>
+  <sql>insert into EnvironmentRolePermission (select rp.id from RolePermission rp, Permission p where rp.permission_id=p.id and p.name='GET_STUDENT_COURSEACTIVITY' and rp.role='TEACHER');</sql>
+  <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from RolePermission) where sequence_name = 'RolePermission';</sql>
 
 </update>
