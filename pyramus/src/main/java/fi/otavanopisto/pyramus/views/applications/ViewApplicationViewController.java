@@ -497,7 +497,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         conflicts.add("Hakija opiskelee sopimusoppilaitoksessa");
       }
       // #1487: Jos hetun loppuosa puuttuu tai on XXX, käsitellään manuaalisesti
-      String ssnSuffix = getFormValue(formData, "field-ssn-end");
+      String ssnSuffix = ApplicationUtils.getSsnSuffix(formData); 
       if (StringUtils.isEmpty(ssnSuffix)) {
         conflicts.add("Hakijan henkilötunnuksen loppuosa puuttuu");
       }

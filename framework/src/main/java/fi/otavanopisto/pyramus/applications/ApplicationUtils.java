@@ -165,7 +165,7 @@ public class ApplicationUtils {
     }
   }
   
-  private static String getSsnSuffix(JSONObject formData) {
+  public static String getSsnSuffix(JSONObject formData) {
     String ssn = getFormValue(formData, "field-ssn");
     if (!StringUtils.isEmpty(ssn)) {
       return StringUtils.upperCase(StringUtils.substring(ssn, 7, 11));
