@@ -227,7 +227,7 @@
         var element = event.element;
         if ($(element).is(':visible')) {
           var emailRegExp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-          if (!value || value.trim().length == 0 || !value.match(emailRegExp)) {
+          if (!value || value.trim().length == 0 || !value.match(emailRegExp) || value.indexOf('.@') >= -1) {
             return false;
           }
         }
