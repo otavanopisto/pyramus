@@ -676,10 +676,28 @@
             for (var i = 0, l = studentSubjectCreditsData.subjects.length; i < l; i++) {
               var subject = studentSubjectCreditsData.subjects[i];
               var subjectElement = container.appendChild(new Element("div", {className: "studentSubjectCreditsSubject"}));
-              var subjectNameElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsSubjectName"}));
+              
+              var subjectCaptionRowElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsSubjectCaption"}));
+              var subjectNameElement = subjectCaptionRowElement.appendChild(new Element("div", {className: "studentSubjectCreditsSubjectName"}));
               subjectNameElement.update(subject.name);
+
+              // Column captions on the first subject
+              if (i == 0) {
+                var columnCaptionElement = subjectCaptionRowElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
+                columnCaptionElement.appendChild(new Element("span").update(getLocale().getText("students.viewStudent.subjectGrades.columns.completed")));
+                
+                columnCaptionElement = subjectCaptionRowElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
+                columnCaptionElement.appendChild(new Element("span").update(getLocale().getText("students.viewStudent.subjectGrades.columns.courseLength")));
+
+                columnCaptionElement = subjectCaptionRowElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
+                columnCaptionElement.appendChild(new Element("span").update(getLocale().getText("students.viewStudent.subjectGrades.columns.average")));
+              }
+              
+              subjectElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsSubjectGrades"}));
+              
               var subjectCreditsContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsCreditsContainer"}));
-  
+              var courseLengthMap = new Map();
+              
               if (subject.courses) {
                 for (var j = 0, m = subject.courses.length; j < m; j++) {
                   var course = subject.courses[j];
@@ -712,20 +730,37 @@
                     
                     var courseGrade = credit.gradeName;
                     gradeElement.update(courseGrade);
+                    
+                    // Only sum course lengths of passing grades
+                    if (credit.passingGrade) {
+                      var courseLength = parseFloat(course.courseLength);
+                      if (!isNaN(courseLength)) {
+                        var courseLengthUnit = course.lengthUnit;
+                        if (courseLengthUnit) {
+                          var currVal = courseLengthMap.get(courseLengthUnit);
+                          var newVal = currVal ? currVal + courseLength : courseLength;
+                          courseLengthMap.set(courseLengthUnit, newVal);
+                        }
+                      }
+                    }
                   }
                 }
               }
 
               var pccElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
-              var courseCountTextSpan = pccElement.appendChild(new Element("span"));
-              courseCountTextSpan.update(subject.mandatoryCourseCount ? subject.mandatoryCourseCompletedCount + "/" + subject.mandatoryCourseCount : subject.passedCoursesCount);
+              var pccSpan = pccElement.appendChild(new Element("span"));
+              pccSpan.update(subject.mandatoryCourseCount ? subject.mandatoryCourseCompletedCount + "/" + subject.mandatoryCourseCount : subject.passedCoursesCount);
 
               // If subject is completed, add some visual indication
               if (subject.completed) {
-            	  var courseCountTextSpan = pccElement.appendChild(new Element("span", {className: "studentSubjectCreditsPassedCoursesCount__checked-wrapper"}));
-            	  courseCountTextSpan.appendChild(new Element("img", {src: GLOBAL_contextPath + '/gfx/input-checked.png'}));
+                pccSpan.addClassName("completedSubject");
               }
-
+              
+              pccElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
+              for (const [key, value] of courseLengthMap) {
+                pccElement.appendChild(new Element("span").update(value + key));
+              }
+              
               var subMeanContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsMeanGradeContainer"}));
               var subMeanComputedGrade = subMeanContainer.appendChild(new Element("div", {className: "studentSubjectCreditsComputedMeanGrade"}));
               var subMeanGrade = subMeanContainer.appendChild(new Element("div", {
@@ -924,14 +959,19 @@
             header : '<fmt:message key="students.viewStudent.transferCreditsTableCourseLengthHeader"/>',
             right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8, 
             width: 100,
+            paramName: 'courseLength',
             dataType: 'text',
             editable: false
           }, {
             header : '<fmt:message key="students.viewStudent.transferCreditsTableCourseLengthUnitHeader"/>',
             right: 8 + 180 + 8 + 120 + 8 + 100 + 8, 
             width: 100,
+            paramName: 'courseLengthUnitName',
             dataType: 'text',
             editable: false
+          }, {
+            dataType: 'hidden',
+            paramName: 'courseLengthUnitSymbol'
           }, {
             header : '<fmt:message key="students.viewStudent.transferCreditsTableGradeHeader"/>',
             right: 8 + 180 + 8 + 120 + 8, 
@@ -1082,14 +1122,19 @@
             header : '<fmt:message key="students.viewStudent.courseAssessmentsTableCourseLengthHeader"/>',
             right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8, 
             width: 100,
+            paramName: 'courseLength',
             dataType: 'text',
             editable: false
           }, {
             header : '<fmt:message key="students.viewStudent.courseAssessmentsTableCourseLengthUnitHeader"/>',
             right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8, 
             width: 100,
+            paramName: 'courseLengthUnitName',
             dataType: 'text',
             editable: false
+          }, {
+            dataType: 'hidden',
+            paramName: 'courseLengthUnitSymbol'
           }, {
             header : '<fmt:message key="students.viewStudent.courseAssessmentsTableGradeHeader"/>',
             right: 8 + 22 + 8 + 150 + 8 + 120 + 8, 
@@ -1435,27 +1480,17 @@
               '${studentTransferCredit.date.time}',
               '${studentTransferCredit.courseLength.units}',
               '${fn:escapeXml(studentTransferCredit.courseLength.unit.name)}',
+              '${fn:escapeXml(studentTransferCredit.courseLength.unit.symbol)}',
               '${fn:escapeXml(studentTransferCredit.grade.name)}',
               '${fn:escapeXml(studentTransferCredit.grade.gradingScale.name)}',
               '${fn:escapeXml(studentTransferCredit.assessor.fullName)}']);
           </c:forEach>
           transferCreditsTable.addRows(rows);
-          if (transferCreditsTable.getRowCount() > 0) {
-            $('viewStudentTransferCreditsTotalValue.${student.id}').innerHTML = transferCreditsTable.getRowCount(); 
-          }
-          else {
-            $('viewStudentTransferCreditsTotalContainer.${student.id}').setStyle({
-              display: 'none'
-            });
-          }
           
+          refreshSumRowCounts(transferCreditsTable, $('viewStudentTransferCreditsTotalValue.${student.id}'), $('viewStudentTransferCreditsTotalContainer.${student.id}'));
+
           transferCreditsTable.addListener("afterFiltering", function (event) {
-            var visibleRows = event.tableComponent.getVisibleRowCount();
-            var totalRows = event.tableComponent.getRowCount();
-            if (visibleRows == totalRows)
-              $('viewStudentTransferCreditsTotalValue.${student.id}').innerHTML = totalRows;
-            else
-              $('viewStudentTransferCreditsTotalValue.${student.id}').innerHTML = visibleRows + " (" + totalRows + ")";
+            refreshSumRowCounts(event.tableComponent, $('viewStudentTransferCreditsTotalValue.${student.id}'), $('viewStudentTransferCreditsTotalContainer.${student.id}'));
           });
           
           courseAssessmentsTable = setupCourseAssessmentsTable(
@@ -1517,6 +1552,7 @@
                 topAssessment.timestamp,
                 studentAssessment.courseLength,
                 studentAssessment.courseLengthUnitName,
+                studentAssessment.courseLengthUnitSymbol,
                 grade,
                 topAssessment.gradingScaleName,
                 topAssessment.assessorName,
@@ -1526,22 +1562,11 @@
           }
           
           courseAssessmentsTable.addRows(rows);
-          if (courseAssessmentsTable.getRowCount() > 0) {
-            $('viewStudentCourseAssessmentsTotalValue.${student.id}').innerHTML = courseAssessmentsTable.getRowCount(); 
-          }
-          else {
-            $('viewStudentCourseAssessmentsTotalContainer.${student.id}').setStyle({
-              display: 'none'
-            });
-          }
+
+          refreshSumRowCounts(courseAssessmentsTable, $('viewStudentCourseAssessmentsTotalValue.${student.id}'), $('viewStudentCourseAssessmentsTotalContainer.${student.id}'));
 
           courseAssessmentsTable.addListener("afterFiltering", function (event) {
-            var visibleRows = event.tableComponent.getVisibleRowCount();
-            var totalRows = event.tableComponent.getRowCount();
-            if (visibleRows == totalRows)
-              $('viewStudentCourseAssessmentsTotalValue.${student.id}').innerHTML = totalRows;
-            else
-              $('viewStudentCourseAssessmentsTotalValue.${student.id}').innerHTML = visibleRows + " (" + totalRows + ")";
+            refreshSumRowCounts(event.tableComponent, $('viewStudentCourseAssessmentsTotalValue.${student.id}'), $('viewStudentCourseAssessmentsTotalContainer.${student.id}'));
           });
 
           // Linked course assessments
@@ -1575,6 +1600,7 @@
                   cAs.creditDate,
                   cAs.courseLength,
                   cAs.courseLengthUnitName,
+                  cAs.courseLengthUnitSymbol,
                   cAs.gradeName,
                   cAs.gradingScaleName,
                   cAs.assessingUserName,
@@ -1584,22 +1610,10 @@
             linkedCourseAssessmentsTable.addRows(rows);
           }
 
-          if (linkedCourseAssessmentsTable.getRowCount() > 0) {
-            $('viewStudentLinkedCourseAssessmentsTotalValue.${student.id}').innerHTML = linkedCourseAssessmentsTable.getRowCount(); 
-          }
-          else {
-            $('viewStudentLinkedCourseAssessmentsTotalContainer.${student.id}').setStyle({
-              display: 'none'
-            });
-          }
+          refreshSumRowCounts(linkedCourseAssessmentsTable, $('viewStudentLinkedCourseAssessmentsTotalValue.${student.id}'), $('viewStudentLinkedCourseAssessmentsTotalContainer.${student.id}'));
 
           linkedCourseAssessmentsTable.addListener("afterFiltering", function (event) {
-            var visibleRows = event.tableComponent.getVisibleRowCount();
-            var totalRows = event.tableComponent.getRowCount();
-            if (visibleRows == totalRows)
-              $('viewStudentLinkedCourseAssessmentsTotalValue.${student.id}').innerHTML = totalRows;
-            else
-              $('viewStudentLinkedCourseAssessmentsTotalValue.${student.id}').innerHTML = visibleRows + " (" + totalRows + ")";
+            refreshSumRowCounts(event.tableComponent, $('viewStudentLinkedCourseAssessmentsTotalValue.${student.id}'), $('viewStudentLinkedCourseAssessmentsTotalContainer.${student.id}'));
           });
           
           // Linked transfer credits
@@ -1623,6 +1637,7 @@
                   tc.creditDate,
                   tc.courseLength,
                   tc.courseLengthUnitName,
+                  tc.courseLengthUnitSymbol,
                   tc.gradeName,
                   tc.gradingScaleName,
                   tc.assessingUserName
@@ -1631,22 +1646,10 @@
             linkedTransferCreditsTable.addRows(rows);
           }
           
-          if (linkedTransferCreditsTable.getRowCount() > 0) {
-            $('viewStudentLinkedTransferCreditsTotalValue.${student.id}').innerHTML = linkedTransferCreditsTable.getRowCount(); 
-          }
-          else {
-            $('viewStudentLinkedTransferCreditsTotalContainer.${student.id}').setStyle({
-              display: 'none'
-            });
-          }
+          refreshSumRowCounts(linkedTransferCreditsTable, $('viewStudentLinkedTransferCreditsTotalValue.${student.id}'), $('viewStudentLinkedTransferCreditsTotalContainer.${student.id}'));
           
           linkedTransferCreditsTable.addListener("afterFiltering", function (event) {
-            var visibleRows = event.tableComponent.getVisibleRowCount();
-            var totalRows = event.tableComponent.getRowCount();
-            if (visibleRows == totalRows)
-              $('viewStudentLinkedTransferCreditsTotalValue.${student.id}').innerHTML = totalRows;
-            else
-              $('viewStudentLinkedTransferCreditsTotalValue.${student.id}').innerHTML = visibleRows + " (" + totalRows + ")";
+            refreshSumRowCounts(event.tableComponent, $('viewStudentLinkedTransferCreditsTotalValue.${student.id}'), $('viewStudentLinkedTransferCreditsTotalContainer.${student.id}'));
           });
 
           // Projects 
@@ -1878,6 +1881,62 @@
         </c:if>
       }
 
+      function refreshSumRowCounts(table, sumRowElement, sumRowContainer) {
+        if (!table) {
+          return;
+        }
+
+        if (table.getRowCount() == 0) {
+          // No rows, hide the sum row too
+          sumRowContainer.setStyle({
+            display: 'none'
+          });
+          
+          return;
+        }
+        
+        var courseLengthColumn = table.getNamedColumnIndex('courseLength');
+        var courseLengthUnitColumn = table.getNamedColumnIndex('courseLengthUnitSymbol');
+
+        var unitSums = new Map();
+        for (var rowInd = 0; rowInd < table.getRowCount(); rowInd++) {
+          // Only sum up the visible rows
+          if (table.isRowVisible(rowInd)) {
+            var courseLength = parseFloat(table.getCellValue(rowInd, courseLengthColumn));
+            if (!isNaN(courseLength)) {
+              var courseLengthUnit = table.getCellValue(rowInd, courseLengthUnitColumn);
+              var currVal = unitSums.get(courseLengthUnit);
+              var newVal = currVal ? currVal + courseLength : courseLength;
+              unitSums.set(courseLengthUnit, newVal);
+            }
+          }
+        }
+
+        var courseLengthDescriptor = "";
+        
+        for (const [key, value] of unitSums) {
+          if (courseLengthDescriptor != "") {
+            courseLengthDescriptor += ", ";
+          }
+          courseLengthDescriptor += value;
+          courseLengthDescriptor += key;
+        }
+        
+        courseLengthDescriptor = courseLengthDescriptor != "" ? ", " + courseLengthDescriptor + " " : "";
+        
+        var visibleRows = table.getVisibleRowCount();
+        var totalRows = table.getRowCount();
+
+        var sumRowText = visibleRows + " " + getLocale().getText("terms.piecesAbbr") + courseLengthDescriptor;
+        
+        if (visibleRows != totalRows) {
+          var hiddenRows = totalRows - visibleRows;
+          sumRowText += " (" + hiddenRows + " " + getLocale().getText("students.viewStudent.tables.hiddenRows") + ")";
+        }
+        
+        sumRowElement.innerHTML = sumRowText;
+      }
+      
       function onStudentProjectHeaderClick(event) {
         Event.stop(event);
         var element = Event.element(event);
