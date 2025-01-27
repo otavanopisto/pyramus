@@ -219,7 +219,14 @@ public class MuikkuRESTService {
 
       String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
       StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-      if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+      if (!items.containsKey(key)) {
+        items.put(key, item);
+      }
+      else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
+        // #1646: Don't override passing grades with non-passing grades
+        if (items.get(key).isPassing() && !item.isPassing()) {
+          continue;
+        }
         items.put(key, item);
       }
     }
@@ -233,7 +240,14 @@ public class MuikkuRESTService {
         CourseAssessment courseAssessment = (CourseAssessment) credit;
         String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
         StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+        if (!items.containsKey(key)) {
+          items.put(key, item);
+        }
+        else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
+          // #1646: Don't override passing grades with non-passing grades
+          if (items.get(key).isPassing() && !item.isPassing()) {
+            continue;
+          }
           items.put(key, item);
         }
       }
@@ -241,7 +255,14 @@ public class MuikkuRESTService {
         TransferCredit transferCredit = (TransferCredit) credit;
         String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
         StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
-        if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
+        if (!items.containsKey(key)) {
+          items.put(key, item);
+        }
+        else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
+          // #1646: Don't override passing grades with non-passing grades
+          if (items.get(key).isPassing() && !item.isPassing()) {
+            continue;
+          }
           items.put(key, item);
         }
       }
