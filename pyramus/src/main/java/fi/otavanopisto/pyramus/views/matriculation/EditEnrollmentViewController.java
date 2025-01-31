@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
@@ -28,6 +29,8 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnroll
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -229,6 +232,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamEnrollmentChangeLogDAO enrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
 
     MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
     if (enrollment == null) {
@@ -263,6 +267,13 @@ public class EditEnrollmentViewController extends PyramusViewController {
     String fullName = enrollment.getStudent().getFullName();
     String email = enrollment.getStudent().getPrimaryEmail() != null ? enrollment.getStudent().getPrimaryEmail().getAddress() : null;
     String phoneNumber = enrollment.getStudent().getPrimaryPhoneNumber() != null ? enrollment.getStudent().getPrimaryPhoneNumber().getNumber() : null;
+
+    List<StudentGroup> studentGroups = studentGroupDAO.listByStudent(enrollment.getStudent());
+    List<StudentGroupUser> studyAdvisors = studentGroups.stream()
+      .filter(studentGroup -> Boolean.TRUE.equals(studentGroup.getGuidanceGroup()))
+      .flatMap(studentGroup -> studentGroup.getUsers().stream())
+      .filter(studentGroupUser -> studentGroupUser.isStudyAdvisor())
+      .collect(Collectors.toList());
     
     pageRequestContext.getRequest().setAttribute("enrollment", enrollment);
     pageRequestContext.getRequest().setAttribute("changeLog", changeLog);
@@ -271,6 +282,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("phone", phoneNumber);
     pageRequestContext.getRequest().setAttribute("nationalStudentNumber", enrollment.getNationalStudentNumber());
     pageRequestContext.getRequest().setAttribute("guidanceCounselor", enrollment.getGuider());
+    pageRequestContext.getRequest().setAttribute("studyAdvisors", studyAdvisors);
     pageRequestContext.getRequest().setAttribute("enrollAs", enrollment.getEnrollAs().name());
     pageRequestContext.getRequest().setAttribute("numMandatoryCourses", enrollment.getNumMandatoryCourses());
     pageRequestContext.getRequest().setAttribute("restartExam", enrollment.isRestartExam());
