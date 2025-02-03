@@ -448,6 +448,17 @@
   
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.studyAdvisors"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.studyAdvisors.help"/>
+                </jsp:include>
+
+                <c:forEach var="studyAdvisor" items="${studyAdvisors}">
+                  <div>${fn:escapeXml(studyAdvisor.staffMember.fullName)}</div>
+                </c:forEach>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollAs"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollAs.help"/>
                 </jsp:include>            
