@@ -569,9 +569,15 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         
         StudentCardActivity activity = studentCard.getActivity();
         Date cancellationDate = studentCard.getCancellationDate();
-        if (!active && activity == StudentCardActivity.ACTIVE) {
-          activity = StudentCardActivity.CANCELLED;
-          cancellationDate = new Date();
+        if (!active) {
+          if (activity == StudentCardActivity.ACTIVE) {
+            activity = StudentCardActivity.CANCELLED;
+            cancellationDate = new Date();
+          }
+        }
+        else {
+          activity = StudentCardActivity.ACTIVE;
+          cancellationDate = null;
         }
         studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
       }
