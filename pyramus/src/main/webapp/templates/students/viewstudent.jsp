@@ -1967,15 +1967,19 @@
           id : 'editStudentKoskiDialog',
           contentURL : GLOBAL_contextPath + '/students/editstudentkoskidialog.page?personId=' + personId,
           centered : true,
-          showCancel : true,
+          showOk : true,
+          showCancel : false,
           title : '<fmt:message key="students.editStudentKoskiDialog.dialogTitle"/>',
-          cancelLabel : '<fmt:message key="students.editStudentKoskiDialog.closeLabel"/>' 
+          okLabel : '<fmt:message key="students.editStudentKoskiDialog.closeLabel"/>' 
         });
         
         dialog.setSize("640px", "450px");
         dialog.addDialogListener(function(event) {
           switch (event.name) {
-            case 'cancelClick':
+            case 'okClick':
+              if (event.results.saved) {
+                window.location.reload(true);
+              }
             break;
           }
         });

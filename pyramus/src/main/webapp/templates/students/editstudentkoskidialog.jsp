@@ -20,6 +20,14 @@
     <jsp:include page="/templates/generic/glasspane_support.jsp"></jsp:include>
     
     <script type="text/javascript">
+      function getResults() {
+        return {
+          saved: __wasSaved
+        };
+      }
+
+      var __wasSaved = false;
+      
       /**
        * Called when this dialog loads. Initializes the search navigation and student tables.
        *
@@ -224,6 +232,7 @@
             formElement._globalGlassPane.hide();
             delete formElement._globalGlassPane;
             formElement._globalGlassPane = undefined;
+            __wasSaved = true;
           },
           onFailure: function (errorMessage, errorCode, isHttpError, jsonResponse) {
             alert(errorMessage);
@@ -233,7 +242,6 @@
           }
         });
       }
-
     </script>
 
   </head>
