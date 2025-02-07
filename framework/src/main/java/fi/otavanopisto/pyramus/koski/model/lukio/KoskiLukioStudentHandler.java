@@ -107,7 +107,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    Set<LukionOppiaineenSuoritus> oppiaineet = assessmentsToModel(handler, ops, student, studentEducationType, studentSubjects, laskeKeskiarvot);
+    List<LukionOppiaineenSuoritus> oppiaineet = assessmentsToModel(handler, ops, student, studentEducationType, studentSubjects, laskeKeskiarvot);
 
     LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
         LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
@@ -131,9 +131,9 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
     return studentSubjects;
   }
 
-  private Set<LukionOppiaineenSuoritus> assessmentsToModel(KoskiStudyProgrammeHandler handler, OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
+  private List<LukionOppiaineenSuoritus> assessmentsToModel(KoskiStudyProgrammeHandler handler, OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
     Collection<CreditStub> credits = listCredits(student, true, true, ops, credit -> matchingCurriculumFilter(student, credit));
-    Set<LukionOppiaineenSuoritus> results = new HashSet<>();
+    List<LukionOppiaineenSuoritus> results = new ArrayList<>();
     
     Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map = new HashMap<>();
     Set<OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> accomplished = new HashSet<>();
@@ -153,7 +153,10 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       }
     }
     
-    for (OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> lukionOppiaineenSuoritusWSubject : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> lukionOppiaineenSuoritusWSubject = map.get(subjectCode);
+      
       LukionOppiaineenSuoritus lukionOppiaineenSuoritus = lukionOppiaineenSuoritusWSubject.getOppiaineenSuoritus();
       if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOsasuoritukset())) {
         // Skip empty subjects

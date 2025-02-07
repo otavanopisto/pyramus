@@ -77,9 +77,9 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
     return studentSubjects;
   }
 
-  protected Set<LukionOsasuoritus2019> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
+  protected List<LukionOsasuoritus2019> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
     Collection<CreditStub> credits = listCredits(student, true, true, ops, credit -> matchingCurriculumFilter(student, credit));
-    Set<LukionOsasuoritus2019> results = new HashSet<>();
+    List<LukionOsasuoritus2019> results = new ArrayList<>();
     
     Map<String, OppiaineenSuoritusWithSubject<LukionOsasuoritus2019>> map = new HashMap<>();
     Set<OppiaineenSuoritusWithSubject<LukionOsasuoritus2019>> accomplished = new HashSet<>();
@@ -99,7 +99,10 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       }
     }
     
-    for (OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> lukionOppiaineenSuoritusWSubject : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> lukionOppiaineenSuoritusWSubject = map.get(subjectCode);
+      
       LukionOsasuoritus2019 lukionOsaSuoritus = lukionOppiaineenSuoritusWSubject.getOppiaineenSuoritus();
       if (CollectionUtils.isEmpty(lukionOsaSuoritus.getOsasuoritukset())) {
         // Skip empty subjects

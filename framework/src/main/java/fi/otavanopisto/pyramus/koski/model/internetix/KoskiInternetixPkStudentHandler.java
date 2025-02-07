@@ -183,7 +183,10 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
     
     PerusopetuksenSuoritusTapa perusopetuksenSuoritusTapa = suoritusTapa(student);
 
-    for (OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritus : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritus = map.get(subjectCode);
+      
       if (CollectionUtils.isEmpty(oppiaineenSuoritus.getOppiaineenSuoritus().getOsasuoritukset())) {
         // Skip empty subjects
         continue;

@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.lukio.ops2019;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -26,7 +26,7 @@ public class LukionOppiaineenOppimaaranSuoritus2019 extends LukionSuoritus2019 {
     osasuoritukset.add(osasuoritus);
   }
   
-  public Set<LukionOppiaineenSuoritus2019> getOsasuoritukset() {
+  public List<LukionOppiaineenSuoritus2019> getOsasuoritukset() {
     return osasuoritukset;
   }
 
@@ -35,5 +35,5 @@ public class LukionOppiaineenOppimaaranSuoritus2019 extends LukionSuoritus2019 {
   }
 
   private final LukionOppiaineenOppimaaranKoulutusmoduuli2019 koulutusmoduuli = new LukionOppiaineenOppimaaranKoulutusmoduuli2019();
-  private final Set<LukionOppiaineenSuoritus2019> osasuoritukset = new HashSet<>();
+  private final List<LukionOppiaineenSuoritus2019> osasuoritukset = new ArrayList<>();
 }

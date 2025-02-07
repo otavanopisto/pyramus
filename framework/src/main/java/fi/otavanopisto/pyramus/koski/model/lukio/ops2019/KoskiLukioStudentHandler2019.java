@@ -99,7 +99,7 @@ public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandl
     
     // NON-COMMON
     
-    Set<LukionOsasuoritus2019> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, laskeKeskiarvot);
+    List<LukionOsasuoritus2019> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, laskeKeskiarvot);
 
     LukionOppimaaranSuoritus2019 suoritus = new LukionOppimaaranSuoritus2019(
         LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);

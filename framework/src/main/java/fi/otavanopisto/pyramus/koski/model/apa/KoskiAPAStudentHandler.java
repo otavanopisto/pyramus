@@ -138,7 +138,10 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
       }
     }
     
-    for (OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> oppiaineenSuoritusWSubject : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> oppiaineenSuoritusWSubject = map.get(subjectCode);
+      
       APAOppiaineenSuoritus oppiaineenSuoritus = oppiaineenSuoritusWSubject.getOppiaineenSuoritus();
       if (CollectionUtils.isEmpty(oppiaineenSuoritus.getOsasuoritukset())) {
         // Skip empty subjects

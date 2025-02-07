@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.koski;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -958,4 +959,10 @@ public abstract class KoskiStudentHandler {
     return null;
   }
   
+  protected List<String> getSortedKeys(Map<String, ?> map) {
+    List<String> keys = new ArrayList<>(map.keySet());
+    Collections.sort(keys, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
+    return keys;
+  }
+
 }

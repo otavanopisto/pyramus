@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.apa;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -29,7 +29,7 @@ public class APASuoritus extends AikuistenPerusopetuksenSuoritus {
     osasuoritukset.add(osasuoritus);
   }
   
-  public Set<APAOppiaineenSuoritus> getOsasuoritukset() {
+  public List<APAOppiaineenSuoritus> getOsasuoritukset() {
     return osasuoritukset;
   }
   
@@ -38,5 +38,5 @@ public class APASuoritus extends AikuistenPerusopetuksenSuoritus {
   }
   
   private final APAKoulutusmoduuli koulutusmoduuli = new APAKoulutusmoduuli(SuorituksenTyyppi.aikuistenperusopetuksenoppimaaranalkuvaihe);
-  private final Set<APAOppiaineenSuoritus> osasuoritukset = new HashSet<>();
+  private final List<APAOppiaineenSuoritus> osasuoritukset = new ArrayList<>();
 }

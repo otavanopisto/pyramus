@@ -186,7 +186,10 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
       }
     }
     
-    for (OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> lukionOppiaineenSuoritus : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> lukionOppiaineenSuoritus = map.get(subjectCode);
+      
       if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOppiaineenSuoritus().getOsasuoritukset())) {
         // Skip empty subjects
         continue;
