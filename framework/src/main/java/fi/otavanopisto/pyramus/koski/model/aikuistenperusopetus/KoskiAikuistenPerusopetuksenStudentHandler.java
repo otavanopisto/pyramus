@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -100,7 +99,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    Set<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineet = assessmentsToModel(ops, student, studentEducationType, 
+    List<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineet = assessmentsToModel(ops, student, studentEducationType, 
         studentSubjects, laskeKeskiarvot);
 
     AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
@@ -124,15 +123,15 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
     return studentSubjects;
   }
   
-  private Set<AikuistenPerusopetuksenOppiaineenSuoritus> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
+  private List<AikuistenPerusopetuksenOppiaineenSuoritus> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
     Collection<CreditStub> credits = listCredits(student, true, true, ops, credit -> matchingCurriculumFilter(student, credit));
-    Set<AikuistenPerusopetuksenOppiaineenSuoritus> results = new HashSet<>();
+    List<AikuistenPerusopetuksenOppiaineenSuoritus> results = new ArrayList<>();
     
     Map<String, OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus>> map = new HashMap<>();
     Set<OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus>> accomplished = new HashSet<>();
     
     for (CreditStub credit : credits) {
-      OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritusWSubject = getSubject(student, studentEducationType, studentSubjects, credit.getSubject(), map);
+      OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritusWSubject = getSubject(student, ops, studentEducationType, studentSubjects, credit.getSubject(), map);
       collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritusWSubject, studentSubjects, accomplished);
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritusWSubject != null) {
@@ -146,7 +145,10 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       }
     }
     
-    for (OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritusWSubject : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritusWSubject = map.get(subjectCode);
+      
       AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus = oppiaineenSuoritusWSubject.getOppiaineenSuoritus();
       if (CollectionUtils.isEmpty(oppiaineenSuoritus.getOsasuoritukset())) {
         // Skip empty subjects
@@ -173,7 +175,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
     return results;
   }
 
-  private OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> getSubject(Student student, EducationType studentEducationType, 
+  private OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> getSubject(Student student, OpiskelijanOPS ops, EducationType studentEducationType, 
       StudentSubjectSelections studentSubjects, Subject subject, Map<String, OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
 
@@ -181,13 +183,21 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
     if (StringUtils.equals(subjectCode, "ot")) {
       subjectCode = "OPA";
     }
-    
-    // SubjectCode for religious subjects is different
-    if (StringUtils.equals(subjectCode, "ue") || StringUtils.equals(subjectCode, "uo") || StringUtils.equals(subjectCode, "et"))
-      subjectCode = "KT";
 
-    if (map.containsKey(subjectCode))
+    // Uskonto
+    if (KoskiConsts.Perusopetus.USKONTO.contains(subjectCode)) {
+      // Vain ainevalinnoissa olevat uskonnon aineet ilmoitetaan
+      if (!studentSubjects.isReligion(subjectCode)) {
+        return null;
+      }
+      
+      // Uskonnon oppiaineille käytetään ainekoodia KT
+      subjectCode = "KT";
+    }
+
+    if (map.containsKey(subjectCode)) {
       return map.get(subjectCode);
+    }
     
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
@@ -211,14 +221,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
         Kielivalikoima kieli = Kielivalikoima.valueOf(langCode);
         
         if (kieli != null) {
-          KoskiOppiaineetYleissivistava valinta = 
-              studentSubjects.isALanguage(subjectCode) ? KoskiOppiaineetYleissivistava.A1 :
-                studentSubjects.isA1Language(subjectCode) ? KoskiOppiaineetYleissivistava.A1 :
-                  studentSubjects.isA2Language(subjectCode) ? KoskiOppiaineetYleissivistava.A2 :
-                    studentSubjects.isB1Language(subjectCode) ? KoskiOppiaineetYleissivistava.B1 :
-                      studentSubjects.isB2Language(subjectCode) ? KoskiOppiaineetYleissivistava.B2 :
-                        studentSubjects.isB3Language(subjectCode) ? KoskiOppiaineetYleissivistava.B3 : null;
-          
+          KoskiOppiaineetYleissivistava valinta = studentSubjects.koskiKoodi(ops, subjectCode);
           AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli(
               valinta, kieli, isPakollinenOppiaine(student, valinta));
           return mapSubject(subject, subjectCode, false, tunniste, map);
@@ -230,23 +233,6 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       }
     }
 
-    // et muissa aineissa, ei käänny KT:ksi
-    String[] religionSubjects = new String[] { "ue", "uo", "ui" };
-    
-    if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      // Only the religion that student has selected is reported
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
-        if (map.containsKey("KT"))
-          return map.get("KT");
-        
-        KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
-        AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
-            kansallinenAine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.KT));
-        return mapSubject(subject, "KT", false, tunniste, map);
-      } else
-        return null;
-    }
-    
     if (matchingEducationType && EnumUtils.isValidEnum(KoskiOppiaineetYleissivistava.class, StringUtils.upperCase(subjectCode))) {
       // Common national subject
       
@@ -284,7 +270,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       AikuistenPerusopetuksenPaattovaiheenKurssit2017 kurssi = AikuistenPerusopetuksenPaattovaiheenKurssit2017.valueOf(kurssiKoodi);
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePV2017(kurssi);
     } else {
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       

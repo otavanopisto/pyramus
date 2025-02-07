@@ -41,6 +41,11 @@ public class KoskiConsts {
   public static class SchoolVariables {
     public static final String KOSKI_SCHOOL_OID = "koski.schooloid";
   }
+
+  public static class Perusopetus {
+    // Perusopetuksen uskonnon aineet. Elämänkatsomustieto (et) ei kuulu näihin, sille on oma lokeronsa.
+    public static final Set<String> USKONTO = Set.of("ue", "uo", "ui");
+  }
   
   public static class SubjectSelections {
     public static final String MATH = "lukioMatematiikka";
