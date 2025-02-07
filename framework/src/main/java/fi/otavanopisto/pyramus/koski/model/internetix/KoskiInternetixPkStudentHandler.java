@@ -329,7 +329,7 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       AikuistenPerusopetuksenPaattovaiheenKurssit2017 kurssi = AikuistenPerusopetuksenPaattovaiheenKurssit2017.valueOf(kurssiKoodi);
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePV2017(kurssi);
     } else {
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       

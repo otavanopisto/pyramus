@@ -337,7 +337,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       boolean pakollinen = kurssinTyyppi == LukionKurssinTyyppi.pakollinen;
 
       suorituksenTyyppi = SuorituksenTyyppi.lukionpaikallinenopintojakso;
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
       tunniste = new LukionOpintojaksonTunnistePaikallinen2019(paikallinenKoodi, laajuus, pakollinen, kuvaus(courseCredit.getCourseName()));
     }
       
