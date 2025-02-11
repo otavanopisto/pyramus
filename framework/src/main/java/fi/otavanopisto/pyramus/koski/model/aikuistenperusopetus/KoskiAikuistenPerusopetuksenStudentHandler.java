@@ -184,15 +184,22 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       subjectCode = "OPA";
     }
 
-    // Uskonto
-    if (KoskiConsts.Perusopetus.USKONTO.contains(subjectCode)) {
+    /*
+     * Uskonnon ainevalinta. Uskonnosta voi olla valittuna aina vain 
+     * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
+     * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
+     */
+    if (KoskiConsts.Perusopetus.USKONTO_JA_ET.contains(subjectCode)) {
       // Vain ainevalinnoissa olevat uskonnon aineet ilmoitetaan
       if (!studentSubjects.isReligion(subjectCode)) {
         return null;
       }
       
-      // Uskonnon oppiaineille käytetään ainekoodia KT
-      subjectCode = "KT";
+      // Elämänkatsomustiedolla (et) on oma oppiaineensa, Muille
+      // uskonnon oppiaineille käytetään ainekoodia KT
+      if (KoskiConsts.Perusopetus.USKONTO.contains(subjectCode)) {
+        subjectCode = "KT";
+      }
     }
 
     if (map.containsKey(subjectCode)) {
