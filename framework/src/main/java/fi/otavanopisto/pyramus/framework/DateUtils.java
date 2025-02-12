@@ -9,6 +9,32 @@ import java.util.Date;
 
 public class DateUtils {
 
+  /**
+   * Returns true if the date part of the two given dates are different.
+   * 
+   * If both are null, there's no change -> returns false.
+   * If one of the dates is null returns true.
+   * Else compares the date portion of the Dates
+   * 
+   * @param d1 date 1
+   * @param d2 date 2
+   * @return true if the date part is different between the two dates
+   */
+  public static boolean dateChanged(Date d1, Date d2) {
+    // Both null -> not changed (false)
+    if (d1 == null && d2 == null) {
+      return false;
+    }
+
+    // Other one is null, but because both weren't null, something changed (true)
+    if (d1 == null || d2 == null) {
+      return true;
+    }
+    
+    // isSameDay wants non-null dates which they should be at this point
+    return !org.apache.commons.lang3.time.DateUtils.isSameDay(d1, d2);
+  }
+
   public static Date setTime(Date date, int hours, int minutes, int seconds) {
     if (date == null) {
       return null;
