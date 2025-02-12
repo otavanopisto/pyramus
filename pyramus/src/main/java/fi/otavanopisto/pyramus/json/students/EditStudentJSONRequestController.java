@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.StaleObjectStateException;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -74,6 +73,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.JSONRequestController2;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
@@ -294,9 +294,9 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       Boolean active = requestContext.getBoolean("active." + student.getId());
       StudentCardType studentCardType = (StudentCardType) requestContext.getEnum("studentCardType." + student.getId(), StudentCardType.class);
       StudentCard studentCard = studentCardDAO.findByStudent(student);
-      boolean cardExpiryChanged = studentCard != null && dateChanged(studentCard.getExpiryDate(), studentCardExpires);
-      boolean studyEndDateChanged = dateChanged(student.getStudyEndDate(), studyEndDate);
-      boolean studyTimeEndChanged = dateChanged(student.getStudyTimeEnd(), studyTimeEnd);
+      boolean cardExpiryChanged = studentCard != null && DateUtils.dateChanged(studentCard.getExpiryDate(), studentCardExpires);
+      boolean studyEndDateChanged = DateUtils.dateChanged(student.getStudyEndDate(), studyEndDate);
+      boolean studyTimeEndChanged = DateUtils.dateChanged(student.getStudyTimeEnd(), studyTimeEnd);
       
       // Tags
 
@@ -569,9 +569,15 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         
         StudentCardActivity activity = studentCard.getActivity();
         Date cancellationDate = studentCard.getCancellationDate();
-        if (!active && activity == StudentCardActivity.ACTIVE) {
-          activity = StudentCardActivity.CANCELLED;
-          cancellationDate = new Date();
+        if (!active) {
+          if (activity == StudentCardActivity.ACTIVE) {
+            activity = StudentCardActivity.CANCELLED;
+            cancellationDate = new Date();
+          }
+        }
+        else {
+          activity = StudentCardActivity.ACTIVE;
+          cancellationDate = null;
         }
         studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
       }
@@ -587,8 +593,4 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     requestContext.setRedirectURL(requestContext.getReferer(true));
   }
   
-  private boolean dateChanged(Date d1, Date d2) {
-    return d1 == null ? d2 == null ? false : true : !DateUtils.isSameDay(d1, d2);
-  }
-
 }

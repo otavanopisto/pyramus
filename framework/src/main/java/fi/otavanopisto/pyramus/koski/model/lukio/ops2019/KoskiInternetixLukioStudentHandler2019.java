@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.lukio.ops2019;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -74,7 +75,7 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
     
-    Set<LukionOsasuoritus2019> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, laskeKeskiarvot);
+    List<LukionOsasuoritus2019> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, laskeKeskiarvot);
 
     LukionOppiaineenOppimaaranSuoritus2019 suoritus = new LukionOppiaineenOppimaaranSuoritus2019(
         LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, getDiaarinumero(student));

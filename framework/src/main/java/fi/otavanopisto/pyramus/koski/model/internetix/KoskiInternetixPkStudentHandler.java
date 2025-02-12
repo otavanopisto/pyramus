@@ -183,7 +183,10 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
     
     PerusopetuksenSuoritusTapa perusopetuksenSuoritusTapa = suoritusTapa(student);
 
-    for (OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritus : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritus = map.get(subjectCode);
+      
       if (CollectionUtils.isEmpty(oppiaineenSuoritus.getOppiaineenSuoritus().getOsasuoritukset())) {
         // Skip empty subjects
         continue;
@@ -329,7 +332,7 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       AikuistenPerusopetuksenPaattovaiheenKurssit2017 kurssi = AikuistenPerusopetuksenPaattovaiheenKurssit2017.valueOf(kurssiKoodi);
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePV2017(kurssi);
     } else {
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       

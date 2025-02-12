@@ -138,7 +138,10 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
       }
     }
     
-    for (OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> oppiaineenSuoritusWSubject : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> oppiaineenSuoritusWSubject = map.get(subjectCode);
+      
       APAOppiaineenSuoritus oppiaineenSuoritus = oppiaineenSuoritusWSubject.getOppiaineenSuoritus();
       if (CollectionUtils.isEmpty(oppiaineenSuoritus.getOsasuoritukset())) {
         // Skip empty subjects
@@ -247,7 +250,7 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
       AikuistenPerusopetuksenAlkuvaiheenKurssit2017 kurssi = AikuistenPerusopetuksenAlkuvaiheenKurssit2017.valueOf(kurssiKoodi);
       tunniste = new APAKurssinTunnisteOPS2017(kurssi);
     } else {
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
       tunniste = new APAKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       

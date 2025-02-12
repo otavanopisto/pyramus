@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.students;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -13,6 +15,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
+import fi.otavanopisto.pyramus.koski.KoskiController;
 
 public class EditKoskiPersonVariablesJSONRequestController extends JSONRequestController {
 
@@ -25,21 +28,41 @@ public class EditKoskiPersonVariablesJSONRequestController extends JSONRequestCo
     Long personId = requestContext.getLong("personId");
     Person person = personDAO.findById(personId);
 
-    String personOid = requestContext.getString("personOid");
-    personVariableDAO.setPersonVariable(person, KoskiConsts.VariableNames.KOSKI_HENKILO_OID, StringUtils.trim(personOid));
+    boolean changed = false;
+    String personOid = StringUtils.trim(requestContext.getString("personOid"));
+    
+    String oldPersonOid = personVariableDAO.findByPersonAndKey(person, KoskiConsts.VariableNames.KOSKI_HENKILO_OID);
+    if (!StringUtils.equals(personOid, oldPersonOid)) {
+      personVariableDAO.setPersonVariable(person, KoskiConsts.VariableNames.KOSKI_HENKILO_OID, personOid);
+      changed = true;
+    }
     
     Integer personVariableCount = requestContext.getInteger("studentKoskiIDsTable.rowCount");
     if (personVariableCount != null) {
       for (int i = 0; i < personVariableCount; i++) {
         String colPrefix = "studentKoskiIDsTable." + i;
-        String linkedOid = requestContext.getString(colPrefix + ".linkedOid");
+        String linkedOid = StringUtils.trim(requestContext.getString(colPrefix + ".linkedOid"));
         Long studentId = requestContext.getLong(colPrefix + ".studentId");
         Student student = studentDAO.findById(studentId);
         
         if (person.getId().equals(student.getPerson().getId())) {
-          userVariableDAO.setUserVariable(student, KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID, StringUtils.trim(linkedOid));
+          String oldLinkedOid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID);
+          
+          if (!StringUtils.equals(linkedOid, oldLinkedOid)) {
+            userVariableDAO.setUserVariable(student, KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID, linkedOid);
+            changed = true;
+          }
         }
       }
+    }
+    
+    if (changed) {
+      // If any OIDs were changed, put the Person in the update queue
+      KoskiController koskiController = CDI.current().select(KoskiController.class).get();
+      koskiController.markForUpdate(person);
+
+      // Some of the OIDs are searchable so reindex the entity
+      personDAO.forceReindex(person);
     }
   }
 

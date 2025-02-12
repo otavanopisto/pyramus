@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,7 +34,7 @@ public class LukionOppimaaranSuoritus extends LukionSuoritus {
     osasuoritukset.add(osasuoritus);
   }
   
-  public Set<LukionOsasuoritus> getOsasuoritukset() {
+  public List<LukionOsasuoritus> getOsasuoritukset() {
     return osasuoritukset;
   }
   
@@ -49,5 +49,5 @@ public class LukionOppimaaranSuoritus extends LukionSuoritus {
   
   private final Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli(Koulutus.K309902);
   private final KoodistoViite<LukionOppimaara> oppimaara = new KoodistoViite<>();
-  private final Set<LukionOsasuoritus> osasuoritukset = new HashSet<>();
+  private final List<LukionOsasuoritus> osasuoritukset = new ArrayList<>();
 }
