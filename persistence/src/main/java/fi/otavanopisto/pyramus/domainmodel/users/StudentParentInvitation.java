@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Entity
-public class StudentParentRegistration {
+public class StudentParentInvitation {
 
   /**
    * Returns internal unique id

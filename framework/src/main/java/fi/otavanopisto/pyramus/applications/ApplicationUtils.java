@@ -62,7 +62,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -92,7 +92,7 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.users.StudentParentRegistration;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
@@ -971,7 +971,7 @@ public class ApplicationUtils {
     ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
-    StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
+    StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -1242,7 +1242,7 @@ public class ApplicationUtils {
           
           if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
             String hash = UUID.randomUUID().toString();
-            studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+            studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
           }
         }
         
@@ -1254,7 +1254,7 @@ public class ApplicationUtils {
           
           if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
             String hash = UUID.randomUUID().toString();
-            studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+            studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
           }
         }
         
@@ -1266,7 +1266,7 @@ public class ApplicationUtils {
           
           if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
             String hash = UUID.randomUUID().toString();
-            studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+            studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
           }
         }
       }
@@ -1422,13 +1422,13 @@ public class ApplicationUtils {
        * Send instructions to guardians how to create their credentials
        */
 
-      StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
-      List<StudentParentRegistration> guardians = studentParentRegistrationDAO.listBy(student);
+      StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
+      List<StudentParentInvitation> guardians = studentParentInvitationDAO.listBy(student);
 
       String guardianEmailContent = IOUtils.toString(request.getServletContext().getResourceAsStream(
           "/templates/applications/mails/mail-credentials-guardian-create.html"), "UTF-8");
       
-      for (StudentParentRegistration guardian : guardians) {
+      for (StudentParentInvitation guardian : guardians) {
         StringBuffer guardianCreateCredentialsLink = new StringBuffer(getRequestURIRoot(request));
         guardianCreateCredentialsLink.append("/parentregister.page?c=");
         guardianCreateCredentialsLink.append(guardian.getHash());

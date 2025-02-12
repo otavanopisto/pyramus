@@ -16,7 +16,7 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 
-public class CreateStudentParentRegistrationViewController extends PyramusViewController implements Breadcrumbable {
+public class EditStudentParentInvitationViewController extends PyramusViewController implements Breadcrumbable {
 
   /**
    * Processes the page request by including the corresponding JSP page to the response. 
@@ -39,7 +39,7 @@ public class CreateStudentParentRegistrationViewController extends PyramusViewCo
     
     pageRequestContext.getRequest().setAttribute("student", student);
     
-    pageRequestContext.setIncludeJSP("/templates/studentparents/createstudentparentregistration.jsp");
+    pageRequestContext.setIncludeJSP("/templates/studentparents/editstudentparentinvitation.jsp");
   }
 
   public UserRole[] getAllowedRoles() {
