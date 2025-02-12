@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -30,7 +30,7 @@ public class AikuistenPerusopetuksenOppimaaranSuoritus extends AikuistenPerusope
     osasuoritukset.add(osasuoritus);
   }
   
-  public Set<AikuistenPerusopetuksenOsasuoritus> getOsasuoritukset() {
+  public List<AikuistenPerusopetuksenOsasuoritus> getOsasuoritukset() {
     return osasuoritukset;
   }
   
@@ -39,5 +39,5 @@ public class AikuistenPerusopetuksenOppimaaranSuoritus extends AikuistenPerusope
   }
   
   private final Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli(Koulutus.K201101);
-  private final Set<AikuistenPerusopetuksenOsasuoritus> osasuoritukset = new HashSet<>();
+  private final List<AikuistenPerusopetuksenOsasuoritus> osasuoritukset = new ArrayList<>();
 }

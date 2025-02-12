@@ -205,7 +205,17 @@ public class KoskiController {
     markForUpdate(student.getPerson());
   }
   
-  private void markForUpdate(Person person) {
+  /**
+   * Marks given person to be added to the update queue.
+   * 
+   * @param person the person
+   */
+  public void markForUpdate(Person person) {
+    if (person == null) {
+      logger.severe("Null person passed to method.");
+      return;
+    }
+    
     try {
       if (settings.hasReportedStudents(person)) {
         List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(person);

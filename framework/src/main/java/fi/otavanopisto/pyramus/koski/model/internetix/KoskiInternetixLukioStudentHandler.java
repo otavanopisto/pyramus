@@ -186,7 +186,10 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
       }
     }
     
-    for (OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> lukionOppiaineenSuoritus : map.values()) {
+    List<String> sortedSubjects = getSortedKeys(map);
+    for (String subjectCode : sortedSubjects) {
+      OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> lukionOppiaineenSuoritus = map.get(subjectCode);
+      
       if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOppiaineenSuoritus().getOsasuoritukset())) {
         // Skip empty subjects
         continue;
@@ -376,7 +379,7 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
       LukionKurssinTyyppi kurssinTyyppi = findCourseType(student, courseCredit, true, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
       tunniste = new LukionKurssinTunnisteValtakunnallinenOPS2004(kurssi, kurssinTyyppi);
     } else {
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
       LukionKurssinTyyppi kurssinTyyppi = findCourseType(student, courseCredit, true, LukionKurssinTyyppi.syventava, LukionKurssinTyyppi.soveltava);
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }

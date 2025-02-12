@@ -14,6 +14,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.enterprise.inject.spi.CDI;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.StaleObjectStateException;
 
@@ -29,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
@@ -50,11 +54,13 @@ import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.GradeCourseResourceDAO;
 import fi.otavanopisto.pyramus.dao.courses.OtherCostDAO;
 import fi.otavanopisto.pyramus.dao.courses.StudentCourseResourceDAO;
+import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.resources.ResourceDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
@@ -98,6 +104,7 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.koski.KoskiController;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
@@ -287,6 +294,10 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();
+    CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+
+    KoskiController koskiController = CDI.current().select(KoskiController.class).get();
     
     Locale locale = requestContext.getRequest().getLocale();
     StaffMember loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
@@ -355,6 +366,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
 
     Set<Long> existingCourseModuleIds = new HashSet<>();
+    // List of Person.id of persons that should be updated after all the changes
+    Set<Long> koskiUpdatePersonIds = new HashSet<>();
 
     // Store the list of courseModules separate from course.getCourseModules() as the latter may change inside the loop
     List<CourseModule> courseModules = courseModuleDAO.listByCourse(course);
@@ -363,23 +376,48 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     for (PyramusIxTableRowFacade courseModulesTableRow : courseModulesTable.rows()) {
       Long courseModuleId = courseModulesTableRow.getLong("courseModuleId");
     
-      Subject subject = subjectDAO.findById(courseModulesTableRow.getLong("subject"));
+      Long newSubjectId = courseModulesTableRow.getLong("subject");
+      Subject subject = subjectDAO.findById(newSubjectId);
       Integer courseNumber = courseModulesTableRow.getInteger("courseNumber");
       Double courseLength = courseModulesTableRow.getDouble("courseLength");
-      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(courseModulesTableRow.getLong("courseLengthTimeUnit"));
+      Long newTimeUnitId = courseModulesTableRow.getLong("courseLengthTimeUnit");
+      EducationalTimeUnit courseLengthTimeUnit = educationalTimeUnitDAO.findById(newTimeUnitId);
 
       if (courseModuleId == -1) {
         courseModuleDAO.create(course, subject, courseNumber, courseLength, courseLengthTimeUnit);
       } else {
         CourseModule existing = courseModuleDAO.findById(courseModuleId);
-        courseModuleDAO.update(existing, subject, courseNumber, courseLength, courseLengthTimeUnit);
         existingCourseModuleIds.add(existing.getId());
+        
+        Long oldSubjectId = existing.getSubject() != null ? existing.getSubject().getId() : null;
+        Double oldCourseLength = existing.getCourseLength() != null ? existing.getCourseLength().getUnits() : null;
+        Long oldTimeUnitId = existing.getCourseLength() != null && existing.getCourseLength().getUnit() != null ? existing.getCourseLength().getUnit().getId() : null;
+
+        // If any properties have changed, update the module and list all 
+        // students with assessments from the module to be updated to Koski
+        if (!Objects.equals(oldSubjectId, newSubjectId) ||
+            !Objects.equals(existing.getCourseNumber(), courseNumber) ||
+            !Objects.equals(oldCourseLength, courseLength) ||
+            !Objects.equals(oldTimeUnitId, newTimeUnitId)) {
+          courseModuleDAO.update(existing, subject, courseNumber, courseLength, courseLengthTimeUnit);
+          
+          courseAssessmentDAO.listByCourseModule(existing, TSB.FALSE).stream()
+            .map(ca -> ca.getStudent().getPersonId())
+            .forEach(personId -> koskiUpdatePersonIds.add(personId));
+        }
       }
     }
     
     for (CourseModule courseModule : courseModules) {
       if (!existingCourseModuleIds.contains(courseModule.getId())) {
-        courseModuleDAO.delete(courseModule);
+        // If the CourseModule has any CourseAssessments (archived or not) it cannot be deleted
+        if (CollectionUtils.isEmpty(courseAssessmentDAO.listByCourseModule(courseModule, TSB.IGNORE))) {
+          courseModuleDAO.delete(courseModule);
+        }
+        else {
+          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
+              Messages.getInstance().getText(locale, "generic.errors.cannotDeleteCourseModuleWithAssessments"));
+        }
       }
     }
     
@@ -747,9 +785,22 @@ public class EditCourseJSONRequestController extends JSONRequestController {
           /* Existing student */
           Student student = studentDAO.findById(studentId);
           courseStudent = courseStudentDAO.findById(courseStudentId);
+
+          // Check that all the entities can be found and that they belong to same person
+          if (student == null || courseStudent == null || courseStudent.getStudent() == null || !courseStudent.getStudent().getPersonId().equals(student.getPersonId())) {
+            throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
+                Messages.getInstance().getText(locale, "generic.errors.courseStudentNotFound"));
+          }
+          
+          boolean koskiUpdate = !courseStudent.getStudent().getId().equals(studentId);
           
           try {
             courseStudentDAO.update(courseStudent, student, enrolmentType, participationType, enrolmentDate, lodging, optionality);
+
+            // If the student was changed for CourseStudent and it has assessments on any CourseModule, trigger an update for it
+            if (koskiUpdate && CollectionUtils.isNotEmpty(courseAssessmentDAO.listByCourseStudentAndArchived(courseStudent, Boolean.FALSE))) {
+              koskiUpdatePersonIds.add(courseStudent.getStudent().getPersonId());
+            }
           } catch (DuplicateCourseStudentException dcse) {
             throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
                 Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
@@ -760,6 +811,10 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
     processSignupStudyProgrammes(requestContext, course, loggedUser);
     processSignupStudentGroups(requestContext, course, loggedUser);
+
+    for (Long personId : koskiUpdatePersonIds) {
+      koskiController.markForUpdate(personDAO.findById(personId));
+    }
     
     requestContext.setRedirectURL(requestContext.getReferer(true));
   }

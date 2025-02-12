@@ -137,6 +137,17 @@ public class StudentSubjectSelections {
     this.religion = religion;
   }
 
+  /**
+   * Returns true if the given subject is selected 
+   * as the religion subject by the student.
+   * 
+   * @param subjectCode subject's code
+   * @return true if given subject is selected as religion subject
+   */
+  public boolean isReligion(String subjectCode) {
+    return StringUtils.equals(getReligion(), subjectCode);
+  }
+  
   public String getAccomplishments() {
     return accomplishments;
   }
