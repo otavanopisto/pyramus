@@ -7,7 +7,9 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
@@ -30,7 +32,10 @@ public class StudentParentRegistrationViewController extends PyramusViewControll
       requestContext.getRequest().setAttribute("credentialsCreated", Boolean.TRUE);
     }
     else {
+      StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
       String hash = StringUtils.trim(requestContext.getString("c"));
+      StudentParentInvitation invitation = studentParentInvitationDAO.findByHash(hash);
+      boolean invalidInvitation = invitation == null || invitation.isExpired();
       boolean invalidLogin = false;
       
       if (requestContext.isLoggedIn()) {
@@ -41,6 +46,7 @@ public class StudentParentRegistrationViewController extends PyramusViewControll
       
       requestContext.getRequest().setAttribute("hash", hash);
       requestContext.getRequest().setAttribute("invalidLogin", invalidLogin);
+      requestContext.getRequest().setAttribute("invalidInvitation", invalidInvitation);
     }
     
     requestContext.setIncludeJSP("/templates/users/studentparentregistration.jsp");
