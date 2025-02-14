@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -29,6 +33,23 @@ public class StudentParentInvitation {
     return id;
   }
 
+  /**
+   * Returns true if this invitation is considered expired.
+   * 
+   * Expiration is hard set at two weeks.
+   * 
+   * @return true if this invitation is considered expired.
+   */
+  @Transient
+  public boolean isExpired() {
+    if (created == null) {
+      return true;
+    }
+
+    LocalDateTime createdLD = Instant.ofEpochMilli(created.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    return LocalDateTime.now().minusWeeks(2).isAfter(createdLD);
+  }
+  
   public Student getStudent() {
     return student;
   }
@@ -101,13 +122,13 @@ public class StudentParentInvitation {
   @Email
   private String email;
   
-  @Column (nullable = false, updatable = false)
+  @Column (nullable = false, unique = true)
   @NotEmpty
   @NotNull
   private String hash;
 
   @NotNull
-  @Column (nullable = false, updatable = false)
+  @Column (nullable = false)
   @Temporal (value = TemporalType.TIMESTAMP)
   private Date created;
   

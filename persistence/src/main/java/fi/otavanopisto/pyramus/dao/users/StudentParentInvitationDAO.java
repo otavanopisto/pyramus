@@ -52,5 +52,11 @@ public class StudentParentInvitationDAO extends PyramusEntityDAO<StudentParentIn
     
     return entityManager.createQuery(criteria).getResultList();
   }
+
+  public StudentParentInvitation updateHashAndDate(StudentParentInvitation invitation, String hash, Date date) {
+    invitation.setHash(hash);
+    invitation.setCreated(date);
+    return persist(invitation);
+  }
   
 }
