@@ -57,6 +57,11 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
     String lastName = StringUtils.trim(requestContext.getString("lastName"));
     String email = StringUtils.trim(requestContext.getString("email"));
 
+    // If there is an invitation already, it should be refreshed instead of creating multiples to same email
+    if (studentParentInvitationDAO.doesInvitationExist(student, email)) {
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "There is already an invitation with this email. Try refreshing it instead.");
+    }
+    
     String hash = UUID.randomUUID().toString();
     StudentParentInvitation guardian = studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
 
