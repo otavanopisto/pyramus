@@ -21,11 +21,13 @@
 <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/hoverpanel_support.jsp"></jsp:include>
+<jsp:include page="/templates/generic/ajax_support.jsp"></jsp:include>
 
 <link href="${pageContext.request.contextPath}/css/viewstudent-subjectcredits.css" rel="stylesheet">
 
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
+<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/viewstudent.js"></script>
 
 <!-- Used to render memo values with line breaks; for some reason this is the only approach that works -->
 <%
@@ -154,10 +156,12 @@
           }
         }
 
-        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/list-add.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsCreateStudentParentRegistrationLabel"/>',
-          link: GLOBAL_contextPath + '/studentparents/editstudentparentinvitation.page?studentId=' + studentId 
+          onclick: function (event) {
+            openEditStudentParentInvitationDialog(studentId, -1);
+          }
         }));
 
         var studentReports = JSDATA["studentReports"].evalJSON();
@@ -623,9 +627,9 @@
                 showOk : true,  
                 showCancel : true,
                 autoEvaluateSize: true,
-                title : '<fmt:message key="students.viewStudent.filesTableDeleteFileArchiveConfirmDialogTitle"/>',
-                okLabel : '<fmt:message key="students.viewStudent.filesTableDeleteFileArchiveConfirmDialogOkLabel"/>',
-                cancelLabel : '<fmt:message key="students.viewStudent.filesTableDeleteFileArchiveConfirmDialogCancelLabel"/>'
+                title : getLocale().getText("generic.dialog.titles.areYouSure"),
+                okLabel : getLocale().getText("generic.dialog.delete"),
+                cancelLabel : getLocale().getText("generic.dialog.cancel")
               });
             
               dialog.addDialogListener(function(event) {
@@ -1320,6 +1324,7 @@
         
         var studentParentsTable = new IxTable($('studentParentsTableContainer.' + studentId), {
           id : "studentParentsTable." + studentId,
+          rowHoverEffect: true,
           columns : [{
             left : 0,
             width: 160,
@@ -1336,17 +1341,54 @@
             dataType: 'hidden',
             paramName: 'studentParentId'
           }, {
-            left: 0 + 160 + 8 + 200 + 8,
+            right: 8 + 22 + 8,
             width: 22,
             dataType: 'button',
-            hidden: true,
             paramName: 'studentParentEditButton',
             imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-            tooltip: '<fmt:message key="students.viewStudent.studentParentsTableEditTooltip"/>',
+            tooltip: getLocale().getText("students.viewStudent.parentsTable.editTooltip"),
             onclick: function (event) {
               var table = event.tableComponent;
               var studentParentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentParentId'));
               redirectTo(GLOBAL_contextPath + '/studentparents/editstudentparent.page?userId=' + studentParentId);
+            }
+          }, {
+            right: 8,
+            width: 22,
+            dataType: 'button',
+            paramName: 'studentParentRemoveButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
+            tooltip: getLocale().getText("students.viewStudent.parentsTable.removeTooltip"),
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var studentParentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentParentId'));
+              var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentRemoveDialogConfirmText"
+
+              archivedRowIndex = event.row; 
+                 
+              var dialog = new IxDialog({
+                id : 'confirmRemoval',
+                contentURL : url,
+                centered : true,
+                showOk : true,  
+                showCancel : true,
+                autoEvaluateSize: true,
+                title : getLocale().getText("generic.dialog.titles.areYouSure"),
+                okLabel : getLocale().getText("generic.dialog.delete"),
+                cancelLabel : getLocale().getText("generic.dialog.cancel")
+              });
+            
+              dialog.addDialogListener(function(event) {
+                switch (event.name) {
+                  case 'okClick':
+                    axios.delete("/studentparents/studentparents/{0}/students/{1}".format(studentParentId, studentId)).then(function (response) {
+                      getIxTableById('studentParentsTable.' + studentId).deleteRow(archivedRowIndex);
+                    });
+                  break;
+                }
+              });
+            
+              dialog.open();
             }
           }]
         });
@@ -1357,16 +1399,165 @@
             name,
             studentParentData[i].email,
             studentParentData[i].userId,
+            '',
             ''
           ]);
-          
-          if (studentParentData[i].status === "USER") {
-            var columnIndex = studentParentsTable.getNamedColumnIndex('studentParentEditButton');
-            studentParentsTable.showCell(rowIndex, columnIndex);
-          }
         }
         
         return studentParentsTable;
+      }
+
+      function setupStudentParentInvitationsTable(studentId) {
+        var studentParentDataAll = JSDATA["studentParentInvitations"].evalJSON();
+        
+        if (!studentParentDataAll) {
+          return;
+        }
+
+        var studentParentData = studentParentDataAll[studentId];
+        if (!studentParentData) {
+          return;
+        }
+
+        if (studentParentData.length == 0) {
+          return;
+        }
+        
+        var studentParentInvitationsTable = new IxTable($('studentParentInvitationsTableContainer.' + studentId), {
+          id : "studentParentInvitationsTable." + studentId,
+          rowHoverEffect: true,
+          columns : [{
+            left : 0,
+            width: 160,
+            dataType : 'text',
+            editable: false,
+            paramName: 'name'
+          }, {
+            left : 0 + 160 + 8,
+            right: 8 + 22 + 8 + 22 + 8 + 22 + 8 + 100 + 8,
+            dataType: 'text',
+            editable: false,
+            paramName: 'email'
+          }, {
+            right: 8 + 22 + 8 + 22 + 8 + 22 + 8,
+            width: 100,
+            dataType: 'select',
+            editable: false,
+            paramName: 'status',
+            options: [
+              {text: getLocale().getText("students.viewStudent.parentInvitationsTable.status.invited"), value: 'INVITED'},
+              {text: getLocale().getText("students.viewStudent.parentInvitationsTable.status.expired"), value: 'EXPIRED'}
+            ]
+          }, {
+            dataType: 'hidden',
+            paramName: 'invitationId'
+          }, {
+            right: 8 + 22 + 8 + 22 + 8,
+            width: 22,
+            dataType: 'button',
+            paramName: 'studentParentInvitationRefreshInviteButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/refresh.png',
+            tooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.refreshTooltip"),
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var invitationId = table.getCellValue(event.row, table.getNamedColumnIndex('invitationId'));
+              
+              var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentInviteRefreshDialogConfirmText"
+
+              archivedRowIndex = event.row; 
+                 
+              var dialog = new IxDialog({
+                id : 'confirmRemoval',
+                contentURL : url,
+                centered : true,
+                showOk : true,  
+                showCancel : true,
+                autoEvaluateSize: true,
+                title : getLocale().getText("generic.dialog.titles.areYouSure"),
+                okLabel : getLocale().getText("generic.dialog.ok"),
+                cancelLabel : getLocale().getText("generic.dialog.cancel")
+              });
+            
+              dialog.addDialogListener(function(event) {
+                switch (event.name) {
+                  case 'okClick':
+                    axios.post("/studentparents/students/{0}/invitations/{1}/refresh".format(studentId, invitationId)).then(function (response) {
+                      window.location.reload(true);
+                    });
+                  break;
+                }
+              });
+            
+              dialog.open();
+            }
+          }, {
+            right: 8 + 22 + 8,
+            width: 22,
+            dataType: 'button',
+            paramName: 'studentParentInvitationEditButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            tooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.editTooltip"),
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var invitationId = table.getCellValue(event.row, table.getNamedColumnIndex('invitationId'));
+              openEditStudentParentInvitationDialog(studentId, invitationId);
+            }
+          }, {
+            right: 8,
+            width: 22,
+            dataType: 'button',
+            paramName: 'studentParentInvitationRemoveButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/edit-delete.png',
+            tooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.deleteTooltip"),
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var invitationId = table.getCellValue(event.row, table.getNamedColumnIndex('invitationId'));
+              var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentInviteDeleteDialogConfirmText"
+
+              archivedRowIndex = event.row; 
+                 
+              var dialog = new IxDialog({
+                id : 'confirmRemoval',
+                contentURL : url,
+                centered : true,
+                showOk : true,  
+                showCancel : true,
+                autoEvaluateSize: true,
+                title : getLocale().getText("generic.dialog.titles.areYouSure"),
+                okLabel : getLocale().getText("generic.dialog.delete"),
+                cancelLabel : getLocale().getText("generic.dialog.cancel")
+              });
+            
+              dialog.addDialogListener(function(event) {
+                switch (event.name) {
+                  case 'okClick':
+                    axios.delete("/studentparents/students/{0}/invitations/{1}".format(studentId, invitationId)).then(function (response) {
+                      getIxTableById('studentParentInvitationsTable.' + studentId).deleteRow(archivedRowIndex);
+                    });
+                  break;
+                }
+              });
+            
+              dialog.open();
+            }
+          }]
+        });
+
+        for (var i = 0, l = studentParentData.length; i < l; i++) {
+          var name = studentParentData[i].firstName + " " + studentParentData[i].lastName;
+          var status = studentParentData[i].expired ? "EXPIRED" : "INVITED";
+          var rowIndex = studentParentInvitationsTable.addRow([
+            name,
+            studentParentData[i].email,
+            status,
+            studentParentData[i].invitationId,
+            '',
+            '',
+            ''
+          ]);
+        }
+        
+        return studentParentInvitationsTable;
       }
 
       function onLoad(event) {
@@ -1820,6 +2011,7 @@
           }
           
           setupStudentParentsTable(${student.id});
+          setupStudentParentInvitationsTable(${student.id});
         </c:forEach>
         
         
@@ -2604,6 +2796,19 @@
                     </c:when>
                   </c:choose>
 
+                  <c:choose>
+                    <c:when test="${studentHasParentInvitations[student.id]}">
+                      <div class="genericFormSection">
+                        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale" value="students.viewStudent.studentParentInvitationsTitle" />
+                          <jsp:param name="helpLocale" value="students.viewStudent.studentParentInvitationsHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">
+                          <div id="studentParentInvitationsTableContainer.${student.id}"></div>
+                        </div>
+                      </div>
+                    </c:when>
+                  </c:choose>
                 </div>
                 <!--  Student Contact Info Ends -->
 
