@@ -23,7 +23,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 
-public class CreateStudentParentInvitationJSONRequestController extends JSONRequestController {
+public class EditStudentParentInvitationJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
@@ -49,7 +49,7 @@ public class CreateStudentParentInvitationJSONRequestController extends JSONRequ
       }
     }
 
-    if (!student.getPerson().isUnderAge()) {
+    if (student.getPerson().getBirthday() == null || !student.getPerson().isUnderAge()) {
       throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Student is not underage.");
     }
     
