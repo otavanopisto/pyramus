@@ -157,7 +157,7 @@
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/list-add.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsCreateStudentParentRegistrationLabel"/>',
-          link: GLOBAL_contextPath + '/studentparents/createstudentparentregistration.page?studentId=' + studentId 
+          link: GLOBAL_contextPath + '/studentparents/editstudentparentinvitation.page?studentId=' + studentId 
         }));
 
         var studentReports = JSDATA["studentReports"].evalJSON();

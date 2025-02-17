@@ -14,20 +14,20 @@ import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.users.StudentParentRegistration;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 
-public class CreateStudentParentRegistrationJSONRequestController extends JSONRequestController {
+public class CreateStudentParentInvitationJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
+    StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     Long loggedUserId = requestContext.getLoggedUserId();
@@ -58,7 +58,7 @@ public class CreateStudentParentRegistrationJSONRequestController extends JSONRe
     String email = StringUtils.trim(requestContext.getString("email"));
 
     String hash = UUID.randomUUID().toString();
-    StudentParentRegistration guardian = studentParentRegistrationDAO.create(firstName, lastName, email, student, hash);
+    StudentParentInvitation guardian = studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
 
     // Send mail
     

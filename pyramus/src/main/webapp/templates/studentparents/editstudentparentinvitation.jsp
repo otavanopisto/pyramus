@@ -32,7 +32,7 @@
     <div> 
       <div class="genericFormContainer"> 
 
-        <form action="createstudentparentregistration.json" method="post" ix:jsonform="true" ix:useglasspane="true">
+        <form action="createstudentparentinvitation.json" method="post" ix:jsonform="true" ix:useglasspane="true">
           <div class="tabLabelsContainer" id="tabs">
             <a class="tabLabel" href="#basic">
               <fmt:message key="studentparents.createStudentParentRegistration.pageTitle"/>

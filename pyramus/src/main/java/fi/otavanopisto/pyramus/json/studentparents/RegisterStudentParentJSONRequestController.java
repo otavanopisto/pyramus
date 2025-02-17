@@ -11,12 +11,12 @@ import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentChildDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentRegistrationDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
-import fi.otavanopisto.pyramus.domainmodel.users.StudentParentRegistration;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -47,14 +47,14 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
     StudentParentChildDAO studentParentChildDAO = DAOFactory.getInstance().getStudentParentChildDAO();
-    StudentParentRegistrationDAO studentParentRegistrationDAO = DAOFactory.getInstance().getStudentParentRegistrationDAO();
+    StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
 
     String hash = requestContext.getString("hash");
     String formType = StringUtils.trim(requestContext.getString("type"));
     String ssnConfirm = StringUtils.trim(requestContext.getString("ssn-confirm"));
     
-    StudentParentRegistration studentParentRegistration = studentParentRegistrationDAO.findByHash(hash);
+    StudentParentInvitation studentParentInvitation = studentParentInvitationDAO.findByHash(hash);
     
     /*
      * For valid student
@@ -63,14 +63,14 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
      * - Student must be underage
      */
     boolean isValidStudent = 
-        studentParentRegistration != null && 
-        studentParentRegistration.getStudent() != null &&
-        studentParentRegistration.getStudent().getPerson() != null &&
-        Boolean.FALSE.equals(studentParentRegistration.getStudent().getArchived()) &&
-        Boolean.TRUE.equals(studentParentRegistration.getStudent().getPerson().isUnderAge());
+        studentParentInvitation != null && 
+        studentParentInvitation.getStudent() != null &&
+        studentParentInvitation.getStudent().getPerson() != null &&
+        Boolean.FALSE.equals(studentParentInvitation.getStudent().getArchived()) &&
+        Boolean.TRUE.equals(studentParentInvitation.getStudent().getPerson().isUnderAge());
     
     // Validate
-    if (!isValidStudent || StringUtils.isBlank(ssnConfirm) || !StringUtils.equals(ssnConfirm, studentParentRegistration.getStudent().getPerson().getSocialSecurityNumber())) {
+    if (!isValidStudent || StringUtils.isBlank(ssnConfirm) || !StringUtils.equals(ssnConfirm, studentParentInvitation.getStudent().getPerson().getSocialSecurityNumber())) {
       fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.formValidationError"));
       return;
     }
@@ -102,7 +102,7 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
           
           // Require email to be unique
           boolean unique = true;
-          if (!UserUtils.isAllowedEmail(studentParentRegistration.getEmail(), unique)) {
+          if (!UserUtils.isAllowedEmail(studentParentInvitation.getEmail(), unique)) {
             throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
           }
   
@@ -110,11 +110,11 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
             throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
           }
           
-          Organization organization = studentParentRegistration.getStudent().getOrganization();
-          studentParent = studentParentDAO.create(studentParentRegistration.getFirstName(), studentParentRegistration.getLastName(), organization);
+          Organization organization = studentParentInvitation.getStudent().getOrganization();
+          studentParent = studentParentDAO.create(studentParentInvitation.getFirstName(), studentParentInvitation.getLastName(), organization);
     
           ContactType contactType = contactTypeDAO.findById(1L);
-          emailDAO.create(studentParent.getContactInfo(), contactType, true, studentParentRegistration.getEmail()).getId(); 
+          emailDAO.create(studentParent.getContactInfo(), contactType, true, studentParentInvitation.getEmail()).getId(); 
 
           try {
             String externalId = internalAuthenticationProvider.createCredentials(username, password1);
@@ -143,9 +143,9 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
       }
   
       if (studentParent != null) {
-        studentParentChildDAO.create(studentParent, studentParentRegistration.getStudent());
+        studentParentChildDAO.create(studentParent, studentParentInvitation.getStudent());
         
-        studentParentRegistrationDAO.delete(studentParentRegistration);
+        studentParentInvitationDAO.delete(studentParentInvitation);
         
         requestContext.addResponseParameter("status", "OK");
       } else {
