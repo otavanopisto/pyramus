@@ -2,5 +2,6 @@
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
 
   <sql>alter table StudentParentInvitation add constraint UK_eubfqigftoloss78wybdntchs unique (hash);</sql>
+  <sql>alter table StudentParentChild add constraint UKg3skyifgkrw1ojuxpf56ua62t unique (studentParent, student);</sql>
 
 </update>
