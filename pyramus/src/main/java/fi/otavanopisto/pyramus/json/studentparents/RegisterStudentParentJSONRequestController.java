@@ -144,6 +144,11 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
       }
   
       if (studentParent != null) {
+        // Abort if StudentParent is already attached to the Student
+        if (studentParentChildDAO.findBy(studentParent, studentParentInvitation.getStudent()) != null) {
+          throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.userAlreadyParent"));
+        }
+        
         studentParentChildDAO.create(studentParent, studentParentInvitation.getStudent());
         
         studentParentInvitationDAO.delete(studentParentInvitation);
