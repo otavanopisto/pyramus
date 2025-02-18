@@ -18,7 +18,6 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
@@ -31,7 +30,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -53,9 +51,6 @@ public class UserController {
   
   @Inject
   private StudentDAO studentDAO;
-
-  @Inject
-  private StudentParentDAO studentParentDAO;
 
   @Inject
   private StaffMemberDAO staffMemberDAO;
@@ -157,24 +152,6 @@ public class UserController {
 
   public List<StaffMember> listStaffMembersByPerson(Person person) {
     return staffMemberDAO.listByPerson(person);
-  }
-
-  /* StudentParent */
-  
-  public StudentParent findStudentParentById(Long id) {
-    return studentParentDAO.findById(id);
-  }
-  
-  public StudentParent findStudentParentByEmail(String email) {
-    return studentParentDAO.findByUniqueEmail(email);
-  }
-  
-  public List<StudentParent> listStudentParents(Integer firstResult, Integer maxResults) {
-    return studentParentDAO.listAll(firstResult, maxResults);
-  }
-
-  public List<StudentParent> listStudentParentsByPerson(Person person) {
-    return studentParentDAO.listBy(person);
   }
 
   /* Variables */

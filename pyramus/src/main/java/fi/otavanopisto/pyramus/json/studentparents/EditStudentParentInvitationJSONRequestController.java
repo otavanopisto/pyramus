@@ -23,7 +23,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 
-public class CreateStudentParentInvitationJSONRequestController extends JSONRequestController {
+public class EditStudentParentInvitationJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
@@ -49,7 +49,7 @@ public class CreateStudentParentInvitationJSONRequestController extends JSONRequ
       }
     }
 
-    if (!student.getPerson().isUnderAge()) {
+    if (student.getPerson().getBirthday() == null || !student.getPerson().isUnderAge()) {
       throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Student is not underage.");
     }
     
@@ -57,6 +57,11 @@ public class CreateStudentParentInvitationJSONRequestController extends JSONRequ
     String lastName = StringUtils.trim(requestContext.getString("lastName"));
     String email = StringUtils.trim(requestContext.getString("email"));
 
+    // If there is an invitation already, it should be refreshed instead of creating multiples to same email
+    if (studentParentInvitationDAO.doesInvitationExist(student, email)) {
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "There is already an invitation with this email. Try refreshing it instead.");
+    }
+    
     String hash = UUID.randomUUID().toString();
     StudentParentInvitation guardian = studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
 

@@ -40,6 +40,7 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
+import fi.otavanopisto.pyramus.rest.controller.StudentParentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
@@ -66,6 +67,9 @@ public class PersonRESTService extends AbstractRESTService {
   @Inject
   private StudentController studentController;
   
+  @Inject
+  private StudentParentController studentParentController;
+
   @Inject
   private PersonController personController;
 
@@ -268,7 +272,7 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    return Response.ok(objectFactory.createModel(userController.listStudentParentsByPerson(person))).build();
+    return Response.ok(objectFactory.createModel(studentParentController.listStudentParentsByPerson(person))).build();
   }
   
   @Path("/persons/{ID:[0-9]*}/credentials")

@@ -6,10 +6,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Entity
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "studentParent", "student"})
+    }
+)
 public class StudentParentChild {
   
   public Long getId() {

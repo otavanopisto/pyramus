@@ -9,8 +9,10 @@ import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -26,9 +28,12 @@ public class EditStudentParentInvitationViewController extends PyramusViewContro
   public void process(PageRequestContext pageRequestContext) {
     StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
 
     StaffMember loggedUser = staffDAO.findById(pageRequestContext.getLoggedUserId());
-    
+
+    Long invitationId = pageRequestContext.getLong("invitationId");
+    StudentParentInvitation invitation = invitationId != null && !invitationId.equals(-1) ? studentParentInvitationDAO.findById(invitationId) : null;
     Student student = studentDAO.findById(pageRequestContext.getLong("studentId"));
     
     // TODO permission ?
@@ -36,8 +41,13 @@ public class EditStudentParentInvitationViewController extends PyramusViewContro
     if (!UserUtils.canAccessOrganization(loggedUser, student.getOrganization())) {
       throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Cannot access users' organization.");
     }
+
+    if (invitation != null && !invitation.getStudent().getId().equals(student.getId())) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Student doesn't match the invitation.");
+    }
     
     pageRequestContext.getRequest().setAttribute("student", student);
+    pageRequestContext.getRequest().setAttribute("invitation", invitation);
     
     pageRequestContext.setIncludeJSP("/templates/studentparents/editstudentparentinvitation.jsp");
   }

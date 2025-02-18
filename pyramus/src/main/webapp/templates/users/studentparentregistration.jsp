@@ -39,6 +39,19 @@
         </main>
         
       </c:when>
+      <c:when test="${invalidInvitation}">
+        <section class="application-description application-description--credentials">
+          <div class="application-description__credentials">
+            <div class="application-description__credentials-header">
+              <fmt:message key="studentparents.parentRegistration.invalidInvitationHeader"/>
+            </div>
+          </div>
+        </section>
+        
+        <main class="application-content application-content--credentials">
+          <p><fmt:message key="studentparents.parentRegistration.invalidInvitationMessage"/></p>
+        </main>
+      </c:when>
       <c:when test="${invalidLogin}">
         <section class="application-description application-description--credentials">
           <div class="application-description__credentials">
@@ -51,7 +64,6 @@
         <main class="application-content application-content--credentials">
           <p><fmt:message key="studentparents.parentRegistration.invalidLoginMessage"/></p>
         </main>
-        
       </c:when>
       <c:otherwise>
         <section class="application-description application-description--credentials">
@@ -69,7 +81,7 @@
               <section class="form-section section-create-credentials current">
                 <div class="form-section__field-container">
                   <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
-                  <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25">
+                  <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25" style="text-transform: uppercase">
                 </div>
           
                 <c:choose>
