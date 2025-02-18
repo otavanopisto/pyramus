@@ -1374,7 +1374,7 @@
                 showCancel : true,
                 autoEvaluateSize: true,
                 title : getLocale().getText("generic.dialog.titles.areYouSure"),
-                okLabel : getLocale().getText("generic.dialog.delete"),
+                okLabel : getLocale().getText("students.viewStudent.parentsTable.detachDialog.detach"),
                 cancelLabel : getLocale().getText("generic.dialog.cancel")
               });
             
