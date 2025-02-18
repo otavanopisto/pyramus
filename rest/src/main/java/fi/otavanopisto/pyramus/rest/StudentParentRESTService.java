@@ -214,7 +214,10 @@ public class StudentParentRESTService extends AbstractRESTService {
     }
     
     StudentParentChild studentParentChild = studentParentController.findStudentParentChild(studentParent, student);
-    
+    if (studentParentChild == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
     studentParentController.deleteStudentParentChild(studentParentChild);
     
     return Response.noContent().build();
