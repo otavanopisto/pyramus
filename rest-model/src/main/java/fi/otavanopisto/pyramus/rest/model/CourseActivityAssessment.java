@@ -60,6 +60,22 @@ public class CourseActivityAssessment {
     this.gradeDate = gradeDate;
   }
 
+  public Long getEvaluatorId() {
+    return evaluatorId;
+  }
+
+  public void setEvaluatorId(Long evaluatorId) {
+    this.evaluatorId = evaluatorId;
+  }
+
+  public String getEvaluatorName() {
+    return evaluatorName;
+  }
+
+  public void setEvaluatorName(String evaluatorName) {
+    this.evaluatorName = evaluatorName;
+  }
+
   private Long courseModuleId;
   private String grade;
   private Boolean passingGrade;
@@ -67,5 +83,7 @@ public class CourseActivityAssessment {
   private Date gradeDate;
   private String text;
   private CourseActivityState state;
+  private Long evaluatorId;
+  private String evaluatorName;
 
 }

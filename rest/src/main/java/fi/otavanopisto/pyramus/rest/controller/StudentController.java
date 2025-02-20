@@ -504,6 +504,8 @@ public class StudentController {
           assessment.setDate(linkedAssessment.getCreated());
           assessment.setGradeDate(linkedAssessment.getCredit().getDate());
           assessment.setState(CourseActivityState.GRADED_PASS);
+          assessment.setEvaluatorId(((CourseAssessment) linkedAssessment.getCredit()).getAssessor().getPersonId());
+          assessment.setEvaluatorName(((CourseAssessment) linkedAssessment.getCredit()).getAssessor().getFullName());
         }
 
         // Status override if course has been graded
@@ -516,6 +518,8 @@ public class StudentController {
           assessment.setDate(courseAssessment.getDate());
           assessment.setGradeDate(courseAssessment.getDate());
           assessment.setState(assessment.getPassingGrade() ? CourseActivityState.GRADED_PASS : CourseActivityState.GRADED_FAIL);
+          assessment.setEvaluatorId(courseAssessment.getAssessor().getPersonId());
+          assessment.setEvaluatorName(courseAssessment.getAssessor().getFullName());
         }
         
         // Status override if student has requested the course to be assessed
