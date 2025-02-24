@@ -133,8 +133,9 @@ public class SubjectChoicesViewController extends PyramusViewController implemen
     }
     
     pageRequestContext.getRequest().setAttribute("studentId", studentId);
-    
-    this.setJsDataVariable(pageRequestContext, "studentName", student.getFullName());
+    pageRequestContext.getRequest().setAttribute("personId", student.getPersonId());
+    pageRequestContext.getRequest().setAttribute("studentName", student.getFullName());
+        
     this.setJsDataVariable(pageRequestContext, "studentId", studentId.toString());
     this.setJsDataVariable(pageRequestContext, "educationType", educationType);
     this.setJsDataVariable(pageRequestContext, "subjects", jsonSubjects.toString());

@@ -225,7 +225,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
     if (matchingEducationType && studentSubjects.isAdditionalLanguage(subjectCode)) {
       if (subjectCode.length() > 2) {
         String langCode = settings.getSubjectToLanguageMapping(subjectCode.substring(0, 2).toUpperCase());
-        Kielivalikoima kieli = Kielivalikoima.valueOf(langCode);
+        Kielivalikoima kieli = langCode != null ? Kielivalikoima.valueOf(langCode) : null;
         
         if (kieli != null) {
           KoskiOppiaineetYleissivistava valinta = studentSubjects.koskiKoodi(ops, subjectCode);
@@ -233,7 +233,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
               valinta, kieli, isPakollinenOppiaine(student, valinta));
           return mapSubject(subject, subjectCode, false, tunniste, map);
         } else {
-          logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
+          logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum. Subject code was %s.", langCode, subjectCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
           return null;
         }
