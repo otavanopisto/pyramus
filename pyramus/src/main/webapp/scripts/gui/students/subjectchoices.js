@@ -4,7 +4,6 @@ var subjectChoiceKeys = JSDATA["subjectChoiceKeys"].evalJSON();
 var subjects = JSDATA["subjects"].evalJSON();
 var passFailGradeOptions = JSDATA["passFailGradeOptions"].evalJSON();
 var studentId = JSDATA["studentId"].evalJSON();
-var studentName = JSDATA["studentName"];
 var educationType = JSDATA["educationType"];
 
 function addSubjectChoicesTableRow() {
@@ -110,6 +109,7 @@ function updateTable(event) {
             selectController.addOption(selectHandlerInstance, "rub", "Ruotsi (rub)");
             selectController.addOption(selectHandlerInstance, "saa", "Saksa (saa)");
             selectController.addOption(selectHandlerInstance, "sab", "Saksa (sab)");
+            selectController.addOption(selectHandlerInstance, "fib", "Suomi (fib)");
             selectController.addOption(selectHandlerInstance, "vea", "Venäjä (vea)");
             selectController.addOption(selectHandlerInstance, "veb", "Venäjä (veb)");
             selectController.addOption(selectHandlerInstance, "smb", "Saame (smb)");
@@ -151,8 +151,6 @@ function updateTable(event) {
 function onLoad(event) {
   tabControl = new IxProtoTabs($('tabs'));
   
-  $("pageHeader").innerHTML = "Ainevalinnat - " + studentName;
-
   var subjectChoicesTable = new IxTable($('subjectChoicesTableContainer'), {
     id : "subjectChoicesTable",
     columns : [
