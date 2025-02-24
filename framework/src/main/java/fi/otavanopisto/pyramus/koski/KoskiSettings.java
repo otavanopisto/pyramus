@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
@@ -313,6 +314,30 @@ public class KoskiSettings {
   
   public String getSubjectToLanguageMapping(String subjectCode) {
     return subjectToLanguageMapping.get(subjectCode);
+  }
+
+  /**
+   * Returns Koski Kielivalikoima enum from Pyramus Subject's code.
+   * 
+   * Specifically
+   * <ol>
+   * <li>Takes the leading two characters from the subjectCode in uppercase
+   * <li>Uses the koski-config subject to language mapping to map the subject to a language code
+   * <li>Returns the enum if it is found or null otherwise
+   * </ol>
+   * 
+   * @param subjectCode Subject's code
+   * @return Kielivalikoima if found or null otherwise
+   */
+  public Kielivalikoima subjectToKielikoodi(String subjectCode) {
+    if (StringUtils.isNotBlank(subjectCode) && subjectCode.length() >= 2) {
+      String subjectCodePart = subjectCode.toUpperCase().substring(0, 2);
+      String langCode = subjectToLanguageMapping.get(subjectCodePart);
+      
+      return langCode != null ? EnumUtils.getEnum(Kielivalikoima.class, langCode) : null;
+    }
+    
+    return null;
   }
 
   public KoskiStudyProgrammeHandler getStudyProgrammeHandlerType(Long studyProgrammeId) {
