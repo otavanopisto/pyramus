@@ -66,7 +66,7 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
     if (invitation != null) {
       // Modifying an existing invitation, can only change the firstName / lastName
       
-      invitation = studentParentInvitationDAO.updateName(invitation, firstName, lastName);
+      studentParentInvitationDAO.updateName(invitation, firstName, lastName);
     }
     else {
       // Creating new invitation
@@ -77,7 +77,7 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
       }
       
       String hash = UUID.randomUUID().toString();
-      invitation = studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
+      StudentParentInvitation guardian = studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
 
       // Send mail
       
@@ -88,16 +88,16 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
         
         StringBuffer guardianCreateCredentialsLink = new StringBuffer(ApplicationUtils.getRequestURIRoot(request));
         guardianCreateCredentialsLink.append("/parentregister.page?c=");
-        guardianCreateCredentialsLink.append(invitation.getHash());
+        guardianCreateCredentialsLink.append(guardian.getHash());
         
         String subject = "Muikku-oppimisympäristön tunnukset";
-        String content = String.format(guardianEmailContent, invitation.getFirstName(), guardianCreateCredentialsLink.toString());
+        String content = String.format(guardianEmailContent, guardian.getFirstName(), guardianCreateCredentialsLink.toString());
         
         Mailer.sendMail(
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
             null,
-            invitation.getEmail(),
+            guardian.getEmail(),
             subject,
             content);
       } catch (Exception ex) {
