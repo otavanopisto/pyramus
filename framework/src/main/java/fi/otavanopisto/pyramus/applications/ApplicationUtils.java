@@ -1539,7 +1539,7 @@ public class ApplicationUtils {
       case "messut":
         return "Messut";
       case "te-toimisto":
-        return "TE-toimisto";
+        return "Työllisyyspalvelut";
       case "nuorisotyo":
         return "Nuorisotyö";
       case "muu":
