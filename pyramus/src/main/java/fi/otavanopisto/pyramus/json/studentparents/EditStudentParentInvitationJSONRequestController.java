@@ -34,7 +34,13 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
     final StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     
     Student student = studentDAO.findById(requestContext.getLong("studentId"));
-
+    Long invitationId = requestContext.getLong("invitationId");
+    StudentParentInvitation invitation = invitationId != null ? studentParentInvitationDAO.findById(invitationId) : null;
+    
+    if (invitationId != null && invitation == null) {
+      throw new RuntimeException("Couldn't find invitation to edit");
+    }
+    
     // TODO "permission" check
     
     if (student.getOrganization() != null) {
@@ -57,37 +63,46 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
     String lastName = StringUtils.trim(requestContext.getString("lastName"));
     String email = StringUtils.trim(requestContext.getString("email"));
 
-    // If there is an invitation already, it should be refreshed instead of creating multiples to same email
-    if (studentParentInvitationDAO.doesInvitationExist(student, email)) {
-      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "There is already an invitation with this email. Try refreshing it instead.");
+    if (invitation != null) {
+      // Modifying an existing invitation, can only change the firstName / lastName
+      
+      invitation = studentParentInvitationDAO.updateName(invitation, firstName, lastName);
     }
-    
-    String hash = UUID.randomUUID().toString();
-    StudentParentInvitation guardian = studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
+    else {
+      // Creating new invitation
+      
+      // If there is an invitation already, it should be refreshed instead of creating multiples to same email
+      if (studentParentInvitationDAO.doesInvitationExist(student, email)) {
+        throw new SmvcRuntimeException(StatusCode.UNDEFINED, "There is already an invitation with this email. Try refreshing it instead.");
+      }
+      
+      String hash = UUID.randomUUID().toString();
+      invitation = studentParentInvitationDAO.create(firstName, lastName, email, student, hash);
 
-    // Send mail
-    
-    try {
-      HttpServletRequest request = requestContext.getRequest();
-      String guardianEmailContent = IOUtils.toString(request.getServletContext().getResourceAsStream(
-          "/templates/applications/mails/mail-credentials-guardian-create.html"), "UTF-8");
+      // Send mail
       
-      StringBuffer guardianCreateCredentialsLink = new StringBuffer(ApplicationUtils.getRequestURIRoot(request));
-      guardianCreateCredentialsLink.append("/parentregister.page?c=");
-      guardianCreateCredentialsLink.append(guardian.getHash());
-      
-      String subject = "Muikku-oppimisympäristön tunnukset";
-      String content = String.format(guardianEmailContent, guardian.getFirstName(), guardianCreateCredentialsLink.toString());
-      
-      Mailer.sendMail(
-          Mailer.JNDI_APPLICATION,
-          Mailer.HTML,
-          null,
-          guardian.getEmail(),
-          subject,
-          content);
-    } catch (Exception ex) {
-      throw new SmvcRuntimeException(ex);
+      try {
+        HttpServletRequest request = requestContext.getRequest();
+        String guardianEmailContent = IOUtils.toString(request.getServletContext().getResourceAsStream(
+            "/templates/applications/mails/mail-credentials-guardian-create.html"), "UTF-8");
+        
+        StringBuffer guardianCreateCredentialsLink = new StringBuffer(ApplicationUtils.getRequestURIRoot(request));
+        guardianCreateCredentialsLink.append("/parentregister.page?c=");
+        guardianCreateCredentialsLink.append(invitation.getHash());
+        
+        String subject = "Muikku-oppimisympäristön tunnukset";
+        String content = String.format(guardianEmailContent, invitation.getFirstName(), guardianCreateCredentialsLink.toString());
+        
+        Mailer.sendMail(
+            Mailer.JNDI_APPLICATION,
+            Mailer.HTML,
+            null,
+            invitation.getEmail(),
+            subject,
+            content);
+      } catch (Exception ex) {
+        throw new SmvcRuntimeException(ex);
+      }
     }
     
     requestContext.setRedirectURL(requestContext.getReferer(true));
