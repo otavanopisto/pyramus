@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -40,6 +41,7 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
+import fi.otavanopisto.pyramus.rest.controller.StudentParentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
@@ -66,6 +68,9 @@ public class PersonRESTService extends AbstractRESTService {
   @Inject
   private StudentController studentController;
   
+  @Inject
+  private StudentParentController studentParentController;
+
   @Inject
   private PersonController personController;
 
@@ -237,6 +242,7 @@ public class PersonRESTService extends AbstractRESTService {
       Oppija oppija = koskiController.personToOppija(person);
       
       ObjectMapper mapper = new ObjectMapper();
+      mapper.registerModule(new JavaTimeModule());
       mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 
       return Response.ok(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oppija)).build();
@@ -268,7 +274,7 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    return Response.ok(objectFactory.createModel(userController.listStudentParentsByPerson(person))).build();
+    return Response.ok(objectFactory.createModel(studentParentController.listStudentParentsByPerson(person))).build();
   }
   
   @Path("/persons/{ID:[0-9]*}/credentials")

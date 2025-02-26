@@ -64,13 +64,14 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
      */
     boolean isValidStudent = 
         studentParentInvitation != null && 
+        !studentParentInvitation.isExpired() &&
         studentParentInvitation.getStudent() != null &&
         studentParentInvitation.getStudent().getPerson() != null &&
         Boolean.FALSE.equals(studentParentInvitation.getStudent().getArchived()) &&
         Boolean.TRUE.equals(studentParentInvitation.getStudent().getPerson().isUnderAge());
     
     // Validate
-    if (!isValidStudent || StringUtils.isBlank(ssnConfirm) || !StringUtils.equals(ssnConfirm, studentParentInvitation.getStudent().getPerson().getSocialSecurityNumber())) {
+    if (!isValidStudent || StringUtils.isBlank(ssnConfirm) || !StringUtils.equalsIgnoreCase(ssnConfirm, studentParentInvitation.getStudent().getPerson().getSocialSecurityNumber())) {
       fail(requestContext, Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.formValidationError"));
       return;
     }
@@ -143,6 +144,11 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
       }
   
       if (studentParent != null) {
+        // Abort if StudentParent is already attached to the Student
+        if (studentParentChildDAO.findBy(studentParent, studentParentInvitation.getStudent()) != null) {
+          throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.userAlreadyParent"));
+        }
+        
         studentParentChildDAO.create(studentParent, studentParentInvitation.getStudent());
         
         studentParentInvitationDAO.delete(studentParentInvitation);

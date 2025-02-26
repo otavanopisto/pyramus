@@ -2,12 +2,17 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -28,13 +33,15 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
-import fi.otavanopisto.pyramus.rest.controller.UserController;
+import fi.otavanopisto.pyramus.rest.controller.StudentParentController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.students.StudentParentStudentCourseRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
@@ -47,16 +54,22 @@ import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 public class StudentParentRESTService extends AbstractRESTService {
 
   @Inject
+  private Logger logger;
+  
+  @Inject
+  private HttpServletRequest httpRequest;
+  
+  @Inject
   private AssessmentController assessmentController;
 
   @Inject
   private CourseController courseController;
 
   @Inject
-  private UserController userController;
+  private StudentController studentController;
 
   @Inject
-  private StudentController studentController;
+  private StudentParentController studentParentController;
 
   @Inject
   private ObjectFactory objectFactory;
@@ -64,6 +77,45 @@ public class StudentParentRESTService extends AbstractRESTService {
   @Inject
   private RESTSecurity restSecurity;
 
+  @Path("/students/{STUDENTID:[0-9]*}/invitations/{INVITATIONID:[0-9]*}/refresh")
+  @POST
+  @RESTPermit (UserPermissions.MANAGE_STUDENTPARENT_INVITATIONS)
+  public Response refreshInvitation(@PathParam("STUDENTID") Long studentId, @PathParam("INVITATIONID") Long invitationId) {
+    Student student = studentController.findStudentById(studentId);
+    StudentParentInvitation invitation = studentParentController.findInvitationById(invitationId);
+    
+    if (student != null && invitation != null && invitation.getStudent().getId().equals(student.getId())) {
+      try {
+        invitation = studentParentController.refreshInvitation(invitation);
+        studentParentController.sendInvitationEmail(invitation, httpRequest);
+        return Response.noContent().build();
+      }
+      catch (Exception ex) {
+        logger.log(Level.SEVERE, "Refreshing invitation failed.", ex);
+        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+      }
+    }
+    else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/invitations/{INVITATIONID:[0-9]*}")
+  @DELETE
+  @RESTPermit (UserPermissions.MANAGE_STUDENTPARENT_INVITATIONS)
+  public Response deleteInvitation(@PathParam("STUDENTID") Long studentId, @PathParam("INVITATIONID") Long invitationId) {
+    Student student = studentController.findStudentById(studentId);
+    StudentParentInvitation invitation = studentParentController.findInvitationById(invitationId);
+    
+    if (student != null && invitation != null && invitation.getStudent().getId().equals(student.getId())) {
+      studentParentController.deleteInvitation(invitation);
+      return Response.noContent().build();
+    }
+    else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/studentparents")
   @GET
   @RESTPermit (UserPermissions.LIST_STUDENTPARENTS)
@@ -72,12 +124,12 @@ public class StudentParentRESTService extends AbstractRESTService {
     
     if (StringUtils.isNotBlank(email)) {
       studentParents = new ArrayList<>();
-      StudentParent studentParent = userController.findStudentParentByEmail(email);
+      StudentParent studentParent = studentParentController.findStudentParentByEmail(email);
       if (studentParent != null) {
         studentParents.add(studentParent);
       }
     } else {
-      studentParents = userController.listStudentParents(firstResult, maxResults);
+      studentParents = studentParentController.listStudentParents(firstResult, maxResults);
     }
     
     return Response.ok(objectFactory.createModel(studentParents)).build();
@@ -87,7 +139,7 @@ public class StudentParentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (handling = Handling.INLINE)
   public Response findStaffMemberById(@PathParam("ID") Long id, @Context Request request) {
-    StudentParent studentParent = userController.findStudentParentById(id);
+    StudentParent studentParent = studentParentController.findStudentParentById(id);
     
     if (studentParent == null || studentParent.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
@@ -117,7 +169,7 @@ public class StudentParentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (handling = Handling.INLINE)
   public Response listStaffMembersEmails(@PathParam("ID") Long id) {
-    StudentParent studentParent = userController.findStudentParentById(id);
+    StudentParent studentParent = studentParentController.findStudentParentById(id);
     if (studentParent == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -134,7 +186,7 @@ public class StudentParentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response listStudentParentStudents(@PathParam("ID") Long id) {
-    StudentParent studentParent = userController.findStudentParentById(id);
+    StudentParent studentParent = studentParentController.findStudentParentById(id);
     if (studentParent == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -146,12 +198,37 @@ public class StudentParentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(studentParent.getActiveChildren())).build();
   }
   
+  @Path("/studentparents/{ID:[0-9]*}/students/{STUDENTID:[0-9]*}")
+  @DELETE
+  @RESTPermit (UserPermissions.DETACH_STUDENTPARENT)
+  public Response detachStudentParentFromStudent(
+      @PathParam("ID") Long id, @PathParam("STUDENTID") Long studentId) {
+    StudentParent studentParent = studentParentController.findStudentParentById(id);
+    if (studentParent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || !studentParent.isActiveParentOf(student)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentParentChild studentParentChild = studentParentController.findStudentParentChild(studentParent, student);
+    if (studentParentChild == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    studentParentController.deleteStudentParentChild(studentParentChild);
+    
+    return Response.noContent().build();
+  }
+  
   @Path("/studentparents/{ID:[0-9]*}/students/{STUDENTID:[0-9]*}/courses")
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response listStudentParentStudentsCourses(
       @PathParam("ID") Long id, @PathParam("STUDENTID") Long studentId) {
-    StudentParent studentParent = userController.findStudentParentById(id);
+    StudentParent studentParent = studentParentController.findStudentParentById(id);
     if (studentParent == null) {
       return Response.status(Status.NOT_FOUND).build();
     }

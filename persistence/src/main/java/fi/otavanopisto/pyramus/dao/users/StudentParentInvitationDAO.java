@@ -41,6 +41,32 @@ public class StudentParentInvitationDAO extends PyramusEntityDAO<StudentParentIn
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
+  /**
+   * Checks if given student has an invitation with given email. Due to the lack of
+   * restrictions in the first version of the Student Parent system, there may be
+   * multiple of invitations.
+   * 
+   * @param student student
+   * @param email email in the invitation
+   * @return
+   */
+  public boolean doesInvitationExist(Student student, String email) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentParentInvitation> criteria = criteriaBuilder.createQuery(StudentParentInvitation.class);
+    Root<StudentParentInvitation> root = criteria.from(StudentParentInvitation.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(StudentParentInvitation_.student), student),
+            criteriaBuilder.equal(root.get(StudentParentInvitation_.email), email)
+        )
+    );
+    
+    return !entityManager.createQuery(criteria).getResultList().isEmpty();
+  }
+  
   public List<StudentParentInvitation> listBy(Student student) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -52,5 +78,17 @@ public class StudentParentInvitationDAO extends PyramusEntityDAO<StudentParentIn
     
     return entityManager.createQuery(criteria).getResultList();
   }
-  
+
+  public StudentParentInvitation updateName(StudentParentInvitation invitation, String firstName, String lastName) {
+    invitation.setFirstName(firstName);
+    invitation.setLastName(lastName);
+    return persist(invitation);
+  }
+
+  public StudentParentInvitation updateHashAndDate(StudentParentInvitation invitation, String hash, Date date) {
+    invitation.setHash(hash);
+    invitation.setCreated(date);
+    return persist(invitation);
+  }
+
 }

@@ -18,7 +18,10 @@
   </head>
   <body onload="onLoad(event);" ix:enabledrafting="true">
     <@include_page path="/templates/generic/header.jsp"/> 
-    <h1 id="pageHeader" class="genericPageHeader">Ainevalinnat</h1>
+    <h1 class="genericPageHeader">
+      Ainevalinnat - ${studentName}
+      <a href="/students/viewstudent.page?person=${personId}" class="pyramusViewLink pyramusViewLinkEye">Näytä opiskelija</a>
+    </h1>
     
     <div id="manageStudyProgrammesFormContainer"> 
 	    <div class="genericFormContainer"> 

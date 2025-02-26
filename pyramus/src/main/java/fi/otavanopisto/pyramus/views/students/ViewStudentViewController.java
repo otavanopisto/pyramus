@@ -285,6 +285,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     Map<Long, StudentTOR> subjectCredits = new HashMap<>();
     Map<Long, List<MatriculationExamEnrollment>> studentMatriculationEnrollments = new HashMap<>();
     Map<Long, Boolean> studentHasParents = new HashMap<>();
+    Map<Long, Boolean> studentHasParentInvitations = new HashMap<>();
     Map<Long, Set<String>> koskiStudentOIDs = new HashMap<>();
     List<ViewStudentValidationWarning> studentValidations = new ArrayList<>();
     
@@ -296,6 +297,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     JSONArray curriculumsJSON = new JSONArray();
     JSONObject studentAssessmentsJSON = new JSONObject();
     JSONObject studentParentsJSON = new JSONObject();
+    JSONObject studentParentInvitationsJSON = new JSONObject();
     
     List<Report> studentReports = reportDAO.listByContextType(ReportContextType.Student);
     Collections.sort(studentReports, new StringAttributeComparator("getName"));
@@ -896,23 +898,23 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
       
       arr = new JSONArray();
-      
       List<StudentParentInvitation> studentParentInvitations = studentParentInvitationDAO.listBy(student);
       for (StudentParentInvitation studentParentInvitation : studentParentInvitations) {
         JSONObject studentParentJSON = new JSONObject();
-        studentParentJSON.put("status", "REGISTRATION");
-        studentParentJSON.put("personId", null);
-        studentParentJSON.put("userId", null);
+        studentParentJSON.put("invitationId", studentParentInvitation.getId());
+        studentParentJSON.put("expired", studentParentInvitation.isExpired());
         studentParentJSON.put("firstName", studentParentInvitation.getFirstName());
         studentParentJSON.put("lastName", studentParentInvitation.getLastName());
         studentParentJSON.put("email", studentParentInvitation.getEmail());
         arr.add(studentParentJSON);
       }
+      studentHasParentInvitations.put(student.getId(), !studentParentInvitations.isEmpty());
+      studentParentInvitationsJSON.put(student.getId(), arr);
       
+      arr = new JSONArray();
       List<StudentParent> studentParents = studentParentDAO.listBy(student);
       for (StudentParent studentParent : studentParents) {
         JSONObject studentParentJSON = new JSONObject();
-        studentParentJSON.put("status", "USER");
         studentParentJSON.put("personId", studentParent.getPersonId());
         studentParentJSON.put("userId", studentParent.getId());
         studentParentJSON.put("firstName", studentParent.getFirstName());
@@ -925,8 +927,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         studentParentJSON.put("email", emails);
         arr.add(studentParentJSON);
       }
-
-      studentHasParents.put(student.getId(), studentParentInvitations.size() > 0 || studentParents.size() > 0);
+      studentHasParents.put(student.getId(), !studentParents.isEmpty());
       studentParentsJSON.put(student.getId(), arr);
       
       studentValidations.addAll(ViewStudentTools.validate(student));
@@ -974,6 +975,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     setJsDataVariable(pageRequestContext, "curriculums", curriculumsJSON.toString());
     setJsDataVariable(pageRequestContext, "studentVariables", studentVariablesJSON.toString());
     setJsDataVariable(pageRequestContext, "studentParents", studentParentsJSON.toString());
+    setJsDataVariable(pageRequestContext, "studentParentInvitations", studentParentInvitationsJSON.toString());
     
     pageRequestContext.getRequest().setAttribute("studentCards", studentCards);
     pageRequestContext.getRequest().setAttribute("students", students);
@@ -993,6 +995,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     pageRequestContext.getRequest().setAttribute("studentStudyPeriods", studentStudyPeriods);
     pageRequestContext.getRequest().setAttribute("studentMatriculationEnrollments", studentMatriculationEnrollments);
     pageRequestContext.getRequest().setAttribute("studentHasParents", studentHasParents);
+    pageRequestContext.getRequest().setAttribute("studentHasParentInvitations", studentHasParentInvitations);
     pageRequestContext.getRequest().setAttribute("studentValidations", studentValidations);
     
     pageRequestContext.getRequest().setAttribute("koskiPersonURL", koskiController.getVirkailijaUrl());
