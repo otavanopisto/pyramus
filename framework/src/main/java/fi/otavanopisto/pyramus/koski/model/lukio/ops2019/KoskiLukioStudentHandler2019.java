@@ -122,13 +122,13 @@ public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandl
       if (spokenLanguageExam.getCredit() instanceof CourseAssessment) {
         CourseAssessment ca = (CourseAssessment) spokenLanguageExam.getCredit();
         if (ca.getSubject() != null && StringUtils.isNotBlank(ca.getSubject().getCode())) {
-          kieli = EnumUtils.getEnum(Kielivalikoima.class, ca.getSubject().getCode().substring(0, 2));
+          kieli = settings.subjectToKielikoodi(ca.getSubject().getCode());
         }
       }
       else if (spokenLanguageExam.getCredit() instanceof TransferCredit) {
         TransferCredit tc = (TransferCredit) spokenLanguageExam.getCredit();
         if (tc.getSubject() != null && StringUtils.isNotBlank(tc.getSubject().getCode())) {
-          kieli = EnumUtils.getEnum(Kielivalikoima.class, tc.getSubject().getCode().substring(0, 2));
+          kieli = settings.subjectToKielikoodi(tc.getSubject().getCode());
         }
       }
       

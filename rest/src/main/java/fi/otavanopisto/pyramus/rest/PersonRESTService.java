@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -241,6 +242,7 @@ public class PersonRESTService extends AbstractRESTService {
       Oppija oppija = koskiController.personToOppija(person);
       
       ObjectMapper mapper = new ObjectMapper();
+      mapper.registerModule(new JavaTimeModule());
       mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 
       return Response.ok(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oppija)).build();

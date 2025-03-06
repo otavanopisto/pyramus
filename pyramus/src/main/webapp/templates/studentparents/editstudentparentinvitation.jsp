@@ -58,7 +58,7 @@
                 <jsp:param name="titleLocale" value="studentparents.createStudentParentRegistration.studentTitle"/>
                 <jsp:param name="helpLocale" value="studentparents.createStudentParentRegistration.studentHelp"/>
               </jsp:include>
-              <div>${student.fullName}</div>
+              <div>${fn:escapeXml(student.fullName)}</div>
             </div>
             
             <div class="genericFormSection">
@@ -66,7 +66,7 @@
                 <jsp:param name="titleLocale" value="studentparents.createStudentParentRegistration.firstNameTitle"/>
                 <jsp:param name="helpLocale" value="studentparents.createStudentParentRegistration.firstNameHelp"/>
               </jsp:include>
-              <input type="text" id="firstName" name="firstName" size="20" class="required" value="${invitation.firstName}">
+              <input type="text" id="firstName" name="firstName" size="20" class="required" value="${fn:escapeXml(invitation.firstName)}">
             </div>
   
             <div class="genericFormSection">  
@@ -74,7 +74,7 @@
                 <jsp:param name="titleLocale" value="studentparents.createStudentParentRegistration.lastNameTitle"/>
                 <jsp:param name="helpLocale" value="studentparents.createStudentParentRegistration.lastNameHelp"/>
               </jsp:include>
-              <input type="text" id="lastName" name="lastName" size="30" class="required" value="${invitation.lastName}">
+              <input type="text" id="lastName" name="lastName" size="30" class="required" value="${fn:escapeXml(invitation.lastName)}">
             </div>
 
             <div class="genericFormSection">  
@@ -82,7 +82,15 @@
                 <jsp:param name="titleLocale" value="studentparents.createStudentParentRegistration.emailTitle"/>
                 <jsp:param name="helpLocale" value="studentparents.createStudentParentRegistration.emailNameHelp"/>
               </jsp:include>
-              <input type="text" id="email" name="email" size="30" class="required email" value="${invitation.email}">
+              
+              <c:choose>
+                <c:when test="${invitation ne null}">
+                  <input type="text" id="email" name="email" size="30" disabled="disabled" value="${fn:escapeXml(invitation.email)}">
+                </c:when>
+                <c:otherwise>
+                  <input type="text" id="email" name="email" size="30" class="required email" value="${fn:escapeXml(invitation.email)}">
+                </c:otherwise>
+              </c:choose>
             </div>
 
           </div>

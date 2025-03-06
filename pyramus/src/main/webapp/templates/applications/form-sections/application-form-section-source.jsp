@@ -103,7 +103,7 @@
           <input id="te-toimisto" type="radio" name="field-source" value="te-toimisto" data-dependencies="true" data-parsley-required="true">
         </div>
         <div class="field-row-label">
-          <label for="te-toimisto">TE-toimisto</label>
+          <label for="te-toimisto">Työllisyyspalvelut</label>
         </div>
       </div>
       <div class="field-row-flex">
