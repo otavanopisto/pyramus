@@ -203,6 +203,17 @@
           link: GLOBAL_contextPath + '/students/importstudentcredits.page?studentId=' + studentId  
         }));
 
+        var subjectGradesTabRelatedActionsHoverMenu = new IxHoverMenu($('subjectGradesTabRelatedActionsHoverMenuContainer.' + studentId), {
+          text: getLocale().getText("terms.relatedActions")
+        });
+        subjectGradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: getLocale().getText("students.viewStudent.studentSubjecGradesDialog.title"),
+          onclick: function (event) {
+            openEditSubjectGradesDialog(studentId);
+          }
+        }));
+        
         var contactLogTabRelatedActionsHoverMenu = new IxHoverMenu($('contactLogTabRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.viewStudent.contactLogTabRelatedActionsLabel"/>'
         });
@@ -3562,6 +3573,10 @@
               </div>
 
               <div id="subgrades.${student.id}" class="tabContent">
+                <div style="min-height: 26px;">
+                  <div id="subjectGradesTabRelatedActionsHoverMenuContainer.${student.id}" class="tabRelatedActionsContainer"></div>
+                </div>
+                
                 <div class="genericFormSection">
                   <div id="subjectCreditsTable.${student.id}"></div>
                 </div>

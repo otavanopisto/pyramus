@@ -35,3 +35,19 @@ function openEditStudentParentInvitationDialog(studentId, invitationId) {
   
   dialog.open();
 }
+
+function openEditSubjectGradesDialog(studentId) {
+  var dialog = new IxDialog({
+    id : 'editStudentSubjectGradesDialog',
+    contentURL : GLOBAL_contextPath + '/students/editstudentsubjectgradesdialog.page?studentId=' + studentId,
+    centered : true,
+    showOk : true,
+    showCancel : false,
+    title : getLocale().getText("students.viewStudent.studentSubjecGradesDialog.title"),
+    okLabel : getLocale().getText("terms.close"), 
+    cancelLabel : getLocale().getText("terms.close") 
+  });
+  
+  dialog.setSize("900px", "500px");
+  dialog.open();
+}
