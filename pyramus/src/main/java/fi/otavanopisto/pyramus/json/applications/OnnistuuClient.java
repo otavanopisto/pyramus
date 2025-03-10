@@ -50,7 +50,11 @@ public class OnnistuuClient {
 
     Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
     String contentMd5 = getMd5(json);
-    Response response = doPost("/api/v1/document/", contentMd5, MediaType.APPLICATION_JSON, entity);
+    Response response = doPost(
+        "/api/v1/document/",
+        contentMd5,
+        MediaType.APPLICATION_JSON,
+        entity);
 
     // Validation
 
@@ -106,7 +110,11 @@ public class OnnistuuClient {
 
     Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
     String contentMd5 = getMd5(json);
-    Response response = doPost(String.format("/api/v1/invitation/%s/signature", invitationId), contentMd5, MediaType.APPLICATION_JSON, entity);
+    Response response = doPost(
+        String.format("/api/v1/invitation/%s/signature", invitationId),
+        contentMd5,
+        MediaType.APPLICATION_JSON,
+        entity);
     
     // Validation
     
@@ -124,7 +132,10 @@ public class OnnistuuClient {
   public void addPdf(String document, byte[] pdf) throws OnnistuuClientException {
     Entity<byte[]> entity = Entity.entity(pdf, "application/pdf");
     String contentMd5 = getMd5(pdf);
-    Response response = doPost(String.format("/api/v1/document/%s/files", document), contentMd5, "application/pdf",
+    Response response = doPost(
+        String.format("/api/v1/document/%s/files", document),
+        contentMd5,
+        "application/pdf",
         entity);
     if (response.getStatus() != 201) {
       int status = response.getStatus();
@@ -155,8 +166,11 @@ public class OnnistuuClient {
     
     Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
     String contentMd5 = getMd5(json);
-    Response response = doPost(String.format("/api/v1/document/%s/invitations", document), contentMd5,
-        MediaType.APPLICATION_JSON, entity);
+    Response response = doPost(
+        String.format("/api/v1/document/%s/invitations", document),
+        contentMd5,
+        MediaType.APPLICATION_JSON,
+        entity);
     
     // Response
     
@@ -198,9 +212,12 @@ public class OnnistuuClient {
     String date = dateToRFC2822(new Date());
     String auth = getAuthorizationHeader("GET", contentMd5, MediaType.APPLICATION_JSON, date, path);
     Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(String.format("https://www.onnistuu.fi%s", path));
-    Builder request = target.request().header("Content-Type", MediaType.APPLICATION_JSON)
-        .header("Content-MD5", contentMd5).header("Date", date).header("Authorization", auth);
+    WebTarget target = client.target(String.format("https://sign.visma.net%s", path));
+    Builder request = target.request()
+        .header("Content-Type", MediaType.APPLICATION_JSON)
+        .header("Content-MD5", contentMd5)
+        .header("Date", date)
+        .header("Authorization", auth);
     return request.get();
   }
 
@@ -210,9 +227,12 @@ public class OnnistuuClient {
     String date = dateToRFC2822(new Date());
     String auth = getAuthorizationHeader("POST", contentMd5, contentType, date, path);
     Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(String.format("https://www.onnistuu.fi%s", path));
-    Builder request = target.request().header("Content-Type", contentType).header("Content-MD5", contentMd5)
-        .header("Date", date).header("Authorization", auth);
+    WebTarget target = client.target(String.format("https://sign.visma.net%s", path));
+    Builder request = target.request()
+        .header("Content-Type", contentType)
+        .header("Content-MD5", contentMd5)
+        .header("Date", date)
+        .header("Authorization", auth);
     return request.post(entity);
   }
 
@@ -252,7 +272,7 @@ public class OnnistuuClient {
     try {
       Mac mac = Mac.getInstance(HMAC_SHA512);
       mac.init(secretKeySpec);
-      String authPostfix = new String(Base64.getEncoder().encode(mac.doFinal(requestParts.getBytes())));
+      String authPostfix = Base64.getEncoder().encodeToString(mac.doFinal(requestParts.getBytes("UTF-8")));
       StringBuilder sb = new StringBuilder();
       sb.append("Onnistuu ");
       sb.append(clientIdentifier);
