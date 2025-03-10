@@ -31,9 +31,6 @@
         margin: 4px 1px 8px 0px;      
         padding: 4px;
       }
-
-      .settingbox_column {
-      }
     </style>
   </head>
   
@@ -52,12 +49,12 @@
         </div>
 
         <div class="settingbox">
-          <span class="settingbox_column">
+          <span>
             <input type="checkbox" name="autoFillOnEdit" id="autoFillOnEdit" checked="checked"/>
             <label for="autoFillOnEdit"><fmt:message key="students.editStudentSubjectGradesDialog.autofillCheckboxLabel"/></label>
           </span>
 
-          <span class="settingbox_column">
+          <span>
             <span class="genericFormSection">      
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="students.editStudentSubjectGradesDialog.gradeApproverTitle"/>
@@ -88,7 +85,7 @@
             </span>
           </span>
           
-          <span class="settingbox_column">
+          <span>
             <button type="button" onclick="editstudentsubjectgradesdialog_activateAllCompletedSubjects(event);">
               <fmt:message key="students.editStudentSubjectGradesDialog.editCompletedSubjectsButton"/>
             </button>
