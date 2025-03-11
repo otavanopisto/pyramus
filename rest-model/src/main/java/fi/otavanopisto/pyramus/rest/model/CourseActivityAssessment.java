@@ -60,14 +60,6 @@ public class CourseActivityAssessment {
     this.gradeDate = gradeDate;
   }
 
-  public Long getEvaluatorId() {
-    return evaluatorId;
-  }
-
-  public void setEvaluatorId(Long evaluatorId) {
-    this.evaluatorId = evaluatorId;
-  }
-
   public String getEvaluatorName() {
     return evaluatorName;
   }
@@ -83,7 +75,6 @@ public class CourseActivityAssessment {
   private Date gradeDate;
   private String text;
   private CourseActivityState state;
-  private Long evaluatorId;
   private String evaluatorName;
 
 }
