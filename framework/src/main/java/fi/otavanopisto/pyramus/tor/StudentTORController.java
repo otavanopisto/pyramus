@@ -1,12 +1,17 @@
 package fi.otavanopisto.pyramus.tor;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,9 +36,31 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 
 public class StudentTORController {
 
+  public enum StudentTORHandling {
+    /**
+     * No extra handling.
+     */
+    NONE,
+    
+    /**
+     * Use Curriculum and calculate summary fields based on it.
+     */
+    CURRICULUM,
+    
+    /**
+     * Use Curriculum and calculate summary fields based on it,
+     * if there are subjects that are included in other subjects,
+     * the credits are moved under the included subjects.
+     */
+    CURRICULUM_MOVE_INCLUDED;
+    
+    public final static EnumSet<StudentTORHandling> LOAD_CURRICULUM = EnumSet.of(CURRICULUM, CURRICULUM_MOVE_INCLUDED);
+  }
+  
   /**
    * Constructs table of records for given student. If subject summary fields
    * (subject completed, mandatory course count and completed mandatory course count)
@@ -45,9 +72,9 @@ public class StudentTORController {
    * @return Student's TOR
    * @throws Exception if something goes wrong
    */
-  public static StudentTOR constructStudentTOR(Student student, boolean useCurriculum) throws Exception {
-    TORCurriculum curriculum = useCurriculum ? getCurriculum(student) : null;
-    return constructStudentTOR(student, curriculum);
+  public static StudentTOR constructStudentTOR(Student student, StudentTORHandling handling) throws Exception {
+    TORCurriculum curriculum = StudentTORHandling.LOAD_CURRICULUM.contains(handling) ? getCurriculum(student) : null;
+    return constructStudentTOR(student, curriculum, handling);
   }
 
   /**
@@ -61,7 +88,7 @@ public class StudentTORController {
    * @return Student's TOR
    * @throws Exception if something goes wrong
    */
-  public static StudentTOR constructStudentTOR(Student student, TORCurriculum curriculum) throws Exception {
+  public static StudentTOR constructStudentTOR(Student student, TORCurriculum curriculum, StudentTORHandling handling) throws Exception {
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
@@ -74,6 +101,41 @@ public class StudentTORController {
     StudentTOR tor = new StudentTOR();
     TORProblems problems = tor.getProblems();
 
+    Map<String, Set<String>> subjectCodeTranslations = (handling == StudentTORHandling.CURRICULUM_MOVE_INCLUDED && curriculum != null) 
+        ? getReverseIncludedSubjectsMapping(curriculum) : null;
+    
+    // Collect Subjects
+
+    for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
+      if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
+        Subject subject = courseAssessment.getSubject();
+        addTORSubject(tor, student, subject, curriculum, handling);
+      }
+    }
+    
+    for (TransferCredit transferCredit : transferCreditsByStudent) {
+      Subject subject = transferCredit.getSubject();
+      addTORSubject(tor, student, subject, curriculum, handling);
+    }
+    
+    for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
+      CourseAssessment courseAssessment = (CourseAssessment) linkedCourseAssessment.getCredit();
+      if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
+        Subject subject = courseAssessment.getSubject();
+        addTORSubject(tor, student, subject, curriculum, handling);
+      }
+    }
+    
+    for (CreditLink linkedTransferCredit : linkedTransferCreditsByStudent) {
+      TransferCredit transferCredit = (TransferCredit) linkedTransferCredit.getCredit();
+      if (transferCredit != null) {
+        Subject subject = transferCredit.getSubject();
+        addTORSubject(tor, student, subject, curriculum, handling);
+      }
+    }
+    
+    // Collect Credits
+    
     for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
       if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
         Subject subject = courseAssessment.getSubject();
@@ -84,7 +146,7 @@ public class StudentTORController {
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         boolean mandatory = isMandatory(courseAssessment);
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
+        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
       }
     }
     
@@ -98,7 +160,7 @@ public class StudentTORController {
       Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
       TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
       boolean mandatory = transferCredit.getOptionality() == CourseOptionality.MANDATORY;
-      addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
+      addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
     }
     
     for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
@@ -112,7 +174,7 @@ public class StudentTORController {
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         boolean mandatory = isMandatory(courseAssessment);
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
+        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
       }
     }
     
@@ -128,14 +190,14 @@ public class StudentTORController {
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         boolean mandatory = transferCredit.getOptionality() == CourseOptionality.MANDATORY;
-        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, problems);
+        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
       }
     }
 
     tor.postProcess(curriculum);
     return tor;
   }
-  
+
   /**
    * Returns TORCurriculum for student or null if one cannot be resolved.
    * 
@@ -186,7 +248,28 @@ public class StudentTORController {
     return lengthUnit;
   }
 
-  private static void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums, boolean mandatory, Double courseLength, TORCourseLengthUnit courseLengthUnit, TORProblems problems) {
+  private static void addTORSubject(StudentTOR tor, Student student, Subject subject, TORCurriculum curriculum, StudentTORHandling handling) {
+    TORSubject torSubject = tor.findSubject(subject.getId());
+    if (torSubject == null) {
+      Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
+      fi.otavanopisto.pyramus.tor.Subject subjectModel = new fi.otavanopisto.pyramus.tor.Subject(
+          subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived());
+      torSubject = TORSubject.from(subjectModel);
+      tor.addSubject(torSubject);
+      
+      StudentSubjectGradeDAO studentSubjectGradeDAO = DAOFactory.getInstance().getStudentSubjectGradeDAO();
+      StudentSubjectGrade studentSubjectGrade = studentSubjectGradeDAO.findBy(student, subject);
+      
+      if (studentSubjectGrade != null && studentSubjectGrade.getGrade() != null) {
+        fi.otavanopisto.pyramus.domainmodel.grading.Grade grade = studentSubjectGrade.getGrade();
+        Grade gradeModel = new Grade(grade.getId(), grade.getName(), grade.getDescription(), grade.getGradingScale().getId(),
+            grade.getPassingGrade(), grade.getQualification(), grade.getGPA(), grade.getArchived());
+        torSubject.setMeanGrade(gradeModel);
+      }
+    }
+  }
+
+  private static void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums, boolean mandatory, Double courseLength, TORCourseLengthUnit courseLengthUnit, Map<String, Set<String>> subjectCodeTranslations, TORProblems problems) {
     if (credit.getGrade() == null) {
       return;
     }
@@ -209,44 +292,102 @@ public class StudentTORController {
     Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
     fi.otavanopisto.pyramus.tor.Subject subjectModel = new fi.otavanopisto.pyramus.tor.Subject(
         subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived());
+
+    // List of subjects the credit will be added to
+    List<TORSubject> torSubjects = new ArrayList<>();
     
-    TORSubject torSubject = tor.findSubject(subject.getId());
-    if (torSubject == null) {
-      torSubject = TORSubject.from(subjectModel);
-      tor.addSubject(torSubject);
+    /*
+     * If the translations map is set, the subjects there
+     * will have their credits moved under the specified
+     * other subjects. At some point there might be need
+     * for an enum that still preserves them in the original
+     * place too, so implement that with another enum.
+     */
+    if (subjectCodeTranslations != null && subjectCodeTranslations.containsKey(subject.getCode())) {
+      Set<String> translatedSubjectCodes = subjectCodeTranslations.get(subject.getCode());
       
-      StudentSubjectGradeDAO studentSubjectGradeDAO = DAOFactory.getInstance().getStudentSubjectGradeDAO();
-      StudentSubjectGrade studentSubjectGrade = studentSubjectGradeDAO.findBy(student, subject);
-      if (studentSubjectGrade != null && studentSubjectGrade.getGrade() != null) {
-        fi.otavanopisto.pyramus.domainmodel.grading.Grade grade = studentSubjectGrade.getGrade();
-        Grade gradeModel = new Grade(grade.getId(), grade.getName(), grade.getDescription(), grade.getGradingScale().getId(),
-            grade.getPassingGrade(), grade.getQualification(), grade.getGPA(), grade.getArchived());
-        torSubject.setMeanGrade(gradeModel);
+      for (String translatedSubjectCode : translatedSubjectCodes) {
+        TORSubject torSubject = tor.findSubject(translatedSubjectCode);
+        if (torSubject != null) {
+          torSubjects.add(torSubject);
+        }
       }
+    }
+    else {
+      TORSubject torSubject = tor.findSubject(subject.getId());
+
+      if (torSubject == null) {
+        torSubject = TORSubject.from(subjectModel);
+        tor.addSubject(torSubject);
+        
+        StudentSubjectGradeDAO studentSubjectGradeDAO = DAOFactory.getInstance().getStudentSubjectGradeDAO();
+        StudentSubjectGrade studentSubjectGrade = studentSubjectGradeDAO.findBy(student, subject);
+        if (studentSubjectGrade != null && studentSubjectGrade.getGrade() != null) {
+          fi.otavanopisto.pyramus.domainmodel.grading.Grade grade = studentSubjectGrade.getGrade();
+          Grade gradeModel = new Grade(grade.getId(), grade.getName(), grade.getDescription(), grade.getGradingScale().getId(),
+              grade.getPassingGrade(), grade.getQualification(), grade.getGPA(), grade.getArchived());
+          torSubject.setMeanGrade(gradeModel);
+        }
+      }
+      
+      torSubjects.add(torSubject);
     }
 
-    TORCourse torCourse = torSubject.findCourse(courseNumber);
-    if (torCourse == null) {
-      torCourse = new TORCourse(subjectModel, courseNumber, mandatory, courseLength, courseLengthUnit);
-      torSubject.addCourse(torCourse);
-    } else {
-      // Validate the lengthUnit matches
-      
-      if (torCourse.getLengthUnit() != courseLengthUnit) {
-        problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_LENGTHUNITS, String.format("%s%d", subjectModel.getCode(), courseNumber)));
+    for (TORSubject torSubject : torSubjects) {
+      TORCourse torCourse = torSubject.findCourse(courseNumber);
+      if (torCourse == null) {
+        torCourse = new TORCourse(subjectModel, courseNumber, mandatory, courseLength, courseLengthUnit);
+        torSubject.addCourse(torCourse);
+      } else {
+        // Validate the lengthUnit matches
+        
+        if (torCourse.getLengthUnit() != courseLengthUnit) {
+          problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_LENGTHUNITS, String.format("%s%d", subjectModel.getCode(), courseNumber)));
+        }
+        
+        // Validate the mandatority matches
+        
+        if (torCourse.isMandatory() != mandatory) {
+          problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_MANDATORITIES, String.format("%s%d", subjectModel.getCode(), courseNumber)));
+        }
       }
       
-      // Validate the mandatority matches
-      
-      if (torCourse.isMandatory() != mandatory) {
-        problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_MANDATORITIES, String.format("%s%d", subjectModel.getCode(), courseNumber)));
-      }
+      String gradeName = credit.getGrade().getName();
+      Double gpa = credit.getGrade().getGPA();
+      torCourse.addCredit(new TORCredit(credit.getGrade().getId(), gradeName, gpa, credit.getDate(), 
+          TORCreditType.COURSEASSESSMENT, credit.getGrade().getPassingGrade()));
     }
-    
-    String gradeName = credit.getGrade().getName();
-    Double gpa = credit.getGrade().getGPA();
-    torCourse.addCredit(new TORCredit(credit.getGrade().getId(), gradeName, gpa, credit.getDate(), 
-        TORCreditType.COURSEASSESSMENT, credit.getGrade().getPassingGrade()));
   }
+  
+  /**
+   * Creates reverse subject code mapping from given TORCurriculum.
+   * 
+   * F.ex. if subjects MAA and MAB both have included subject MAY,
+   * the resulting map is going to be MAY -> [MAA, MAB].
+   * 
+   * @param curriculum
+   * @param handling
+   * @param subjectCodeTranslations
+   * @return
+   */
+  private static Map<String, Set<String>> getReverseIncludedSubjectsMapping(TORCurriculum curriculum) {
+    Map<String, Set<String>> subjectCodeTranslations = new HashMap<>();
 
+    for (TORCurriculumSubject torCurriculumSubject : curriculum.getSubjects()) {
+      List<String> includedSubjects = torCurriculumSubject.getIncludedSubjects();
+      if (CollectionUtils.isNotEmpty(includedSubjects)) {
+        for (String includedSubject : includedSubjects) {
+          Set<String> set = subjectCodeTranslations.get(includedSubject);
+          if (set == null) {
+            set = new HashSet<>();
+            subjectCodeTranslations.put(includedSubject, set);
+          }
+          set.add(torCurriculumSubject.getCode());
+        }
+      }
+    }
+
+    return subjectCodeTranslations;
+  }
+  
 }

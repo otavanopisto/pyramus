@@ -32,6 +32,21 @@ public class TORCurriculumSubject {
     this.modules = modules;
   }
 
+  /**
+   * Returns first module that matches the given courseNumber.
+   * 
+   * @param courseNumber course number
+   * @return first module that matches the course number or null otherwise
+   */
+  public TORCurriculumModule findModule(int courseNumber) {
+    return 
+        this.modules == null ? null :
+        this.modules.stream()
+          .filter(module -> module.getCourseNumber() == courseNumber)
+          .findFirst()
+          .orElse(null);
+  }
+  
   public List<String> getIncludedSubjects() {
     return includedSubjects;
   }

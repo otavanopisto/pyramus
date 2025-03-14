@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -60,7 +61,7 @@ public class EditStudentSubjectGradesDialogViewController extends PyramusViewCon
     }
 
     try {
-      StudentTOR tor = StudentTORController.constructStudentTOR(student, true);
+      StudentTOR tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
       
       ObjectMapper mapper = new ObjectMapper();
       StringWriter writer = new StringWriter();

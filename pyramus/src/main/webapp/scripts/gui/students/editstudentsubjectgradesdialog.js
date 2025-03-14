@@ -70,7 +70,7 @@ function editstudentsubjectgradesdialog_onLoad(event) {
       options: studyApprovers
     }, {
       dataType: 'hidden',
-      paramName: 'arithmeticMeanGrade'
+      paramName: 'numericMeanGrade'
     }, {
       dataType: 'hidden',
       paramName: 'subjectId'
@@ -98,11 +98,6 @@ function editstudentsubjectgradesdialog_onLoad(event) {
   for (var i = 0, l = subjectCreditsData.subjects.length; i < l; i++) {
     var subject = subjectCreditsData.subjects[i];
     
-    // Skip MAY - not applicable
-    if (subject.code == "MAY") {
-      continue;
-    }
-    
     var numMandatoryCompletedCount = subject.mandatoryCourseCount ? subject.mandatoryCourseCompletedCount + "/" + subject.mandatoryCourseCount : subject.passedCoursesCount;
     var subjectGrade = studentSubjectGrades[subject.id];
 
@@ -114,7 +109,7 @@ function editstudentsubjectgradesdialog_onLoad(event) {
       subjectGrade ? subjectGrade.gradeId : '',
       subjectGrade ? subjectGrade.gradeDate : '',
       subjectGrade ? subjectGrade.gradeApproverId : '',
-      subject.arithmeticMeanGrade,
+      subject.weightedMeanGrade,
       subject.id,
       subject.completed ? '1' : '0',
       subjectGrade ? subjectGrade.gradeId : '',
@@ -155,12 +150,12 @@ function editstudentsubjectgradesdialog_setSubjectRowEditable(table, row, editMo
   if (editMode && document.getElementById("autoFillOnEdit").checked) {
     
     if (!table.getCellValue(row, table.getNamedColumnIndex('gradeId'))) {
-      var arithmeticMeanGrade = table.getCellValue(row, table.getNamedColumnIndex('arithmeticMeanGrade'));
+      var numericMeanGrade = table.getCellValue(row, table.getNamedColumnIndex('numericMeanGrade'));
       var gradeId = undefined;
-      
-      // If arithmeticMeanGrade exists, attempt to round it and use that for searching, else use the 
-      if (arithmeticMeanGrade) {
-        var roundedGrade = Math.round(arithmeticMeanGrade);
+
+      // If numericMeanGrade exists, attempt to round it and use that for searching, else use the computedGrade
+      if (numericMeanGrade) {
+        var roundedGrade = Math.round(numericMeanGrade);
         if (roundedGrade != NaN) {
           gradeId = editstudentsubjectgradesdialog_findMatchingGrade(roundedGrade, window.__editstudentsubjectgradesdialog_grades);
         }
