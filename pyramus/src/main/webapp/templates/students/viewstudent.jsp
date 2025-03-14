@@ -3839,7 +3839,7 @@
                     </c:if>
                   </div>
                   <div>
-                    <fmt:message key="students.viewStudent.matriculationMandatory"/>: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} opintopistettä
+                    <fmt:message key="students.viewStudent.matriculationMandatory"/>: ${attendanceBean.sumCompletedMandatoryModuleLength} / ${attendanceBean.sumMandatoryModuleLength} <fmt:message key="students.viewStudent.matriculationCreditPoints"/>
                   </div>
                 </div>
                 
