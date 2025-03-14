@@ -151,6 +151,7 @@ import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
 import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -3529,7 +3530,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     double numCreditPoints = 0;
     try {
-      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, false);
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, StudentTORHandling.NONE);
       numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op, true);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);

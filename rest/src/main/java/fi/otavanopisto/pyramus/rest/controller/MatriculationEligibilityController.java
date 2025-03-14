@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
 import fi.otavanopisto.pyramus.rest.model.MatriculationExamStudentStatus;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
@@ -137,7 +138,7 @@ public class MatriculationEligibilityController {
      * sledgehammer move but StudentTOR will handle the improved grades etc 
      * difficult stuff so we don't need to try replicate it here.
      */
-    StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, torCurriculum);
+    StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, torCurriculum, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
     
     TORSubject torSubject = studentTOR.findSubject(subjectCode);
 
@@ -148,8 +149,8 @@ public class MatriculationEligibilityController {
        * completed and mandatory courses.
        */
       Double creditPointsCompleted = curriculumSubject.getMatriculationRequiredStudies() != null
-          ? torSubject.getCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum)
-          : torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum);
+          ? torSubject.getTotalCreditPointsCompleted()
+          : torSubject.getMandatoryCreditPointsCompleted();
   
       return new StudentMatriculationEligibilityResultOPS2021(
           subjectMandatoryCreditPointCount,

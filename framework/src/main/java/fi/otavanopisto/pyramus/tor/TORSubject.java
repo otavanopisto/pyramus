@@ -110,78 +110,13 @@ public class TORSubject extends Subject {
     this.totalCreditPointsCompleted = totalCreditPointsCompleted;
   }
 
-  /**
-   * Returns total sum of credit points from completed courses within the subject
-   * including the included subjects.
-   * 
-   * @param studentTOR
-   * @param torCurriculum
-   * @return
-   */
-  public Double getCreditPointsCompletedWithIncludedSubjects(StudentTOR studentTOR, TORCurriculum torCurriculum) {
-    Double sum = getTotalCreditPointsCompleted();
-    if (sum == null) {
-      return null;
-    }
-    
-    TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(getCode());
-    if (torCurriculumSubject != null) {
-      if (CollectionUtils.isNotEmpty(torCurriculumSubject.getIncludedSubjects())) {
-        for (String includedSubject : torCurriculumSubject.getIncludedSubjects()) {
-          TORSubject torSubject = studentTOR.findSubject(includedSubject);
-          if (torSubject != null) {
-            Double includedSubjectCreditPointsCompleted = torSubject.getTotalCreditPointsCompleted();
-            if (includedSubjectCreditPointsCompleted != null) {
-              sum += includedSubjectCreditPointsCompleted;
-            }
-          }
-        }
-      }
-    }
-    
-    return sum;
-  }
-
-  /**
-   * Returns sum of credit points from completed and mandatory courses within the subject
-   * including the included subjects.
-   * 
-   * @param studentTOR
-   * @param torCurriculum
-   * @return
-   */
-  public Double getMandatoryCreditPointsCompletedWithIncludedSubjects(StudentTOR studentTOR,
-      TORCurriculum torCurriculum) {
-    Double sum = getMandatoryCreditPointsCompleted();
-    if (sum == null) {
-      return null;
-    }
-    
-    TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(getCode());
-    if (torCurriculumSubject != null) {
-      if (CollectionUtils.isNotEmpty(torCurriculumSubject.getIncludedSubjects())) {
-        for (String includedSubject : torCurriculumSubject.getIncludedSubjects()) {
-          TORSubject torSubject = studentTOR.findSubject(includedSubject);
-          if (torSubject != null) {
-            Double includedSubjectCreditPointsCompleted = torSubject.getMandatoryCreditPointsCompleted();
-            if (includedSubjectCreditPointsCompleted != null) {
-              sum += includedSubjectCreditPointsCompleted;
-            }
-          }
-        }
-      }
-    }
-    
-    return sum;
-  }
-
-  protected void postProcess(TORCurriculum curriculum, TORProblems problems) {
+  protected void postProcess(StudentTOR studentTOR, TORCurriculum curriculum, TORProblems problems) {
     Collections.sort(courses, Comparator.comparing(TORCourse::getCourseNumber, Comparator.nullsLast(Integer::compareTo)));
     courses.forEach(course -> course.postProcess());
     
     calculateArithmeticMeanGrade();
     calculateWeightedMeanGrade(problems);
-    processCurriculum(curriculum, problems);
+    processCurriculum(studentTOR, curriculum, problems);
   }
   
   private void calculateArithmeticMeanGrade() {
@@ -227,10 +162,11 @@ public class TORSubject extends Subject {
    * courses marked as mandatory in the curriculum are successfully
    * completed.
    * 
+   * @param studentTOR 
    * @param curriculum
    * @param problems
    */
-  private void processCurriculum(TORCurriculum curriculum, TORProblems problems) {
+  private void processCurriculum(StudentTOR studentTOR, TORCurriculum curriculum, TORProblems problems) {
     if (curriculum != null && StringUtils.isNotBlank(getCode())) {
       TORCurriculumSubject curriculumSubject = curriculum.getSubjectByCode(getCode());
       if (curriculumSubject != null && CollectionUtils.isNotEmpty(curriculumSubject.getModules())) {
@@ -238,19 +174,26 @@ public class TORSubject extends Subject {
         double sumCompletedMandatoryCreditPoints = 0d;
         double sumCompletedTotalCreditPoints = 0d;
 
-        for (TORCurriculumModule module : curriculumSubject.getModules()) {
-          TORCourse torCourse = findCourse(module.getCourseNumber());
-          
+        for (TORCourse torCourse : courses) {
           if (torCourse != null && torCourse.isPassed()) {
             if (torCourse.getLengthUnit() == TORCourseLengthUnit.op && torCourse.getCourseLength() != null) {
               sumCompletedTotalCreditPoints += torCourse.getCourseLength();
             }
-            
-            if (module.isMandatory()) {
-              numMandatoryCoursesCompleted++;
+
+            if (torCourse.getCourseNumber() != null && torCourse.getSubject() != null && StringUtils.isNotBlank(torCourse.getSubject().getCode())) {
+              /*
+               * Finding the module is done awkwardly with the subject's code because 
+               * if there are included credits from another subject, they aren't necessarily
+               * under the curriculumSubject subject.
+               */
+              TORCurriculumModule curriculumModule = curriculum.findModule(torCourse.getSubject().getCode(), torCourse.getCourseNumber());
               
-              if (torCourse.getLengthUnit() == TORCourseLengthUnit.op && torCourse.getCourseLength() != null) {
-                sumCompletedMandatoryCreditPoints += torCourse.getCourseLength();
+              if (curriculumModule != null && curriculumModule.isMandatory()) {
+                numMandatoryCoursesCompleted++;
+                
+                if (torCourse.getLengthUnit() == TORCourseLengthUnit.op && torCourse.getCourseLength() != null) {
+                  sumCompletedMandatoryCreditPoints += torCourse.getCourseLength();
+                }
               }
             }
           }
