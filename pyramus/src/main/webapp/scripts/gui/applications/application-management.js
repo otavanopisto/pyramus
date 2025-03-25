@@ -309,6 +309,7 @@
         ['Link','Unlink'],
         ['Table','SpecialChar']
       ],
+      versionCheck: false,
       entities_latin: false,
       removePlugins: 'elementspath' 
     });
