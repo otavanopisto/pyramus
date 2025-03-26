@@ -60,6 +60,7 @@ import fi.otavanopisto.pyramus.ytl.YTLSiirtotiedosto;
 
 /**
  * https://github.com/digabi/ilmoittautuminen/wiki/Ilmoittautumistiedot
+ * https://github.com/digabi/ilmoittautuminen/blob/master/koekoodit_ja_nimet.csv
  */
 public class YTLReportBinaryRequestController extends BinaryRequestController {
 
@@ -352,9 +353,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
 
   private boolean isÄidinkieli(MatriculationExamAttendance attendance) {
     MatriculationExamSubject subject = attendance.getSubject();
-    return 
-        subject == MatriculationExamSubject.AI ||
-        subject == MatriculationExamSubject.S2;
+    return subject != null && subject.isÄidinkieli();
   }
 
   public UserRole[] getAllowedRoles() {
