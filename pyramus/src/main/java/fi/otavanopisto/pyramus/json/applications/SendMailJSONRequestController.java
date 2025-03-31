@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationMailErrorHandler;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
@@ -113,7 +114,8 @@ public class SendMailJSONRequestController extends JSONRequestController {
           toRecipients,
           ccRecipients,
           subject,
-          content);
+          content,
+          new ApplicationMailErrorHandler(application));
       
       // Application log entry
       

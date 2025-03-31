@@ -6,7 +6,7 @@ import java.util.Set;
 public class MailEvent {
 
   public MailEvent(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, Set<String> bcc,
-      String subject, String content, List<MailAttachment> attachments) {
+      String subject, String content, List<MailAttachment> attachments, MailErrorHandler errorHandler) {
     super();
     this.jndiName = jndiName;
     this.mimeType = mimeType;
@@ -17,6 +17,7 @@ public class MailEvent {
     this.subject = subject;
     this.content = content;
     this.attachments = attachments;
+    this.errorHandler = errorHandler;
   }
 
   public String getJndiName() {
@@ -55,6 +56,14 @@ public class MailEvent {
     return attachments;
   }
 
+  public MailErrorHandler getErrorHandler() {
+    return errorHandler;
+  }
+
+  public void setErrorHandler(MailErrorHandler errorHandler) {
+    this.errorHandler = errorHandler;
+  }
+
   private String jndiName;
   private String mimeType;
   private String from;
@@ -64,4 +73,5 @@ public class MailEvent {
   private String subject;
   private String content;
   private List<MailAttachment> attachments;
+  private MailErrorHandler errorHandler;
 }

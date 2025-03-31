@@ -108,7 +108,8 @@ public class StudentParentController {
         null,
         invitation.getEmail(),
         subject,
-        content);
+        content,
+        null);
   }
   
   private String generateHash() {

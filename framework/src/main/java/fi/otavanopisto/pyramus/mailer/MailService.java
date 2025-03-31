@@ -37,8 +37,8 @@ public class MailService {
 
   @Lock(LockType.READ)
   public void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, Set<String> bcc, String subject,
-      String content, List<MailAttachment> attachments) {
-    mailEvent.fire(new MailEvent(jndiName, mimeType, from, to, cc, bcc, subject, content, attachments));
+      String content, List<MailAttachment> attachments, MailErrorHandler errorHandler) {
+    mailEvent.fire(new MailEvent(jndiName, mimeType, from, to, cc, bcc, subject, content, attachments, errorHandler));
   }
 
   @Asynchronous
@@ -132,6 +132,14 @@ public class MailService {
       Transport.send(message);
     }
     catch (Exception e) {
+      if (event.getErrorHandler() != null) {
+        try {
+          event.getErrorHandler().report(event.getSubject(), e.getMessage());
+        }
+        catch (Exception e2) {
+          logger.log(Level.SEVERE, "Error handling error", e2);
+        }
+      }
       logger.log(Level.SEVERE, "Error sending mail", e);
     }
   }

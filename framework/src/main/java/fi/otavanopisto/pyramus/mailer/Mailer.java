@@ -28,39 +28,39 @@ public class Mailer {
 
   private static final Logger logger = Logger.getLogger(Mailer.class.getName());
   
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content) {
-    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, Collections.emptyList());
+  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, Collections.emptyList(), errorHandler);
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content) {
-    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), subject, content, Collections.emptyList());
+  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), subject, content, Collections.emptyList(), errorHandler);
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content, List<MailAttachment> mailAttachments) {
-    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), subject, content, mailAttachments);
+  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content, List<MailAttachment> mailAttachments, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), subject, content, mailAttachments, errorHandler);
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailAttachment mailAttachment) {
-    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, Collections.singletonList(mailAttachment));
+  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailAttachment mailAttachment, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, Collections.singletonList(mailAttachment), errorHandler);
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, List<MailAttachment> mailAttachments) {
-    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, mailAttachments);
+  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, List<MailAttachment> mailAttachments, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, mailAttachments, errorHandler);
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String subject, String content) {
-    sendMail(jndiName, mimeType, from, to, Collections.emptySet(), subject, content, Collections.emptyList());
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String subject, String content, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, to, Collections.emptySet(), subject, content, Collections.emptyList(), errorHandler);
   }
   
-  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String cc, String subject, String content) {
-    sendMail(jndiName, mimeType, from, to, Collections.singleton(cc), subject, content, Collections.emptyList());
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String cc, String subject, String content, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, to, Collections.singleton(cc), subject, content, Collections.emptyList(), errorHandler);
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, String subject, String content) {
-    sendMail(jndiName, mimeType, from, to, cc, subject, content, Collections.emptyList());
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, String subject, String content, MailErrorHandler errorHandler) {
+    sendMail(jndiName, mimeType, from, to, cc, subject, content, Collections.emptyList(), errorHandler);
   }
   
-  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, String subject, String content, List<MailAttachment> mailAttachments) {
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, String subject, String content, List<MailAttachment> mailAttachments, MailErrorHandler errorHandler) {
     MailService mailService = (MailService) findByClass(MailService.class);
     if (mailService == null) {
       logger.log(Level.SEVERE, "MailService not bound");
@@ -76,7 +76,7 @@ public class Mailer {
       logger.info("Content: " + content);
     }
     else {
-      mailService.sendMail(jndiName, mimeType, from, to, cc, Collections.emptySet(), subject, content, mailAttachments);
+      mailService.sendMail(jndiName, mimeType, from, to, cc, Collections.emptySet(), subject, content, mailAttachments, errorHandler);
     }
   }
 

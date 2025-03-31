@@ -151,7 +151,7 @@ public class MonthlySourceSummary {
         }
       }
       
-      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, recipientSet, subject, summary.toString());
+      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, recipientSet, subject, summary.toString(), null);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to send application monthly source summary", e);

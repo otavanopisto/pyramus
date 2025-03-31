@@ -99,7 +99,8 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
             null,
             guardian.getEmail(),
             subject,
-            content);
+            content,
+            null);
       } catch (Exception ex) {
         throw new SmvcRuntimeException(ex);
       }
