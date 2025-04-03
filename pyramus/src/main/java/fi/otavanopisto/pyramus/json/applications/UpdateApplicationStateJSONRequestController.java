@@ -12,6 +12,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationMailErrorHandler;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -220,10 +221,10 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           // Send mail to applicant (and possible guardian)
           
           if (StringUtils.isBlank(guardianMail)) {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, attachments);
+            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, attachments, new ApplicationMailErrorHandler(application));
           }
           else {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, guardianMail, subject, content, attachments);
+            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, guardianMail, subject, content, attachments, new ApplicationMailErrorHandler(application));
           }
           
           // Add notification about sent mail
