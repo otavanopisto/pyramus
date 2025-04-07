@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
@@ -55,8 +56,14 @@ public class StudentTOR {
   }
   
   protected void postProcess(TORCurriculum curriculum) {
+    // Remove empty subjects, these may exist if the subject's credits are included to other subjects
+    subjects.removeIf(subject -> CollectionUtils.isEmpty(subject.getCourses()));
+    
+    // Sort subjects by name
     Collections.sort(subjects, Comparator.comparing(TORSubject::getName));
-    subjects.forEach(subject -> subject.postProcess(curriculum, problems));
+
+    // Do the post processing on the subjects
+    subjects.forEach(subject -> subject.postProcess(this, curriculum, problems));
   }
   
   private final TORProblems problems = new TORProblems();
