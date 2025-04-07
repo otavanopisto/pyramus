@@ -54,7 +54,9 @@ public class StudentTORController {
     /**
      * Use Curriculum and calculate summary fields based on it,
      * if there are subjects that are included in other subjects,
-     * the credits are moved under the included subjects.
+     * the credits are moved under the included subjects. If the
+     * subjects don't exist though, the subject is still included
+     * as an individual subject.
      */
     CURRICULUM_MOVE_INCLUDED;
     
@@ -209,6 +211,22 @@ public class StudentTORController {
     if (student.getCurriculum() != null) {
       String curriculumName = student.getCurriculum().getName();
       
+      return getCurriculum(curriculumName);
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Returns TORCurriculum for curriculum name or null if one cannot be resolved.
+   * 
+   * @param student
+   * @return
+   * @throws Exception if parsing curriculum json fails
+   */
+  public static TORCurriculum getCurriculum(String curriculumName) throws Exception {
+    if (StringUtils.isNotBlank(curriculumName)) {
+      
       String curriculumFile = null;
       switch (curriculumName) {
         case PyramusConsts.OPS_2018: curriculumFile = "curriculum_2018.json"; break;
@@ -295,6 +313,9 @@ public class StudentTORController {
 
     // List of subjects the credit will be added to
     List<TORSubject> torSubjects = new ArrayList<>();
+    // If the subject gets included into another subject, this is 
+    // marked true and it's not included as an individual subject
+    boolean handled = false;
     
     /*
      * If the translations map is set, the subjects there
@@ -310,10 +331,12 @@ public class StudentTORController {
         TORSubject torSubject = tor.findSubject(translatedSubjectCode);
         if (torSubject != null) {
           torSubjects.add(torSubject);
+          handled = true;
         }
       }
     }
-    else {
+    
+    if (!handled) {
       TORSubject torSubject = tor.findSubject(subject.getId());
 
       if (torSubject == null) {
