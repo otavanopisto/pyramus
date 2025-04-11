@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
@@ -48,7 +51,9 @@ public class ManageTransferCreditsViewController extends PyramusViewController i
     Student student = studentDAO.findById(studentId);
     List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
-
+    String studentSSNHash = (student.getPerson() != null && StringUtils.isNotBlank(student.getPerson().getSocialSecurityNumber()))
+        ? DigestUtils.sha256Hex(student.getPerson().getSocialSecurityNumber()) : null;
+    
     List<EducationalTimeUnit> timeUnits = educationalTimeUnitDAO.listUnarchived();
     Collections.sort(timeUnits, new StringAttributeComparator("getName"));
 
@@ -67,6 +72,7 @@ public class ManageTransferCreditsViewController extends PyramusViewController i
     pageRequestContext.getRequest().setAttribute("gradingScales", gradingScales);
     pageRequestContext.getRequest().setAttribute("timeUnits", timeUnits);
     pageRequestContext.getRequest().setAttribute("transferCreditTemplates", transferCreditTemplates);
+    pageRequestContext.getRequest().setAttribute("studentSSNHash", studentSSNHash);
     
     pageRequestContext.setIncludeJSP("/templates/grading/managetransfercredits.jsp");
   }

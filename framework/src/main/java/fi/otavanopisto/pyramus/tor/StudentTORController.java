@@ -147,6 +147,21 @@ public class StudentTORController {
     if (student.getCurriculum() != null) {
       String curriculumName = student.getCurriculum().getName();
       
+      return getCurriculum(curriculumName);
+    }
+
+    return null;
+  }
+
+  /**
+   * Returns TORCurriculum for curriculum name or null if one cannot be resolved.
+   * 
+   * @param student
+   * @return
+   * @throws Exception if parsing curriculum json fails
+   */
+  public static TORCurriculum getCurriculum(String curriculumName) throws Exception {
+    if (StringUtils.isNotBlank(curriculumName)) {      
       String curriculumFile = null;
       switch (curriculumName) {
         case PyramusConsts.OPS_2018: curriculumFile = "curriculum_2018.json"; break;
