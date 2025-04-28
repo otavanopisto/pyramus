@@ -46,6 +46,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.ytl.AbstractKokelas;
 import fi.otavanopisto.pyramus.ytl.Kokelas;
@@ -232,7 +233,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
 
     StudentTOR tor;
     try {
-      tor = StudentTORController.constructStudentTOR(student, false);
+      tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.NONE);
     } catch (Exception ex) {
       tor = new StudentTOR();
       logger.log(Level.SEVERE, String.format("Failed to construct TOR for Student %d", student.getId()), ex);
