@@ -2407,6 +2407,35 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   margin-left:8px;
 }
 
+#manageTransferCredits .genericFormAddFileContainer {
+	align-items: center;
+	background: #739de7;
+	border-radius: 5px;
+	display: inline-flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	padding: 5px 10px;
+	position: relative;
+}
+
+#manageTransferCredits .genericFormAddFileContainer .genericFormAddFileDescription {
+  color: #fff;
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+#manageTransferCredits .genericFormAddFileContainer .genericFormAddFileField {
+  bottom: 0;
+  cursor: pointer;
+	left: 0;
+	opacity: 0;
+	position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+
 #transferCreditsCountContainer {
   margin-left: 8px;
   margin-top: 8px;

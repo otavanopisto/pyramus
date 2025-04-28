@@ -719,6 +719,10 @@
         var glassPane = new IxGlassPane(document.body, { });
         glassPane.show();
         
+        $('noTransferCreditsAddedMessageContainer').setStyle({
+          display: 'none'
+        });
+        
         setTimeout(function () {
           try {
             var timeUnitMapping = {};
@@ -808,28 +812,28 @@
                     
                     const notesContainer = document.getElementById("koskiImportNotesContainer");
                     for (const note of credits.notes) {
-                      const noteDiv = document.createElement("div");
+                      const noteDiv = document.createElement("p");
                       noteDiv.appendChild(document.createTextNode(note));
                       notesContainer.appendChild(noteDiv);
                     }
     
                     const errorContainer = document.getElementById("koskiImportErrorContainer");
                     for (const error of credits.errors) {
-                      const errorDiv = document.createElement("div");
+                      const errorDiv = document.createElement("p");
                       errorDiv.appendChild(document.createTextNode(error));
                       errorContainer.appendChild(errorDiv);
                     }
                     
                     const curriculumErrorsContainer = document.getElementById("koskiImportCurriculumErrorsContainer");
                     for (const error of credits.curriculumErrors) {
-                      const errorDiv = document.createElement("div");
+                      const errorDiv = document.createElement("p");
                       errorDiv.appendChild(document.createTextNode(error));
                       curriculumErrorsContainer.appendChild(errorDiv);
                     }
     
                     const curriculumNotesContainer = document.getElementById("koskiImportCurriculumNotesContainer");
                     for (const error of credits.curriculumNotes) {
-                      const errorDiv = document.createElement("div");
+                      const errorDiv = document.createElement("p");
                       errorDiv.appendChild(document.createTextNode(error));
                       curriculumNotesContainer.appendChild(errorDiv);
                     }
@@ -860,34 +864,46 @@
     
     <style type="text/css">
       .pyramusAccordion {
-        
+        border: 1px solid #a0bff7;
+        border-radius: 5px;
+        margin: 5px;
+        padding: 10px;
       }
       
       .pyramusAccordionButton {
         align-items: center;
-        background-color: #739de7;
-        border-radius: 10px;
         cursor: pointer;
-        display: inline-block;
-        color: #fff;
+        display: flex;
+        color: #2e5ec5;
+        line-height: 1;
+        height: 20px;
         font-size: 12px;
-        padding: 4px 6px;
         text-decoration: none;
-        vertical-align: middle;
       }
       
-      .pyramusAccordionButton:after {
+      .pyramusAccordionButton:before {
+        align-items: center;
         content: "+";
-        margin-left: 5px;
+        display: flex;
+        height: 14px;
+        justify-content: center;
+        margin: 0 5px 0 0;
+        width: 10px;
       }
       
-      .pyramusAccordionButtonOpened:after {
+      .pyramusAccordionButtonOpened:before {
+        align-items: center;
         content: "-";
+        display: flex;
+        height: 14px;
+        justify-content: center;
+        margin: 0 5px 0 0;
+        width: 10px;
       }
       
       .pyramusAccordionContent {
         display: none;
-        margin: 2px 8px;
+        margin: 0 0 0 15px;
       }
     </style>
   </head>
@@ -914,7 +930,6 @@
           <div id="manageTransferCredits" class="tabContentixTableFormattedData">
 
             <c:if test="${student.curriculum.name eq 'OPS 2021'}">
-              <input type="file" onchange="koskiImportCredits(event);"/>
               <div class="transferCreditImportOutput">
                 <div class="pyramusAccordion">
                   <div class="pyramusAccordionButton pyramusAccordionButtonOpened">Errors</div>
@@ -970,6 +985,18 @@
                 <fmt:message key="grading.manageTransferCredits.addTemplateButton"/>
               </button>   
             </div>
+            
+            <c:if test="${student.curriculum.name eq 'OPS 2021'}">
+	            <div class="genericFormSection">
+	              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+	                <jsp:param name="titleLocale" value="grading.manageTransferCredits.templateTitle"/>
+	                <jsp:param name="helpLocale" value="grading.manageTransferCredits.templateHelp"/>
+	              </jsp:include>
+	              <div class="genericFormAddFileContainer">
+	                <div class="genericFormAddFileDescription">Klikkaa mua ja lisääppäs tänne väbä JSON notta päästään parsimaan sitä</div>
+	                <input class="genericFormAddFileField" type="file" onchange="koskiImportCredits(event);"/></div>
+	            </div>
+            </c:if>
 
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addTransferCreditsTableRow();"><fmt:message key="grading.manageTransferCredits.addTransferCreditLink"/></span>
