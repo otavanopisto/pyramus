@@ -190,15 +190,14 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
             }
             else {
               for (const kurssi of kurssit) {
-                var kurssiKoodi = kurssi.koulutusmoduuli.tunniste.koodiarvo;
-                var arviointi = parasArviointi(kurssi.arviointi, kurssiKoodi, results);
-                
-                if (arviointi == null || !arviointi["hyväksytty"]) {
+                const kurssiKoodi = kurssi.koulutusmoduuli.tunniste.koodiarvo;
+                const arviointi = parasArviointi(kurssi.arviointi, kurssiKoodi, results);
+
+                if (arviointi == null) {
                   results.notes.push("{0} ei löydetty hyväksyttyä arviointia.".format(kurssiKoodi));
                 }
                 else {
-                  var arvosana = arviointi ? arviointi.arvosana.koodiarvo : "";
-
+                  const arvosana = arviointi ? arviointi.arvosana.koodiarvo : "";
                   var laajuus = null;
                   var laajuusYksikko = null;
 
@@ -297,10 +296,11 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
             doConvert = true;
           break;
           case "KNRO":
-            // TODO vt_vastaavuus.subject
-
-            // Muuttunut kurssinumero
-            tulosObjekti.curriculumNotes.push("OPS-konversio: " + subject + courseNumber + " -> " + subject + konversioKurssi.to);
+            // Muuttunut oppiaine / kurssinumero
+            const uusiSubject = konversioKurssi.subject ? konversioKurssi.subject : subject;
+            tulosObjekti.curriculumNotes.push("OPS-konversio: " + subject + courseNumber + " -> " + uusiSubject + konversioKurssi.to);
+            
+            subject = uusiSubject;
             courseNumber = konversioKurssi.to;
             doConvert = true;
           break;
@@ -396,25 +396,42 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
   return [];
 }
 
+/**
+ * Palauttaa "parhaan" arvioinnin arvioinnit-listasta.
+ *
+ * Palauttaa null, jos yhtään läpäisevää arvosanaa ei pystytä selvittämään.
+ */
 function parasArviointi(arvioinnit, kurssiKoodi, results) {
   if (!arvioinnit || !arvioinnit.length) {
     results.errors.push("Kurssilla " + kurssiKoodi + " ei ole arviointeja");
     return null;
   } 
 
+  // Läpäisevät arvosanat. Kosken antamassa arvioinnin jsonissa olisi myös
+  // property "hyväksytty", mutta tämä on tietoja syötettäessä optionaalinen
+  // joten ei luoteta siihen.
+  const lapaisevatArvosanat = [ '5', '6', '7', '8', '9', '10', 'O', 'S' ];
+
   var arviointi = arvioinnit[0];
   var arviointiArvosanaNum = parseInt(arviointi.arvosana.koodiarvo, 10);
+  var arviointiLapaiseva = lapaisevatArvosanat.indexOf(arviointi.arvosana.koodiarvo) != -1;
 
   for (var i = 1; i < arvioinnit.length; i++) {
+    const i_lapaiseva = lapaisevatArvosanat.indexOf(arvioinnit[i].arvosana.koodiarvo) != -1;
+    
     // Hyväksytty arviointi > ei-hyväksytty
-    if (!arviointi["hyväksytty"] && arvioinnit[i]["hyväksytty"]) {
+    if (!arviointiLapaiseva && i_lapaiseva) {
       arviointi = arvioinnit[i];
+      arviointiArvosanaNum = parseInt(arviointi.arvosana.koodiarvo, 10);
+      arviointiLapaiseva = i_lapaiseva;
     }
     else {
       var arvosanaNum = parseInt(arvioinnit[i].arvosana.koodiarvo, 10);
       // Jos i:nnen arvioinnin arvosana on suurempi, käytetään sitä
       if (!isNaN(arvosanaNum) && !isNaN(arviointiArvosanaNum) && arvosanaNum > arviointiArvosanaNum) {
         arviointi = arvioinnit[i];
+        arviointiArvosanaNum = parseInt(arviointi.arvosana.koodiarvo, 10);
+        arviointiLapaiseva = i_lapaiseva;
       }
     }
   }
@@ -423,7 +440,7 @@ function parasArviointi(arvioinnit, kurssiKoodi, results) {
     results.notes.push(kurssiKoodi + " sisältää useita arviointeja. Käytettiin arvosanaa " + (arviointi ? arviointi.arvosana.koodiarvo : "?"));
   }
 
-  return arviointi;
+  return arviointiLapaiseva ? arviointi : null;
 }
 
 /**
