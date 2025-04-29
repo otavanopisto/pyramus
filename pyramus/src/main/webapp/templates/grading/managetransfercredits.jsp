@@ -869,7 +869,7 @@
       .pyramusAccordion {
         border: 1px solid #a0bff7;
         border-radius: 5px;
-        margin: 5px;
+        margin: 5px 5px 10px;
         padding: 10px;
       }
       
