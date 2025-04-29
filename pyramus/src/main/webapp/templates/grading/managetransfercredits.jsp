@@ -837,6 +837,9 @@
                       errorDiv.appendChild(document.createTextNode(error));
                       curriculumNotesContainer.appendChild(errorDiv);
                     }
+                    
+                    const outputContainer = document.getElementById("transferCreditImportOutput");
+                    outputContainer.style.display = "block";
                   })
                   .then(function () {
                     glassPane.hide();
@@ -928,28 +931,6 @@
           </div>
           
           <div id="manageTransferCredits" class="tabContentixTableFormattedData">
-
-            <c:if test="${student.curriculum.name eq 'OPS 2021'}">
-              <div class="transferCreditImportOutput">
-                <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton pyramusAccordionButtonOpened">Errors</div>
-                  <div id="koskiImportErrorContainer" class="pyramusAccordionContent" style="display: block;"></div>
-                </div>
-                <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton">Notes</div>
-                  <div id="koskiImportNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
-                </div>
-                <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton">Curriculum Errors</div>
-                  <div id="koskiImportCurriculumErrorsContainer" class="pyramusAccordionContent" style="display: none;"></div>
-                </div>
-                <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton">Curriculum Notes</div>
-                  <div id="koskiImportCurriculumNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
-                </div>
-              </div>
-            </c:if>
-          
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="grading.manageTransferCredits.studentTitle"/>
@@ -987,15 +968,35 @@
             </div>
             
             <c:if test="${student.curriculum.name eq 'OPS 2021'}">
-	            <div class="genericFormSection">
-	              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-	                <jsp:param name="titleLocale" value="grading.manageTransferCredits.templateTitle"/>
-	                <jsp:param name="helpLocale" value="grading.manageTransferCredits.templateHelp"/>
-	              </jsp:include>
-	              <div class="genericFormAddFileContainer">
-	                <div class="genericFormAddFileDescription">Klikkaa mua ja lisääppäs tänne väbä JSON notta päästään parsimaan sitä</div>
-	                <input class="genericFormAddFileField" type="file" onchange="koskiImportCredits(event);"/></div>
-	            </div>
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="grading.manageTransferCredits.templateTitle"/>
+                  <jsp:param name="helpLocale" value="grading.manageTransferCredits.templateHelp"/>
+                </jsp:include>
+                <div class="genericFormAddFileContainer">
+                  <div class="genericFormAddFileDescription">Klikkaa mua ja lisääppäs tänne väbä JSON notta päästään parsimaan sitä</div>
+                  <input class="genericFormAddFileField" type="file" onchange="koskiImportCredits(event);"/>
+                </div>
+              </div>
+
+              <div id="transferCreditImportOutput" class="transferCreditImportOutput" style="display: none;">
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton pyramusAccordionButtonOpened">Errors</div>
+                  <div id="koskiImportErrorContainer" class="pyramusAccordionContent" style="display: block;"></div>
+                </div>
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton">Notes</div>
+                  <div id="koskiImportNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
+                </div>
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton">Curriculum Errors</div>
+                  <div id="koskiImportCurriculumErrorsContainer" class="pyramusAccordionContent" style="display: none;"></div>
+                </div>
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton">Curriculum Notes</div>
+                  <div id="koskiImportCurriculumNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
+                </div>
+              </div>
             </c:if>
 
             <div class="genericTableAddRowContainer">
