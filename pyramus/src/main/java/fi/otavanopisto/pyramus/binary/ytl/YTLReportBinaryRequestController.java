@@ -46,6 +46,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.ytl.AbstractKokelas;
 import fi.otavanopisto.pyramus.ytl.Kokelas;
@@ -60,6 +61,7 @@ import fi.otavanopisto.pyramus.ytl.YTLSiirtotiedosto;
 
 /**
  * https://github.com/digabi/ilmoittautuminen/wiki/Ilmoittautumistiedot
+ * https://github.com/digabi/ilmoittautuminen/blob/master/koekoodit_ja_nimet.csv
  */
 public class YTLReportBinaryRequestController extends BinaryRequestController {
 
@@ -231,7 +233,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
 
     StudentTOR tor;
     try {
-      tor = StudentTORController.constructStudentTOR(student, false);
+      tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.NONE);
     } catch (Exception ex) {
       tor = new StudentTOR();
       logger.log(Level.SEVERE, String.format("Failed to construct TOR for Student %d", student.getId()), ex);
@@ -352,9 +354,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
 
   private boolean isÄidinkieli(MatriculationExamAttendance attendance) {
     MatriculationExamSubject subject = attendance.getSubject();
-    return 
-        subject == MatriculationExamSubject.AI ||
-        subject == MatriculationExamSubject.S2;
+    return subject != null && subject.isÄidinkieli();
   }
 
   public UserRole[] getAllowedRoles() {

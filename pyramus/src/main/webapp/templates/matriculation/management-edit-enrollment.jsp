@@ -61,7 +61,10 @@
           {value:"FY", text:"Fysiikka"},
           {value:"BI", text:"Biologia"},
           {value:"MAA", text:"Matematiikka, pitkä"},
-          {value:"MAB", text:"Matematiikka, lyhyt"}
+          {value:"MAB", text:"Matematiikka, lyhyt"},
+          {value:"I", text:"Äidinkieli ja kirjallisuus, inarinsaame"},
+          {value:"W", text:"Äidinkieli ja kirjallisuus, koltansaame"},
+          {value:"Z", text:"Äidinkieli ja kirjallisuus, pohjoissaame"}
         ];
         var mandatorityOptions = [
           {value: "", text: ""},

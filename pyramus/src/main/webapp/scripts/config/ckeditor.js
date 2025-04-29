@@ -1,5 +1,6 @@
 CKEDITOR.config.scayt_autoStartup  = false;
 CKEDITOR.config.entities = false;
+CKEDITOR.config.versionCheck = false;
 
 var defaultDescriptionToolbar = [
   ['Cut','Copy','Paste','PasteText','-', 'Scayt'],

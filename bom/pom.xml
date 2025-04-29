@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.otavanopisto.pyramus</groupId>
   <artifactId>bom</artifactId>
-  <version>0.7.235-SNAPSHOT</version>
+  <version>0.7.239-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -42,7 +42,7 @@
     <junit4.version>4.13.1</junit4.version>
     
     <!-- JUnit5 -->
-    <junit5.version>5.7.0</junit5.version>
+    <junit5.version>5.12.1</junit5.version>
 
     <!-- REST-assured -->
 
@@ -96,7 +96,7 @@
 
     <!-- Pyramus -->
 
-    <pyramus.version>0.7.235-SNAPSHOT</pyramus.version>
+    <pyramus.version>0.7.239-SNAPSHOT</pyramus.version>
 
     <!-- Webapp-permission -->
 
@@ -376,23 +376,12 @@
       <!-- JUnit5 -->
       
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
         <version>${junit5.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
-  
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit5.version}</version>
-      </dependency>
-  
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-params</artifactId>
-        <version>${junit5.version}</version>
-      </dependency>
-      
     </dependencies>
   </dependencyManagement>
 

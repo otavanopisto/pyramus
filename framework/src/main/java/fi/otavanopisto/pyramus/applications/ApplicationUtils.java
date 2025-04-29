@@ -734,10 +734,10 @@ public class ApplicationUtils {
         // Send mail to applicant or, for minors, applicant and guardian
 
         if (StringUtils.isBlank(guardianMail)) {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
         }
         else {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content, new ApplicationMailErrorHandler(application));
         }
 
         // #879: Add sent modification mail to application log
@@ -812,7 +812,8 @@ public class ApplicationUtils {
           staffMember == null ? null : staffMember.getPrimaryEmail().getAddress(),
           emails,
           mailSubject,
-          mailContent);
+          mailContent,
+          new ApplicationMailErrorHandler(application));
     }
     
     // Log entry
@@ -1396,7 +1397,8 @@ public class ApplicationUtils {
             null,
             application.getEmail(),
             subject,
-            content);
+            content,
+            new ApplicationMailErrorHandler(application));
       }
       else {
         Mailer.sendMail(
@@ -1406,7 +1408,8 @@ public class ApplicationUtils {
             application.getEmail(),
             guardianMail,
             subject,
-            content);
+            content,
+            new ApplicationMailErrorHandler(application));
       }
       
       // Add notification about sent mail
@@ -1442,7 +1445,8 @@ public class ApplicationUtils {
             null,
             guardian.getEmail(),
             subject,
-            content);
+            content,
+            new ApplicationMailErrorHandler(application));
 
         // Add notification about sent mail
 

@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
+import fi.otavanopisto.pyramus.applications.ApplicationMailErrorHandler;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -892,10 +893,10 @@ public class ApplicationRESTService extends AbstractRESTService {
       // Send mail to applicant or, for minors, applicant and guardian
 
       if (StringUtils.isEmpty(guardianMail)) {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
       }
       else {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content, new ApplicationMailErrorHandler(application));
       }
 
       // #879: Add sent confirmation mail to application log
@@ -940,7 +941,8 @@ public class ApplicationRESTService extends AbstractRESTService {
           ApplicationUtils.applicationLineUiValue(application.getLine()),
           viewUrl);
       Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, application.getEmail(),
-          application.getHandler().getPrimaryEmail().getAddress(), subject, content);
+          application.getHandler().getPrimaryEmail().getAddress(), subject, content,
+          new ApplicationMailErrorHandler(application));
     }
   }
 

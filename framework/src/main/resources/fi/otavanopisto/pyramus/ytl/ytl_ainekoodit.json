@@ -333,5 +333,35 @@
     "suoritetutKurssit": [
       { "educationType": "2", "subjectCode": "YH" }
     ]
+  },
+  {
+    "ytlAine": "I",
+    "ytlOppimäärä": "",
+    "aine": "Äidinkieli ja kirjallisuus, inarinsaame",
+    "aineKoodi": "ÄIS",
+    "matriculationExamSubject": "I",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ÄIS" }
+    ]
+  },
+  {
+    "ytlAine": "W",
+    "ytlOppimäärä": "",
+    "aine": "Äidinkieli ja kirjallisuus, koltansaame",
+    "aineKoodi": "ÄIS",
+    "matriculationExamSubject": "W",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ÄIS" }
+    ]
+  },
+  {
+    "ytlAine": "Z",
+    "ytlOppimäärä": "",
+    "aine": "Äidinkieli ja kirjallisuus, pohjoissaame",
+    "aineKoodi": "ÄIS",
+    "matriculationExamSubject": "Z",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ÄIS" }
+    ]
   }
 ]

@@ -95,6 +95,9 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
       }
     }
     
+    // Suullisen kielitaidon kokeet
+    suullisenKielitaidonKokeet(student, suoritus);
+    
     return new OpiskeluoikeusInternetix(opiskeluoikeus, false);
   }
 

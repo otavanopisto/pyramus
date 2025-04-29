@@ -114,6 +114,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import fi.otavanopisto.pyramus.tor.TORCourse;
 import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
@@ -933,7 +934,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       studentValidations.addAll(ViewStudentTools.validate(student));
 
       try {
-        StudentTOR tor = StudentTORController.constructStudentTOR(student, true);
+        StudentTOR tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
         subjectCredits.put(student.getId(), tor);
       } catch (Exception ex) {
         logger.log(Level.SEVERE, String.format("Failed to construct TOR for student %d", student.getId()), ex);
@@ -1055,7 +1056,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
     StudentTOR studentTOR;
     try {
-      studentTOR = StudentTORController.constructStudentTOR(latestStudent, torCurriculum);
+      studentTOR = StudentTORController.constructStudentTOR(latestStudent, torCurriculum, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
     } catch (Exception e) {
       logger.log(Level.SEVERE, String.format("Couldn't load StudentTOR for student %d", latestStudent.getId()), e);
       return;
@@ -1170,7 +1171,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     
     // These count the included subjects also
     Double sumMandatoryModuleLength = torCurriculumSubject != null ? (double) torCurriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum) : 0d;
-    Double sumCompletedMandatoryModuleLength = torSubject != null ? sumCompletedMandatoryModuleLength = torSubject.getMandatoryCreditPointsCompletedWithIncludedSubjects(studentTOR, torCurriculum) : 0d;
+    Double sumCompletedMandatoryModuleLength = torSubject != null ? torSubject.getMandatoryCreditPointsCompleted() : 0d;
 
     if (torCurriculumSubject != null) {
       for (TORCurriculumModule torCurriculumModule : torCurriculumSubject.getModules()) {
