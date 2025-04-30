@@ -88,6 +88,7 @@ public class MailService {
       // Sender
 
       InternetAddress fromAddress = new InternetAddress(from == null ? "haku@muikkuverkko.fi" : from);
+      message.setFrom(fromAddress);
       message.setReplyTo(new InternetAddress[] { fromAddress });
 
       // Content
