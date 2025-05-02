@@ -18,11 +18,18 @@ import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
+import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
+import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.UserContact;
+import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/contacts")
 @Produces("application/json")
@@ -34,15 +41,38 @@ public class UserContactRESTService extends AbstractRESTService {
   @Inject
   private UserController userController;
 
+  @Inject
+  private SessionController sessionController;
+
+  @Inject
+  private RESTSecurity restSecurity;
+
   @Path("/users/{USERID:[0-9]*}/contacts")
   @GET
-  @RESTPermit(UserPermissions.LIST_STAFFMEMBER_EMAILS)
+  @RESTPermit(handling = Handling.INLINE)
   public Response listUserContacts(@PathParam("USERID") Long userId) {
 
     User user = userController.findUserById(userId);
 
     if (user == null) {
       return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    Student student = sessionController.getUser() instanceof Student ? (Student) sessionController.getUser() : null;
+    StaffMember staffMember = sessionController.getUser() instanceof StaffMember
+        ? (StaffMember) sessionController.getUser()
+        : null;
+
+    if (student != null) {
+      if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_CONTACTS, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    else {
+      if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFF_CONTACTS, UserPermissions.USER_OWNER },
+          staffMember, Style.OR)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
 
     ContactInfo contactInfo = user.getContactInfo();
@@ -60,24 +90,28 @@ public class UserContactRESTService extends AbstractRESTService {
     for (int i = 0; i < len; i++) {
       UserContact userContact = new UserContact();
 
+      userContact.setId(contactInfo.getId());
+
       // Email
-      if (emails.size()-1 >= i) {
+      if (emails.size() - 1 >= i) {
         Email email = emails.get(i);
 
         if (email != null) {
           userContact.setEmail(email.getAddress());
           userContact.setContactType(email.getContactType().getName());
+          userContact.setDefaultContact(email.getDefaultAddress());
         }
       }
       // Address & name
-      
-      if (addresses.size()-1 >= i) {
+
+      if (addresses.size() - 1 >= i) {
         Address address = addresses.get(i);
 
         if (address != null) {
-          String addressString = address.getStreetAddress() + ", " + address.getPostalCode() + " " + address.getCity()
-              + ", " + address.getCountry();
-          userContact.setAddress(addressString);
+          userContact.setStreetAddress(address.getStreetAddress());
+          userContact.setPostalCode(address.getPostalCode());
+          userContact.setCity(address.getCity());
+          userContact.setCountry(address.getCountry());
           userContact.setName(address.getName());
 
           if (userContact.getContactType() == null) {
@@ -87,7 +121,7 @@ public class UserContactRESTService extends AbstractRESTService {
       }
       // Phone number
 
-      if (phonenumbers.size()-1 >= i) {
+      if (phonenumbers.size() - 1 >= i) {
         PhoneNumber phoneNumber = phonenumbers.get(i);
 
         if (phoneNumber != null) {
