@@ -669,8 +669,6 @@
 
         const data = opsVastaavuusTaulukkoKaikki();
         
-        console.log(data);
-        
         for (const subjectCode of Object.keys(data.aineet)) {
           const cont = document.createElement("div");
           container.appendChild(cont);
@@ -754,12 +752,8 @@
                 try {
                   var koskiHenkilo = JSON.parse(e.target.result);
 
-                  console.log(koskiHenkilo);
-                  
                   parseKoskiTransferCredits(koskiHenkilo, '${student.curriculum.id}', '${studentSSNHash}').then((credits) => {
                     var table = getIxTableById('transferCreditsTable');
-                    
-                    console.log(credits);
                     
                     table.detachFromDom();
                     credits.credits.forEach(credit => {

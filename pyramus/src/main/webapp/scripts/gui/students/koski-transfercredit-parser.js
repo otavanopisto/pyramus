@@ -1058,50 +1058,92 @@ function opsVastaavuusTaulukkoKaikki() {
     opsit: opsit
   };
 
-  const oppiaineet = new Set(vastaavuustaulukot.flatMap(vt => Object.keys(vt.aineet)));
-  
-  for (const oppiaine of oppiaineet) {
-    const kaikkioppiainevastaavuudet = {};
-    kokotaulukko.aineet[oppiaine] = kaikkioppiainevastaavuudet;
+  for (const vt of vastaavuustaulukot) {
+    const vt_oppiaineet = Object.keys(vt.aineet);
+    for (const vt_oppiaine of vt_oppiaineet) {
+      const vt_oppiaine_kurssinrot = Object.keys(vt.aineet[vt_oppiaine]);
+      for (const vt_kurssinro of vt_oppiaine_kurssinrot) {
+        const vt_vastaavuus = vt.aineet[vt_oppiaine][vt_kurssinro];
+        switch (vt_vastaavuus.type) {
+          case "OK": {
+            var kaikkioppiainevastaavuudet = kokotaulukko.aineet[vt_oppiaine];
+            if (!kaikkioppiainevastaavuudet) {
+              kaikkioppiainevastaavuudet = {};
+              kokotaulukko.aineet[vt_oppiaine] = kaikkioppiainevastaavuudet;
+            }
 
-    for (const vt of vastaavuustaulukot) {
-      if (vt.aineet[oppiaine]) {
-        // Kaikki vastaavuustaulukossa olevat kurssinumerot
-        const vt_kurssinrot = Object.keys(vt.aineet[oppiaine]);
-        for (const vt_kurssinro of vt_kurssinrot) {
-          const vt_vastaavuus = vt.aineet[oppiaine][vt_kurssinro];
-          switch (vt_vastaavuus.type) {
-            case "OK":
-              if (!kaikkioppiainevastaavuudet[vt_kurssinro]) {
-                kaikkioppiainevastaavuudet[vt_kurssinro] = {};
-              }
-              kaikkioppiainevastaavuudet[vt_kurssinro][vt.diaarinumero] = vt_kurssinro;
-            break;
-            case "KNRO":
-              // TODO vt_vastaavuus.subject
-            
-            
-              if (!kaikkioppiainevastaavuudet[vt_vastaavuus.to]) {
-                kaikkioppiainevastaavuudet[vt_vastaavuus.to] = {};
-              }
-              kaikkioppiainevastaavuudet[vt_vastaavuus.to][vt.diaarinumero] = vt_kurssinro;
-            break;
-            case "MONI":
-console.log("SDFASDFSDFSD");            
-            break;
-            case "KORJAA_KÄSIN":
-              if (!kaikkioppiainevastaavuudet[vt_kurssinro]) {
-                kaikkioppiainevastaavuudet[vt_kurssinro] = {};
-              }
-              kaikkioppiainevastaavuudet[vt_kurssinro][vt.diaarinumero] = "K";
-            break;
+            if (!kaikkioppiainevastaavuudet[vt_kurssinro]) {
+              kaikkioppiainevastaavuudet[vt_kurssinro] = {};
+            }
+            kaikkioppiainevastaavuudet[vt_kurssinro][vt.diaarinumero] = vt_oppiaine + vt_kurssinro;
           }
+          break;
+          
+          case "KNRO": {
+            // Jos vastaavuustaulukko vaihtaa oppiaineen (esim RUB -> RUB1), käytetään sitä
+            const knro_oppiaine = vt_vastaavuus.subject ? vt_vastaavuus.subject : vt_oppiaine;
+            
+            var kaikkioppiainevastaavuudet = kokotaulukko.aineet[knro_oppiaine];
+            if (!kaikkioppiainevastaavuudet) {
+              kaikkioppiainevastaavuudet = {};
+              kokotaulukko.aineet[knro_oppiaine] = kaikkioppiainevastaavuudet;
+            }
+
+            if (!kaikkioppiainevastaavuudet[vt_vastaavuus.to]) {
+              kaikkioppiainevastaavuudet[vt_vastaavuus.to] = {};
+            }
+            kaikkioppiainevastaavuudet[vt_vastaavuus.to][vt.diaarinumero] = vt_oppiaine + vt_kurssinro;
+          }
+          break;
+          
+          case "MONI": {
+            var konversioKohde = "";
+            for (const konversioModuli of vt_vastaavuus.moni) {
+              const moduliAine = konversioModuli.subject ? konversioModuli.subject : vt_oppiaine;
+              const moduliKnro = konversioModuli.no;
+
+              if (konversioKohde != "") {
+                konversioKohde += " + ";
+              }
+              konversioKohde += moduliAine + moduliKnro;
+            }
+
+            for (const konversioModuli of vt_vastaavuus.moni) {
+              const moduliAine = konversioModuli.subject ? konversioModuli.subject : vt_oppiaine;
+              const moduliKnro = konversioModuli.no;
+              
+              var kaikkioppiainevastaavuudet = kokotaulukko.aineet[moduliAine];
+              if (!kaikkioppiainevastaavuudet) {
+                kaikkioppiainevastaavuudet = {};
+                kokotaulukko.aineet[moduliAine] = kaikkioppiainevastaavuudet;
+              }
+  
+              if (!kaikkioppiainevastaavuudet[moduliKnro]) {
+                kaikkioppiainevastaavuudet[moduliKnro] = {};
+              }
+              kaikkioppiainevastaavuudet[moduliKnro][vt.diaarinumero] = konversioKohde;
+            }            
+          }
+          break;
+          
+          case "KORJAA_KÄSIN": {
+            var kaikkioppiainevastaavuudet = kokotaulukko.aineet[vt_oppiaine];
+            if (!kaikkioppiainevastaavuudet) {
+              kaikkioppiainevastaavuudet = {};
+              kokotaulukko.aineet[vt_oppiaine] = kaikkioppiainevastaavuudet;
+            }
+
+            if (!kaikkioppiainevastaavuudet[vt_kurssinro]) {
+              kaikkioppiainevastaavuudet[vt_kurssinro] = {};
+            }
+            kaikkioppiainevastaavuudet[vt_kurssinro][vt.diaarinumero] = "K";
+          }
+          break;
         }
       }
     }
-    
   }
-  
+
   return kokotaulukko;
 }
 
