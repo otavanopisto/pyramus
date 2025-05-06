@@ -29,21 +29,21 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
   // Perustarkistukset
 
   if (!henkilo) {
-    errors.push("Henkilö-tietuetta ei määritetty");
+    errors.push(getLocale().getText("students.manageTransferCredits.tcm.noPersonJSONGiven"));
     return;
   }
   
   var opiskeluoikeudet = henkilo.opiskeluoikeudet;
   
   if (!opiskeluoikeudet) {
-    errors.push("Henkilöllä ei ole opiskeluoikeuksia");
+    errors.push(getLocale().getText("students.manageTransferCredits.tcm.noStudyPermits"));
     return;
   }
 
   if (henkilo["henkilö"].hetu && studentSSNHash) {
     var hetuhash = await sha256(henkilo["henkilö"].hetu);
     if (hetuhash != studentSSNHash) {
-      errors.push("Opiskelijan henkilötunnus eroaa tiedostossa olevasta henkilötunnuksesta.");
+      errors.push(getLocale().getText("students.manageTransferCredits.tcm.ssnMismatch"));
     }
   }
 
@@ -80,7 +80,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
       }
     })
     .catch(function (error) {
-      errors.push("Oppiaineiden hakeminen epäonnistui.");
+      errors.push(getLocale().getText("students.manageTransferCredits.tcm.fetchingSubjectsFailed"));
       console.error(error);
     });
 
@@ -90,7 +90,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
         opetussuunnitelma = response.data;        
       })
       .catch(function (error) {
-        errors.push("Opiskelijan opetussuunnitelman hakeminen epäonnistui. Tietoja saattaa puuttua ops-konversiossa.");
+        errors.push(getLocale().getText("students.manageTransferCredits.tcm.fetchingStudentsCurriculumFailed"));
         console.error(error);
       });
   }
@@ -104,7 +104,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
     var suoritukset = opiskeluoikeus.suoritukset;
 
     if (!suoritukset) {
-      errors.push("Opiskeluoikeudella ei ole suoritteita")
+      errors.push(getLocale().getText("students.manageTransferCredits.tcm.studyPermitMissingAThing"))
     }
     else {
       var oppilaitos = null;
@@ -124,11 +124,11 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
               
               if (ret) {
                 if (ret.length == 0) {
-                  errors.push("Oppilaitosta ei löytynyt oppilaitosnumerolla " + oppilaitosnumero);
+                  errors.push(getLocale().getText("students.manageTransferCredits.tcm.schoolNotFoundWithNumber", oppilaitosnumero));
                 }
                 else {
                   if (ret.length > 1) {
-                    errors.push("Oppilaitosnumerolla " + oppilaitosnumero + " löytyi useita oppilaitoksia");
+                    errors.push(getLocale().getText("students.manageTransferCredits.tcm.multipleSchoolsWithNumber", oppilaitosnumero));
                   }
                   
                   oppilaitos = ret[0];
@@ -137,7 +137,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
               }
             })
             .catch(function (error) {
-              errors.push("Oppilaitoksen haku oppilaitosnumerolla " + oppilaitosnumero + " epäonnistui.");
+              errors.push(getLocale().getText("students.manageTransferCredits.tcm.fetchingSchoolFailed", oppilaitosnumero));
               console.error(error);
             });
         }
@@ -146,7 +146,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
       for (const suoritus of suoritukset) {
         const diaarinumero = suoritus.koulutusmoduuli.perusteenDiaarinumero;
         if (!diaarinumero) {
-          errors.push("Opiskeluoikeudella ei ole diaarinumeroa.");
+          errors.push(getLocale().getText("students.manageTransferCredits.tcm.journalNumberMissing"));
           break;
         }
         
@@ -159,17 +159,17 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
 
         // Jos diaarinumero viittaa 2021 opetussuunnitelmaan, ei käytetä vastaavuustaulukoita
         if (diaarinumerotOPS2021.indexOf(diaarinumero) != -1) {
-          notes.push("Tiedoston opetussuunnitelma on OPS 2021 ({0}), ohitetaan vastaavuustaulukot".format(diaarinumero));
+          notes.push(getLocale().getText("students.manageTransferCredits.tcm.skipTranslationTables", diaarinumero));
         }
         else {
           vastaavuustaulukko = opsVastaavuustaulukko(diaarinumero);
           
           
           if (vastaavuustaulukko) {
-            notes.push("OPS-konversiotaulukko {0} ({1})".format(vastaavuustaulukko.nimi, diaarinumero));
+            notes.push(getLocale().getText("students.manageTransferCredits.tcm.selectedTranslationTable", vastaavuustaulukko.nimi, diaarinumero));
           }
           else {
-            errors.push("OPS-konversiotaulukkoa ei pystytty selvittämään diaarinumerolla {0}".format(diaarinumero));
+            errors.push(getLocale().getText("students.manageTransferCredits.tcm.noTranslationTable", diaarinumero));
             break;
           }
         }
@@ -178,7 +178,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
         var oppiaineet = suoritus.osasuoritukset;
         
         if (!oppiaineet) {
-          errors.push("Opiskeluoikeudella ei ole oppiaineita");
+          errors.push(getLocale().getText("students.manageTransferCredits.tcm.studyPermitHasNoSubjects"));
         }
         else {
           for (const oppiaine of oppiaineet) {
@@ -186,7 +186,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
             var kurssit = oppiaine.osasuoritukset;
             
             if (!kurssit) {
-              errors.push("Oppiaineella ei ole kursseja");
+              errors.push(getLocale().getText("students.manageTransferCredits.tcm.subjectHasNoCourses"));
             }
             else {
               for (const kurssi of kurssit) {
@@ -194,7 +194,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
                 const arviointi = parasArviointi(kurssi.arviointi, kurssiKoodi, results);
 
                 if (arviointi == null) {
-                  results.notes.push("{0} ei löydetty hyväksyttyä arviointia.".format(kurssiKoodi));
+                  results.notes.push(getLocale().getText("students.manageTransferCredits.tcm.noApprovedGradeForCourse", kurssiKoodi));
                 }
                 else {
                   const arvosana = arviointi ? arviointi.arvosana.koodiarvo : "";
@@ -202,7 +202,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
                   var laajuusYksikko = null;
 
                   if (!kurssi.koulutusmoduuli.laajuus) {
-                    errors.push(kurssiKoodi + " laajuus puuttuu.");
+                    errors.push(getLocale().getText("students.manageTransferCredits.tcm.noLengthForCourse", kurssiKoodi));
                   }
                   else {
                     laajuus = kurssi.koulutusmoduuli.laajuus.arvo;
@@ -251,7 +251,7 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
     return null;
   }
   
-  var doConvert = false;
+//  var doConvert = false;
   var convertedOk = false;
   var subject = null;
   var courseNumber = null;
@@ -291,68 +291,113 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
       const konversioKurssi = konversioAine[courseNumber];
       if (konversioKurssi) {
         switch (konversioKurssi.type) {
-          case "OK":
+          case "OK": {
             // Suora konversio
-            doConvert = true;
+            
+            const opsmoduli = etsiOpsModuli(subject, courseNumber, opetussuunnitelma, tulosObjekti);
+            if (opsmoduli) {
+              if (opsmoduli.name) {
+                courseName = subject + courseNumber + " " + opsmoduli.name;
+              }
+
+              return [{
+                convertedOk: true,
+                subject: subject,
+                courseNumber: typeof courseNumber == "number" ? courseNumber : null,
+                courseName: courseName,
+                courseLength: opsmoduli.length,
+                courseLengthUnit: opsmoduli.lengthUnitSymbol,
+                mandatory: opsmoduli.mandatory
+              }];
+            }
+            
+//            doConvert = true;
+          }
           break;
-          case "KNRO":
+          
+          case "KNRO": {
             // Muuttunut oppiaine / kurssinumero
             const uusiSubject = konversioKurssi.subject ? konversioKurssi.subject : subject;
-            tulosObjekti.curriculumNotes.push("OPS-konversio: " + subject + courseNumber + " -> " + uusiSubject + konversioKurssi.to);
+            tulosObjekti.curriculumNotes.push(getLocale().getText("students.manageTransferCredits.tcm.courseTranslation", subject + courseNumber, uusiSubject + konversioKurssi.to));
             
             subject = uusiSubject;
             courseNumber = konversioKurssi.to;
-            doConvert = true;
+            
+            const opsmoduli = etsiOpsModuli(subject, courseNumber, opetussuunnitelma, tulosObjekti);
+            if (opsmoduli) {
+              if (opsmoduli.name) {
+                courseName = subject + courseNumber + " " + opsmoduli.name;
+              }
+
+              return [{
+                convertedOk: true,
+                subject: subject,
+                courseNumber: typeof courseNumber == "number" ? courseNumber : null,
+                courseName: courseName,
+                courseLength: opsmoduli.length,
+                courseLengthUnit: opsmoduli.lengthUnitSymbol,
+                mandatory: opsmoduli.mandatory
+              }];
+            }
+//            doConvert = true;
+          }
+          break;
+          
+          case "MONI": {
+            // Yhdestä kurssista useita hyväksilukuja
+            
+            if (konversioKurssi.moni) {
+              var konversioKohde = "";
+              for (const konversioModuli of konversioKurssi.moni) {
+                const moduliAine = konversioModuli.subject ? konversioModuli.subject : subject;
+                const moduliKnro = konversioModuli.no;
+
+                if (konversioKohde != "") {
+                  konversioKohde += ", ";
+                }
+                konversioKohde += moduliAine + moduliKnro;
+              }
+              
+              tulosObjekti.curriculumNotes.push(getLocale().getText("students.manageTransferCredits.tcm.courseTranslation", subject + courseNumber, konversioKohde));
+
+              const konversioModulit = [];
+              for (const konversioModuli of konversioKurssi.moni) {
+                const moduliAine = konversioModuli.subject ? konversioModuli.subject : subject;
+                const moduliKnro = konversioModuli.no;
+                
+                const opsmoduli = etsiOpsModuli(moduliAine, moduliKnro, opetussuunnitelma, tulosObjekti);
+                if (opsmoduli) {
+                  if (opsmoduli.name) {
+                    courseName = moduliAine + moduliKnro + " " + opsmoduli.name;
+                  }
+    
+                  konversioModulit.push({
+                    convertedOk: true,
+                    subject: moduliAine,
+                    courseNumber: typeof moduliKnro == "number" ? moduliKnro : null,
+                    courseName: courseName,
+                    courseLength: opsmoduli.length,
+                    courseLengthUnit: opsmoduli.lengthUnitSymbol,
+                    mandatory: opsmoduli.mandatory
+                  });
+                }
+              }
+              return konversioModulit;
+            }
+          }
           break;
           case "KORJAA_KÄSIN":
-            tulosObjekti.curriculumErrors.push(courseCode + " kurssi merkitty käsin korjattavaksi.");
+            tulosObjekti.curriculumErrors.push(getLocale().getText("students.manageTransferCredits.tcm.manualTranslation", courseCode));
           break;
         }
       }
       else {
-        tulosObjekti.curriculumErrors.push(courseCode + " kurssille ei löytynyt ops-vastaavuutta");
+        tulosObjekti.curriculumErrors.push(getLocale().getText("students.manageTransferCredits.tcm.noTranslationForCourse", courseCode));
       }
     }
     else {
-      tulosObjekti.curriculumErrors.push(courseCode + " oppiaineelle ei löytynyt ops-vastaavuutta");
+      tulosObjekti.curriculumErrors.push(getLocale().getText("students.manageTransferCredits.tcm.noTranslationForSubject", courseCode));
     }
-    
-    if (doConvert) {
-      // Etsitään opetussuunnitelmasta kurssin/modulin tiedot
-      if (subject && courseNumber && opetussuunnitelma && opetussuunnitelma.subjects) {
-        const opssubject = opetussuunnitelma.subjects.find(s => s.code == subject);
-        if (opssubject && opssubject.modules) {
-          const opsmodule = opssubject.modules.find(m => m.courseNumber == courseNumber);
-          if (opsmodule) {
-            if (opsmodule.name) {
-              courseName = subject + courseNumber + " " + opsmodule.name;
-            }
-            mandatory = opsmodule.mandatory;
-            courseLength = opsmodule.length;
-            courseLengthUnit = opsmodule.lengthUnitSymbol;
-            convertedOk = true;
-          }
-          else {
-            const virheKurssiKoodi = subject ? (subject + (courseNumber ? courseNumber : "")) : "Alkuperäiselle " + courseCode;
-            tulosObjekti.curriculumErrors.push(virheKurssiKoodi + " kurssille ei löytynyt vastinetta opetussuunnitelmasta, ops-vastaavuus voi olla vaillinainen.");
-          }
-        }
-        else {
-          const virheKurssiKoodi = subject ? (subject + (courseNumber ? courseNumber : "")) : "Alkuperäiselle " + courseCode;
-          tulosObjekti.curriculumErrors.push(virheKurssiKoodi + " kurssille ei löytynyt vastinetta opetussuunnitelmasta, ops-vastaavuus voi olla vaillinainen.");
-        }
-      }
-    }
-    
-    return [{
-      convertedOk: convertedOk,
-      subject: subject,
-      courseNumber: typeof courseNumber == "number" ? courseNumber : null,
-      courseName: courseName,
-      courseLength: courseLength,
-      courseLengthUnit: courseLengthUnit,
-      mandatory: mandatory
-    }];
   }
   else {
     // Vastaavuustaulukkoa ei ole, haetaan tiedot (uudesta) opetussuunnitelmasta
@@ -375,8 +420,13 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
             convertedOk = true;
           }
           else {
-            const virheKurssiKoodi = subject ? (subject + (courseNumber ? courseNumber : "")) : "Alkuperäiselle " + courseCode;
-            tulosObjekti.curriculumErrors.push(virheKurssiKoodi + " kurssille ei löytynyt vastinetta opetussuunnitelmasta, ops-vastaavuus voi olla vaillinainen.");
+            // Kurssia ei löydy Pyramuksessa olevasta opetussuunnitelman kuvauksesta
+            if (subject) {
+              tulosObjekti.curriculumErrors.push(getLocale().getText("students.manageTransferCredits.tcm.noCurriculumMatchForCourse", subject + (courseNumber ? courseNumber : "")));
+            }
+            else {
+              tulosObjekti.curriculumErrors.push(getLocale().getText("students.manageTransferCredits.tcm.noCurriculumMatchForCourseOriginal", courseCode));
+            }
           }
 
           return [{
@@ -396,6 +446,24 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
   return [];
 }
 
+function etsiOpsModuli(subject, courseNumber, opetussuunnitelma, tulosObjekti) {
+  // Etsitään opetussuunnitelmasta kurssin/modulin tiedot
+  if (subject && courseNumber && opetussuunnitelma && opetussuunnitelma.subjects) {
+    const opssubject = opetussuunnitelma.subjects.find(s => s.code == subject);
+    if (opssubject && opssubject.modules) {
+      const opsmodule = opssubject.modules.find(m => m.courseNumber == courseNumber);
+      if (opsmodule) {
+        return opsmodule;
+      }
+    }
+  }
+  
+  // Kurssia ei löydy Pyramuksessa olevasta opetussuunnitelman kuvauksesta
+  tulosObjekti.curriculumErrors.push(getLocale().getText("students.manageTransferCredits.tcm.noCurriculumMatchForCourse", subject + (courseNumber ? courseNumber : "")));
+            
+  return null;
+}
+
 /**
  * Palauttaa "parhaan" arvioinnin arvioinnit-listasta.
  *
@@ -403,7 +471,7 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
  */
 function parasArviointi(arvioinnit, kurssiKoodi, results) {
   if (!arvioinnit || !arvioinnit.length) {
-    results.errors.push("Kurssilla " + kurssiKoodi + " ei ole arviointeja");
+    results.errors.push(getLocale().getText("students.manageTransferCredits.tcm.courseHasNoAssessments", kurssiKoodi));
     return null;
   } 
 
@@ -437,7 +505,7 @@ function parasArviointi(arvioinnit, kurssiKoodi, results) {
   }
 
   if (arvioinnit.length > 1) {
-    results.notes.push(kurssiKoodi + " sisältää useita arviointeja. Käytettiin arvosanaa " + (arviointi ? arviointi.arvosana.koodiarvo : "?"));
+    results.notes.push(getLocale().getText("students.manageTransferCredits.tcm.courseHasMultipleAssessments", kurssiKoodi, arviointi ? arviointi.arvosana.koodiarvo : "?"));
   }
 
   return arviointiLapaiseva ? arviointi : null;
@@ -463,8 +531,11 @@ function opsVastaavuustaulukko(diaarinumero) {
   if (OPS2015DIAARIT.indexOf(diaarinumero) != -1) {
     var ops2015yhteiset = {
       "ÄI": {
-        1: { type: "OK", to: 1 },
-        2: { type: "KORJAA_KÄSIN", to: 2 },
+        1: { type: "OK" },
+        2: { type: "MONI", moni: [
+          { no: 2 },
+          { no: 3 }
+        ] },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 14 },
@@ -475,45 +546,60 @@ function opsVastaavuustaulukko(diaarinumero) {
         11: { type: "KNRO", to: 17 },
       },
       "S2": {
-        1: { type: "OK", to: 1 },
-        2: { type: "KORJAA_KÄSIN", to: 2 },
+        1: { type: "OK" },
+        2: { type: "MONI", moni: [
+          { no: 2 },
+          { no: 3 }
+        ] },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 12 },
         6: { type: "KNRO", to: 13 },
-        7: { type: "KORJAA_KÄSIN", to: 16 },
+        7: { type: "MONI", moni: [
+          { no: 7 },
+          { no: 14 }
+        ] },
         8: { type: "KNRO", to: 10 },
         9: { type: "KNRO", to: 11 }
       },
       "BI": {
-        1: { type: "OK", to: 1 },
-        2: { type: "KORJAA_KÄSIN", to: 3 },
+        1: { type: "OK" },
+        2: { type: "MONI", moni: [
+          { no: 2 },
+          { no: 3 }
+        ] },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 6 }
       },
       "ENA": {
-        1: { type: "KORJAA_KÄSIN", to: 1 },
+        1: { type: "MONI", moni: [
+          { no: 1 },
+          { no: 13 }
+        ] },
         2: { type: "KNRO", to: 12 },
-        3: { type: "OK", to: 4 },
-        4: { type: "OK", to: 5 },
-        5: { type: "OK", to: 14 },
-        6: { type: "OK", to: 15 },
-        7: { type: "OK", to: 16 },
-        8: { type: "OK", to: 6 },
-        9: { type: "KORJAA_KÄSIN", to: 10 },
-        11: { type: "OK", to: 17 }
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "OK" },
+        7: { type: "OK" },
+        8: { type: "OK" },
+        9: { type: "MONI", moni: [
+          { no: 9 },
+          { no: 10 }
+        ] },
+        11: { type: "OK" }
       },
       "MAY": {
-        1: { type: "OK", to: 1 },
-        15: { type: "OK", to: 15 }
+        1: { type: "OK" },
+        15: { type: "OK" }
       },
       "MAA": {
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
+        2: { type: "OK" },
+        3: { type: "OK" },
         4: { type: "KORJAA_KÄSIN", to: 4 },
         5: { type: "KORJAA_KÄSIN", to: 5 },
-        6: { type: "OK", to: 6 },
+        6: { type: "OK" },
         7: { type: "KNRO", to: 5 },
         8: { type: "KNRO", to: 18 },
         9: { type: "KNRO", to: 7 },
@@ -523,26 +609,35 @@ function opsVastaavuustaulukko(diaarinumero) {
         13: { type: "KNRO", to: 12 }
       },
       "MAB": {
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 },
-        6: { type: "KORJAA_KÄSIN", to: 6 },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "MONI", moni: [
+          { no: 6 },
+          { no: 7 }
+        ] },
         7: { type: "KNRO", to: 8 },
         8: { type: "KNRO", to: 9 },
         11: { type: "KNRO", to: 10 }        
       },
       "FY": {
-        1: { type: "KORJAA_KÄSIN", to: 1 },
+        1: { type: "MONI", moni: [
+          { no: 1 },
+          { no: 9 }
+        ] },
         2: { type: "KNRO", to: 3 },
         3: { type: "KNRO", to: 6 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 },
+        4: { type: "OK" },
+        5: { type: "OK" },
         6: { type: "KNRO", to: 7 },
         7: { type: "KNRO", to: 8 }
       },
       "KE": {
-        1: { type: "KORJAA_KÄSIN", to: 1 },
+        1: { type: "MONI", moni: [
+          { no: 1 },
+          { no: 2 }
+        ] },
         2: { type: "KNRO", to: 3 },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
@@ -550,72 +645,72 @@ function opsVastaavuustaulukko(diaarinumero) {
       },
       "RUB1": {
         1: { type: "KORJAA_KÄSIN", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 },
-        6: { type: "OK", to: 6 },
-        7: { type: "OK", to: 7 },
-        8: { type: "OK", to: 8 },
-        9: { type: "OK", to: 9 },
-        10: { type: "OK", to: 10 }
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "OK" },
+        7: { type: "OK" },
+        8: { type: "OK" },
+        9: { type: "OK" },
+        10: { type: "OK" }
       },
       "GE": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" }
       },
       "YH": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" }
       },
       "KU": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" }
       },
       "FI": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" }
       },
       "UE": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 },
-        6: { type: "OK", to: 6 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "OK" }
       },
       "UO": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 },
-        6: { type: "OK", to: 6 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "OK" }
       },
       "UI": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 },
-        6: { type: "OK", to: 6 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "OK" }
       },
       "UJ": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 },
-        6: { type: "OK", to: 6 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "OK" }
       },
       "ET": {
         1: { type: "KNRO", to: 7 }, // S ?
@@ -623,44 +718,44 @@ function opsVastaavuustaulukko(diaarinumero) {
         3: { type: "KNRO", to: 2 },
         4: { type: "KNRO", to: 3 },
         5: { type: "KNRO", to: 4 },
-        6: { type: "OK", to: 6 }
+        6: { type: "OK" }
       },
       "PS": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" }
       },
       "TE": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" }
       },
       "LI": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 },
-        5: { type: "OK", to: 5 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" },
+        5: { type: "OK" }
       },
       "MU": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" }
       },
       "OP": {
-        1: { type: "OK", to: 1 },
-        2: { type: "OK", to: 2 },
-        3: { type: "OK", to: 3 },
-        4: { type: "OK", to: 4 }
+        1: { type: "OK" },
+        2: { type: "OK" },
+        3: { type: "OK" },
+        4: { type: "OK" }
       },
       "AT": {
         1: { type: "KORJAA_KÄSIN", to: 1 },
-        2: { type: "OK", to: 2 },
+        2: { type: "OK" },
         3: { type: "KNRO", to: 6 },
-        4: { type: "OK", to: 4 },
+        4: { type: "OK" },
         5: { type: "KNRO", to: 7 },
         6: { type: "KNRO", to: 8 },
         7: { type: "KNRO", to: 9 },
@@ -991,6 +1086,9 @@ function opsVastaavuusTaulukkoKaikki() {
               }
               kaikkioppiainevastaavuudet[vt_vastaavuus.to][vt.diaarinumero] = vt_kurssinro;
             break;
+            case "MONI":
+console.log("SDFASDFSDFSD");            
+            break;
             case "KORJAA_KÄSIN":
               if (!kaikkioppiainevastaavuudet[vt_kurssinro]) {
                 kaikkioppiainevastaavuudet[vt_kurssinro] = {};
@@ -1006,38 +1104,6 @@ function opsVastaavuusTaulukkoKaikki() {
   
   return kokotaulukko;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

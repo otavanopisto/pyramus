@@ -809,8 +809,9 @@
                     });
                     
                     table.reattachToDom();
-                    
+
                     const notesContainer = document.getElementById("koskiImportNotesContainer");
+                    document.getElementById("koskiImportNotesContainerCount").textContent = "({0})".format(credits.notes.length);
                     for (const note of credits.notes) {
                       const noteDiv = document.createElement("p");
                       noteDiv.appendChild(document.createTextNode(note));
@@ -818,6 +819,7 @@
                     }
     
                     const errorContainer = document.getElementById("koskiImportErrorContainer");
+                    document.getElementById("koskiImportErrorContainerCount").textContent = "({0})".format(credits.errors.length);
                     for (const error of credits.errors) {
                       const errorDiv = document.createElement("p");
                       errorDiv.appendChild(document.createTextNode(error));
@@ -825,6 +827,7 @@
                     }
                     
                     const curriculumErrorsContainer = document.getElementById("koskiImportCurriculumErrorsContainer");
+                    document.getElementById("koskiImportCurriculumErrorsContainerCount").textContent = "({0})".format(credits.curriculumErrors.length);
                     for (const error of credits.curriculumErrors) {
                       const errorDiv = document.createElement("p");
                       errorDiv.appendChild(document.createTextNode(error));
@@ -832,6 +835,7 @@
                     }
     
                     const curriculumNotesContainer = document.getElementById("koskiImportCurriculumNotesContainer");
+                    document.getElementById("koskiImportCurriculumNotesContainerCount").textContent = "({0})".format(credits.curriculumNotes.length);
                     for (const error of credits.curriculumNotes) {
                       const errorDiv = document.createElement("p");
                       errorDiv.appendChild(document.createTextNode(error));
@@ -970,30 +974,30 @@
             <c:if test="${student.curriculum.name eq 'OPS 2021'}">
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="grading.manageTransferCredits.templateTitle"/>
-                  <jsp:param name="helpLocale" value="grading.manageTransferCredits.templateHelp"/>
+                  <jsp:param name="titleLocale" value="grading.manageTransferCredits.addFromKoskiJSONTitle"/>
+                  <jsp:param name="helpLocale" value="grading.manageTransferCredits.addFromKoskiJSONTitleHelp"/>
                 </jsp:include>
                 <div class="genericFormAddFileContainer">
-                  <div class="genericFormAddFileDescription">Klikkaa mua ja lisääppäs tänne väbä JSON notta päästään parsimaan sitä</div>
+                  <div class="genericFormAddFileDescription"><fmt:message key="grading.manageTransferCredits.addFromKoskiJSONTitle"/></div>
                   <input class="genericFormAddFileField" type="file" onchange="koskiImportCredits(event);"/>
                 </div>
               </div>
 
               <div id="transferCreditImportOutput" class="transferCreditImportOutput" style="display: none;">
                 <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton pyramusAccordionButtonOpened">Errors</div>
+                  <div class="pyramusAccordionButton pyramusAccordionButtonOpened"><fmt:message key="grading.manageTransferCredits.jsonimport.errors"/><span id="koskiImportErrorContainerCount" style="margin-left: 2pt;"></span></div>
                   <div id="koskiImportErrorContainer" class="pyramusAccordionContent" style="display: block;"></div>
                 </div>
                 <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton">Notes</div>
+                  <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.notes"/><span id="koskiImportNotesContainerCount" style="margin-left: 2pt;"></span></div>
                   <div id="koskiImportNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
                 </div>
                 <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton">Curriculum Errors</div>
+                  <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.curriculumErrors"/><span id="koskiImportCurriculumErrorsContainerCount" style="margin-left: 2pt;"></span></div>
                   <div id="koskiImportCurriculumErrorsContainer" class="pyramusAccordionContent" style="display: none;"></div>
                 </div>
                 <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton">Curriculum Notes</div>
+                  <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.curriculumNotes"/><span id="koskiImportCurriculumNotesContainerCount" style="margin-left: 2pt;"></span></div>
                   <div id="koskiImportCurriculumNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
                 </div>
               </div>
