@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.koski.model.lukio.ops2019;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,11 +22,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.grading.SpokenLanguageExamDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.SpokenLanguageExam;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -34,6 +37,7 @@ import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.OppiaineenSuoritusWithSubject;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
+import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoKehittyvanKielitaidonTasot;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
@@ -68,6 +72,9 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
 
   @Inject
   private Logger logger;
+
+  @Inject
+  private SpokenLanguageExamDAO spokenLanguageExamDAO;
 
   protected StudentSubjectSelections getDefaultSubjectSelections() {
     StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
@@ -403,4 +410,48 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
     return allowedValues[0];
   }
 
+  /**
+   * Hakee suullisen kielitaidon kokeiden merkinnät ja tekee merkinnnät
+   * opiskeluoikeuden tietoihin.
+   * 
+   * @param student
+   * @param suoritus
+   */
+  protected void suullisenKielitaidonKokeet(Student student, LukionSuoritus2019 suoritus) {
+    List<SpokenLanguageExam> spokenLanguageExams = spokenLanguageExamDAO.listByStudent(student);
+    
+    for (SpokenLanguageExam spokenLanguageExam : spokenLanguageExams) {
+      Kielivalikoima kieli = null;
+      
+      if (spokenLanguageExam.getCredit() instanceof CourseAssessment) {
+        CourseAssessment ca = (CourseAssessment) spokenLanguageExam.getCredit();
+        if (ca.getSubject() != null && StringUtils.isNotBlank(ca.getSubject().getCode())) {
+          kieli = settings.subjectToKielikoodi(ca.getSubject().getCode());
+        }
+      }
+      else if (spokenLanguageExam.getCredit() instanceof TransferCredit) {
+        TransferCredit tc = (TransferCredit) spokenLanguageExam.getCredit();
+        if (tc.getSubject() != null && StringUtils.isNotBlank(tc.getSubject().getCode())) {
+          kieli = settings.subjectToKielikoodi(tc.getSubject().getCode());
+        }
+      }
+      
+      if (kieli == null) {
+        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.GENERIC_ERROR, new Date(), "Suullisen kielitaidon kokeen kieltä ei pystytty määrittämään.");
+        continue;
+      }
+      
+      ArviointiasteikkoYleissivistava arvosana = getArvosana(spokenLanguageExam.getGrade());
+      ArviointiasteikkoKehittyvanKielitaidonTasot taitotaso = EnumUtils.getEnum(ArviointiasteikkoKehittyvanKielitaidonTasot.class, spokenLanguageExam.getSkillLevel().name());
+      LocalDate paiva = spokenLanguageExam.getTimestamp().toLocalDate();
+      
+      SuullisenKielitaidonKoe2019 suko = new SuullisenKielitaidonKoe2019(
+          kieli,
+          arvosana, 
+          taitotaso, 
+          paiva);
+      suoritus.addSuullisenKielitaidonKoe(suko);
+    }
+  }
+  
 }

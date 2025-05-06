@@ -30,6 +30,19 @@ public class TORCurriculum {
       : null;
   }
   
+  /**
+   * Searches for a TORCurriculumModule with given
+   * subjectCode and courseNumber.
+   * 
+   * @param subjectCode subject's code
+   * @param courseNumber course number
+   * @return module if found or null otherwise
+   */
+  public TORCurriculumModule findModule(String subjectCode, int courseNumber) {
+    TORCurriculumSubject torSubject = getSubjectByCode(subjectCode);
+    return torSubject != null ? torSubject.findModule(courseNumber) : null;
+  }
+  
   private String name;
   private List<TORCurriculumSubject> subjects;
 }
