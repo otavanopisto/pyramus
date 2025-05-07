@@ -924,7 +924,7 @@
               <fmt:message key="grading.manageTransferCredits.tabLabelTransferCredits"/>
             </a>
             <a class="tabLabel" href="#conversionTables">
-              <fmt:message key="grading.manageTransferCredits.tabLabelTransferCredits"/>
+              <fmt:message key="grading.manageTransferCredits.tabLabelTranslationTables"/>
             </a>
           </div>
           
