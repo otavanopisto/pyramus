@@ -118,7 +118,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
           oppilaitos = oppilaitosCache[oppilaitosnumero];
         }
         else {
-          await axios.get("/schools/schools?code={0}".format(oppilaitosnumero))
+          await axios.get("/schools/schools?code={0}&filterArchived=true".format(oppilaitosnumero))
             .then(function (response) {
               const ret = response.data;
               
