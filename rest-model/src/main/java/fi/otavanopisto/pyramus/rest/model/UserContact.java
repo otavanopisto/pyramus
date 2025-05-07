@@ -5,8 +5,7 @@ public class UserContact {
   public UserContact() {
   }
 
-  public UserContact(Long id, String name, String phoneNumber, String email, String streetAddress, String postalCode, String city, String country, String contactType, Boolean defaultContact) {
-    super();
+  public UserContact(Long id, String name, String phoneNumber, String email, String streetAddress, String postalCode, String city, String country, String contactType, boolean defaultContact) {
     this.id = id;
     this.name = name;
     this.phoneNumber = phoneNumber;
@@ -91,11 +90,11 @@ public class UserContact {
     this.contactType = contactType;
   }
 
-  public Boolean isDefaultContact() {
+  public boolean isDefaultContact() {
     return defaultContact;
   }
 
-  public void setDefaultContact(Boolean defaultContact) {
+  public void setDefaultContact(boolean defaultContact) {
     this.defaultContact = defaultContact;
   }
 
@@ -108,5 +107,5 @@ public class UserContact {
   private String city;
   private String country;
   private String contactType;
-  private Boolean defaultContact;
+  private boolean defaultContact;
 }

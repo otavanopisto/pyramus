@@ -55,22 +55,17 @@ public class UserContactRESTService extends AbstractRESTService {
     User user = userController.findUserById(userId);
 
     if (user == null) {
-      return Response.status(Status.BAD_REQUEST).build();
+      return Response.status(Status.NOT_FOUND).build();
     }
 
-    Student student = sessionController.getUser() instanceof Student ? (Student) sessionController.getUser() : null;
-    StaffMember staffMember = sessionController.getUser() instanceof StaffMember
-        ? (StaffMember) sessionController.getUser()
-        : null;
-
-    if (student != null) {
-      if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_CONTACTS, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+    if (sessionController.getUser() instanceof Student) {
+      if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_CONTACTS, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, sessionController.getUser(), Style.OR)) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
     else {
       if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFF_CONTACTS, UserPermissions.USER_OWNER },
-          staffMember, Style.OR)) {
+          sessionController.getUser(), Style.OR)) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
@@ -90,6 +85,7 @@ public class UserContactRESTService extends AbstractRESTService {
     for (int i = 0; i < len; i++) {
       UserContact userContact = new UserContact();
 
+      // TODO: Refactor later to represent the contact's id when a separate contact table has been created
       userContact.setId(contactInfo.getId());
 
       // Email
