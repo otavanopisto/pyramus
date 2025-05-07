@@ -720,31 +720,12 @@
         $('noTransferCreditsAddedMessageContainer').setStyle({
           display: 'none'
         });
+
+        const gradeMapping = JSDATA["importGradeMapping"].evalJSON();
+        const timeUnitMapping = JSDATA["importTimeUnitMapping"].evalJSON();
         
         setTimeout(function () {
           try {
-            var timeUnitMapping = {};
-            var gradeMapping = {};
-            
-            // TODO GRADEMAPPING DOESN'T WORK, THERE'S OVERLAPPING GRADE NAMES
-            
-            <c:forEach var="timeUnit" items="${timeUnits}" varStatus="vs">
-              timeUnitMapping["${fn:escapeXml(timeUnit.symbol)}"] = ${timeUnit.id};
-            </c:forEach>
-    
-            // Hard coded to following grading scales:
-            // 3 = 4-10
-            // 9 = Suoritettu / Keskeytynyt
-            
-            <c:forEach var="gradingScale" items="${gradingScales}">
-              <c:if test="${gradingScale.id == 3 || gradingScale.id == 9}">
-                <c:forEach var="grade" items="${gradingScale.grades}">
-                  gradeMapping["${fn:escapeXml(grade.name)}"] = ${grade.id};
-                </c:forEach>
-              </c:if>
-            </c:forEach>
-            
-            
             var file = event.target.files[0];
             if (file) {
               var reader = new FileReader();

@@ -21,4 +21,12 @@ public class PyramusConsts {
   public static final String TIMEUNIT_OP = "op";
   public static final String TIMEUNIT_HOURS = "h";
   
+  /**
+   * SettingKeys
+   */
+  public static class Setting {
+    // Comma separated list of GradingScale ids used for importing credits from a json file for a lukio student
+    public static final String TRANSFERCREDITIMPORTS_GRADINGSCALES_LUKIO = "transfercredits.import.gradingscales.lukio";
+  }
+  
 }
