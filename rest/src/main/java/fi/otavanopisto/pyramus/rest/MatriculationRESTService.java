@@ -182,6 +182,8 @@ public class MatriculationRESTService extends AbstractRESTService {
       }
     }
     
+    // TODO Add checks for dates
+
     List<MatriculationExam> studentExams = matriculationEligibilityController.listExamsByStudent(student, filter);
     
     return Response.ok(
@@ -279,6 +281,8 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    // TODO Add check for date
+    
     // Student is only allowed to change status from APPROVED to CONFIRMED
     if (examEnrollment.getState() != MatriculationExamEnrollmentState.APPROVED) {
       return Response.status(Status.FORBIDDEN).entity("Matriculation exam enrollment not in applicable state.").build();
@@ -326,7 +330,9 @@ public class MatriculationRESTService extends AbstractRESTService {
     if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, student)) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    
+
+    // TODO Add check for dates
+
     // Find the enrollment by exam and student, if it exists, we are updating
     MatriculationExamEnrollment existingEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
 
@@ -604,6 +610,8 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setYear(exam.getExamYear());
     result.setStarts(exam.getStarts().getTime());
     result.setEnds(exam.getEnds().getTime());
+    
+    // TODO add confirmation date?
     
     if (student != null) {
       boolean compulsoryEducationEligible = false;

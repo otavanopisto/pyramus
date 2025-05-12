@@ -38,6 +38,7 @@ public class BrowseMatriculationExamsViewController extends PyramusViewControlle
       obj.put("examTerm", exam.getExamTerm());
       obj.put("starts", exam.getStarts() != null ? exam.getStarts().getTime() : null);
       obj.put("ends", exam.getEnds() != null ? exam.getEnds().getTime() : null);
+      obj.put("confirmationDate", exam.getConfirmationDate() != null ? exam.getConfirmationDate().getTime() : null);
       obj.put("enrollmentActive", exam.isEnrollmentActive());
       obj.put("totalEnrollments", totalEnrollments);
       obj.put("confirmedEnrollments", confirmedEnrollments);
