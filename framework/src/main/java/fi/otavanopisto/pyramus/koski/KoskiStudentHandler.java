@@ -392,16 +392,16 @@ public abstract class KoskiStudentHandler {
    * @return
    */
   protected StudentSubjectSelections loadStudentSubjectSelections(Student student, StudentSubjectSelections studentSubjects) {
-    String math = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
-    String lang = userVariableDAO.findByUserAndKey(student, "lukioAidinkieli");
-    String aLang = userVariableDAO.findByUserAndKey(student, "lukioKieliA");
-    String a1Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliA1");
-    String a2Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliA2");
-    String b1Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliB1");
-    String b2Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliB2");
-    String b3Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliB3");
-    String religion = userVariableDAO.findByUserAndKey(student, "lukioUskonto");
-    String accomplishmentsStr = userVariableDAO.findByUserAndKey(student, "lukioSmerkinta");
+    String math = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.MATH);
+    String lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.NATIVE_LANGUAGE);
+    String aLang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_A);
+    String a1Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_A1);
+    String a2Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_A2);
+    String b1Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_B1);
+    String b2Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_B2);
+    String b3Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_B3);
+    String religion = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.RELIGION);
+    String accomplishmentsStr = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.COMPLETION_MARKS);
 
     if (StringUtils.isNotBlank(math)) {
       studentSubjects.setMath(math);
