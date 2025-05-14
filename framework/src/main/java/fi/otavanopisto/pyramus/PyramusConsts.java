@@ -21,4 +21,8 @@ public class PyramusConsts {
   public static final String TIMEUNIT_OP = "op";
   public static final String TIMEUNIT_HOURS = "h";
   
+  public static class Matriculation {
+    public static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
+    public static final String SETTING_ELIGIBLE_GROUPS = "matriculation.eligibleGroups";
+  }
 }
