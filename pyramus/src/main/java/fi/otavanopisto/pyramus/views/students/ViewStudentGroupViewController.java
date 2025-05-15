@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentGroupContactLogEntryCommentDA
 import fi.otavanopisto.pyramus.dao.students.StudentGroupContactLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupContactLogEntryComment;
@@ -69,6 +70,17 @@ public class ViewStudentGroupViewController extends PyramusViewController2 imple
     pageRequestContext.getRequest().setAttribute("studentGroup", studentGroup);
     
     List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
+    List<StudentGroupStudent> removableStudentGroupStudents = new ArrayList<>();
+    if (!studentGroupStudents.isEmpty()) {
+      for (StudentGroupStudent studentGroupStudent : studentGroupStudents) {
+        Student student = studentGroupStudent.getStudent();
+        
+        if (student.getArchived() || student == null) {
+          removableStudentGroupStudents.add(studentGroupStudent);
+        }
+      }
+      studentGroupStudents.removeAll(removableStudentGroupStudents);
+    }
     Collections.sort(studentGroupStudents, new Comparator<StudentGroupStudent>() {
       @Override
       public int compare(StudentGroupStudent o1, StudentGroupStudent o2) {
