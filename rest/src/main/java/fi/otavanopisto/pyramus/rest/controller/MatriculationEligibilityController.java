@@ -232,8 +232,7 @@ public class MatriculationEligibilityController {
     Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
 
     Date enrollmentStarts = matriculationExam.getStarts();
-    Date enrollmentEnds = personalExamEnrollmentExpiry == null ? matriculationExam.getEnds() : 
-      new Date(Math.max(matriculationExam.getEnds().getTime(), personalExamEnrollmentExpiry.getTime()));
+    Date enrollmentEnds = DateUtils.max(matriculationExam.getEnds(), personalExamEnrollmentExpiry);
 
     Date currentDate = new Date();
     if (currentDate.before(enrollmentStarts) || currentDate.after(enrollmentEnds)) {
@@ -245,6 +244,55 @@ public class MatriculationEligibilityController {
     return hasGroupEligibility(student);
   }
 
+  /**
+   * Returns true if the student may update their exam enrollment.
+   * 
+   * In order to be able to update the enrollment
+   * - The exam needs to have enrollment active
+   * - The exam needs to have specified both the enrollment start and end dates
+   * - The current date must be later than the exam's enrollment start date but 
+   *   earlier than one of the following:
+   *   - the enrollment end date on exam
+   *   - the confirmationDate on exam
+   *   - the student's end date override.
+   * - The student needs to be part of a group that has matriculation set active.
+   * 
+   * Thus the check is quite similar to the check for being able to enroll to
+   * an exam. The only difference is that the confirmationDate allows for 
+   * modifications after the enrollment phase has concluded.
+   * 
+   * @param student
+   * @param matriculationExam
+   * @return
+   */
+  public boolean isUpdatableByStudent(MatriculationExamEnrollment enrollment) {
+    MatriculationExam matriculationExam = enrollment != null ? enrollment.getExam() : null;
+    Student student = enrollment != null ? enrollment.getStudent() : null;
+
+    if (student == null || matriculationExam == null || !matriculationExam.isEnrollmentActive() || matriculationExam.getStarts() == null || matriculationExam.getEnds() == null) {
+      // If dates are not set, exam enrollment is not active
+      return false;
+    }
+
+    // TODO: custom date affects all exams...
+
+    UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
+    String personalExamEnrollmentExpiryStr = userVariableKey != null ? userVariableDAO.findByUserAndKey(student, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE) : null;
+    Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
+
+    Date enrollmentStarts = matriculationExam.getStarts();
+    Date updatePeriodEnds = DateUtils.max(matriculationExam.getConfirmationDate(), DateUtils.max(matriculationExam.getEnds(), personalExamEnrollmentExpiry));
+
+    Date currentDate = new Date();
+    if (currentDate.before(enrollmentStarts) || currentDate.after(updatePeriodEnds)) {
+      // Current date either before start or after end, return false
+      return false;
+    }
+
+    // Everything fine so far, check for the group eligibility
+    return hasGroupEligibility(student);
+  }
+  
   /**
    * Lists exams by given student based on the filter.
    * 
@@ -263,6 +311,12 @@ public class MatriculationEligibilityController {
     
     for (MatriculationExam exam : allExams) {
       boolean isEligible = isEnrollableByStudent(exam, student);
+      
+      // Updatable has no separate state so we consider updatable enrollments as eligible too - fix later if needed
+      if (!isEligible) {
+        MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDAO.findByExamAndStudent(exam, student);
+        isEligible = examEnrollment != null && isUpdatableByStudent(examEnrollment);
+      }
 
       // If the filter is asking for eligible exams to be listed and the student is eligible, add to list
       if ((filter == MatriculationExamListFilter.ALL || filter == MatriculationExamListFilter.ELIGIBLE) && isEligible) {

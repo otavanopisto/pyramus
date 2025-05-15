@@ -14,6 +14,7 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
   public MatriculationExam create(
       Date starts,
       Date ends, 
+      Date confirmationDate,
       Integer examYear,
       MatriculationExamTerm examTerm, 
       boolean enrollmentActive
@@ -21,6 +22,7 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     MatriculationExam exam = new MatriculationExam();
     exam.setStarts(starts);
     exam.setEnds(ends);
+    exam.setConfirmationDate(confirmationDate);
     exam.setExamYear(examYear);
     exam.setExamTerm(examTerm);
     exam.setEnrollmentActive(enrollmentActive);
@@ -32,12 +34,14 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
       MatriculationExam exam,
       Date starts,
       Date ends, 
+      Date confirmationDate,
       Integer examYear,
       MatriculationExamTerm examTerm,
       boolean enrollmentActive
   ) {
     exam.setStarts(starts);
     exam.setEnds(ends);
+    exam.setConfirmationDate(confirmationDate);
     exam.setExamYear(examYear);
     exam.setExamTerm(examTerm);
     exam.setEnrollmentActive(enrollmentActive);

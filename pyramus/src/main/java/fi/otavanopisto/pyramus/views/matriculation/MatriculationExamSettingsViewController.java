@@ -72,6 +72,7 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     
     Date starts = DateUtils.startOfDay(pageRequestContext.getDate("starts"));
     Date ends = DateUtils.endOfDay(pageRequestContext.getDate("ends"));
+    Date confirmationDate = DateUtils.endOfDay(pageRequestContext.getDate("confirmationDate"));
     boolean enrollmentActive = Boolean.TRUE.equals(pageRequestContext.getBoolean("enrollmentActive"));
     
     Integer examYear = pageRequestContext.getInteger("examYear");
@@ -81,11 +82,11 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     MatriculationExam exam;
     if ("new".equals(pageRequestContext.getString("examId"))) {
       // Create new
-      exam = dao.create(starts, ends, examYear, examTerm, enrollmentActive);
+      exam = dao.create(starts, ends, confirmationDate, examYear, examTerm, enrollmentActive);
     } else {
       Long examId = pageRequestContext.getLong("examId");
       exam = dao.findById(examId);
-      exam = dao.update(exam, starts, ends, examYear, examTerm, enrollmentActive);
+      exam = dao.update(exam, starts, ends, confirmationDate, examYear, examTerm, enrollmentActive);
     }
     
     Long subjectTableRowCount = pageRequestContext.getLong("subjectSettingsTable.rowCount");

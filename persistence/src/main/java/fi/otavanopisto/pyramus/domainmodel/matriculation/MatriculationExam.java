@@ -76,6 +76,14 @@ public class MatriculationExam {
     this.enrollmentActive = enrollmentActive;
   }
 
+  public Date getConfirmationDate() {
+    return confirmationDate;
+  }
+
+  public void setConfirmationDate(Date confirmationDate) {
+    this.confirmationDate = confirmationDate;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExam")  
   @TableGenerator(name="MatriculationExam", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -91,6 +99,9 @@ public class MatriculationExam {
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
   private Date ends;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date confirmationDate;
 
   @Column
   private Integer examYear;

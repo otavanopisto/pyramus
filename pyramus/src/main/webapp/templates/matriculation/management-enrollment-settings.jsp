@@ -116,6 +116,14 @@
             <input type="text" name="ends" class="ixDateField" value="${exam.ends.time}"/>
           </div>
 
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.settings.confirmationDate"/>
+              <jsp:param name="helpLocale" value="matriculation.settings.confirmationDateHelp"/>
+            </jsp:include>
+            <input type="text" name="confirmationDate" class="ixDateField" value="${exam.confirmationDate.time}"/>
+          </div>
+
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="matriculation.settings.subjectList"/>

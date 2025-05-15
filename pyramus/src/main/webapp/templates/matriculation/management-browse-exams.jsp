@@ -56,23 +56,30 @@
             editable: false,
             paramName: 'ends'
           }, {
-            header : 'Ilmoittautuminen aktiivinen',
+            header : 'Vahvistuspvm',
             width: 100,
             left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
+            dataType : 'date',
+            editable: false,
+            paramName: 'confirmationDate'
+          }, {
+            header : 'Ilmoittautuminen aktiivinen',
+            width: 100,
+            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
             dataType : 'checkbox',
             editable: false,
             paramName: 'enrollmentActive'
           }, {
             header : 'Lomakkeita (vah/hyl/yht)',
             width: 100,
-            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
+            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
             dataType : 'text',
             editable: false,
             paramName: 'enrollmentCounts'
           }, {
             header : 'Vahvistettuja koe-ilmoittautumisia',
             width: 120,
-            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
+            left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
             dataType : 'text',
             editable: false,
             paramName: 'attendanceCounts'
@@ -102,6 +109,7 @@
               examsJSON[i].examTerm,
               examsJSON[i].starts,
               examsJSON[i].ends,
+              examsJSON[i].confirmationDate,
               examsJSON[i].enrollmentActive,
               examsJSON[i].confirmedEnrollments + "/" + examsJSON[i].rejectedEnrollments + "/" + examsJSON[i].totalEnrollments,
               examsJSON[i].enrolledConfirmedAttendances,
