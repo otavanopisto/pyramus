@@ -75,6 +75,20 @@ public class EditStudentGroupViewController extends PyramusViewController2 imple
     pageRequestContext.getRequest().setAttribute("studentGroup", studentGroup);
 
     List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
+    
+    // Filter archived students from the list
+    List<StudentGroupStudent> removableStudentGroupStudents = new ArrayList<>();
+    if (!studentGroupStudents.isEmpty()) {
+      for (StudentGroupStudent studentGroupStudent : studentGroupStudents) {
+        Student student = studentGroupStudent.getStudent();
+        
+        if (student.getArchived() || student == null) {
+          removableStudentGroupStudents.add(studentGroupStudent);
+        }
+      }
+      studentGroupStudents.removeAll(removableStudentGroupStudents);
+    }
+    
     Collections.sort(studentGroupStudents, new Comparator<StudentGroupStudent>() {
       @Override
       public int compare(StudentGroupStudent o1, StudentGroupStudent o2) {
