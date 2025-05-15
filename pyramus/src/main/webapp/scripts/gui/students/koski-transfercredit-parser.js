@@ -174,76 +174,91 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
           }
         }
         
-        // Ensimmäinen osasuoritukset = oppiainetaso
-        var oppiaineet = suoritus.osasuoritukset;
-        
-        if (!oppiaineet) {
-          errors.push(getLocale().getText("students.manageTransferCredits.tcm.studyPermitHasNoSubjects"));
-        }
-        else {
-          for (const oppiaine of oppiaineet) {
-            // Toinen osasuoritukset = kurssitaso
-            var kurssit = oppiaine.osasuoritukset;
-            
-            if (!kurssit) {
-              errors.push(getLocale().getText("students.manageTransferCredits.tcm.subjectHasNoCourses"));
-            }
-            else {
-              for (const kurssi of kurssit) {
-                const kurssiKoodi = kurssi.koulutusmoduuli.tunniste.koodiarvo;
-                const arviointi = parasArviointi(kurssi.arviointi, kurssiKoodi, results);
+        const SUORITUKSENTYYPIT = ["lukionoppimaara", "lukionaineopinnot"];
+        const suorituksenTyyppi = suoritus.tyyppi.koodiarvo;
 
-                if (arviointi == null) {
-                  results.notes.push(getLocale().getText("students.manageTransferCredits.tcm.noApprovedGradeForCourse", kurssiKoodi));
-                }
-                else {
-                  const arvosana = arviointi ? arviointi.arvosana.koodiarvo : "";
-                  var laajuus = null;
-                  var laajuusYksikko = null;
-
-                  if (!kurssi.koulutusmoduuli.laajuus) {
-                    errors.push(getLocale().getText("students.manageTransferCredits.tcm.noLengthForCourse", kurssiKoodi));
-                  }
-                  else {
-                    laajuus = kurssi.koulutusmoduuli.laajuus.arvo;
-                    
-                    var yksikkoKoodi = kurssi.koulutusmoduuli.laajuus["yksikkö"].koodiarvo;
-                    laajuusYksikko = yksikkoKoodi ? OPINTOJENLAAJUUSYKSIKKO[yksikkoKoodi] : null;
-                  }
-                  
-                  var kurssinTyyppi = kurssi.koulutusmoduuli.kurssinTyyppi;
-                  var pakollinen = (kurssinTyyppi && kurssinTyyppi.koodiarvo == "pakollinen" && kurssinTyyppi.koodistoUri == "lukionkurssintyyppi") ? true : false;
-                  
-                  var parsitutKurssiKoodit = parseKoskiCourseCode(kurssiKoodi, vastaavuustaulukko, opetussuunnitelma, results);
-                  
-                  for (const parsittuKurssiKoodi of parsitutKurssiKoodit) {
-                    // pyrOppiaine = Pyramuksen Subject:n json-kuvaus, tarvitaan id, code ja nimi sieltä
-                    var pyrOppiaine = parsittuKurssiKoodi.subject ? pyramusOppiaineet[parsittuKurssiKoodi.subject] : null;
-                    
-                    credits.push({
-                      convertedOk: parsittuKurssiKoodi.convertedOk,
-                      courseName: parsittuKurssiKoodi.courseName ? parsittuKurssiKoodi.courseName : "",
-                      courseCode: parsittuKurssiKoodi.subject + (parsittuKurssiKoodi.courseNumber != null ? parsittuKurssiKoodi.courseNumber : ""),
-                      subject: pyrOppiaine,
-                      subjectCode: parsittuKurssiKoodi.subject,
-                      courseNumber: parsittuKurssiKoodi.courseNumber,
-                      grade: arvosana,
-                      courseLength: parsittuKurssiKoodi.courseLength ? parsittuKurssiKoodi.courseLength : laajuus,
-                      courseLengthUnit: parsittuKurssiKoodi.courseLengthUnit ? parsittuKurssiKoodi.courseLengthUnit : laajuusYksikko,
-                      mandatory: (typeof parsittuKurssiKoodi.mandatory == "boolean") ? parsittuKurssiKoodi.mandatory : pakollinen,
-                      school: oppilaitos
-                    });
-                  }
-                }
+        if (SUORITUKSENTYYPIT.indexOf(suorituksenTyyppi) != -1) {
+          // Ensimmäinen osasuoritukset = oppiainetaso
+          var oppiaineet = suoritus.osasuoritukset;
+          
+          if (!oppiaineet) {
+            errors.push(getLocale().getText("students.manageTransferCredits.tcm.studyPermitHasNoSubjects"));
+          }
+          else {
+            for (const oppiaine of oppiaineet) {
+              // Toinen osasuoritukset = kurssitaso
+              var kurssit = oppiaine.osasuoritukset;
+              
+              if (!kurssit) {
+                errors.push(getLocale().getText("students.manageTransferCredits.tcm.subjectHasNoCourses"));
+              }
+              else {
+                parsiKurssit(kurssit, oppilaitos, credits, results, OPINTOJENLAAJUUSYKSIKKO, vastaavuustaulukko, opetussuunnitelma, pyramusOppiaineet);
               }
             }
           }
+        }
+        else if (suorituksenTyyppi == "lukionoppiaineenoppimaara") {
+          // 2016 aineopintoylläri
+          
+          var kurssit = suoritus.osasuoritukset;
+          parsiKurssit(kurssit, oppilaitos, credits, results, OPINTOJENLAAJUUSYKSIKKO, vastaavuustaulukko, opetussuunnitelma, pyramusOppiaineet);
         }
       }
     }
   }
   
   return results;
+}
+
+function parsiKurssit(kurssit, oppilaitos, credits, results, OPINTOJENLAAJUUSYKSIKKO, vastaavuustaulukko, opetussuunnitelma, pyramusOppiaineet) {
+  for (const kurssi of kurssit) {
+    const kurssiKoodi = kurssi.koulutusmoduuli.tunniste.koodiarvo;
+    const arviointi = parasArviointi(kurssi.arviointi, kurssiKoodi, results);
+
+    if (arviointi == null) {
+      results.notes.push(getLocale().getText("students.manageTransferCredits.tcm.noApprovedGradeForCourse", kurssiKoodi));
+    }
+    else {
+      const arvosana = arviointi ? arviointi.arvosana.koodiarvo : "";
+      var laajuus = null;
+      var laajuusYksikko = null;
+
+      if (!kurssi.koulutusmoduuli.laajuus) {
+        results.errors.push(getLocale().getText("students.manageTransferCredits.tcm.noLengthForCourse", kurssiKoodi));
+      }
+      else {
+        laajuus = kurssi.koulutusmoduuli.laajuus.arvo;
+        
+        var yksikkoKoodi = kurssi.koulutusmoduuli.laajuus["yksikkö"].koodiarvo;
+        laajuusYksikko = yksikkoKoodi ? OPINTOJENLAAJUUSYKSIKKO[yksikkoKoodi] : null;
+      }
+      
+      var kurssinTyyppi = kurssi.koulutusmoduuli.kurssinTyyppi;
+      var pakollinen = (kurssinTyyppi && kurssinTyyppi.koodiarvo == "pakollinen" && kurssinTyyppi.koodistoUri == "lukionkurssintyyppi") ? true : false;
+      
+      var parsitutKurssiKoodit = parseKoskiCourseCode(kurssiKoodi, vastaavuustaulukko, opetussuunnitelma, results);
+      
+      for (const parsittuKurssiKoodi of parsitutKurssiKoodit) {
+        // pyrOppiaine = Pyramuksen Subject:n json-kuvaus, tarvitaan id, code ja nimi sieltä
+        var pyrOppiaine = parsittuKurssiKoodi.subject ? pyramusOppiaineet[parsittuKurssiKoodi.subject] : null;
+        
+        credits.push({
+          convertedOk: parsittuKurssiKoodi.convertedOk,
+          courseName: parsittuKurssiKoodi.courseName ? parsittuKurssiKoodi.courseName : "",
+          courseCode: parsittuKurssiKoodi.subject + (parsittuKurssiKoodi.courseNumber != null ? parsittuKurssiKoodi.courseNumber : ""),
+          subject: pyrOppiaine,
+          subjectCode: parsittuKurssiKoodi.subject,
+          courseNumber: parsittuKurssiKoodi.courseNumber,
+          grade: arvosana,
+          courseLength: parsittuKurssiKoodi.courseLength ? parsittuKurssiKoodi.courseLength : laajuus,
+          courseLengthUnit: parsittuKurssiKoodi.courseLengthUnit ? parsittuKurssiKoodi.courseLengthUnit : laajuusYksikko,
+          mandatory: (typeof parsittuKurssiKoodi.mandatory == "boolean") ? parsittuKurssiKoodi.mandatory : pakollinen,
+          school: oppilaitos
+        });
+      }
+    }
+  }
 }
 
 function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma, tulosObjekti) {
