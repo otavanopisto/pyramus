@@ -3123,6 +3123,16 @@
                                   <fmt:message key="terms.pending"/>
                                 </c:set>
                               </c:when>
+                              <c:when test="${enrollment.state == 'SUPPLEMENTATION_REQUEST'}">
+                                <c:set var="matriculationExamEnrollmentState">
+                                  <fmt:message key="terms.supplementationRequest"/>
+                                </c:set>
+                              </c:when>
+                              <c:when test="${enrollment.state == 'SUPPLEMENTED'}">
+                                <c:set var="matriculationExamEnrollmentState">
+                                  <fmt:message key="terms.supplemented"/>
+                                </c:set>
+                              </c:when>
                               <c:when test="${enrollment.state == 'APPROVED'}">
                                 <c:set var="matriculationExamEnrollmentState">
                                   <fmt:message key="terms.approved"/>
@@ -3131,6 +3141,11 @@
                               <c:when test="${enrollment.state == 'REJECTED'}">
                                 <c:set var="matriculationExamEnrollmentState">
                                   <fmt:message key="terms.rejected"/>
+                                </c:set>
+                              </c:when>
+                              <c:when test="${enrollment.state == 'CONFIRMED'}">
+                                <c:set var="matriculationExamEnrollmentState">
+                                  <fmt:message key="terms.confirmed"/>
                                 </c:set>
                               </c:when>
                               <c:otherwise>
