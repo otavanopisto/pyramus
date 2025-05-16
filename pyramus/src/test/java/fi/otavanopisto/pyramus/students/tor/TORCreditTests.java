@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.students.tor;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import fi.otavanopisto.pyramus.tor.TORCredit;
 import fi.otavanopisto.pyramus.tor.TORCreditType;

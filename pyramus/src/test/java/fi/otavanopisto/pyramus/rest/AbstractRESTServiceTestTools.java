@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -147,7 +147,7 @@ public class AbstractRESTServiceTestTools {
       .body(courseStaffMember)
       .post("/courses/courses/{COURSEID}/staffMembers/", courseId);
 
-    assertEquals(200, response.statusCode(), "Failed to create courseStaffMember");
+    assertEquals("Failed to create courseStaffMember", 200, response.statusCode());
     
     return response.as(CourseStaffMember.class);
   }

@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.rest;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class StaffMemberTestsIT extends AbstractRESTServiceTest {
 

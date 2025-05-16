@@ -1,11 +1,11 @@
 package fi.otavanopisto.pyramus.koski;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.PainotettuArvosana;
@@ -26,7 +26,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.meanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_7;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
 
   @Test
@@ -38,7 +38,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.meanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_S;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
   
   @Test
@@ -50,7 +50,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.meanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_5;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
   
   @Test
@@ -67,7 +67,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.weightedMeanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_7;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
 
   @Test
@@ -80,7 +80,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.weightedMeanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_S;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
 
   @Test
@@ -94,7 +94,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.weightedMeanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_6;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
 
   @Test
@@ -107,7 +107,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.weightedMeanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_6;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
 
   @Test
@@ -120,7 +120,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.weightedMeanGrade(grades);
     ArviointiasteikkoYleissivistava expected = ArviointiasteikkoYleissivistava.GRADE_5;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
 
   @Test
@@ -130,7 +130,7 @@ public class KoskiCommonTests {
     ArviointiasteikkoYleissivistava meanGrade = ArviointiasteikkoYleissivistava.weightedMeanGrade(grades);
     ArviointiasteikkoYleissivistava expected = null;
     
-    assertTrue(meanGrade == expected, String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected));
+    assertTrue(String.format("Expected Mean Grade was %s, expected %s", meanGrade, expected), meanGrade == expected);
   }
 
   

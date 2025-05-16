@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.ui.base;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import fi.otavanopisto.pyramus.ui.AbstractUITest;
 
 public class SystemPagesStudentPermissionsTestsBase extends AbstractUITest {

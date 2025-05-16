@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import io.restassured.response.Response;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
