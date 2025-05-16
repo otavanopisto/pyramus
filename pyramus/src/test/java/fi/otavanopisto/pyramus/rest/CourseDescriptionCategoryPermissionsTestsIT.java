@@ -2,42 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseDescriptionCategory;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class CourseDescriptionCategoryPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class CourseDescriptionCategoryPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CoursePermissions coursePermissions = new CoursePermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public CourseDescriptionCategoryPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateCourseDescriptionCategories() throws NoSuchFieldException{
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateCourseDescriptionCategories(Role role) throws NoSuchFieldException{
     CourseDescriptionCategory category = new CourseDescriptionCategory("New Category", Boolean.FALSE);
 
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(category)
       .post("/courses/descriptionCategories");
     
-    assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSEDESCRIPTIONCATEGORY, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.CREATE_COURSEDESCRIPTIONCATEGORY, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -48,22 +35,25 @@ public class CourseDescriptionCategoryPermissionsTestsIT extends AbstractRESTPer
     }
   }
   
-  @Test
-  public void testPermissionsListCourseDescriptionCategories() throws NoSuchFieldException{
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCourseDescriptionCategories(Role role) throws NoSuchFieldException{
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/descriptionCategories");
-    assertOk(response, coursePermissions, CoursePermissions.LIST_COURSEDESCRIPTIONCATEGORIES, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.LIST_COURSEDESCRIPTIONCATEGORIES, 200);
   }
   
-  @Test
-  public void testPermissionsFindCourseDescriptionCategory() throws NoSuchFieldException{
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindCourseDescriptionCategory(Role role) throws NoSuchFieldException{
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/descriptionCategories/1");
-    assertOk(response, coursePermissions, CoursePermissions.FIND_COURSEDESCRIPTIONCATEGORY, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.FIND_COURSEDESCRIPTIONCATEGORY, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateCourseDescriptionCategory() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateCourseDescriptionCategory(Role role) throws NoSuchFieldException {
     CourseDescriptionCategory category = new CourseDescriptionCategory("Not Updated", Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -76,11 +66,11 @@ public class CourseDescriptionCategoryPermissionsTestsIT extends AbstractRESTPer
     try {
       CourseDescriptionCategory updateCategory = new CourseDescriptionCategory(id, "Updated", Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateCategory)
         .put("/courses/descriptionCategories/{ID}", id);
-      assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSEDESCRIPTIONCATEGORY, 200);
+      assertOk(role, updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSEDESCRIPTIONCATEGORY, 200);
 
     } finally {
       given().headers(getAdminAuthHeaders())
@@ -88,8 +78,9 @@ public class CourseDescriptionCategoryPermissionsTestsIT extends AbstractRESTPer
     }
   }
   
-  @Test
-  public void testPermissionsDeleteCourseDescriptionCategory() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteCourseDescriptionCategory(Role role) throws NoSuchFieldException {
     CourseDescriptionCategory category = new CourseDescriptionCategory("To be deleted", Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -99,10 +90,10 @@ public class CourseDescriptionCategoryPermissionsTestsIT extends AbstractRESTPer
      
     Long id = response.body().jsonPath().getLong("id");
     
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/courses/descriptionCategories/{ID}", id);
     
-    assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSEDESCRIPTIONCATEGORY, 204);
+    assertOk(role, deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSEDESCRIPTIONCATEGORY, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/courses/descriptionCategories/{ID}?permanent=true", id);

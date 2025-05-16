@@ -2,34 +2,21 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseComponent;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class CourseComponentPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class CourseComponentPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CoursePermissions coursePermissions = new CoursePermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public CourseComponentPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateCourseComponent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateCourseComponent(Role role) throws NoSuchFieldException {
     Long courseId = 1001l;
     
     CourseComponent courseComponent = new CourseComponent(
@@ -39,12 +26,12 @@ public class CourseComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
         1l, 
         Boolean.FALSE);
 
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(courseComponent)
       .post("/courses/courses/{COURSEID}/components", courseId);
     
-    assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSECOMPONENT, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.CREATE_COURSECOMPONENT, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -55,22 +42,25 @@ public class CourseComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
     }
   }
   
-  @Test
-  public void testPermissionsListCourseComponents() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCourseComponents(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/courses/1000/components");
-    assertOk(response, coursePermissions, CoursePermissions.LIST_COURSECOMPONENTS, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.LIST_COURSECOMPONENTS, 200);
   }
   
-  @Test
-  public void testPermissionsFindCourseComponent() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindCourseComponent(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/courses/1001/components/1003");
-    assertOk(response, coursePermissions, CoursePermissions.FIND_COURSECOMPONENT, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.FIND_COURSECOMPONENT, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateCourseComponent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateCourseComponent(Role role) throws NoSuchFieldException {
     Long courseId = 1001l;
     
     CourseComponent courseComponent = new CourseComponent(
@@ -96,19 +86,20 @@ public class CourseComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
           1l, 
           Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateComponent)
         .put("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id);
-      assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSECOMPONENT, 200);
+      assertOk(role, updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSECOMPONENT, 200);
     } finally {
-      given().headers(getAuthHeaders())
+      given().headers(getAdminAuthHeaders())
         .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id);
     }
   }
   
-  @Test
-  public void testPermissionsDeleteCourseComponent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteCourseComponent(Role role) throws NoSuchFieldException {
     Long courseId = 1001l;
     
     CourseComponent courseComponent = new CourseComponent(
@@ -125,9 +116,9 @@ public class CourseComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
     
     Long id = response.body().jsonPath().getLong("id");
     
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id);
-    assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSECOMPONENT, 204);
+    assertOk(role, deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSECOMPONENT, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id);

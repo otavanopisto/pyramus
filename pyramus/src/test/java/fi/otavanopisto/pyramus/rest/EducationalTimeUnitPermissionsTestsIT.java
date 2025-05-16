@@ -2,42 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.junit.runner.RunWith;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class EducationalTimeUnitPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class EducationalTimeUnitPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
   
 private CommonPermissions commonPermissions = new CommonPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public EducationalTimeUnitPermissionsTestsIT(String role){
-    this.role = role;
-  }
-
-  @Test
-  public void testPermissionsCreateEducationalTimeUnit() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateEducationalTimeUnit(Role role) throws NoSuchFieldException {
     EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", "sym", 1d, Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(educationalTimeUnit)
       .post("/common/educationalTimeUnits");
     
-    assertOk(response, commonPermissions, CommonPermissions.CREATE_EDUCATIONALTIMEUNIT, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.CREATE_EDUCATIONALTIMEUNIT, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -48,24 +35,27 @@ private CommonPermissions commonPermissions = new CommonPermissions();
     }
   }
   
-  @Test
-  public void testPermissionsListEducationalTimeUnits() throws NoSuchFieldException {
-    Response response =  given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListEducationalTimeUnits(Role role) throws NoSuchFieldException {
+    Response response =  given().headers(getAuthHeaders(role))
       .get("/common/educationalTimeUnits");
     
-    assertOk(response, commonPermissions, CommonPermissions.LIST_EDUCATIONALTIMEUNITS, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.LIST_EDUCATIONALTIMEUNITS, 200);
   }
   
-  @Test
-  public void testPermissionsFindEducationalTimeUnit() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindEducationalTimeUnit(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/common/educationalTimeUnits/{ID}", 1);
     
-    assertOk(response, commonPermissions, CommonPermissions.FIND_EDUCATIONALTIMEUNIT, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.FIND_EDUCATIONALTIMEUNIT, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateEducationalTimeUnit() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateEducationalTimeUnit(Role role) throws NoSuchFieldException {
     EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -77,19 +67,20 @@ private CommonPermissions commonPermissions = new CommonPermissions();
     try {
       EducationalTimeUnit upOffsetDateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(upOffsetDateTimeUnit)
         .put("/common/educationalTimeUnits/{ID}", id);
-      assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONALTIMEUNIT, 200);
+      assertOk(role, updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONALTIMEUNIT, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/common/educationalTimeUnits/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testPermissionsDeleteEducationalTimeUnit() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteEducationalTimeUnit(Role role) throws NoSuchFieldException {
     EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -100,9 +91,9 @@ private CommonPermissions commonPermissions = new CommonPermissions();
     Long id = response.body().jsonPath().getLong("id");
     
     
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/common/educationalTimeUnits/{ID}", id);
-    assertOk(deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_EDUCATIONALTIMEUNIT, 204);
+    assertOk(role, deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_EDUCATIONALTIMEUNIT, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/common/educationalTimeUnits/{ID}?permanent=true", id);

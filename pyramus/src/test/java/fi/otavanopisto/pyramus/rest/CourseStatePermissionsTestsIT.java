@@ -2,42 +2,28 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseState;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CoursePermissions coursePermissions = new CoursePermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  
-  public CourseStatePermissionsTestsIT(String role){
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateCourseState() throws NoSuchFieldException{
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateCourseState(Role role) throws NoSuchFieldException{
     CourseState courseState = new CourseState("Test State", Boolean.FALSE);
 
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(courseState)
       .post("/courses/courseStates");
-    assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTATE, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.CREATE_COURSESTATE, 200);
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
       if (id != null) {
@@ -47,22 +33,25 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
     }   
   }
   
-  @Test
-  public void testPermissionsListCourseStates() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCourseStates(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/courseStates");
-    assertOk(response, coursePermissions, CoursePermissions.LIST_COURSESTATES, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.LIST_COURSESTATES, 200);
   }
   
-  @Test
-  public void testPermissionsFindCourseState() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindCourseState(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/courseStates/{ID}", 3);
-    assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTATE, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.FIND_COURSESTATE, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateCourseState() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateCourseState(Role role) throws NoSuchFieldException {
     CourseState courseState = new CourseState(
         "Update test", Boolean.FALSE);
 
@@ -78,12 +67,12 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
       "Updated name",
       Boolean.FALSE);
 
-    Response updateResponse = given().headers(getAuthHeaders())
+    Response updateResponse = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(updateState)
       .put("/courses/courseStates/{ID}", id);
     
-    assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSESTATE, 200);  
+    assertOk(role, updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSESTATE, 200);  
 
     given().headers(getAdminAuthHeaders())
       .delete("/courses/courseStates/{ID}?permanent=true", id)
@@ -91,8 +80,9 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .statusCode(204);
   }
   
-  @Test
-  public void testPermissionsArchiveCourseState() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsArchiveCourseState(Role role) throws NoSuchFieldException {
     CourseState courseState = new CourseState("Delete Test", Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -102,10 +92,10 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
 
     Long id = response.body().jsonPath().getLong("id");
 
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/courses/courseStates/{ID}", id);
     
-    assertOk(deleteResponse, coursePermissions, CoursePermissions.ARCHIVE_COURSESTATE, 204);
+    assertOk(role, deleteResponse, coursePermissions, CoursePermissions.ARCHIVE_COURSESTATE, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/courses/courseStates/{ID}?permanent=true", id);

@@ -2,46 +2,28 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentGroupPermissions;
 import io.restassured.response.Response;
 
-import fi.otavanopisto.pyramus.rest.controller.permissions.StudentGroupPermissions;
+public class StudentGroupStudentPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-@RunWith(Parameterized.class)
-public class StudentGroupStudentPermissionTestsIT extends AbstractRESTPermissionsTest {
-
-  public StudentGroupStudentPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentGroupPermissions studentGroupPermissions = new StudentGroupPermissions();
   
-  @Test
-  public void testCreateStudentGroupStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudentGroupStudent(Role role) throws NoSuchFieldException {
     fi.otavanopisto.pyramus.rest.model.StudentGroupStudent entity = new fi.otavanopisto.pyramus.rest.model.StudentGroupStudent(null, 3l);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(entity)
       .post("/students/studentGroups/{ID}/students", 2l);
 
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.CREATE_STUDENTGROUPSTUDENT);
+    assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.CREATE_STUDENTGROUPSTUDENT);
     
     if (response.getStatusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -51,24 +33,27 @@ public class StudentGroupStudentPermissionTestsIT extends AbstractRESTPermission
     }
   }
   
-  @Test
-  public void testListStudentGroupStudents() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudentGroupStudents(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studentGroups/{ID}/students", 1);
 
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.LIST_STUDENTGROUPSTUDENTS);
+    assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.LIST_STUDENTGROUPSTUDENTS);
   }
   
-  @Test
-  public void testFindStudentGroupStudent() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudentGroupStudent(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studentGroups/{GROUPID}/students/{ID}", 1l, 1l);
 
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUPSTUDENT);
+    assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUPSTUDENT);
   }
   
-  @Test
-  public void testDeleteStudentGroupStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudentGroupStudent(Role role) throws NoSuchFieldException {
     fi.otavanopisto.pyramus.rest.model.StudentGroupStudent entity = new fi.otavanopisto.pyramus.rest.model.StudentGroupStudent(null, 3l);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -78,10 +63,10 @@ public class StudentGroupStudentPermissionTestsIT extends AbstractRESTPermission
 
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id);
     
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.DELETE_STUDENTGROUPSTUDENT, 204);
+    assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.DELETE_STUDENTGROUPSTUDENT, 204);
 
     if (response.getStatusCode() != 204) {
       given().headers(getAdminAuthHeaders())
