@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.ui.base;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fi.otavanopisto.pyramus.ui.AbstractUITest;
 

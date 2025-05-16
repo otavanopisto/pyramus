@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.not;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.restassured.response.Response;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
