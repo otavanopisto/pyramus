@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.EnumSet;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -35,14 +35,14 @@ public class CourseAssessmentPermissionsTestsIT extends AbstractRESTPermissionsT
   private CourseStudent testCOURSESTUDENT = null;
   private CourseModule testCOURSEMODULE = null;
   
-  @BeforeAll
+  @BeforeEach
   public void setup() {
     testCOURSE = tools().createCourse("CourseAssessmentPermissionsTestsIT", 1l);
     testCOURSEMODULE = testCOURSE.getCourseModules().iterator().next();
     testCOURSESTUDENT = tools().createCourseStudent(testCOURSE.getId(), TEST_STUDENTID);
   }
   
-  @AfterAll
+  @AfterEach
   public void teardown() {
     tools().deleteCourseStudent(testCOURSESTUDENT);
     tools().deleteCourse(testCOURSE);
