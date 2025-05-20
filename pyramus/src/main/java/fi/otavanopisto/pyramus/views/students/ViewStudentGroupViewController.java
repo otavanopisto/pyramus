@@ -70,17 +70,14 @@ public class ViewStudentGroupViewController extends PyramusViewController2 imple
     pageRequestContext.getRequest().setAttribute("studentGroup", studentGroup);
     
     List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
-    List<StudentGroupStudent> removableStudentGroupStudents = new ArrayList<>();
-    if (!studentGroupStudents.isEmpty()) {
-      for (StudentGroupStudent studentGroupStudent : studentGroupStudents) {
-        Student student = studentGroupStudent.getStudent();
-        
-        if (student.getArchived() || student == null) {
-          removableStudentGroupStudents.add(studentGroupStudent);
-        }
+    
+    for (int i = studentGroupStudents.size() - 1; i >= 0; i--) {
+      StudentGroupStudent sgs = studentGroupStudents.get(i);
+      if (sgs.getStudent() == null || sgs.getStudent().getArchived()) {
+        studentGroupStudents.remove(i);
       }
-      studentGroupStudents.removeAll(removableStudentGroupStudents);
     }
+    
     Collections.sort(studentGroupStudents, new Comparator<StudentGroupStudent>() {
       @Override
       public int compare(StudentGroupStudent o1, StudentGroupStudent o2) {
