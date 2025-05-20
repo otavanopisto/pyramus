@@ -14,7 +14,7 @@ jobs:
           java-version: 17
           cache: maven
       - name: Build with Maven
-        run: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+        run: mvn clean install -DskipTests=false -Dmaven.javadoc.skip=true -B -V
       - name: Set Pyramus host
         run: echo "127.0.0.1 dev.pyramus.fi" | sudo tee -a /etc/hosts
       - name: Test REST

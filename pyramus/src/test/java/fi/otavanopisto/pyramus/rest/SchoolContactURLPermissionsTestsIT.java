@@ -2,42 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.SchoolPermissions;
 import fi.otavanopisto.pyramus.rest.model.ContactURL;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class SchoolContactURLPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class SchoolContactURLPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
   
   private SchoolPermissions schoolPermissions = new SchoolPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public SchoolContactURLPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateSchoolContactURL() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateSchoolContactURL(Role role) throws NoSuchFieldException {
     ContactURL contactURL = new ContactURL(null, 1l, "http://www.myfakehomepage.org");
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(contactURL)
       .post("/schools/schools/{ID}/contactURLs", 1l);
 
-    assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLCONTACTURL, 200);
+    assertOk(role, response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLCONTACTURL, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -48,20 +35,23 @@ public class SchoolContactURLPermissionsTestsIT extends AbstractRESTPermissionsT
     }
   }
   
-  @Test
-  public void testPermissionsListSchoolContactURLs() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListSchoolContactURLs(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/schools/{ID}/contactURLs", 1l), schoolPermissions, SchoolPermissions.LIST_SCHOOLCONTACTURLS, 200);
   }
   
-  @Test
-  public void testPermissionsFindSchoolContactURL() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindSchoolContactURL(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/schools/{SCHOOLID}/contactURLs/{ID}", 1l, 1l), schoolPermissions, SchoolPermissions.FIND_SCHOOLCONTACTURL, 200);
   }  
 
-  @Test
-  public void testPermissionsDeleteSchoolContactURL() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteSchoolContactURL(Role role) throws NoSuchFieldException {
     ContactURL contactURL = new ContactURL(null, 1l, "http://www.myfakehomepage.org");
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -71,9 +61,9 @@ public class SchoolContactURLPermissionsTestsIT extends AbstractRESTPermissionsT
 
     Long id = response.body().jsonPath().getLong("id");
 
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/schools/schools/{SCHOOLID}/contactURLs/{ID}", 1l, id);
-    assertOk(deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLCONTACTURL, 204);
+    assertOk(role, deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLCONTACTURL, 204);
     
     if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders())

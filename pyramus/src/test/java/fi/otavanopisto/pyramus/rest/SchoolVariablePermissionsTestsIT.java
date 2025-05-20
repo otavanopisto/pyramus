@@ -2,42 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.SchoolPermissions;
 import fi.otavanopisto.pyramus.rest.model.VariableKey;
 import fi.otavanopisto.pyramus.rest.model.VariableType;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class SchoolVariablePermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class SchoolVariablePermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private SchoolPermissions schoolPermissions = new SchoolPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public SchoolVariablePermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateSchoolVariables() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateSchoolVariables(Role role) throws NoSuchFieldException {
     VariableKey schoolVariable = new VariableKey("crevar", "variable to be created", false, VariableType.TEXT);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(schoolVariable)
       .post("/schools/variables");
-    assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLVARIABLEKEY, 200);
+    assertOk(role, response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLVARIABLEKEY, 200);
     
     if (response.statusCode() == 200) {
       given().headers(getAdminAuthHeaders())
@@ -45,20 +32,23 @@ public class SchoolVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     }
   }
 
-  @Test
-  public void testPermissionsListSchoolVariables() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListSchoolVariables(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/variables"), schoolPermissions, SchoolPermissions.LIST_SCHOOLVARIABLEKEYS, 200);
   }
   
-  @Test
-  public void testPermissionsFindSchoolVariable() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindSchoolVariable(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/variables/TV1"), schoolPermissions, SchoolPermissions.FIND_SCHOOLVARIABLEKEY, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateSchoolVariable() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateSchoolVariable(Role role) throws NoSuchFieldException {
     VariableKey schoolVariable = new VariableKey("upd", "not updated", false, VariableType.TEXT);
     
     given().headers(getAdminAuthHeaders())
@@ -69,19 +59,20 @@ public class SchoolVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     try {
       VariableKey updateVariable = new VariableKey("upd", "updated", true, VariableType.NUMBER);
       
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateVariable)
         .put("/schools/variables/{KEY}", updateVariable.getKey());
-      assertOk(updateResponse, schoolPermissions, SchoolPermissions.UPDATE_SCHOOLVARIABLEKEY, 200);
+      assertOk(role, updateResponse, schoolPermissions, SchoolPermissions.UPDATE_SCHOOLVARIABLEKEY, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/schools/variables/{KEY}", schoolVariable.getKey());
     }
   }
   
-  @Test
-  public void testPermissionsDeleteSchoolVariable() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteSchoolVariable(Role role) throws NoSuchFieldException {
     VariableKey schoolVariable = new VariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
     
     given().headers(getAdminAuthHeaders())
@@ -89,10 +80,10 @@ public class SchoolVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
       .body(schoolVariable)
       .post("/schools/variables");
     
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/schools/variables/{KEY}", schoolVariable.getKey());
     
-    assertOk(deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLVARIABLEKEY, 204);
+    assertOk(role, deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLVARIABLEKEY, 204);
     
     if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders())

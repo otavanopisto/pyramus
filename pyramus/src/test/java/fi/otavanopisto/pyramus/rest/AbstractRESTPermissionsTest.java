@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.Common;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 
+@Deprecated
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest implements AbstractRestServicePermissionsTestI{
 
   public AbstractRESTPermissionsTest() {

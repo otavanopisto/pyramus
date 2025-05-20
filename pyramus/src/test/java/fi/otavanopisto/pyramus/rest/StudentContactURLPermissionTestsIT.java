@@ -2,49 +2,31 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.ContactURL;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class StudentContactURLPermissionTestsIT extends AbstractRESTPermissionsTest {
+public class StudentContactURLPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public StudentContactURLPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentPermissions studentPermissions = new StudentPermissions();
   
   private final static long TEST_STUDENT_ID = 3l;
 
-  @Test
-  public void testCreateStudentContactURL() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudentContactURL(Role role) throws NoSuchFieldException {
     ContactURL contactURL = new ContactURL(null, 1l, "http://www.myfakehomepage.org");
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(contactURL)
       .post("/students/students/{ID}/contactURLs", TEST_STUDENT_ID);
 
-    assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTCONTACTURL);
+    assertOk(role, response, studentPermissions, StudentPermissions.CREATE_STUDENTCONTACTURL);
 
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -54,34 +36,37 @@ public class StudentContactURLPermissionTestsIT extends AbstractRESTPermissionsT
     }
   }
   
-  @Test
-  public void testListStudentContactURLs() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudentContactURLs(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/students/{ID}/contactURLs", TEST_STUDENT_ID);
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTCONTACTURLS, 403);
+    if (roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(role, response, studentPermissions, StudentPermissions.LIST_STUDENTCONTACTURLS, 403);
     }
     else {
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTCONTACTURLS);
+      assertOk(role, response, studentPermissions, StudentPermissions.LIST_STUDENTCONTACTURLS);
     }
   }
   
-  @Test
-  public void testFindStudentContactURL() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudentContactURL(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/students/{STUDENTID}/contactURLs/{ID}", TEST_STUDENT_ID, 3l);
     
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTCONTACTURL, 403);
+    if (roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(role, response, studentPermissions, StudentPermissions.FIND_STUDENTCONTACTURL, 403);
     }
     else {
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTCONTACTURL);
+      assertOk(role, response, studentPermissions, StudentPermissions.FIND_STUDENTCONTACTURL);
     }
   }  
 
-  @Test
-  public void testDeleteStudentContactURL() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudentContactURL(Role role) throws NoSuchFieldException {
     ContactURL contactURL = new ContactURL(null, 1l, "http://www.myfakehomepage.org");
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -91,10 +76,10 @@ public class StudentContactURLPermissionTestsIT extends AbstractRESTPermissionsT
 
     Long id = response.body().jsonPath().getLong("id");
 
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/students/{STUDENTID}/contactURLs/{ID}", TEST_STUDENT_ID, id);
     
-    assertOk(response, studentPermissions, StudentPermissions.DELETE_STUDENTCONTACTURL, 204);
+    assertOk(role, response, studentPermissions, StudentPermissions.DELETE_STUDENTCONTACTURL, 204);
 
     if (response.getStatusCode() != 204) {
       given().headers(getAdminAuthHeaders())

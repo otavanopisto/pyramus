@@ -2,38 +2,26 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 
-@RunWith(Parameterized.class)
-public class StudentCoursesTestsPermissionsIT extends AbstractRESTPermissionsTest{
+public class StudentCoursesTestsPermissionsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private final static long TEST_STUDENT_ID = 3l;
   private StudentPermissions studentPermissions = new StudentPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public StudentCoursesTestsPermissionsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsStudentListCourses() throws NoSuchFieldException {
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsStudentListCourses(Role role) throws NoSuchFieldException {
+    if (roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(role, given().headers(getAuthHeaders(role))
           .get("/students/students/{ID}/courses", TEST_STUDENT_ID), studentPermissions, StudentPermissions.LIST_COURSESTUDENTSBYSTUDENT, 403);
     }
     else {
-      assertOk(given().headers(getAuthHeaders())
+      assertOk(role, given().headers(getAuthHeaders(role))
           .get("/students/students/{ID}/courses", TEST_STUDENT_ID), studentPermissions, StudentPermissions.LIST_COURSESTUDENTSBYSTUDENT, 200);
     }
   }

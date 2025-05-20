@@ -2,47 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentExaminationTypePermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentExaminationType;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class StudentExaminationTypePermissionTestsIT extends AbstractRESTPermissionsTest {
+public class StudentExaminationTypePermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public StudentExaminationTypePermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentExaminationTypePermissions studentExaminationTypePermissions = new StudentExaminationTypePermissions();
   
-  @Test
-  public void testCreateStudentExaminationType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudentExaminationType(Role role) throws NoSuchFieldException {
     StudentExaminationType studentExaminationType = new StudentExaminationType(null, "create", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(studentExaminationType)
       .post("/students/examinationTypes");
 
-    assertOk(response, studentExaminationTypePermissions, StudentExaminationTypePermissions.CREATE_STUDENTEXAMINATIONTYPE);
+    assertOk(role, response, studentExaminationTypePermissions, StudentExaminationTypePermissions.CREATE_STUDENTEXAMINATIONTYPE);
     
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -52,24 +34,27 @@ public class StudentExaminationTypePermissionTestsIT extends AbstractRESTPermiss
     }
   }
   
-  @Test
-  public void listStudentExaminationTypes() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void listStudentExaminationTypes(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/examinationTypes");
     
-    assertOk(response, studentExaminationTypePermissions, StudentExaminationTypePermissions.LIST_STUDENTEXAMINATIONTYPES);
+    assertOk(role, response, studentExaminationTypePermissions, StudentExaminationTypePermissions.LIST_STUDENTEXAMINATIONTYPES);
   }
   
-  @Test
-  public void testFindStudentExaminationType() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudentExaminationType(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/examinationTypes/{ID}", 1);
 
-    assertOk(response, studentExaminationTypePermissions, StudentExaminationTypePermissions.FIND_STUDENTEXAMINATIONTYPE);
+    assertOk(role, response, studentExaminationTypePermissions, StudentExaminationTypePermissions.FIND_STUDENTEXAMINATIONTYPE);
   }
   
-  @Test
-  public void testUpdateStudentExaminationType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudentExaminationType(Role role) throws NoSuchFieldException {
     StudentExaminationType studentExaminationType = new StudentExaminationType(null, "Not Updated", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -81,20 +66,21 @@ public class StudentExaminationTypePermissionTestsIT extends AbstractRESTPermiss
     try {
       StudentExaminationType updateStudentExaminationType = new StudentExaminationType(id, "Updated", Boolean.FALSE);
 
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudentExaminationType)
         .put("/students/examinationTypes/{ID}", id);
       
-      assertOk(response, studentExaminationTypePermissions, StudentExaminationTypePermissions.UPDATE_STUDENTEXAMINATIONTYPE);
+      assertOk(role, response, studentExaminationTypePermissions, StudentExaminationTypePermissions.UPDATE_STUDENTEXAMINATIONTYPE);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/students/examinationTypes/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testDeleteStudentExaminationType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudentExaminationType(Role role) throws NoSuchFieldException {
     StudentExaminationType studentExaminationType = new StudentExaminationType(null, "create type", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -104,10 +90,10 @@ public class StudentExaminationTypePermissionTestsIT extends AbstractRESTPermiss
     
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/examinationTypes/{ID}", id);
     
-    assertOk(response, studentExaminationTypePermissions, StudentExaminationTypePermissions.DELETE_STUDENTEXAMINATIONTYPE, 204);
+    assertOk(role, response, studentExaminationTypePermissions, StudentExaminationTypePermissions.DELETE_STUDENTEXAMINATIONTYPE, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/students/examinationTypes/{ID}?permanent=true", id);
