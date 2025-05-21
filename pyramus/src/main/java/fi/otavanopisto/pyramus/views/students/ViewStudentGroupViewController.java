@@ -18,7 +18,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentGroupContactLogEntryCommentDA
 import fi.otavanopisto.pyramus.dao.students.StudentGroupContactLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupContactLogEntryComment;
