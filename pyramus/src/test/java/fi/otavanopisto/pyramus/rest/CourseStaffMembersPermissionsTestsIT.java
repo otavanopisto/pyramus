@@ -2,44 +2,31 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMemberRoleEnum;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
   
   private static final long COURSE_ID = 1000;
   private CoursePermissions coursePermissions = new CoursePermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public CourseStaffMembersPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateCourseStaffMember() throws NoSuchFieldException{
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateCourseStaffMember(Role role) throws NoSuchFieldException{
     CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(entity)
       .post("/courses/courses/{COURSEID}/staffMembers", COURSE_ID);
 
-    assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTAFFMEMBER, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.CREATE_COURSESTAFFMEMBER, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -50,22 +37,25 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
     }
   }
 
-  @Test
-  public void testPermissionsListCourseStaffMembers() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCourseStaffMembers(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/courses/{COURSEID}/staffMembers", COURSE_ID);
-    assertOk(response, coursePermissions, CoursePermissions.LIST_COURSESTAFFMEMBERS, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.LIST_COURSESTAFFMEMBERS, 200);
   }
   
-  @Test
-  public void testPermissionsFindCourseStaffMember() throws NoSuchFieldException{
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindCourseStaffMember(Role role) throws NoSuchFieldException{
+    Response response = given().headers(getAuthHeaders(role))
     .get("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, 1l);
-    assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTAFFMEMBER, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.FIND_COURSESTAFFMEMBER, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateCourseStaffMemberRole() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateCourseStaffMemberRole(Role role) throws NoSuchFieldException {
     CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     Long id = null;
     
@@ -79,19 +69,20 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
       
       CourseStaffMember updateEntity = new CourseStaffMember(id, null, 1l, CourseStaffMemberRoleEnum.COURSE_TUTOR);
       
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateEntity)
         .put("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, updateEntity.getId());
-      assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSESTAFFMEMBER, 200);
+      assertOk(role, updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSESTAFFMEMBER, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
     }
   }
   
-  @Test
-  public void testPermissionsDeleteCourseStaffMember() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteCourseStaffMember(Role role) throws NoSuchFieldException {
     CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, CourseStaffMemberRoleEnum.COURSE_TEACHER);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -101,9 +92,9 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
 
     Long id = response.body().jsonPath().getLong("id");
 
-    Response deleteResponse = given().headers(getAuthHeaders()).delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
+    Response deleteResponse = given().headers(getAuthHeaders(role)).delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
     
-    assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTAFFMEMBER, 204);
+    assertOk(role, deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTAFFMEMBER, 204);
     
     if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders()).delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);

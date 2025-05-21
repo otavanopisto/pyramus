@@ -1,49 +1,36 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.Person;
 import fi.otavanopisto.pyramus.rest.model.Sex;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
+public class PersonPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
   
   // TODO: tests for default person
 
-  public PersonPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private PersonPermissions personPermissions = new PersonPermissions();
   private StudentPermissions studentPermissions = new StudentPermissions();
 
-  @Test
-  public void testCreatePerson() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreatePerson(Role role) throws NoSuchFieldException {
     Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created", null);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(person)
       .post("/persons/persons");
 
-    assertOk(response, personPermissions, PersonPermissions.CREATE_PERSON);
+    assertOk(role, response, personPermissions, PersonPermissions.CREATE_PERSON);
 
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -55,36 +42,40 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testListPersons() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListPersons(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/persons/persons");
     
-    assertOk(response, personPermissions, PersonPermissions.LIST_PERSONS);
+    assertOk(role, response, personPermissions, PersonPermissions.LIST_PERSONS);
   }
   
-  @Test
-  public void testFindPerson() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindPerson(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/persons/persons/{ID}", 3);
     
-    assertOk(response, personPermissions, PersonPermissions.FIND_PERSON);
+    assertOk(role, response, personPermissions, PersonPermissions.FIND_PERSON);
   }
   
-  @Test
-  public void testFindPersonOppija() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindPersonOppija(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/persons/persons/{ID}/oppija", 3);
 
-    int expectedStatusCode = isCurrentRole(Role.ADMINISTRATOR) ? 200 : isCurrentRole(Role.EVERYONE) ? 403 : 404;
+    int expectedStatusCode = role == Role.ADMINISTRATOR ? 200 : role == Role.EVERYONE ? 403 : 404;
     int statusCode = response.statusCode();
     
-    assertEquals(String.format("Status code <%d> didn't match expected code <%d> when Role = %s", statusCode, expectedStatusCode, getRole()),
+    assertEquals(String.format("Status code <%d> didn't match expected code <%d> when Role = %s", statusCode, expectedStatusCode, role),
         expectedStatusCode, statusCode);
   }
   
-  @Test
-  public void testUpdatePerson() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdatePerson(Role role) throws NoSuchFieldException {
     Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated", null);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -96,12 +87,12 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
     try {
       Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated", null);
 
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudent)
         .put("/persons/persons/{ID}", id);
 
-      assertOk(response, personPermissions, PersonPermissions.UPDATE_PERSON);
+      assertOk(role, response, personPermissions, PersonPermissions.UPDATE_PERSON);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/persons/persons/{ID}", id)
@@ -110,8 +101,9 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testDeletePerson() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeletePerson(Role role) throws NoSuchFieldException {
     Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted", null);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -121,10 +113,10 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
 
     int id = response.body().jsonPath().getInt("id");
 
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/persons/persons/{ID}", id);
     
-    assertOk(response, personPermissions, PersonPermissions.DELETE_PERSON, 204);
+    assertOk(role, response, personPermissions, PersonPermissions.DELETE_PERSON, 204);
     
     if (response.getStatusCode() != 204) {
       given().headers(getAdminAuthHeaders())
@@ -134,11 +126,12 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testListStudents() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())   
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudents(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))   
       .get("/persons/persons/{ID}/students", 3l);
     
-    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTSBYPERSON);
+    assertOk(role, response, studentPermissions, StudentPermissions.LIST_STUDENTSBYPERSON);
   }
 }

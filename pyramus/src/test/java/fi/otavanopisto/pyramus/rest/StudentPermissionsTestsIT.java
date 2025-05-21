@@ -5,41 +5,21 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.Student;
-
+import io.restassured.response.Response;
 
 /**
  * Tests of permissions used in StudentRESTService
  */
-@RunWith(Parameterized.class)
-public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public StudentPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentPermissions studentPermissions = new StudentPermissions();
   private final static long TEST_STUDENT_ID = 3l;
   private static final long SECONDARY_TEST_STUDENT_ID = 13L;
@@ -56,8 +36,9 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
 //    assertEquals("__UserTags != 0 in test " + testName.getMethodName(), 0, getEntityCount("__UserTags"));
 //  }
   
-  @Test
-  public void testCreateStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudent(Role role) throws NoSuchFieldException {
     Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
@@ -93,12 +74,12 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       null // matriculation eligibility
     );
 
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(student)
         .post("/students/students");
 
-    assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENT);
+    assertOk(role, response, studentPermissions, StudentPermissions.CREATE_STUDENT);
     
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -108,15 +89,16 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testListStudents() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudents(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
         .get("/students/students");
 
-    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
+    assertOk(role, response, studentPermissions, StudentPermissions.LIST_STUDENTS);
     
     if (response.statusCode() == 200) {
-      if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      if (roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
         // For group restricted roles there should be only one result student
         response.then().body("id.size()", is(1));
       } else {
@@ -125,43 +107,47 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
 
-  @Test
-  public void testListStudentsByEmail() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudentsByEmail(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
         .get("/students/students?email=student1@bogusmail.com");
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS, 204);
+    if (roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(role, response, studentPermissions, StudentPermissions.LIST_STUDENTS, 204);
     } else {
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
+      assertOk(role, response, studentPermissions, StudentPermissions.LIST_STUDENTS);
     }
   }
   
-  @Test
-  public void testFindStudent() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudent(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
         .get("/students/students/{ID}", TEST_STUDENT_ID);
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+    if (roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
       // Accessible students restricted to groups of the logged user
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT, 403);
+      assertOk(role, response, studentPermissions, StudentPermissions.FIND_STUDENT, 403);
     } else {
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT);
+      assertOk(role, response, studentPermissions, StudentPermissions.FIND_STUDENT);
     }
   }
   
-  @Test
-  public void testFindStudentGuider() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudentGuider(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
         .get("/students/students/{ID}", SECONDARY_TEST_STUDENT_ID);
 
     // This should be ok for all roles as the group restricted study guider can
     // also access this user via studentgroup 2.
-    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT);
+    assertOk(role, response, studentPermissions, StudentPermissions.FIND_STUDENT);
   }
   
-  @Test
-  public void testUpdateStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudent(Role role) throws NoSuchFieldException {
     Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
@@ -237,22 +223,23 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
         null // matriculation eligibility
       );
       
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudent)
         .put("/students/students/{ID}", id);
 
-      assertOk(response, studentPermissions, StudentPermissions.UPDATE_STUDENT);
+      assertOk(role, response, studentPermissions, StudentPermissions.UPDATE_STUDENT);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/students/students/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testUpdateStudentOwner() throws NoSuchFieldException {
-    if (Role.STUDENT.name().equals(this.role)) {
-      Long studentId = getUserIdForRole(Role.STUDENT.name());
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudentOwner(Role role) throws NoSuchFieldException {
+    if (Role.STUDENT == role) {
+      Long studentId = getUserIdForRole(Role.STUDENT);
 
       Response response = given().headers(getAdminAuthHeaders())
           .get("/students/students/{ID}", studentId);
@@ -295,7 +282,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
         null // matriculation eligibility
       );
       
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudent)
         .put("/students/students/{ID}", studentId);
@@ -311,8 +298,9 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }  
   
-  @Test
-  public void testDeleteStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudent(Role role) throws NoSuchFieldException {
     Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
@@ -354,10 +342,10 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/students/{ID}", id);
     
-    assertOk(response, studentPermissions, StudentPermissions.DELETE_STUDENT, 204);
+    assertOk(role, response, studentPermissions, StudentPermissions.DELETE_STUDENT, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/students/students/{ID}?permanent=true", id);

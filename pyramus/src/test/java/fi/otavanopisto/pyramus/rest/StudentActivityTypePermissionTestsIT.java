@@ -2,47 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentActivityTypePermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentActivityType;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermissionsTest {
+public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public StudentActivityTypePermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentActivityTypePermissions studentActivityTypePermissions = new StudentActivityTypePermissions();
 
-  @Test
-  public void testCreateStudentActivityType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudentActivityType(Role role) throws NoSuchFieldException {
     StudentActivityType studentActivityType = new StudentActivityType(null, "create", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(studentActivityType)
       .post("/students/activityTypes");
 
-    assertOk(response, studentActivityTypePermissions, StudentActivityTypePermissions.CREATE_STUDENTACTIVITYTYPE);
+    assertOk(role, response, studentActivityTypePermissions, StudentActivityTypePermissions.CREATE_STUDENTACTIVITYTYPE);
       
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -52,24 +34,27 @@ public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermission
     }
   }
   
-  @Test
-  public void listStudentActivityTypes() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void listStudentActivityTypes(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/activityTypes");
     
-    assertOk(response, studentActivityTypePermissions, StudentActivityTypePermissions.LIST_STUDENTACTIVITYTYPES);
+    assertOk(role, response, studentActivityTypePermissions, StudentActivityTypePermissions.LIST_STUDENTACTIVITYTYPES);
   }
   
-  @Test
-  public void testFindStudentActivityType() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudentActivityType(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/activityTypes/{ID}", 1);
     
-    assertOk(response, studentActivityTypePermissions, StudentActivityTypePermissions.FIND_STUDENTACTIVITYTYPE);
+    assertOk(role, response, studentActivityTypePermissions, StudentActivityTypePermissions.FIND_STUDENTACTIVITYTYPE);
   }
   
-  @Test
-  public void testUpdateStudentActivityType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudentActivityType(Role role) throws NoSuchFieldException {
     StudentActivityType studentActivityType = new StudentActivityType(null, "Not Updated", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -81,12 +66,12 @@ public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermission
     try {
       StudentActivityType updateStudentActivityType = new StudentActivityType(id, "Updated", Boolean.FALSE);
 
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudentActivityType)
         .put("/students/activityTypes/{ID}", id);
       
-      assertOk(response, studentActivityTypePermissions, StudentActivityTypePermissions.UPDATE_STUDENTACTIVITYTYPE);
+      assertOk(role, response, studentActivityTypePermissions, StudentActivityTypePermissions.UPDATE_STUDENTACTIVITYTYPE);
 
     } finally {
       given().headers(getAdminAuthHeaders())
@@ -94,8 +79,9 @@ public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermission
     }
   }
   
-  @Test
-  public void testDeleteStudentActivityType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudentActivityType(Role role) throws NoSuchFieldException {
     StudentActivityType studentActivityType = new StudentActivityType(null, "create type", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -105,10 +91,10 @@ public class StudentActivityTypePermissionTestsIT extends AbstractRESTPermission
     
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/activityTypes/{ID}", id);
     
-    assertOk(response, studentActivityTypePermissions, StudentActivityTypePermissions.DELETE_STUDENTACTIVITYTYPE, 204);
+    assertOk(role, response, studentActivityTypePermissions, StudentActivityTypePermissions.DELETE_STUDENTACTIVITYTYPE, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/students/activityTypes/{ID}?permanent=true", id);
