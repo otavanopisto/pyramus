@@ -1,14 +1,3 @@
-/*
-
-TODO
-
-- Kaikki 2005-opsiin liittyvä
-- Diaarinumerot
-- RUB
-
-*/
-
-
 async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) {
   // Tulosobjektit
 
@@ -1034,7 +1023,7 @@ function opsVastaavuustaulukko(diaarinumero) {
     };
 
     /*
-      TODO TODO TODO TODO TODO TODO TODO  Tarkista diaarinumerot, nuorten saattaa olla 30/011/2003 ?
+      Huom, Nuorten diaarinumero saattaa olla 30/011/2003 tai 33/011/2003 ?
     */
     
     switch (diaarinumero) {
@@ -1112,16 +1101,7 @@ function opsVastaavuusTaulukkoKaikki() {
           break;
           
           case "MONI": {
-            var konversioKohde = "";
-            for (const konversioModuli of vt_vastaavuus.moni) {
-              const moduliAine = konversioModuli.subject ? konversioModuli.subject : vt_oppiaine;
-              const moduliKnro = konversioModuli.no;
-
-              if (konversioKohde != "") {
-                konversioKohde += " + ";
-              }
-              konversioKohde += moduliAine + moduliKnro;
-            }
+            var konversioKohde = vt_oppiaine + vt_kurssinro + "+";
 
             for (const konversioModuli of vt_vastaavuus.moni) {
               const moduliAine = konversioModuli.subject ? konversioModuli.subject : vt_oppiaine;
