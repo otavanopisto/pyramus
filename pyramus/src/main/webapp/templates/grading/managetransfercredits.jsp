@@ -827,6 +827,7 @@
                 }
                 catch (error) {
                   console.error(error);
+                  alert(getLocale().getText("students.manageTransferCredits.tcm.fileReadError"));
                   
                   if (glassPane) {
                     glassPane.hide();
