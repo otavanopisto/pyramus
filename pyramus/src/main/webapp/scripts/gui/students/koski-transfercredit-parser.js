@@ -29,7 +29,7 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
     return;
   }
 
-  if (henkilo["henkilö"].hetu && studentSSNHash) {
+  if (henkilo["henkilö"] && henkilo["henkilö"].hetu && studentSSNHash) {
     var hetuhash = await sha256(henkilo["henkilö"].hetu);
     if (hetuhash != studentSSNHash) {
       errors.push(getLocale().getText("students.manageTransferCredits.tcm.ssnMismatch"));
@@ -219,7 +219,7 @@ function parsiKurssit(kurssit, oppilaitos, credits, results, OPINTOJENLAAJUUSYKS
       else {
         laajuus = kurssi.koulutusmoduuli.laajuus.arvo;
         
-        var yksikkoKoodi = kurssi.koulutusmoduuli.laajuus["yksikkö"].koodiarvo;
+        var yksikkoKoodi = kurssi.koulutusmoduuli.laajuus["yksikkö"] ? kurssi.koulutusmoduuli.laajuus["yksikkö"].koodiarvo : null;
         laajuusYksikko = yksikkoKoodi ? OPINTOJENLAAJUUSYKSIKKO[yksikkoKoodi] : null;
       }
       
