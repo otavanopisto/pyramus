@@ -29,11 +29,16 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
     return;
   }
 
-  if (henkilo["henkilö"] && henkilo["henkilö"].hetu && studentSSNHash) {
-    var hetuhash = await sha256(henkilo["henkilö"].hetu);
-    if (hetuhash != studentSSNHash) {
-      errors.push(getLocale().getText("students.manageTransferCredits.tcm.ssnMismatch"));
+  if (henkilo["henkilö"]) {
+    if (henkilo["henkilö"].hetu && studentSSNHash) {
+      var hetuhash = await sha256(henkilo["henkilö"].hetu);
+      if (hetuhash != studentSSNHash) {
+        errors.push(getLocale().getText("students.manageTransferCredits.tcm.ssnMismatch"));
+      }
     }
+  }
+  else {
+    errors.push(getLocale().getText("students.manageTransferCredits.tcm.personInfoMissing"));
   }
 
   // Staattiset mäppäykset
