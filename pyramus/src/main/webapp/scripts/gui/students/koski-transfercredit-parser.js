@@ -489,7 +489,7 @@ function parasArviointi(arvioinnit, kurssiKoodi, results) {
   // jsonissa olisi myös property "hyväksytty", mutta tämä on tietoja 
   // syötettäessä optionaalinen joten ei luoteta siihen. (Jos siis haluttaisiin
   // vain hyväksyttyjä arvosanoja.)
-  const lapaisevatArvosanat = [ '4', '5', '6', '7', '8', '9', '10', 'H', 'O', 'S' ];
+  const lapaisevatArvosanat = [ '4', '5', '6', '7', '8', '9', '10', 'O', 'S' ];
 
   var arviointi = arvioinnit[0];
   var arviointiArvosanaNum = parseInt(arviointi.arvosana.koodiarvo, 10);
