@@ -6,12 +6,16 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -34,6 +38,24 @@ public class ArchiveStudentJSONRequestController extends JSONRequestController {
     if (!studentProjects.isEmpty()) {
       for (StudentProject studentProject : studentProjects) {
         studentProjectDAO.archive(studentProject);
+      }
+    }
+    
+    // Archive course students of archived student
+    CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
+    List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
+    if (!courseStudents.isEmpty()) {
+      for (CourseStudent courseStudent : courseStudents) {
+        courseStudentDAO.archive(courseStudent);
+      }
+    }
+    
+    // Archive student group users of archived student
+    StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
+    List<StudentGroupStudent> studentGroupStudents = studentGroupStudentDAO.listByStudent(student, false);
+    if (!studentGroupStudents.isEmpty()) {
+      for (StudentGroupStudent studentGroupStudent : studentGroupStudents) {
+        studentGroupStudentDAO.delete(studentGroupStudent);
       }
     }
     
