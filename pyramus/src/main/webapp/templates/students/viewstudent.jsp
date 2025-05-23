@@ -3802,7 +3802,11 @@
             
             <button id="addOldMatriculationGradesButton" onclick="addOldMatriculationGrades(event);" disabled="disabled"><fmt:message key="students.viewStudent.matriculationAddOldMatriculationGrades"/></button>
           </div>
-                
+          
+          <c:if test="${!matriculationCurriculumOk}">
+            <div style="color: red; margin: 4px 0px;"><fmt:message key="students.viewStudent.matriculationUndescribedCurriculumError"/></div>
+          </c:if>
+          
           <c:forEach var="examTerm" items="${matriculationExamTerms}">
             <c:choose>
               <c:when test="${examTerm.term == 'SPRING'}">
@@ -3823,12 +3827,12 @@
             <div class="viewStudentMatriculationTermHeaderRow">
               <b style="font-size: 1.2em">${examTerm.year} ${matriculationExamEnrollmentTerm}</b>
               <c:if test="${not empty examTerm.studyProgrammeName}">
-                <span style="margin: 0px 4px;">${examTerm.studyProgrammeName}</span>
+                <span style="margin-left: 8px;">${examTerm.studyProgrammeName}</span>
               </c:if>
               <c:if test="${not empty examTerm.state}">
-                <span class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${examTerm.state}"/></span>
+                <span style="margin-left: 8px;" class="matriculationEnrollmentStateInline"><fmt:message key="generic.matriculation.enrollmentStates.${examTerm.state}"/></span>
               </c:if>
-              <span>
+              <span style="margin-left: 8px;">
                 <a href="${pageContext.request.contextPath}/matriculation/editgrades.page?person=${person.id}&term=${examTerm.term}&year=${examTerm.year}">
                   <img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png" class="iconButton" />
                 </a>
