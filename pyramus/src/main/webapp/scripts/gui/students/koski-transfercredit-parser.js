@@ -106,7 +106,8 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
       // Selvitetään oppilaitos oppilaitosnumeron perusteella
       
       if (opiskeluoikeus.oppilaitos && opiskeluoikeus.oppilaitos.oppilaitosnumero && opiskeluoikeus.oppilaitos.oppilaitosnumero.koodiarvo) {
-        var oppilaitosnumero = opiskeluoikeus.oppilaitos.oppilaitosnumero.koodiarvo;
+        const oppilaitosnumero = opiskeluoikeus.oppilaitos.oppilaitosnumero.koodiarvo;
+        const oppilaitosNimi = (opiskeluoikeus.oppilaitos.nimi && opiskeluoikeus.oppilaitos.nimi.fi) ? opiskeluoikeus.oppilaitos.nimi.fi : ""; 
   
         if (oppilaitosCache[oppilaitosnumero]) {
           oppilaitos = oppilaitosCache[oppilaitosnumero];
@@ -118,11 +119,11 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
               
               if (ret) {
                 if (ret.length == 0) {
-                  errors.push(getLocale().getText("students.manageTransferCredits.tcm.schoolNotFoundWithNumber", oppilaitosnumero));
+                  errors.push(getLocale().getText("students.manageTransferCredits.tcm.schoolNotFoundWithNumber", oppilaitosnumero, oppilaitosNimi));
                 }
                 else {
                   if (ret.length > 1) {
-                    errors.push(getLocale().getText("students.manageTransferCredits.tcm.multipleSchoolsWithNumber", oppilaitosnumero));
+                    errors.push(getLocale().getText("students.manageTransferCredits.tcm.multipleSchoolsWithNumber", oppilaitosnumero, oppilaitosNimi));
                   }
                   
                   oppilaitos = ret[0];
@@ -484,10 +485,11 @@ function parasArviointi(arvioinnit, kurssiKoodi, results) {
     return null;
   } 
 
-  // Läpäisevät arvosanat. Kosken antamassa arvioinnin jsonissa olisi myös
-  // property "hyväksytty", mutta tämä on tietoja syötettäessä optionaalinen
-  // joten ei luoteta siihen.
-  const lapaisevatArvosanat = [ '5', '6', '7', '8', '9', '10', 'O', 'S' ];
+  // Arvosanat. joista tehdään hyväksiluvut. Kosken antamassa arvioinnin 
+  // jsonissa olisi myös property "hyväksytty", mutta tämä on tietoja 
+  // syötettäessä optionaalinen joten ei luoteta siihen. (Jos siis haluttaisiin
+  // vain hyväksyttyjä arvosanoja.)
+  const lapaisevatArvosanat = [ '4', '5', '6', '7', '8', '9', '10', 'H', 'O', 'S' ];
 
   var arviointi = arvioinnit[0];
   var arviointiArvosanaNum = parseInt(arviointi.arvosana.koodiarvo, 10);
@@ -606,15 +608,15 @@ function opsVastaavuustaulukko(diaarinumero) {
       "MAA": {
         2: { type: "OK" },
         3: { type: "OK" },
-        4: { type: "KORJAA_KÄSIN", to: 4 },
-        5: { type: "KORJAA_KÄSIN", to: 5 },
+        4: { type: "KORJAA_KÄSIN" },
+        5: { type: "KORJAA_KÄSIN" },
         6: { type: "OK" },
         7: { type: "KNRO", to: 5 },
         8: { type: "KNRO", to: 18 },
         9: { type: "KNRO", to: 7 },
         10: { type: "KNRO", to: 8 },
-        11: { type: "KORJAA_KÄSIN", to: 11 },
-        12: { type: "KORJAA_KÄSIN", to: 12 },
+        11: { type: "KORJAA_KÄSIN" },
+        12: { type: "KORJAA_KÄSIN" },
         13: { type: "KNRO", to: 12 }
       },
       "MAB": {
@@ -643,17 +645,14 @@ function opsVastaavuustaulukko(diaarinumero) {
         7: { type: "KNRO", to: 8 }
       },
       "KE": {
-        1: { type: "MONI", moni: [
-          { no: 1 },
-          { no: 2 }
-        ] },
-        2: { type: "KNRO", to: 3 },
+        1: { type: "KORJAA_KÄSIN" },
+        2: { type: "KORJAA_KÄSIN" },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 6 }
       },
       "RUB1": {
-        1: { type: "KORJAA_KÄSIN", to: 1 },
+        1: { type: "KORJAA_KÄSIN" },
         2: { type: "OK" },
         3: { type: "OK" },
         4: { type: "OK" },
@@ -761,7 +760,7 @@ function opsVastaavuustaulukko(diaarinumero) {
         4: { type: "OK" }
       },
       "AT": {
-        1: { type: "KORJAA_KÄSIN", to: 1 },
+        1: { type: "KORJAA_KÄSIN" },
         2: { type: "OK" },
         3: { type: "KNRO", to: 6 },
         4: { type: "OK" },
@@ -837,12 +836,12 @@ function opsVastaavuustaulukko(diaarinumero) {
       "BI": {
         1: { type: "OK" },
         2: { type: "KNRO", to: 4 },
-        3: { type: "KORJAA_KÄSIN", to: 4 },
+        3: { type: "KORJAA_KÄSIN" },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 6 }
       },
       "ENA": {
-        1: { type: "KORJAA_KÄSIN", to: 1 },
+        1: { type: "KORJAA_KÄSIN" },
         2: { type: "KNRO", to: 12 },
         3: { type: "KNRO", to: 6 },
         4: { type: "OK" },
@@ -855,8 +854,8 @@ function opsVastaavuustaulukko(diaarinumero) {
         1: { type: "KNRO", to: 1, subject: "MAY" },
         2: { type: "OK" },
         3: { type: "OK" },
-        4: { type: "KORJAA_KÄSIN", to: 4 },
-        5: { type: "KORJAA_KÄSIN", to: 5 },
+        4: { type: "KORJAA_KÄSIN" },
+        5: { type: "KORJAA_KÄSIN" },
         6: { type: "KNRO", to: 8 },
         7: { type: "KNRO", to: 6 },
         8: { type: "KNRO", to: 18 },
@@ -872,7 +871,7 @@ function opsVastaavuustaulukko(diaarinumero) {
         4: { type: "KNRO", to: 8 },
         5: { type: "OK" },
         6: { type: "KNRO", to: 1, subject: "MAY" },
-        7: { type: "KORJAA_KÄSIN", to: 8 },
+        7: { type: "KORJAA_KÄSIN" },
         9: { type: "KNRO", to: 15, subject: "MAY" },
         10: { type: "KNRO", to: 9 }        
       },
@@ -887,7 +886,7 @@ function opsVastaavuustaulukko(diaarinumero) {
       },
       "KE": {
         1: { type: "KNRO", to: 3 },
-        2: { type: "KORJAA_KÄSIN", to: 3 },
+        2: { type: "KORJAA_KÄSIN" },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 6 }
