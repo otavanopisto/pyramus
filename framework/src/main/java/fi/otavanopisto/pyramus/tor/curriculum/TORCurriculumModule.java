@@ -34,8 +34,17 @@ public class TORCurriculumModule {
     this.length = length;
   }
 
+  public String getLengthUnitSymbol() {
+    return lengthUnitSymbol;
+  }
+
+  public void setLengthUnitSymbol(String lengthUnitSymbol) {
+    this.lengthUnitSymbol = lengthUnitSymbol;
+  }
+
   private String name;
   private int courseNumber;
   private int length;
+  private String lengthUnitSymbol;
   private boolean mandatory;
 }

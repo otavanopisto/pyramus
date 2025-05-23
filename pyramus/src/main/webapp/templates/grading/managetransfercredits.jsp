@@ -18,6 +18,10 @@
     <jsp:include page="/templates/generic/jsonform_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/draftapi_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/ajax_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/glasspane_support.jsp"></jsp:include>
+    
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski-transfercredit-parser.js"></script>
 
     <script type="text/javascript">
 
@@ -26,7 +30,7 @@
       function addTransferCreditsTableRow() {
         var table = getIxTableById('transferCreditsTable');
         
-        rowIndex = table.addRow(['', '', -1, 0, 0, -1, '', -1, -1, '', '', '', ${loggedUserId}, new Date().getTime(), '', '', -1], true);
+        rowIndex = table.addRow(['', '', '', -1, 0, 0, -1, '', -1, -1, '', '', '', ${loggedUserId}, new Date().getTime(), '', '', -1], true);
         
         var subjectColumnIndex = table.getNamedColumnIndex('subject');
         var schoolColumnIndex = table.getNamedColumnIndex('school');
@@ -79,6 +83,7 @@
               
               rowDatas.push([
                 '',
+                '',
                 template.courseName.escapeHTML(),
                 template.courseOptionality,                                  
                 template.courseNumber,
@@ -128,6 +133,12 @@
         });
       }
       
+      function setTransferCreditRowEditable(table, rowIndex) {
+        for (var i = 0; i < table.getColumnCount(); i++) {
+          table.setCellEditable(rowIndex, i, table.isCellEditable(rowIndex, i) == false);
+        }
+      }
+      
       function onLoad(event) {
         tabControl = new IxProtoTabs($('tabs'));
         var curriculums = JSDATA["curriculums"].evalJSON();
@@ -151,9 +162,19 @@
             tooltip: '<fmt:message key="grading.manageTransferCredits.transferCreditsTableEditTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              for (var i = 0; i < table.getColumnCount(); i++) {
-                table.setCellEditable(event.row, i, table.isCellEditable(event.row, i) == false);
-              }
+              setTransferCreditRowEditable(table, event.row);
+            }
+          }, {
+            left: 4,
+            width: 22,
+            dataType: 'button',
+            paramName: 'importNotification',
+            hidden: true,
+            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
+            tooltip: '<fmt:message key="grading.manageTransferCredits.transferCreditsTableEditTooltip"/>',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              table.hideCell(event.row, table.getNamedColumnIndex('importNotification'));
             }
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableCourseNameHeader"/>',
@@ -552,6 +573,7 @@
         
           rowIndex = transferCreditsTable.addRow([
             '',
+            '',
             '${fn:escapeXml(transferCredit.courseName)}',
             '${transferCredit.optionality}',
             ${transferCredit.courseNumber},
@@ -617,9 +639,256 @@
         }
         
         updateTransferCreditsCount();
+        createConversionTables();
+        initializeAccordions();
       }
+      
+      function initializeAccordions() {
+        const accordionElements = document.getElementsByClassName("pyramusAccordion");
+        for (const ace of accordionElements) {
+          const accordionButtons = ace.getElementsByClassName("pyramusAccordionButton");
+          for (const button of accordionButtons) {
+            button.addEventListener("click", function (event) {
+              this.classList.toggle("pyramusAccordionButtonOpened");
+              const contentNodes = this.parentNode.getElementsByClassName("pyramusAccordionContent");
+              for (const contentNode of contentNodes) {
+                if (contentNode.style.display == "none") {
+                  contentNode.style.display = "block";
+                }
+                else {
+                  contentNode.style.display = "none";
+                }
+              }
+            });
+          }
+        }
+      }
+      
+      function createConversionTables() {
+        const container = document.getElementById("conversionTableContainer");
+
+        const data = opsVastaavuusTaulukkoKaikki();
         
+        for (const subjectCode of Object.keys(data.aineet)) {
+          const cont = document.createElement("div");
+          container.appendChild(cont);
+          
+          const title = document.createElement("h2");
+          title.appendChild(document.createTextNode(subjectCode));
+          cont.appendChild(title);
+
+          const table = document.createElement("table");
+          cont.appendChild(table);
+
+          const headerRow = document.createElement("tr");
+          table.appendChild(headerRow);
+          
+          const ops2021header = document.createElement("th");
+          ops2021header.appendChild(document.createTextNode("OPS 2021"));
+          headerRow.appendChild(ops2021header);
+          
+          for (const dt of data.opsit) {
+            const opsheader = document.createElement("th");
+            opsheader.appendChild(document.createTextNode(dt.nimi));
+            headerRow.appendChild(opsheader);
+          }
+          
+          const courseNumbers = Object.keys(data.aineet[subjectCode]);
+          for (const courseNumber of courseNumbers) {
+            const tr = document.createElement("tr");
+            table.appendChild(tr);
+
+            const courseNumberCell = document.createElement("td");
+            courseNumberCell.appendChild(document.createTextNode(subjectCode + courseNumber));
+            tr.appendChild(courseNumberCell);
+            
+            for (const dt of data.opsit) {
+              const dataCell = document.createElement("td");
+              if (data.aineet[subjectCode][courseNumber][dt.diaarinumero]) {
+                dataCell.appendChild(document.createTextNode(data.aineet[subjectCode][courseNumber][dt.diaarinumero]));
+              }
+              tr.appendChild(dataCell);
+            }
+          }
+        }
+      }
+      
+      function koskiImportCredits(event) {
+        var glassPane = new IxGlassPane(document.body, { });
+        glassPane.show();
+        
+        $('noTransferCreditsAddedMessageContainer').setStyle({
+          display: 'none'
+        });
+
+        const gradeMapping = JSDATA["importGradeMapping"].evalJSON();
+        const timeUnitMapping = JSDATA["importTimeUnitMapping"].evalJSON();
+        
+        setTimeout(function () {
+          try {
+            var file = event.target.files[0];
+            if (file) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                try {
+                  var koskiHenkilo = JSON.parse(e.target.result);
+
+                  parseKoskiTransferCredits(koskiHenkilo, '${student.curriculum.id}', '${studentSSNHash}').then((credits) => {
+                    var table = getIxTableById('transferCreditsTable');
+                    
+                    table.detachFromDom();
+                    credits.credits.forEach(credit => {
+                      var optionality = credit.mandatory ? 'MANDATORY' : 'OPTIONAL';
+                      var gradeId = gradeMapping[credit.grade];
+                      var subjectId = credit.subject ? credit.subject.id : '';
+                      var courseLengthUnitId = timeUnitMapping[credit.courseLengthUnit] || '';
+                      var schoolId = credit.school ? credit.school.id : '';
+                      
+                      var rowIndex = table.addRow([
+                        '',
+                        '',
+                        credit.courseName ? credit.courseName : credit.courseCode, // course name
+                        optionality,
+                        credit.courseNumber,
+                        gradeId,           
+                        subjectId,         
+                        credit.courseLength, 
+                        courseLengthUnitId,          
+                        schoolId,
+                        ${student.curriculum.id}, // Curriculum default to student's curriculum
+                        '',                       // offCurriculum
+                        '',                       // funding
+                        ${loggedUserId},           
+                        new Date().getTime(), 
+                        '',
+                        '',
+                        -1
+                      ]);
+                      
+                      IxTableControllers.getController('autoCompleteSelect').setDisplayValue(table.getCellEditor(rowIndex, table.getNamedColumnIndex('user')), '${fn:escapeXml(loggedUserName)}');
+                      if (credit.subject) {
+                        var subjectName = credit.subject.code + " - " + credit.subject.name;
+                        IxTableControllers.getController('autoCompleteSelect').setDisplayValue(table.getCellEditor(rowIndex, table.getNamedColumnIndex('subject')), subjectName);
+                      }
+                      if (credit.school) {
+                        IxTableControllers.getController('autoCompleteSelect').setDisplayValue(table.getCellEditor(rowIndex, table.getNamedColumnIndex('school')), credit.school.name);
+                      }
+                      // Hide modify button for new entries
+                      table.hideCell(rowIndex, table.getNamedColumnIndex('modifyButton'));
+    
+                      if (!credit.convertedOk) {
+                        table.showCell(rowIndex, table.getNamedColumnIndex('importNotification'));
+                      }
+                      
+                      setTransferCreditRowEditable(table, rowIndex);
+                    });
+                    
+                    table.reattachToDom();
+
+                    const notesContainer = document.getElementById("koskiImportNotesContainer");
+                    document.getElementById("koskiImportNotesContainerCount").textContent = "({0})".format(credits.notes.length);
+                    for (const note of credits.notes) {
+                      const noteDiv = document.createElement("p");
+                      noteDiv.appendChild(document.createTextNode(note));
+                      notesContainer.appendChild(noteDiv);
+                    }
+    
+                    const errorContainer = document.getElementById("koskiImportErrorContainer");
+                    document.getElementById("koskiImportErrorContainerCount").textContent = "({0})".format(credits.errors.length);
+                    for (const error of credits.errors) {
+                      const errorDiv = document.createElement("p");
+                      errorDiv.appendChild(document.createTextNode(error));
+                      errorContainer.appendChild(errorDiv);
+                    }
+                    
+                    const curriculumErrorsContainer = document.getElementById("koskiImportCurriculumErrorsContainer");
+                    document.getElementById("koskiImportCurriculumErrorsContainerCount").textContent = "({0})".format(credits.curriculumErrors.length);
+                    for (const error of credits.curriculumErrors) {
+                      const errorDiv = document.createElement("p");
+                      errorDiv.appendChild(document.createTextNode(error));
+                      curriculumErrorsContainer.appendChild(errorDiv);
+                    }
+    
+                    const curriculumNotesContainer = document.getElementById("koskiImportCurriculumNotesContainer");
+                    document.getElementById("koskiImportCurriculumNotesContainerCount").textContent = "({0})".format(credits.curriculumNotes.length);
+                    for (const error of credits.curriculumNotes) {
+                      const errorDiv = document.createElement("p");
+                      errorDiv.appendChild(document.createTextNode(error));
+                      curriculumNotesContainer.appendChild(errorDiv);
+                    }
+                    
+                    const outputContainer = document.getElementById("transferCreditImportOutput");
+                    outputContainer.style.display = "block";
+                  })
+                  .then(function () {
+                    glassPane.hide();
+                    delete glassPane;
+                  });
+                }
+                catch (error) {
+                  console.error(error);
+                  alert(getLocale().getText("students.manageTransferCredits.tcm.fileReadError"));
+                  
+                  if (glassPane) {
+                    glassPane.hide();
+                    delete glassPane;
+                  }
+                }
+              }
+              reader.readAsText(file);
+            }
+          }
+          catch (e) {
+            console.error(e);
+          }
+        }, 0);
+      }
     </script>
+    
+    <style type="text/css">
+      .pyramusAccordion {
+        border: 1px solid #a0bff7;
+        border-radius: 5px;
+        margin: 5px 5px 10px;
+        padding: 10px;
+      }
+      
+      .pyramusAccordionButton {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        color: #2e5ec5;
+        line-height: 1;
+        height: 20px;
+        font-size: 12px;
+        text-decoration: none;
+      }
+      
+      .pyramusAccordionButton:before {
+        align-items: center;
+        content: "+";
+        display: flex;
+        height: 14px;
+        justify-content: center;
+        margin: 0 5px 0 0;
+        width: 10px;
+      }
+      
+      .pyramusAccordionButtonOpened:before {
+        align-items: center;
+        content: "-";
+        display: flex;
+        height: 14px;
+        justify-content: center;
+        margin: 0 5px 0 0;
+        width: 10px;
+      }
+      
+      .pyramusAccordionContent {
+        display: none;
+        margin: 0 0 0 15px;
+      }
+    </style>
   </head>
   
   <body onload="onLoad(event);" ix:enabledrafting="true">
@@ -636,10 +905,12 @@
             <a class="tabLabel" href="#manageTransferCredits">
               <fmt:message key="grading.manageTransferCredits.tabLabelTransferCredits"/>
             </a>
+            <a class="tabLabel" href="#conversionTables">
+              <fmt:message key="grading.manageTransferCredits.tabLabelTranslationTables"/>
+            </a>
           </div>
           
           <div id="manageTransferCredits" class="tabContentixTableFormattedData">
-          
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="grading.manageTransferCredits.studentTitle"/>
@@ -675,6 +946,38 @@
                 <fmt:message key="grading.manageTransferCredits.addTemplateButton"/>
               </button>   
             </div>
+            
+            <c:if test="${student.curriculum.name eq 'OPS 2021'}">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="grading.manageTransferCredits.addFromKoskiJSONTitle"/>
+                  <jsp:param name="helpLocale" value="grading.manageTransferCredits.addFromKoskiJSONTitleHelp"/>
+                </jsp:include>
+                <div class="genericFormAddFileContainer">
+                  <div class="genericFormAddFileDescription"><fmt:message key="grading.manageTransferCredits.addFromKoskiJSONTitle"/></div>
+                  <input class="genericFormAddFileField" type="file" onchange="koskiImportCredits(event);"/>
+                </div>
+              </div>
+
+              <div id="transferCreditImportOutput" class="transferCreditImportOutput" style="display: none;">
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton pyramusAccordionButtonOpened"><fmt:message key="grading.manageTransferCredits.jsonimport.errors"/><span id="koskiImportErrorContainerCount" style="margin-left: 2pt;"></span></div>
+                  <div id="koskiImportErrorContainer" class="pyramusAccordionContent" style="display: block;"></div>
+                </div>
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.notes"/><span id="koskiImportNotesContainerCount" style="margin-left: 2pt;"></span></div>
+                  <div id="koskiImportNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
+                </div>
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.curriculumErrors"/><span id="koskiImportCurriculumErrorsContainerCount" style="margin-left: 2pt;"></span></div>
+                  <div id="koskiImportCurriculumErrorsContainer" class="pyramusAccordionContent" style="display: none;"></div>
+                </div>
+                <div class="pyramusAccordion">
+                  <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.curriculumNotes"/><span id="koskiImportCurriculumNotesContainerCount" style="margin-left: 2pt;"></span></div>
+                  <div id="koskiImportCurriculumNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
+                </div>
+              </div>
+            </c:if>
 
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addTransferCreditsTableRow();"><fmt:message key="grading.manageTransferCredits.addTransferCreditLink"/></span>
@@ -691,6 +994,11 @@
             </div>
           </div>
     
+          <div id="conversionTables" class="tabContentixTableFormattedData">
+            <h1>OPS-vastaavuustaulukot</h1>
+            <div id="conversionTableContainer"></div>
+          </div>
+
           <div class="genericFormSubmitSectionOffTab">
             <input type="submit" class="formvalid" value="<fmt:message key="grading.manageTransferCredits.saveButton"/>">
           </div>
