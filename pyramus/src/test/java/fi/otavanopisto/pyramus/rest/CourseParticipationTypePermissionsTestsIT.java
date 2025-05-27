@@ -3,42 +3,29 @@ package fi.otavanopisto.pyramus.rest;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseParticipationType;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CoursePermissions coursePermissions = new CoursePermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public CourseParticipationTypePermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateCourseParticipationType() throws NoSuchFieldException{
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateCourseParticipationType(Role role) throws NoSuchFieldException{
     CourseParticipationType courseParticipationType = new CourseParticipationType("Test Type", Boolean.FALSE);
 
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(courseParticipationType)
       .post("/courses/participationTypes");
     
-    assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSEPARTICIPATIONTYPE, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.CREATE_COURSEPARTICIPATIONTYPE, 200);
 
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -48,22 +35,25 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
     }
   }
   
-  @Test
-  public void testPermissionsListCourseParticipationTypes() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCourseParticipationTypes(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/participationTypes");
-    assertOk(response, coursePermissions, CoursePermissions.LIST_COURSEPARTICIPATIONTYPES, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.LIST_COURSEPARTICIPATIONTYPES, 200);
   }
   
-  @Test
-  public void testPermissionsListCourseParticipationType() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCourseParticipationType(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/courses/participationTypes/{ID}", 1);
-    assertOk(response, coursePermissions, CoursePermissions.LIST_COURSEPARTICIPATIONTYPES, 200);
+    assertOk(role, response, coursePermissions, CoursePermissions.LIST_COURSEPARTICIPATIONTYPES, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateCourseParticipationType() throws NoSuchFieldException{
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateCourseParticipationType(Role role) throws NoSuchFieldException{
     CourseParticipationType courseParticipationType = new CourseParticipationType(
         "Update test", Boolean.FALSE);
 
@@ -78,17 +68,18 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
         "Updated name",
         Boolean.FALSE);
 
-    Response updateResponse = given().headers(getAuthHeaders())
+    Response updateResponse = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(updateType)
       .put("/courses/participationTypes/{ID}", id);
-    assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSEPARTICIPATIONTYPE, 200);
+    assertOk(role, updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSEPARTICIPATIONTYPE, 200);
     
     deleteParticipationType(id);
   }
   
-  @Test
-  public void testPermissionsDeleteCourseParticipationType() throws NoSuchFieldException{
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteCourseParticipationType(Role role) throws NoSuchFieldException{
     CourseParticipationType courseParticipationType = new CourseParticipationType("Delete Type", Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -98,10 +89,10 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
 
     Long id = response.body().jsonPath().getLong("id");
     
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/courses/participationTypes/{ID}", id);    
     
-    assertOk(deleteResponse, coursePermissions, CoursePermissions.ARCHIVE_COURSEPARTICIPATIONTYPE, 204);
+    assertOk(role, deleteResponse, coursePermissions, CoursePermissions.ARCHIVE_COURSEPARTICIPATIONTYPE, 204);
 
     deleteParticipationType(id);
   }

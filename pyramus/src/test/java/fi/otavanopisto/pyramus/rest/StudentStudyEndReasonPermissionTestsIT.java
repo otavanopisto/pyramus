@@ -2,46 +2,28 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentStudyEndReasonPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentStudyEndReason;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissionsTest {
+public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public StudentStudyEndReasonPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentStudyEndReasonPermissions studentStudyEndReasonPermissions = new StudentStudyEndReasonPermissions();
   
-  @Test
-  public void testCreateStudyEndReason() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudyEndReason(Role role) throws NoSuchFieldException {
     StudentStudyEndReason endReason = new StudentStudyEndReason(null, "create test", null);
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(endReason)
       .post("/students/studyEndReasons");
     
-    assertOk(response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.CREATE_STUDENTSTUDYENDREASON);
+    assertOk(role, response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.CREATE_STUDENTSTUDYENDREASON);
       
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -51,24 +33,27 @@ public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissi
     }
   }
 
-  @Test
-  public void testListStudyEndReasons() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudyEndReasons(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studyEndReasons");
     
-    assertOk(response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.LIST_STUDENTSTUDYENDREASONS);
+    assertOk(role, response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.LIST_STUDENTSTUDYENDREASONS);
   }
 
-  @Test
-  public void testFindStudyEndReasons() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudyEndReasons(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studyEndReasons/{ID}", 1);
 
-    assertOk(response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.FIND_STUDENTSTUDYENDREASON);
+    assertOk(role, response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.FIND_STUDENTSTUDYENDREASON);
   }
   
-  @Test
-  public void testUpdateStudyEndReason() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudyEndReason(Role role) throws NoSuchFieldException {
     StudentStudyEndReason endReason = new StudentStudyEndReason(null, "not updated", null);
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -79,12 +64,12 @@ public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissi
     try {
       StudentStudyEndReason updateReason = new StudentStudyEndReason(id, "updated", 1l);
       
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateReason)
         .put("/students/studyEndReasons/{ID}", id);
 
-      assertOk(response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.UPDATE_STUDENTSTUDYENDREASON);
+      assertOk(role, response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.UPDATE_STUDENTSTUDYENDREASON);
 
     } finally {
       given().headers(getAdminAuthHeaders())
@@ -92,8 +77,9 @@ public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissi
     }
   }
   
-  @Test
-  public void testDeleteStudyEndReason() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudyEndReason(Role role) throws NoSuchFieldException {
     StudentStudyEndReason endReason = new StudentStudyEndReason(null, "to be deleted", null);
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -102,10 +88,10 @@ public class StudentStudyEndReasonPermissionTestsIT extends AbstractRESTPermissi
       
     Long id = response.body().jsonPath().getLong("id");
 
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/studyEndReasons/{ID}", id);
     
-    assertOk(response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.DELETE_STUDENTSTUDYENDREASON, 204);
+    assertOk(role, response, studentStudyEndReasonPermissions, StudentStudyEndReasonPermissions.DELETE_STUDENTSTUDYENDREASON, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/students/studyEndReasons/{ID}?permanent=true", id);

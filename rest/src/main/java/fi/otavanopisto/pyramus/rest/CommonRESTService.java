@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -38,6 +40,8 @@ import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.tor.StudentTORController;
+import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
 
 @Path("/common")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +50,9 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @RequestScoped
 public class CommonRESTService extends AbstractRESTService {
 
+  @Inject
+  private Logger logger;
+  
   @Inject
   private CommonController commonController;
 
@@ -57,7 +64,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Inject
   private SessionController sessionController;
-  
+
   @Inject
   private ObjectFactory objectFactory;
   
@@ -1139,4 +1146,30 @@ public class CommonRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  @Path("/curriculums/{ID:[0-9]*}/json")
+  @GET
+  @RESTPermit (CommonPermissions.FIND_CURRICULUM_JSON)
+  public Response findCurriculumJSON(@PathParam("ID") Long id) {
+    Curriculum curriculum = curriculumController.findCurriculumById(id);
+    if (curriculum == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (curriculum.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    try {
+      TORCurriculum torCurriculum = StudentTORController.getCurriculum(curriculum.getName());
+      if (torCurriculum == null) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      
+      return Response.ok().entity(torCurriculum).build();
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Couldn't fetch TORCurriculum", e);
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+
 }

@@ -2,37 +2,24 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.SchoolPermissions;
 import fi.otavanopisto.pyramus.rest.model.PhoneNumber;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class SchoolPhoneNumberPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class SchoolPhoneNumberPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private SchoolPermissions schoolPermissions = new SchoolPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public SchoolPhoneNumberPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateSchoolPhoneNumber() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateSchoolPhoneNumber(Role role) throws NoSuchFieldException {
     PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(phoneNumber)
       .post("/schools/schools/{ID}/phoneNumbers", 1l);
@@ -46,20 +33,23 @@ public class SchoolPhoneNumberPermissionsTestsIT extends AbstractRESTPermissions
     }
   }
   
-  @Test
-  public void testPermissionsListSchoolPhoneNumbers() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListSchoolPhoneNumbers(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/schools/{ID}/phoneNumbers", 1l), schoolPermissions, SchoolPermissions.LIST_SCHOOLPHONENUMBERS, 200);
   }
   
-  @Test
-  public void testPermissionsFindSchoolPhoneNumber() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindSchoolPhoneNumber(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/schools/{SCHOOLID}/phoneNumbers/{ID}", 1l, 1l), schoolPermissions, SchoolPermissions.FIND_SCHOOLPHONENUMBER, 200);
   }  
 
-  @Test
-  public void testPermissionsDeleteSchoolPhoneNumber() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteSchoolPhoneNumber(Role role) throws NoSuchFieldException {
     PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -69,9 +59,9 @@ public class SchoolPhoneNumberPermissionsTestsIT extends AbstractRESTPermissions
       
     Long id = response.body().jsonPath().getLong("id");
 
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/schools/schools/{SCHOOLID}/phoneNumbers/{ID}", 1l, id);
-    assertOk(deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLPHONENUMBER, 204);
+    assertOk(role, deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLPHONENUMBER, 204);
     
     if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders())

@@ -2,47 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudyProgrammeCategory;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermissionsTest {
-
-  public StudyProgrammeCategoryPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
+public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private StudyProgrammeCategoryPermissions studyProgrammeCategoryPermissions = new StudyProgrammeCategoryPermissions();
   
-  @Test
-  public void testCreateStudyProgrammeCategory() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudyProgrammeCategory(Role role) throws NoSuchFieldException {
     StudyProgrammeCategory studyProgrammeCategory = new StudyProgrammeCategory(null, "create", 1l, Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(studyProgrammeCategory)
       .post("/students/studyProgrammeCategories");
 
-    assertOk(response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.CREATE_STUDYPROGRAMMECATEGORY);
+    assertOk(role, response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.CREATE_STUDYPROGRAMMECATEGORY);
     
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -52,24 +34,27 @@ public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermiss
     }
   }
   
-  @Test
-  public void listStudyProgrammeCategories() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void listStudyProgrammeCategories(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studyProgrammeCategories");
 
-    assertOk(response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.LIST_STUDYPROGRAMMECATEGORIES);
+    assertOk(role, response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.LIST_STUDYPROGRAMMECATEGORIES);
   }
   
-  @Test
-  public void testFindStudyProgrammeCategory() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudyProgrammeCategory(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studyProgrammeCategories/{ID}", 1);
 
-    assertOk(response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.FIND_STUDYPROGRAMMECATEGORY);
+    assertOk(role, response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.FIND_STUDYPROGRAMMECATEGORY);
   }
   
-  @Test
-  public void testUpdateStudyProgrammeCategory() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudyProgrammeCategory(Role role) throws NoSuchFieldException {
     StudyProgrammeCategory studyProgrammeCategory = new StudyProgrammeCategory(null, "Not Updated", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -81,20 +66,21 @@ public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermiss
     try {
       StudyProgrammeCategory updateStudyProgrammeCategory = new StudyProgrammeCategory(id, "Updated", 2l, Boolean.FALSE);
 
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudyProgrammeCategory)
         .put("/students/studyProgrammeCategories/{ID}", id);
 
-      assertOk(response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.UPDATE_STUDYPROGRAMMECATEGORY);
+      assertOk(role, response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.UPDATE_STUDYPROGRAMMECATEGORY);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/students/studyProgrammeCategories/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testDeleteStudyProgrammeCategory() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudyProgrammeCategory(Role role) throws NoSuchFieldException {
     StudyProgrammeCategory studyProgrammeCategory = new StudyProgrammeCategory(null, "create type", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -104,10 +90,10 @@ public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermiss
     
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/studyProgrammeCategories/{ID}", id);
     
-    assertOk(response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.DELETE_STUDYPROGRAMMECATEGORY, 204);
+    assertOk(role, response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.DELETE_STUDYPROGRAMMECATEGORY, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/students/studyProgrammeCategories/{ID}?permanent=true", id);

@@ -2,42 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.model.EducationType;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
   
   private CommonPermissions commonPermissions = new CommonPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public EducationTypePermissionsTestsIT(String role) {
-    this.role = role;
-  }
-
-  @Test
-  public void testPermissionsCreateEducationType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateEducationType(Role role) throws NoSuchFieldException {
     EducationType educationType = new EducationType(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(educationType)
       .post("/common/educationTypes");
 
-    assertOk(response, commonPermissions, CommonPermissions.CREATE_EDUCATIONTYPE, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.CREATE_EDUCATIONTYPE, 200);
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
       if (id != null) {
@@ -47,32 +34,36 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
     }
   }
   
-  @Test
-  public void testPermissionsFindEducationTypes() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindEducationTypes(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
         .get("/common/educationTypes");
     
-    assertOk(response, commonPermissions, CommonPermissions.FIND_EDUCATIONTYPE, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.FIND_EDUCATIONTYPE, 200);
   }
   
-  @Test
-  public void testPermissionsFindEducationType() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindEducationType(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
         .get("/common/educationTypes/{ID}", 1);
     
-    assertOk(response, commonPermissions, CommonPermissions.FIND_EDUCATIONTYPE, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.FIND_EDUCATIONTYPE, 200);
   }
   
-  @Test
-  public void testPermissionsListSubject() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListSubject(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
         .get("/common/educationTypes/{ID}/subjects", 2);
     
-    assertOk(response, commonPermissions, CommonPermissions.LIST_SUBJECTSBYEDUCATIONTYPE, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.LIST_SUBJECTSBYEDUCATIONTYPE, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateEducationType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateEducationType(Role role) throws NoSuchFieldException {
     EducationType educationType = new EducationType(null, "Not Updated", "NOT", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -84,22 +75,23 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
     try {
       EducationType updateEducationType = new EducationType(id, "Updated", "UPD", Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateEducationType)
         .put("/common/educationTypes/{ID}", id);
-      assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONTYPE, 200);
+      assertOk(role, updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONTYPE, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/common/educationTypes/{ID}?permanent=true", id);
     }
   }
 //  hmm dur?
-//  @Test
+//  @ParameterizedTest
+//  @EnumSource(Role.class)
 //  public void testPermissionsEducationType() {
 //    EducationType educationType = new EducationType(null, "create type", "TST", Boolean.FALSE);
 //    
-//    Response response = given().headers(getAuthHeaders())
+//    Response response = given().headers(getAuthHeaders(role))
 //      .contentType("application/json")
 //      .body(educationType)
 //      .post("/common/educationTypes");
@@ -107,25 +99,25 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
 //    Long id = new Long(response.body().jsonPath().getInt("id"));
 //    assertNotNull(id);
 //    
-//    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
+//    given().headers(getAuthHeaders(role)).get("/common/educationTypes/{ID}", id)
 //      .then()
 //      .statusCode(200);
 //    
-//    given().headers(getAuthHeaders())
+//    given().headers(getAuthHeaders(role))
 //      .delete("/common/educationTypes/{ID}", id)
 //      .then()
 //      .statusCode(204);
 //    
-//    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
+//    given().headers(getAuthHeaders(role)).get("/common/educationTypes/{ID}", id)
 //      .then()
 //      .statusCode(404);
 //    
-//    given().headers(getAuthHeaders())
+//    given().headers(getAuthHeaders(role))
 //      .delete("/common/educationTypes/{ID}?permanent=true", id)
 //      .then()
 //      .statusCode(204);
 //    
-//    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
+//    given().headers(getAuthHeaders(role)).get("/common/educationTypes/{ID}", id)
 //      .then()
 //      .statusCode(404);
 //  }

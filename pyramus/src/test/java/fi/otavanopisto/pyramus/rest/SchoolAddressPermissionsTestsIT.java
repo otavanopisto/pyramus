@@ -2,41 +2,28 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.SchoolPermissions;
 import fi.otavanopisto.pyramus.rest.model.Address;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class SchoolAddressPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class SchoolAddressPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
   
   private SchoolPermissions schoolPermissions = new SchoolPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-    
-  public SchoolAddressPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateSchoolAddress() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateSchoolAddress(Role role) throws NoSuchFieldException {
     Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(address)
       .post("/schools/schools/{ID}/addresses", 1l);
-    assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLADDRESS, 200);
+    assertOk(role, response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLADDRESS, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -47,20 +34,23 @@ public class SchoolAddressPermissionsTestsIT extends AbstractRESTPermissionsTest
     }
   }
   
-  @Test
-  public void testPermissionsListSchoolAddresses() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListSchoolAddresses(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
         .get("/schools/schools/{ID}/addresses", 1l), schoolPermissions, SchoolPermissions.LIST_SCHOOLADDRESSS, 200);
   }
   
-  @Test
-  public void testPermissionsFindSchoolAddress() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindSchoolAddress(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, 1l), schoolPermissions, SchoolPermissions.FIND_SCHOOLADDRESS, 200);
   }  
 
-  @Test
-  public void testPermissionsDeleteSchoolAddress() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteSchoolAddress(Role role) throws NoSuchFieldException {
     Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -70,9 +60,9 @@ public class SchoolAddressPermissionsTestsIT extends AbstractRESTPermissionsTest
       
     Long id = response.body().jsonPath().getLong("id");
 
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id);
-    assertOk(deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLADDRESS, 204);
+    assertOk(role, deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLADDRESS, 204);
     
     if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders()).delete("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id);

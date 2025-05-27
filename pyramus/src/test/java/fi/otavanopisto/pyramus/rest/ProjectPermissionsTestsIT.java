@@ -3,34 +3,22 @@ package fi.otavanopisto.pyramus.rest;
 import static io.restassured.RestAssured.given;
 
 import java.util.Arrays;
-import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ProjectPermissions;
 import fi.otavanopisto.pyramus.rest.model.Project;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private ProjectPermissions projectPermissions = new ProjectPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public ProjectPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-    
-  @Test
-  public void testPermissionsCreateProject() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateProject(Role role) throws NoSuchFieldException {
     Project project = new Project(null, 
         "to be created", 
         "project to be created", 
@@ -43,11 +31,11 @@ public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(project)
       .post("/projects/projects");
-    assertOk(response, projectPermissions, ProjectPermissions.CREATE_PROJECT, 200);
+    assertOk(role, response, projectPermissions, ProjectPermissions.CREATE_PROJECT, 200);
 
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -58,20 +46,23 @@ public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testPermissionsListProjects() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListProjects(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
         .get("/projects/projects"), projectPermissions, ProjectPermissions.LIST_PROJECTS, 200);
   }
   
-  @Test
-  public void testPermissionsFindProject() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindProject(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/projects/projects/{ID}", 1), projectPermissions, ProjectPermissions.FIND_PROJECT, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateProjects() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateProjects(Role role) throws NoSuchFieldException {
     Project project = new Project(null, 
         "not updated", 
         "not updated project", 
@@ -103,19 +94,20 @@ public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
         Arrays.asList("tag2", "tag3"), 
         Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateProject)
         .put("/projects/projects/{ID}", id);
-      assertOk(updateResponse, projectPermissions, ProjectPermissions.UPDATE_PROJECT, 200);
+      assertOk(role, updateResponse, projectPermissions, ProjectPermissions.UPDATE_PROJECT, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/projects/projects/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testPermissionsDeleteProject() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteProject(Role role) throws NoSuchFieldException {
     Project project = new Project(null, 
         "to be deleted", 
         "to be deleted", 
@@ -135,9 +127,9 @@ public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
 
     Long id = response.body().jsonPath().getLong("id");
     
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/projects/projects/{ID}", id);
-    assertOk(deleteResponse, projectPermissions, ProjectPermissions.DELETE_PROJECT, 204);
+    assertOk(role, deleteResponse, projectPermissions, ProjectPermissions.DELETE_PROJECT, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/projects/projects/{ID}?permanent=true", id);    

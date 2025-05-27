@@ -2,41 +2,30 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.time.OffsetDateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
-import io.restassured.response.Response;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ModulePermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseLength;
 import fi.otavanopisto.pyramus.rest.model.CourseModule;
 import fi.otavanopisto.pyramus.rest.model.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.rest.model.Module;
 import fi.otavanopisto.pyramus.rest.model.Subject;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private ModulePermissions modulePermissions = new ModulePermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public ModulePermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testCreateModule() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateModule(Role role) throws NoSuchFieldException {
     Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "Create test", 
@@ -51,11 +40,11 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
         null,
         courseModules);
 
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(module)
       .post("/modules/modules/");
-    assertOk(response, modulePermissions, ModulePermissions.CREATE_MODULE, 200);
+    assertOk(role, response, modulePermissions, ModulePermissions.CREATE_MODULE, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -66,22 +55,25 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testPermissionsListModules() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListModules(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/modules/modules");
-    assertOk(response, modulePermissions, ModulePermissions.LIST_MODULES, 200);
+    assertOk(role, response, modulePermissions, ModulePermissions.LIST_MODULES, 200);
   }
   
-  @Test
-  public void testPermissionsFindModule() throws NoSuchFieldException {
-     Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindModule(Role role) throws NoSuchFieldException {
+     Response response = given().headers(getAuthHeaders(role))
       .get("/modules/modules/{ID}", 1);
-     assertOk(response, modulePermissions, ModulePermissions.FIND_MODULE, 200);
+     assertOk(role, response, modulePermissions, ModulePermissions.FIND_MODULE, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateModule() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateModule(Role role) throws NoSuchFieldException {
     Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "not updated", 
@@ -119,19 +111,20 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
           null,
           courseModules);
       
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateModule)
         .put("/modules/modules/{ID}", id);
-      assertOk(updateResponse, modulePermissions, ModulePermissions.UPDATE_MODULE, 200);
+      assertOk(role, updateResponse, modulePermissions, ModulePermissions.UPDATE_MODULE, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/modules/modules/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testPermissionsDeleteModule() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteModule(Role role) throws NoSuchFieldException {
     Set<CourseModule> courseModules = new HashSet<>(Arrays.asList(createCourseModule(1l, 111, 1d, 1l)));
     Module module = new Module(null,
         "not updated", 
@@ -152,26 +145,28 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .post("/modules/modules");
     Long id = response.body().jsonPath().getLong("id");
    
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/modules/modules/{ID}", id);
-    assertOk(deleteResponse, modulePermissions, ModulePermissions.DELETE_MODULE, 204);
+    assertOk(role, deleteResponse, modulePermissions, ModulePermissions.DELETE_MODULE, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/modules/modules/{ID}?permanent=true", id);
   }
   
-  @Test
-  public void testPermissionsListCoursesByModule() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCoursesByModule(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/modules/modules/{MODULEID}/courses", 1l);
-    assertOk(response, modulePermissions, ModulePermissions.LIST_COURSESBYMODULE, 200);
+    assertOk(role, response, modulePermissions, ModulePermissions.LIST_COURSESBYMODULE, 200);
   }
   
-  @Test
-  public void testPermissionsListProjectsByModule() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListProjectsByModule(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/modules/modules/{MODULEID}/projects", 1l);
-    assertOk(response, modulePermissions, ModulePermissions.LIST_PROJECTSBYMODULE, 200);
+    assertOk(role, response, modulePermissions, ModulePermissions.LIST_PROJECTSBYMODULE, 200);
   }
 
   private CourseModule createCourseModule(long subjectId, int courseNumber, double courseLengthUnits, long courseLengthUnitId) {

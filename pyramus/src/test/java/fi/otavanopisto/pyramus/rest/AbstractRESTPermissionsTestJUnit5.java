@@ -94,9 +94,15 @@ public abstract class AbstractRESTPermissionsTestJUnit5 extends AbstractIntegrat
   }
 	
   public boolean roleIsAllowed(Role role, List<String> allowedRoles) {
+    // Cannot access endpoints without logging in
+    if (role == Role.EVERYONE) {
+      return false;
+    }
+    
     // Everyone -> every role has access
-    if (allowedRoles.contains(Role.EVERYONE.name()))
+    if (allowedRoles.contains(Role.EVERYONE.name())) {
       return true;
+    }
 
     return allowedRoles.contains(role.name());
   }

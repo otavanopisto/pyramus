@@ -2,42 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.model.Curriculum;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class CurriculumPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class CurriculumPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CommonPermissions commonPermissions = new CommonPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public CurriculumPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateCurriculum() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateCurriculum(Role role) throws NoSuchFieldException {
     Curriculum curriculum = new Curriculum(null, "Test Curriculum", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(curriculum)
       .post("/common/curriculums");
 
-    assertOk(response, commonPermissions, CommonPermissions.CREATE_CURRICULUM, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.CREATE_CURRICULUM, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -49,22 +36,25 @@ public class CurriculumPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testPermissionsListCurriculums() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListCurriculums(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/common/curriculums");
-    assertOk(response, commonPermissions, CommonPermissions.LIST_CURRICULUMS, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.LIST_CURRICULUMS, 200);
   }
   
-  @Test
-  public void testPermissionsFindCurriculum() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindCurriculum(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/common/curriculums/{ID}", 1);
-    assertOk(response, commonPermissions, CommonPermissions.FIND_CURRICULUM, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.FIND_CURRICULUM, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateCurriculum() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateCurriculum(Role role) throws NoSuchFieldException {
     Curriculum curriculum = new Curriculum(null, "Original Curriculum", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -77,12 +67,12 @@ public class CurriculumPermissionsTestsIT extends AbstractRESTPermissionsTest {
       Curriculum updateCurriculum = new Curriculum(id, "Updated Curriculum", Boolean.FALSE);
 
       Response updateResponse = given()
-          .headers(getAuthHeaders())
+          .headers(getAuthHeaders(role))
           .contentType("application/json")
           .body(updateCurriculum)
           .put("/common/curriculums/{ID}", id);
       
-      assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_CURRICULUM, 200);
+      assertOk(role, updateResponse, commonPermissions, CommonPermissions.UPDATE_CURRICULUM, 200);
 
     } finally {
       given()
@@ -92,8 +82,9 @@ public class CurriculumPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testPermissionsDeleteCurriculum() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteCurriculum(Role role) throws NoSuchFieldException {
     Curriculum curriculum = new Curriculum(null, "Curriculum to be deleted", Boolean.FALSE);
     
     Response response = given()
@@ -104,10 +95,10 @@ public class CurriculumPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long id = response.body().jsonPath().getLong("id");
     try {
-      Response deleteResponse = given().headers(getAuthHeaders())
+      Response deleteResponse = given().headers(getAuthHeaders(role))
         .delete("/common/curriculums/{ID}", id);
       
-      assertOk(deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_CURRICULUM, 204);
+      assertOk(role, deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_CURRICULUM, 204);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/common/curriculums/{ID}?permanent=true", id);

@@ -5,42 +5,29 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.model.GradingScale;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CommonPermissions commonPermissions = new CommonPermissions();
 
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-
-  public GradingScalePermissionsTestsIT(String role) {
-    this.role = role;
-  }
-
-  @Test
-  public void testPermissionsCreateGradingScale() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateGradingScale(Role role) throws NoSuchFieldException {
     GradingScale gradingScale = new GradingScale(null, "create scale", "grading scale for testing creation", Boolean.FALSE);
     Response response;
 
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
         .contentType("application/json").body(gradingScale)
         .post("/common/gradingScales");
 
-    assertOk(response, commonPermissions, CommonPermissions.CREATE_GRADINGSCALE, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.CREATE_GRADINGSCALE, 200);
 
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -51,24 +38,27 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
     }
   }
 
-  @Test
-  public void testPermissionsListGradingScales() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders()).get(
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListGradingScales(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role)).get(
         "/common/gradingScales");
-    assertOk(response, commonPermissions, CommonPermissions.LIST_GRADINGSCALES,
+    assertOk(role, response, commonPermissions, CommonPermissions.LIST_GRADINGSCALES,
         200);
   }
 
-  @Test
-  public void testPermissionsFindGradingScale() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders()).get(
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindGradingScale(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role)).get(
         "/common/gradingScales/{ID}", 1);
-    assertOk(response, commonPermissions, CommonPermissions.FIND_GRADINGSCALE,
+    assertOk(role, response, commonPermissions, CommonPermissions.FIND_GRADINGSCALE,
         200);
   }
 
-  @Test
-  public void testPermissionsUpdateGradingScale() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateGradingScale(Role role) throws NoSuchFieldException {
     GradingScale gradingScale = new GradingScale(null, "not updated",
         "grading scale has not been updated yet", Boolean.FALSE);
 
@@ -88,11 +78,11 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
       GradingScale updateScale = new GradingScale(id, "updated",
           "grading scale has been updated", Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
           .contentType("application/json").body(updateScale)
           .put("/common/gradingScales/{ID}", id);
 
-      assertOk(updateResponse, commonPermissions,
+      assertOk(role, updateResponse, commonPermissions,
           CommonPermissions.UPDATE_GRADINGSCALE, 200);
 
     } finally {
@@ -101,8 +91,9 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
     }
   }
 
-  @Test
-  public void testPermissionsDeleteGradingScale() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteGradingScale(Role role) throws NoSuchFieldException {
     GradingScale gradingScale = new GradingScale(null, "to be deleted", "grading scale to be deleted", Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -113,9 +104,9 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
     Long id = response.body().jsonPath().getLong("id");
 
     try {
-      Response deleteResponse = given().headers(getAuthHeaders())
+      Response deleteResponse = given().headers(getAuthHeaders(role))
           .delete("/common/gradingScales/{ID}", id);
-      assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_GRADINGSCALE, 204);
+      assertOk(role, deleteResponse, commonPermissions, CommonPermissions.DELETE_GRADINGSCALE, 204);
     } finally {
       given().headers(getAdminAuthHeaders()).delete(
           "/common/gradingScales/{ID}?permanent=true", id);

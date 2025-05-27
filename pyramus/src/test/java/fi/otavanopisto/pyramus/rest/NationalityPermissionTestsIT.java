@@ -2,47 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.NationalityPermissions;
 import fi.otavanopisto.pyramus.rest.model.Nationality;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
+public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public NationalityPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private NationalityPermissions nationalityPermissions = new NationalityPermissions();
   
-  @Test
-  public void testCreateNationality() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateNationality(Role role) throws NoSuchFieldException {
     Nationality nationality = new Nationality(null, "TST", "create", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(nationality)
       .post("/students/nationalities");
 
-    assertOk(response, nationalityPermissions, NationalityPermissions.CREATE_NATIONALITY);
+    assertOk(role, response, nationalityPermissions, NationalityPermissions.CREATE_NATIONALITY);
       
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -52,24 +34,27 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testListNationalities() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListNationalities(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/nationalities");
 
-    assertOk(response, nationalityPermissions, NationalityPermissions.LIST_NATIONALITIES);
+    assertOk(role, response, nationalityPermissions, NationalityPermissions.LIST_NATIONALITIES);
   }
   
-  @Test
-  public void testFindNationality() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindNationality(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/nationalities/{ID}", 1);
 
-    assertOk(response, nationalityPermissions, NationalityPermissions.FIND_NATIONALITY);
+    assertOk(role, response, nationalityPermissions, NationalityPermissions.FIND_NATIONALITY);
   }
   
-  @Test
-  public void testUpdateNationality() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateNationality(Role role) throws NoSuchFieldException {
     Nationality nationality = new Nationality(null, "Not Updated", "NOT", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -81,20 +66,21 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
     try {
       Nationality updateNationality = new Nationality(id, "Updated", "UPD", Boolean.FALSE);
 
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateNationality)
         .put("/students/nationalities/{ID}", id);
 
-      assertOk(response, nationalityPermissions, NationalityPermissions.UPDATE_NATIONALITY);
+      assertOk(role, response, nationalityPermissions, NationalityPermissions.UPDATE_NATIONALITY);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/students/nationalities/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testDeleteNationality() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteNationality(Role role) throws NoSuchFieldException {
     Nationality nationality = new Nationality(null, "create type", "TST", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -104,10 +90,10 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
     
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/nationalities/{ID}", id);
 
-    assertOk(response, nationalityPermissions, NationalityPermissions.DELETE_NATIONALITY, 204);
+    assertOk(role, response, nationalityPermissions, NationalityPermissions.DELETE_NATIONALITY, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/students/nationalities/{ID}?permanent=true", id);
