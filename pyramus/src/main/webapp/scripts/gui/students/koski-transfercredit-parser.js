@@ -261,7 +261,6 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
     return null;
   }
   
-//  var doConvert = false;
   var convertedOk = false;
   var subject = null;
   var courseNumber = null;
@@ -320,8 +319,6 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
                 mandatory: opsmoduli.mandatory
               }];
             }
-            
-//            doConvert = true;
           }
           break;
           
@@ -349,7 +346,6 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
                 mandatory: opsmoduli.mandatory
               }];
             }
-//            doConvert = true;
           }
           break;
           
@@ -1026,18 +1022,14 @@ function opsVastaavuustaulukko(diaarinumero) {
       }
     };
 
-    /*
-      Huom, Nuorten diaarinumero saattaa olla 30/011/2003 tai 33/011/2003 ?
-    */
-    
     switch (diaarinumero) {
       case "4/011/2004": return {
         diaarinumero: "4/011/2004",
         nimi: "2005 Aikuiset",
         aineet: Object.assign(ops2005yhteiset, ops2005aikuiset)
       }
-      case "1/011/2004": return {
-        diaarinumero: "1/011/2004",
+      case "33/011/2003": return {
+        diaarinumero: "33/011/2003",
         nimi: "2005 Nuoret",
         aineet: Object.assign(ops2005yhteiset, ops2005nuoret)
       }
@@ -1055,7 +1047,7 @@ function opsVastaavuusTaulukkoKaikki() {
   const vastaavuustaulukot = [
     opsVastaavuustaulukko("60/011/2015"),
     opsVastaavuustaulukko("70/011/2015"),
-    opsVastaavuustaulukko("1/011/2004"),
+    opsVastaavuustaulukko("33/011/2003"),
     opsVastaavuustaulukko("4/011/2004")
   ];
   
