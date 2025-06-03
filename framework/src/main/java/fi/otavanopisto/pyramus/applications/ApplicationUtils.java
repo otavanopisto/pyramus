@@ -155,14 +155,8 @@ public class ApplicationUtils {
         return false;
       }
     }
-    // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
-    String line = getFormValue(formData, "field-line");
-    if (StringUtils.equals(line, "aineopiskelu")) {
-      return !isInternetixUnderage(application);
-    }
-    else {
-      return !isUnderage(application);
-    }
+    // #1487: Jos alle 18, käsitellään manuaalisesti
+    return !isUnderage(application);
   }
   
   public static String getSsnSuffix(JSONObject formData) {
@@ -261,29 +255,6 @@ public class ApplicationUtils {
   
   public static boolean isValidLine(String line) {
     return applicationLineUiValue(line) != null;
-  }
-  
-  public static boolean isInternetixUnderage(Application application) {
-    String dateString = extractBirthdayString(application);
-    if (StringUtils.isBlank(dateString)) {
-      return false;
-    }
-    try {
-      // #1487: If you're born on or after 1.1.2005, until the end of the year you turn 20...
-      LocalDate birthday = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d.M.yyyy"));
-      LocalDate threshold = LocalDate.parse("1.1.2005", DateTimeFormatter.ofPattern("d.M.yyyy"));
-      if (birthday.equals(threshold) || birthday.isAfter(threshold)) {
-        if (LocalDate.now().getYear() - birthday.getYear() <= 20) {
-          return true;
-        }
-      }
-      // ...otherwise under 18
-      return isUnderage(application);
-    }
-    catch (DateTimeParseException e) {
-      logger.warning(String.format("Malformatted date %s (%s)", dateString, e.getMessage()));
-      return false;
-    }
   }
 
   public static boolean isUnderage(Application application) {
