@@ -504,11 +504,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
         conflicts.add("Hakijan henkilötunnuksen loppuosa on XXXX");
       }
-      // #1487: Jos aineopiskelija on alle 20 (lukio, vain 1.1.2005 jälkeen syntyneet) tai alle 18, käsitellään manuaalisesti
-      if (StringUtils.equals(application.getLine(), "aineopiskelu") && ApplicationUtils.isInternetixUnderage(application)) {
-        conflicts.add("Hakija on alle 20 (vain 1.1.2005 jälkeen syntyneet)");
-      }
-      else if (ApplicationUtils.isUnderage(application)) {
+      if (ApplicationUtils.isUnderage(application)) {
         conflicts.add("Hakija on alaikäinen");
       }
     }
