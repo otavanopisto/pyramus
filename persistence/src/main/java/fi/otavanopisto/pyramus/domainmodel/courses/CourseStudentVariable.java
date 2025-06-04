@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.courses;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -74,8 +75,8 @@ public class CourseStudentVariable {
   @JoinColumn(name = "variableKey")
   private CourseStudentVariableKey key;
   
+  @Basic(optional = false)
   @NotEmpty
-  @Column (nullable = false)
   @NotNull
   @Lob
   private String value;

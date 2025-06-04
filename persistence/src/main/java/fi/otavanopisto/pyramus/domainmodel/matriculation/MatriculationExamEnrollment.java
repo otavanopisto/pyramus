@@ -224,12 +224,10 @@ public class MatriculationExamEnrollment {
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String contactInfoChange;
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String message;
   
   @Column(nullable = false)

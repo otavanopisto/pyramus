@@ -94,7 +94,6 @@ public class GradingScale implements ArchivableEntity {
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String description;
   
   private Boolean archived = Boolean.FALSE;

@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.domainmodel.students;
 import java.util.Date;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -111,6 +110,5 @@ public class StudentSubjectGrade {
 
   @Lob
   @Basic(fetch = FetchType.LAZY)
-  @Column
   private String explanation;
 }

@@ -1071,7 +1071,6 @@ public class Person implements ContextReference {
 
   @Lob
   @Basic(fetch = FetchType.LAZY)
-  @Column
   private String basicInfo;
 
   @OneToMany

@@ -153,7 +153,6 @@ public class StudentContactLogEntryComment implements ArchivableEntity {
   private StudentContactLogEntry entry;
   
   @Lob
-  @Column
   private String text;
   
   @Column (updatable = false)
