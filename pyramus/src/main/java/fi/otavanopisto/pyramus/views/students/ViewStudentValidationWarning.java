@@ -15,7 +15,9 @@ public class ViewStudentValidationWarning {
     // Default user is not set
     DEFAULT_USER_NOT_SET,
     // Default user is archived
-    DEFAULT_USER_ARCHIVED
+    DEFAULT_USER_ARCHIVED,
+    // The user's students have overlapping study rights at the same education level.
+    OVERLAPPING_STUDY_RIGHTS
   }
   
   public enum ViewStudentValidationWarningSeverity {
