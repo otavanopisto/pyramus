@@ -3,6 +3,8 @@ package fi.otavanopisto.pyramus.views.students;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -70,7 +72,7 @@ public class ViewStudentTools {
           continue;
         }
         // Skip if trying to compare two of the same student
-        if (student1.getId() == student2.getId()) {
+        if (student1.getId().equals(student2.getId())) {
           continue;
         }
         
@@ -94,10 +96,8 @@ public class ViewStudentTools {
           }
         }
         
-        if (s1EducationTypeCode != null || s2EducationTypeCode != null) {
-          if (s1EducationTypeCode != s2EducationTypeCode) {
-            continue;
-          }
+        if (!StringUtils.equals(s1EducationTypeCode, s2EducationTypeCode)) {
+          continue;
         }
         
         // The start dates of the studies must be set
