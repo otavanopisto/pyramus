@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
@@ -46,8 +47,8 @@ import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 @ApplicationScoped
 public class MatriculationEligibilityController {
 
-  private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
-  private static final String SETTING_ELIGIBLE_GROUPS = "matriculation.eligibleGroups";
+  private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = PyramusConsts.Matriculation.USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE;
+  private static final String SETTING_ELIGIBLE_GROUPS = PyramusConsts.Matriculation.SETTING_ELIGIBLE_GROUPS;
   
   @Inject
   private Logger logger;

@@ -3,43 +3,26 @@ package fi.otavanopisto.pyramus.rest;
 import static io.restassured.RestAssured.given;
 
 import java.util.Arrays;
-import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentGroupPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentGroup;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
+public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private static final Long TEST_ORGANIZATION_ID = 1l;
-  
-  public StudentGroupPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
   
   private StudentGroupPermissions studentGroupPermissions = new StudentGroupPermissions();
   private StudentPermissions studentPermissions = new StudentPermissions();
   
-  @Test
-  public void testCreateStudentGroup() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudentGroup(Role role) throws NoSuchFieldException {
     StudentGroup entity = new StudentGroup(null, 
         "to be created", 
         "student group to be created", 
@@ -53,12 +36,12 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
         TEST_ORGANIZATION_ID, // organizationId
         Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(entity)
       .post("/students/studentGroups");
 
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.CREATE_STUDENTGROUP);
+    assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.CREATE_STUDENTGROUP);
     
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -68,27 +51,30 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testListStudentGroups() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudentGroups(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studentGroups");
 
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.LIST_STUDENTGROUPS);
+    assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.LIST_STUDENTGROUPS);
   }
   
-  @Test
-  public void testFindStudentGroup() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudentGroup(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/studentGroups/{ID}", 1);
 
-    if (!roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION))
-      assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP);
+    if (!roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION))
+      assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP);
     else
-      assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP, 403);
+      assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP, 403);
   }
   
-  @Test
-  public void testUpdateStudentGroup() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudentGroup(Role role) throws NoSuchFieldException {
     StudentGroup entity = new StudentGroup(null, 
         "not updated", 
         "not updated student group", 
@@ -122,20 +108,21 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
           TEST_ORGANIZATION_ID, // organizationId
           Boolean.FALSE);
       
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateEntity)
         .put("/students/studentGroups/{ID}", id);
       
-      assertOk(response, studentGroupPermissions, StudentGroupPermissions.UPDATE_STUDENTGROUP);
+      assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.UPDATE_STUDENTGROUP);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/students/studentGroups/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testDeleteStudentGroup() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudentGroup(Role role) throws NoSuchFieldException {
     StudentGroup entity = new StudentGroup(null, 
         "to be created", 
         "student group to be created", 
@@ -156,10 +143,10 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
 
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/studentGroups/{ID}", id);
     
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.DELETE_STUDENTGROUP, 204);
+    assertOk(role, response, studentGroupPermissions, StudentGroupPermissions.DELETE_STUDENTGROUP, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/students/studentGroups/{ID}?permanent=true", id);

@@ -2,41 +2,28 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.model.ContactURLType;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CommonPermissions commonPermissions = new CommonPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public ContactURLTypePermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateContactURLType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateContactURLType(Role role) throws NoSuchFieldException {
     ContactURLType contactURLType = new ContactURLType(null, "create", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(contactURLType)
       .post("/common/contactURLTypes");
-    assertOk(response, commonPermissions, CommonPermissions.CREATE_CONTACTTYPE, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.CREATE_CONTACTTYPE, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -47,22 +34,25 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
     }
   }
   
-  @Test
-  public void testPermissionsListContactURLTypes() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListContactURLTypes(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/common/contactURLTypes");
-    assertOk(response, commonPermissions, CommonPermissions.LIST_CONTACTURLTYPES, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.LIST_CONTACTURLTYPES, 200);
   }
   
-  @Test
-  public void testPermissionsFindContactURLType() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindContactURLType(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/common/contactURLTypes/{ID}", 1);
-    assertOk(response, commonPermissions, CommonPermissions.FIND_CONTACTURLTYPE, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.FIND_CONTACTURLTYPE, 200);
   }
   
-  @Test
-  public void testUpdateContactURLType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateContactURLType(Role role) throws NoSuchFieldException {
     ContactURLType contactURLType = new ContactURLType(null, "Not Updated", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -74,11 +64,11 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
     try {
       ContactURLType updateContactURLType = new ContactURLType(id, "Updated", Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateContactURLType)
         .put("/common/contactURLTypes/{ID}", id);
-      assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_CONTACTURLTYPE, 200);
+      assertOk(role, updateResponse, commonPermissions, CommonPermissions.UPDATE_CONTACTURLTYPE, 200);
 
     } finally {
       given().headers(getAdminAuthHeaders())
@@ -86,8 +76,9 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
     }
   }
   
-  @Test
-  public void testPermissionsDeleteContactURLType() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteContactURLType(Role role) throws NoSuchFieldException {
     ContactURLType contactURLType = new ContactURLType(null, "create type", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -97,9 +88,9 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
     
     Long id = response.body().jsonPath().getLong("id");
 
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/common/contactURLTypes/{ID}", id);
-    assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_CONTACTURLTYPE, 204);
+    assertOk(role, deleteResponse, commonPermissions, CommonPermissions.DELETE_CONTACTURLTYPE, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/common/contactURLTypes/{ID}?permanent=true", id);

@@ -132,6 +132,7 @@
 
       <div class="tabLabelsContainer" id="tabs">
         <a class="tabLabel" href="#filters">Hallinnoi ylioppilaskirjoitusten kokeita</a>
+        <a class="tabLabel" href="#groups">Ilmoittautumisryhmät</a>
       </div>
 
       <div id="filters" class="tabContent">
@@ -140,6 +141,35 @@
         </div>
       
         <div id="searchResultsTableContainer"></div>
+      </div>
+      
+      <div id="groups" class="tabContent">
+        <h3>Koulutusohjelmat</h3>
+        <c:choose>
+          <c:when test="${empty eligibleStudyProgrammes}">
+            <i>Ei sallittuja koulutusohjelmia</i>
+          </c:when>
+          <c:otherwise>
+            <ul>
+            <c:forEach var="studyProgramme" items="${eligibleStudyProgrammes}">
+              <li>${studyProgramme.name}</li>
+            </c:forEach>
+            </ul>
+          </c:otherwise>
+        </c:choose>
+        <h3>Opiskelijaryhmät</h3>
+        <c:choose>
+          <c:when test="${empty eligibleStudentGroups}">
+            <i>Ei sallittuja opiskelijaryhmiä</i>
+          </c:when>
+          <c:otherwise>
+            <ul>
+            <c:forEach var="studentGroup" items="${eligibleStudentGroups}">
+              <li>${studentGroup.name}</li>
+            </c:forEach>
+            </ul>
+          </c:otherwise>
+        </c:choose>
       </div>
     </div>
        

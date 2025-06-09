@@ -77,14 +77,6 @@ public class CourseAssessmentRequest implements ArchivableEntity {
   public void setCreated(Date created) {
     this.created = created;
   }
-  
-  public Boolean getLocked() {
-    return locked;
-  }
-
-  public void setLocked(Boolean locked) {
-    this.locked = locked;
-  }
 
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseAssessmentRequest")  
@@ -108,11 +100,6 @@ public class CourseAssessmentRequest implements ArchivableEntity {
   @Column (nullable = false)
   @Field
   private Boolean handled = Boolean.FALSE;
-
-  @NotNull
-  @Column (nullable = false)
-  @Field
-  private Boolean locked = Boolean.FALSE;
   
   @NotNull
   @Column (nullable = false)

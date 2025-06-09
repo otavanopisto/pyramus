@@ -1024,133 +1024,136 @@ public class ViewStudentViewController extends PyramusViewController2 implements
    * 
    * The persons latest(/active) student is used for curriculum and study degree purposes.
    * The student must have
-   * - OPS 2021
    * - Lukio education type (in study programme category)
    * 
    * @param person
    * @param pageRequestContext
    */
   private void constructMatriculationTabContent(Person person, PageRequestContext pageRequestContext) {
-    Student latestStudent = person.getLatestStudent();
-    String code = latestStudent.getStudyProgramme() != null &&
-        latestStudent.getStudyProgramme().getCategory() !=  null &&
-        latestStudent.getStudyProgramme().getCategory().getEducationType() != null &&
-        latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() != null
-        ? latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() : null;
-    boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
-    
-    if (!isHighSchoolStudent ||
-        latestStudent == null ||
-        latestStudent.getCurriculum() == null ||
-        !PyramusConsts.OPS_2021.equals(latestStudent.getCurriculum().getName())) {
-      return;
-    }
-
-    TORCurriculum torCurriculum;
     try {
-      torCurriculum = StudentTORController.getCurriculum(latestStudent);
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, String.format("Couldn't load TORCurriculum for student %d", latestStudent.getId()), e);
-      return;
-    }
-
-    StudentTOR studentTOR;
-    try {
-      studentTOR = StudentTORController.constructStudentTOR(latestStudent, torCurriculum, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, String.format("Couldn't load StudentTOR for student %d", latestStudent.getId()), e);
-      return;
-    }
-
-    MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
-    MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
-    MatriculationGradeDAO matriculationGradeDAO = DAOFactory.getInstance().getMatriculationGradeDAO();
-    List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listByPerson(person);
-
-    // This is used for subject code mappings
-    List<YTLAineKoodi> mapping = YTLController.readMapping();
-
-    // Map a term (year+term) to a bean containing the term's enrollments and grades
-    Map<String, MatriculationEnrollmentBean> termBeans = new HashMap<>();
-
-    /*
-     * Populate MatriculationExamEnrollments to termBeans. We skip the grades
-     * at this point as it makes it easier to go through the MatriculationGrades.
-     */
-    for (MatriculationExamEnrollment enrollment : enrollments) {
-      if (enrollment.getExam() == null || enrollment.getExam().getExamTerm() == null || enrollment.getExam().getExamYear() == null) {
-        // Skip enrollment that doesn't have term or year defined - although they always should
-        continue;
+      Student latestStudent = person.getLatestStudent();
+      String code = latestStudent.getStudyProgramme() != null &&
+          latestStudent.getStudyProgramme().getCategory() !=  null &&
+          latestStudent.getStudyProgramme().getCategory().getEducationType() != null &&
+          latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() != null
+          ? latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() : null;
+      boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+      
+      if (!isHighSchoolStudent ||
+          latestStudent == null ||
+          latestStudent.getCurriculum() == null) {
+        return;
       }
-      
-      String term = enrollment.getExam().getExamTerm().name() + enrollment.getExam().getExamYear();
-      
-      String studyProgrammeName = enrollment.getStudent() != null && enrollment.getStudent().getStudyProgramme() != null ? enrollment.getStudent().getStudyProgramme().getName() : null;
-      MatriculationEnrollmentBean termBean = new MatriculationEnrollmentBean(enrollment.getExam().getExamYear(), enrollment.getExam().getExamTerm(), enrollment.getState(), studyProgrammeName);
-      termBeans.put(term, termBean);
-
-      List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDAO.listByEnrollmentAndStatus(enrollment, MatriculationExamAttendanceStatus.ENROLLED);
-      
-      for (MatriculationExamAttendance attendance : attendances) {
-        MatriculationAttendanceBean attendanceBean = assembleAttendance(attendance.getSubject(), torCurriculum, studentTOR, mapping);
-        if (attendanceBean != null) {
-          termBean.addAttendance(attendanceBean);
+  
+      TORCurriculum torCurriculum;
+      try {
+        torCurriculum = StudentTORController.getCurriculum(latestStudent);
+      } catch (Exception e) {
+        logger.log(Level.SEVERE, String.format("Couldn't load TORCurriculum for student %d", latestStudent.getId()), e);
+        return;
+      }
+  
+      StudentTOR studentTOR;
+      try {
+        studentTOR = StudentTORController.constructStudentTOR(latestStudent, torCurriculum, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
+      } catch (Exception e) {
+        logger.log(Level.SEVERE, String.format("Couldn't load StudentTOR for student %d", latestStudent.getId()), e);
+        return;
+      }
+  
+      MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+      MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
+      MatriculationGradeDAO matriculationGradeDAO = DAOFactory.getInstance().getMatriculationGradeDAO();
+      List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listByPerson(person);
+  
+      // This is used for subject code mappings
+      List<YTLAineKoodi> mapping = YTLController.readMapping();
+  
+      // Map a term (year+term) to a bean containing the term's enrollments and grades
+      Map<String, MatriculationEnrollmentBean> termBeans = new HashMap<>();
+  
+      /*
+       * Populate MatriculationExamEnrollments to termBeans. We skip the grades
+       * at this point as it makes it easier to go through the MatriculationGrades.
+       */
+      for (MatriculationExamEnrollment enrollment : enrollments) {
+        if (enrollment.getExam() == null || enrollment.getExam().getExamTerm() == null || enrollment.getExam().getExamYear() == null) {
+          // Skip enrollment that doesn't have term or year defined - although they always should
+          continue;
+        }
+        
+        String term = enrollment.getExam().getExamTerm().name() + enrollment.getExam().getExamYear();
+        
+        String studyProgrammeName = enrollment.getStudent() != null && enrollment.getStudent().getStudyProgramme() != null ? enrollment.getStudent().getStudyProgramme().getName() : null;
+        MatriculationEnrollmentBean termBean = new MatriculationEnrollmentBean(enrollment.getExam().getExamYear(), enrollment.getExam().getExamTerm(), enrollment.getState(), studyProgrammeName);
+        termBeans.put(term, termBean);
+  
+        List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDAO.listByEnrollmentAndStatus(enrollment, MatriculationExamAttendanceStatus.ENROLLED);
+        
+        for (MatriculationExamAttendance attendance : attendances) {
+          MatriculationAttendanceBean attendanceBean = assembleAttendance(attendance.getSubject(), torCurriculum, studentTOR, mapping);
+          if (attendanceBean != null) {
+            termBean.addAttendance(attendanceBean);
+          }
         }
       }
-    }
-
-    /*
-     * List the MatriculationGrades for the person and add them to the
-     * termBeans list. If there is a bean already, attach the grade to that.
-     */
-    List<MatriculationGrade> personGrades = matriculationGradeDAO.listBy(person);
-    for (MatriculationGrade matriculationGrade : personGrades) {
-      String term = matriculationGrade.getTerm().name() + matriculationGrade.getYear();
-      MatriculationExamGrade grade = matriculationGrade != null ? matriculationGrade.getGrade() : null;
-      LocalDate gradeDate = matriculationGrade != null ? matriculationGrade.getGradeDate() : null;
-      
-      MatriculationEnrollmentBean termBean = termBeans.get(term);
-      if (termBean == null) {
-        // If we have to make a new term bean based on MatriculationGrade, the following fields will be null - take into account
-        String studyProgrammeName = null;
-        MatriculationExamEnrollmentState state = null;
-        termBeans.put(term, termBean = new MatriculationEnrollmentBean(matriculationGrade.getYear(), matriculationGrade.getTerm(), state , studyProgrammeName));
-      }
-      
-      MatriculationAttendanceBean attendanceBean = termBean.findAttendance(matriculationGrade.getSubject());
-      if (attendanceBean == null) {
-        attendanceBean = assembleAttendance(matriculationGrade.getSubject(), torCurriculum, studentTOR, mapping);
+  
+      /*
+       * List the MatriculationGrades for the person and add them to the
+       * termBeans list. If there is a bean already, attach the grade to that.
+       */
+      List<MatriculationGrade> personGrades = matriculationGradeDAO.listBy(person);
+      for (MatriculationGrade matriculationGrade : personGrades) {
+        String term = matriculationGrade.getTerm().name() + matriculationGrade.getYear();
+        MatriculationExamGrade grade = matriculationGrade != null ? matriculationGrade.getGrade() : null;
+        LocalDate gradeDate = matriculationGrade != null ? matriculationGrade.getGradeDate() : null;
+        
+        MatriculationEnrollmentBean termBean = termBeans.get(term);
+        if (termBean == null) {
+          // If we have to make a new term bean based on MatriculationGrade, the following fields will be null - take into account
+          String studyProgrammeName = null;
+          MatriculationExamEnrollmentState state = null;
+          termBeans.put(term, termBean = new MatriculationEnrollmentBean(matriculationGrade.getYear(), matriculationGrade.getTerm(), state, studyProgrammeName));
+        }
+        
+        MatriculationAttendanceBean attendanceBean = termBean.findAttendance(matriculationGrade.getSubject());
+        if (attendanceBean == null) {
+          attendanceBean = assembleAttendance(matriculationGrade.getSubject(), torCurriculum, studentTOR, mapping);
+          if (attendanceBean != null) {
+            termBean.addAttendance(attendanceBean);
+          }
+        }
+        
         if (attendanceBean != null) {
-          termBean.addAttendance(attendanceBean);
+          attendanceBean.setGrade(grade);
+          attendanceBean.setGradeDate(gradeDate);
         }
       }
-      
-      if (attendanceBean != null) {
-        attendanceBean.setGrade(grade);
-        attendanceBean.setGradeDate(gradeDate);
+  
+      Messages messages = Messages.getInstance();
+      Locale locale = pageRequestContext.getRequest().getLocale();
+      List<TermOption> termOptions = new ArrayList<>();
+      for (int yearind = Calendar.getInstance().get(Calendar.YEAR) + 4; yearind >= 2016; yearind--) {
+        String value;
+        boolean enabled;
+  
+        value = MatriculationExamTerm.AUTUMN.name() + String.valueOf(yearind);
+        enabled = !termBeans.containsKey(value);
+        termOptions.add(new TermOption(yearind, MatriculationExamTerm.AUTUMN.name(), messages.getText(locale, "terms.seasons.autumn") + " " + String.valueOf(yearind), enabled));
+  
+        value = MatriculationExamTerm.SPRING.name() + String.valueOf(yearind);
+        enabled = !termBeans.containsKey(value);
+        termOptions.add(new TermOption(yearind, MatriculationExamTerm.SPRING.name(), messages.getText(locale, "terms.seasons.spring") + " " + String.valueOf(yearind), enabled));
       }
+  
+      Collection<MatriculationEnrollmentBean> enrollmentBeans = termBeans.values();
+      
+      pageRequestContext.getRequest().setAttribute("termOptions", termOptions);   
+      pageRequestContext.getRequest().setAttribute("matriculationCurriculumOk", torCurriculum != null);   
+      pageRequestContext.getRequest().setAttribute("matriculationExamTerms", enrollmentBeans);
+    } catch (Exception ex) {
+      logger.log(Level.SEVERE, String.format("Constructing matriculation tab content failed for person %d", person != null ? person.getId() : null, ex));
     }
-
-    Messages messages = Messages.getInstance();
-    Locale locale = pageRequestContext.getRequest().getLocale();
-    List<TermOption> termOptions = new ArrayList<>();
-    for (int yearind = Calendar.getInstance().get(Calendar.YEAR) + 4; yearind >= 2016; yearind--) {
-      String value;
-      boolean enabled;
-
-      value = MatriculationExamTerm.AUTUMN.name() + String.valueOf(yearind);
-      enabled = !termBeans.containsKey(value);
-      termOptions.add(new TermOption(yearind, MatriculationExamTerm.AUTUMN.name(), messages.getText(locale, "terms.seasons.autumn") + " " + String.valueOf(yearind), enabled));
-
-      value = MatriculationExamTerm.SPRING.name() + String.valueOf(yearind);
-      enabled = !termBeans.containsKey(value);
-      termOptions.add(new TermOption(yearind, MatriculationExamTerm.SPRING.name(), messages.getText(locale, "terms.seasons.spring") + " " + String.valueOf(yearind), enabled));
-    }
-
-    Collection<MatriculationEnrollmentBean> enrollmentBeans = termBeans.values();
-    
-    pageRequestContext.getRequest().setAttribute("termOptions", termOptions);   
-    pageRequestContext.getRequest().setAttribute("matriculationExamTerms", enrollmentBeans);
   }
 
   private MatriculationAttendanceBean assembleAttendance(MatriculationExamSubject subject, TORCurriculum torCurriculum, StudentTOR studentTOR, List<YTLAineKoodi> mapping) {
@@ -1164,7 +1167,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     }
 
     // torCurriculumSubject may be null if the student has matriculation attendance to a subject that's not in the curriculum
-    TORCurriculumSubject torCurriculumSubject = torCurriculum.getSubjectByCode(subjectCode);
+    TORCurriculumSubject torCurriculumSubject = torCurriculum != null ? torCurriculum.getSubjectByCode(subjectCode) : null;
 
     // torSubject may be null if the student has no credits from the subject
     TORSubject torSubject = studentTOR.findSubject(subjectCode);

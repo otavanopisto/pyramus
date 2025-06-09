@@ -4,42 +4,29 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.model.Subject;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private CommonPermissions commonPermissions = new CommonPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public SubjectPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateSubject() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateSubject(Role role) throws NoSuchFieldException {
     Subject subject = new Subject(null, "TST", "create subject", 1l, Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(subject)
       .post("/common/subjects");
 
-    assertOk(response, commonPermissions, CommonPermissions.CREATE_SUBJECT, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.CREATE_SUBJECT, 200);
     
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -51,22 +38,25 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
 
   }
   
-  @Test
-  public void testPermissionsListSubject() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListSubject(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/common/subjects");
-    assertOk(response, commonPermissions, CommonPermissions.LIST_SUBJECTS, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.LIST_SUBJECTS, 200);
   }
   
-  @Test
-  public void testPermissionsFindSubject() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindSubject(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/common/subjects/{ID}", 1);
-    assertOk(response, commonPermissions, CommonPermissions.FIND_SUBJECT, 200);
+    assertOk(role, response, commonPermissions, CommonPermissions.FIND_SUBJECT, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateSubject() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateSubject(Role role) throws NoSuchFieldException {
     Subject subject = new Subject(null, "NUPD", "not updated", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -85,12 +75,12 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
     try {
       Subject updateSubject = new Subject(id, "UPD", "updated", 2l, Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateSubject)
         .put("/common/subjects/{ID}", id);
       
-      assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_SUBJECT, 200);
+      assertOk(role, updateResponse, commonPermissions, CommonPermissions.UPDATE_SUBJECT, 200);
 
     } finally {
       given().headers(getAdminAuthHeaders())
@@ -99,8 +89,9 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
   
-  @Test
-  public void testPermissionsDeleteSubject() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteSubject(Role role) throws NoSuchFieldException {
     Subject subject = new Subject(null, "DEL", "to be deleted", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -110,10 +101,10 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long id = response.body().jsonPath().getLong("id");
 
-    Response deleteResponse = given().headers(getAuthHeaders())
+    Response deleteResponse = given().headers(getAuthHeaders(role))
       .delete("/common/subjects/{ID}", id);
     
-    assertOk(deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_SUBJECT, 204);
+    assertOk(role, deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_SUBJECT, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/common/subjects/{ID}?permanent=true", id);

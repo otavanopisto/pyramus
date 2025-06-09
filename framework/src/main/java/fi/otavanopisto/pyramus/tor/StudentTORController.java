@@ -225,8 +225,7 @@ public class StudentTORController {
    * @throws Exception if parsing curriculum json fails
    */
   public static TORCurriculum getCurriculum(String curriculumName) throws Exception {
-    if (StringUtils.isNotBlank(curriculumName)) {
-      
+    if (StringUtils.isNotBlank(curriculumName)) {      
       String curriculumFile = null;
       switch (curriculumName) {
         case PyramusConsts.OPS_2018: curriculumFile = "curriculum_2018.json"; break;

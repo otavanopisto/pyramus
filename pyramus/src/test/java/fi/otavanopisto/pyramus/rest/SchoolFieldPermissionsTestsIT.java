@@ -2,42 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.SchoolPermissions;
 import fi.otavanopisto.pyramus.rest.model.SchoolField;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private SchoolPermissions schoolPermissions = new SchoolPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public SchoolFieldPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testPermissionsCreateSchoolField() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsCreateSchoolField(Role role) throws NoSuchFieldException {
     SchoolField schoolField = new SchoolField(null, "to be created", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(schoolField)
       .post("/schools/schoolFields");
     
-    assertOk(response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLFIELD, 200);
+    assertOk(role, response, schoolPermissions, SchoolPermissions.CREATE_SCHOOLFIELD, 200);
 
     if (response.statusCode() == 200) {
       Long id = response.body().jsonPath().getLong("id");
@@ -48,20 +35,23 @@ public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTest {
     }
   }
 
-  @Test
-  public void testPermissionsListSchoolFields() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsListSchoolFields(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/schools/schoolFields"), schoolPermissions, SchoolPermissions.LIST_SCHOOLFIELDS, 200);
   }
   
-  @Test
-  public void testPermissionsFindSchoolField() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsFindSchoolField(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
         .get("/schools/schoolFields/{ID}", 1), schoolPermissions, SchoolPermissions.FIND_SCHOOLFIELD, 200);
   }
   
-  @Test
-  public void testPermissionsUpdateSchoolField() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsUpdateSchoolField(Role role) throws NoSuchFieldException {
     SchoolField schoolField = new SchoolField(null, "not updated", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -73,19 +63,20 @@ public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTest {
     try {
       SchoolField updateSchoolField = new SchoolField(id, "updated", Boolean.FALSE);
       
-      Response updateResponse = given().headers(getAuthHeaders())
+      Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateSchoolField)
         .put("/schools/schoolFields/{ID}", id);
-      assertOk(updateResponse, schoolPermissions, SchoolPermissions.UPDATE_SCHOOLFIELD, 200);
+      assertOk(role, updateResponse, schoolPermissions, SchoolPermissions.UPDATE_SCHOOLFIELD, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
         .delete("/schools/schoolFields/{ID}?permanent=true", id);
     }
   }
   
-  @Test
-  public void testPermissionsDeleteSchoolField() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testPermissionsDeleteSchoolField(Role role) throws NoSuchFieldException {
     SchoolField schoolField = new SchoolField(null, "to be deleted", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -95,7 +86,7 @@ public class SchoolFieldPermissionsTestsIT extends AbstractRESTPermissionsTest {
 
     Long id = response.body().jsonPath().getLong("id");
 
-    assertOk(given().headers(getAuthHeaders())
+    assertOk(role, given().headers(getAuthHeaders(role))
         .delete("/schools/schoolFields/{ID}", id), schoolPermissions, SchoolPermissions.DELETE_SCHOOLFIELD, 204);
     
     given().headers(getAdminAuthHeaders())

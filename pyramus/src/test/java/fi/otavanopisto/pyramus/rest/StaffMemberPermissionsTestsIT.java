@@ -2,44 +2,34 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 
-@RunWith(Parameterized.class)
-public class StaffMemberPermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class StaffMemberPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
   private UserPermissions userPermissions = new UserPermissions();
   
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
-  public StaffMemberPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  @Test
-  public void testListStaffMembers() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStaffMembers(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/staff/members"), userPermissions, UserPermissions.LIST_STAFFMEMBERS, 200);
   }
   
-  @Test
-  public void testListStaffMembersByEmail() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStaffMembersByEmail(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/staff/members?email=guest1@bogusmail.com"), userPermissions, UserPermissions.LIST_STAFFMEMBERS, 200);
   }
   
-  @Test
-  public void testFindStaffMember() throws NoSuchFieldException {
-    assertOk(given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStaffMember(Role role) throws NoSuchFieldException {
+    assertOk(role, given().headers(getAuthHeaders(role))
       .get("/staff/members/{ID}", 1l), userPermissions, UserPermissions.FIND_STAFFMEMBER, 200);
   }
 }

@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.dao.students;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -8,8 +9,10 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import fi.otavanopisto.pyramus.dao.Predicates;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -19,6 +22,7 @@ import fi.otavanopisto.pyramus.events.StudentGroupStudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupStudentRemovedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupStudentUpdatedEvent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup_;
 
 @Stateless
 public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent> {
@@ -65,6 +69,26 @@ public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public List<StudentGroupStudent> listByStudent(Student student, Boolean onlyGuidanceGroups) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentGroupStudent> criteria = criteriaBuilder.createQuery(StudentGroupStudent.class);
+    Root<StudentGroupStudent> root = criteria.from(StudentGroupStudent.class);
+    Join<StudentGroupStudent, StudentGroup> studentGroupJoin = root.join(StudentGroupStudent_.studentGroup);
+    
+
+    Predicates predicates = Predicates.newInstance()
+        .add(criteriaBuilder.equal(root.get(StudentGroupStudent_.student), student))
+        .add(criteriaBuilder.equal(studentGroupJoin.get(StudentGroup_.archived), Boolean.FALSE))
+        .add(criteriaBuilder.equal(studentGroupJoin.get(StudentGroup_.guidanceGroup), Boolean.TRUE), Boolean.TRUE.equals(onlyGuidanceGroups));
+    
+    criteria.select(root);
+    criteria.where(predicates.array());
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
   
   public void update(StudentGroupStudent studentGroupStudent, Student student, User updatingUser) {

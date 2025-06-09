@@ -2,47 +2,29 @@ package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentEducationalLevelPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentEducationalLevel;
+import io.restassured.response.Response;
 
-@RunWith(Parameterized.class)
-public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermissionsTest {
+public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public StudentEducationalLevelPermissionTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentEducationalLevelPermissions studentEducationalLevelPermissions = new StudentEducationalLevelPermissions();
   
-  @Test
-  public void testCreateStudentEducationalLevel() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudentEducationalLevel(Role role) throws NoSuchFieldException {
     StudentEducationalLevel studentEducationalLevel = new StudentEducationalLevel(null, "create", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
       .body(studentEducationalLevel)
       .post("/students/educationalLevels");
 
-    assertOk(response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.CREATE_STUDENTEDUCATIONALLEVEL);
+    assertOk(role, response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.CREATE_STUDENTEDUCATIONALLEVEL);
       
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
@@ -52,24 +34,27 @@ public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermis
     }
   }
   
-  @Test
-  public void listStudentEducationalLevels() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void listStudentEducationalLevels(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/educationalLevels");
     
-    assertOk(response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.LIST_STUDENTEDUCATIONALLEVELS);
+    assertOk(role, response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.LIST_STUDENTEDUCATIONALLEVELS);
   }
   
-  @Test
-  public void testFindStudentEducationalLevel() throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders())
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudentEducationalLevel(Role role) throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders(role))
       .get("/students/educationalLevels/{ID}", 1);
 
-    assertOk(response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.FIND_STUDENTEDUCATIONALLEVEL);
+    assertOk(role, response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.FIND_STUDENTEDUCATIONALLEVEL);
   }
   
-  @Test
-  public void testUpdateStudentEducationalLevel() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudentEducationalLevel(Role role) throws NoSuchFieldException {
     StudentEducationalLevel studentEducationalLevel = new StudentEducationalLevel(null, "Not Updated", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -81,12 +66,12 @@ public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermis
     try {
       StudentEducationalLevel updateStudentEducationalLevel = new StudentEducationalLevel(id, "Updated", Boolean.FALSE);
 
-      response = given().headers(getAuthHeaders())
+      response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudentEducationalLevel)
         .put("/students/educationalLevels/{ID}", id);
 
-      assertOk(response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.UPDATE_STUDENTEDUCATIONALLEVEL);
+      assertOk(role, response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.UPDATE_STUDENTEDUCATIONALLEVEL);
 
     } finally {
       given().headers(getAdminAuthHeaders())
@@ -96,8 +81,9 @@ public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermis
     }
   }
   
-  @Test
-  public void testDeleteStudentEducationalLevel() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudentEducationalLevel(Role role) throws NoSuchFieldException {
     StudentEducationalLevel studentEducationalLevel = new StudentEducationalLevel(null, "create type", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -107,10 +93,10 @@ public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermis
     
     Long id = response.body().jsonPath().getLong("id");
     
-    response = given().headers(getAuthHeaders())
+    response = given().headers(getAuthHeaders(role))
       .delete("/students/educationalLevels/{ID}", id);
     
-    assertOk(response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.DELETE_STUDENTEDUCATIONALLEVEL, 204);
+    assertOk(role, response, studentEducationalLevelPermissions, StudentEducationalLevelPermissions.DELETE_STUDENTEDUCATIONALLEVEL, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/students/educationalLevels/{ID}?permanent=true", id);

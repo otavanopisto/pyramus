@@ -1,15 +1,25 @@
 package fi.otavanopisto.pyramus.views.matriculation;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
+import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
@@ -47,7 +57,42 @@ public class BrowseMatriculationExamsViewController extends PyramusViewControlle
       jsonMatriculationExams.add(obj);
     }
     setJsDataVariable(pageRequestContext, "matriculationExams", jsonMatriculationExams.toString());
+
+    // Collect eligible groups
     
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
+    
+    List<StudyProgramme> eligibleStudyProgrammes = new ArrayList<>();
+    List<StudentGroup> eligibleStudentGroups = new ArrayList<>();
+    
+    String eligibleGroupsStr = SettingUtils.getSettingValue(PyramusConsts.Matriculation.SETTING_ELIGIBLE_GROUPS);
+
+    if (StringUtils.isNotBlank(eligibleGroupsStr)) {
+      String[] split = StringUtils.split(eligibleGroupsStr, ",");
+
+      for (String groupIdentifier : split) {
+        if (groupIdentifier.startsWith("STUDYPROGRAMME:")) {
+          Long studyProgrammeId = Long.parseLong(groupIdentifier.substring(15));
+          StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
+          if (studyProgramme != null) {
+            eligibleStudyProgrammes.add(studyProgramme);
+          }
+        } else if (groupIdentifier.startsWith("STUDENTGROUP:")) {
+          Long studentGroupId = Long.parseLong(groupIdentifier.substring(13));
+          StudentGroup studentGroup = studentGroupDAO.findById(studentGroupId);
+          if (studentGroup != null) {
+            eligibleStudentGroups.add(studentGroup);
+          }
+        }
+      }
+    }
+
+    eligibleStudyProgrammes.sort(Comparator.comparing(StudyProgramme::getName));
+    eligibleStudentGroups.sort(Comparator.comparing(StudentGroup::getName));
+
+    pageRequestContext.getRequest().setAttribute("eligibleStudyProgrammes", eligibleStudyProgrammes);
+    pageRequestContext.getRequest().setAttribute("eligibleStudentGroups", eligibleStudentGroups);
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-browse-exams.jsp");
   }
 

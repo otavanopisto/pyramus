@@ -262,6 +262,10 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String FIND_CURRICULUM_JSON = "FIND_CURRICULUM_JSON";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_CURRICULUM = "UPDATE_CURRICULUM";
   
   @Scope (PermissionScope.ENVIRONMENT)
