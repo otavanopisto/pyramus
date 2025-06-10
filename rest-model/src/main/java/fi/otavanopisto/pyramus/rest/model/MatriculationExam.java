@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.LocalDate;
+
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 public class MatriculationExam {
@@ -12,19 +14,19 @@ public class MatriculationExam {
     this.id = id;
   }
 
-  public Long getStarts() {
+  public LocalDate getStarts() {
     return starts;
   }
 
-  public void setStarts(Long starts) {
+  public void setStarts(LocalDate starts) {
     this.starts = starts;
   }
 
-  public Long getEnds() {
+  public LocalDate getEnds() {
     return ends;
   }
 
-  public void setEnds(Long ends) {
+  public void setEnds(LocalDate ends) {
     this.ends = ends;
   }
 
@@ -68,11 +70,20 @@ public class MatriculationExam {
     this.enrollment = enrollment;
   }
 
+  public LocalDate getConfirmDate() {
+    return confirmDate;
+  }
+
+  public void setConfirmDate(LocalDate confirmDate) {
+    this.confirmDate = confirmDate;
+  }
+
   private Long id;
   private Integer year;
   private MatriculationExamTerm term;
-  private Long starts;
-  private Long ends;
+  private LocalDate starts;
+  private LocalDate ends;
+  private LocalDate confirmDate;
   private boolean compulsoryEducationEligible;
   private MatriculationExamStudentStatus studentStatus;
   private MatriculationExamEnrollment enrollment;

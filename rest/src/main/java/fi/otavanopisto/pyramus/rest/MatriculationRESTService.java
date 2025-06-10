@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
@@ -268,7 +269,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     if (exam == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
-
+    
     MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
     if (examEnrollment == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -279,6 +280,10 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    if (!matriculationEligibilityController.isUpdatableByStudent(examEnrollment)) {
+      return Response.status(Status.FORBIDDEN).entity("Matriculation exam enrollment update period has ended.").build();
+    }
+    
     // Student is only allowed to change status from APPROVED to CONFIRMED
     if (examEnrollment.getState() != MatriculationExamEnrollmentState.APPROVED) {
       return Response.status(Status.FORBIDDEN).entity("Matriculation exam enrollment not in applicable state.").build();
@@ -310,23 +315,20 @@ public class MatriculationRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Student ids do not match").build();
     }
 
+    MatriculationExam exam = matriculationExamDao.findById(examId);
+    if (exam == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Exam not found").build();
+    }
+
     Student student = studentDao.findById(studentId);
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
     }
 
-    MatriculationExam exam = matriculationExamDao.findById(examId);
-
-    if (exam == null || !matriculationEligibilityController.isEnrollableByStudent(exam, student)) {
-      return Response.status(Status.BAD_REQUEST)
-          .entity("Exam enrollment is closed")
-          .build();
-    }
-
     if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, student)) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    
+
     // Find the enrollment by exam and student, if it exists, we are updating
     MatriculationExamEnrollment existingEnrollment = matriculationExamEnrollmentDao.findByExamAndStudent(exam, student);
 
@@ -334,10 +336,21 @@ public class MatriculationRESTService extends AbstractRESTService {
      * Validation
      */
     
-    if (existingEnrollment != null) {
+    if (existingEnrollment == null) {
+      // Creating new enrollment, check that the enrollment is active
+      if (!matriculationEligibilityController.isEnrollableByStudent(exam, student)) {
+        return Response.status(Status.BAD_REQUEST).entity("Exam enrollment is closed").build();
+      }
+    }
+    else {
       // Validate enrollment id in payload
       if (!Objects.equals(existingEnrollment.getId(), enrollment.getId())) {
         return Response.status(Status.BAD_REQUEST).entity("Enrollment ids do not match").build();
+      }
+      
+      // Check that the enrollment update period is still active
+      if (!matriculationEligibilityController.isUpdatableByStudent(existingEnrollment)) {
+        return Response.status(Status.BAD_REQUEST).entity("Enrollment update period has passed").build();
       }
       
       // Validate that the existing enrollment is in state where modification is allowed
@@ -602,8 +615,9 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setId(exam.getId());
     result.setTerm(exam.getExamTerm());
     result.setYear(exam.getExamYear());
-    result.setStarts(exam.getStarts().getTime());
-    result.setEnds(exam.getEnds().getTime());
+    result.setStarts(DateUtils.toLocalDate(exam.getStarts()));
+    result.setEnds(DateUtils.toLocalDate(exam.getEnds()));
+    result.setConfirmDate(DateUtils.toLocalDate(exam.getConfirmationDate()));
     
     if (student != null) {
       boolean compulsoryEducationEligible = false;
