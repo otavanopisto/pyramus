@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.dao.matriculation;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;

@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 
 public class ISO8601Timestamp {
    

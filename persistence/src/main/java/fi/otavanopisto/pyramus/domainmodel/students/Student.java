@@ -3,28 +3,11 @@ package fi.otavanopisto.pyramus.domainmodel.students;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Resolution;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -37,6 +20,20 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 
 @Entity
 @Indexed
@@ -49,17 +46,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 )
 public class Student extends User implements ArchivableEntity {
 
-  /**
-   * Returns full name (first name + last name) of this student.
-   *  
-   * @return Full name
-   */
-  @Transient 
-  @Field (store = Store.NO)
-  public String getFullName() {
-    return getFirstName() + ' ' + getLastName();
-  }
-  
   /**
    * Sets additional info for this student.
    * 
@@ -332,7 +318,8 @@ public class Student extends User implements ArchivableEntity {
 
   @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "school")
-  @IndexedEmbedded (depth = 1)
+  @IndexedEmbedded (includeDepth = 1)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private School school;
   
   @ManyToOne (fetch = FetchType.LAZY)
@@ -362,8 +349,7 @@ public class Student extends User implements ArchivableEntity {
   private Date studyStartDate;
   
   @Temporal (value=TemporalType.DATE)
-  @Field (analyze = Analyze.NO)
-  @DateBridge (resolution = Resolution.DAY)
+  @GenericField
   private Date studyEndDate;
   
   @ManyToOne (fetch = FetchType.LAZY)

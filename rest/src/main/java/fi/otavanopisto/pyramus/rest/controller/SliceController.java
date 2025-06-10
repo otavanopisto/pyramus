@@ -5,9 +5,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;

@@ -2,11 +2,11 @@ package fi.otavanopisto.pyramus.security.impl;
 
 import java.util.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;

@@ -2,27 +2,21 @@ package fi.otavanopisto.pyramus.domainmodel.students;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * StudentContactLogEntryComment class defines a message bind to a contact log entry
@@ -37,14 +31,7 @@ import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFa
  * 
  * @author antti.viljakainen
  */
-
 @Entity
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedContactLogEntryComment",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class StudentContactLogEntryComment implements ArchivableEntity {
 
   /**
@@ -167,7 +154,6 @@ public class StudentContactLogEntryComment implements ArchivableEntity {
   
   @NotNull
   @Column (nullable = false)
-  @Field
   private Boolean archived = Boolean.FALSE;
 
   @Version

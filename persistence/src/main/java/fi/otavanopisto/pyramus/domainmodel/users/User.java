@@ -3,40 +3,21 @@ package fi.otavanopisto.pyramus.domainmodel.users;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.bridge.builtin.impl.BuiltinIterableBridge;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -45,6 +26,26 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.security.ContextReference;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Indexed
@@ -96,20 +97,11 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   }
   
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.NO)
-  @SortableField
-  public String getFirstNameSortable() {
-    return getFirstName();
-  }
-
-  @Transient
-  @Field(analyze = Analyze.NO, store = Store.NO)
-  @SortableField
-  public String getLastNameSortable() {
-    return getLastName();
-  }
-  
-  @Transient 
+  @FullTextField (projectable = Projectable.NO)
+  @IndexingDependency(derivedFrom = {
+      @ObjectPath({ @PropertyValue(propertyName = "firstName") }),
+      @ObjectPath({ @PropertyValue(propertyName = "lastName") })
+  })
   public String getFullName() {
     return getFirstName() + ' ' + getLastName();
   }
@@ -176,6 +168,8 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   }
 
   @Transient
+  @GenericField
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
   public Set<Role> getRoles() {
     return Collections.emptySet();
   }
@@ -202,18 +196,6 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
     return false;
   }
 
-  @Field (name = "roles", store = Store.NO)
-  @FieldBridge(impl=BuiltinIterableBridge.class)
-  public Set<String> getRolesSearchable() {
-    if (getRoles() == null) {
-      return null;
-    }
-    
-    return getRoles().stream()
-        .map(role -> role.name())
-        .collect(Collectors.toSet());
-  }
-  
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="User")  
   @TableGenerator(name="User", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -226,28 +208,32 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private ContactInfo contactInfo;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @FullTextField
+  @KeywordField (name = "firstName_sort", projectable = Projectable.NO, sortable = Sortable.YES)
   private String firstName;
   
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @FullTextField
+  @KeywordField (name = "lastName_sort", projectable = Projectable.NO, sortable = Sortable.YES)
   private String lastName;
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__UserTags", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<Tag> tags = new HashSet<>();
   
   @NotNull
   @Column (nullable = false)
-  @Field
+  @GenericField
   private Boolean archived;
   
   @Version

@@ -1,10 +1,8 @@
 package fi.otavanopisto.pyramus.dao.resources;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -12,11 +10,10 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -26,11 +23,13 @@ import fi.otavanopisto.pyramus.domainmodel.resources.ResourceCategory;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceType;
 import fi.otavanopisto.pyramus.domainmodel.resources.WorkResource;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 
 @Stateless
 public class ResourceDAO extends PyramusEntityDAO<Resource> {
 
-  @SuppressWarnings("unchecked")
   public SearchResult<Resource> searchResourcesBasic(int resultsPerPage, int page, String queryText) {
     int firstResult = page * resultsPerPage;
 
@@ -44,7 +43,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
     }
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -58,33 +57,25 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, WorkResource.class, MaterialResource.class)
-        .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-        .setFirstResult(firstResult)
-        .setMaxResults(resultsPerPage);
-    
-      query.setFirstResult(firstResult).setMaxResults(resultsPerPage);
+      LuceneSearchResult<Resource> fetch = session
+          .search(List.of(WorkResource.class, MaterialResource.class))
+          .extension(LuceneExtension.get())
+          .where(f -> 
+            f.bool()
+              .must(f.fromLuceneQuery(luceneQuery))
+              .filter(f.match().field("archived").matching(Boolean.FALSE))
+          )
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
-      query.enableFullTextFilter("ArchivedResource").setParameter("archived", Boolean.FALSE);
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = firstResult + resultsPerPage - 1;
-      if (lastResult > hits - 1) {
-        lastResult = hits - 1;
-      }
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<Resource> searchResources(int resultsPerPage, int page, String name, String tags, ResourceType resourceType,
       ResourceCategory resourceCategory, boolean filterArchived) {
     int firstResult = page * resultsPerPage;
@@ -99,15 +90,10 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
       addTokenizedSearchCriteria(queryBuilder, "tags.text", tags, true);
     }
     
-    if (resourceCategory != null) {
-      addTokenizedSearchCriteria(queryBuilder, "category.id", resourceCategory.getId().toString(), true);
-    }
-
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
-
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
       String queryString = queryBuilder.toString();
       Query luceneQuery;
@@ -119,27 +105,15 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query;
-
-      if (resourceType == null) {
-        query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, WorkResource.class, MaterialResource.class)
-            .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-            .setFirstResult(firstResult)
-            .setMaxResults(resultsPerPage);
-      }
-      else {
+      Collection<Class<? extends Resource>> from = List.of(WorkResource.class, MaterialResource.class);
+      
+      if (resourceType != null) {
         switch (resourceType) {
-        case MATERIAL_RESOURCE:
-          query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, MaterialResource.class)
-              .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-              .setFirstResult(firstResult)
-              .setMaxResults(resultsPerPage);
+          case MATERIAL_RESOURCE:
+            from = List.of(MaterialResource.class);
           break;
-        case WORK_RESOURCE:
-          query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, WorkResource.class)
-              .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-              .setFirstResult(firstResult)
-              .setMaxResults(resultsPerPage);
+          case WORK_RESOURCE:
+            from = List.of(WorkResource.class);
           break;
           default:
             throw new PersistenceException("Invalid resource type");
@@ -147,24 +121,24 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
           
       }
       
-      query.setFirstResult(firstResult).setMaxResults(resultsPerPage);
+      LuceneSearchResult<Resource> fetch = session
+          .search(from)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      if (filterArchived) {
-        query.enableFullTextFilter("ArchivedResource").setParameter("archived", Boolean.FALSE);
-      }
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = firstResult + resultsPerPage - 1;
-      if (lastResult > hits - 1) {
-        lastResult = hits - 1;
-      }
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+            if (resourceCategory != null) {
+              b.filter(f.match().field("category.id").matching(resourceCategory.getId()));
+            }
+            if (filterArchived) {
+              b.filter(f.match().field("archived").matching(Boolean.FALSE));
+            }
+          }))
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }

@@ -34,9 +34,9 @@
 
   <properties>
     <!-- WildFly -->
-    <!-- See https://repo1.maven.org/maven2/org/wildfly/bom/wildfly-jakartaee8/26.1.2.Final/wildfly-jakartaee8-26.1.2.Final.pom -->
+    <!-- See https://repo1.maven.org/maven2/org/wildfly/bom/wildfly-ee/36.0.1.Final/wildfly-ee-36.0.1.Final.pom -->
 
-    <wildfly.version>26.1.2.Final</wildfly.version>
+    <wildfly.version>36.0.1.Final</wildfly.version>
 
     <!-- JUnit4 -->
     <junit4.version>4.13.1</junit4.version>
@@ -88,7 +88,7 @@
 
     <!-- Freemarker -->
 
-    <freemarker.version>2.3.20</freemarker.version>
+    <freemarker.version>2.3.34</freemarker.version>
 
     <!-- Apache Oltu -->
 
@@ -100,7 +100,7 @@
 
     <!-- Webapp-permission -->
 
-    <webapp-permission.version>1.0.3</webapp-permission.version>
+    <webapp-permission.version>1.0.4-SNAPSHOT</webapp-permission.version>
   </properties>
 
   <dependencyManagement>
@@ -110,12 +110,12 @@
 
       <dependency>
         <groupId>org.wildfly.bom</groupId>
-        <artifactId>wildfly-jakartaee8</artifactId>
+        <artifactId>wildfly-ee</artifactId>
         <scope>import</scope>
         <type>pom</type>
         <version>${wildfly.version}</version>
       </dependency>
-
+      
       <!-- OpenId -->
 
       <dependency>

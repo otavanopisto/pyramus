@@ -3,30 +3,16 @@ package fi.otavanopisto.pyramus.dao.users;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ListJoin;
-import javax.persistence.criteria.MapJoin;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -53,6 +39,18 @@ import fi.otavanopisto.pyramus.events.StaffMemberCreatedEvent;
 import fi.otavanopisto.pyramus.events.StaffMemberDeletedEvent;
 import fi.otavanopisto.pyramus.events.StaffMemberUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.ListJoin;
+import jakarta.persistence.criteria.MapJoin;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.SetJoin;
 
 @Stateless
 public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
@@ -227,7 +225,6 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<StaffMember> searchUsersBasic(int resultsPerPage, int page, String text) {
 
     int firstResult = page * resultsPerPage;
@@ -241,7 +238,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     queryBuilder.append(")");
   
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       String queryString = queryBuilder.toString();
@@ -254,28 +251,22 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StaffMember.class)
-          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.Type.STRING),
-                   new SortField("firstNameSortable", SortField.Type.STRING) }))
-          .setFirstResult(firstResult)
-          . setMaxResults(resultsPerPage);
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      LuceneSearchResult<StaffMember> fetch = session
+          .search(StaffMember.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.fromLuceneQuery(luceneQuery))
+          .sort(f -> 
+              f.score()
+              .then().field("lastName_sort")
+              .then().field("firstName_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<StaffMember> searchUsers(int resultsPerPage, int page, String firstName, String lastName, String tags,
       String email, Set<Role> roles, TSB enabled) {
 
@@ -302,22 +293,8 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
       queryBuilder.append(")");
     }
 
-    if (enabled.isBoolean()) {
-      queryBuilder.append("+(");
-      addTokenizedSearchCriteria(queryBuilder, "enabled", enabled.booleanValue().toString(), false);
-      queryBuilder.append(")");
-    }
-    
-    if (CollectionUtils.isNotEmpty(roles)) {
-      queryBuilder.append("+(");
-      for (Role role : roles) {
-        addTokenizedSearchCriteria(queryBuilder, "roles", role.toString(), false);
-      }
-      queryBuilder.append(")");
-    }
-    
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       String queryString = queryBuilder.toString();
@@ -330,21 +307,29 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StaffMember.class)
-          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.Type.STRING),
-                   new SortField("firstNameSortable", SortField.Type.STRING) }))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
+      LuceneSearchResult<StaffMember> fetch = session
+          .search(StaffMember.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+            if (enabled.isBoolean()) {
+              b.filter(f.match().field("enabled").matching(enabled.booleanValue()));
+            }
+            
+            if (CollectionUtils.isNotEmpty(roles)) {
+              // Filter by roles, use or here
+              b.filter(f.or().with(or -> {
+                roles.forEach(role -> or.add(f.match().field("roles").matching(role)));
+              }));
+            }
+          }))
+          .sort(f -> 
+              f.score()
+              .then().field("lastName_sort")
+              .then().field("firstName_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
     } catch (ParseException e) {
       throw new PersistenceException(e);

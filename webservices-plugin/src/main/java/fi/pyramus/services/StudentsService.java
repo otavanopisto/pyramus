@@ -3,11 +3,11 @@ package fi.pyramus.services;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.persistence.EnumType;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.persistence.EnumType;
 import javax.xml.ws.BindingType;
 
 import org.apache.commons.lang3.StringUtils;

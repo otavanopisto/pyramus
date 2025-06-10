@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.json.students;
 
 import java.io.IOException;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 import org.apache.commons.io.IOUtils;
 

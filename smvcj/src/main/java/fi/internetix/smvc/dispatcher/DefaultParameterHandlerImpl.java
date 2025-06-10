@@ -2,7 +2,7 @@ package fi.internetix.smvc.dispatcher;
 
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class DefaultParameterHandlerImpl implements ParameterHandler {
 

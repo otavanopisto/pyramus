@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.json.lukio;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.inject.spi.CDI;
+import jakarta.enterprise.inject.spi.CDI;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;

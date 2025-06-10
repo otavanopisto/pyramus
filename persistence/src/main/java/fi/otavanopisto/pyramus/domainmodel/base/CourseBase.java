@@ -7,39 +7,40 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.HibernateException;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Base entity for both modules and courses, modeling the fields that are mutual to both.  
@@ -261,13 +262,6 @@ public abstract class CourseBase implements ArchivableEntity {
     this.variables = variables;
   }
   
-  @Transient
-  @Field (analyze = Analyze.NO, store = Store.NO)
-  @SortableField
-  public String getNameSortable() {
-    return name;
-  }
-
   @SuppressWarnings("unused")
   private void setVersion(Long version) {
     this.version = version;
@@ -329,7 +323,8 @@ public abstract class CourseBase implements ArchivableEntity {
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @FullTextField
+  @KeywordField(name = "name_sort", projectable = Projectable.NO, sortable = Sortable.YES)
   private String name;
   
   @ManyToOne 
@@ -352,17 +347,18 @@ public abstract class CourseBase implements ArchivableEntity {
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Field
+  @FullTextField
   private String description;
   
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="courseBase")
   @IndexedEmbedded(includeEmbeddedObjectId = true)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private List<CourseEducationType> courseEducationTypes = new Vector<>();
 
   @NotNull
   @Column(nullable = false)
-  @Field
+  @GenericField
   private Boolean archived = Boolean.FALSE;
   
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
@@ -379,9 +375,11 @@ public abstract class CourseBase implements ArchivableEntity {
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name = "__CourseBaseCurriculums", joinColumns = @JoinColumn(name = "courseBase"), inverseJoinColumns = @JoinColumn(name = "curriculum"))
   @IndexedEmbedded(includeEmbeddedObjectId = true) 
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<Curriculum> curriculums = new HashSet<>();
 
   @OneToMany (mappedBy = "course", fetch = FetchType.LAZY)
   @IndexedEmbedded(includeEmbeddedObjectId = true)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private List<CourseModule> courseModules = new Vector<>();
 }

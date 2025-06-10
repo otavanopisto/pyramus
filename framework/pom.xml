@@ -20,16 +20,16 @@
     <!-- Servlet -->
 
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <!-- EJB -->
 
     <dependency>
-      <groupId>org.jboss.spec.javax.ejb</groupId>
-      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+      <groupId>jakarta.ejb</groupId>
+      <artifactId>jakarta.ejb-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -54,19 +54,23 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
-      <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
+      <groupId>jakarta.enterprise.concurrent</groupId>
+      <artifactId>jakarta.enterprise.concurrent-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
       <scope>provided</scope>
     </dependency>
   
     <!-- Pyramus -->
   
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
     <dependency>
       <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>smvcj</artifactId>
@@ -84,8 +88,8 @@
       <artifactId>webapp-permission</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.spec.javax.faces</groupId>
-      <artifactId>jboss-jsf-api_2.3_spec</artifactId>
+      <groupId>jakarta.faces</groupId>
+      <artifactId>jakarta.faces-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -124,8 +128,8 @@
     <!--  Mail -->
 
     <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>jakarta.mail</artifactId>
+      <groupId>jakarta.mail</groupId>
+      <artifactId>jakarta.mail-api</artifactId>
       <scope>provided</scope>
     </dependency>
 

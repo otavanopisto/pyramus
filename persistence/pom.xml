@@ -11,7 +11,8 @@
   </parent>
   
   <properties>
-    <hibernate-jpamodelgen.version>5.3.24.Final</hibernate-jpamodelgen.version>
+    <!-- This is present in the Wildfly BOM, how to make it work here ? -->
+    <hibernate-jpamodelgen.version>6.6.7.Final</hibernate-jpamodelgen.version>
   </properties>
   
   <dependencies>
@@ -43,8 +44,8 @@
     <!-- Servlet -->
 
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -57,35 +58,56 @@
     </dependency>
   
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queries</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queryparser</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
       <scope>provided</scope>
+<!--
       <exclusions>
         <exclusion>
           <groupId>org.dom4j</groupId>
           <artifactId>dom4j</artifactId>
         </exclusion>
       </exclusions>
+-->
     </dependency>
-  
+    
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search-orm</artifactId>
+      <groupId>org.hibernate.search</groupId>
+      <artifactId>hibernate-search-mapper-orm</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+    
+    <dependency>
+      <groupId>org.hibernate.search</groupId>
+      <artifactId>hibernate-search-backend-lucene</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Jackson -->
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- EJB -->
 
     <dependency>
-      <groupId>org.jboss.spec.javax.ejb</groupId>
-      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+      <groupId>jakarta.ejb</groupId>
+      <artifactId>jakarta.ejb-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -109,8 +131,8 @@
     <!-- JMS -->
     
     <dependency>
-      <groupId>org.jboss.spec.javax.jms</groupId>
-      <artifactId>jboss-jms-api_2.0_spec</artifactId>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
       <scope>provided</scope>
     </dependency>
     
@@ -120,6 +142,7 @@
       <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>common</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>fi.otavanopisto</groupId>
       <artifactId>webapp-permission</artifactId>
@@ -139,7 +162,7 @@
           <annotationProcessors>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</annotationProcessors>
           <annotationProcessorPaths>
             <path>
-              <groupId>org.hibernate</groupId>
+              <groupId>org.hibernate.orm</groupId>
               <artifactId>hibernate-jpamodelgen</artifactId>
               <version>${hibernate-jpamodelgen.version}</version>
             </path>

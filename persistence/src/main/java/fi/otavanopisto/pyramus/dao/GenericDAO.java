@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.servlet.http.HttpSession;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.servlet.http.HttpSession;
 
 import fi.otavanopisto.pyramus.domainmodel.audit.AuditLog;
 import fi.otavanopisto.pyramus.domainmodel.audit.AuditLogType;
@@ -39,7 +39,7 @@ public abstract class GenericDAO<T> {
   public List<T> listAll(Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
-    Query query = entityManager.createQuery("select o from " + genericTypeClass.getName() + " o");
+    Query query = entityManager.createQuery("select o from " + genericTypeClass.getSimpleName() + " o");
     
     if (firstResult != null) {
       query.setFirstResult(firstResult);
@@ -88,7 +88,7 @@ public abstract class GenericDAO<T> {
   public long count() {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
-    Query query = entityManager.createQuery("select count(o) from " + genericTypeClass.getName() + " o");
+    Query query = entityManager.createQuery("select count(o) from " + genericTypeClass.getSimpleName() + " o");
     return (long) query.getSingleResult();
   }
 

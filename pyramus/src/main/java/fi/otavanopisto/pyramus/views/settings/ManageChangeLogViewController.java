@@ -8,11 +8,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Inheritance;
-import javax.persistence.Version;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.Version;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;

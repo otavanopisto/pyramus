@@ -4,54 +4,46 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PersistenceException;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 import fi.otavanopisto.security.ContextReference;
+import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Indexed
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedStudentGroup",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class StudentGroup implements ContextReference, ArchivableEntity {
 
   /**
@@ -75,7 +67,6 @@ public class StudentGroup implements ContextReference, ArchivableEntity {
     this.description = description;
   }
 
-  @Field
   public String getDescription() {
     return description;
   }
@@ -174,13 +165,6 @@ public class StudentGroup implements ContextReference, ArchivableEntity {
     }
   }
 
-  @Transient
-  @Field (analyze = Analyze.NO, store = Store.NO)
-  @SortableField
-  public String getNameSortable() {
-    return name;
-  }
-
   public void setCreator(User creator) {
     this.creator = creator;
   }
@@ -247,25 +231,28 @@ public class StudentGroup implements ContextReference, ArchivableEntity {
   @ManyToOne
   @JoinColumn (name = "organization")
   @IndexedEmbedded(includeEmbeddedObjectId = true)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Organization organization;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @FullTextField
+  @KeywordField(name = "name_sort", projectable = Projectable.NO, sortable = Sortable.YES)
   private String name;
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
+  @FullTextField
   private String description;
   
   @Column
-  @Field
+  @GenericField
   private Date beginDate;
 
   @NotNull
   @Column (nullable = false)
-  @Field
+  @GenericField
   private Boolean archived = Boolean.FALSE;
   
   @ManyToOne 
@@ -288,12 +275,13 @@ public class StudentGroup implements ContextReference, ArchivableEntity {
   
   @NotNull
   @Column (nullable=false)
-  @Field
+  @GenericField
   private Boolean guidanceGroup = Boolean.FALSE;
 
   @OneToMany
   @JoinColumn (name="studentGroup")
   @IndexedEmbedded
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<StudentGroupUser> users = new HashSet<>();
   
   @OneToMany
@@ -303,6 +291,7 @@ public class StudentGroup implements ContextReference, ArchivableEntity {
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__StudentGroupTags", joinColumns=@JoinColumn(name="studentGroup"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<Tag> tags = new HashSet<>();
   
   @Version

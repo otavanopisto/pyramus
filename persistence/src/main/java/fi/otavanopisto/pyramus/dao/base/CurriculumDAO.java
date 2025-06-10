@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.dao.base;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;

@@ -6,28 +6,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -58,6 +46,16 @@ import fi.otavanopisto.pyramus.events.CourseCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.persistence.search.SearchTimeFilterMode;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 @Stateless
 public class CourseDAO extends PyramusEntityDAO<Course> {
@@ -315,7 +313,6 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<Course> searchCoursesBasic(int resultsPerPage, int page, String text, boolean filterArchived) {
     int firstResult = page * resultsPerPage;
 
@@ -333,7 +330,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     }
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -346,25 +343,21 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       else {
         luceneQuery = parser.parse(queryString);
       }
-      
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Course.class)
-          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
 
-      if (filterArchived) {
-        query.enableFullTextFilter("ArchivedCourse").setParameter("archived", Boolean.FALSE);
-      }
+      LuceneSearchResult<Course> fetch = session
+          .search(Course.class)
+          .extension(LuceneExtension.get())
+          .where(f -> 
+            f.bool()
+              .must(f.fromLuceneQuery(luceneQuery))
+              .filter(f.match().field("archived").matching(Boolean.FALSE))
+          )
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     }
     catch (ParseException e) {
       throw new PersistenceException(e);
@@ -378,7 +371,6 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
         timeframeStart, timeframeEnd, null, null, filterArchived, courseTemplateFilter);
   }
   
-  @SuppressWarnings("unchecked")
   public SearchResult<Course> searchCourses(int resultsPerPage, int page, String name, String tags, String nameExtension,
       String description, CourseState courseState, Subject subject, SearchTimeFilterMode timeFilterMode,
       Date timeframeStart, Date timeframeEnd, EducationType educationType, EducationSubtype educationSubtype, boolean filterArchived,
@@ -410,20 +402,6 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     if (!StringUtils.isBlank(description)) {
       addTokenizedSearchCriteria(queryBuilder, "description", description, true);
     }
-    
-    if (courseState != null) {
-      addTokenizedSearchCriteria(queryBuilder, "state.id", courseState.getId().toString(), true);
-    }
-
-    if (subject != null) {
-      addTokenizedSearchCriteria(queryBuilder, "courseModules.subject.id", subject.getId().toString(), true);
-    }
-
-    if (educationType != null)
-      addTokenizedSearchCriteria(queryBuilder, "courseEducationTypes.educationType.id", educationType.getId().toString(), true);
-
-    if (educationSubtype != null)
-      addTokenizedSearchCriteria(queryBuilder, "courseEducationTypes.courseEducationSubtypes.educationSubtype.id", educationSubtype.getId().toString(), true);
     
     if (timeframeS != null && timeframeE != null) {
       switch (timeFilterMode) {
@@ -484,20 +462,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       }
     }
 
-    switch (courseTemplateFilter) {
-      case LIST_COURSES:
-        addTokenizedSearchCriteria(queryBuilder, "courseTemplate", Boolean.FALSE.toString(), true);
-      break;
-      case LIST_TEMPLATES:
-        addTokenizedSearchCriteria(queryBuilder, "courseTemplate", Boolean.TRUE.toString(), true);
-      break;
-      case LIST_ALL:
-        // No restrictions
-      break;
-    }
-    
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -511,22 +477,50 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Course.class)
-          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
+      LuceneSearchResult<Course> fetch = session
+          .search(Course.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      if (filterArchived)
-        query.enableFullTextFilter("ArchivedCourse").setParameter("archived", Boolean.FALSE);
+            if (courseState != null) {
+              b.filter(f.match().field("state.id").matching(courseState.getId()));
+            }
 
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0)
-        pages++;
+            if (subject != null) {
+              b.filter(f.match().field("courseModules.subject.id").matching(subject.getId()));
+            }
 
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
+            if (educationType != null) {
+              b.filter(f.match().field("courseEducationTypes.educationType.id").matching(educationType.getId()));
+            }
 
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+            if (educationSubtype != null) {
+              b.filter(f.match().field("courseEducationTypes.courseEducationSubtypes.educationSubtype.id").matching(educationSubtype.getId()));
+            }
+            
+            switch (courseTemplateFilter) {
+              case LIST_COURSES:
+                b.filter(f.match().field("courseTemplate").matching(Boolean.FALSE));
+              break;
+              case LIST_TEMPLATES:
+                b.filter(f.match().field("courseTemplate").matching(Boolean.TRUE));
+              break;
+              case LIST_ALL:
+                // No restrictions
+              break;
+            }
+            
+            if (filterArchived) {
+              b.filter(f.match().field("archived").matching(Boolean.FALSE));
+            }
+          }))
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
+
     }
     catch (ParseException e) {
       throw new PersistenceException(e);

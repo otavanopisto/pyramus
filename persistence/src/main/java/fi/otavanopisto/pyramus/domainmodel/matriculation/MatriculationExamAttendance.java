@@ -1,16 +1,14 @@
 package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
-
-import org.hibernate.search.annotations.DocumentId;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.TableGenerator;
 
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
@@ -118,7 +116,6 @@ public class MatriculationExamAttendance {
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamAttendance")  
   @TableGenerator(name="MatriculationExamAttendance", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-  @DocumentId 
   private Long id;
   
   @ManyToOne

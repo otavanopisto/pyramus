@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.persistence.usertypes;
 import java.io.Serializable;
 import java.util.Currency;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class MonetaryAmount implements Serializable {

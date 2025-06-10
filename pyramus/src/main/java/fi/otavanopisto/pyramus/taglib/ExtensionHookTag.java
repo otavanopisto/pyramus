@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.DynamicAttributes;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.DynamicAttributes;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -42,7 +42,7 @@ public class ExtensionHookTag extends TagSupport implements DynamicAttributes {
   /** The content substitution is done here.
    *  @returns SKIP_BODY
    */
-  public int doEndTag() throws javax.servlet.jsp.JspTagException {
+  public int doEndTag() throws jakarta.servlet.jsp.JspTagException {
     List<PageHookController> hookControllers = PageHookVault.getInstance().getPageHooks(getName());
     if (hookControllers != null) {
       for (PageHookController hookController : hookControllers) {
@@ -61,9 +61,9 @@ public class ExtensionHookTag extends TagSupport implements DynamicAttributes {
               pageContext.getRequest().removeAttribute("extensionHookVariables");
             }
           } catch (ServletException e) {
-            throw new javax.servlet.jsp.JspTagException(e);
+            throw new jakarta.servlet.jsp.JspTagException(e);
           } catch (IOException e) {
-            throw new javax.servlet.jsp.JspTagException(e);
+            throw new jakarta.servlet.jsp.JspTagException(e);
           }
         }
       }

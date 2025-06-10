@@ -1,7 +1,7 @@
 package fi.internetix.smvc.dispatcher;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import fi.internetix.smvc.AccessDeniedException;
 import fi.internetix.smvc.LoginRequiredException;

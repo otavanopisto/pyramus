@@ -5,12 +5,12 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.transaction.Status;
-import javax.transaction.TransactionScoped;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
+import jakarta.transaction.Status;
+import jakarta.transaction.TransactionScoped;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 import java.io.Serializable;
 

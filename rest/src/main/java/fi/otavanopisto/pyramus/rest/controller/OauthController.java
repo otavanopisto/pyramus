@@ -1,8 +1,8 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.clientapplications.ClientApplicationAccessTokenDAO;
 import fi.otavanopisto.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;

@@ -1,21 +1,22 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Indexed
@@ -78,14 +79,14 @@ public class Email {
 
   @NotNull
   @Column(nullable = false)
-  @Field
+  @GenericField
   private Boolean defaultAddress = Boolean.FALSE;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field (store = Store.NO)
-  @javax.validation.constraints.Email
+  @KeywordField(projectable = Projectable.NO)
+  @jakarta.validation.constraints.Email
   private String address;
 
   @ManyToOne

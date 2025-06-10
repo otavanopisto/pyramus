@@ -2,9 +2,9 @@ package fi.otavanopisto.pyramus.rest.controller;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 

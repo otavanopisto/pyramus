@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.util.dataimport;
 
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;

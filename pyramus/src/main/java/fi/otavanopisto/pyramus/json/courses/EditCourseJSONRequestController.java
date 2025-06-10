@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.enterprise.inject.spi.CDI;
+import jakarta.enterprise.inject.spi.CDI;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;

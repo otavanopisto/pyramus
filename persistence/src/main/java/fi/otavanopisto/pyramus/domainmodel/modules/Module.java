@@ -5,36 +5,29 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PersistenceException;
-import javax.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
 @Indexed
 @PrimaryKeyJoinColumn(name="id")
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedModule",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class Module extends CourseBase implements ArchivableEntity {
 
   public List<ModuleComponent> getModuleComponents() {
@@ -86,10 +79,12 @@ public class Module extends CourseBase implements ArchivableEntity {
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="module")
   @IndexedEmbedded
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private List<ModuleComponent> moduleComponents = new Vector<>();
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__ModuleTags", joinColumns=@JoinColumn(name="module"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<Tag> tags = new HashSet<>();
 }

@@ -3,12 +3,12 @@ package fi.otavanopisto.pyramus.security.impl;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.security.EnvironmentRolePermissionDAO;
 import fi.otavanopisto.pyramus.dao.security.PermissionDAO;

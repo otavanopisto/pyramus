@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import fi.internetix.smvc.AlreadyLoggedInException;
 import fi.internetix.smvc.InvalidLoginException;

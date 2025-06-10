@@ -2,43 +2,35 @@ package fi.otavanopisto.pyramus.domainmodel.application;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Indexed
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-    name="ArchivedApplication",
-    impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class Application implements ArchivableEntity {
   
   public Long getId() {
@@ -189,37 +181,37 @@ public class Application implements ArchivableEntity {
   @NotNull
   @Column (nullable = false, unique = true)
   @NotEmpty
-  @Field
+  @KeywordField
   private String applicationId;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @KeywordField
   private String line;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @FullTextField
   private String firstName;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @FullTextField
   private String lastName;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @KeywordField
   private String email;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @KeywordField
   private String referenceCode;
 
   @NotNull
@@ -244,12 +236,12 @@ public class Application implements ArchivableEntity {
   @Lob
   @NotNull
   @Basic(optional = false)
-  @Field
+  @FullTextField
   private String formData;
   
   @Column
   @Enumerated (EnumType.STRING)
-  @Field
+  @KeywordField
   private ApplicationState state;
 
   @ManyToOne  
@@ -260,17 +252,17 @@ public class Application implements ArchivableEntity {
   @JoinColumn(name="student")
   private Student student;
 
-  @Field
+  @KeywordField
   private String credentialToken;
 
   @NotNull
   @Column (nullable = false)
-  @Field
+  @GenericField
   private Boolean applicantEditable;
 
   @NotNull
   @Column (nullable = false)
-  @Field
+  @GenericField
   private Boolean archived;
 
 }

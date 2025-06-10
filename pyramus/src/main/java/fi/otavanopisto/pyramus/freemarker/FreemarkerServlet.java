@@ -3,10 +3,10 @@ package fi.otavanopisto.pyramus.freemarker;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import fi.otavanopisto.pyramus.plugin.PluginManager;
 import freemarker.cache.TemplateLoader;
@@ -14,7 +14,7 @@ import freemarker.template.SimpleHash;
 import freemarker.template.Template;
 import freemarker.template.TemplateModel;
 
-public class FreemarkerServlet extends freemarker.ext.servlet.FreemarkerServlet {
+public class FreemarkerServlet extends freemarker.ext.jakarta.servlet.FreemarkerServlet {
 
   /**
    * SerialVersionUID
@@ -43,7 +43,7 @@ public class FreemarkerServlet extends freemarker.ext.servlet.FreemarkerServlet 
   }  
   
   @Override
-  protected Locale deduceLocale(String templatePath, HttpServletRequest request, HttpServletResponse response) {
+  protected Locale deduceLocale(String templatePath, HttpServletRequest request, HttpServletResponse response) throws ServletException {
     Locale locale = request.getLocale();
     if (locale != null) {
       return locale;  

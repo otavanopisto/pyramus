@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.transaction.TransactionScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.transaction.TransactionScoped;
 
 import org.apache.commons.collections.CollectionUtils;
 

@@ -3,49 +3,44 @@ package fi.otavanopisto.pyramus.domainmodel.base;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
 
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Indexed
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedSchool",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class School implements ArchivableEntity {
   
   /**
@@ -76,8 +71,8 @@ public class School implements ArchivableEntity {
   }
 
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.NO)
-  @SortableField
+  @KeywordField (projectable = Projectable.NO, sortable = Sortable.YES)
+  @IndexingDependency(derivedFrom = @ObjectPath({ @PropertyValue(propertyName = "name") }))
   public String getNameSortable() {
     return name;
   }
@@ -182,13 +177,13 @@ public class School implements ArchivableEntity {
   @NotNull
   @NotEmpty
   @Column (nullable = false)
-  @Field
+  @KeywordField
   private String code;
   
   @NotNull
   @NotEmpty
   @Column (nullable = false)
-  @Field
+  @FullTextField
   private String name;
   
   @ManyToOne
@@ -198,16 +193,18 @@ public class School implements ArchivableEntity {
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private ContactInfo contactInfo;
 
   @NotNull
   @Column (nullable = false)
-  @Field
+  @GenericField
   private Boolean archived = Boolean.FALSE;
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__SchoolTags", joinColumns=@JoinColumn(name="school"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<Tag> tags = new HashSet<>();
 
   @ManyToOne

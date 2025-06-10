@@ -6,26 +6,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -47,6 +37,14 @@ import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 @Stateless
 public class ModuleDAO extends PyramusEntityDAO<Module> {
@@ -154,7 +152,6 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     return module;
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<Module> searchModulesBasic(int resultsPerPage, int page, String text) {
     int firstResult = page * resultsPerPage;
     StringBuilder queryBuilder = new StringBuilder();
@@ -170,7 +167,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     }
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     QueryParser parser = new QueryParser("", new StandardAnalyzer());
     String queryString = queryBuilder.toString();
@@ -183,21 +180,20 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Module.class)
-          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING) })).setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
-
-      query.enableFullTextFilter("ArchivedModule").setParameter("archived", Boolean.FALSE);
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      LuceneSearchResult<Module> fetch = session
+          .search(Module.class)
+          .extension(LuceneExtension.get())
+          .where(f -> 
+            f.bool()
+              .must(f.fromLuceneQuery(luceneQuery))
+              .filter(f.match().field("archived").matching(Boolean.FALSE))
+          )
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
+      
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
@@ -210,7 +206,6 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
         null, filterArchived);
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<Module> searchModules(int resultsPerPage, int page, String projectName, String name, String tags, String description,
       String componentName, String componentDescription, Long ownerId, Subject subject, EducationType educationType, EducationSubtype educationSubtype,
       Curriculum curriculum, boolean filterArchived) {
@@ -223,12 +218,8 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     boolean hasDescription = !StringUtils.isBlank(description);
     boolean hasComponentName = !StringUtils.isBlank(componentName);
     boolean hasComponentDescription = !StringUtils.isBlank(componentDescription);
-    boolean hasSubject = subject != null;
-    boolean hasEduType = educationType != null;
-    boolean hasEduSubtype = educationSubtype != null;
-    boolean hasCurriculum = curriculum != null;
 
-    if (hasName || hasTags || hasDescription || hasComponentName || hasComponentDescription || hasSubject || hasEduType || hasEduSubtype || hasCurriculum) {
+    if (hasName || hasTags || hasDescription || hasComponentName || hasComponentDescription) {
       queryBuilder.append("+(");
 
       if (hasName)
@@ -245,18 +236,6 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
 
       if (hasComponentDescription)
         addTokenizedSearchCriteria(queryBuilder, "moduleComponents.description", componentDescription, false);
-
-      if (hasSubject)
-        addTokenizedSearchCriteria(queryBuilder, "subject.id", subject.getId().toString(), true);
-
-      if (hasCurriculum)
-        addTokenizedSearchCriteria(queryBuilder, "curriculums.id", curriculum.getId().toString(), true);
-
-      if (hasEduType)
-        addTokenizedSearchCriteria(queryBuilder, "courseEducationTypes.educationType.id", educationType.getId().toString(), true);
-
-      if (hasEduSubtype)
-        addTokenizedSearchCriteria(queryBuilder, "courseEducationTypes.courseEducationSubtypes.educationSubtype.id", educationSubtype.getId().toString(), true);
 
       queryBuilder.append(")");
     }
@@ -288,7 +267,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     }
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       if (ownerId != null && ownerId > 0) {
@@ -305,23 +284,38 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Module.class)
-          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING) })).setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
+      LuceneSearchResult<Module> fetch = session
+          .search(Module.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      if (filterArchived)
-        query.enableFullTextFilter("ArchivedModule").setParameter("archived", Boolean.FALSE);
+            if (subject != null) {
+              b.filter(f.match().field("courseModules.subject.id").matching(subject.getId()));
+            }
 
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
+            if (curriculum != null) {
+              b.filter(f.match().field("curriculums.id").matching(curriculum.getId()));
+            }
 
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
+            if (educationType != null) {
+              b.filter(f.match().field("courseEducationTypes.educationType.id").matching(educationType.getId()));
+            }
 
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
-
+            if (educationSubtype != null) {
+              b.filter(f.match().field("courseEducationTypes.courseEducationSubtypes.educationSubtype.id").matching(educationSubtype.getId()));
+            }
+            
+            if (filterArchived) {
+              b.filter(f.match().field("archived").matching(Boolean.FALSE));
+            }
+          }))
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
+      
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }

@@ -1,13 +1,13 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-import javax.validation.constraints.Email;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Email;
 
 import org.apache.commons.lang3.StringUtils;
 

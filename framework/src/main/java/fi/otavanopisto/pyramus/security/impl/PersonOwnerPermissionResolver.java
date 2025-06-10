@@ -1,9 +1,9 @@
 package fi.otavanopisto.pyramus.security.impl;
 
-import java.util.logging.Logger;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import java.util.logging.Logger;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;

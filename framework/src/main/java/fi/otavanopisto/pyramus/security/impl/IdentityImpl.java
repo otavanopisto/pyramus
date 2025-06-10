@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.security.impl;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.Identity;

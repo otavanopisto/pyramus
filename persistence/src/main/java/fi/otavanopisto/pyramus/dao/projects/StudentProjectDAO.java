@@ -5,27 +5,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.TSB;
@@ -39,6 +28,15 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Stateless
 public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
@@ -111,7 +109,6 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     return persist(studentProject);
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<StudentProject> searchStudentProjectsBasic(int resultsPerPage, int page, String projectText, String studentText) {
     int firstResult = page * resultsPerPage;
 
@@ -132,10 +129,8 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
       queryBuilder.append(')');
     }
     
-    addTokenizedSearchCriteria(queryBuilder, "student.archived", Boolean.FALSE.toString(), true);
-    
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -149,21 +144,20 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StudentProject.class)
-          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
-
-      query.enableFullTextFilter("ArchivedStudentProject").setParameter("archived", Boolean.FALSE);
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      LuceneSearchResult<StudentProject> fetch = session
+          .search(StudentProject.class)
+          .extension(LuceneExtension.get())
+          .where(f -> 
+            f.bool()
+              .must(f.fromLuceneQuery(luceneQuery))
+              .filter(f.match().field("archived").matching(Boolean.FALSE))
+              .filter(f.match().field("student.archived").matching(Boolean.FALSE))
+          )
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
     }
     catch (ParseException e) {
@@ -171,7 +165,6 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<StudentProject> searchStudentProjects(int resultsPerPage, int page, String name, String tags, String description, String studentName, boolean filterArchived) {
     int firstResult = page * resultsPerPage;
 
@@ -189,7 +182,7 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     addTokenizedSearchCriteria(queryBuilder, "student.archived", Boolean.FALSE.toString(), true);
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -203,24 +196,22 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StudentProject.class)
-          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
+      LuceneSearchResult<StudentProject> fetch = session
+          .search(StudentProject.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      if (filterArchived) {
-        query.enableFullTextFilter("ArchivedStudentProject").setParameter("archived", Boolean.FALSE);
-      }
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+            if (filterArchived) {
+              b.filter(f.match().field("archived").matching(Boolean.FALSE));
+            }
+            b.filter(f.match().field("student.archived").matching(Boolean.FALSE));
+          }))
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
     }
     catch (ParseException e) {

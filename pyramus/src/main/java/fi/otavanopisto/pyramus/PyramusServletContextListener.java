@@ -10,16 +10,18 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.transaction.UserTransaction;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.transaction.UserTransaction;
 
 import fi.internetix.smvc.controllers.RequestController;
 import fi.internetix.smvc.controllers.RequestControllerMapper;
@@ -45,6 +47,7 @@ import fi.otavanopisto.pyramus.webhooks.Webhooks;
  * The application context listener responsible of initialization and finalization of the
  * application.
  */
+@Dependent
 public class PyramusServletContextListener implements ServletContextListener {
   
   @Inject

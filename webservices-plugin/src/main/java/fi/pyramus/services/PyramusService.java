@@ -2,8 +2,8 @@ package fi.pyramus.services;
 
 import java.util.Set;
 
-import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolation;
+import jakarta.persistence.PersistenceException;
+import jakarta.validation.ConstraintViolation;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.SystemDAO;

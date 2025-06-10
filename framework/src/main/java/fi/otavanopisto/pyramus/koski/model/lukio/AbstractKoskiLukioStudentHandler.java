@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.koski.model.lukio;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;

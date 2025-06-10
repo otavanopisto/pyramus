@@ -133,7 +133,7 @@
     <url-pattern>*.ftl</url-pattern>
   </servlet-mapping>
   <listener>
-    <listener-class>freemarker.ext.jsp.EventForwarding</listener-class>
+    <listener-class>freemarker.ext.jakarta.jsp.EventForwarding</listener-class>
   </listener>
   <listener>
     <listener-class>fi.otavanopisto.pyramus.PyramusServletContextListener</listener-class>

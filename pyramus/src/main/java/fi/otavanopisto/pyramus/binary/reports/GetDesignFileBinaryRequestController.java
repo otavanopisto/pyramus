@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.binary.reports;
 
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 

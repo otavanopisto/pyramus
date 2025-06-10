@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Predicate;
 
 public class Predicates {
 

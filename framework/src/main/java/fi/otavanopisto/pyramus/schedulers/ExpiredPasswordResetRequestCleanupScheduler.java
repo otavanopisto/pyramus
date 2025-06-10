@@ -4,10 +4,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.inject.Inject;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 

@@ -5,30 +5,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
@@ -47,6 +33,18 @@ import fi.otavanopisto.pyramus.events.StudentGroupArchivedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 @Stateless
 public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
@@ -196,7 +194,6 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<StudentGroup> searchStudentGroups(int resultsPerPage, int page, Organization organization, String name, 
       String tags, String description, User user, Date timeframeStart, Date timeframeEnd, 
       boolean filterArchived) {
@@ -224,14 +221,6 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
       addTokenizedSearchCriteria(queryBuilder, "description", description, true);
     }
     
-    if (user != null) {
-      addTokenizedSearchCriteria(queryBuilder, "users.staffMember.id", user.getId().toString(), true);
-    }
-    
-    if (organization != null) {
-      addTokenizedSearchCriteria(queryBuilder, "organization.id", organization.getId().toString(), true);
-    }
-    
     if (timeframeS != null && timeframeE != null) {
       /**
        * (beginDate between timeframeStart - timeframeEnd or endDate between timeframeStart -
@@ -253,7 +242,7 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     }
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -267,29 +256,36 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StudentGroup.class)
-          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
+      LuceneSearchResult<StudentGroup> fetch = session
+          .search(StudentGroup.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      if (filterArchived)
-        query.enableFullTextFilter("ArchivedStudentGroup").setParameter("archived", Boolean.FALSE);
+            if (user != null) {
+              b.filter(f.match().field("users.staffMember.id").matching(user.getId()));
+            }
+            
+            if (organization != null) {
+              b.filter(f.match().field("organization.id").matching(organization.getId()));
+            }
+            
+            if (filterArchived) {
+              b.filter(f.match().field("archived").matching(Boolean.FALSE));
+            }
+          }))
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0)
-        pages++;
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     }
     catch (ParseException e) {
       throw new PersistenceException(e);
     }
   }
 
-  @SuppressWarnings("unchecked")
   public SearchResult<StudentGroup> searchStudentGroupsBasic(int resultsPerPage, int page, Organization organization, String text) {
     int firstResult = page * resultsPerPage;
 
@@ -302,12 +298,8 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
       queryBuilder.append(")");
     }
 
-    if (organization != null) {
-      addTokenizedSearchCriteria(queryBuilder, "organization.id", organization.getId().toString(), true);
-    }
-    
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -321,23 +313,24 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StudentGroup.class)
-          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
+      LuceneSearchResult<StudentGroup> fetch = session
+          .search(StudentGroup.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      query.enableFullTextFilter("ArchivedStudentGroup").setParameter("archived", Boolean.FALSE);
+            if (organization != null) {
+              b.filter(f.match().field("organization.id").matching(organization.getId()));
+            }
+            
+            b.filter(f.match().field("archived").matching(Boolean.FALSE));
+          }))
+          .sort(f -> 
+              f.score()
+              .then().field("name_sort"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     }
     catch (ParseException e) {
       throw new PersistenceException(e);

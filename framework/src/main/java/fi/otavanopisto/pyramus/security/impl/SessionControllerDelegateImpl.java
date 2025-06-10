@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.security.impl;
 
 import java.util.Locale;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.security.ContextReference;

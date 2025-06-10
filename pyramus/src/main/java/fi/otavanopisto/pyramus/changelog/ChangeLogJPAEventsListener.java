@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.persistence.metamodel.Attribute;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.persistence.metamodel.Attribute;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;

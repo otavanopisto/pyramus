@@ -1,35 +1,25 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Entity implementation class for Entity: CourseVariable
  *
  */
 @Entity
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedSchoolVariable",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class SchoolVariable implements ArchivableEntity {
 
   public SchoolVariable() {
@@ -112,6 +102,6 @@ public class SchoolVariable implements ArchivableEntity {
   
   @NotNull
   @Column (nullable = false)
-  @Field
+  @GenericField
   private Boolean archived = Boolean.FALSE;
 }

@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.jobs;
 
-import javax.ejb.Schedule;
-import javax.ejb.Stateless;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Stateless;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.drafts.DraftDAO;

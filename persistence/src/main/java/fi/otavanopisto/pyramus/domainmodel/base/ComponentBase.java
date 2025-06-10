@@ -1,25 +1,26 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -79,12 +80,12 @@ public abstract class ComponentBase implements ArchivableEntity {
   @NotNull
   @Column (nullable = false)
   @NotEmpty
-  @Field
+  @FullTextField
   private String name;
 
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Field
+  @FullTextField
   private String description;
   
   @OneToOne (cascade = CascadeType.ALL, orphanRemoval = true)
@@ -93,7 +94,7 @@ public abstract class ComponentBase implements ArchivableEntity {
 
   @NotNull
   @Column(nullable = false)
-  @Field
+  @GenericField
   private Boolean archived = Boolean.FALSE;
 
   @Version

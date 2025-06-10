@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.binary.applications;
 
 import java.util.logging.Logger;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -3,26 +3,24 @@ package fi.otavanopisto.pyramus.domainmodel.help;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Resolution;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.engine.backend.types.Projectable;
 
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
@@ -107,20 +105,18 @@ public class HelpItemTitle {
   @Column (nullable=false)
   @NotNull
   @NotEmpty  
-  @Field
+  @FullTextField
   private String title;
   
   @Column (nullable=false)
   @NotNull
   @Temporal (TemporalType.TIMESTAMP)
-  @Field (analyze = Analyze.NO, store=Store.YES)
-  @DateBridge (resolution=Resolution.MILLISECOND)
+  @GenericField (projectable = Projectable.YES)
   private Date lastModified;
   
   @Column (nullable=false)
   @Temporal (TemporalType.TIMESTAMP)
-  @org.hibernate.search.annotations.Field (analyze = Analyze.NO, store=Store.YES)
-  @DateBridge (resolution=Resolution.MILLISECOND)
+  @GenericField (projectable = Projectable.YES)
   private Date created;
 
   @ManyToOne

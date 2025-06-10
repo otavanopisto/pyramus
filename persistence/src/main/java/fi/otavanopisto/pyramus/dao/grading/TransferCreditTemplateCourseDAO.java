@@ -2,12 +2,12 @@ package fi.otavanopisto.pyramus.dao.grading;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -15,9 +15,10 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -33,7 +34,6 @@ import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 @Stateless
 public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCreditTemplateCourse> {
 
-  @SuppressWarnings("unchecked")
   public SearchResult<TransferCreditTemplateCourse> searchTransferCreditTemplateCoursesBasic(int resultsPerPage, int page, String text) {
     int firstResult = page * resultsPerPage;
 
@@ -46,7 +46,7 @@ public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCr
     }
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       String queryString = queryBuilder.toString();
@@ -58,19 +58,12 @@ public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCr
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, TransferCreditTemplateCourse.class)
-        .setFirstResult(firstResult)
-        .setMaxResults(resultsPerPage);
-
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      LuceneSearchResult<TransferCreditTemplateCourse> fetch = session
+          .search(TransferCreditTemplateCourse.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.fromLuceneQuery(luceneQuery))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
     } catch (ParseException e) {
       throw new PersistenceException(e);

@@ -8,48 +8,37 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PersistenceException;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.EncodingType;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Resolution;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 import fi.otavanopisto.security.ContextReference;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Indexed
 @PrimaryKeyJoinColumn(name="id")
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedCourse",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class Course extends CourseBase implements ArchivableEntity, ContextReference {
 
   public void setModule(Module module) {
@@ -345,27 +334,23 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   @ManyToOne
   private CourseType type;
   
-  @Field
+  @FullTextField
   private String nameExtension;
   
   @Temporal (value=TemporalType.DATE)
-  @Field (analyze = Analyze.NO)
-  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
+  @GenericField
   private Date beginDate;
   
   @Temporal (value=TemporalType.DATE)
-  @Field (analyze = Analyze.NO)
-  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
+  @GenericField
   private Date endDate;
   
   @Temporal (value=TemporalType.DATE)
-  @Field (analyze = Analyze.NO)
-  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
+  @GenericField
   private Date signupStart;
   
   @Temporal (value=TemporalType.DATE)
-  @Field (analyze = Analyze.NO)
-  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
+  @GenericField
   private Date signupEnd;
   
   private Double distanceTeachingDays;
@@ -384,6 +369,7 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="course")
   @IndexedEmbedded
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private List<CourseComponent> courseComponents = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
@@ -405,6 +391,7 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__CourseTags", joinColumns=@JoinColumn(name="course"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<Tag> tags = new HashSet<>();
   
   @Column
@@ -415,6 +402,6 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   
   private Currency courseFeeCurrency;
 
-  @Field (analyze = Analyze.NO)
+  @GenericField
   private boolean courseTemplate;
 }

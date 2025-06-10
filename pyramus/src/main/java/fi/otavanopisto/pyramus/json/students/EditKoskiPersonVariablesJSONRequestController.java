@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.json.students;
 
-import javax.enterprise.inject.spi.CDI;
+import jakarta.enterprise.inject.spi.CDI;
 
 import org.apache.commons.lang.StringUtils;
 

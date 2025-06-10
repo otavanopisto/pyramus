@@ -4,7 +4,7 @@ import java.util.List;
 
 public class SearchResult<E> {
 
-  public SearchResult(int page, int pages, int totalHitCount, int firstResult, int lastResult, List<E> results) {
+  public SearchResult(long page, long pages, long totalHitCount, long firstResult, long lastResult, List<E> results) {
     this.page = page;
     this.pages = pages;
     this.totalHitCount = totalHitCount;
@@ -13,15 +13,15 @@ public class SearchResult<E> {
     this.results = results;
   }
   
-  public int getPage() {
+  public long getPage() {
     return page;
   }
   
-  public int getPages() {
+  public long getPages() {
     return pages;
   }
   
-  public int getTotalHitCount() {
+  public long getTotalHitCount() {
     return totalHitCount;
   }
   
@@ -29,18 +29,18 @@ public class SearchResult<E> {
     return results;
   }
   
-  public int getFirstResult() {
+  public long getFirstResult() {
     return firstResult;
   }
   
-  public int getLastResult() {
+  public long getLastResult() {
     return lastResult;
   }
   
-  private int page;
-  private int pages;
-  private int totalHitCount;
-  private int firstResult;
-  private int lastResult;
+  private long page;
+  private long pages;
+  private long totalHitCount;
+  private long firstResult;
+  private long lastResult;
   private List<E> results;
 }

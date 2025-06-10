@@ -5,23 +5,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaBuilder.In;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -31,6 +24,13 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 @Stateless
 public class ApplicationDAO extends PyramusEntityDAO<Application> {
@@ -68,7 +68,6 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
-  @SuppressWarnings("unchecked")
   public SearchResult<Application> searchApplications(int resultsPerPage, int page, String applicantName, Set<String> lines, ApplicationState state, boolean filterArchived) {
     
     if (lines.isEmpty()) {
@@ -84,10 +83,6 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     }
     queryBuilder.append(")");
     
-    if (state != null) {
-      addTokenizedSearchCriteria(queryBuilder, "state", state.toString(), true);
-    }
-
     if (!StringUtils.isBlank(applicantName)) {
       queryBuilder.append("+(");
       addTokenizedSearchCriteria(queryBuilder, true, applicantName, "firstName", "lastName");
@@ -95,7 +90,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     }
     
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
@@ -109,22 +104,23 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Application.class)
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
+      LuceneSearchResult<Application> fetch = session
+          .search(Application.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.bool().with(b -> {
+            b.must(f.fromLuceneQuery(luceneQuery));
 
-      if (filterArchived) {
-        query.enableFullTextFilter("ArchivedApplication").setParameter("archived", Boolean.FALSE);
-      }
+            if (state != null) {
+              b.filter(f.match().field("state").matching(state));
+            }
 
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0)
-        pages++;
+            if (filterArchived) {
+              b.filter(f.match().field("archived").matching(Boolean.FALSE));
+            }
+          }))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
 
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     }
     catch (ParseException e) {
       throw new PersistenceException(e);

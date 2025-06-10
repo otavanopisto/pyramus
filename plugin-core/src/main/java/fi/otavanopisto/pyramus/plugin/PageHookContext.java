@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.plugin;
 
 import java.util.Map;
 
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 
 public class PageHookContext {

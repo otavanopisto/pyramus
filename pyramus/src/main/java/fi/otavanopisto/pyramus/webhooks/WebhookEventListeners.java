@@ -3,9 +3,9 @@ package fi.otavanopisto.pyramus.webhooks;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
-import javax.inject.Inject;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.TransactionPhase;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;

@@ -4,19 +4,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.hibernate.search.mapper.orm.work.SearchIndexingPlan;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
+import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
 
@@ -24,7 +27,7 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   public List<T> listByArchived(boolean archived, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
-    Query query = entityManager.createQuery("select o from " + genericTypeClass.getName() + " o where archived=:archived");
+    Query query = entityManager.createQuery("select o from " + genericTypeClass.getSimpleName() + " o where archived=:archived");
     query.setParameter("archived", archived);
     
     if (firstResult != null) {
@@ -51,8 +54,10 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   }
   
   public void forceReindex(T o) {
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(getEntityManager());
-    fullTextEntityManager.index(o);
+    EntityManager em = getEntityManager();
+    SearchSession searchSession = Search.session(em); 
+    SearchIndexingPlan indexingPlan = searchSession.indexingPlan(); 
+    indexingPlan.addOrUpdate(o);
   }
 
   protected void addTokenizedSearchCriteria(StringBuilder queryBuilder, String fieldName, String value, boolean required, Float boost) {
@@ -166,6 +171,18 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
         criteriaBuilder.isNotNull(student.get(Student_.studyEndDate)),
         criteriaBuilder.lessThan(student.get(Student_.studyEndDate), studentStudyEndThreshold)
     );
+  }
+  
+  protected <E> SearchResult<E> searchResults(LuceneSearchResult<E> fetch, long page, long firstResult, long resultsPerPage) {
+    long hits = fetch.total().hitCount();
+    long pages = hits / resultsPerPage;
+    if (hits % resultsPerPage > 0) {
+      pages++;
+    }
+
+    long lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
+
+    return new SearchResult<>(page, pages, hits, firstResult, lastResult, fetch.hits());
   }
   
   private static final String DATERANGE_INFINITY_LOW = "00000000";

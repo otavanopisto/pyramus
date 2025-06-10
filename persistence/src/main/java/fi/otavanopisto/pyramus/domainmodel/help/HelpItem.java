@@ -7,36 +7,38 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PersistenceException;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Resolution;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
+import org.hibernate.search.engine.backend.types.Projectable;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -157,7 +159,11 @@ public class HelpItem {
   }
   
   @Transient
-  @Field (analyze = Analyze.NO, store = Store.YES)
+  @KeywordField (projectable = Projectable.YES)
+  @IndexingDependency(derivedFrom = {
+      @ObjectPath({ @PropertyValue(propertyName = "indexColumn") }),
+      @ObjectPath({ @PropertyValue(propertyName = "parent") })
+  })
   public String getRecursiveIndex() {
     String result = StringUtils.leftPad(String.valueOf(getIndexColumn() + 1), 3, '0'); 
     
@@ -190,21 +196,19 @@ public class HelpItem {
   private HelpFolder parent;
   
   @Column (nullable=false)
-  @Field (analyze = Analyze.NO, store = Store.YES)
+  @GenericField (projectable = Projectable.YES)
   @NotNull
   private Integer indexColumn;
   
   @Column (nullable=false)
   @NotNull
   @Temporal (TemporalType.TIMESTAMP)
-  @Field (analyze = Analyze.NO, store=Store.YES)
-  @DateBridge (resolution=Resolution.MILLISECOND)
+  @GenericField (projectable = Projectable.YES)
   private Date lastModified;
   
   @Column (nullable=false)
   @Temporal (TemporalType.TIMESTAMP)
-  @org.hibernate.search.annotations.Field (analyze = Analyze.NO, store=Store.YES)
-  @DateBridge (resolution=Resolution.MILLISECOND)
+  @GenericField (projectable = Projectable.YES)
   private Date created;
 
   @ManyToOne
@@ -222,5 +226,6 @@ public class HelpItem {
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__HelpItemTags", joinColumns=@JoinColumn(name="helpItem"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Set<Tag> tags = new HashSet<>();
 } 

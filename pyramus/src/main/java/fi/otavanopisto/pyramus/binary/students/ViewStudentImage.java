@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.binary.students;
 
 import java.io.IOException;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;

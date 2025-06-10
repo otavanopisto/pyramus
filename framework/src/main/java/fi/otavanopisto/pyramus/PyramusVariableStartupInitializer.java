@@ -1,9 +1,9 @@
 package fi.otavanopisto.pyramus;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 

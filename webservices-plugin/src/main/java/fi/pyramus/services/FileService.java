@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.activation.DataHandler;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;

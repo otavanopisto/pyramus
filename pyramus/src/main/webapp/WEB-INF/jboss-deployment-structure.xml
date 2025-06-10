@@ -4,6 +4,8 @@
       <module name="org.apache.commons.codec" />
       <module name="org.apache.commons.io" />
       <module name="org.apache.httpcomponents" />
+      <module name="org.apache.lucene" />
+      <module name="org.hibernate.search.backend.lucene" />
     </dependencies>
   </deployment>
 </jboss-deployment-structure>

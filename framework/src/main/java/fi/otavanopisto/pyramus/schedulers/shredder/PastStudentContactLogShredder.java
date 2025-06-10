@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 

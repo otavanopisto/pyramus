@@ -1,39 +1,33 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Version;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Indexed
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@FullTextFilterDefs (
-    @FullTextFilterDef (
-       name="ArchivedSubject",
-       impl=ArchivedEntityFilterFactory.class
-    )
-  )
 public class Subject implements ArchivableEntity {
 
   public Long getId() {
@@ -98,23 +92,24 @@ public class Subject implements ArchivableEntity {
   @DocumentId
   private Long id;
 
-  @Field
+  @KeywordField
   private String code;
 
   @NotNull
   @NotEmpty
   @Column (nullable = false)
-  @Field(store=Store.NO)
+  @FullTextField (projectable = Projectable.NO)
   private String name;
   
   @IndexedEmbedded
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn(name="educationType")
   private EducationType educationType;
   
   @NotNull
   @Column(nullable = false)
-  @Field
+  @GenericField
   private Boolean archived = Boolean.FALSE;
 
   @Version

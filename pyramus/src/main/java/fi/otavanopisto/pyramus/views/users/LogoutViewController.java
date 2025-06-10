@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.views.users;
 
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 

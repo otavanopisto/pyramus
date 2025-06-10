@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
-import javax.enterprise.context.RequestScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateful;
+import jakarta.enterprise.context.RequestScoped;
 
 @RequestScoped
 @Stateful

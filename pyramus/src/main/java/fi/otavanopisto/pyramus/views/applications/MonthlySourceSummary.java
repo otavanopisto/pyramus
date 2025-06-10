@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ejb.Schedule;
-import javax.ejb.Stateless;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Stateless;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

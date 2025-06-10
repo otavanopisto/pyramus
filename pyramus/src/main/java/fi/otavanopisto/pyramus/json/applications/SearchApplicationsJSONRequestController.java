@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +77,7 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
     SearchResult<Application> searchResult = applicationDAO.searchApplications(resultsPerPage, page, applicantName, lines, state, Boolean.TRUE);
 
     List<Map<String, Object>> results = new ArrayList<>();
-    List<Application> applications = searchResult.getResults();
+    List<Application> applications = new ArrayList<>(searchResult.getResults());
     
     Collections.sort(applications, new Comparator<Application>() {
       @Override

@@ -2,11 +2,11 @@ package fi.otavanopisto.pyramus.security.impl;
 
 import java.util.Locale;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateful;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;

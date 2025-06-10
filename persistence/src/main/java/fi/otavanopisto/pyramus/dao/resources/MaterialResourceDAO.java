@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.dao.resources;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.resources.MaterialResource;

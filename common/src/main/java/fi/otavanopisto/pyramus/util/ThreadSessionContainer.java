@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.util;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public class ThreadSessionContainer {
 

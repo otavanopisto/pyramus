@@ -1,8 +1,8 @@
 package fi.otavanopisto.pyramus.reports;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 /**
  * The application context listener responsible of initialization and finalization of the

@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.ejb.Schedule;
-import javax.ejb.Stateless;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Stateless;
 
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;

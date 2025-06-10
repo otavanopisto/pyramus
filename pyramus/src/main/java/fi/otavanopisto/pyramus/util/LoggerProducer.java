@@ -2,9 +2,12 @@ package fi.otavanopisto.pyramus.util;
 
 import java.util.logging.Logger;
 
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.InjectionPoint;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class LoggerProducer {
 
   @Produces

@@ -2,21 +2,16 @@ package fi.otavanopisto.pyramus.dao.help;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
+import org.hibernate.search.backend.lucene.LuceneExtension;
+import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -25,11 +20,13 @@ import fi.otavanopisto.pyramus.domainmodel.help.HelpPage;
 import fi.otavanopisto.pyramus.domainmodel.help.HelpPageContent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 
 @Stateless
 public class HelpPageDAO extends PyramusEntityDAO<HelpPage> {
 
-  @SuppressWarnings("unchecked")
   public SearchResult<HelpPage> searchHelpPagesBasic(int resultsPerPage, int page, String text) {
     int firstResult = page * resultsPerPage;
     StringBuilder queryBuilder = new StringBuilder();
@@ -43,7 +40,7 @@ public class HelpPageDAO extends PyramusEntityDAO<HelpPage> {
     }
 
     EntityManager entityManager = getEntityManager();
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+    SearchSession session = Search.session(entityManager);
 
     QueryParser parser = new QueryParser("", new StandardAnalyzer());
     String queryString = queryBuilder.toString();
@@ -56,20 +53,15 @@ public class HelpPageDAO extends PyramusEntityDAO<HelpPage> {
         luceneQuery = parser.parse(queryString);
       }
   
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, HelpPage.class)
-          .setSort(new Sort(new SortField[]{ new SortField("recursiveIndex", SortField.Type.STRING) }))
-          .setFirstResult(firstResult)
-          .setMaxResults(resultsPerPage);
-  
-      int hits = query.getResultSize();
-      int pages = hits / resultsPerPage;
-      if (hits % resultsPerPage > 0) {
-        pages++;
-      }
-  
-      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
-  
-      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      LuceneSearchResult<HelpPage> fetch = session
+          .search(HelpPage.class)
+          .extension(LuceneExtension.get())
+          .where(f -> f.fromLuceneQuery(luceneQuery))
+          .sort(f -> 
+              f.field("recursiveIndex"))
+          .fetch(firstResult, resultsPerPage);
+      return searchResults(fetch, page, firstResult, resultsPerPage);
+      
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
