@@ -184,7 +184,6 @@ public class StudentContactLogEntry implements ArchivableEntity {
   private Student student;
   
   @Lob
-  @Column
   private String text;
   
   @Column (updatable = false)

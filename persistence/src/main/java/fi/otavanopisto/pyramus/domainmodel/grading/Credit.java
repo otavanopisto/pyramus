@@ -113,7 +113,6 @@ public class Credit implements ArchivableEntity {
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String verbalAssessment;
   
   @ManyToOne  

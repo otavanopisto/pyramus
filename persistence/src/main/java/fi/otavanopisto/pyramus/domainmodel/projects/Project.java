@@ -299,7 +299,6 @@ public class Project implements ArchivableEntity {
 
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   @Field
   private String description;
 

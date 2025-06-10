@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.domainmodel.application;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -242,7 +243,7 @@ public class Application implements ArchivableEntity {
   
   @Lob
   @NotNull
-  @Column (nullable=false)
+  @Basic(optional = false)
   @Field
   private String formData;
   

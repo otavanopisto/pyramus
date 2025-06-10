@@ -13,14 +13,11 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Entity
-@Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @PrimaryKeyJoinColumn(name="id")
 public class StudentParent extends User {
 

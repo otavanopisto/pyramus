@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.domainmodel.students;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -58,6 +57,5 @@ public class StudentImage {
   private String contentType;
   
   @Lob
-  @Column
   private byte[] data;
 }

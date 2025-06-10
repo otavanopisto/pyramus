@@ -22,8 +22,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
@@ -34,7 +32,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 
 @Entity
 @Indexed
-@Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @PrimaryKeyJoinColumn(name="id")
 public class StaffMember extends User implements ArchivableEntity {
   

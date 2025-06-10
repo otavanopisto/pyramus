@@ -84,7 +84,6 @@ public abstract class ComponentBase implements ArchivableEntity {
 
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column 
   @Field
   private String description;
   

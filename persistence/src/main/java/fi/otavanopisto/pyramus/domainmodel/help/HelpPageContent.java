@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.domainmodel.help;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -107,7 +108,7 @@ public class HelpPageContent {
   private Locale locale;
   
   @Lob
-  @Column (nullable=false)
+  @Basic(optional = false)
   @NotNull
   @NotEmpty  
   @Field

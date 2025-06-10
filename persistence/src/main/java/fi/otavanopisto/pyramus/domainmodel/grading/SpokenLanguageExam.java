@@ -91,7 +91,6 @@ public class SpokenLanguageExam {
 
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (nullable = true)
   private String verbalAssessment;
   
   @Column(nullable = false)

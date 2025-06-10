@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.application;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -90,7 +91,7 @@ public class ApplicationMailTemplate implements ArchivableEntity {
 
   @Lob
   @NotNull
-  @Column (nullable=false)
+  @Basic(optional = false)
   private String content;
 
   @ManyToOne  
