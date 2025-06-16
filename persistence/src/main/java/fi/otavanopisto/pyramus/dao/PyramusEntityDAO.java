@@ -1,18 +1,15 @@
 package fi.otavanopisto.pyramus.dao;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.hibernate.search.backend.lucene.search.predicate.dsl.LuceneSearchPredicateFactory;
 import org.hibernate.search.backend.lucene.search.query.LuceneSearchResult;
+import org.hibernate.search.engine.search.predicate.dsl.SimpleBooleanPredicateClausesStep;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.hibernate.search.mapper.orm.work.SearchIndexingPlan;
@@ -20,6 +17,11 @@ import org.hibernate.search.mapper.orm.work.SearchIndexingPlan;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
 
@@ -184,6 +186,48 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
 
     return new SearchResult<>(page, pages, hits, firstResult, lastResult, fetch.hits());
   }
+
+  /**
+   * Shortcut to the mess making an or predicate with the native Hibernate.
+   * Turns the Collection into an list of match predicates separated by or.
+   * 
+   * @param f
+   * @param fieldName
+   * @param items
+   * @return
+   */
+  protected SimpleBooleanPredicateClausesStep<?> or(LuceneSearchPredicateFactory f, String fieldName, Collection<?> items) {
+    return f.or().with(or -> {
+      items.forEach(item -> or.add(f.match().field(fieldName).matching(item)));
+    });
+  }
+
+  // Debug use only
+//  @jakarta.persistence.PersistenceUnit(unitName="pyramusManager") org.hibernate.SessionFactory emf;
+//  /**
+//   * Dumps the fields of a Hibernate Search indexed class to system out. 
+//   * Can be used for debug purposes to figure out the indexed fields.
+//
+//   * @param indexClass Class of the entity for which the fields 
+//   */
+//  protected <C> void debugHibernateIndexStructure(Class<C> indexClass) {
+//    org.hibernate.search.mapper.orm.mapping.SearchMapping mapping = Search.mapping(emf);
+//    org.hibernate.search.mapper.orm.entity.SearchIndexedEntity<C> e = mapping.indexedEntity(indexClass);
+//    org.hibernate.search.engine.backend.index.IndexManager man = e.indexManager();
+//    org.hibernate.search.engine.backend.metamodel.IndexDescriptor desc = man.descriptor();
+//    
+//    System.out.println(String.format("=========================================== %s start", indexClass.getSimpleName()));
+//    
+//    desc.staticFields().stream()
+//      .sorted(java.util.Comparator.comparing(org.hibernate.search.engine.backend.metamodel.IndexFieldDescriptor::absolutePath))
+//      .forEach(field -> {
+//        System.out.println(String.format("%s: %s", field.absolutePath(), field.toString()));
+//      }
+//    );
+//    
+//    System.out.println(String.format("=========================================== %s end", indexClass.getSimpleName()));
+//  }
+  // /Debug use only
   
   private static final String DATERANGE_INFINITY_LOW = "00000000";
   private static final String DATERANGE_INFINITY_HIGH = "99999999";

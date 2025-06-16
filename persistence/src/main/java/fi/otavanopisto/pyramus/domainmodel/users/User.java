@@ -147,6 +147,8 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   }
 
   @Transient
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
   public Organization getOrganization() {
     return null;
   }
@@ -203,6 +205,8 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   private Long id; 
   
   @ManyToOne
+  @IndexedEmbedded(includeEmbeddedObjectId = true, includeDepth = 1)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
   private Person person;
   
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

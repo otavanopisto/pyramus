@@ -7,11 +7,9 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
@@ -100,6 +98,7 @@ public class StaffMember extends User implements ArchivableEntity {
 
   private boolean enabled;
   
+  @FullTextField
   private String title;  
   
   // TODO fix the environment to not need EAGER here

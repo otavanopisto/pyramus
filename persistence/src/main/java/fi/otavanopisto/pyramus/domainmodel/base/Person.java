@@ -6,69 +6,55 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
+import org.hibernate.search.engine.backend.types.ObjectStructure;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.TypeBinderRef;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.AssociationInverseSide;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.TypeBinding;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
-
-import fi.otavanopisto.pyramus.domainmodel.base.search.PersonKoskiPersonOIDFieldIndexer;
-import fi.otavanopisto.pyramus.domainmodel.base.search.PersonKoskiStudentOIDFieldIndexer;
+import fi.otavanopisto.pyramus.domainmodel.base.search.PersonKoskiOIDTypeBinder;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.persistence.search.CollectionBridge;
-import fi.otavanopisto.pyramus.persistence.search.filters.StudentIdFilterFactory;
 import fi.otavanopisto.security.ContextReference;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Indexed
-@ClassBridges({
-  @ClassBridge(name = "koskiPersonOID", analyze = Analyze.NO, impl = PersonKoskiPersonOIDFieldIndexer.class),
-  @ClassBridge(name = "koskiStudentOIDs", analyze = Analyze.NO, impl = PersonKoskiStudentOIDFieldIndexer.class)
-})
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="StudentIdFilter",
-     impl=StudentIdFilterFactory.class
-  )
-)
+@TypeBinding(binder = @TypeBinderRef(type = PersonKoskiOIDTypeBinder.class))
 public class Person implements ContextReference {
   
   /**
@@ -157,7 +143,11 @@ public class Person implements ContextReference {
     
     return staffMembers;
   }
-  
+
+  @Transient
+  @IndexedEmbedded(includeEmbeddedObjectId = true, structure = ObjectStructure.NESTED)
+  @AssociationInverseSide(inversePath = @ObjectPath({ @PropertyValue(propertyName = "person")}))
+  @IndexingDependency(derivedFrom = @ObjectPath({ @PropertyValue(propertyName = "users") }))
   public List<Student> getStudents() {
     List<User> users = getUsers();
     List<Student> students = new ArrayList<>();
@@ -213,6 +203,10 @@ public class Person implements ContextReference {
     return basicInfo;
   }
 
+  @Transient
+  @IndexedEmbedded(includeEmbeddedObjectId = true, structure = ObjectStructure.NESTED)
+  @AssociationInverseSide(inversePath = @ObjectPath({ @PropertyValue(propertyName = "person")}))
+  @IndexingDependency(derivedFrom = @ObjectPath({ @PropertyValue(propertyName = "users") }))
   private StaffMember getStaffMember() {
     List<StaffMember> staffMembers = getStaffMembers();
     return !staffMembers.isEmpty() ? staffMembers.get(0) : null;
@@ -244,8 +238,8 @@ public class Person implements ContextReference {
   }
   
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.NO)
-  @SortableField
+  @KeywordField (projectable = Projectable.NO, sortable = Sortable.YES)
+  @IndexingDependency(derivedFrom = @ObjectPath({ @PropertyValue(propertyName = "users") }))
   public String getLastNameSortable() {
     Student student = getLatestStudent();
     StaffMember staffMember = getStaffMember();
@@ -253,118 +247,12 @@ public class Person implements ContextReference {
   }
 
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.NO)
-  @SortableField
+  @KeywordField (projectable = Projectable.NO, sortable = Sortable.YES)
+  @IndexingDependency(derivedFrom = @ObjectPath({ @PropertyValue(propertyName = "users") }))
   public String getFirstNameSortable() {
     Student student = getLatestStudent();
     StaffMember staffMember = getStaffMember();
     return student != null ? student.getFirstName() : staffMember != null ? staffMember.getFirstName() : "";
-  }
-
-  @Transient
-  @Field
-  public String getInactiveFirstNames() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getFirstName() != null) {
-          results.add(student.getFirstName());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveLastNames() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getLastName() != null) {
-          results.add(student.getLastName());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveNicknames() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getNickname() != null) {
-          results.add(student.getNickname());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveEducations() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getEducation() != null) {
-          results.add(student.getEducation());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field(analyze = Analyze.NO)
-  @FieldBridge(impl = CollectionBridge.class)
-  public Set<String> getInactiveEmails() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        for (Email email : student.getContactInfo().getEmails()) {
-          if (email.getAddress() != null) {
-            results.add(email.getAddress());
-          }
-        }
-      }
-    }
-    
-    return results;
-  }
-
-  @Transient
-  @Field
-  public String getInactiveStreetAddresses() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getStreetAddress() != null) {
-            results.add(address.getStreetAddress());
-          }
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactivePostalCodes() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getPostalCode() != null) {
-            results.add(address.getPostalCode());
-          }
-        }
-      }
-    }
-    return setToString(results);
   }
 
   /**
@@ -374,222 +262,17 @@ public class Person implements ContextReference {
    * @return <code>true</code> if this abstract student contains at least one inactive student, otherwise <code>false</code>
    */
   @Transient
-  @Field
-  public String getInactive() {
-    String result = Boolean.FALSE.toString();
+  @GenericField
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
+  public boolean getInactive() {
+    boolean result = false;
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
-        result = Boolean.TRUE.toString();
+        result = true;
         break;
       }
     }
     return result;
-  }
-
-  @Transient
-  @Field
-  public String getInactiveCities() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getCity() != null) {
-            results.add(address.getCity());
-          }
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveCountries() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getCountry() != null) {
-            results.add(address.getCountry());
-          }
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactivePhones() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        for (PhoneNumber phoneNumber : student.getContactInfo().getPhoneNumbers()) {
-          results.add(phoneNumber.getNumber());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveStudyProgrammeIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getStudyProgramme() != null)
-          results.add(student.getStudyProgramme().getId().toString());
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveLanguageIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getLanguage() != null)
-          results.add(student.getLanguage().getId().toString());
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveMunicipalityIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getMunicipality() != null)
-          results.add(student.getMunicipality().getId().toString());
-      }
-    }
-    return results.toString();
-  }
-
-  @Transient
-  @Field
-  public String getInactiveNationalityIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getNationality() != null)
-          results.add(student.getNationality().getId().toString());
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveFirstNames() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getFirstName() != null) {
-          results.add(student.getFirstName());
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveLastNames() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getLastName() != null) {
-          results.add(student.getLastName());
-        }
-      }
-    }
-    
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveNicknames() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getNickname() != null) {
-          results.add(student.getNickname());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveEducations() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getEducation() != null) {
-          results.add(student.getEducation());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field(analyze = Analyze.NO)
-  @FieldBridge(impl = CollectionBridge.class)
-  public Set<String> getActiveEmails() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        for (Email email : student.getContactInfo().getEmails()) {
-          if (email.getAddress() != null) {
-            results.add(email.getAddress());
-          }
-        }
-      }
-    }
-    
-    return results;
-  }
-
-  @Transient
-  @Field
-  public String getActiveStreetAddresses() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getStreetAddress() != null) {
-            results.add(address.getStreetAddress());
-          }
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActivePostalCodes() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getPostalCode() != null) {
-            results.add(address.getPostalCode());
-          }
-        }
-      }
-    }
-    return setToString(results);
   }
 
   /**
@@ -599,8 +282,8 @@ public class Person implements ContextReference {
    * @return <code>true</code> if this abstract student contains at least one active student, otherwise <code>false</code>
    */
   @Transient
-  @SortableField
-  @Field(analyze = Analyze.NO, store = Store.NO)
+  @KeywordField (projectable = Projectable.NO, sortable = Sortable.YES)
+  @IndexingDependency(derivedFrom = @ObjectPath({ @PropertyValue(propertyName = "users") }))
   public String getActive() {
     return Boolean.toString(hasActiveStudents());
   }
@@ -632,388 +315,12 @@ public class Person implements ContextReference {
 
   // TODO: Naming conventions pls
   @Transient
-  @Field
-  public String getStaff() {
+  @GenericField
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
+  public Boolean getStaff() {
     StaffMember staffMember = getStaffMember();
 
-    return Boolean.valueOf(staffMember != null).toString();
-  }
-
-  @Transient
-  @Field
-  public String getActiveCities() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getCity() != null) {
-            results.add(address.getCity());
-          }
-        }
-      }
-    }
-    
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveCountries() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        for (Address address : student.getContactInfo().getAddresses()) {
-          if (address.getCountry() != null) {
-            results.add(address.getCountry());
-          }
-        }
-      }
-    }
-    
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActivePhones() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        for (PhoneNumber phoneNumber : student.getContactInfo().getPhoneNumbers()) {
-          results.add(phoneNumber.getNumber());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveStudyProgrammeIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getStudyProgramme() != null)
-          results.add(student.getStudyProgramme().getId().toString());
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveLanguageIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getLanguage() != null)
-          results.add(student.getLanguage().getId().toString());
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveMunicipalityIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getMunicipality() != null)
-          results.add(student.getMunicipality().getId().toString());
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveNationalityIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getNationality() != null)
-          results.add(student.getNationality().getId().toString());
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getInactiveOrganizationIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getStudyProgramme() != null && student.getStudyProgramme().getOrganization() != null) {
-          results.add(student.getStudyProgramme().getOrganization().getId().toString());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveOrganizationIds() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getStudyProgramme() != null && student.getStudyProgramme().getOrganization() != null) {
-          results.add(student.getStudyProgramme().getOrganization().getId().toString());
-        }
-      }
-    }
-    return setToString(results);
-  }
-  
-  @Transient
-  @Field
-  public String getActiveTags() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        for (Tag tag : student.getTags()) {
-          results.add(tag.getText());
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  /**
-   * Returns whether this abstract student contains at least one student who has got his/her
-   * study end date set or it has been set but it is in the future.
-   *  
-   * @return <code>true</code> if this abstract student contains at least one active student, otherwise <code>false</code>
-   */
-  @Transient
-  @Field
-  public String getInactiveTags() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        for (Tag tag : student.getTags()) {
-          results.add(tag.getText());
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberOrganizations() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      Organization organization = staffMember.getOrganization(); 
-      
-      if (organization != null) {
-        results.add(organization.getId().toString());
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberFirstNames() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      String s = staffMember.getFirstName(); 
-      
-      if (s != null) {
-        results.add(s);
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberLastNames() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      String s = staffMember.getLastName(); 
-      
-      if (s != null) {
-        results.add(s);
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field(analyze = Analyze.NO)
-  @FieldBridge(impl = CollectionBridge.class)
-  public Set<String> getStaffMemberEmails() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      
-      for (Email email : staffMember.getContactInfo().getEmails()) {
-        String s = email.getAddress(); 
-        
-        if (s != null) {
-          results.add(s);
-        }
-      }
-    }
-
-    return results;
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberTitles() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      String s = staffMember.getTitle(); 
-      
-      if (s != null) {
-        results.add(s);
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberRoles() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      Set<Role> roles = staffMember.getRoles();
-      if (roles != null) {
-        roles.forEach(role -> {
-          String s = role.toString();
-          
-          if (s != null) {
-            results.add(s);
-          }
-        });
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberTags() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      for (Tag tag : staffMember.getTags()) {
-        String s = tag.getText();
-        
-        if (s != null) {
-          results.add(s);
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-  
-  @Transient
-  @Field
-  public String getStaffMemberPhones() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      for (PhoneNumber number : staffMember.getContactInfo().getPhoneNumbers()) {
-        String s = number.getNumber(); 
-        
-        if (s != null) {
-          results.add(s);
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberStreetAddresses() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      for (Address address : staffMember.getContactInfo().getAddresses()) {
-        String s = address.getStreetAddress(); 
-        
-        if (s != null) {
-          results.add(s);
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberPostalCodes() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      for (Address address : staffMember.getContactInfo().getAddresses()) {
-        String s = address.getPostalCode(); 
-        
-        if (s != null) {
-          results.add(s);
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberCities() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      for (Address address : staffMember.getContactInfo().getAddresses()) {
-        String s = address.getCity(); 
-        
-        if (s != null) {
-          results.add(s);
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getStaffMemberCountries() {
-    Set<String> results = new HashSet<>();
-    for (StaffMember staffMember : getStaffMembers()) {
-      for (Address address : staffMember.getContactInfo().getAddresses()) {
-        String s = address.getCountry(); 
-        
-        if (s != null) {
-          results.add(s);
-        }
-      }
-    }
-
-    return setToString(results);
-  }
-
-  private String setToString(Set<String> set) {
-    StringBuilder sb = new StringBuilder();
-    Iterator<String> i = set.iterator();
-    while (i.hasNext()) {
-      sb.append(i.next());
-      if (i.hasNext()) {
-        sb.append(' ');
-      }
-    }
-    return sb.toString();
+    return Boolean.valueOf(staffMember != null);
   }
 
   public Boolean getSecureInfo() {
@@ -1056,17 +363,17 @@ public class Person implements ContextReference {
   private Date birthday;
 
   @Column
-  @Field(store = Store.NO)
+  @KeywordField(projectable = Projectable.NO)
   private String socialSecurityNumber;
 
   @Column
   @Enumerated (EnumType.STRING)
-  @Field(store = Store.NO)
+  @GenericField(projectable = Projectable.NO)
   private Sex sex;
 
   @NotNull
   @Column (nullable = false)
-  @Field
+  @GenericField
   private Boolean secureInfo = Boolean.FALSE;
 
   @Lob
@@ -1075,7 +382,6 @@ public class Person implements ContextReference {
 
   @OneToMany
   @JoinColumn(name = "person_id")
-  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private List<User> users = new ArrayList<>();
   
   @OneToOne

@@ -4,10 +4,15 @@ import java.util.Date;
 import java.util.Set;
 
 import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.TypeBinderRef;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.TypeBinding;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -17,6 +22,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.base.search.StudentKoskiOIDTypeBinder;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -44,6 +50,7 @@ import jakarta.persistence.Transient;
         @Index(name = "IDXngi0qhp83ytohmc24btun6g24", columnList = "studyEndDate")
     }
 )
+@TypeBinding(binder = @TypeBinderRef(type = StudentKoskiOIDTypeBinder.class))
 public class Student extends User implements ArchivableEntity {
 
   /**
@@ -193,6 +200,11 @@ public class Student extends User implements ArchivableEntity {
   }
   
   @Transient
+  @GenericField
+  @IndexingDependency(derivedFrom = {
+      @ObjectPath(@PropertyValue(propertyName = "studyStartDate")),
+      @ObjectPath(@PropertyValue(propertyName = "studyEndDate"))
+  })
   public boolean getActive() {
     return getHasStartedStudies() && !getHasFinishedStudies();
   }
@@ -298,6 +310,7 @@ public class Student extends User implements ArchivableEntity {
     this.parentBillingDetails = parentBillingDetails;
   }
 
+  @FullTextField
   private String nickname;
     
   @Lob
@@ -306,19 +319,25 @@ public class Student extends User implements ArchivableEntity {
   
   @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "nationality")
+  @IndexedEmbedded(includeEmbeddedObjectId = true, includePaths = { "id" })
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Nationality nationality;
 
   @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "language")
+  @IndexedEmbedded(includeEmbeddedObjectId = true, includePaths = { "id" })
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Language language;
 
   @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "municipality")
+  @IndexedEmbedded(includeEmbeddedObjectId = true, includePaths = { "id" })
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private Municipality municipality;
 
   @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "school")
-  @IndexedEmbedded (includeDepth = 1)
+  @IndexedEmbedded (includeEmbeddedObjectId = true, includeDepth = 1)
   @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private School school;
   
@@ -339,10 +358,13 @@ public class Student extends User implements ArchivableEntity {
   
   @ManyToOne  
   @JoinColumn(name="studyProgramme")
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private StudyProgramme studyProgramme;
 
   private Double previousStudies; 
   
+  @FullTextField
   private String education;
   
   @Temporal (value=TemporalType.DATE)
@@ -354,7 +376,8 @@ public class Student extends User implements ArchivableEntity {
   
   @ManyToOne (fetch = FetchType.LAZY)
   @JoinColumn (name = "studyEndReason")
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
+  @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
   private StudentStudyEndReason studyEndReason;
   
   @Basic (fetch = FetchType.LAZY)
