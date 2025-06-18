@@ -84,24 +84,30 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
         hasEveryonePermission(permission, contextReference);
 
     PyramusPermissionCollection collection = findCollection(permission.getName());
-    try {
-      PermissionFeature[] features = collection.listPermissionFeatures(permission.getName());
-      if (features != null) {
-        for (PermissionFeature feature : features) {
-          Instance<PermissionFeatureHandler> instance = featureHandlers.select(new PermissionFeatureLiteral(feature.value()));
-          if (!instance.isUnsatisfied()) {
-            PermissionFeatureHandler permissionFeatureHandler = instance.get();
-            allowed = permissionFeatureHandler.hasPermission(permission.getName(), userEntity, contextReference, allowed);
-            // With multiple features, allow when at least one of them is satisfied
-            if (allowed) {
-              break;
-            }
-          } else
-            logger.log(Level.SEVERE, String.format("Unsatisfied permission feature %s", feature.value()));
+    if (collection != null) {
+      try {
+        PermissionFeature[] features = collection.listPermissionFeatures(permission.getName());
+        if (features != null) {
+          for (PermissionFeature feature : features) {
+            Instance<PermissionFeatureHandler> instance = featureHandlers.select(new PermissionFeatureLiteral(feature.value()));
+            if (!instance.isUnsatisfied()) {
+              PermissionFeatureHandler permissionFeatureHandler = instance.get();
+              allowed = permissionFeatureHandler.hasPermission(permission.getName(), userEntity, contextReference, allowed);
+              // With multiple features, allow when at least one of them is satisfied
+              if (allowed) {
+                break;
+              }
+            } else
+              logger.log(Level.SEVERE, String.format("Unsatisfied permission feature %s", feature.value()));
+          }
         }
+      } catch (Exception e) {
+        logger.log(Level.SEVERE, String.format("Could not list permission features for permission %s", permission.getName()), e);
       }
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, String.format("Could not list permission features for permission %s", permission), e);
+    }
+    else {
+      logger.log(Level.SEVERE, String.format("Could not list permission features for permission %s because the collection wasn't found. Make sure the collection containing the permission is CDI bean.", permission.getName()));
+      return false;
     }
     
     return allowed;

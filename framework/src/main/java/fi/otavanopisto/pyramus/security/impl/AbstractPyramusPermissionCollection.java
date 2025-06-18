@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.security.impl;
 
 import fi.otavanopisto.security.AbstractPermissionCollection;
 
-public class AbstractPyramusPermissionCollection extends AbstractPermissionCollection {
+public abstract class AbstractPyramusPermissionCollection extends AbstractPermissionCollection {
   
   public static final String EVERYONE = "EVERYONE";
 
