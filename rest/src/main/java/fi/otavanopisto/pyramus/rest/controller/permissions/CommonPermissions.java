@@ -9,7 +9,9 @@ import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class CommonPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   /**

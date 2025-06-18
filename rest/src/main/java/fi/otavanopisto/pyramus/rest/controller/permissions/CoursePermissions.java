@@ -10,7 +10,9 @@ import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionFeatures;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class CoursePermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
