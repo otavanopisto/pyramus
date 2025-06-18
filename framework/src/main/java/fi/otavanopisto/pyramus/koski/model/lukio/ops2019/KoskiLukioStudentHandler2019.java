@@ -8,8 +8,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jakarta.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -28,7 +26,10 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler2019 {
 
   public static final String USERVARIABLE_UNDER18START = KoskiConsts.UserVariables.STARTED_UNDER18;

@@ -2,8 +2,6 @@ package fi.otavanopisto.pyramus.koski.model.lukio;
 
 import java.util.Set;
 
-import jakarta.inject.Inject;
-
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
@@ -11,7 +9,10 @@ import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.KoskiLukioStudentHandler2019;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class KoskiLukioStudentHandlerDelegator extends KoskiStudentHandler {
 
   @Inject

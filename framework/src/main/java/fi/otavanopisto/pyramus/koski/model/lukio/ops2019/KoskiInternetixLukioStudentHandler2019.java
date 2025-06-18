@@ -22,10 +22,12 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.internetix.OpiskeluoikeusInternetix;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Käsittelijä 2019 (2021) lukion opetussuunnitelman aineopiskelijoille.
  */
+@ApplicationScoped
 public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler2019 {
 
   public static final String USERVARIABLE_UNDER18START = KoskiConsts.UserVariables.STARTED_UNDER18;
