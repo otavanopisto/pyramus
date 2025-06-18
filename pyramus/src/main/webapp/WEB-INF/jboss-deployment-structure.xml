@@ -1,6 +1,17 @@
-<jboss-deployment-structure>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
   <deployment>
+    <exclusions>
+      <module name="org.apache.cxf" />
+    </exclusions>
+    <exclude-subsystems>
+      <subsystem name="cxf"/>
+<!--       <subsystem name="jaxrs"/> -->
+    </exclude-subsystems>
     <dependencies>
+<!--       <module name="org.apache.cxf.impl" export="true"/> -->
+<!--       <module name="org.apache.cxf.impl"/> -->
+      
+      
       <module name="org.apache.commons.codec" />
       <module name="org.apache.commons.io" />
       <module name="org.apache.httpcomponents" />
