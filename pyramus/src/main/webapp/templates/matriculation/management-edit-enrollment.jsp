@@ -319,7 +319,10 @@
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
 
     <h1 class="genericPageHeader">
-      Muokkaa YO-ilmoittautumisia
+      <c:choose>
+        <c:when test="${formMode == 'NEW'}">Uusi YO-ilmoittautuminen</c:when>
+        <c:otherwise>Muokkaa YO-ilmoittautumista</c:otherwise>
+      </c:choose>
       <a href="${pageContext.request.contextPath}/students/viewstudent.page?person=${enrollment.student.person.id}" class="pyramusViewLink pyramusViewLinkEye">Siirry opiskelijan tietoihin</a>
     </h1>
     
@@ -400,7 +403,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.name"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.name.help"/>
                 </jsp:include>            
-                ${fn:escapeXml(name)}
+                ${fn:escapeXml(student.fullName)}
               </div>
   
               <div class="genericFormSection">  
@@ -408,45 +411,27 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.email"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.email.help"/>
                 </jsp:include>            
-                ${fn:escapeXml(email)}
+                ${fn:escapeXml(student.primaryEmail.address)}
               </div>
   
-              <div class="genericFormSection">  
+              <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.phone"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.phone.help"/>
-                </jsp:include>            
-                ${fn:escapeXml(phone)}
+                </jsp:include>
+                ${fn:escapeXml(student.primaryPhoneNumber.number)}
               </div>
             </div>
-
+              
             <div class="genericViewInfoWapper">
-              <div class="genericFormSection">
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.degreeStructure"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.degreeStructure.help"/>
-                </jsp:include>            
-                <select class="required" name="degreeStructure">
-                  <option></option>
-                  <option ${degreeStructure=='PRE2022' ? 'selected="selected"' : ''} value="PRE2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.PRE2022"/></option>
-                  <option ${degreeStructure=='POST2022' ? 'selected="selected"' : ''} value="POST2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.POST2022"/></option>
-                </select>
-              </div>
-
-              <div class="genericFormSection">
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.nationalStudentNumber.help"/>
-                </jsp:include>            
-                <input type="text" name="nationalStudentNumber" value="${fn:escapeXml(nationalStudentNumber)}">
-              </div>
-  
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.guidanceCounselor"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.guidanceCounselor.help"/>
-                </jsp:include>            
-                <input type="text" name="guidanceCounselor" value="${fn:escapeXml(guidanceCounselor)}" size="40"/>
+                </jsp:include>
+                <c:forEach var="groupAdvisor" items="${groupAdvisors}">
+                  <div>${fn:escapeXml(groupAdvisor.staffMember.fullName)}</div>
+                </c:forEach>
               </div>
   
               <div class="genericFormSection">
@@ -459,16 +444,88 @@
                   <div>${fn:escapeXml(studyAdvisor.staffMember.fullName)}</div>
                 </c:forEach>
               </div>
+            </div>
+
+            <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.newEnrollmentExam"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.newEnrollmentExam.help"/>
+                </jsp:include>
+                <c:choose>
+                  <c:when test="${formMode eq 'NEW'}">
+                    <select class="required" name="examId">
+                      <option></option>
+                      <c:forEach var="exam" items="${exams}">
+                        <c:choose>
+                          <c:when test="${exam.exam.examTerm == 'SPRING'}">
+                            <c:set var="examTermText"><fmt:message key="terms.seasons.spring" /></c:set>
+                          </c:when>
+                          <c:when test="${exam.exam.examTerm == 'AUTUMN'}">
+                            <c:set var="examTermText"><fmt:message key="terms.seasons.autumn" /></c:set>
+                          </c:when>
+                          <c:otherwise>
+                            <c:set var="examTermText"></c:set>
+                          </c:otherwise>
+                        </c:choose>
+                        <option ${!empty exam.enrollment ? 'disabled="disabled"' : ''} value="${exam.exam.id}">
+                          ${exam.exam.examYear} ${examTermText}
+                          <c:if test="${!empty exam.enrollment}">
+                            (<fmt:message key="matriculation.editEnrollment.newEnrollmentExamEnrollmentDate"/> <fmt:formatDate value="${exam.enrollment.enrollmentDate}" />)
+                          </c:if>
+                        </option>
+                      </c:forEach>
+                    </select>
+                  </c:when>
+                  <c:otherwise>
+                    <c:choose>
+                      <c:when test="${enrollment.exam.examTerm == 'SPRING'}">
+                        <c:set var="examTermText"><fmt:message key="terms.seasons.spring" /></c:set>
+                      </c:when>
+                      <c:when test="${enrollment.exam.examTerm == 'AUTUMN'}">
+                        <c:set var="examTermText"><fmt:message key="terms.seasons.autumn" /></c:set>
+                      </c:when>
+                      <c:otherwise>
+                        <c:set var="examTermText"></c:set>
+                      </c:otherwise>
+                    </c:choose>
+                    ${enrollment.exam.examYear} ${examTermText}
+                  </c:otherwise>
+                </c:choose>
+              </div>
+
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.nationalStudentNumber.help"/>
+                </jsp:include>            
+                <input type="text" name="nationalStudentNumber" value="${fn:escapeXml(enrollment.nationalStudentNumber)}">
+              </div>
   
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.degreeStructure"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.degreeStructure.help"/>
+                </jsp:include>            
+                <select class="required" name="degreeStructure">
+                  <option></option>
+                  <option ${enrollment.degreeStructure=='PRE2022' ? 'selected="selected"' : ''} value="PRE2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.PRE2022"/></option>
+                  <option ${enrollment.degreeStructure=='POST2022' ? 'selected="selected"' : ''} value="POST2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.POST2022"/></option>
+                </select>
+              </div>
+
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollAs"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollAs.help"/>
                 </jsp:include>            
                 <select class="required" name="enrollAs">
-                  <option ${enrollAs=='UPPERSECONDARY' ? 'selected="selected"' : ''} value="UPPERSECONDARY">Lukio-opinnot</option>
-                  <option ${enrollAs=='VOCATIONAL' ? 'selected="selected"' : ''} value="VOCATIONAL">Ammatilliset opinnot</option>
-                  <option ${enrollAs=='UNKNOWN' ? 'selected="selected"' : ''} value="UNKNOWN">Muu tausta</option>
+                  <c:if test="${formMode == 'NEW'}">
+                    <option></option>
+                  </c:if>
+                  <option ${enrollment.enrollAs=='UPPERSECONDARY' ? 'selected="selected"' : ''} value="UPPERSECONDARY">Lukio-opinnot</option>
+                  <option ${enrollment.enrollAs=='VOCATIONAL' ? 'selected="selected"' : ''} value="VOCATIONAL">Ammatilliset opinnot</option>
+                  <option ${enrollment.enrollAs=='UNKNOWN' ? 'selected="selected"' : ''} value="UNKNOWN">Muu tausta</option>
                 </select>
               </div>
   
@@ -494,6 +551,9 @@
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.degreeType.help"/>
                 </jsp:include>            
                 <select class="required" name="degreeType">
+                  <c:if test="${formMode == 'NEW'}">
+                    <option></option>
+                  </c:if>
                   <option ${enrollment.degreeType=='MATRICULATIONEXAMINATION' ? 'selected="selected"' : ''} value="MATRICULATIONEXAMINATION">Yo-tutkinto</option>
                   <option ${enrollment.degreeType=='MATRICULATIONEXAMINATIONSUPPLEMENT' ? 'selected="selected"' : ''} value="MATRICULATIONEXAMINATIONSUPPLEMENT">Tutkinnon korottaja tai täydentäjä</option>
                   <option ${enrollment.degreeType=='SEPARATEEXAM' ? 'selected="selected"' : ''} value="SEPARATEEXAM">Erillinen koe (ilman yo-tutkintoa)</option>
@@ -505,7 +565,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.location"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.location.help"/>
                 </jsp:include>            
-                <input type="text" name="location" value="${fn:escapeXml(location)}">
+                <input type="text" name="location" value="${fn:escapeXml(enrollment.location)}">
               </div>
   
               <div class="genericFormSection">
@@ -521,7 +581,7 @@
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.message"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.message.help"/>
                 </jsp:include>            
-                <textarea name="message" cols="80" rows="8">${fn:escapeXml(message)}</textarea>
+                <textarea name="message" cols="80" rows="8">${fn:escapeXml(enrollment.message)}</textarea>
               </div>
   
               <div class="genericFormSection">
@@ -579,6 +639,7 @@
                   <option ${state=='APPROVED' ? 'selected="selected"' : ''} ${!allowedStates.contains('APPROVED') ? 'disabled="disabled"' : ''} value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
                   <option ${state=='REJECTED' ? 'selected="selected"' : ''} ${!allowedStates.contains('REJECTED') ? 'disabled="disabled"' : ''} value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
                   <option ${state=='CONFIRMED' ? 'selected="selected"' : ''} ${!allowedStates.contains('CONFIRMED') ? 'disabled="disabled"' : ''} value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/></option>
+                  <option ${state=='FILLED_ON_BEHALF' ? 'selected="selected"' : ''} ${!allowedStates.contains('FILLED_ON_BEHALF') ? 'disabled="disabled"' : ''} value="FILLED_ON_BEHALF"><fmt:message key="generic.matriculation.enrollmentStates.FILLED_ON_BEHALF"/></option>
                 </select>
               </div>
 

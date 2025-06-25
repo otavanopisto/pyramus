@@ -296,6 +296,8 @@ public class MatriculationEligibilityController {
         return MatriculationExamStudentStatus.REJECTED;
       case CONFIRMED:
         return MatriculationExamStudentStatus.CONFIRMED;
+      case FILLED_ON_BEHALF:
+        return MatriculationExamStudentStatus.FILLED_ON_BEHALF;
       default:
         throw new IllegalArgumentException();
     }
@@ -315,6 +317,8 @@ public class MatriculationEligibilityController {
         return MatriculationExamEnrollmentState.REJECTED;
       case CONFIRMED:
         return MatriculationExamEnrollmentState.CONFIRMED;
+      case FILLED_ON_BEHALF:
+        return MatriculationExamEnrollmentState.FILLED_ON_BEHALF;
       case ELIGIBLE:
       case NOT_ELIGIBLE:
       default:

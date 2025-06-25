@@ -43,7 +43,7 @@
                 results[i].email,
                 results[i].state,
                 results[i].numMandatoryCourses,
-                results[i].guider,
+                results[i].guiders,
                 results[i].handler,
                 '']);
             }
@@ -104,7 +104,8 @@
               { text: getLocale().getText("generic.matriculation.enrollmentStates.SUPPLEMENTED"), value: "SUPPLEMENTED" },
               { text: getLocale().getText("generic.matriculation.enrollmentStates.APPROVED"), value: "APPROVED" },
               { text: getLocale().getText("generic.matriculation.enrollmentStates.REJECTED"), value: "REJECTED" },
-              { text: getLocale().getText("generic.matriculation.enrollmentStates.CONFIRMED"), value: "CONFIRMED" }
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.CONFIRMED"), value: "CONFIRMED" },
+              { text: getLocale().getText("generic.matriculation.enrollmentStates.FILLED_ON_BEHALF"), value: "FILLED_ON_BEHALF" }
             ]
           }, {
             header : 'Pakollisia opintoja',
@@ -114,7 +115,7 @@
             editable: false,
             paramName: 'numMandatoryCourses'
           }, {
-            header : 'Ohjaaja',
+            header : 'Ryhmäohjaaja(t)',
             width: 200,
             left: 8 + 300 + 8 + 250 + 8 + 150 + 8 + 130,
             dataType : 'text',

@@ -2,7 +2,9 @@ package fi.otavanopisto.pyramus.views.matriculation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +20,10 @@ import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
@@ -29,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnroll
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -60,49 +65,83 @@ public class EditEnrollmentViewController extends PyramusViewController {
   
   private void doPost(PageRequestContext pageRequestContext) {
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-edit-enrollment.jsp");
-    Long id = pageRequestContext.getLong("enrollment");
-    if (id == null) {
-      pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
-      return;
-    }
+
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    MatriculationExamDAO examDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     MatriculationExamEnrollmentChangeLogDAO matriculationExamEnrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
-    MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
-    if (enrollment == null) {
-      pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
-      return;
-    }
-    
+
     StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
-    EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
 
     MatriculationExamEnrollmentState enrollmentState = MatriculationExamEnrollmentState.valueOf(
         pageRequestContext.getString("state"));
     
-    if (!allowedStates.contains(enrollmentState)) {
-      pageRequestContext.addMessage(Severity.ERROR, "Cannot change state to the requested one");
-      return;
+    Long enrollmentId = pageRequestContext.getLong("enrollment");
+    MatriculationExamEnrollment enrollment = enrollmentId != null ? enrollmentDAO.findById(enrollmentId) : null;
+    if (enrollment != null) {
+      // Edit existing enrollment
+
+      EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
+
+      if (!allowedStates.contains(enrollmentState)) {
+        pageRequestContext.addMessage(Severity.ERROR, "Cannot change state to the requested one");
+        return;
+      }
+      
+      enrollment = enrollmentDAO.update(
+          enrollment,
+          SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
+          DegreeType.valueOf(pageRequestContext.getString("degreeType")),
+          ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),
+          pageRequestContext.getBoolean("restartExam"),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("location"), ""),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("contactInfoChange"), ""),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
+          pageRequestContext.getBoolean("canPublishName"),
+          enrollment.getStudent(),
+          MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure"))
+      );
     }
+    else {
+      // Create new enrollment
+      
+      Long studentId = pageRequestContext.getLong("student");
+      Student student = studentId != null ? studentDAO.findById(studentId) : null;
+      if (student == null) {
+        pageRequestContext.addMessage(Severity.ERROR, "Student not found");
+        return;
+      }
+      
+      Long examId = pageRequestContext.getLong("examId");
+      MatriculationExam exam = examId != null ? examDAO.findById(examId) : null;
+      if (exam == null) {
+        pageRequestContext.addMessage(Severity.ERROR, "Exam not found");
+        return;
+      }
+      
+      enrollment = enrollmentDAO.create(
+          exam,
+          pageRequestContext.getLong("nationalStudentNumber"),
+          SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
+          DegreeType.valueOf(pageRequestContext.getString("degreeType")),
+          ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),
+          pageRequestContext.getBoolean("restartExam"),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("location"), ""),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("contactInfoChange"), ""),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
+          pageRequestContext.getBoolean("canPublishName"),
+          student,
+          enrollmentState,
+          MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
+          new Date()
+      );
+    }
+    
 
     MatriculationExamEnrollmentChangeLogType changeLogChangeType = MatriculationExamEnrollmentChangeLogType.ENROLLMENT_UPDATED;
     MatriculationExamEnrollmentState changeLogNewState = null;
-
-    enrollment = enrollmentDAO.update(
-      enrollment,
-      ObjectUtils.firstNonNull(pageRequestContext.getString("guidanceCounselor"), ""),
-      SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
-      DegreeType.valueOf(pageRequestContext.getString("degreeType")),
-      ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),
-      pageRequestContext.getBoolean("restartExam"),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("location"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("contactInfoChange"), ""),
-      ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
-      pageRequestContext.getBoolean("canPublishName"),
-      enrollment.getStudent(),
-      MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure"))
-    );
 
     if (enrollmentState != enrollment.getState()) {
       changeLogNewState = enrollmentState;
@@ -203,7 +242,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       }
     }
     
-    pageRequestContext.setRedirectURL(pageRequestContext.getRequest().getRequestURI() + "?enrollment=" + id);
+    pageRequestContext.setRedirectURL(pageRequestContext.getRequest().getRequestURI() + "?enrollment=" + enrollment.getId());
   }
 
   private MatriculationExamAttendanceFunding parseFunding(String value) {
@@ -223,27 +262,59 @@ public class EditEnrollmentViewController extends PyramusViewController {
   private void doGet(PageRequestContext pageRequestContext) {
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-edit-enrollment.jsp");
 
-    Long id = pageRequestContext.getLong("enrollment");
-    if (id == null) {
-      pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
-      return;
-    }
+    MatriculationExamDAO examDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamEnrollmentChangeLogDAO enrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
 
-    MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
-    if (enrollment == null) {
-      pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
-      return;
+    StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+
+    String formMode;
+    Student student;
+    // The staff member which should be included as an option for the handler of the enrollment
+    StaffMember selectedHandler;
+    MatriculationExamEnrollmentState currentEnrollmentState;
+    List<MatriculationExamWithParticipationInfo> exams = null;
+
+    Long enrollmentId = pageRequestContext.getLong("enrollment");
+    MatriculationExamEnrollment enrollment = enrollmentId != null ? enrollmentDAO.findById(enrollmentId) : null;
+    if (enrollment != null) {
+      formMode = "EDIT";
+      student = enrollment.getStudent();
+      selectedHandler = enrollment.getHandler() != null ? enrollment.getHandler() : null;
+      currentEnrollmentState = enrollment.getState();
+    }
+    else {
+      // Creating new enrollment on behalf of the student
+      formMode = "NEW";
+
+      Long studentId = pageRequestContext.getLong("student");
+      student = studentId != null ? studentDAO.findById(studentId) : null;
+      if (student == null) {
+        pageRequestContext.addMessage(Severity.ERROR, "Enrollment not found");
+        return;
+      }
+
+      // Make sure the logged in user is available as the handler for enrollment
+      selectedHandler = loggedUser;
+      // Default state for new enrollment on behalf of the student
+      currentEnrollmentState = MatriculationExamEnrollmentState.FILLED_ON_BEHALF;
+
+      // Collect the exams and their enrollment info
+      exams = new ArrayList<MatriculationExamWithParticipationInfo>();
+      List<MatriculationExam> allExams = examDAO.listAll();
+      for (MatriculationExam matriculationExam : allExams) {
+        MatriculationExamEnrollment examEnrollment = enrollmentDAO.findByExamAndStudent(matriculationExam, student);
+        exams.add(new MatriculationExamWithParticipationInfo(matriculationExam, examEnrollment));
+      }
     }
 
     EnumSet<Role> activeStaffMemberRoles = EnumSet.of(Role.ADMINISTRATOR, Role.STUDY_PROGRAMME_LEADER, Role.MANAGER, Role.STUDY_GUIDER, Role.TEACHER);
 
     List<StaffMember> enrollmentHandlers = staffMemberDAO.listActiveStaffMembersByRole(activeStaffMemberRoles);
-    StaffMember selectedHandler = enrollment.getHandler() != null ? enrollment.getHandler() : null;
     if (selectedHandler != null) {
       Long selectedStudyApproverId = selectedHandler.getId();
       
@@ -257,41 +328,36 @@ public class EditEnrollmentViewController extends PyramusViewController {
     }
     enrollmentHandlers.sort(Comparator.comparing(StaffMember::getLastName).thenComparing(StaffMember::getFirstName));
 
-    StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
-    
-    EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, enrollment.getState());
+    EnumSet<MatriculationExamEnrollmentState> allowedStates = getAllowedStates(loggedUser, currentEnrollmentState);
     Set<String> allowedStatesStrSet = allowedStates.stream().map(MatriculationExamEnrollmentState::name).collect(Collectors.toSet());
     
-    List<MatriculationExamEnrollmentChangeLog> changeLog = enrollmentChangeLogDAO.listByEnrollment(enrollment);
+    List<MatriculationExamEnrollmentChangeLog> changeLog = enrollment != null ? enrollmentChangeLogDAO.listByEnrollment(enrollment) : Collections.emptyList();
 
-    String fullName = enrollment.getStudent().getFullName();
-    String email = enrollment.getStudent().getPrimaryEmail() != null ? enrollment.getStudent().getPrimaryEmail().getAddress() : null;
-    String phoneNumber = enrollment.getStudent().getPrimaryPhoneNumber() != null ? enrollment.getStudent().getPrimaryPhoneNumber().getNumber() : null;
-
-    List<StudentGroup> studentGroups = studentGroupDAO.listByStudent(enrollment.getStudent());
+    // Group and study advisors are listed from the StudentGroups
+    
+    List<StudentGroup> studentGroups = studentGroupDAO.listByStudent(student);
+    List<StudentGroupUser> groupAdvisors = studentGroups.stream()
+        .filter(studentGroup -> Boolean.TRUE.equals(studentGroup.getGuidanceGroup()))
+        .flatMap(studentGroup -> studentGroup.getUsers().stream())
+        .filter(studentGroupUser -> studentGroupUser.isGroupAdvisor())
+        .collect(Collectors.toList());
     List<StudentGroupUser> studyAdvisors = studentGroups.stream()
       .filter(studentGroup -> Boolean.TRUE.equals(studentGroup.getGuidanceGroup()))
       .flatMap(studentGroup -> studentGroup.getUsers().stream())
       .filter(studentGroupUser -> studentGroupUser.isStudyAdvisor())
       .collect(Collectors.toList());
     
+    pageRequestContext.getRequest().setAttribute("formMode", formMode);
+    pageRequestContext.getRequest().setAttribute("exams", exams);
     pageRequestContext.getRequest().setAttribute("enrollment", enrollment);
+    pageRequestContext.getRequest().setAttribute("student", student);
     pageRequestContext.getRequest().setAttribute("changeLog", changeLog);
-    pageRequestContext.getRequest().setAttribute("name", fullName);
-    pageRequestContext.getRequest().setAttribute("email", email);
-    pageRequestContext.getRequest().setAttribute("phone", phoneNumber);
-    pageRequestContext.getRequest().setAttribute("nationalStudentNumber", enrollment.getNationalStudentNumber());
-    pageRequestContext.getRequest().setAttribute("guidanceCounselor", enrollment.getGuider());
+    pageRequestContext.getRequest().setAttribute("groupAdvisors", groupAdvisors);
     pageRequestContext.getRequest().setAttribute("studyAdvisors", studyAdvisors);
-    pageRequestContext.getRequest().setAttribute("enrollAs", enrollment.getEnrollAs().name());
-    pageRequestContext.getRequest().setAttribute("numMandatoryCourses", enrollment.getNumMandatoryCourses());
-    pageRequestContext.getRequest().setAttribute("restartExam", enrollment.isRestartExam());
-    pageRequestContext.getRequest().setAttribute("location", enrollment.getLocation());
-    pageRequestContext.getRequest().setAttribute("message", enrollment.getMessage());
-    pageRequestContext.getRequest().setAttribute("canPublishName", enrollment.isCanPublishName());
-    pageRequestContext.getRequest().setAttribute("state", enrollment.getState().name());
-    pageRequestContext.getRequest().setAttribute("degreeStructure", enrollment.getDegreeStructure().name());
-    pageRequestContext.getRequest().setAttribute("enrollmentDate", enrollment.getEnrollmentDate());
+    pageRequestContext.getRequest().setAttribute("numMandatoryCourses", enrollment != null ? enrollment.getNumMandatoryCourses() : 0);
+    pageRequestContext.getRequest().setAttribute("restartExam", enrollment != null ? enrollment.isRestartExam() : false);
+    pageRequestContext.getRequest().setAttribute("state", currentEnrollmentState.name());
+    pageRequestContext.getRequest().setAttribute("enrollmentDate", enrollment != null ? enrollment.getEnrollmentDate() : new Date());
     pageRequestContext.getRequest().setAttribute("allowedStates", allowedStatesStrSet);
     pageRequestContext.getRequest().setAttribute("handlers", enrollmentHandlers);
     
@@ -338,26 +404,25 @@ public class EditEnrollmentViewController extends PyramusViewController {
         break;
       default:
         break;
-      }
-      
-      ObjectMapper om = new ObjectMapper();
-      
-      try {
-        setJsDataVariable(
-            pageRequestContext,
-            "enrolledAttendances",
-            om.writeValueAsString(enrolledAttendances));
-        setJsDataVariable(
-            pageRequestContext,
-            "finishedAttendances",
-            om.writeValueAsString(finishedAttendances));
-        setJsDataVariable(
-            pageRequestContext,
-            "plannedAttendances",
-            om.writeValueAsString(plannedAttendances));
-      } catch (JsonProcessingException ex) {
-        throw new RuntimeException(ex);
-      }
+      }      
+    }
+
+    ObjectMapper om = new ObjectMapper();
+    try {
+      setJsDataVariable(
+          pageRequestContext,
+          "enrolledAttendances",
+          om.writeValueAsString(enrolledAttendances));
+      setJsDataVariable(
+          pageRequestContext,
+          "finishedAttendances",
+          om.writeValueAsString(finishedAttendances));
+      setJsDataVariable(
+          pageRequestContext,
+          "plannedAttendances",
+          om.writeValueAsString(plannedAttendances));
+    } catch (JsonProcessingException ex) {
+      throw new RuntimeException(ex);
     }
   }
 
@@ -398,6 +463,24 @@ public class EditEnrollmentViewController extends PyramusViewController {
     return allowedStates;
   }
 
+  public class MatriculationExamWithParticipationInfo {
+    public MatriculationExamWithParticipationInfo(MatriculationExam exam, MatriculationExamEnrollment enrollment) {
+      this.exam = exam;
+      this.enrollment = enrollment;
+    }
+    
+    public MatriculationExam getExam() {
+      return exam;
+    }
+    
+    public MatriculationExamEnrollment getEnrollment() {
+      return enrollment;
+    }
+    
+    private final MatriculationExam exam;
+    private final MatriculationExamEnrollment enrollment;
+  }
+  
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }
