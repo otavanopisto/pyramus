@@ -257,7 +257,6 @@ public class StudentGroup implements ContextReference, ArchivableEntity {
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String description;
   
   @Column

@@ -153,7 +153,6 @@ public class StudentGroupContactLogEntry implements ArchivableEntity {
   private StudentGroup studentGroup;
   
   @Lob
-  @Column
   private String text;
   
   private String creatorName;

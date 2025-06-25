@@ -167,7 +167,6 @@ public class ContactInfo {
 
   @Lob  
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String additionalInfo;
  
   @Version

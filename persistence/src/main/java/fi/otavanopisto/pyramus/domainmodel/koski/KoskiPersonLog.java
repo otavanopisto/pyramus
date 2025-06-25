@@ -87,7 +87,6 @@ public class KoskiPersonLog {
   private KoskiPersonState state;
   
   @Lob
-  @Column
   private String message;
   
 }

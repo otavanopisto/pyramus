@@ -83,7 +83,6 @@ public class FormDraft {
   private String url;
   
   @Lob
-  @Column
   private String data;
   
   @ManyToOne  

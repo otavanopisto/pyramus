@@ -147,7 +147,6 @@ public class File implements ArchivableEntity, ModificationTrackedEntity {
   private String contentType;
   
   @Lob
-  @Column
   private byte[] data;
   
   @NotNull

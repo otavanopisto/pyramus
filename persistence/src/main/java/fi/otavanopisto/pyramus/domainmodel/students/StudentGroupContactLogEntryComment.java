@@ -132,7 +132,6 @@ public class StudentGroupContactLogEntryComment implements ArchivableEntity {
   private StudentGroupContactLogEntry entry;
   
   @Lob
-  @Column
   private String text;
   
   private String creatorName;

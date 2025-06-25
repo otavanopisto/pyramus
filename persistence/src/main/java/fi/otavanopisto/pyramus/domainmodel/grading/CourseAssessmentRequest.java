@@ -93,7 +93,6 @@ public class CourseAssessmentRequest implements ArchivableEntity {
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String requestText;
 
   @NotNull

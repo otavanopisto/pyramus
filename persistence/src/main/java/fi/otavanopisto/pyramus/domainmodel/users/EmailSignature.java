@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -43,7 +42,6 @@ public class EmailSignature {
   private User user;
 
   @Lob
-  @Column
   private String signature;
 
 }

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -317,7 +316,6 @@ public class Student extends User implements ArchivableEntity {
     
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column
   private String additionalInfo;
   
   @ManyToOne (fetch = FetchType.LAZY)
@@ -388,7 +386,6 @@ public class Student extends User implements ArchivableEntity {
 
   @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (nullable = true)
   private String parentBillingDetails;
   
 }

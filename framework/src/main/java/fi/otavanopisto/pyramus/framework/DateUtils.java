@@ -57,6 +57,15 @@ public class DateUtils {
     return setTime(date, 23, 59, 59);
   }
   
+  /**
+   * Returns the date that is later of the two. Ignores nulls
+   * such that if either is null the non-null will be returned.
+   * If both are null, returns null.
+   * 
+   * @param date1
+   * @param date2
+   * @return
+   */
   public static Date max(Date date1, Date date2) {
     if (date1 == null && date2 == null) {
       return null;

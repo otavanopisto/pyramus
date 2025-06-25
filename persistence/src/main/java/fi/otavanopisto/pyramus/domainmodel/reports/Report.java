@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.domainmodel.reports;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -131,7 +132,7 @@ public class Report implements ArchivableEntity{
   private String name;
 
   @Lob
-  @Column (nullable = false)
+  @Basic(optional = false)
   @NotEmpty
   private String data;
   
