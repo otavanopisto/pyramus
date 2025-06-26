@@ -14,7 +14,7 @@ public class BrowseMatriculationEnrollmentsViewController extends PyramusViewCon
   public void process(PageRequestContext pageRequestContext) {
     MatriculationExamDAO matriculationExamDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     
-    List<MatriculationExam> exams = matriculationExamDAO.listAll();
+    List<MatriculationExam> exams = matriculationExamDAO.listSorted();
     pageRequestContext.getRequest().setAttribute("exams", exams);
     
     pageRequestContext.setIncludeJSP("/templates/matriculation/management-browse-enrollments.jsp");

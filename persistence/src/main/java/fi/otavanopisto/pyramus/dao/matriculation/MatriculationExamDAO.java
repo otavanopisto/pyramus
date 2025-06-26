@@ -1,11 +1,17 @@
 package fi.otavanopisto.pyramus.dao.matriculation;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam_;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
 @Stateless
@@ -48,4 +54,19 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     return persist(exam);
   }
 
+  public List<MatriculationExam> listSorted() {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExam> criteria = criteriaBuilder.createQuery(MatriculationExam.class);
+    Root<MatriculationExam> root = criteria.from(MatriculationExam.class);
+    
+    criteria.select(root);
+    criteria.orderBy(
+        criteriaBuilder.desc(root.get(MatriculationExam_.examYear)),
+        criteriaBuilder.desc(root.get(MatriculationExam_.examTerm))
+    );
+
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
 }

@@ -305,7 +305,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
 
       // Collect the exams and their enrollment info
       exams = new ArrayList<MatriculationExamWithParticipationInfo>();
-      List<MatriculationExam> allExams = examDAO.listAll();
+      List<MatriculationExam> allExams = examDAO.listSorted();
       for (MatriculationExam matriculationExam : allExams) {
         MatriculationExamEnrollment examEnrollment = enrollmentDAO.findByExamAndStudent(matriculationExam, student);
         exams.add(new MatriculationExamWithParticipationInfo(matriculationExam, examEnrollment));
