@@ -1032,7 +1032,9 @@ public class ViewStudentViewController extends PyramusViewController2 implements
   private void constructMatriculationTabContent(Person person, PageRequestContext pageRequestContext) {
     try {
       Student latestStudent = person.getLatestStudent();
-      String code = latestStudent.getStudyProgramme() != null &&
+      String code = 
+          latestStudent != null &&
+          latestStudent.getStudyProgramme() != null &&
           latestStudent.getStudyProgramme().getCategory() !=  null &&
           latestStudent.getStudyProgramme().getCategory().getEducationType() != null &&
           latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() != null
@@ -1152,7 +1154,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       pageRequestContext.getRequest().setAttribute("matriculationCurriculumOk", torCurriculum != null);   
       pageRequestContext.getRequest().setAttribute("matriculationExamTerms", enrollmentBeans);
     } catch (Exception ex) {
-      logger.log(Level.SEVERE, String.format("Constructing matriculation tab content failed for person %d", person != null ? person.getId() : null, ex));
+      logger.log(Level.SEVERE, String.format("Constructing matriculation tab content failed for person %d", person != null ? person.getId() : null), ex);
     }
   }
 
