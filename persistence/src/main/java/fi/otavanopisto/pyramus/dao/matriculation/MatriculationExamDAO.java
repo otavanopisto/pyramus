@@ -63,7 +63,7 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     criteria.select(root);
     criteria.orderBy(
         criteriaBuilder.desc(root.get(MatriculationExam_.examYear)),
-        criteriaBuilder.desc(root.get(MatriculationExam_.examTerm))
+        criteriaBuilder.asc(root.get(MatriculationExam_.examTerm))
     );
 
     return entityManager.createQuery(criteria).getResultList();
