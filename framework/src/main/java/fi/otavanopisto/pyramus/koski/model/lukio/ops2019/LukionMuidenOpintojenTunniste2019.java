@@ -9,6 +9,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.LukionMuutOpinnot;
  */
 public class LukionMuidenOpintojenTunniste2019 extends LukionOppiaineenKoulutusmoduuli {
 
+  public LukionMuidenOpintojenTunniste2019() {
+  }
+  
   public LukionMuidenOpintojenTunniste2019(LukionMuutOpinnot tunniste) {
     super();
     this.getTunniste().setValue(tunniste);
