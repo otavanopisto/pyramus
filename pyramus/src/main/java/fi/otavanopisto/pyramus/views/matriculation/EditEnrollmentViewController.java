@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -203,7 +204,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
         MatriculationExamSubject.valueOf(pageRequestContext.getString("finishedAttendances." + i + ".subject"));
       Boolean mandatory = parseMandatory(pageRequestContext.getString("finishedAttendances." + i + ".mandatority"));
       MatriculationExamGrade grade =
-        MatriculationExamGrade.valueOf(pageRequestContext.getString("finishedAttendances." + i + ".grade"));
+          EnumUtils.getEnum(MatriculationExamGrade.class, pageRequestContext.getString("finishedAttendances." + i + ".grade"));
       MatriculationExamAttendanceFunding funding = parseFunding(pageRequestContext.getString("finishedAttendances." + i + ".funding"));      
       
       if (NEW_ROW_ID.equals(attendanceId)) {
@@ -390,7 +391,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getSubject().name(),
                 mandatoryToString(attendance.isMandatory()),
                 attendance.getFunding() != null ? attendance.getFunding().toString() : "",
-                attendance.getGrade().name(),
+                attendance.getGrade() != null ? attendance.getGrade().name() : "",
                 ""));
         break;
       case PLANNED:
