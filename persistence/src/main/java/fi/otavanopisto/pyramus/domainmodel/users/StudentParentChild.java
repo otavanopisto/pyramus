@@ -39,6 +39,14 @@ public class StudentParentChild {
     this.student = student;
   }
 
+  public boolean isContinuedViewPermission() {
+    return continuedViewPermission;
+  }
+
+  public void setContinuedViewPermission(boolean continuedViewPermission) {
+    this.continuedViewPermission = continuedViewPermission;
+  }
+
   @Id 
   @GeneratedValue(strategy = GenerationType.IDENTITY)  
   private Long id;
@@ -51,4 +59,6 @@ public class StudentParentChild {
   @JoinColumn(name = "student")
   private Student student;
 
+  private boolean continuedViewPermission;
+  
 }

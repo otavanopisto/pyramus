@@ -42,18 +42,8 @@ public class StudentParent extends User {
    */
   @Override
   public boolean isAccountEnabled() {
-    List<StudentParentChild> currentChildren = getChildren();
-    
-    for (StudentParentChild parentChild : currentChildren) {
-      Student child = parentChild.getStudent();
-      
-      // Account is enabled if any of the students are active
-      if (isActiveChild(child)) {
-        return true;
-      }
-    }
-    
-    return false;
+    List<StudentParentChild> childs = getChildren();
+    return CollectionUtils.isNotEmpty(childs) && childs.stream().anyMatch(child -> isActiveChild(child));
   }
   
   public List<StudentParentChild> getChildren() {
@@ -64,7 +54,7 @@ public class StudentParent extends User {
   public List<StudentParentChild> getActiveChildren() {
     List<StudentParentChild> childs = getChildren();
     return CollectionUtils.isNotEmpty(childs)
-        ? childs.stream().filter(child -> isActiveChild(child.getStudent())).collect(Collectors.toList())
+        ? childs.stream().filter(child -> isActiveChild(child)).collect(Collectors.toList())
         : Collections.emptyList();
   }
 
@@ -87,7 +77,7 @@ public class StudentParent extends User {
       if (studentParentChild != null && studentParentChild.getStudent() != null && Boolean.FALSE.equals(studentParentChild.getStudent().getArchived())) {
         if (studentParentChild.getStudent().getId().equals(student.getId())) {
           // Student is in the list, check that the time/age restriction holds
-          return isActiveChild(studentParentChild.getStudent());
+          return isActiveChild(studentParentChild);
         }
       }
     }
@@ -105,14 +95,16 @@ public class StudentParent extends User {
    * @return
    */
   @Transient
-  private boolean isActiveChild(Student student) {
+  private boolean isActiveChild(StudentParentChild studentParentChild) {
+    Student student = studentParentChild.getStudent();
+    
     // Archived student or student who is not active is never active
     if (student.getArchived() || !student.getActive()) {
       return false;
     }
     
-    // Check for underage
-    return student.getPerson() != null && Boolean.TRUE.equals(student.getPerson().isUnderAge());
+    // Check that the student is either underage (implicit permission) or that the continued permission is granted
+    return student.getPerson() != null && (Boolean.TRUE.equals(student.getPerson().isUnderAge()) || studentParentChild.isContinuedViewPermission());
   }
   
   @OneToMany (mappedBy = "studentParent")
