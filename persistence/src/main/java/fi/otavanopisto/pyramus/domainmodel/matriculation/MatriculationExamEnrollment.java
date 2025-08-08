@@ -50,14 +50,6 @@ public class MatriculationExamEnrollment {
     this.nationalStudentNumber = nationalStudentNumber;
   }
 
-  public String getGuider() {
-    return guider;
-  }
-
-  public void setGuider(String guider) {
-    this.guider = guider;
-  }
-
   public int getNumMandatoryCourses() {
     return numMandatoryCourses;
   }
@@ -201,9 +193,6 @@ public class MatriculationExamEnrollment {
   
   @Column
   private Long nationalStudentNumber;
-  
-  @Column
-  private String guider;
   
   @Column
   @Enumerated(EnumType.STRING)

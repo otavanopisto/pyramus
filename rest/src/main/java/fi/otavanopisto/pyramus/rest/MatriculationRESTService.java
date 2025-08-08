@@ -430,7 +430,6 @@ public class MatriculationRESTService extends AbstractRESTService {
         enrollmentEntity = matriculationExamEnrollmentDao.create(
           exam,
           enrollment.getNationalStudentNumber(),
-          enrollment.getGuider(),
           SchoolType.valueOf(enrollment.getEnrollAs()),
           DegreeType.valueOf(enrollment.getDegreeType()),
           enrollment.getNumMandatoryCourses(),
@@ -476,7 +475,6 @@ public class MatriculationRESTService extends AbstractRESTService {
         
         enrollmentEntity = matriculationExamEnrollmentDao.update(
           existingEnrollment,
-          enrollment.getGuider(),
           SchoolType.valueOf(enrollment.getEnrollAs()),
           DegreeType.valueOf(enrollment.getDegreeType()),
           enrollment.getNumMandatoryCourses(),
@@ -663,7 +661,6 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setId(examEnrollment.getId());
     result.setExamId(examEnrollment.getExam().getId());
     result.setNationalStudentNumber(examEnrollment.getNationalStudentNumber());
-    result.setGuider(examEnrollment.getGuider());
     result.setEnrollAs(examEnrollment.getEnrollAs().name());
     result.setDegreeType(examEnrollment.getDegreeType().name());
     result.setNumMandatoryCourses(examEnrollment.getNumMandatoryCourses());

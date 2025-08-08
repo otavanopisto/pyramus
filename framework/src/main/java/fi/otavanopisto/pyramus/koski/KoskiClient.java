@@ -185,8 +185,7 @@ public class KoskiClient {
             // Having multiple periods is going to cause problems invalidating due to date checks in Koski
             opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().clear();
             
-            Date invalidationDate = opiskeluoikeus.getPaattymispaiva() != null ? opiskeluoikeus.getPaattymispaiva() : 
-              opiskeluoikeus.getAlkamispaiva() != null ? opiskeluoikeus.getAlkamispaiva() : new Date();
+            Date invalidationDate = new Date();
             opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
                 new OpiskeluoikeusJakso(invalidationDate, OpiskeluoikeudenTila.mitatoity));
           } else {

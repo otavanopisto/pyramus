@@ -164,6 +164,12 @@
           }
         }));
 
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+          iconURL: GLOBAL_contextPath + '/gfx/list-add.png',
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsCreateMatriculationEnrollmentLabel"/>',
+          link: GLOBAL_contextPath + '/matriculation/edit.page?student=' + studentId
+        }));
+
         var studentReports = JSDATA["studentReports"].evalJSON();
         
         if (studentReports) {
@@ -3120,32 +3126,37 @@
                             <c:choose>
                               <c:when test="${enrollment.state == 'PENDING'}">
                                 <c:set var="matriculationExamEnrollmentState">
-                                  <fmt:message key="terms.pending"/>
+                                  <fmt:message key="generic.matriculation.enrollmentStates.PENDING"/>
                                 </c:set>
                               </c:when>
                               <c:when test="${enrollment.state == 'SUPPLEMENTATION_REQUEST'}">
                                 <c:set var="matriculationExamEnrollmentState">
-                                  <fmt:message key="terms.supplementationRequest"/>
+                                  <fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTATION_REQUEST"/>
                                 </c:set>
                               </c:when>
                               <c:when test="${enrollment.state == 'SUPPLEMENTED'}">
                                 <c:set var="matriculationExamEnrollmentState">
-                                  <fmt:message key="terms.supplemented"/>
+                                  <fmt:message key="generic.matriculation.enrollmentStates.SUPPLEMENTED"/>
                                 </c:set>
                               </c:when>
                               <c:when test="${enrollment.state == 'APPROVED'}">
                                 <c:set var="matriculationExamEnrollmentState">
-                                  <fmt:message key="terms.approved"/>
+                                  <fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/>
                                 </c:set>
                               </c:when>
                               <c:when test="${enrollment.state == 'REJECTED'}">
                                 <c:set var="matriculationExamEnrollmentState">
-                                  <fmt:message key="terms.rejected"/>
+                                  <fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/>
                                 </c:set>
                               </c:when>
                               <c:when test="${enrollment.state == 'CONFIRMED'}">
                                 <c:set var="matriculationExamEnrollmentState">
-                                  <fmt:message key="terms.confirmed"/>
+                                  <fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/>
+                                </c:set>
+                              </c:when>
+                              <c:when test="${enrollment.state == 'FILLED_ON_BEHALF'}">
+                                <c:set var="matriculationExamEnrollmentState">
+                                  <fmt:message key="generic.matriculation.enrollmentStates.FILLED_ON_BEHALF"/>
                                 </c:set>
                               </c:when>
                               <c:otherwise>

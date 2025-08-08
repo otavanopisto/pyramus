@@ -106,14 +106,14 @@
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="matriculation.settings.startDate"/>
             </jsp:include>                                           
-            <input type="text" name="starts" class="ixDateField" value="${exam.starts.time}"/>
+            <input type="text" name="starts" class="ixDateField required" value="${exam.starts.time}"/>
           </div>
 
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="matriculation.settings.endDate"/>
             </jsp:include>                                           
-            <input type="text" name="ends" class="ixDateField" value="${exam.ends.time}"/>
+            <input type="text" name="ends" class="ixDateField required" value="${exam.ends.time}"/>
           </div>
 
           <div class="genericFormSection">

@@ -13,6 +13,8 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,6 +30,12 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnroll
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
@@ -41,7 +49,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
   public MatriculationExamEnrollment create(
       MatriculationExam exam,
       Long nationalStudentNumber,
-      String guider,
       SchoolType enrollAs,
       DegreeType degreeType,
       int numMandatoryCourses,
@@ -59,7 +66,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
 
     result.setExam(exam);
     result.setNationalStudentNumber(nationalStudentNumber);
-    result.setGuider(guider);
     result.setEnrollAs(enrollAs);
     result.setDegreeType(degreeType);
     result.setNumMandatoryCourses(numMandatoryCourses);
@@ -78,7 +84,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
 
   public MatriculationExamEnrollment update(
     MatriculationExamEnrollment enrollment,
-    String guider,
     SchoolType enrollAs,
     DegreeType degreeType,
     int numMandatoryCourses,
@@ -90,7 +95,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     Student student,
     MatriculationExamEnrollmentDegreeStructure degreeStructure
   ) {
-    enrollment.setGuider(guider);
     enrollment.setEnrollAs(enrollAs);
     enrollment.setDegreeType(degreeType);
     enrollment.setNumMandatoryCourses(numMandatoryCourses);
@@ -152,8 +156,27 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
         Predicates namePredicates = Predicates.newInstance();
       
         if (StringUtils.isNotBlank(s)) {
-          namePredicates.add(criteriaBuilder.like(root.get(MatriculationExamEnrollment_.guider), "%" + s + "%"));
-
+          // TODO Maybe lucenize this mess
+          Subquery<Student> sqStudentGroupStudent = criteria.subquery(Student.class);
+          Root<StudentGroup> from = sqStudentGroupStudent.from(StudentGroup.class);
+          SetJoin<StudentGroup, StudentGroupStudent> studentGroupStudents = from.join(StudentGroup_.students);
+          SetJoin<StudentGroup, StudentGroupUser> studentGroupStaffMembers = from.join(StudentGroup_.users);
+          Join<StudentGroupUser, StaffMember> studentGroupStaffMember = studentGroupStaffMembers.join(StudentGroupUser_.staffMember);
+          
+          sqStudentGroupStudent
+            .select(studentGroupStudents.get(StudentGroupStudent_.student))
+            .where(
+                criteriaBuilder.and(
+                    // Search only from group advisors
+                    criteriaBuilder.equal(studentGroupStaffMembers.get(StudentGroupUser_.groupAdvisor), Boolean.TRUE),
+                    criteriaBuilder.or(
+                        criteriaBuilder.like(studentGroupStaffMember.get(StaffMember_.firstName), "%" + s + "%"),
+                        criteriaBuilder.like(studentGroupStaffMember.get(StaffMember_.lastName), "%" + s + "%")
+                    )
+                )
+            );
+          namePredicates.add(studentJoin.in(sqStudentGroupStudent));
+          
           namePredicates.add(criteriaBuilder.like(studentJoin.get(Student_.firstName), "%" + s + "%"));
           namePredicates.add(criteriaBuilder.like(studentJoin.get(Student_.lastName), "%" + s + "%"));
 

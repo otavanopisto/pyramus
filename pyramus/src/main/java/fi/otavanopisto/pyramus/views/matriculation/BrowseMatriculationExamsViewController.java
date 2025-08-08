@@ -33,7 +33,7 @@ public class BrowseMatriculationExamsViewController extends PyramusViewControlle
     MatriculationExamEnrollmentDAO examEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO examAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     
-    List<MatriculationExam> exams = examDAO.listAll();
+    List<MatriculationExam> exams = examDAO.listSorted();
     
     JSONArray jsonMatriculationExams = new JSONArray();
     for (MatriculationExam exam : exams) {
