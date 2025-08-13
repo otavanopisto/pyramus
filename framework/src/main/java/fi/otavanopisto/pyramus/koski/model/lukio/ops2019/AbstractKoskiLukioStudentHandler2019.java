@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.OppiaineenSuoritusWithSubject;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
@@ -55,20 +55,6 @@ import fi.otavanopisto.pyramus.koski.model.lukio.AbstractKoskiLukioStudentHandle
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 
 public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler {
-
-  // KU, LI, MU, TE kuuluisivat listaan, mutta ilmoitetaan paikallisina
-  private static final EnumSet<KoskiOppiaineetYleissivistava> VALTAKUNNALLISETOPPIAINEET2019 = EnumSet.of(
-      KoskiOppiaineetYleissivistava.BI,
-      KoskiOppiaineetYleissivistava.ET,
-      KoskiOppiaineetYleissivistava.FI,
-      KoskiOppiaineetYleissivistava.FY,
-      KoskiOppiaineetYleissivistava.GE,
-      KoskiOppiaineetYleissivistava.HI,
-      KoskiOppiaineetYleissivistava.KE,
-      KoskiOppiaineetYleissivistava.OP,
-      KoskiOppiaineetYleissivistava.PS,
-      KoskiOppiaineetYleissivistava.YH
-  );
 
   @Inject
   private Logger logger;
@@ -185,16 +171,33 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       Subject subject, StudentSubjectSelections studentSubjects, Map<String, OppiaineenSuoritusWithSubject<LukionOsasuoritus2019>> map) {
     String subjectCode = subjectCode(subject);
 
-    if (map.containsKey(subjectCode))
+    /*
+     * Uskonnon ainevalinta. Uskonnosta voi olla valittuna aina vain 
+     * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
+     * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
+     */
+    if (KoskiConsts.Lukio.USKONTO_JA_ET.contains(subjectCode)) {
+      // Vain ainevalinnoissa oleva uskonnon aine ilmoitetaan
+      if (!studentSubjects.isReligion(subjectCode)) {
+        return null;
+      }
+      
+      // Elämänkatsomustiedolla (ET) on oma oppiaineensa, Muille
+      // uskonnon oppiaineille käytetään ainekoodia KT
+      if (KoskiConsts.Lukio.USKONTO.contains(subjectCode)) {
+        subjectCode = "KT";
+      }
+    }
+
+    if (map.containsKey(subjectCode)) {
       return map.get(subjectCode);
+    }
     
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
     
     // Aineet, joista lukiodiplomit voi suorittaa
-    List<String> lukioDiplomit = Arrays.asList(new String[] { "KOLD", "KULD", "KÄLD", "LILD", "MELD", "MULD", "TALD", "TELD" });
-
-    if (lukioDiplomit.contains(subjectCode)) {
+    if (KoskiConsts.Lukio2019.LUKIODIPLOMIT.contains(subjectCode)) {
       if (map.containsKey("LD")) {
         return map.get("LD");
       }
@@ -259,21 +262,6 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       }
     }
 
-    String[] religionSubjects = new String[] { "UE", "UO", "UI", "UK", "UJ", "UX" };
-
-    if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      // Only the religion that student has selected is reported
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
-        if (map.containsKey("KT"))
-          return map.get("KT");
-        
-        KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
-        LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen2019(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-        return mapSubject(subject, "KT", false, tunniste, map);
-      } else
-        return null;
-    }
-    
     if (matchingEducationType && isValtakunnallinenOppiaine2019(subjectCode)) {
       // Common national subject
 
@@ -293,8 +281,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
     String subjectCodeUpper = StringUtils.upperCase(subjectCode);
     
     return EnumUtils.isValidEnum(KoskiOppiaineetYleissivistava.class, subjectCodeUpper)
-      ? VALTAKUNNALLISETOPPIAINEET2019.contains(KoskiOppiaineetYleissivistava.valueOf(subjectCodeUpper))
-      : false;
+      && KoskiConsts.Lukio2019.VALTAKUNNALLISETOPPIAINEET.contains(KoskiOppiaineetYleissivistava.valueOf(subjectCodeUpper));
   }
 
   private OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> mapSubject(Subject subject, String subjectCode, boolean paikallinenOppiaine, LukionOppiaineenTunniste2019 tunniste, Map<String, OppiaineenSuoritusWithSubject<LukionOsasuoritus2019>> map) {

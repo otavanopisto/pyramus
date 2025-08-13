@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,6 +24,7 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
@@ -241,6 +241,24 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       Map<String, OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
 
+    /*
+     * Uskonnon ainevalinta. Uskonnosta voi olla valittuna aina vain 
+     * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
+     * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
+     */
+    if (KoskiConsts.Perusopetus.USKONTO_JA_ET.contains(subjectCode)) {
+      // Vain ainevalinnoissa olevat uskonnon aineet ilmoitetaan
+      if (!studentSubjects.isReligion(subjectCode)) {
+        return null;
+      }
+      
+      // Elämänkatsomustiedolla (et) on oma oppiaineensa, Muille
+      // uskonnon oppiaineille käytetään ainekoodia KT
+      if (KoskiConsts.Perusopetus.USKONTO.contains(subjectCode)) {
+        subjectCode = "KT";
+      }
+    }
+
     String mapKey = String.valueOf(creditOPS) + subjectCode;
     if (map.containsKey(mapKey)) {
       return map.get(mapKey);
@@ -286,23 +304,6 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       }
     }
 
-    String[] religionSubjects = new String[] { "ue", "uo" };
-    
-    if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      // Only the religion that student has selected is reported
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
-        mapKey = String.valueOf(creditOPS) + "KT";
-        if (map.containsKey(mapKey))
-          return map.get(mapKey);
-        
-        KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
-        AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
-            kansallinenAine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.KT));
-        return map(map, mapKey, creditOPS, tunniste, subject);
-      } else
-        return null;
-    }
-    
     if (matchingEducationType && EnumUtils.isValidEnum(KoskiOppiaineetYleissivistava.class, StringUtils.upperCase(subjectCode))) {
       // Common national subject
       
