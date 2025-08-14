@@ -1176,7 +1176,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     
     // These count the included subjects also
     Double sumMandatoryModuleLength = torCurriculumSubject != null ? (double) torCurriculumSubject.getMandatoryModuleLengthSumWithIncludedModules(torCurriculum) : 0d;
-    Double sumCompletedMandatoryModuleLength = torSubject != null ? torSubject.getMandatoryCreditPointsCompleted() : 0d;
+    Double sumCompletedMandatoryModuleLength = torSubject != null ? torSubject.getMandatoryCreditPointsCompleted() : Double.valueOf(0d);
 
     if (torCurriculumSubject != null) {
       for (TORCurriculumModule torCurriculumModule : torCurriculumSubject.getModules()) {
