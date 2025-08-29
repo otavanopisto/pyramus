@@ -41,14 +41,6 @@ public class Email {
     return defaultAddress;
   }
 
-  public void setContactType(ContactType contactType) {
-    this.contactType = contactType;
-  }
-
-  public ContactType getContactType() {
-    return contactType;
-  }
-
   public void setContactInfo(ContactInfo contactInfo) {
     this.contactInfo = contactInfo;
   }
@@ -72,10 +64,6 @@ public class Email {
   @DocumentId
   private Long id;
   
-  @ManyToOne
-  @JoinColumn (name = "contactType")
-  private ContactType contactType;
-
   @NotNull
   @Column(nullable = false)
   @Field

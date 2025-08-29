@@ -64,14 +64,6 @@ public class Address {
     return name;
   }
 
-  public void setContactType(ContactType contactType) {
-    this.contactType = contactType;
-  }
-
-  public ContactType getContactType() {
-    return contactType;
-  }
-
   public void setDefaultAddress(Boolean defaultAddress) {
     this.defaultAddress = defaultAddress;
   }
@@ -108,10 +100,6 @@ public class Address {
   @Field
   private Boolean defaultAddress = Boolean.FALSE;
 
-  @ManyToOne
-  @JoinColumn (name = "contactType")
-  private ContactType contactType;
-  
   @Field (store = Store.NO)
   private String name;
   

@@ -12,19 +12,17 @@ import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.Address_;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class AddressDAO extends PyramusEntityDAO<Address> {
 
-  public Address create(ContactInfo contactInfo, ContactType contactType, String name, String streetAddress, String postalCode, String city,
+  public Address create(ContactInfo contactInfo, String name, String streetAddress, String postalCode, String city,
       String country, Boolean defaultAddress) {
     EntityManager entityManager = getEntityManager();
 
     Address address = new Address();
     address.setContactInfo(contactInfo);
-    address.setContactType(contactType);
     address.setName(name);
     address.setStreetAddress(streetAddress);
     address.setPostalCode(postalCode);
@@ -56,8 +54,6 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
    *          The address to update
    * @param defaultAddress
    *          Default address
-   * @param contactType
-   *          Contact type
    * @param name
    *          Name
    * @param streetAddress
@@ -71,7 +67,7 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
    * 
    * @return The updated address
    */
-  public Address update(Address address, Boolean defaultAddress, ContactType contactType, String name, String streetAddress, String postalCode,
+  public Address update(Address address, Boolean defaultAddress, String name, String streetAddress, String postalCode,
       String city, String country) {
     EntityManager entityManager = getEntityManager();
 
@@ -86,7 +82,6 @@ public class AddressDAO extends PyramusEntityDAO<Address> {
     }
 
     address.setDefaultAddress(defaultAddress);
-    address.setContactType(contactType);
     address.setName(name);
     address.setStreetAddress(streetAddress);
     address.setPostalCode(postalCode);

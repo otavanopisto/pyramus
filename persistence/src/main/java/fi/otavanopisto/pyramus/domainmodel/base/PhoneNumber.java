@@ -25,14 +25,6 @@ public class PhoneNumber {
     return id;
   }
 
-  public void setContactType(ContactType contactType) {
-    this.contactType = contactType;
-  }
-
-  public ContactType getContactType() {
-    return contactType;
-  }
-
   public void setDefaultNumber(Boolean defaultNumber) {
     this.defaultNumber = defaultNumber;
   }
@@ -72,10 +64,6 @@ public class PhoneNumber {
   @TableGenerator(name="PhoneNumber", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
   
-  @ManyToOne
-  @JoinColumn (name = "contactType")
-  private ContactType contactType;
-
   @NotNull
   @Column(nullable = false)
   @Field
