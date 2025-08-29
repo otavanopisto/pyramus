@@ -20,6 +20,8 @@
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/editschool.js">
     </script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/typedcontactinfo.js">
+    </script>
     
     <style type="text/css">
       .billingDetailsRow label {
@@ -116,28 +118,12 @@
             <div id="tags_choices" class="autocomplete_choices"></div>
           </div>
 
-          <div class="genericFormSection">                
+          <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="settings.editSchool.addressesTitle"/>
-              <jsp:param name="helpLocale" value="settings.editSchool.addressesHelp"/>
+              <jsp:param name="titleLocale" value="generic.forms.contactInfosTitle"/>
+              <jsp:param name="helpLocale" value="generic.forms.contactInfosHelp"/>
             </jsp:include>
-            <div id="addressTable"></div>
-          </div>
-
-          <div class="genericFormSection">               
-            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="settings.editSchool.emailTableEmailsTitle"/>
-              <jsp:param name="helpLocale" value="settings.editSchool.emailTableEmailsHelp"/>
-            </jsp:include>
-            <div id="emailTable"></div>
-          </div>
-
-          <div class="genericFormSection">                
-            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="settings.editSchool.phoneNumbersTitle"/>
-              <jsp:param name="helpLocale" value="settings.editSchool.phoneNumbersHelp"/>
-            </jsp:include>
-            <div id="phoneTable"></div>
+            <div id="contactInfos"></div>
           </div>
   
           <div class="genericFormSection">  
