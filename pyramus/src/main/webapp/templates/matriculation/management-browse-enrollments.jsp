@@ -201,6 +201,7 @@
               <option value="APPROVED"><fmt:message key="generic.matriculation.enrollmentStates.APPROVED"/></option>
               <option value="REJECTED"><fmt:message key="generic.matriculation.enrollmentStates.REJECTED"/></option>
               <option value="CONFIRMED"><fmt:message key="generic.matriculation.enrollmentStates.CONFIRMED"/></option>
+              <option value="FILLED_ON_BEHALF"><fmt:message key="generic.matriculation.enrollmentStates.FILLED_ON_BEHALF"/></option>
             </select>
           </div>
   
