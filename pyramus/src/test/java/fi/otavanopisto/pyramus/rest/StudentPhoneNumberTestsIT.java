@@ -17,7 +17,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateStudentPhoneNumber() {
-    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 12 234 5678");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -28,7 +28,6 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("number", is(phoneNumber.getNumber()))
-      .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
       .body("defaultNumber", is( phoneNumber.getDefaultNumber()));
       
     int id = response.body().jsonPath().getInt("id");
@@ -66,7 +65,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testUpdateStudentPhoneNumber() {
-    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 1234 567");
+    PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 1234 567");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -77,12 +76,11 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("number", is(phoneNumber.getNumber()))
-      .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
       .body("defaultNumber", is( phoneNumber.getDefaultNumber()));
       
     long id = response.body().jsonPath().getLong("id");
     try {
-      PhoneNumber updatedPhoneNumber = new PhoneNumber(id, 1l, Boolean.FALSE, "(888) 432 1098");
+      PhoneNumber updatedPhoneNumber = new PhoneNumber(id, Boolean.FALSE, "(888) 432 1098");
         
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -92,7 +90,6 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
         .statusCode(200)
         .body("id", not(is((Long) null)))
         .body("number", is(updatedPhoneNumber.getNumber()))
-        .body("contactTypeId", is(updatedPhoneNumber.getContactTypeId().intValue()))
         .body("defaultNumber", is(updatedPhoneNumber.getDefaultNumber()));
     } finally {
       given().headers(getAuthHeaders())
@@ -104,7 +101,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteStudentPhoneNumber() {
-    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 12 234 5678");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -115,7 +112,6 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("number", is(phoneNumber.getNumber()))
-      .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
       .body("defaultNumber", is( phoneNumber.getDefaultNumber()));
       
     Long id = response.body().jsonPath().getLong("id");
