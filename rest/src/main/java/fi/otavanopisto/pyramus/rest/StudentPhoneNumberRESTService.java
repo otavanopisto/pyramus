@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -89,20 +88,15 @@ public class StudentPhoneNumberRESTService extends AbstractRESTService {
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    Long contactTypeId = phoneNumber.getContactTypeId();
+
     Boolean defaultNumber = phoneNumber.getDefaultNumber();
     String number = phoneNumber.getNumber();
 
-    if (contactTypeId == null || defaultNumber == null || StringUtils.isBlank(number)) {
+    if (defaultNumber == null || StringUtils.isBlank(number)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    ContactType contactType = commonController.findContactTypeById(contactTypeId);
-    if (contactType == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-
-    return Response.ok(objectFactory.createModel(studentController.addStudentPhoneNumber(student, contactType, number, defaultNumber))).build();
+    return Response.ok(objectFactory.createModel(studentController.addStudentPhoneNumber(student, number, defaultNumber))).build();
   }
 
   @Path("/{ID:[0-9]*}")
@@ -159,11 +153,8 @@ public class StudentPhoneNumberRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    ContactType contactType = commonController.findContactTypeById(body.getContactTypeId());
-
     phoneNumber = studentController.updateStudentPhoneNumber(
         phoneNumber,
-        contactType,
         body.getNumber(),
         body.getDefaultNumber());
 

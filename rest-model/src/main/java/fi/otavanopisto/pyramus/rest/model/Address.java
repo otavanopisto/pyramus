@@ -6,11 +6,10 @@ public class Address {
     super();
   }
 
-  public Address(Long id, Long contactTypeId, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+  public Address(Long id, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
     this();
     this.id = id;
     this.defaultAddress = defaultAddress;
-    this.contactTypeId = contactTypeId;
     this.name = name;
     this.streetAddress = streetAddress;
     this.postalCode = postalCode;
@@ -32,14 +31,6 @@ public class Address {
 
   public void setDefaultAddress(Boolean defaultAddress) {
     this.defaultAddress = defaultAddress;
-  }
-
-  public Long getContactTypeId() {
-    return contactTypeId;
-  }
-
-  public void setContactTypeId(Long contactTypeId) {
-    this.contactTypeId = contactTypeId;
   }
 
   public String getName() {
@@ -84,7 +75,6 @@ public class Address {
 
   private Long id;
   private Boolean defaultAddress;
-  private Long contactTypeId;
   private String name;
   private String streetAddress;
   private String postalCode;

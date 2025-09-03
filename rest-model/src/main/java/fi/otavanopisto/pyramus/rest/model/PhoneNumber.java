@@ -6,10 +6,9 @@ public class PhoneNumber {
     super();
   }
 
-  public PhoneNumber(Long id, Long contactTypeId, Boolean defaultNumber, String number) {
+  public PhoneNumber(Long id, Boolean defaultNumber, String number) {
     this();
     this.id = id;
-    this.contactTypeId = contactTypeId;
     this.defaultNumber = defaultNumber;
     this.number = number;
   }
@@ -22,14 +21,6 @@ public class PhoneNumber {
     this.id = id;
   }
 
-  public Long getContactTypeId() {
-    return contactTypeId;
-  }
-
-  public void setContactTypeId(Long contactTypeId) {
-    this.contactTypeId = contactTypeId;
-  }
-  
   public Boolean getDefaultNumber() {
     return defaultNumber;
   }
@@ -47,7 +38,6 @@ public class PhoneNumber {
   }
 
   private Long id;
-  private Long contactTypeId;
   private Boolean defaultNumber;
   private String number;
 }
