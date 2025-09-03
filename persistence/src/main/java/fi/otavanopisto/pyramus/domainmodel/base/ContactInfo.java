@@ -24,8 +24,10 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
 @Indexed
-public class ContactInfo {
+public abstract class ContactInfo {
 
+  public abstract boolean hasUniqueEmails();
+  
   public Long getId() {
     return id;
   }

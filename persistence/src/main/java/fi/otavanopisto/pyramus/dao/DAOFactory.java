@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.auditlog.AuditLogDAO;
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
+import fi.otavanopisto.pyramus.dao.base.TypedContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
 import fi.otavanopisto.pyramus.dao.base.ComponentBaseDAO;
@@ -650,6 +651,10 @@ public class DAOFactory {
     return (ContactInfoDAO) findByClass(ContactInfoDAO.class);
   }
 
+  public TypedContactInfoDAO getTypedContactInfoDAO() {
+    return (TypedContactInfoDAO) findByClass(TypedContactInfoDAO.class);
+  }
+  
   public ContactTypeDAO getContactTypeDAO() {
     return (ContactTypeDAO) findByClass(ContactTypeDAO.class);
   }
