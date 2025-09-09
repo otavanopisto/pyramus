@@ -70,7 +70,7 @@
             editable: false,
             paramName: 'enrollmentActive'
           }, {
-            header : 'Lomakkeita (vah/hyl/yht)',
+            header : 'Lomakkeita (vah/hyl/top/yht)',
             width: 100,
             left: 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100,
             dataType : 'text',
@@ -111,7 +111,7 @@
               examsJSON[i].ends,
               examsJSON[i].confirmationDate,
               examsJSON[i].enrollmentActive,
-              examsJSON[i].confirmedEnrollments + "/" + examsJSON[i].rejectedEnrollments + "/" + examsJSON[i].totalEnrollments,
+              examsJSON[i].confirmedEnrollments + "/" + examsJSON[i].rejectedEnrollments + "/" + examsJSON[i].fobEnrollments + "/" + examsJSON[i].totalEnrollments,
               examsJSON[i].enrolledConfirmedAttendances,
               examsJSON[i].id,
               ''

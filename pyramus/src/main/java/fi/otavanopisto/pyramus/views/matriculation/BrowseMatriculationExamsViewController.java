@@ -33,13 +33,14 @@ public class BrowseMatriculationExamsViewController extends PyramusViewControlle
     MatriculationExamEnrollmentDAO examEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO examAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     
-    List<MatriculationExam> exams = examDAO.listAll();
+    List<MatriculationExam> exams = examDAO.listSorted();
     
     JSONArray jsonMatriculationExams = new JSONArray();
     for (MatriculationExam exam : exams) {
       Long totalEnrollments = examEnrollmentDAO.countEnrollments(exam, EnumSet.allOf(MatriculationExamEnrollmentState.class));
       Long confirmedEnrollments = examEnrollmentDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.CONFIRMED));
       Long rejectedEnrollments = examEnrollmentDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.REJECTED));
+      Long fobEnrollments = examEnrollmentDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.FILLED_ON_BEHALF));
       Long enrolledConfirmedAttendances = examAttendanceDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.CONFIRMED), EnumSet.of(MatriculationExamAttendanceStatus.ENROLLED));
       
       JSONObject obj = new JSONObject();
@@ -53,6 +54,7 @@ public class BrowseMatriculationExamsViewController extends PyramusViewControlle
       obj.put("totalEnrollments", totalEnrollments);
       obj.put("confirmedEnrollments", confirmedEnrollments);
       obj.put("rejectedEnrollments", rejectedEnrollments);
+      obj.put("fobEnrollments", fobEnrollments);
       obj.put("enrolledConfirmedAttendances", enrolledConfirmedAttendances);
       jsonMatriculationExams.add(obj);
     }
