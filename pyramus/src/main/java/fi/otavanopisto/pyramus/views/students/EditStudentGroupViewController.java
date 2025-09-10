@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -130,7 +131,7 @@ public class EditStudentGroupViewController extends PyramusViewController2 imple
           else
             studyProgrammeName = Messages.getInstance().getText(pageRequestContext.getRequest().getLocale(), "students.editStudent.noStudyProgrammeDropDownItemLabel");
   
-          if (student.getStudyEndDate() != null) {
+          if (student.getStudyEndDate() != null && student.getStudyEndDate().before(new Date())) {
             studyProgrammeName += " *";
           }
           
