@@ -79,20 +79,12 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
 
   @Transient  
   public Email getPrimaryEmail() {
-    for (Email email : getContactInfo().getEmails()) {
-      if (email.getDefaultAddress())
-        return email;
-    }
-    return null;
+    return getContactInfo().getDefaultEmail();
   }
   
   @Transient  
   public PhoneNumber getPrimaryPhoneNumber() {
-    for (PhoneNumber phoneNumber : getContactInfo().getPhoneNumbers()) {
-      if (phoneNumber.getDefaultNumber())
-        return phoneNumber;
-    }
-    return null;
+    return getContactInfo().getDefaultPhoneNumber();
   }
   
   @Transient
