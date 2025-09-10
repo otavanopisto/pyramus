@@ -53,7 +53,7 @@
   
     <h1 class="genericPageHeader">
       <fmt:message key="settings.editSchool.pageTitle" />
-      <a href="viewschool.page?school=${school.id}"><img src="${pageContext.request.contextPath}/gfx/eye.png"></a>
+      <a href="viewschool.page?school=${school.id}" class="pyramusViewLink pyramusViewLinkEye"><fmt:message key="generic.navigation.school.viewSchool"/></a>
     </h1>
   
     <div class="genericFormContainer"> 

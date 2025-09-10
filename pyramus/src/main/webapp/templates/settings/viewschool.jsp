@@ -39,7 +39,7 @@
   
     <h1 class="genericPageHeader">
       <fmt:message key="settings.viewSchool.pageTitle" />
-      <a href="editschool.page?school=${school.id}"><img src="${pageContext.request.contextPath}/gfx/accessories-text-editor.png"></a>
+      <a href="editschool.page?school=${school.id}" class="pyramusViewLink pyramusViewLinkEdit"><fmt:message key="generic.navigation.school.editSchool"/></a>
     </h1>
     
   
