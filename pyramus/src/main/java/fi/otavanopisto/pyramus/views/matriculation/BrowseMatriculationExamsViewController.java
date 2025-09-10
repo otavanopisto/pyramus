@@ -41,7 +41,7 @@ public class BrowseMatriculationExamsViewController extends PyramusViewControlle
       Long confirmedEnrollments = examEnrollmentDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.CONFIRMED));
       Long rejectedEnrollments = examEnrollmentDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.REJECTED));
       Long fobEnrollments = examEnrollmentDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.FILLED_ON_BEHALF));
-      Long enrolledConfirmedAttendances = examAttendanceDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.CONFIRMED), EnumSet.of(MatriculationExamAttendanceStatus.ENROLLED));
+      Long enrolledConfirmedAttendances = examAttendanceDAO.countEnrollments(exam, EnumSet.of(MatriculationExamEnrollmentState.CONFIRMED, MatriculationExamEnrollmentState.FILLED_ON_BEHALF), EnumSet.of(MatriculationExamAttendanceStatus.ENROLLED));
       
       JSONObject obj = new JSONObject();
       obj.put("id", exam.getId());
