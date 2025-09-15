@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql></sql>
+
+  <sql>
+    alter table ContactInfo add column DTYPE varchar(31) not null;
+  </sql>
+  
+  update ContactInfo set DTYPE = 'PersonalContactInfo';
+
+  <sql>
+    alter table ContactInfo add column contactType bigint;
+  </sql>
+  
+  <sql>
+    alter table ContactInfo 
+       add constraint FKkog5ran2ib23f2qflkgexqogx 
+       foreign key (contactType) 
+       references ContactType (id);
+  </sql>
+
+  <sql>
+    create table __StudentAdditionalContactInfos (
+       student bigint not null,
+        typedContactInfo bigint not null
+    );
+  </sql>
+
+  <sql>
+    alter table __StudentAdditionalContactInfos 
+       add constraint UK_bti7xfg1cn32y7vk8iunrxua1 unique (typedContactInfo);
+  </sql>
+
+  <sql>
+    alter table __StudentAdditionalContactInfos 
+       add constraint FKhkx3xqmbiuo1t8assbjentlfp 
+       foreign key (typedContactInfo) 
+       references ContactInfo (id);
+  </sql>
+
+  <sql>
+    alter table __StudentAdditionalContactInfos 
+       add constraint FK2goixxqasxeqnfraope935ohy 
+       foreign key (student) 
+       references Student (id);
+  </sql>
+
+  <sql>
+    create table __SchoolContactInfos (
+       school bigint not null,
+        typedContactInfo bigint not null
+    );
+  </sql>
+
+    alter table __SchoolContactInfos 
+       add constraint FKecnvvqf3tapcgndeww9q03em8 
+       foreign key (typedContactInfo) 
+       references ContactInfo (id);
+
+    alter table __SchoolContactInfos 
+       add constraint FKfks335riv1m0172u4y0405rbp 
+       foreign key (school) 
+       references School (id);
+
+  <sql>
+  </sql>
+
+  <sql>
+  </sql>
+
+  <sql>
+  </sql>
+
+  <sql>
+  </sql>
+
+  <sql>
+  </sql>
+
+  <sql>
+  </sql>
+
+  <sql>
+  </sql>
+
+  TODO KONVERSIOT
+
+  alter table Address drop column contactType;
+  alter table Email drop column contactType;
+  alter table PhoneNumber drop column contactType;
+
+  alter table School drop column contactInfo;
+  
+  alter table Defaults drop column studentDefaultContactType;
+  alter table Defaults drop column userDefaultContactType;
+
+</update>

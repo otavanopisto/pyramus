@@ -28,6 +28,7 @@
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/viewstudent.js"></script>
+<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/typedcontactinfo.js"></script>
 
 <!-- Used to render memo values with line breaks; for some reason this is the only approach that works -->
 <%
@@ -1590,6 +1591,7 @@
         var studentVariablesContainer = JSDATA["studentVariables"].evalJSON();
         var studentAssessmentsContainer = JSDATA["studentAssessments"].evalJSON();
         var personVariables = JSDATA["personVariables"].evalJSON();
+        var studentAdditionalContactInfos = JSDATA["studentAdditionalContactInfos"].evalJSON();
 
         Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
         loadLogEntries(${person.id});
@@ -1598,6 +1600,11 @@
           // Setup basics
           setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
 
+          var additionalContactInfos = studentAdditionalContactInfos['${student.id}'];
+          if (additionalContactInfos) {
+            initializeContactInfoView($('additionalContactInfos.${student.id}'), additionalContactInfos);
+          }
+          
           // Setup course tabs
           coursesTable = setupCoursesTab(${student.id});
 
@@ -2712,7 +2719,7 @@
                         items="${student.contactInfo.addresses}">
                         <div class="genericFormTitle">
                           <div class="genericFormTitleText">
-                            <div>${address.contactType.name}</div>
+                            <div><fmt:message key="students.viewStudent.addressHomeTitle" /></div>
                           </div>
                         </div>
                         <div class="genericViewFormDataText">
@@ -2737,19 +2744,7 @@
                     <div class="genericViewFormDataText">
                       <c:forEach var="email"
                         items="${student.contactInfo.emails}">
-                        <c:choose>
-                          <c:when test="${not empty email.contactType}">
-                            <div>
-                              <a href="mailto:${email.address}">${email.address}</a>
-                              (${fn:toLowerCase(email.contactType.name)})
-                            </div>
-                          </c:when>
-                          <c:otherwise>
-                            <div>
-                              <a href="mailto:${email.address}">${email.address}</a>
-                            </div>
-                          </c:otherwise>
-                        </c:choose>
+                        <a href="mailto:${email.address}">${email.address}</a>
                       </c:forEach>
                     </div>
                   </div>
@@ -2768,21 +2763,24 @@
                         <div class="genericViewFormDataText">
                           <c:forEach var="phone"
                             items="${student.contactInfo.phoneNumbers}">
-                            <c:choose>
-                              <c:when
-                                test="${not empty phone.contactType}">
-                                <div>${phone.number}
-                                  (${fn:toLowerCase(phone.contactType.name)})</div>
-                              </c:when>
-                              <c:otherwise>
-                                <div>${phone.number}</div>
-                              </c:otherwise>
-                            </c:choose>
+                            <div>${phone.number}</div>
                           </c:forEach>
                         </div>
                       </div>
                     </c:when>
                   </c:choose>
+
+                  <c:if test="${!empty student.additionalContactInfos}">
+                    <div class="genericFormSection">
+                      <jsp:include
+                        page="/templates/generic/fragments/formtitle.jsp">
+                        <jsp:param name="titleLocale" value="generic.forms.contactInfosTitle" />
+                        <jsp:param name="helpLocale" value="generic.forms.contactInfosHelp" />
+                      </jsp:include>
+                      
+                      <div id="additionalContactInfos.${student.id}"></div>
+                    </div>
+                  </c:if>
 
                   <c:choose>
                     <c:when test="${!empty student.municipality}">
@@ -4002,11 +4000,6 @@
               <div class="genericFormSection">
                 <c:forEach var="address"
                   items="${staffMember.contactInfo.addresses}">
-                  <div class="genericFormTitle">
-                    <div class="genericFormTitleText">
-                      <div>${address.contactType.name}</div>
-                    </div>
-                  </div>
                   <div class="genericViewFormDataText">
                     <div>${address.name}</div>
                     <div>${address.streetAddress}</div>
@@ -4029,19 +4022,7 @@
             <div class="genericViewFormDataText">
               <c:forEach var="email"
                 items="${staffMember.contactInfo.emails}">
-                <c:choose>
-                  <c:when test="${not empty email.contactType}">
-                    <div>
-                      <a href="mailto:${email.address}">${email.address}</a>
-                      (${fn:toLowerCase(email.contactType.name)})
-                    </div>
-                  </c:when>
-                  <c:otherwise>
-                    <div>
-                      <a href="mailto:${email.address}">${email.address}</a>
-                    </div>
-                  </c:otherwise>
-                </c:choose>
+                <a href="mailto:${email.address}">${email.address}</a>
               </c:forEach>
             </div>
           </div>
@@ -4060,16 +4041,7 @@
                 <div class="genericViewFormDataText">
                   <c:forEach var="phone"
                     items="${staffMember.contactInfo.phoneNumbers}">
-                    <c:choose>
-                      <c:when
-                        test="${not empty phone.contactType}">
-                        <div>${phone.number}
-                          (${fn:toLowerCase(phone.contactType.name)})</div>
-                      </c:when>
-                      <c:otherwise>
-                        <div>${phone.number}</div>
-                      </c:otherwise>
-                    </c:choose>
+                    <div>${phone.number}</div>
                   </c:forEach>
                 </div>
               </div>

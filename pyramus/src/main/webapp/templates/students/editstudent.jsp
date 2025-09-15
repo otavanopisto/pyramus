@@ -27,18 +27,19 @@
 
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/typedcontactinfo.js"></script>
     
     <script type="text/javascript">
       function addAddressTableRow(addressTable) {
-        addressTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '', '', '', '', '']);
+        addressTable.addRow([-1, '', '', '', '', '', '', '', '']);
       }
 
       function addPhoneTableRow(phoneTable) {
-        phoneTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '']);
+        phoneTable.addRow([-1, '', '', '', '']);
       }
 
       function addEmailTableRow(emailTable) {
-        emailTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '']);
+        emailTable.addRow([-1, '', '', '', '']);
       }
 
       function addLodgingPeriodTableRow(lodgingPeriodTable) {
@@ -65,28 +66,15 @@
             paramName: 'defaultNumber',
             tooltip: '<fmt:message key="students.editStudent.phoneTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="students.editStudent.phoneTableTypeHeader"/>',
-            width: 150,
-            left : 30,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="students.editStudent.phoneTableNumberHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 200,
             dataType: 'text',
             editable: true,
             paramName: 'phone'
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -97,7 +85,7 @@
             }
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -134,21 +122,8 @@
             paramName: 'defaultAddress',
             tooltip: '<fmt:message key="students.editStudent.emailTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="students.editStudent.emailTableTypeHeader"/>',
-            width: 150,
-            left : 30,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="students.editStudent.emailTableAddressHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 200,
             dataType: 'text',
             editable: true,
@@ -156,7 +131,7 @@
             editorClassNames: 'email'
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -167,7 +142,7 @@
             }
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -204,56 +179,43 @@
             paramName: 'defaultAddress',
             tooltip: '<fmt:message key="students.editStudent.addressTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="students.editStudent.addressTableTypeHeader"/>',
-            left : 30,
-            width : 150,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="students.editStudent.addressTableNameHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'name'
           }, {
             header : '<fmt:message key="students.editStudent.addressTableStreetHeader"/>',
-            left : 344,
+            left : 30 + 8 + 150 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'street'
           }, {
             header : '<fmt:message key="students.editStudent.addressTablePostalCodeHeader"/>',
-            left : 502,
+            left : 30 + 8 + 150 + 8 + 150 + 8,
             width : 100,
             dataType: 'text',
             editable: true,
             paramName: 'postal'
           }, {
             header : '<fmt:message key="students.editStudent.addressTableCityHeader"/>',
-            left : 610,
+            left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'city'
           }, {
             header : '<fmt:message key="students.editStudent.addressTableCountryHeader"/>',
-            left : 768,
+            left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8,
             width : 100,
             dataType: 'text',
             editable: true,
             paramName: 'country'
           }, {
             width: 30,
-            left: 874,
+            left: 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -264,7 +226,7 @@
             }
           }, {
             width: 30,
-            left: 874,
+            left: 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -540,6 +502,8 @@
 
         var studentLodgingPeriodsContainer = JSDATA["studentLodgingPeriods"].evalJSON();
         var studentStudyPeriodsContainer = JSDATA["studentStudyPeriods"].evalJSON();
+        var contactTypes = JSDATA["contactTypes"].evalJSON();
+        var studentAdditionalContactInfos = JSDATA["studentAdditionalContactInfos"].evalJSON();
 
         var data = {
           studentLodgingPeriodsContainer : studentLodgingPeriodsContainer,
@@ -551,7 +515,7 @@
 
         Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
         loadLogEntries(${person.id});
-        
+
         var personVariables = JSDATA["personVariables"].evalJSON();
         if (personVariables && personVariables.length > 0) {
           var personVariablesTable = initPersonVariablesTable();
@@ -605,6 +569,8 @@
           setupRelatedCommands(studentId, '${sprogName}', ${studentHasCredits[student.id]}, ${studentHasFiles[student.id]});
           setupStudent(studentId, data);
 
+          initializeContactInfoEditor($('additionalContactInfos.${student.id}'), contactTypes, studentAdditionalContactInfos['${student.id}']);
+          
           // Addresses
 
           addressTable = initAddressTable(studentId);
@@ -613,7 +579,6 @@
             addressTable.addRow([
               ${address.id},
               ${address.defaultAddress},
-              ${address.contactType.id},
               '${fn:escapeXml(address.name)}',
               '${fn:escapeXml(address.streetAddress)}',
               '${fn:escapeXml(address.postalCode)}',
@@ -636,7 +601,6 @@
             emailTable.addRow([
               ${email.id},
               ${email.defaultAddress},
-              ${email.contactType.id},
               '${fn:escapeXml(email.address)}',
               '',
               '']);
@@ -655,7 +619,6 @@
             phoneTable.addRow([
               ${phone.id},
               ${phone.defaultNumber},
-              ${phone.contactType.id},
               '${fn:escapeXml(phone.number)}',
               '',
               '']);
@@ -1316,6 +1279,14 @@
                   <jsp:param name="helpLocale" value="students.editStudent.otherContactInfoInfoHelp"/>
                 </jsp:include>
                 <textarea name="otherContactInfo.${student.id}" rows="5" cols="50">${student.contactInfo.additionalInfo}</textarea>
+              </div>
+
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="generic.forms.contactInfosTitle" />
+                  <jsp:param name="helpLocale" value="generic.forms.contactInfosHelp" />
+                </jsp:include>
+                <div id="additionalContactInfos.${student.id}"></div>
               </div>
 
               <div class="genericFormSection">  

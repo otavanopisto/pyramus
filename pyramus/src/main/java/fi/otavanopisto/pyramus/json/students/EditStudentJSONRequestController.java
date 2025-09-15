@@ -20,7 +20,6 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
-import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
@@ -46,7 +45,6 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
@@ -81,6 +79,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.util.ContactInfoUtils;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 public class EditStudentJSONRequestController extends JSONRequestController2 {
@@ -140,7 +139,6 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
-    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
@@ -260,9 +258,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         String colPrefix = "emailTable." + student.getId() + "." + i;
         String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
         if (StringUtils.isNotBlank(email)) {
-          ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-          
-          if (!UserUtils.isAllowedEmail(email, contactType, person.getId()))
+          if (!UserUtils.isAllowedUniqueEmail(email, person))
             throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
         }
       }
@@ -449,7 +445,6 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         String colPrefix = "addressTable." + student.getId() + "." + i;
         Long addressId = requestContext.getLong(colPrefix + ".addressId");
         Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
         String name = requestContext.getString(colPrefix + ".name");
         String street = requestContext.getString(colPrefix + ".street");
         String postal = requestContext.getString(colPrefix + ".postal");
@@ -457,14 +452,14 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         String country = requestContext.getString(colPrefix + ".country");
         boolean hasAddress = name != null || street != null || postal != null || city != null || country != null;
         if (addressId == -1 && hasAddress) {
-          Address address = addressDAO.create(student.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
+          Address address = addressDAO.create(student.getContactInfo(), name, street, postal, city, country, defaultAddress);
           existingAddresses.add(address.getId());
         }
         else if (addressId > 0) {
           Address address = addressDAO.findById(addressId);
           if (hasAddress) {
             existingAddresses.add(addressId);
-            addressDAO.update(address, defaultAddress, contactType, name, street, postal, city, country);
+            addressDAO.update(address, defaultAddress, name, street, postal, city, country);
           }
         }
       }
@@ -483,16 +478,15 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       for (int i = 0; i < rowCount; i++) {
         String colPrefix = "emailTable." + student.getId() + "." + i;
         Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
         String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
         
         if (StringUtils.isNotBlank(email)) {
           Long emailId = requestContext.getLong(colPrefix + ".emailId");
           if (emailId == -1) {
-            emailId = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, email).getId(); 
+            emailId = emailDAO.create(student.getContactInfo(), defaultAddress, email).getId(); 
           }
           else {
-            emailDAO.update(emailDAO.findById(emailId), contactType, defaultAddress, email);
+            emailDAO.update(emailDAO.findById(emailId), defaultAddress, email);
           }
           existingEmails.add(emailId);
         }
@@ -512,15 +506,14 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       for (int i = 0; i < rowCount; i++) {
         String colPrefix = "phoneTable." + student.getId() + "." + i;
         Boolean defaultNumber = requestContext.getBoolean(colPrefix + ".defaultNumber");
-        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
         String number = requestContext.getString(colPrefix + ".phone");
         Long phoneId = requestContext.getLong(colPrefix + ".phoneId");
         if (phoneId == -1 && number != null) {
-          phoneId = phoneNumberDAO.create(student.getContactInfo(), contactType, defaultNumber, number).getId();
+          phoneId = phoneNumberDAO.create(student.getContactInfo(), defaultNumber, number).getId();
           existingPhoneNumbers.add(phoneId);
         }
         else if (phoneId > 0 && number != null) {
-          phoneNumberDAO.update(phoneNumberDAO.findById(phoneId), contactType, defaultNumber, number);
+          phoneNumberDAO.update(phoneNumberDAO.findById(phoneId), defaultNumber, number);
           existingPhoneNumbers.add(phoneId);
         }
       }
@@ -532,6 +525,9 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         }
       }
 
+      // Additional Contact Infos
+      ContactInfoUtils.readAndUpdateTypedContactInfos(requestContext, String.format("additionalContactInfos.%d", student.getId()), student.getAdditionalContactInfos());
+      
       Long studyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
       // #4226: Remove applications of nettipk/nettilukio students when their studies end
       if (studiesEnded && studyProgrammeId != null && (studyProgrammeId == 6L || studyProgrammeId == 7L)) {
@@ -581,7 +577,8 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         }
         studentCardDAO.update(studentCard, activity, expiryDate, studentCardType, cancellationDate);
       }
-    }
+      
+    } // end of Student loop
     
 
     // Contact information of a student won't be reflected to Person

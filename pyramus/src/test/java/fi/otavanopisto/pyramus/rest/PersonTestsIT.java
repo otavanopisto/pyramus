@@ -281,7 +281,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       
     int student3Id = response.body().jsonPath().getInt("id");
     
-    Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
+    Email email = new Email(null, Boolean.FALSE, "bogus@norealmail.org");
     
     response = given().headers(getAuthHeaders())
       .contentType("application/json")

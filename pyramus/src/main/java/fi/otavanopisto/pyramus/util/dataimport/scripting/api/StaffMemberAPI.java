@@ -3,12 +3,10 @@ package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 import java.util.EnumSet;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -49,13 +47,7 @@ public class StaffMemberAPI {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     address = address != null ? address.trim() : null;
-    
-    ContactType contactType = contactTypeDAO.findById(contactTypeId);
-    if (contactType == null) {
-      throw new InvalidScriptException("ContactType could not be found");
-    }
     
     StaffMember staffMember = staffMemberDAO.findById(staffMemberId);
     if (staffMember == null) {
@@ -74,7 +66,7 @@ public class StaffMemberAPI {
       }
     }
     
-    emailDAO.create(staffMember.getContactInfo(), contactType, defaultAddress, address);
+    emailDAO.create(staffMember.getContactInfo(), defaultAddress, address);
   }
 
 }

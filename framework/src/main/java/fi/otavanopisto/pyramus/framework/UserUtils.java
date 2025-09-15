@@ -9,24 +9,20 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.AccessDeniedException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentDAO;
-import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
-import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
@@ -37,39 +33,26 @@ public class UserUtils {
   }
 
   /**
-   * Is email address allowed (not in use)
-   * 
-   * @param emailAddress address that is being used
-   * @param contactType contacttype for emailAddress, if contacttype is non-unique, this methods returns always true
-   * @return true if email is not in use
-   */
-  public static boolean isAllowedEmail(String emailAddress, ContactType contactType) {
-    return isAllowedEmail(emailAddress, contactType, null);
-  }
-
-  /**
-   * Is email address allowed (not in use by another person)
+   * Is email address allowed (not in use).
    * 
    * @param emailAddress address
-   * @param contactType contacttype for emailAddress, if contacttype is non-unique, this methods returns always true
-   * @param personId id of person receiving this address
-   * @return true if email may be used by the provided person
-   * @throws IllegalArgumentException if the given email is blank 
-   */
-  public static boolean isAllowedEmail(String emailAddress, ContactType contactType, Long personId) {
-    return isAllowedEmail(emailAddress, !contactType.getNonUnique(), personId);
-  }
-
-  /**
-   * Is email address allowed (not in use)
-   * 
-   * @param emailAddress address
-   * @param unique if the email has to be unique. if false, this method returns always true
+   * @param person person receiving this address
    * @return true if email is not in use
    * @throws IllegalArgumentException if the given email is blank 
    */
-  public static boolean isAllowedEmail(String emailAddress, boolean unique) {
-    return isAllowedEmail(emailAddress, unique, null);
+  public static boolean isAllowedUniqueEmail(String emailAddress, Person person) {
+    return isAllowedEmail(emailAddress, true, person);
+  }
+  
+  /**
+   * Is email address allowed (not in use).
+   * 
+   * @param emailAddress address
+   * @return true if email is not in use
+   * @throws IllegalArgumentException if the given email is blank 
+   */
+  public static boolean isAllowedUniqueEmail(String emailAddress) {
+    return isAllowedEmail(emailAddress, true, null);
   }
   
   /**
@@ -77,11 +60,11 @@ public class UserUtils {
    * 
    * @param emailAddress address
    * @param unique if the email has to be unique. if false, this method returns always true
-   * @param personId id of person receiving this address
+   * @param person person receiving this address
    * @return true if email may be used by the provided person
    * @throws IllegalArgumentException if the given email is blank 
    */
-  public static boolean isAllowedEmail(String emailAddress, boolean unique, Long personId) {
+  private static boolean isAllowedEmail(String emailAddress, boolean unique, Person person) {
     if (StringUtils.isBlank(emailAddress)) {
       throw new IllegalArgumentException("Email address cannot be blank.");
     }
@@ -93,69 +76,35 @@ public class UserUtils {
     
     emailAddress = StringUtils.trim(emailAddress);
 
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
 
-    StaffMember staffMember = staffMemberDAO.findByUniqueEmail(emailAddress);
-    StudentParent studentParent = studentParentDAO.findByUniqueEmail(emailAddress);
-    List<Student> students = studentDAO.listBy(null, emailAddress, null, null, null, null);
+    List<User> emailOwners = userDAO.listByUniqueEmail(emailAddress);
 
     // True, if email is not in use
-    if (staffMember == null && studentParent == null && students.isEmpty()) {
+
+    if (CollectionUtils.isEmpty(emailOwners)) {
       return true;
     }
 
+    Long personId = person != null ? person.getId() : null;
+    
     if (personId != null) {
       // True, if found matches the person, or if not found at all 
-      boolean allowed = true;
-      
-      allowed = allowed && (staffMember != null ? personId.equals(staffMember.getPerson().getId()) : true);
-      allowed = allowed && (studentParent != null ? personId.equals(studentParent.getPerson().getId()) : true);
-      
-      for (Student student : students) {
-        if (student.getContactInfo().getEmails() != null) {
-          for (Email email : student.getContactInfo().getEmails()) {
-            if (emailAddress.equalsIgnoreCase(email.getAddress())) {
-              /**
-               * allowed if
-               *  - contacttype of the email in use is non-unique (ie. used as contact person etc)
-               *  - person that owns the used email is the same as the person receiving the address 
-               */
-              
-              allowed = allowed && (email.getContactType().getNonUnique() || (student != null ? personId.equals(student.getPerson().getId()) : true));
-            }
-          }
+
+      for (User user : emailOwners) {
+        if (!personId.equals(user.getPersonId())) {
+          return false;
         }
       }
       
-      return allowed;
+      return true;
     } else {
       /**
        * The email is being assigned to a user that likely doesn't exist yet (personId = null)
        * so check if there is globally unique use of it already.
        */
-      
-      // Doesn't this have the assumption that staffmembers/studentParents have only unique contacts?
-      if (staffMember != null || studentParent != null) {
-        return false;
-      }
-      
-      for (Student student : students) {
-        if (student.getContactInfo().getEmails() != null) {
-          for (Email email : student.getContactInfo().getEmails()) {
-            if (emailAddress.equalsIgnoreCase(email.getAddress())) {
-              // Not allowed if the email is in use in a non-unique field
-              
-              if (email.getContactType().isUniqueEmails()) {
-                return false;
-              }
-            }
-          }
-        }
-      }
-      
-      return true;
+
+      return CollectionUtils.isEmpty(emailOwners);
     }
   }
   

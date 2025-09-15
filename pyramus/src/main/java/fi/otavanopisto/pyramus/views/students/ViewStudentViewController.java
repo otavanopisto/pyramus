@@ -120,6 +120,7 @@ import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumModule;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
+import fi.otavanopisto.pyramus.util.ContactInfoUtils;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
@@ -346,6 +347,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       if (studentCard != null) {
         studentCards.put(student.getId(), studentCard);
       }
+      
       /**
        * Fetch courses this student is part of and sort the courses by course name
        */
@@ -939,7 +941,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       } catch (Exception ex) {
         logger.log(Level.SEVERE, String.format("Failed to construct TOR for student %d", student.getId()), ex);
       }
-    }
+      
+    } // end of Student loop
 
     ObjectMapper mapper = new ObjectMapper();
     StringWriter writer = new StringWriter();
@@ -967,7 +970,11 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     }
 
     constructMatriculationTabContent(person, pageRequestContext);
-    
+
+    // AdditionalInfos
+    JSONObject studentAdditionalContactInfosJSON = ContactInfoUtils.getPersonAdditionalContactInfos(students);
+    setJsDataVariable(pageRequestContext, "studentAdditionalContactInfos", studentAdditionalContactInfosJSON.toString());
+
     setJsDataVariable(pageRequestContext, "studentAssessments", studentAssessmentsJSON.toString());
     setJsDataVariable(pageRequestContext, "linkedCourseAssessments", linkedCourseAssessments.toString());
     setJsDataVariable(pageRequestContext, "linkedTransferCredits", linkedTransferCredits.toString());

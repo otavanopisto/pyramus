@@ -18,15 +18,15 @@
     
     <script type="text/javascript">
       function addEmailTableRow(values) {
-        getIxTableById('emailTable').addRow(values || ['', <c:out value="${contactTypes[0].id}" />, '', '', '']);
+        getIxTableById('emailTable').addRow(values || ['', '', '', '']);
       };
   
       function addPhoneTableRow(values) {
-        getIxTableById('phoneTable').addRow(values || ['', <c:out value="${contactTypes[0].id}" />, '', '', '']);
+        getIxTableById('phoneTable').addRow(values || ['', '', '', '']);
       };
   
       function addAddressTableRow(values) {
-        getIxTableById('addressTable').addRow(values || ['', <c:out value="${contactTypes[0].id}" />, '', '', '', '', '', '', '']);
+        getIxTableById('addressTable').addRow(values || ['', '', '', '', '', '', '', '']);
       };
           
       function setupTags() {
@@ -81,21 +81,8 @@
             paramName: 'defaultAddress',
             tooltip: '<fmt:message key="users.createUser.emailTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="users.createUser.emailTableTypeHeader"/>',
-            width: 150,
-            left : 30,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="users.createUser.emailTableAddressHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 200,
             dataType: 'text',
             editable: true,
@@ -103,7 +90,7 @@
             editorClassNames: 'email'
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -114,7 +101,7 @@
             }
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -134,7 +121,6 @@
         if (emails_values && emails_values.length > 0) {
           for (var i = 0; i < emails_values.length; i++) {
             addEmailTableRow([emails_values[i].defaultAddress, 
-                              emails_values[i].contactType != undefined ? emails_values[i].contactType.id : '',
                               emails_values[i].address, '', '']);
           }
         } else {
@@ -154,56 +140,43 @@
             paramName: 'defaultAddress',
             tooltip: '<fmt:message key="users.createUser.addressTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="users.createUser.addressTableTypeHeader"/>',
-            left : 30,
-            width : 150,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="users.createUser.addressTableNameHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'name'
           }, {
             header : '<fmt:message key="users.createUser.addressTableStreetHeader"/>',
-            left : 344,
+            left : 30 + 8 + 150 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'street'
           }, {
             header : '<fmt:message key="users.createUser.addressTablePostalCodeHeader"/>',
-            left : 502,
+            left : 30 + 8 + 150 + 8 + 150 + 8,
             width : 100,
             dataType: 'text',
             editable: true,
             paramName: 'postal'
           }, {
             header : '<fmt:message key="users.createUser.addressTableCityHeader"/>',
-            left : 610,
+            left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'city'
           }, {
             header : '<fmt:message key="users.createUser.addressTableCountryHeader"/>',
-            left : 768,
+            left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8,
             width : 100,
             dataType: 'text',
             editable: true,
             paramName: 'country'
           }, {
             width: 30,
-            left: 874,
+            left: 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -214,7 +187,7 @@
             }
           }, {
             width: 30,
-            left: 874,
+            left: 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -234,7 +207,6 @@
         if (address_values && address_values.length > 0) {
           for (var i = 0; i < address_values.length; i++) {
             addAddressTableRow([address_values[i].defaultAddress, 
-                                address_values[i].contactType != undefined ? address_values[i].contactType.id : '', 
                                 address_values[i].name != undefined ? address_values[i].name : '', 
                                 address_values[i].streetAddress, 
                                 address_values[i].postalCode, 
@@ -258,28 +230,15 @@
             paramName: 'defaultNumber',
             tooltip: '<fmt:message key="users.createUser.phoneTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="users.createUser.phoneTableTypeHeader"/>',
-            width: 150,
-            left : 30,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="users.createUser.phoneTableNumberHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 200,
             dataType: 'text',
             editable: true,
             paramName: 'phone'
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -290,7 +249,7 @@
             }
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -310,7 +269,6 @@
         if (phone_values && phone_values.length > 0) {
           for (var i = 0; i < phone_values.length; i++) {
             addPhoneTableRow([phone_values[i].defaultNumber, 
-                              phone_values[i].contactType != undefined ? phone_values[i].contactType.id : '',
                               phone_values[i].number, '', '']);
           }
         } else {

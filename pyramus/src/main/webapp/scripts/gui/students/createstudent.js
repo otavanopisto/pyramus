@@ -6,15 +6,15 @@ var address_values = JSDATA["createstudent_addresses"] ? JSDATA["createstudent_a
 var phone_values = JSDATA["createstudent_phones"] ? JSDATA["createstudent_phones"].evalJSON() : undefined;
 
 function addEmailTableRow(values) {
-  getIxTableById('emailTable').addRow(values || [ '', contactTypes[0].id, '', '', '' ]);
+  getIxTableById('emailTable').addRow(values || [ '', '', '', '' ]);
 };
 
 function addPhoneTableRow(values) {
-  getIxTableById('phoneTable').addRow(values || [ '', contactTypes[0].id, '', '', '' ]);
+  getIxTableById('phoneTable').addRow(values || [ '', '', '', '' ]);
 };
 
 function addAddressTableRow(values) {
-  getIxTableById('addressTable').addRow(values || [ '', contactTypes[0].id, '', '', '', '', '', '', '' ]);
+  getIxTableById('addressTable').addRow(values || [ '', '', '', '', '', '', '', '' ]);
 };
 
 function addLodgingPeriodTableRow(lodgingPeriodTable) {
@@ -74,6 +74,7 @@ function onLoad(event) {
   var tabControl = new IxProtoTabs($('tabs'));
 
   initStudentLodgingPeriodsTable();
+  initializeContactInfoEditor($('additionalContactInfos'), contactTypes);
   
   // E-mail address
 
@@ -87,25 +88,8 @@ function onLoad(event) {
       paramName : 'defaultAddress',
       tooltip : getLocale().getText("students.createStudent.emailTableDefaultTooltip"),
     }, {
-      header : getLocale().getText("students.createStudent.emailTableTypeHeader"),
-      width : 150,
-      left : 30,
-      dataType : 'select',
-      editable : true,
-      paramName : 'contactTypeId',
-      options : (function() {
-        var results = [];
-        for ( var i = 0, l = contactTypes.length; i < l; i++) {
-          results.push({
-            text : contactTypes[i].name,
-            value : contactTypes[i].id
-          });
-        }
-        return results;
-      })()
-    }, {
       header : getLocale().getText("students.createStudent.emailTableAddressHeader"),
-      left : 188,
+      left : 30 + 8,
       width : 200,
       dataType : 'text',
       editable : true,
@@ -113,7 +97,7 @@ function onLoad(event) {
       editorClassNames : 'email'
     }, {
       width : 30,
-      left : 396,
+      left : 30 + 8 + 200 + 8,
       dataType : 'button',
       paramName : 'addButton',
       hidden : true,
@@ -124,7 +108,7 @@ function onLoad(event) {
       }
     }, {
       width : 30,
-      left : 396,
+      left : 30 + 8 + 200 + 8,
       dataType : 'button',
       paramName : 'removeButton',
       hidden : true,
@@ -144,7 +128,6 @@ function onLoad(event) {
   if (emails_values && emails_values.length > 0) {
     for (var i = 0; i < emails_values.length; i++) {
       addEmailTableRow([emails_values[i].defaultAddress, 
-                        emails_values[i].contactType != undefined ? emails_values[i].contactType.id : '', 
                         emails_values[i].address, '', '']);
     }
   } else {
@@ -164,60 +147,43 @@ function onLoad(event) {
       paramName : 'defaultAddress',
       tooltip : getLocale().getText("students.createStudent.addressTableDefaultTooltip"),
     }, {
-      header : getLocale().getText("students.createStudent.addressTableTypeHeader"),
-      left : 30,
-      width : 150,
-      dataType : 'select',
-      editable : true,
-      paramName : 'contactTypeId',
-      options : (function() {
-        var results = [];
-        for ( var i = 0, l = contactTypes.length; i < l; i++) {
-          results.push({
-            text : contactTypes[i].name,
-            value : contactTypes[i].id
-          });
-        }
-        return results;
-      })()
-    }, {
       header : getLocale().getText("students.createStudent.addressTableNameHeader"),
-      left : 188,
+      left : 30 + 8,
       width : 150,
       dataType : 'text',
       editable : true,
       paramName : 'name'
     }, {
       header : getLocale().getText("students.createStudent.addressTableStreetHeader"),
-      left : 344,
+      left : 30 + 8 + 150 + 8,
       width : 150,
       dataType : 'text',
       editable : true,
       paramName : 'street'
     }, {
       header : getLocale().getText("students.createStudent.addressTablePostalCodeHeader"),
-      left : 502,
+      left : 30 + 8 + 150 + 8 + 150 + 8,
       width : 100,
       dataType : 'text',
       editable : true,
       paramName : 'postal'
     }, {
       header : getLocale().getText("students.createStudent.addressTableCityHeader"),
-      left : 610,
+      left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8,
       width : 150,
       dataType : 'text',
       editable : true,
       paramName : 'city'
     }, {
       header : getLocale().getText("students.createStudent.addressTableCountryHeader"),
-      left : 768,
+      left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8,
       width : 100,
       dataType : 'text',
       editable : true,
       paramName : 'country'
     }, {
       width : 30,
-      left : 874,
+      left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
       dataType : 'button',
       paramName : 'addButton',
       hidden : true,
@@ -228,7 +194,7 @@ function onLoad(event) {
       }
     }, {
       width : 30,
-      left : 874,
+      left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
       dataType : 'button',
       paramName : 'removeButton',
       hidden : true,
@@ -248,7 +214,6 @@ function onLoad(event) {
   if (address_values && address_values.length > 0) {
     for (var i = 0; i < address_values.length; i++) {
       addAddressTableRow([address_values[i].defaultAddress, 
-                          address_values[i].contactType != undefined ? address_values[i].contactType.id : '', 
                           address_values[i].name != undefined ? address_values[i].name : '', 
                           address_values[i].streetAddress, 
                           address_values[i].postalCode, 
@@ -272,32 +237,15 @@ function onLoad(event) {
       paramName : 'defaultNumber',
       tooltip : getLocale().getText("students.createStudent.phoneTableDefaultTooltip"),
     }, {
-      header : getLocale().getText("students.createStudent.phoneTableTypeHeader"),
-      width : 150,
-      left : 30,
-      dataType : 'select',
-      editable : true,
-      paramName : 'contactTypeId',
-      options : (function() {
-        var results = [];
-        for ( var i = 0, l = contactTypes.length; i < l; i++) {
-          results.push({
-            text : contactTypes[i].name,
-            value : contactTypes[i].id
-          });
-        }
-        return results;
-      })()
-    }, {
       header : getLocale().getText("students.createStudent.phoneTableNumberHeader"),
-      left : 188,
+      left : 30 + 8,
       width : 200,
       dataType : 'text',
       editable : true,
       paramName : 'phone'
     }, {
       width : 30,
-      left : 396,
+      left : 30 + 8 + 200 + 8,
       dataType : 'button',
       paramName : 'addButton',
       hidden : true,
@@ -308,7 +256,7 @@ function onLoad(event) {
       }
     }, {
       width : 30,
-      left : 396,
+      left : 30 + 8 + 200 + 8,
       dataType : 'button',
       paramName : 'removeButton',
       hidden : true,
@@ -328,7 +276,6 @@ function onLoad(event) {
   if (phone_values && phone_values.length > 0) {
     for (var i = 0; i < phone_values.length; i++) {
       addPhoneTableRow([phone_values[i].defaultNumber, 
-                        phone_values[i].contactType != undefined ? phone_values[i].contactType.id : '', 
                         phone_values[i].number, 
                         '', '']);
     }

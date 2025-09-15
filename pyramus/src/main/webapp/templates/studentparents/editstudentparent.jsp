@@ -20,15 +20,15 @@
     <script type="text/javascript">
 
       function addAddressTableRow(addressTable) {
-        addressTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '', '', '', '', '']);
+        addressTable.addRow([-1, '', '', '', '', '', '', '', '']);
       }
 
       function addEmailTableRow() {
-        getIxTableById('emailTable').addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '']);
+        getIxTableById('emailTable').addRow([-1, '', '', '', '']);
       }
 
       function addPhoneTableRow(phoneTable) {
-        phoneTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '']);
+        phoneTable.addRow([-1, '', '', '', '']);
       }
 
       function onLoad(event) {
@@ -51,56 +51,43 @@
             paramName: 'defaultAddress',
             tooltip: '<fmt:message key="users.editUser.addressTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="users.editUser.addressTableTypeHeader"/>',
-            left : 30,
-            width : 150,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="users.editUser.addressTableNameHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'name'
           }, {
             header : '<fmt:message key="users.editUser.addressTableStreetHeader"/>',
-            left : 344,
+            left : 30 + 8 + 150 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'street'
           }, {
             header : '<fmt:message key="users.editUser.addressTablePostalCodeHeader"/>',
-            left : 502,
+            left : 30 + 8 + 150 + 8 + 150 + 8,
             width : 100,
             dataType: 'text',
             editable: true,
             paramName: 'postal'
           }, {
             header : '<fmt:message key="users.editUser.addressTableCityHeader"/>',
-            left : 610,
+            left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8,
             width : 150,
             dataType: 'text',
             editable: true,
             paramName: 'city'
           }, {
             header : '<fmt:message key="users.editUser.addressTableCountryHeader"/>',
-            left : 768,
+            left : 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8,
             width : 100,
             dataType: 'text',
             editable: true,
             paramName: 'country'
           }, {
             width: 30,
-            left: 874,
+            left: 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -111,7 +98,7 @@
             }
           }, {
             width: 30,
-            left: 874,
+            left: 30 + 8 + 150 + 8 + 150 + 8 + 100 + 8 + 150 + 8 + 100 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -133,7 +120,6 @@
           addressTable.addRow([
             ${address.id},
             ${address.defaultAddress},
-            ${address.contactType.id},
             '${fn:escapeXml(address.name)}',
             '${fn:escapeXml(address.streetAddress)}',
             '${fn:escapeXml(address.postalCode)}',
@@ -163,21 +149,8 @@
             paramName: 'defaultAddress',
             tooltip: '<fmt:message key="users.editUser.emailTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="users.editUser.emailTableTypeHeader"/>',
-            width: 150,
-            left : 30,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="users.editUser.emailTableAddressHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 200,
             dataType: 'text',
             editable: true,
@@ -185,7 +158,7 @@
             editorClassNames: 'email'
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -196,7 +169,7 @@
             }
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -218,7 +191,6 @@
           emailTable.addRow([
             ${email.id},
             ${email.defaultAddress},
-            ${email.contactType.id},
             '${fn:escapeXml(email.address)}',
             '',
             '']);
@@ -244,28 +216,15 @@
             paramName: 'defaultNumber',
             tooltip: '<fmt:message key="users.editUser.phoneTableDefaultTooltip"/>',
           }, {
-            header : '<fmt:message key="users.editUser.phoneTableTypeHeader"/>',
-            width: 150,
-            left : 30,
-            dataType: 'select',
-            editable: true,
-            paramName: 'contactTypeId',
-            options: [
-              <c:forEach var="contactType" items="${contactTypes}" varStatus="vs">
-                {text: "${contactType.name}", value: ${contactType.id}}
-                <c:if test="${not vs.last}">,</c:if>
-              </c:forEach>
-            ]
-          }, {
             header : '<fmt:message key="users.editUser.phoneTableNumberHeader"/>',
-            left : 188,
+            left : 30 + 8,
             width : 200,
             dataType: 'text',
             editable: true,
             paramName: 'phone'
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'addButton',
             hidden: true,
@@ -276,7 +235,7 @@
             }
           }, {
             width: 30,
-            left: 396,
+            left: 30 + 8 + 200 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             hidden: true,
@@ -298,7 +257,6 @@
           phoneTable.addRow([
             ${phone.id},
             ${phone.defaultNumber},
-            ${phone.contactType.id},
             '${fn:escapeXml(phone.number)}',
             '',
             '']);

@@ -52,6 +52,7 @@ import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.base.TypedContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
@@ -82,6 +83,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
@@ -944,6 +946,7 @@ public class ApplicationUtils {
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
+    TypedContactInfoDAO additionalContactInfoDAO = DAOFactory.getInstance().getTypedContactInfoDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -1094,20 +1097,15 @@ public class ApplicationUtils {
       }
     }
     
-    // Main contact type
-    
-    ContactType contactType = contactTypeDAO.findById(1L); // Koti (unique)
-
     // Attach email
     
     String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
-    emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email);
+    emailDAO.create(student.getContactInfo(), Boolean.TRUE, email);
     
     // Attach address
     
     addressDAO.create(
         student.getContactInfo(),
-        contactType,
         String.format("%s %s", getFormValue(formData, "field-nickname"), getFormValue(formData, "field-last-name")),
         getFormValue(formData, "field-street-address"),
         getFormValue(formData, "field-zip-code"),
@@ -1119,7 +1117,6 @@ public class ApplicationUtils {
     
     phoneNumberDAO.create(
         student.getContactInfo(),
-        contactType,
         Boolean.TRUE,
         getFormValue(formData, "field-phone"));
     
@@ -1129,78 +1126,115 @@ public class ApplicationUtils {
       
       // Attach email
       
-      contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
+      ContactType contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
+
+      // Guardian's contact infos for guardians 1-3
+      TypedContactInfo underageContactInfo1 = null;
+      TypedContactInfo underageContactInfo2 = null;
+      TypedContactInfo underageContactInfo3 = null;
+      
       email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
       if (!StringUtils.isBlank(email)) {
-        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+        if (underageContactInfo1 == null) {
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
+        }
+        emailDAO.create(underageContactInfo1, Boolean.TRUE, email);
       }
       email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
       if (!StringUtils.isBlank(email)) {
-        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+        if (underageContactInfo2 == null) {
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
+        }
+        emailDAO.create(underageContactInfo2, Boolean.TRUE, email);
       }
       email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
       if (!StringUtils.isBlank(email)) {
-        emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
+        if (underageContactInfo3 == null) {
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
+        }
+        emailDAO.create(underageContactInfo3, Boolean.TRUE, email);
       }
 
       // Attach address
       
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name"))) {
+        if (underageContactInfo1 == null) {
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
+        }
         addressDAO.create(
-            student.getContactInfo(),
-            contactType,
+            underageContactInfo1,
             String.format("%s %s", getFormValue(formData, "field-underage-first-name"), getFormValue(formData, "field-underage-last-name")),
             getFormValue(formData, "field-underage-street-address"),
             getFormValue(formData, "field-underage-zip-code"),
             getFormValue(formData, "field-underage-city"),
             getFormValue(formData, "field-underage-country"),
-            Boolean.FALSE);
+            Boolean.TRUE);
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-2"))) {
+        if (underageContactInfo2 == null) {
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
+        }
         addressDAO.create(
-            student.getContactInfo(),
-            contactType,
+            underageContactInfo2,
             String.format("%s %s", getFormValue(formData, "field-underage-first-name-2"), getFormValue(formData, "field-underage-last-name-2")),
             getFormValue(formData, "field-underage-street-address-2"),
             getFormValue(formData, "field-underage-zip-code-2"),
             getFormValue(formData, "field-underage-city-2"),
             getFormValue(formData, "field-underage-country-2"),
-            Boolean.FALSE);
+            Boolean.TRUE);
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-3"))) {
+        if (underageContactInfo3 == null) {
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
+        }
         addressDAO.create(
-            student.getContactInfo(),
-            contactType,
+            underageContactInfo3,
             String.format("%s %s", getFormValue(formData, "field-underage-first-name-3"), getFormValue(formData, "field-underage-last-name-3")),
             getFormValue(formData, "field-underage-street-address-3"),
             getFormValue(formData, "field-underage-zip-code-3"),
             getFormValue(formData, "field-underage-city-3"),
             getFormValue(formData, "field-underage-country-3"),
-            Boolean.FALSE);
+            Boolean.TRUE);
       }
 
       // Attach phone
       
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone"))) {
+        if (underageContactInfo1 == null) {
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
+        }
         phoneNumberDAO.create(
-            student.getContactInfo(),
-            contactType,
-            Boolean.FALSE,
+            underageContactInfo1,
+            Boolean.TRUE,
             getFormValue(formData, "field-underage-phone"));
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-2"))) {
+        if (underageContactInfo2 == null) {
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
+        }
         phoneNumberDAO.create(
-            student.getContactInfo(),
-            contactType,
-            Boolean.FALSE,
+            underageContactInfo2,
+            Boolean.TRUE,
             getFormValue(formData, "field-underage-phone-2"));
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-3"))) {
+        if (underageContactInfo3 == null) {
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
+        }
         phoneNumberDAO.create(
-            student.getContactInfo(),
-            contactType,
-            Boolean.FALSE,
+            underageContactInfo3,
+            Boolean.TRUE,
             getFormValue(formData, "field-underage-phone-3"));
+      }
+      
+      if (underageContactInfo1 != null) {
+        student.getAdditionalContactInfos().add(underageContactInfo1);
+      }
+      if (underageContactInfo2 != null) {
+        student.getAdditionalContactInfos().add(underageContactInfo2);
+      }
+      if (underageContactInfo3 != null) {
+        student.getAdditionalContactInfos().add(underageContactInfo3);
       }
       
       // Create guardian invitations if the automated registration is enabled
@@ -1455,7 +1489,7 @@ public class ApplicationUtils {
     String emailAddress = StringUtils.lowerCase(StringUtils.trim(application.getEmail()));
     List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
     for (Email email : emails) {
-      if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
+      if (email.getContactInfo() == null || email.getContactInfo().hasUniqueEmails()) {
         User user = userDAO.findByContactInfo(email.getContactInfo());
         if (user != null && !Boolean.TRUE.equals(user.getArchived())) {
           Person person = user.getPerson();

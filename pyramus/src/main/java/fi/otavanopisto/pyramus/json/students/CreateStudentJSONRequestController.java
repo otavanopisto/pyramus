@@ -15,7 +15,6 @@ import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
-import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
@@ -34,7 +33,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -54,6 +52,7 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.util.ContactInfoUtils;
 
 public class CreateStudentJSONRequestController extends JSONRequestController {
 
@@ -75,7 +74,6 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
-    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     StudentLodgingPeriodDAO lodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
@@ -83,19 +81,6 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
 
     Long personId = requestContext.getLong("personId");
-    
-    int emailCount2 = requestContext.getInteger("emailTable.rowCount");
-    for (int i = 0; i < emailCount2; i++) {
-      String colPrefix = "emailTable." + i;
-      String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
-      if (StringUtils.isNotBlank(email)) {
-        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-        
-        if (!UserUtils.isAllowedEmail(email, contactType, personId)) {
-          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
-        }
-      }
-    }
     
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
@@ -176,6 +161,17 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     } else {
       personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
     }
+
+    int emailCount2 = requestContext.getInteger("emailTable.rowCount");
+    for (int i = 0; i < emailCount2; i++) {
+      String colPrefix = "emailTable." + i;
+      String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
+      if (StringUtils.isNotBlank(email)) {
+        if (!UserUtils.isAllowedUniqueEmail(email, person)) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+        }
+      }
+    }
     
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, 
         activityType, examinationType, educationalLevel, education, nationality, municipality, language, 
@@ -216,7 +212,6 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     for (int i = 0; i < addressCount; i++) {
       String colPrefix = "addressTable." + i;
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String name = requestContext.getString(colPrefix + ".name");
       String street = requestContext.getString(colPrefix + ".street");
       String postal = requestContext.getString(colPrefix + ".postal");
@@ -224,7 +219,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
       String country = requestContext.getString(colPrefix + ".country");
       boolean hasAddress = name != null || street != null || postal != null || city != null || country != null;
       if (hasAddress) {
-        addressDAO.create(student.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
+        addressDAO.create(student.getContactInfo(), name, street, postal, city, country, defaultAddress);
       }
     }
     
@@ -234,11 +229,10 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     for (int i = 0; i < emailCount; i++) {
       String colPrefix = "emailTable." + i;
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
       
       if (StringUtils.isNotBlank(email)) {
-        emailDAO.create(student.getContactInfo(), contactType, defaultAddress, email);
+        emailDAO.create(student.getContactInfo(), defaultAddress, email);
       }
     }
     
@@ -248,10 +242,9 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     for (int i = 0; i < phoneCount; i++) {
       String colPrefix = "phoneTable." + i;
       Boolean defaultNumber = requestContext.getBoolean(colPrefix + ".defaultNumber");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String number = requestContext.getString(colPrefix + ".phone");
       if (number != null) {
-        phoneNumberDAO.create(student.getContactInfo(), contactType, defaultNumber, number);
+        phoneNumberDAO.create(student.getContactInfo(), defaultNumber, number);
       }
     }
     
@@ -271,6 +264,9 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
         }
       }
     }
+    
+    // Additional Contact Infos
+    ContactInfoUtils.readAndUpdateTypedContactInfos(requestContext, "additionalContactInfos", student.getAdditionalContactInfos());
     
     // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed

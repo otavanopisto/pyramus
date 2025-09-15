@@ -455,7 +455,7 @@ public class ViewApplicationViewController extends PyramusViewController {
     if (!StringUtils.isBlank(emailAddress)) {
       List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
       for (Email email : emails) {
-        if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
+        if (email.getContactInfo() == null || email.getContactInfo().hasUniqueEmails()) {
           User user = userDAO.findByContactInfo(email.getContactInfo());
           if (user != null && !Boolean.TRUE.equals(user.getArchived())) {
             Person person = user.getPerson();

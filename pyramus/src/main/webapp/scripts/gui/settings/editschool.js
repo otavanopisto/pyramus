@@ -16,7 +16,7 @@ function onLoad(event) {
   setupTags();
   
   var contactInfos = JSDATA["contactInfos"].evalJSON();
-  initializeContactInfoEditor($('contactInfos'), 'contactInfos', contactTypes, contactInfos);
+  var contactInfoEditor = initializeContactInfoEditor($('contactInfos'), contactTypes, contactInfos);
   
   var variablesTable = new IxTable($('variablesTable'), {
     id : "variablesTable",
