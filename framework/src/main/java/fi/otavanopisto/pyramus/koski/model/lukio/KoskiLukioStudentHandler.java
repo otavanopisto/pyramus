@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -210,9 +209,27 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       Subject subject, StudentSubjectSelections studentSubjects, Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
 
-    if (map.containsKey(subjectCode))
-      return map.get(subjectCode);
+    /*
+     * Uskonnon ainevalinta. Uskonnosta voi olla valittuna aina vain 
+     * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
+     * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
+     */
+    if (KoskiConsts.Lukio.USKONTO_JA_ET.contains(subjectCode)) {
+      // Vain ainevalinnoissa oleva uskonnon aine ilmoitetaan
+      if (!studentSubjects.isReligion(subjectCode)) {
+        return null;
+      }
+      
+      // Elämänkatsomustiedolla (ET) on oma oppiaineensa, Muille
+      // uskonnon oppiaineille käytetään ainekoodia KT
+      if (KoskiConsts.Lukio.USKONTO.contains(subjectCode)) {
+        subjectCode = "KT";
+      }
+    }
     
+    if (map.containsKey(subjectCode)) {
+      return map.get(subjectCode);
+    }    
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
     
@@ -269,21 +286,6 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       }
     }
 
-    String[] religionSubjects = new String[] { "UE", "UO" };
-    
-    if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      // Only the religion that student has selected is reported
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
-        if (map.containsKey("KT"))
-          return map.get("KT");
-        
-        KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
-        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-        return mapSubject(subject, "KT", false, tunniste, map);
-      } else
-        return null;
-    }
-    
     if (matchingEducationType && EnumUtils.isValidEnum(KoskiOppiaineetYleissivistava.class, StringUtils.upperCase(subjectCode))) {
       // Common national subject
       

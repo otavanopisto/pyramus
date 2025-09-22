@@ -1,12 +1,15 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+
+import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 
 public class KoskiConsts {
 
@@ -48,6 +51,40 @@ public class KoskiConsts {
     
     // Perusopetuksen uskonnon ainevalinnat. Elämänkatsomustieto (et) kuuluu näihin ja nämä on keskenään poissulkevia.
     public static final Set<String> USKONTO_JA_ET = Set.of("ue", "uo", "ui", "et");
+  }
+
+  /**
+   * Lukion yleiset asetukset - ei ops-sidonnaisuutta
+   */
+  public static class Lukio {
+    // Lukion uskonnon aineet. Elämänkatsomustieto (et) ei kuulu näihin, sille on oma lokeronsa.
+    public static final Set<String> USKONTO       = Set.of("UE", "UO", "UI", "UK", "UJ", "UX");
+    
+    // Lukion uskonnon ainevalinnat. Elämänkatsomustieto (et) kuuluu näihin ja nämä on keskenään poissulkevia.
+    public static final Set<String> USKONTO_JA_ET = Set.of("UE", "UO", "UI", "UK", "UJ", "UX", "ET");
+  }
+  
+  /**
+   * Lukion opetussuunnitelma 2019
+   */
+  public static class Lukio2019 {
+    // Lukiodiplomien ainekoodit
+    public static final Set<String> LUKIODIPLOMIT = Set.of("KOLD", "KULD", "KÄLD", "LILD", "MELD", "MULD", "TALD", "TELD");
+    
+    // KU, LI, MU, TE kuuluisivat listaan, mutta ilmoitetaan paikallisina
+    public static final EnumSet<KoskiOppiaineetYleissivistava> VALTAKUNNALLISETOPPIAINEET = EnumSet.of(
+        KoskiOppiaineetYleissivistava.BI,
+        KoskiOppiaineetYleissivistava.ET,
+        KoskiOppiaineetYleissivistava.FI,
+        KoskiOppiaineetYleissivistava.FY,
+        KoskiOppiaineetYleissivistava.GE,
+        KoskiOppiaineetYleissivistava.HI,
+        KoskiOppiaineetYleissivistava.KE,
+        KoskiOppiaineetYleissivistava.KT,
+        KoskiOppiaineetYleissivistava.OP,
+        KoskiOppiaineetYleissivistava.PS,
+        KoskiOppiaineetYleissivistava.YH
+    );
   }
   
   public static class SubjectSelections {

@@ -29,7 +29,6 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.UserContact;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
-import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/contacts")
 @Produces("application/json")
@@ -40,9 +39,6 @@ public class UserContactRESTService extends AbstractRESTService {
 
   @Inject
   private UserController userController;
-
-  @Inject
-  private SessionController sessionController;
 
   @Inject
   private RESTSecurity restSecurity;
@@ -58,14 +54,13 @@ public class UserContactRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (sessionController.getUser() instanceof Student) {
-      if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_CONTACTS, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, sessionController.getUser(), Style.OR)) {
+    if (user instanceof Student) {
+      if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_CONTACTS, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, user, Style.OR)) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
     else {
-      if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFF_CONTACTS, UserPermissions.USER_OWNER },
-          sessionController.getUser(), Style.OR)) {
+      if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFF_CONTACTS, UserPermissions.USER_OWNER }, user, Style.OR)) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
