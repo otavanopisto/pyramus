@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.json.applications;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -74,21 +75,17 @@ public class SendMailJSONRequestController extends JSONRequestController {
       for (int i = 0; i < recipients.size(); i++) {
         toRecipients.add(recipients.get(i).toString());
       }
-      Set<String> ccRecipients = new HashSet<String>();
+      Set<String> bccRecipients = new HashSet<String>();
       if (formData.has("mail-form-recipient-cc")) {
         recipients = toJSONArray(formData.getString("mail-form-recipient-cc"));
         for (int i = 0; i < recipients.size(); i++) {
-          ccRecipients.add(recipients.get(i).toString());
+          bccRecipients.add(recipients.get(i).toString());
         }
       }
-      if (toRecipients.isEmpty() && ccRecipients.isEmpty()) {
+      if (toRecipients.isEmpty()) {
         logger.log(Level.WARNING, "Refusing application mail due to missing recipients");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
-      }
-      else if (toRecipients.isEmpty() && !ccRecipients.isEmpty()) {
-        toRecipients.addAll(ccRecipients);
-        ccRecipients.clear();
       }
       String subject = formData.getString("mail-form-subject");
       String content = formData.getString("mail-form-content");
@@ -112,17 +109,28 @@ public class SendMailJSONRequestController extends JSONRequestController {
           Mailer.HTML,
           staffMember.getPrimaryEmail().getAddress(),
           toRecipients,
-          ccRecipients,
+          Collections.emptySet(),
+          bccRecipients,
           subject,
           content,
           new ApplicationMailErrorHandler(application));
+      
+      StringBuffer recipientMails = new StringBuffer();
+      for (String s : toRecipients) {
+        recipientMails.append(s);
+        recipientMails.append("<br/>");
+      }
+      for (String s : bccRecipients) {
+        recipientMails.append(s);
+        recipientMails.append("<br/>");
+      }
       
       // Application log entry
       
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
       applicationLogDAO.create(application,
           ApplicationLogType.HTML,
-          String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+          String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", recipientMails.toString(), subject, content),
           staffMember);
     }
     catch (Exception e) {
