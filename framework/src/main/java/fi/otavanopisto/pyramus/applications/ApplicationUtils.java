@@ -52,9 +52,9 @@ import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
-import fi.otavanopisto.pyramus.dao.base.TypedContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
@@ -83,10 +83,10 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
-import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
@@ -946,7 +946,7 @@ public class ApplicationUtils {
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
-    TypedContactInfoDAO additionalContactInfoDAO = DAOFactory.getInstance().getTypedContactInfoDAO();
+    StudentAdditionalContactInfoDAO additionalContactInfoDAO = DAOFactory.getInstance().getStudentAdditionalContactInfoDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -1129,28 +1129,28 @@ public class ApplicationUtils {
       ContactType contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
 
       // Guardian's contact infos for guardians 1-3
-      TypedContactInfo underageContactInfo1 = null;
-      TypedContactInfo underageContactInfo2 = null;
-      TypedContactInfo underageContactInfo3 = null;
+      StudentAdditionalContactInfo underageContactInfo1 = null;
+      StudentAdditionalContactInfo underageContactInfo2 = null;
+      StudentAdditionalContactInfo underageContactInfo3 = null;
       
       email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
       if (!StringUtils.isBlank(email)) {
         if (underageContactInfo1 == null) {
-          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType, false);
         }
         emailDAO.create(underageContactInfo1, Boolean.TRUE, email);
       }
       email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
       if (!StringUtils.isBlank(email)) {
         if (underageContactInfo2 == null) {
-          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType, false);
         }
         emailDAO.create(underageContactInfo2, Boolean.TRUE, email);
       }
       email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
       if (!StringUtils.isBlank(email)) {
         if (underageContactInfo3 == null) {
-          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType, false);
         }
         emailDAO.create(underageContactInfo3, Boolean.TRUE, email);
       }
@@ -1159,7 +1159,7 @@ public class ApplicationUtils {
       
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name"))) {
         if (underageContactInfo1 == null) {
-          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType, false);
         }
         addressDAO.create(
             underageContactInfo1,
@@ -1172,7 +1172,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-2"))) {
         if (underageContactInfo2 == null) {
-          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType, false);
         }
         addressDAO.create(
             underageContactInfo2,
@@ -1185,7 +1185,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-3"))) {
         if (underageContactInfo3 == null) {
-          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType, false);
         }
         addressDAO.create(
             underageContactInfo3,
@@ -1201,7 +1201,7 @@ public class ApplicationUtils {
       
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone"))) {
         if (underageContactInfo1 == null) {
-          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType, false);
         }
         phoneNumberDAO.create(
             underageContactInfo1,
@@ -1210,7 +1210,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-2"))) {
         if (underageContactInfo2 == null) {
-          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType, false);
         }
         phoneNumberDAO.create(
             underageContactInfo2,
@@ -1219,7 +1219,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-3"))) {
         if (underageContactInfo3 == null) {
-          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType, false);
         }
         phoneNumberDAO.create(
             underageContactInfo3,

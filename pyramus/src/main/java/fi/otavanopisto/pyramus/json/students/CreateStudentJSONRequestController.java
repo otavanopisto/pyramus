@@ -266,7 +266,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     }
     
     // Additional Contact Infos
-    ContactInfoUtils.readAndUpdateTypedContactInfos(requestContext, "additionalContactInfos", student.getAdditionalContactInfos());
+    ContactInfoUtils.readAndUpdateStudentAdditionalContactInfos(requestContext, "additionalContactInfos", student.getAdditionalContactInfos());
     
     // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed

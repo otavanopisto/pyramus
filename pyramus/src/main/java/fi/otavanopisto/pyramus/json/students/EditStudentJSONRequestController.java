@@ -526,7 +526,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       }
 
       // Additional Contact Infos
-      ContactInfoUtils.readAndUpdateTypedContactInfos(requestContext, String.format("additionalContactInfos.%d", student.getId()), student.getAdditionalContactInfos());
+      ContactInfoUtils.readAndUpdateStudentAdditionalContactInfos(requestContext, String.format("additionalContactInfos.%d", student.getId()), student.getAdditionalContactInfos());
       
       Long studyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
       // #4226: Remove applications of nettipk/nettilukio students when their studies end

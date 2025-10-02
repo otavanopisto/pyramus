@@ -16,11 +16,11 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
-import fi.otavanopisto.pyramus.dao.base.TypedContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -35,13 +35,13 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
-import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
@@ -58,7 +58,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     ContactInfoDAO contactInfoDAO = DAOFactory.getInstance().getContactInfoDAO();
-    TypedContactInfoDAO typedContactInfoDAO = DAOFactory.getInstance().getTypedContactInfoDAO();
+    StudentAdditionalContactInfoDAO additionalContactInfoDAO = DAOFactory.getInstance().getStudentAdditionalContactInfoDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
@@ -163,8 +163,8 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     // Additional Contact Infos
     
     if (CollectionUtils.isNotEmpty(oldStudent.getAdditionalContactInfos())) {
-      for (TypedContactInfo additionalContactInfo : oldStudent.getAdditionalContactInfos()) {
-        TypedContactInfo copiedAdditionalInfo = typedContactInfoDAO.create(additionalContactInfo.getContactType());
+      for (StudentAdditionalContactInfo additionalContactInfo : oldStudent.getAdditionalContactInfos()) {
+        StudentAdditionalContactInfo copiedAdditionalInfo = additionalContactInfoDAO.create(additionalContactInfo.getContactType(), false);
 
         // Addresses
         

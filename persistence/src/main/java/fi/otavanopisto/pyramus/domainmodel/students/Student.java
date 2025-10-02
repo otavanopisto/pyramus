@@ -39,7 +39,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
-import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -318,7 +317,7 @@ public class Student extends User implements ArchivableEntity {
     this.parentBillingDetails = parentBillingDetails;
   }
 
-  public List<TypedContactInfo> getAdditionalContactInfos() {
+  public List<StudentAdditionalContactInfo> getAdditionalContactInfos() {
     return additionalContactInfos;
   }
 
@@ -399,8 +398,8 @@ public class Student extends User implements ArchivableEntity {
   private String parentBillingDetails;
   
   @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinTable (name = "__StudentAdditionalContactInfos", joinColumns = @JoinColumn(name = "student"), inverseJoinColumns = @JoinColumn(name = "typedContactInfo"))
+  @JoinTable (name = "__StudentAdditionalContactInfos", joinColumns = @JoinColumn(name = "student"), inverseJoinColumns = @JoinColumn(name = "additionalContactInfo"))
   @IndexedEmbedded
-  private List<TypedContactInfo> additionalContactInfos = new ArrayList<>();
+  private List<StudentAdditionalContactInfo> additionalContactInfos = new ArrayList<>();
 
 }

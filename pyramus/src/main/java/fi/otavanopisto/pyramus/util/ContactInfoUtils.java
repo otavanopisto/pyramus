@@ -14,7 +14,6 @@ import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
-import fi.otavanopisto.pyramus.dao.base.TypedContactInfoDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -22,6 +21,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentAdditionalContactInfo;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 import net.sf.json.JSONArray;
@@ -37,12 +37,56 @@ public class ContactInfoUtils {
    * @param contactInfoEditorName the parameter name used for the front end contact info editor
    * @param contactInfos the list of current contact infos to update
    */
+  public static void readAndUpdateStudentAdditionalContactInfos(RequestContext requestContext, String contactInfoEditorName, List<StudentAdditionalContactInfo> contactInfos) {
+    readAndUpdateTypedContactInfos(requestContext, contactInfoEditorName, contactInfos, new ContactInfoConstructor<StudentAdditionalContactInfo>() {
+      @Override
+      public StudentAdditionalContactInfo create(ContactType contactType) {
+        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().create(contactType, false);
+      }
+
+      @Override
+      public StudentAdditionalContactInfo update(StudentAdditionalContactInfo contactInfo, ContactType contactType) {
+        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().update(contactInfo, contactType, contactInfo.isAllowStudyDiscussions());
+      }
+    });
+  }
+  
+  /**
+   * Companion of front end contact info editor. 
+   * Reads and updates the list of contactInfos.
+   * 
+   * @param requestContext RequestContext used to read the parameters from front end contact info editor
+   * @param contactInfoEditorName the parameter name used for the front end contact info editor
+   * @param contactInfos the list of current contact infos to update
+   */
   public static void readAndUpdateTypedContactInfos(RequestContext requestContext, String contactInfoEditorName, List<TypedContactInfo> contactInfos) {
+    readAndUpdateTypedContactInfos(requestContext, contactInfoEditorName, contactInfos, new ContactInfoConstructor<TypedContactInfo>() {
+      @Override
+      public TypedContactInfo create(ContactType contactType) {
+        return DAOFactory.getInstance().getTypedContactInfoDAO().create(contactType);
+      }
+
+      @Override
+      public TypedContactInfo update(TypedContactInfo contactInfo, ContactType contactType) {
+        return DAOFactory.getInstance().getTypedContactInfoDAO().update(contactInfo, contactType);
+      }
+    });
+  }
+  
+  /**
+   * Companion of front end contact info editor. 
+   * Reads and updates the list of contactInfos.
+   * 
+   * @param requestContext RequestContext used to read the parameters from front end contact info editor
+   * @param contactInfoEditorName the parameter name used for the front end contact info editor
+   * @param contactInfos the list of current contact infos to update
+   * @return 
+   */
+  private static <E extends TypedContactInfo> void readAndUpdateTypedContactInfos(RequestContext requestContext, String contactInfoEditorName, List<E> contactInfos, ContactInfoConstructor<E> dao) {
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
-    TypedContactInfoDAO typedContactInfoDAO = DAOFactory.getInstance().getTypedContactInfoDAO();
     
     int contactInfoCount = requestContext.getInteger(String.format("%s.rowCount", contactInfoEditorName));
     
@@ -50,11 +94,11 @@ public class ContactInfoUtils {
       Long contactInfoContactTypeId = requestContext.getLong(String.format("%s.%d.contactTypeId", contactInfoEditorName, contactInfoIndex));
       ContactType contactInfoContactType = contactTypeDAO.findById(contactInfoContactTypeId);
 
-      TypedContactInfo contactInfo;
+      E contactInfo;
       Long contactInfoId = requestContext.getLong(String.format("%s.%d.id", contactInfoEditorName, contactInfoIndex));
       if (Long.valueOf(-1L).equals(contactInfoId)) {
         // Create new
-        contactInfo = typedContactInfoDAO.create(contactInfoContactType);
+        contactInfo = dao.create(contactInfoContactType);
         contactInfos.add(contactInfo);
       }
       else {
@@ -63,7 +107,7 @@ public class ContactInfoUtils {
         contactInfo = contactInfos.stream().filter(ci -> ci.getId().equals(contactInfoId)).findFirst().orElse(null);
 
         if (contactInfo != null) {
-          typedContactInfoDAO.update(contactInfo, contactInfoContactType);
+          dao.update(contactInfo, contactInfoContactType);
         }
         else {
           throw new RuntimeException(String.format("No contact info found with id %d", contactInfoId));
@@ -189,7 +233,7 @@ public class ContactInfoUtils {
     return studentAdditionalContactInfosJSON;
   }
   
-  public static JSONArray toJSON(List<TypedContactInfo> contactInfos) {
+  public static JSONArray toJSON(List<? extends TypedContactInfo> contactInfos) {
     JSONArray ret = new JSONArray();
     
     if (CollectionUtils.isNotEmpty(contactInfos)) {
@@ -198,6 +242,10 @@ public class ContactInfoUtils {
         contactInfoJSON.put("id", contactInfo.getId());
         contactInfoJSON.put("typeId", contactInfo.getContactType() != null ? contactInfo.getContactType().getId() : null);
         contactInfoJSON.put("typeName", contactInfo.getContactType() != null ? contactInfo.getContactType().getName() : null);
+        
+        if (contactInfo instanceof StudentAdditionalContactInfo) {
+          contactInfoJSON.put("allowStudyDiscussions", ((StudentAdditionalContactInfo) contactInfo).isAllowStudyDiscussions());
+        }
         
         JSONArray addressesJSON = new JSONArray();
         JSONArray emailsJSON = new JSONArray();
@@ -251,4 +299,8 @@ public class ContactInfoUtils {
     return ret;
   }
 
+  private interface ContactInfoConstructor<T> {
+    T create(ContactType contactType);
+    T update(T contactInfo, ContactType contactType);
+  }
 }

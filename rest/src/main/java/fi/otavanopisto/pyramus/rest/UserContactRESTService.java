@@ -8,18 +8,20 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.otavanopisto.pyramus.dao.students.StudentAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
-import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
@@ -40,6 +42,9 @@ public class UserContactRESTService extends AbstractRESTService {
   @Inject
   private UserController userController;
 
+  @Inject
+  private StudentAdditionalContactInfoDAO studentAdditionalContactInfoDAO;
+  
   @Inject
   private RESTSecurity restSecurity;
 
@@ -123,35 +128,78 @@ public class UserContactRESTService extends AbstractRESTService {
     if (user instanceof Student) {
       Student student = (Student) user;
       
-      for (TypedContactInfo additionalContactInfo : student.getAdditionalContactInfos()) {
-        UserContact userContact = new UserContact();
-        userContact.setId(additionalContactInfo.getId());
-        userContact.setContactType(additionalContactInfo.getContactType() != null ? additionalContactInfo.getContactType().getName() : null);
-        
-        Address defaultAddress = additionalContactInfo.getDefaultAddress();
-        Email defaultEmail = additionalContactInfo.getDefaultEmail();
-        PhoneNumber defaultPhoneNumber = additionalContactInfo.getDefaultPhoneNumber();
-        
-        if (defaultAddress != null) {
-          userContact.setStreetAddress(defaultAddress.getStreetAddress());
-          userContact.setPostalCode(defaultAddress.getPostalCode());
-          userContact.setCity(defaultAddress.getCity());
-          userContact.setCountry(defaultAddress.getCountry());
-          userContact.setName(defaultAddress.getName());
-        }
-        
-        if (defaultEmail != null) {
-          userContact.setEmail(defaultEmail.getAddress());
-        }
-        
-        if (defaultPhoneNumber != null) {
-          userContact.setPhoneNumber(defaultPhoneNumber.getNumber());
-        }
-        
-        userContactList.add(userContact);
+      for (StudentAdditionalContactInfo additionalContactInfo : student.getAdditionalContactInfos()) {
+        userContactList.add(restModel(additionalContactInfo));
       }
     }
     
     return Response.ok(userContactList).build();
+  }
+  
+  @Path("/users/{USERID:[0-9]*}/contacts/{CONTACTINFOID}/allowStudyDiscussions")
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateContactInfo(@PathParam("USERID") Long userId, @PathParam("CONTACTINFOID") Long contactInfoId,
+      Boolean allowStudyDiscussions) {
+    if (allowStudyDiscussions == null) {
+      return Response.status(Status.BAD_REQUEST).entity("invalid payload").build();
+    }
+
+    User user = userController.findUserById(userId);
+
+    if (user == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, user)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    if (!(user instanceof Student)) {
+      return Response.status(Status.BAD_REQUEST).entity("User is not a student").build();
+    }
+    
+    StudentAdditionalContactInfo studentAdditionalContactInfo = studentAdditionalContactInfoDAO.findById(contactInfoId);
+    if (studentAdditionalContactInfo == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    Student student = (Student) user;
+    if (!student.getAdditionalContactInfos().stream().anyMatch(aci -> contactInfoId.equals(aci.getId()))) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    studentAdditionalContactInfo = studentAdditionalContactInfoDAO.update(studentAdditionalContactInfo, studentAdditionalContactInfo.getContactType(), allowStudyDiscussions);
+    
+    return Response.ok(restModel(studentAdditionalContactInfo)).build();
+  }
+  
+  private UserContact restModel(StudentAdditionalContactInfo additionalContactInfo) {
+    UserContact userContact = new UserContact();
+    userContact.setId(additionalContactInfo.getId());
+    userContact.setContactType(additionalContactInfo.getContactType() != null ? additionalContactInfo.getContactType().getName() : null);
+    userContact.setAllowStudyDiscussions(additionalContactInfo.isAllowStudyDiscussions());
+    
+    Address defaultAddress = additionalContactInfo.getDefaultAddress();
+    Email defaultEmail = additionalContactInfo.getDefaultEmail();
+    PhoneNumber defaultPhoneNumber = additionalContactInfo.getDefaultPhoneNumber();
+    
+    if (defaultAddress != null) {
+      userContact.setStreetAddress(defaultAddress.getStreetAddress());
+      userContact.setPostalCode(defaultAddress.getPostalCode());
+      userContact.setCity(defaultAddress.getCity());
+      userContact.setCountry(defaultAddress.getCountry());
+      userContact.setName(defaultAddress.getName());
+    }
+    
+    if (defaultEmail != null) {
+      userContact.setEmail(defaultEmail.getAddress());
+    }
+    
+    if (defaultPhoneNumber != null) {
+      userContact.setPhoneNumber(defaultPhoneNumber.getNumber());
+    }
+    
+    return userContact;
   }
 }

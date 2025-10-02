@@ -53,12 +53,28 @@ public class StudentParentController {
     return studentParentDAO.listBy(person);
   }
 
+  public List<StudentParent> listStudentParentsByStudent(Student student) {
+    return studentParentDAO.listBy(student);
+  }
+
   /* StudentParentChild */
   
+  public StudentParentChild findStudentParentChildById(Long studentParentChildId) {
+    return studentParentChildDAO.findById(studentParentChildId);
+  }
+
   public StudentParentChild findStudentParentChild(StudentParent studentParent, Student student) {
     return studentParentChildDAO.findBy(studentParent, student);
   }
 
+  public List<StudentParentChild> listStudentParentChilds(Student student) {
+    return studentParentChildDAO.listBy(student);
+  }
+
+  public StudentParentChild updateContinuedViewPermission(StudentParentChild studentParentChild, boolean continuedViewPermission) {
+    return studentParentChildDAO.updateContinuedViewPermission(studentParentChild, continuedViewPermission);
+  }
+  
   public void deleteStudentParentChild(StudentParentChild studentParentChild) {
     studentParentChildDAO.delete(studentParentChild);
   }
@@ -69,6 +85,14 @@ public class StudentParentController {
     return studentParentInvitationDAO.findById(invitationId);
   }
 
+  public List<StudentParentInvitation> listStudentParentInvitations(Student student) {
+    return studentParentInvitationDAO.listBy(student);
+  }
+
+  public StudentParentInvitation updateContinuedViewPermission(StudentParentInvitation invitation, boolean continuedViewPermission) {
+    return studentParentInvitationDAO.updateContinuedViewPermission(invitation, continuedViewPermission);
+  }
+  
   public void deleteInvitation(StudentParentInvitation invitation) {
     studentParentInvitationDAO.delete(invitation);
   }
