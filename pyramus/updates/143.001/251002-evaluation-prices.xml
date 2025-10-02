@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>update WorklistBillingSettings set settings='{"highSchoolBillingNumber": "7201 4022 100",
+"elementaryBillingNumber": "7200 4022 165",
+"elementaryPrice": 81.31,
+"elementaryHalfPrice": 40.66,
+"highSchool1opPrice": 61.66,
+"highSchool1opHalfPrice": 30.83,
+"highSchool2opPrice": 90.69,
+"highSchool2opHalfPrice": 45.35,
+"highSchool3opPrice": 119.71,
+"highSchool3opHalfPrice": 59.85,
+"assessment2016Price": 150,
+"assessment2021op1Price": 105,
+"assessment2021op2Price": 150,
+"assessment2021op3Price": 185}';</sql>
+
+</update>
