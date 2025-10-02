@@ -136,7 +136,7 @@ public class WorklistController {
           return new WorklistCoursePrice(courseBillingRestModel.getHighSchool2opPrice(), courseBillingRestModel.getHighSchool2opHalfPrice());
         }
         else {
-          // jos pituus ei ole 1-3 opintopisteitä tai 38 opintotuntia, ei laskuteta
+          // jos pituus ei ole 1-3 opintopistettä tai 38 opintotuntia, ei laskuteta
           return null;
         }
       }
