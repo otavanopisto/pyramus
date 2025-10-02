@@ -91,6 +91,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.ContactLogAccess;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -117,6 +119,7 @@ import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.otavanopisto.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
+import fi.otavanopisto.pyramus.rest.controller.StudentParentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeController;
@@ -142,6 +145,7 @@ import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
+import fi.otavanopisto.pyramus.rest.model.StudentParentRelation;
 import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
@@ -205,6 +209,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudentGroupController studentGroupController;
+
+  @Inject
+  private StudentParentController studentParentController;
 
   @Inject
   private PersonController personController;
@@ -3706,6 +3713,135 @@ public class StudentRESTService extends AbstractRESTService {
       }
     }
     return Response.ok().entity(objectFactory.createModel(studentController.updateStudentCardActive(studentCard, activity, cancellationDate))).build();
+  }
+
+  // StudentParentInvitations
+  
+  @Path("/students/{STUDENTID:[0-9]*}/studentParentInvitations")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentParentInvitations(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPARENTSBYSTUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<StudentParentInvitation> studentParentInvitations = studentParentController.listStudentParentInvitations(student);
+    return Response.ok().entity(objectFactory.createModel(studentParentInvitations)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/studentParentInvitations/{INVITATIONID:[0-9]*}/continuedViewPermission")
+  @PUT
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateStudentParentInvitationContinuedViewPermission(@PathParam("STUDENTID") Long studentId,
+      @PathParam("INVITATIONID") Long studentParentInvitationId, Boolean continuedViewPermission) {
+    if (continuedViewPermission == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    StudentParentInvitation studentParentInvitation = studentParentController.findInvitationById(studentParentInvitationId);
+    
+    if (studentParentInvitation == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, student)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    if (!studentParentInvitation.getStudent().getId().equals(student.getId())) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    studentParentInvitation = studentParentController.updateContinuedViewPermission(studentParentInvitation, continuedViewPermission);
+    return Response.ok().entity(objectFactory.createModel(studentParentInvitation)).build();
+  }
+
+  // StudentParents (technically StudentParentChild though)
+  
+  @Path("/students/{STUDENTID:[0-9]*}/studentParents")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentParents(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPARENTSBYSTUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<StudentParentChild> studentParentChilds = studentParentController.listStudentParentChilds(student);
+    
+    List<StudentParentRelation> result = new ArrayList<>(studentParentChilds.size());
+    for (StudentParentChild studentParentChild : studentParentChilds) {
+      result.add(new StudentParentRelation(
+        studentParentChild.getId(),
+        studentParentChild.getStudentParent().getFirstName(),
+        studentParentChild.getStudentParent().getLastName(),
+        studentParentChild.isContinuedViewPermission()
+      ));
+    }
+    
+    return Response.ok().entity(result).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/studentParents/{STUDENTPARENTCHILDID:[0-9]*}/continuedViewPermission")
+  @PUT
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateStudentParentContinuedViewPermission(@PathParam("STUDENTID") Long studentId, @PathParam("STUDENTPARENTCHILDID") Long studentParentChildId,
+      Boolean continuedViewPermission) {
+    if (continuedViewPermission == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    
+    // Only the student can change the continued view permission
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, student)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    StudentParentChild studentParentChild = studentParentController.findStudentParentChildById(studentParentChildId);
+    if (studentParentChild != null && studentParentChild.getStudent().getId().equals(student.getId())) {
+      studentParentChild = studentParentController.updateContinuedViewPermission(studentParentChild, continuedViewPermission);
+      
+      StudentParentRelation studentParentRelation = new StudentParentRelation(
+        studentParentChild.getId(),
+        studentParentChild.getStudentParent().getFirstName(),
+        studentParentChild.getStudentParent().getLastName(),
+        studentParentChild.isContinuedViewPermission()
+      );
+      return Response.ok().entity(studentParentRelation).build();
+    }
+    else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
   }
   
 }
