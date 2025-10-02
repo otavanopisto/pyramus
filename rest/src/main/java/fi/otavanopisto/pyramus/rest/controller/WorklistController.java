@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.courses.CourseModuleDAO;
-import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistBillingSettingsDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
@@ -35,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistCoursePrice;
 
 @Dependent
 @Stateless
@@ -105,7 +104,7 @@ public class WorklistController {
     return null;
   }
   
-  public Double getCourseModuleBasePrice(CourseModule courseModule, User user) {
+  public WorklistCoursePrice getCourseModulePrice(CourseModule courseModule, User user) {
     
     // Determine base price based on education type and course length
     
@@ -114,30 +113,32 @@ public class WorklistController {
       String type = courseModule.getSubject() != null && courseModule.getSubject().getEducationType() != null
           ? courseModule.getSubject().getEducationType().getName() : null;
       if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_PERUSOPETUS)) {
-        return courseBillingRestModel.getElementaryPrice();
+        return new WorklistCoursePrice(courseBillingRestModel.getElementaryPrice(), courseBillingRestModel.getElementaryHalfPrice());
       }
       else if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_LUKIO)) {
-        Double price = isEarliestCourseModuleOfSubjectAssessedByUser(courseModule, user)
-            ? courseBillingRestModel.getHighSchoolPrice()
-            : courseBillingRestModel.getHighSchoolPointPrice(); 
-        Double length = 0d;
         String symbol = courseModule.getCourseLength().getUnit().getSymbol();
         if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_OP)) {
           // pituus opintopisteinä 
-          length = courseModule.getCourseLength().getUnits();
+          int length = (int) Math.round(courseModule.getCourseLength().getUnits());
+          switch (length) {
+          case 1:
+            return new WorklistCoursePrice(courseBillingRestModel.getHighSchool1opPrice(), courseBillingRestModel.getHighSchool1opHalfPrice());
+          case 2:
+            return new WorklistCoursePrice(courseBillingRestModel.getHighSchool2opPrice(), courseBillingRestModel.getHighSchool2opHalfPrice());
+          case 3:
+            return new WorklistCoursePrice(courseBillingRestModel.getHighSchool3opPrice(), courseBillingRestModel.getHighSchool3opHalfPrice());
+          default:
+            return null;
+          }
         }
         else if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_HOURS) && courseModule.getCourseLength().getUnits() == 38) {
           // pituus opintotunteina (lukiossa ainoa vaihtoehto on 38h -> 2 op) 
-          length = 2d;
+          return new WorklistCoursePrice(courseBillingRestModel.getHighSchool2opPrice(), courseBillingRestModel.getHighSchool2opHalfPrice());
         }
         else {
-          // jos pituus ei ole opintopisteitä tai 38 opintotuntia, ei laskuteta
+          // jos pituus ei ole 1-3 opintopisteitä tai 38 opintotuntia, ei laskuteta
           return null;
         }
-        if (length > 1) {
-          price += courseBillingRestModel.getHighSchoolPointPrice() * (length - 1); 
-        }
-        return price;
       }
       else {
         return null;
@@ -217,34 +218,6 @@ public class WorklistController {
       return null;
     }
     return String.join(",", fields.stream().map(Object::toString).collect(Collectors.toList()));
-  }
-  
-  private boolean isEarliestCourseModuleOfSubjectAssessedByUser(CourseModule courseModule, User user) {
-    CourseModuleDAO courseModuleDAO = DAOFactory.getInstance().getCourseModuleDAO();
-    CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
-    
-    List<CourseModule> courseModules = courseModuleDAO.listByCourseAndSubject(courseModule.getCourse(), courseModule.getSubject());
-    
-    // Check if course has multiple modules with the same subject as the given module
-    
-    if (courseModules.size() <= 1) {
-      return true;
-    }
-    
-    // Check if modules sharing the same subject have multiple assessments by the given user
-    
-    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByUserAndCourseModules(user, courseModules);
-    if (courseAssessments.size() == 0) {
-      return true;
-    }
-    else if (courseAssessments.size() == 1) {
-      return courseAssessments.get(0).getCourseModule().getId().equals(courseModule.getId());
-    }
-
-    // Check if the given module is the first one assessed by the given user
-    
-    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate));
-    return courseAssessments.get(0).getCourseModule().getId().equals(courseModule.getId());
   }
 
   private WorklistBillingSettings getBillingSettings() {

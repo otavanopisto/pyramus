@@ -59,7 +59,8 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.WorklistPermissions;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistApproverRestModel;
-import fi.otavanopisto.pyramus.rest.model.worklist.WorklistBasePriceRestModel;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistCoursePrice;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistCoursePricesRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemBilledPriceRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemCourseAssessmentRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemRestModel;
@@ -409,23 +410,23 @@ public class WorklistRESTService {
     return Response.ok(approvers).build();
   }
   
-  @Path("/basePrice")
+  @Path("/coursePrices")
   @GET
   @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_PRICING)
-  public Response getCourseBasePrice(@QueryParam("course") Long courseId) {
+  public Response getCoursePrices(@QueryParam("course") Long courseId) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     else {
-      WorklistBasePriceRestModel basePrices = new WorklistBasePriceRestModel();
+      WorklistCoursePricesRestModel coursePrices = new WorklistCoursePricesRestModel();
       for (CourseModule courseModule : course.getCourseModules()) {
-        Double basePrice = worklistController.getCourseModuleBasePrice(courseModule, sessionController.getUser());
-        if (basePrice != null) {
-          basePrices.put(courseModule.getId(), basePrice);
+        WorklistCoursePrice price = worklistController.getCourseModulePrice(courseModule, sessionController.getUser()); 
+        if (price != null) {
+          coursePrices.put(courseModule.getId(), price);
         }
       }
-      return Response.ok(basePrices).build();
+      return Response.ok(coursePrices).build();
     }
   }
 
