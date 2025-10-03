@@ -58,6 +58,9 @@ public class JSONRequestContext extends RequestContext {
    */
   @Override
   public void writePostCommitResponse(int statusCode) throws Exception {
+    if (getResponse().isCommitted()) {
+      return;
+    }
     addResponseParameter("statusCode", statusCode);
     addResponseParameter("messages", getMessages());
     if (statusCode == StatusCode.OK && !StringUtils.isBlank(getRedirectURL())) {

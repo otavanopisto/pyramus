@@ -42,8 +42,7 @@ public class SendMailJSONRequestController extends JSONRequestController {
       StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
       StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
       if (staffMember == null) {
-        logger.log(Level.WARNING, "Refusing application mail due to staff member not found");
-        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Käsittelijää ei löydy");
         return;
       }
       
@@ -51,8 +50,7 @@ public class SendMailJSONRequestController extends JSONRequestController {
 
       String formDataStr = getFormData(requestContext.getRequest());
       if (formDataStr == null) {
-        logger.log(Level.WARNING, "Refusing application mail due to missing form data");
-        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "Hakemusta ei löydy");
+        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Hakemusta ei löydy");
         return;
       }
       JSONObject formData = JSONObject.fromObject(formDataStr);
@@ -63,28 +61,27 @@ public class SendMailJSONRequestController extends JSONRequestController {
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
       Application application = applicationDAO.findById(applicationEntityId);
       if (application == null) {
-        logger.log(Level.WARNING, "Refusing application mail due to missing application");
-        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "Hakemusta ei löydy");
+        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Hakemusta ei löydy");
         return;
       }
       
       // Mail content
       
       Set<String> recipients = new HashSet<String>();
-      JSONArray jsonRecipients = toJSONArray(formData.getString("mail-form-recipient"));
-      for (int i = 0; i < jsonRecipients.size(); i++) {
-        recipients.add(jsonRecipients.get(i).toString());
+      if (formData.has("mail-form-recipient")) {
+        JSONArray jsonRecipients = toJSONArray(formData.getString("mail-form-recipient"));
+        for (int i = 0; i < jsonRecipients.size(); i++) {
+          recipients.add(jsonRecipients.get(i).toString());
+        }
       }
       if (recipients.isEmpty()) {
-        logger.log(Level.WARNING, "Refusing application mail due to missing recipients");
-        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "Viestille ei ole valittu vastaanottajia");
+        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Viestille ei ole valittu vastaanottajia");
         return;
       }
       String subject = formData.getString("mail-form-subject");
       String content = formData.getString("mail-form-content");
       if (StringUtils.isEmpty(subject) || StringUtils.isEmpty(content)) {
-        logger.log(Level.WARNING, "Refusing application mail due to missing subject or content");
-        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "Viestistä puuttuu otsikko ja/tai sisältö");
+        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Viestistä puuttuu otsikko ja/tai sisältö");
         return;
       }
       

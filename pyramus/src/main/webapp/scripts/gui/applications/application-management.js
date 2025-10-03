@@ -413,7 +413,7 @@
             $('.notification-queue').notificationQueue('notification', 'info', 'Viesti lähetetty');
           },
           error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+            $('.notification-queue').notificationQueue('notification', 'error', err.responseText);
             $(sendButton).removeClass('loading');
           }
         });
