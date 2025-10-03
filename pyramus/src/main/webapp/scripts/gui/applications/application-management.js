@@ -382,9 +382,9 @@
           var rowInput = $('<input>').attr({
             'id': 'mail-form-recipient-' + i,
             'type': 'checkbox',
-            'name': 'mail-form-recipient-' + response.recipients[i].type,
+            'name': 'mail-form-recipient',
             'value': response.recipients[i].mail});
-          if (response.recipients[i].type == 'to') {
+          if (response.recipients[i].checked == 'true') {
             $(rowInput).attr('checked', 'checked');
           }
           var rowLabel = $('<label>')
@@ -413,7 +413,7 @@
             $('.notification-queue').notificationQueue('notification', 'info', 'Viesti lähetetty');
           },
           error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe lähetettäessä postia: ' + err.statusText);
+            $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
             $(sendButton).removeClass('loading');
           }
         });

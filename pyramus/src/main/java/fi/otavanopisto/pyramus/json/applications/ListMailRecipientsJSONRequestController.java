@@ -46,7 +46,7 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       // Applicant
       
       Map<String, Object> recipientInfo = new HashMap<>();
-      recipientInfo.put("type", "to");
+      recipientInfo.put("checked", "true");
       recipientInfo.put("name", String.format("%s %s", application.getFirstName(), application.getLastName()));
       recipientInfo.put("mail", application.getEmail());
       results.add(recipientInfo);
@@ -55,21 +55,21 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       
       if (applicationData.has("field-underage-email") && StringUtils.isNotBlank(applicationData.getString("field-underage-email"))) {
         recipientInfo = new HashMap<>();
-        recipientInfo.put("type", "to");
+        recipientInfo.put("checked", "true");
         recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name"), getFormValue(applicationData, "field-underage-last-name")));
         recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email"))));
         results.add(recipientInfo);
       }
       if (applicationData.has("field-underage-email-2") && StringUtils.isNotBlank(applicationData.getString("field-underage-email-2"))) {
         recipientInfo = new HashMap<>();
-        recipientInfo.put("type", "to");
+        recipientInfo.put("checked", "true");
         recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name-2"), getFormValue(applicationData, "field-underage-last-name-2")));
         recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email-2"))));
         results.add(recipientInfo);
       }
       if (applicationData.has("field-underage-email-3") && StringUtils.isNotBlank(applicationData.getString("field-underage-email-3"))) {
         recipientInfo = new HashMap<>();
-        recipientInfo.put("type", "to");
+        recipientInfo.put("checked", "true");
         recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name-3"), getFormValue(applicationData, "field-underage-last-name-3")));
         recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email-3"))));
         results.add(recipientInfo);
@@ -78,7 +78,7 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       // Sender
 
       recipientInfo = new HashMap<>();
-      recipientInfo.put("type", "cc");
+      recipientInfo.put("checked", "false");
       recipientInfo.put("name", staffMember.getFullName());
       recipientInfo.put("mail", staffMember.getPrimaryEmail().getAddress());
       results.add(recipientInfo);
