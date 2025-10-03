@@ -42,22 +42,6 @@ public class CourseBillingRestModel {
     this.elementaryPrice = elementaryPrice;
   }
 
-  public Double getHighSchoolPrice() {
-    return highSchoolPrice;
-  }
-
-  public void setHighSchoolPrice(Double highSchoolPrice) {
-    this.highSchoolPrice = highSchoolPrice;
-  }
-
-  public Double getHighSchoolPointPrice() {
-    return highSchoolPointPrice;
-  }
-
-  public void setHighSchoolPointPrice(Double highSchoolPointPrice) {
-    this.highSchoolPointPrice = highSchoolPointPrice;
-  }
-
   public String getHighSchoolBillingNumber() {
     return highSchoolBillingNumber;
   }
@@ -74,11 +58,72 @@ public class CourseBillingRestModel {
     this.elementaryBillingNumber = elementaryBillingNumber;
   }
 
+  public Double getElementaryHalfPrice() {
+    return elementaryHalfPrice;
+  }
+
+  public void setElementaryHalfPrice(Double elementaryHalfPrice) {
+    this.elementaryHalfPrice = elementaryHalfPrice;
+  }
+
+  public Double getHighSchool1opPrice() {
+    return highSchool1opPrice;
+  }
+
+  public void setHighSchool1opPrice(Double highSchool1opPrice) {
+    this.highSchool1opPrice = highSchool1opPrice;
+  }
+
+  public Double getHighSchool1opHalfPrice() {
+    return highSchool1opHalfPrice;
+  }
+
+  public void setHighSchool1opHalfPrice(Double highSchool1opHalfPrice) {
+    this.highSchool1opHalfPrice = highSchool1opHalfPrice;
+  }
+
+  public Double getHighSchool2opPrice() {
+    return highSchool2opPrice;
+  }
+
+  public void setHighSchool2opPrice(Double highSchool2opPrice) {
+    this.highSchool2opPrice = highSchool2opPrice;
+  }
+
+  public Double getHighSchool2opHalfPrice() {
+    return highSchool2opHalfPrice;
+  }
+
+  public void setHighSchool2opHalfPrice(Double highSchool2opHalfPrice) {
+    this.highSchool2opHalfPrice = highSchool2opHalfPrice;
+  }
+
+  public Double getHighSchool3opPrice() {
+    return highSchool3opPrice;
+  }
+
+  public void setHighSchool3opPrice(Double highSchool3opPrice) {
+    this.highSchool3opPrice = highSchool3opPrice;
+  }
+
+  public Double getHighSchool3opHalfPrice() {
+    return highSchool3opHalfPrice;
+  }
+
+  public void setHighSchool3opHalfPrice(Double highSchool3opHalfPrice) {
+    this.highSchool3opHalfPrice = highSchool3opHalfPrice;
+  }
+
   private String highSchoolBillingNumber;
   private String elementaryBillingNumber;
   private Double elementaryPrice;
-  private Double highSchoolPrice;
-  private Double highSchoolPointPrice;
+  private Double elementaryHalfPrice;
+  private Double highSchool1opPrice;
+  private Double highSchool1opHalfPrice;
+  private Double highSchool2opPrice;
+  private Double highSchool2opHalfPrice;
+  private Double highSchool3opPrice;
+  private Double highSchool3opHalfPrice;
   private Double assessment2016Price;
   private Double assessment2021op1Price;
   private Double assessment2021op2Price;
