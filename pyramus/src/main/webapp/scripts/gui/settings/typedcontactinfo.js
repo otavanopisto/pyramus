@@ -27,6 +27,10 @@ function initializeContactInfoView(container, contactInfos) {
       
       var dataContainer = new Element("div", { className: "genericViewFormDataText" });
       sectionContainer.appendChild(dataContainer);
+      
+      if (contactInfo.allowStudyDiscussions) {
+        dataContainer.appendChild(new Element("div", { className: "contactInfoAllowStudyDiscussions" }).update(getLocale().getText("typedcontactinfo.allowedStudyDiscussions")));
+      }
 
       if (contactInfo.addresses) {
         contactInfo.addresses.forEach((address) => {
@@ -80,7 +84,7 @@ IxTypedContactInfoEditor = Class.create({
   
     var contactInfoListElem = new Element("div", { className: "typedContactInfosEditorList" });
     var contactInfoCountElem = new Element("input", { type: "hidden", name: variableNamePrefix + ".rowCount", value: "0" });
-    var addNewRowElem = new Element("span", { className: "genericTableAddRowLinkContainer" }).update("Lisää uusi yhteystieto");
+    var addNewRowElem = new Element("span", { className: "genericTableAddRowLinkContainer" }).update(getLocale().getText("typedcontactinfo.addNewContact"));
   
     addNewRowElem.onclick = this._addRowClickListener;
     
@@ -112,8 +116,7 @@ IxTypedContactInfoEditor = Class.create({
     var rowElem = new Element("div", { id: contactInfoID, className: "genericViewInfoWapper" });
     container.appendChild(rowElem);
 
-    // TODO localize
-    rowElem.appendChild(this._initializeContactInfoTitle("Yhteystiedon tyyppi"));
+    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("typedcontactinfo.contactType")));
     
     var contactInfoIdElem = new Element("input", { type: "hidden", name: contactInfoID + ".id", value: (data ? data.id : "-1") });
     rowElem.appendChild(contactInfoIdElem);
@@ -133,11 +136,11 @@ IxTypedContactInfoEditor = Class.create({
     var emails = new Element("div", { id: contactInfoID + ".emails" });
     var phonenumbers = new Element("div", { id: contactInfoID + ".phonenumbers" });
 
-    rowElem.appendChild(this._initializeContactInfoTitle("Osoitteet"));
+    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.addresses")));
     rowElem.appendChild(addresses);
-    rowElem.appendChild(this._initializeContactInfoTitle("Sähköpostiosoitteet"));
+    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.emails")));
     rowElem.appendChild(emails);
-    rowElem.appendChild(this._initializeContactInfoTitle("Puhelinnumerot"));
+    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.phoneNumbers")));
     rowElem.appendChild(phonenumbers);
     
     

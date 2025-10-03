@@ -61,7 +61,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentChildDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
@@ -99,6 +99,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
@@ -215,7 +216,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     StudentCardDAO studentCardDAO = DAOFactory.getInstance().getStudentCardDAO();
     StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
-    StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
+    StudentParentChildDAO studentParentChildDAO = DAOFactory.getInstance().getStudentParentChildDAO();
 
     KoskiController koskiController = CDI.current().select(KoskiController.class).get();
 
@@ -909,14 +910,16 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         studentParentJSON.put("firstName", studentParentInvitation.getFirstName());
         studentParentJSON.put("lastName", studentParentInvitation.getLastName());
         studentParentJSON.put("email", studentParentInvitation.getEmail());
+        studentParentJSON.put("continuedViewPermission", studentParentInvitation.isContinuedViewPermission());
         arr.add(studentParentJSON);
       }
       studentHasParentInvitations.put(student.getId(), !studentParentInvitations.isEmpty());
       studentParentInvitationsJSON.put(student.getId(), arr);
       
       arr = new JSONArray();
-      List<StudentParent> studentParents = studentParentDAO.listBy(student);
-      for (StudentParent studentParent : studentParents) {
+      List<StudentParentChild> studentParentChilds = studentParentChildDAO.listBy(student);
+      for (StudentParentChild studentParentChild : studentParentChilds) {
+        StudentParent studentParent = studentParentChild.getStudentParent();
         JSONObject studentParentJSON = new JSONObject();
         studentParentJSON.put("personId", studentParent.getPersonId());
         studentParentJSON.put("userId", studentParent.getId());
@@ -928,9 +931,10 @@ public class ViewStudentViewController extends PyramusViewController2 implements
             ? studentParent.getContactInfo().getEmails().stream().map(Email::getAddress).collect(Collectors.joining(", "))
             : null;
         studentParentJSON.put("email", emails);
+        studentParentJSON.put("continuedViewPermission", studentParentChild.isContinuedViewPermission());
         arr.add(studentParentJSON);
       }
-      studentHasParents.put(student.getId(), !studentParents.isEmpty());
+      studentHasParents.put(student.getId(), !studentParentChilds.isEmpty());
       studentParentsJSON.put(student.getId(), arr);
       
       studentValidations.addAll(ViewStudentTools.validate(student));

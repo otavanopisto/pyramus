@@ -359,6 +359,10 @@ a[target="_blank"]::after {
 
 }
 
+.contactInfoAllowStudyDiscussions {
+  background: #FFDDDD;
+}
+
 .viewStudentProject {
   margin:0px 0px 0px 0px;
 }
