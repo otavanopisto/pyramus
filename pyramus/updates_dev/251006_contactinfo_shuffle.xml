@@ -21,9 +21,19 @@
   </sql>
 
   <sql>
+    alter table ContactInfo add column allowStudyDiscussions bit;
+  </sql>
+
+  <sql>
+  ???
+    update ContactInfo set allowStudyDiscussions = false;
+  </sql>
+
+
+  <sql>
     create table __StudentAdditionalContactInfos (
        student bigint not null,
-        typedContactInfo bigint not null
+        additionalContactInfo bigint not null
     );
   </sql>
 
@@ -86,6 +96,16 @@
 
   TODO KONVERSIOT
 
+select * 
+from Email e
+join ContactType ct on ct.id = e.contactType 
+join ContactInfo ci on ci.id = e.contactInfo 
+where ct.nonUnique = true
+
+  TODO KONVERSIOT
+  
+  
+  
   alter table Address drop column contactType;
   alter table Email drop column contactType;
   alter table PhoneNumber drop column contactType;
@@ -94,5 +114,8 @@
   
   alter table Defaults drop column studentDefaultContactType;
   alter table Defaults drop column userDefaultContactType;
+
+  <sql>alter table StudentParentInvitation add column continuedViewPermission bit not null;</sql>
+  <sql>alter table StudentParentChild add column continuedViewPermission bit not null;</sql>
 
 </update>
