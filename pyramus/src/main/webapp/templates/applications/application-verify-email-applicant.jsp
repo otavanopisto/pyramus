@@ -21,6 +21,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/fi.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/applications/application.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/applications/application-verify-email.js"></script>
     
     <style>
     </style>
@@ -39,7 +40,7 @@
         <section class="application-description application-description--edit">
           <div class="application-description__edit">
             <div class="application-description__edit-header">
-              Hakemusta ei löydetty
+              Hakemusta ei löytynyt
             </div>
             <div class="application-description__edit-content">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
           </div>
@@ -59,13 +60,15 @@
             <div class="application-description__edit-header">
               Sähköpostin varmistus
             </div>
-            <div class="application-description__edit-content">Sähköpostisi on varmistettu. Tietojesi suojaamiseksi täytä vielä alla olevaan kenttään syntymäaikasi, jonka jälkeen saat ohjeet hakemuksen muokkaamiseen jälkikäteen.</div>
+            <div class="application-description__edit-content">Sähköpostisi on varmistettu. Tietojesi suojaamiseksi täytä vielä alla olevaan kenttään syntymäaikasi, jonka jälkeen toimitamme sinulle ohjeet hakemuksen muokkaamiseen jälkikäteen.</div>
           </div>
         </section>
         
         <main class="application-content application-content--edit">
           <section class="application-content__form">
             <form class="application-form">
+              <input id="a" type="hidden" name="a" value="${applicationId}"/>
+              <input id="v" type="hidden" name="t" value="${verificationToken}"/>
               <section class="form-section section-edit-info">
                 <div class="form-section__field-container field-birthday">
                   <label for="field-birthday" class="required">Syntymäaika</label>

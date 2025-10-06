@@ -1357,31 +1357,16 @@ public class ApplicationUtils {
             getFormValue(formData, "field-nickname"));
       }
         
-      // Send mail to applicant (and possible guardian)
+      // Send mail to applicant
       
-      String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
-      
-      if (StringUtils.isBlank(guardianMail)) {
-        Mailer.sendMail(
-            Mailer.JNDI_APPLICATION,
-            Mailer.HTML,
-            null,
-            application.getEmail(),
-            subject,
-            content,
-            new ApplicationMailErrorHandler(application));
-      }
-      else {
-        Mailer.sendMail(
-            Mailer.JNDI_APPLICATION,
-            Mailer.HTML,
-            null,
-            application.getEmail(),
-            guardianMail,
-            subject,
-            content,
-            new ApplicationMailErrorHandler(application));
-      }
+      Mailer.sendMail(
+          Mailer.JNDI_APPLICATION,
+          Mailer.HTML,
+          null,
+          application.getEmail(),
+          subject,
+          content,
+          new ApplicationMailErrorHandler(application));
       
       // Add notification about sent mail
       
