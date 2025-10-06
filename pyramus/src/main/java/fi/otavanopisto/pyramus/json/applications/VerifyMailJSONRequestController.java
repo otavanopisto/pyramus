@@ -1,33 +1,28 @@
 package fi.otavanopisto.pyramus.json.applications;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.applications.ApplicationMailErrorHandler;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
-import fi.otavanopisto.pyramus.dao.users.EmailSignatureDAO;
-import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
-import fi.otavanopisto.pyramus.domainmodel.users.EmailSignature;
-import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.mailer.Mailer;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class VerifyMailJSONRequestController extends JSONRequestController {
@@ -35,126 +30,100 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
   private static final Logger logger = Logger.getLogger(VerifyMailJSONRequestController.class.getName());
 
   public void process(JSONRequestContext requestContext) {
-    String applicationId = requestContext.getString("applicationId");
     
-    try {
-      
-      // Sender
-      
-      StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-      StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
-      if (staffMember == null) {
-        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Käsittelijää ei löydy");
-        return;
-      }
-      
-      // Form data
-
-      String formDataStr = getFormData(requestContext.getRequest());
-      if (formDataStr == null) {
-        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Hakemusta ei löydy");
-        return;
-      }
-      JSONObject formData = JSONObject.fromObject(formDataStr);
-      
-      // Application
-      
-      Long applicationEntityId = formData.getLong("applicationEntityId");
-      ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-      Application application = applicationDAO.findById(applicationEntityId);
-      if (application == null) {
-        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Hakemusta ei löydy");
-        return;
-      }
-      
-      // Mail content
-      
-      Set<String> recipients = new HashSet<String>();
-      if (formData.has("mail-form-recipient")) {
-        JSONArray jsonRecipients = toJSONArray(formData.getString("mail-form-recipient"));
-        for (int i = 0; i < jsonRecipients.size(); i++) {
-          recipients.add(jsonRecipients.get(i).toString());
-        }
-      }
-      if (recipients.isEmpty()) {
-        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Viestille ei ole valittu vastaanottajia");
-        return;
-      }
-      String subject = formData.getString("mail-form-subject");
-      String content = formData.getString("mail-form-content");
-      if (StringUtils.isEmpty(subject) || StringUtils.isEmpty(content)) {
-        requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Viestistä puuttuu otsikko ja/tai sisältö");
-        return;
-      }
-      
-      // #870: Email signature
-      
-      EmailSignatureDAO emailSignatureDAO = DAOFactory.getInstance().getEmailSignatureDAO();
-      EmailSignature emailSignature = emailSignatureDAO.findByUser(staffMember);
-      if (emailSignature != null) {
-        content += emailSignature.getSignature();
-      }
-      
-      // Send mail
-      
-      Mailer.sendMail(Mailer.JNDI_APPLICATION,
-          Mailer.HTML,
-          staffMember.getPrimaryEmail().getAddress(),
-          Collections.emptySet(), // to
-          Collections.emptySet(), // cc
-          recipients, // bcc
-          subject,
-          content,
-          new ApplicationMailErrorHandler(application));
-      
-      StringBuffer recipientMails = new StringBuffer();
-      for (String s : recipients) {
-        recipientMails.append(s);
-        recipientMails.append("<br/>");
-      }
-      
-      // Application log entry
-      
-      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-      applicationLogDAO.create(application,
-          ApplicationLogType.HTML,
-          String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", recipientMails.toString(), subject, content),
-          staffMember);
+    // Form validation 
+    
+    String token = requestContext.getString("v");
+    String birthday = requestContext.getString("field-birthday");
+    if (StringUtils.isAnyBlank(token, birthday)) {
+      requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Puuttuvia tietoja");
     }
-    catch (Exception e) {
-      logger.log(Level.SEVERE, "Error saving log entry", e);
+    String applicationIdStr = StringUtils.substringBefore(token, "-");
+    if (!NumberUtils.isDigits(applicationIdStr)) {
+      requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vahvistusvirhe");
+    }
+    Long applicationId = Long.valueOf(applicationIdStr);
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    Application application = applicationDAO.findById(applicationId);
+    if (application == null) {
+      requestContext.sendError(HttpServletResponse.SC_NOT_FOUND, "Hakemusta ei löytynyt");
+    }
+    String verificationToken = StringUtils.substringAfter(token, "-");
+    ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
+    ApplicationEmailVerification verification = verificationDAO.findByApplicationAndToken(application, verificationToken);
+    if (verification == null) {
+      requestContext.sendError(HttpServletResponse.SC_NOT_FOUND, "Vahvistuspyyntöä ei löytynyt");
+    }
+    
+    // Birthday validation
+    
+    String applicationBirthday = ApplicationUtils.extractBirthdayString(application);
+    if (!StringUtils.equals(birthday, applicationBirthday)) {
+      requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syntymäaika ei vastaa hakemusta");
+    }
+    
+    // Email verified
+    
+    verificationDAO.updateVerified(verification, true);
+    
+    // Application log entry
+
+    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+    applicationLogDAO.create(application,
+        ApplicationLogType.HTML,
+        String.format("<p>Sähköpostiosoite %s vahvistettu</p>", verification.getEmail()),
+        null);
+    
+    // Send application edit instructions to applicant
+    
+    if (StringUtils.equals(application.getEmail(), verification.getEmail())) {
+
+      JSONObject formData = JSONObject.fromObject(application.getFormData());
+      String line = formData.getString("field-line");
+      String surname = application.getLastName();
+      String referenceCode = application.getReferenceCode();
+      
+      try {
+        String subject = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-confirmation-%s-subject.txt", line)), "UTF-8");
+        String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-confirmation-%s-content.html", line)), "UTF-8");
+        if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
+          logger.log(Level.SEVERE, String.format("Confirmation mail for line %s not defined", line));
+          return;
+        }
+
+        if (!ApplicationUtils.isInternetixLine(application.getLine())) {
+
+          // Replace the dynamic parts of the mail content (edit link, surname and reference code)
+          // #1487: Internetix confirmation mails do not have any dynamic content
+
+          StringBuilder viewUrl = new StringBuilder();
+          viewUrl.append(requestContext.getRequest().getScheme());
+          viewUrl.append("://");
+          viewUrl.append(requestContext.getRequest().getServerName());
+          viewUrl.append(":");
+          viewUrl.append(requestContext.getRequest().getServerPort());
+          viewUrl.append("/applications/edit.page");
+
+          content = String.format(content, viewUrl, surname, referenceCode);
+        }
+
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, verification.getEmail(), subject, content, new ApplicationMailErrorHandler(application));
+
+        applicationLogDAO.create(application,
+            ApplicationLogType.HTML,
+            String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", verification.getEmail(), subject, content),
+            null);
+      }
+      catch (IOException e) {
+        logger.log(Level.SEVERE, "Error sending application edit instructions", e);
+      }
     }
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
-  }
-  
-  private String getFormData(HttpServletRequest req) throws IOException {
-    StringBuilder sb = new StringBuilder();
-    BufferedReader reader = req.getReader();
-    try {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        sb.append(line).append('\n');
-      }
-    }
-    finally {
-      reader.close();
-    }
-    return sb.toString();
-  }
-  
-  private JSONArray toJSONArray(String value) {
-    if (StringUtils.isBlank(value)) {
-      return JSONArray.fromObject("[]");
-    }
-    else if (StringUtils.startsWith(value, "[")) {
-      return JSONArray.fromObject(value);
-    }
-    else {
-      return JSONArray.fromObject(String.format("['%s']", value));
-    }
+    return new UserRole[] { UserRole.EVERYONE };
   }
 
 }

@@ -35,55 +35,32 @@
       </div>
     </header>
 
-    <c:choose>
-      <c:when test="${notFound eq true}">
-        <section class="application-description application-description--edit">
-          <div class="application-description__edit">
-            <div class="application-description__edit-header">
-              Hakemusta ei löytynyt
-            </div>
-            <div class="application-description__edit-content">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
-          </div>
-        </section>
+    <section class="application-description application-description--edit">
+      <div class="application-description__edit">
+        <div class="application-description__edit-header">
+          Sähköpostin vahvistus
+        </div>
+        <div class="application-description__edit-content">Hakemustietojen suojaamiseksi pyydämme vielä täyttämään alla olevaan kenttään hakijan syntymäajan. Tämän myötä sähköpostiosoitteesi on vahvistettu ja voimme olla teihin yhteydessä hakemukseen käsittelyn aikana.</div>
+      </div>
+    </section>
         
-        <main class="application-content application-content--edit">
-          <p class="application-editing-information-row"><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>anna-maria.suora@otavanopisto.fi<br/>044 794 3515</p>
-          <p class="application-editing-information-row"><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavia.fi<br/>044 794 5107</p>
-          <p class="application-editing-information-row"><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavia.fi<br/>044 794 3273</p>
-          <p class="application-editing-information-row"><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
-          <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavia.fi<br/>015 194 3552</p>
-        </main>
-      </c:when>
-      <c:otherwise>
-        <section class="application-description application-description--edit">
-          <div class="application-description__edit">
-            <div class="application-description__edit-header">
-              Sähköpostin varmistus
+    <main class="application-content application-content--edit">
+      <section class="application-content__form">
+        <form class="application-form">
+          <input id="v" type="hidden" name="v" value="${verificationToken}"/>
+          <section class="form-section section-edit-info">
+            <div class="form-section__field-container field-birthday">
+              <label for="field-birthday" class="required">Hakijan syntymäaika</label>
+              <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true">
+              <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
             </div>
-            <div class="application-description__edit-content">Sähköpostisi on nyt varmistettu. Hakemustietojen suojaamiseksi pyydämme vielä täyttämään alla olevaan kenttään hakijan syntymäajan. Tämän myötä voimme olla teihin yhteydessä hakemukseen käsittelyn aikana.</div>
-          </div>
-        </section>
-        
-        <main class="application-content application-content--edit">
-          <section class="application-content__form">
-            <form class="application-form">
-              <input id="a" type="hidden" name="a" value="${applicationId}"/>
-              <input id="v" type="hidden" name="t" value="${verificationToken}"/>
-              <section class="form-section section-edit-info">
-                <div class="form-section__field-container field-birthday">
-                  <label for="field-birthday" class="required">Hakijan syntymäaika</label>
-                  <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true">
-                  <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
-                </div>
-              </section> 
-              <nav class="form-navigation">
-                <button type="button" class="button-edit-application">Lähetä</button>
-              </nav>
-            </form>
-          </section>
-        </main>
-      </c:otherwise>
-    </c:choose>
+          </section> 
+          <nav class="form-navigation">
+            <button type="button" class="button-edit-application">Lähetä</button>
+          </nav>
+        </form>
+      </section>
+    </main>
 	
     <footer class="application-footer">
       <div class="application-footer__contact">

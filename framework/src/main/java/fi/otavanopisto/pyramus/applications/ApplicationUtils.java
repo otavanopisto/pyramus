@@ -672,7 +672,6 @@ public class ApplicationUtils {
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
     try {
 
       // #769: Do not mail application edit instructions to Internetix applicants 
@@ -702,21 +701,16 @@ public class ApplicationUtils {
 
         content = String.format(content, oldSurname, surname, viewUrl, surname, referenceCode);
 
-        // Send mail to applicant or, for minors, applicant and guardian
+        // Send mail
 
-        if (StringUtils.isBlank(guardianMail)) {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
-        }
-        else {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content, new ApplicationMailErrorHandler(application));
-        }
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
 
         // #879: Add sent modification mail to application log
         
         ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
         applicationLogDAO.create(application,
             ApplicationLogType.HTML,
-            String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+            String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", applicantMail, subject, content),
             null);
       }
     }
