@@ -70,7 +70,7 @@
             <div class="application-description__edit-header">
               Sähköpostin vahvistus
             </div>
-            <div class="application-description__edit-content">Tietojesi suojaamiseksi täytä vielä alla olevaan kenttään syntymäaikasi. Tämän myötä sähköpostiosoitteesi on vahvistettu ja voimme olla sinuun yhteydessä hakemukseen käsittelyn aikana.</div>
+            <div class="application-description__edit-content">Tietojesi suojaamiseksi täytä vielä alla olevaan kenttään syntymäaikasi. Tämän myötä sähköpostiosoitteesi on vahvistettu ja voimme olla sinuun yhteydessä hakemuksen käsittelyn aikana.</div>
           </div>
         </section>
         
