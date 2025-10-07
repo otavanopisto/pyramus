@@ -215,7 +215,7 @@ function parsiKurssit(kurssit, oppilaitos, credits, results, OPINTOJENLAAJUUSYKS
       results.notes.push(getLocale().getText("students.manageTransferCredits.tcm.noApprovedGradeForCourse", kurssiKoodi));
     }
     else {
-      const arvosana = arviointi ? arviointi.arvosana.koodiarvo : "";
+      var arvosana = arviointi ? arviointi.arvosana.koodiarvo : "";
       var laajuus = null;
       var laajuusYksikko = null;
 
@@ -238,8 +238,14 @@ function parsiKurssit(kurssit, oppilaitos, credits, results, OPINTOJENLAAJUUSYKS
         // pyrOppiaine = Pyramuksen Subject:n json-kuvaus, tarvitaan id, code ja nimi sieltä
         var pyrOppiaine = parsittuKurssiKoodi.subject ? pyramusOppiaineet[parsittuKurssiKoodi.subject] : null;
         
+        // Jos konversio ylikirjoittaa arvosanan (yleensä korvaa S:llä), tehdään se tässä
+        if (parsittuKurssiKoodi.grade) {
+          arvosana = parsittuKurssiKoodi.grade;
+        }
+        
         credits.push({
           convertedOk: parsittuKurssiKoodi.convertedOk,
+          manualDoubleCheck: !!parsittuKurssiKoodi.manualDoubleCheck,
           courseName: parsittuKurssiKoodi.courseName ? parsittuKurssiKoodi.courseName : "",
           courseCode: parsittuKurssiKoodi.subject + (parsittuKurssiKoodi.courseNumber != null ? parsittuKurssiKoodi.courseNumber : ""),
           subject: pyrOppiaine,
@@ -264,10 +270,6 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
   var convertedOk = false;
   var subject = null;
   var courseNumber = null;
-  var courseName = null;
-  var courseLength = null;
-  var courseLengthUnit = null;
-  var mandatory = null;
 
   // Jos vastaavuustaulukko on olemassa, tehdään sen avulla kurssin muunnos 
   // uuteen opetussuunnitelmaan. Jos vastaavuustaulukkoa ei ole annettu,
@@ -299,55 +301,95 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
     if (konversioAine) {
       const konversioKurssi = konversioAine[courseNumber];
       if (konversioKurssi) {
+        // manualDoubleCheck voi olla joko boolean tai string, jälkimmäisen tapauksessa näytetään se viestinä - tämä logiikka tässä funkkarissa
+        const manualDoubleCheckMessage = function (manualDoubleCheckVar, courseCode) {
+          if (typeof manualDoubleCheckVar == "string" || manualDoubleCheckVar instanceof String) {
+            // manualDoubleCheckVar = selite, miksi kurssi pitäisi tarkistaa
+            return courseCode + " " + manualDoubleCheckVar;
+          }
+          else {
+            // muutoin lokalisoitu teksti
+            return getLocale().getText("students.manageTransferCredits.tcm.manualDoubleCheckNotification", courseCode);
+          }
+        };
+        
         switch (konversioKurssi.type) {
           case "OK": {
             // Suora konversio
+            const manualDoubleCheck = !!konversioKurssi.manualDoubleCheck;
+            var courseName = subject + courseNumber;
+            var courseLength = null;
+            var courseLengthUnit = null;
+            var mandatory = null;
             
             const opsmoduli = etsiOpsModuli(subject, courseNumber, opetussuunnitelma, tulosObjekti);
             if (opsmoduli) {
               if (opsmoduli.name) {
                 courseName = subject + courseNumber + " " + opsmoduli.name;
               }
-
-              return [{
-                convertedOk: true,
-                subject: subject,
-                courseNumber: typeof courseNumber == "number" ? courseNumber : null,
-                courseName: courseName,
-                courseLength: opsmoduli.length,
-                courseLengthUnit: opsmoduli.lengthUnitSymbol,
-                mandatory: opsmoduli.mandatory
-              }];
+              courseLength = opsmoduli.length;
+              courseLengthUnit = opsmoduli.lengthUnitSymbol;
+              mandatory = opsmoduli.mandatory;
             }
+            
+            if (manualDoubleCheck) {
+              tulosObjekti.curriculumErrors.push(manualDoubleCheckMessage(konversioKurssi.manualDoubleCheck, subject + courseNumber));
+            }
+            
+            return [{
+              convertedOk: true,
+              subject: subject,
+              courseNumber: typeof courseNumber == "number" ? courseNumber : null,
+              courseName: courseName,
+              courseLength: courseLength,
+              courseLengthUnit: courseLengthUnit,
+              mandatory: mandatory,
+              manualDoubleCheck: manualDoubleCheck
+            }];
           }
-          break;
           
           case "KNRO": {
             // Muuttunut oppiaine / kurssinumero
+            const manualDoubleCheck = !!konversioKurssi.manualDoubleCheck;
             const uusiSubject = konversioKurssi.subject ? konversioKurssi.subject : subject;
             tulosObjekti.curriculumNotes.push(getLocale().getText("students.manageTransferCredits.tcm.courseTranslation", subject + courseNumber, uusiSubject + konversioKurssi.to));
             
             subject = uusiSubject;
             courseNumber = konversioKurssi.to;
+            var courseName = subject + courseNumber;
+            var courseLength = null;
+            var courseLengthUnit = null;
+            var mandatory = null;
             
             const opsmoduli = etsiOpsModuli(subject, courseNumber, opetussuunnitelma, tulosObjekti);
             if (opsmoduli) {
               if (opsmoduli.name) {
                 courseName = subject + courseNumber + " " + opsmoduli.name;
               }
-
-              return [{
-                convertedOk: true,
-                subject: subject,
-                courseNumber: typeof courseNumber == "number" ? courseNumber : null,
-                courseName: courseName,
-                courseLength: opsmoduli.length,
-                courseLengthUnit: opsmoduli.lengthUnitSymbol,
-                mandatory: opsmoduli.mandatory
-              }];
+              courseLength = opsmoduli.length;
+              courseLengthUnit = opsmoduli.lengthUnitSymbol;
+              mandatory = opsmoduli.mandatory;
             }
+
+            // Konversiossa voi olla erikseen määritetty uusi arvosana, yleensä S
+            const grade = konversioKurssi.grade;
+            
+            if (manualDoubleCheck) {
+              tulosObjekti.curriculumErrors.push(manualDoubleCheckMessage(konversioKurssi.manualDoubleCheck, subject + courseNumber));
+            }
+            
+            return [{
+              convertedOk: true,
+              subject: subject,
+              courseNumber: typeof courseNumber == "number" ? courseNumber : null,
+              courseName: courseName,
+              courseLength: courseLength,
+              courseLengthUnit: courseLengthUnit,
+              grade: grade,
+              mandatory: mandatory,
+              manualDoubleCheck: manualDoubleCheck
+            }];
           }
-          break;
           
           case "MONI": {
             // Yhdestä kurssista useita hyväksilukuja
@@ -368,25 +410,42 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
 
               const konversioModulit = [];
               for (const konversioModuli of konversioKurssi.moni) {
+                const manualDoubleCheck = !!konversioModuli.manualDoubleCheck;
                 const moduliAine = konversioModuli.subject ? konversioModuli.subject : subject;
                 const moduliKnro = konversioModuli.no;
+                var courseName = moduliAine + moduliKnro;
+                var courseLength = null;
+                var courseLengthUnit = null;
+                var mandatory = null;
                 
                 const opsmoduli = etsiOpsModuli(moduliAine, moduliKnro, opetussuunnitelma, tulosObjekti);
                 if (opsmoduli) {
                   if (opsmoduli.name) {
                     courseName = moduliAine + moduliKnro + " " + opsmoduli.name;
                   }
-    
-                  konversioModulit.push({
-                    convertedOk: true,
-                    subject: moduliAine,
-                    courseNumber: typeof moduliKnro == "number" ? moduliKnro : null,
-                    courseName: courseName,
-                    courseLength: opsmoduli.length,
-                    courseLengthUnit: opsmoduli.lengthUnitSymbol,
-                    mandatory: opsmoduli.mandatory
-                  });
+                  courseLength = opsmoduli.length;
+                  courseLengthUnit = opsmoduli.lengthUnitSymbol;
+                  mandatory = opsmoduli.mandatory;
                 }
+    
+                // Konversiossa voi olla erikseen määritetty uusi arvosana, yleensä S
+                const grade = konversioModuli.grade;
+
+                if (manualDoubleCheck) {
+                  tulosObjekti.curriculumErrors.push(manualDoubleCheckMessage(konversioModuli.manualDoubleCheck, moduliAine + moduliKnro));
+                }
+                
+                konversioModulit.push({
+                  convertedOk: true,
+                  subject: moduliAine,
+                  courseNumber: typeof moduliKnro == "number" ? moduliKnro : null,
+                  courseName: courseName,
+                  courseLength: courseLength,
+                  courseLengthUnit: courseLengthUnit,
+                  grade: grade,
+                  mandatory: mandatory,
+                  manualDoubleCheck: manualDoubleCheck
+                });
               }
               return konversioModulit;
             }
@@ -415,6 +474,10 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
           const numstart = subject.length;
           courseNumber = numstart != -1 ? Number(courseCode.slice(numstart)) : null;
 
+          var courseLength = null;
+          var courseLengthUnit = null;
+          var mandatory = null;
+          
           const opsmodule = opsOppiaine.modules.find(m => m.courseNumber == courseNumber);
           if (opsmodule) {
             if (opsmodule.name) {
@@ -545,9 +608,9 @@ function opsVastaavuustaulukko(diaarinumero) {
         ] },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
-        5: { type: "KNRO", to: 14 },
-        6: { type: "KNRO", to: 15 },
-        7: { type: "KNRO", to: 16 },
+        5: { type: "KNRO", to: 14, grade: "S" },
+        6: { type: "KNRO", to: 15, grade: "S" },
+        7: { type: "KNRO", to: 16, grade: "S" },
         8: { type: "KNRO", to: 6 },
         9: { type: "KNRO", to: 10 },
         11: { type: "KNRO", to: 17 },
@@ -582,9 +645,9 @@ function opsVastaavuustaulukko(diaarinumero) {
       "ENA": {
         1: { type: "MONI", moni: [
           { no: 1 },
-          { no: 13 }
+          { no: 13, grade: "S" }
         ] },
-        2: { type: "KNRO", to: 12 },
+        2: { type: "KNRO", to: 12, grade: "S" },
         3: { type: "OK" },
         4: { type: "OK" },
         5: { type: "OK" },
@@ -629,10 +692,7 @@ function opsVastaavuustaulukko(diaarinumero) {
         11: { type: "KNRO", to: 10 }        
       },
       "FY": {
-        1: { type: "MONI", moni: [
-          { no: 1 },
-          { no: 9 }
-        ] },
+        1: { type: "OK", manualDoubleCheck: "merkitty tarkistettavaksi. Varmista pitääkö lisäksi hyväksilukea pakollinen FY2 vai paikallinen valinnainen opintojakso FY9." },
         2: { type: "KNRO", to: 3 },
         3: { type: "KNRO", to: 6 },
         4: { type: "OK" },
@@ -641,14 +701,17 @@ function opsVastaavuustaulukko(diaarinumero) {
         7: { type: "KNRO", to: 8 }
       },
       "KE": {
-        1: { type: "KORJAA_KÄSIN" },
-        2: { type: "KORJAA_KÄSIN" },
+        1: { type: "MONI", moni: [
+          { no: 1 },
+          { no: 2 }
+        ]  },
+        2: { type: "KNRO", to: 3 },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 6 }
       },
       "RUB1": {
-        1: { type: "KORJAA_KÄSIN" },
+        1: { type: "OK", manualDoubleCheck: "merkitty tarkistettavaksi. Varmista pitääkö lisäksi hyväksilukea paikallinen valinnainen opintojakso RUB110." },
         2: { type: "OK" },
         3: { type: "OK" },
         4: { type: "OK" },
@@ -837,8 +900,11 @@ function opsVastaavuustaulukko(diaarinumero) {
         5: { type: "KNRO", to: 6 }
       },
       "ENA": {
-        1: { type: "KORJAA_KÄSIN" },
-        2: { type: "KNRO", to: 12 },
+        1: { type: "MONI", moni: [
+          { no: 1 },
+          { no: 13, grade: "S" }
+        ]  },
+        2: { type: "KNRO", to: 12, grade: "S" },
         3: { type: "KNRO", to: 6 },
         4: { type: "OK" },
         5: { type: "KNRO", to: 3 },
@@ -872,7 +938,7 @@ function opsVastaavuustaulukko(diaarinumero) {
         10: { type: "KNRO", to: 9 }        
       },
       "FY": {
-        1: { type: "OK" },
+        1: { type: "OK", manualDoubleCheck: "merkitty tarkistettavaksi. Varmista pitääkö lisäksi hyväksilukea pakollinen FY2 vai paikallinen valinnainen opintojakso FY9." },
         2: { type: "KNRO", to: 3 },
         3: { type: "KNRO", to: 5 },
         4: { type: "OK" },
@@ -882,13 +948,16 @@ function opsVastaavuustaulukko(diaarinumero) {
       },
       "KE": {
         1: { type: "KNRO", to: 3 },
-        2: { type: "KORJAA_KÄSIN" },
+        2: { type: "MONI", moni: [
+         { no: 1 },
+         { no: 2 }
+        ] },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
         5: { type: "KNRO", to: 6 }
       },
       "RUB": {
-        1: { type: "KNRO", to: 1, subject: "RUB1" },
+        1: { type: "KNRO", to: 1, subject: "RUB1", manualDoubleCheck: "merkitty tarkistettavaksi. Varmista pitääkö lisäksi hyväksilukea paikallinen valinnainen opintojakso RUB110." },
         2: { type: "KNRO", to: 2, subject: "RUB1" },
         3: { type: "KNRO", to: 3, subject: "RUB1" },
         4: { type: "KNRO", to: 5, subject: "RUB1" },
@@ -984,12 +1053,12 @@ function opsVastaavuustaulukko(diaarinumero) {
         1: { type: "KNRO", to: 10 },
         2: { type: "KNRO", to: 4 },
         3: { type: "KNRO", to: 5 },
-        4: { type: "KNRO", to: 14 },
+        4: { type: "KNRO", to: 14, grade: "S" },
         5: { type: "KNRO", to: 2 },
         6: { type: "OK", to: 6 },
-        7: { type: "KNRO", to: 16 },
+        7: { type: "KNRO", to: 16, grade: "S" },
         8: { type: "KNRO", to: 1 },
-        9: { type: "KNRO", to: 15 },
+        9: { type: "KNRO", to: 15, grade: "S" },
         11: { type: "KNRO", to: 17 },
       },
       "HI": {
@@ -1008,11 +1077,11 @@ function opsVastaavuustaulukko(diaarinumero) {
         2: { type: "KNRO", to: 10 },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
-        5: { type: "KNRO", to: 14 },
+        5: { type: "KNRO", to: 14, grade: "S" },
         6: { type: "KNRO", to: 2 },
-        7: { type: "KNRO", to: 16 },
+        7: { type: "KNRO", to: 16, grade: "S" },
         8: { type: "KNRO", to: 6 },
-        9: { type: "KNRO", to: 15 }
+        9: { type: "KNRO", to: 15, grade: "S" }
       },
       "HI": {
         1: { type: "OK" },
@@ -1092,7 +1161,10 @@ function opsVastaavuusTaulukkoKaikki() {
             if (!kaikkioppiainevastaavuudet[vt_vastaavuus.to]) {
               kaikkioppiainevastaavuudet[vt_vastaavuus.to] = {};
             }
-            kaikkioppiainevastaavuudet[vt_vastaavuus.to][vt.diaarinumero] = vt_oppiaine + vt_kurssinro;
+            
+            const diffGrade = !!vt_vastaavuus.grade ? " (" + vt_vastaavuus.grade + ")" : "";
+            const manualDoubleCheckAlert = !!vt_vastaavuus.manualDoubleCheck ? "!" : "";
+            kaikkioppiainevastaavuudet[vt_vastaavuus.to][vt.diaarinumero] = vt_oppiaine + vt_kurssinro + diffGrade + manualDoubleCheckAlert;
           }
           break;
           
@@ -1112,7 +1184,10 @@ function opsVastaavuusTaulukkoKaikki() {
               if (!kaikkioppiainevastaavuudet[moduliKnro]) {
                 kaikkioppiainevastaavuudet[moduliKnro] = {};
               }
-              kaikkioppiainevastaavuudet[moduliKnro][vt.diaarinumero] = konversioKohde;
+              
+              const diffGrade = !!konversioModuli.grade ? " (" + vt_vastaavuus.grade + ")" : "";
+              const manualDoubleCheckAlert = !!konversioModuli.manualDoubleCheck ? "!" : "";
+              kaikkioppiainevastaavuudet[moduliKnro][vt.diaarinumero] = konversioKohde + diffGrade + manualDoubleCheckAlert;
             }            
           }
           break;
