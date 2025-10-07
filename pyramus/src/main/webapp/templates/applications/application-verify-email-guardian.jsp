@@ -40,7 +40,7 @@
         <div class="application-description__edit-header">
           Sähköpostin vahvistus
         </div>
-        <div class="application-description__edit-content">Hakemustietojen suojaamiseksi pyydämme vielä täyttämään alla olevaan kenttään hakijan syntymäajan. Tämän myötä sähköpostiosoitteesi on vahvistettu ja voimme olla teihin yhteydessä hakemukseen käsittelyn aikana.</div>
+        <div class="application-description__edit-content">Hakemustietojen suojaamiseksi pyydämme vielä täyttämään alla olevaan kenttään hakijan syntymäajan. Tämän myötä sähköpostiosoitteesi on vahvistettu ja voimme olla sinuun yhteydessä hakemukseen käsittelyn aikana.</div>
       </div>
     </section>
         

@@ -102,7 +102,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
           String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
-          String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
           boolean underageApplicant = ApplicationUtils.isUnderage(application);
 
           // Make sure we have application signatures and school approval
@@ -218,23 +217,17 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
                 signerOrganization);
           }
           
-          // Send mail to applicant (and possible guardian)
+          // Send mail to applicant
           
-          if (StringUtils.isBlank(guardianMail)) {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, attachments, new ApplicationMailErrorHandler(application));
-          }
-          else {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, guardianMail, subject, content, attachments, new ApplicationMailErrorHandler(application));
-          }
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, attachments, new ApplicationMailErrorHandler(application));
           
           // Add notification about sent mail
           
           ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-          applicationLogDAO.create(
-            application,
-            ApplicationLogType.HTML,
-            String.format("<p>%s</p><p><b>%s</b></p>%s", "Hakijalle lähetetty ilmoitus opiskelijaksi hyväksymisestä", subject, content),
-            staffMember);
+          applicationLogDAO.create(application,
+              ApplicationLogType.HTML,
+              String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", email, subject, content),
+              staffMember);
 
         } // end of application has been approved logic
         else if (applicationState == ApplicationState.TRANSFERRED_AS_STUDENT) {

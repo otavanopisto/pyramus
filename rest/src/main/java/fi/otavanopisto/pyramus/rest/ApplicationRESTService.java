@@ -854,61 +854,65 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     // Mail to the applicant
 
+    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = formData.getString("field-line");
-    String surname = application.getLastName();
-    String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
-    String guardianMail = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email")));
+    String guardianMail1 = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email")));
+    String guardianMail2 = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email-2")));
+    String guardianMail3 = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email-3")));
     try {
-
-      // Confirmation mail subject and content
+      
+      // Applicant email verification
 
       String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/mails/mail-confirmation-%s-subject.txt", line)), "UTF-8");
+          String.format("/templates/applications/mails/mail-verify-%s-subject.txt", line)), "UTF-8");
       String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/mails/mail-confirmation-%s-content.html", line)), "UTF-8");
-
+          String.format("/templates/applications/mails/mail-verify-%s-content.html", line)), "UTF-8");
       if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
-        logger.log(Level.SEVERE, String.format("Confirmation mail for line %s not defined", line));
+        logger.log(Level.SEVERE, String.format("Applicant verification mail for line %s not defined", line));
         return;
       }
-
-      if (!ApplicationUtils.isInternetixLine(application.getLine())) {
-
-        // Replace the dynamic parts of the mail content (edit link, surname and reference code)
-        // #1487: Internetix confirmation mails do not have any dynamic content
-
-        StringBuilder viewUrl = new StringBuilder();
-        viewUrl.append(httpRequest.getScheme());
-        viewUrl.append("://");
-        viewUrl.append(httpRequest.getServerName());
-        viewUrl.append(":");
-        viewUrl.append(httpRequest.getServerPort());
-        viewUrl.append("/applications/edit.page");
-
-        content = String.format(content, viewUrl, surname, referenceCode);
-      }
-
-      // Send mail to applicant or, for minors, applicant and guardian
-
-      if (StringUtils.isEmpty(guardianMail)) {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
-      }
-      else {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content, new ApplicationMailErrorHandler(application));
-      }
-
-      // #879: Add sent confirmation mail to application log
-
-      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
       applicationLogDAO.create(application,
           ApplicationLogType.HTML,
-          String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+          String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", applicantMail, subject, content),
           null);
+
+      // Guardian email verification
+      
+      if (!StringUtils.isAnyBlank(guardianMail1, guardianMail2, guardianMail3)) {
+        content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-verify-%s-content-guardian.html", line)), "UTF-8");
+        if (StringUtils.isBlank(content)) {
+          logger.log(Level.SEVERE, String.format("Guardian verification mail for line %s not defined", line));
+          return;
+        }
+        if (!StringUtils.isBlank(guardianMail1)) {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, guardianMail1, subject, content, new ApplicationMailErrorHandler(application));
+          applicationLogDAO.create(application,
+              ApplicationLogType.HTML,
+              String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", guardianMail1, subject, content),
+              null);
+        }
+        if (!StringUtils.isBlank(guardianMail2)) {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, guardianMail2, subject, content, new ApplicationMailErrorHandler(application));
+          applicationLogDAO.create(application,
+              ApplicationLogType.HTML,
+              String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", guardianMail2, subject, content),
+              null);
+        }
+        if (!StringUtils.isBlank(guardianMail3)) {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, guardianMail3, subject, content, new ApplicationMailErrorHandler(application));
+          applicationLogDAO.create(application,
+              ApplicationLogType.HTML,
+              String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", guardianMail3, subject, content),
+              null);
+        }
+      }
     }
     catch (IOException e) {
-      logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);
+      logger.log(Level.SEVERE, "Unable to retrieve verification mail template", e);
     }
   }
   
