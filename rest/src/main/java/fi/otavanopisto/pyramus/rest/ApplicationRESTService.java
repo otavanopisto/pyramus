@@ -588,6 +588,8 @@ public class ApplicationRESTService extends AbstractRESTService {
         
         ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
         ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, email);
+        boolean applicantMailChanged = verification == null;
+        // TODO mail changed only if verification is active
         if (verification == null) {
           String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
           verificationDAO.create(application, token, email);
@@ -621,46 +623,48 @@ public class ApplicationRESTService extends AbstractRESTService {
           }
         }
         
-        // Check if surname changed (edit information changed)
+        // Check if surname changed which means edit information changed (unless mail changed as it needs to be verified which leads to a new edit information mail)
         
-        String oldSurname = null;
-        boolean referenceCodeModified = false;
-        if (!StringUtils.equalsIgnoreCase(application.getLastName(), lastName)) {
-          referenceCodeModified = true;
-          oldSurname = application.getLastName();
-          referenceCode = ApplicationUtils.generateReferenceCode(lastName, application.getReferenceCode());
-        }
-        else {
-          referenceCode = application.getReferenceCode();
-        }
-        boolean lineChanged = !StringUtils.equals(line, application.getLine());
-        String oldLine = application.getLine(); 
-        application = applicationDAO.update(
-            application,
-            line,
-            firstName,
-            lastName,
-            email,
-            referenceCode,
-            formData.toString(),
-            application.getState(),
-            application.getApplicantEditable(),
-            null);
-        logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
-        modifiedApplicationPostProcessing(application);
-        if (lineChanged) {
-          String notification = String.format("Hakija vaihtoi hakemustaan linjalta <b>%s</b> linjalle <b>%s</b>",
-              ApplicationUtils.applicationLineUiValue(oldLine), ApplicationUtils.applicationLineUiValue(line));
-          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-          applicationLogDAO.create(
+        if (!applicantMailChanged) {
+          String oldSurname = null;
+          boolean referenceCodeModified = false;
+          if (!StringUtils.equalsIgnoreCase(application.getLastName(), lastName)) {
+            referenceCodeModified = true;
+            oldSurname = application.getLastName();
+            referenceCode = ApplicationUtils.generateReferenceCode(lastName, application.getReferenceCode());
+          }
+          else {
+            referenceCode = application.getReferenceCode();
+          }
+          boolean lineChanged = !StringUtils.equals(line, application.getLine());
+          String oldLine = application.getLine(); 
+          application = applicationDAO.update(
               application,
-              ApplicationLogType.HTML,
-              notification,
+              line,
+              firstName,
+              lastName,
+              email,
+              referenceCode,
+              formData.toString(),
+              application.getState(),
+              application.getApplicantEditable(),
               null);
-          ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, false);
-        }
-        if (referenceCodeModified) {
-          ApplicationUtils.sendApplicationModifiedMail(application, httpRequest, oldSurname);
+          logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
+          modifiedApplicationPostProcessing(application);
+          if (lineChanged) {
+            String notification = String.format("Hakija vaihtoi hakemustaan linjalta <b>%s</b> linjalle <b>%s</b>",
+                ApplicationUtils.applicationLineUiValue(oldLine), ApplicationUtils.applicationLineUiValue(line));
+            ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+            applicationLogDAO.create(
+                application,
+                ApplicationLogType.HTML,
+                notification,
+                null);
+            ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, false);
+          }
+          if (referenceCodeModified) {
+            ApplicationUtils.sendApplicationModifiedMail(application, httpRequest, oldSurname);
+          }
         }
       }
 
