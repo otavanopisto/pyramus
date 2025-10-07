@@ -63,7 +63,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
     
     String applicationBirthday = ApplicationUtils.extractBirthdayString(application);
     if (!StringUtils.equals(birthday, applicationBirthday)) {
-      requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syntymäaika ei vastaa hakemusta");
+      requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syöttämäsi syntymäaika ei vastaa hakemuksessa olevaa syntymäaikaa");
       return;
     }
     
