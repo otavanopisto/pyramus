@@ -180,21 +180,16 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           List<MailAttachment> attachments = new ArrayList<MailAttachment>();
           attachments.add(new MailAttachment(String.format("%s-oppilaitos.pdf", filename), "application/pdf", staffDocument));
           attachments.add(new MailAttachment(String.format("%s-hakija.pdf", filename), "application/pdf", applicantDocument));
-          
-          String lineOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavian" : "Otavan Opiston";
-          String signerOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavia" : "Otavan Opisto";
-          String subject = String.format("Hyväksyminen %s opiskelijaksi", lineOrganization);
+
+          String subject = "Hyväksyminen opiskelijaksi";
 
           String content = null;
           if (underageApplicant) {
             content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-                "/templates/applications/mails/mail-accept-study-place-underage.html"), "UTF-8");
+                "/templates/applications/mails/mail-accept-study-place-" + line  + "-underage.html"), "UTF-8");
             content = String.format(content,
                 nickname,
-                lineOrganization,
-                ApplicationUtils.applicationLineUiValue(line),
-                staffMember.getFullName(),
-                signerOrganization);
+                staffMember.getFullName());
           }
           else {
             StringBuilder signUpUrl = new StringBuilder();
@@ -207,14 +202,11 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             signUpUrl.append(application.getApplicationId());
 
             content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-                "/templates/applications/mails/mail-accept-study-place.html"), "UTF-8");
+                "/templates/applications/mails/mail-accept-study-place-" + line + ".html"), "UTF-8");
             content = String.format(content,
                 nickname,
-                lineOrganization,
-                ApplicationUtils.applicationLineUiValue(line),
                 signUpUrl.toString(),
-                staffMember.getFullName(),
-                signerOrganization);
+                staffMember.getFullName());
           }
           
           // Send mail to applicant
