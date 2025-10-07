@@ -113,7 +113,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
 
         applicationLogDAO.create(application,
             ApplicationLogType.HTML,
-            String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", verification.getEmail(), subject, content),
+            String.format("<p>Lähetetty sähköpostia. Vastaanottajat:<br/>%s</p><p><b>%s</b></p>%s", verification.getEmail(), subject, content),
             null);
       }
       catch (IOException e) {

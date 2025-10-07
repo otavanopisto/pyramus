@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.rest;
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -852,67 +851,21 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
 
-    // Mail to the applicant
+    // Verification mail to the applicant and guardians
 
-    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
     JSONObject formData = JSONObject.fromObject(application.getFormData());
-    String line = formData.getString("field-line");
-    String applicantMail = application.getEmail();
     String guardianMail1 = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email")));
     String guardianMail2 = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email-2")));
     String guardianMail3 = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email-3")));
-    try {
-      
-      // Applicant email verification
-
-      String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/mails/mail-verify-%s-subject.txt", line)), "UTF-8");
-      String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/mails/mail-verify-%s-content.html", line)), "UTF-8");
-      if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
-        logger.log(Level.SEVERE, String.format("Applicant verification mail for line %s not defined", line));
-        return;
-      }
-      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
-      applicationLogDAO.create(application,
-          ApplicationLogType.HTML,
-          String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", applicantMail, subject, content),
-          null);
-
-      // Guardian email verification
-      
-      if (!StringUtils.isAnyBlank(guardianMail1, guardianMail2, guardianMail3)) {
-        content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            String.format("/templates/applications/mails/mail-verify-%s-content-guardian.html", line)), "UTF-8");
-        if (StringUtils.isBlank(content)) {
-          logger.log(Level.SEVERE, String.format("Guardian verification mail for line %s not defined", line));
-          return;
-        }
-        if (!StringUtils.isBlank(guardianMail1)) {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, guardianMail1, subject, content, new ApplicationMailErrorHandler(application));
-          applicationLogDAO.create(application,
-              ApplicationLogType.HTML,
-              String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", guardianMail1, subject, content),
-              null);
-        }
-        if (!StringUtils.isBlank(guardianMail2)) {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, guardianMail2, subject, content, new ApplicationMailErrorHandler(application));
-          applicationLogDAO.create(application,
-              ApplicationLogType.HTML,
-              String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", guardianMail2, subject, content),
-              null);
-        }
-        if (!StringUtils.isBlank(guardianMail3)) {
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, guardianMail3, subject, content, new ApplicationMailErrorHandler(application));
-          applicationLogDAO.create(application,
-              ApplicationLogType.HTML,
-              String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", guardianMail3, subject, content),
-              null);
-        }
-      }
+    ApplicationUtils.sendVerificationMail(httpRequest, application, application.getEmail(), false);
+    if (!StringUtils.isBlank(guardianMail1)) {
+      ApplicationUtils.sendVerificationMail(httpRequest, application, guardianMail1, true);
     }
-    catch (IOException e) {
-      logger.log(Level.SEVERE, "Unable to retrieve verification mail template", e);
+    if (!StringUtils.isBlank(guardianMail2)) {
+      ApplicationUtils.sendVerificationMail(httpRequest, application, guardianMail2, true);
+    }
+    if (!StringUtils.isBlank(guardianMail3)) {
+      ApplicationUtils.sendVerificationMail(httpRequest, application, guardianMail3, true);
     }
   }
   

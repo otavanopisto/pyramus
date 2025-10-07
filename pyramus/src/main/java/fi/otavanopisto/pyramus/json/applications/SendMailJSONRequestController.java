@@ -116,7 +116,7 @@ public class SendMailJSONRequestController extends JSONRequestController {
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
       applicationLogDAO.create(application,
           ApplicationLogType.HTML,
-          String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", recipientMails.toString(), subject, content),
+          String.format("<p>Lähetetty sähköpostia. Vastaanottajat:<br/>%s</p><p><b>%s</b></p>%s", recipientMails.toString(), subject, content),
           staffMember);
     }
     catch (Exception e) {

@@ -256,6 +256,29 @@ public class ApplicationUtils {
   public static boolean isValidLine(String line) {
     return applicationLineUiValue(line) != null;
   }
+  
+  public static void sendVerificationMail(HttpServletRequest request, Application application, String email, boolean guardian) {
+    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+    try {
+      String subject = IOUtils.toString(request.getServletContext().getResourceAsStream(
+          String.format("/templates/applications/mails/mail-verify-%s-subject.txt", application.getLine())), "UTF-8");
+      String content = guardian
+          ? IOUtils.toString(request.getServletContext().getResourceAsStream(String.format("/templates/applications/mails/mail-verify-%s-content-guardian.html", application.getLine())), "UTF-8")
+          : IOUtils.toString(request.getServletContext().getResourceAsStream(String.format("/templates/applications/mails/mail-verify-%s-content.html", application.getLine())), "UTF-8");
+      if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
+        logger.log(Level.SEVERE, String.format("Applicant verification mail for line %s not defined", application.getLine()));
+        return;
+      }
+      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, new ApplicationMailErrorHandler(application));
+      applicationLogDAO.create(application,
+          ApplicationLogType.HTML,
+          String.format("<p>Lähetetty sähköpostia. Vastaanottajat:<br/>%s</p><p><b>%s</b></p>%s", email, subject, content),
+          null);
+    }
+    catch (IOException e) {
+      logger.log(Level.SEVERE, "Unable to retrieve verification mail template", e);
+    }
+  }
 
   public static boolean isUnderage(Application application) {
     String dateString = extractBirthdayString(application);
@@ -710,7 +733,7 @@ public class ApplicationUtils {
         ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
         applicationLogDAO.create(application,
             ApplicationLogType.HTML,
-            String.format("<p>Lähetetty sähköposti. Vastaanottajat:<br/>%s</p><p>Viesti:</p><p><b>%s</b></p>%s", applicantMail, subject, content),
+            String.format("<p>Lähetetty sähköpostia. Vastaanottajat:<br/>%s</p><p><b>%s</b></p>%s", applicantMail, subject, content),
             null);
       }
     }
