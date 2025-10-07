@@ -35,32 +35,51 @@
       </div>
     </header>
 
-    <section class="application-description application-description--edit">
-      <div class="application-description__edit">
-        <div class="application-description__edit-header">
-          Sähköpostin vahvistus
-        </div>
-        <div class="application-description__edit-content">Tietojesi suojaamiseksi täytä vielä alla olevaan kenttään syntymäaikasi, jonka jälkeen sähköpostisi on vahvistettu ja toimitamme sinulle ohjeet hakemuksen muokkaamiseen jälkikäteen.</div>
-      </div>
-    </section>
-        
-    <main class="application-content application-content--edit">
-      <section class="application-content__form">
-        <form class="application-form">
-          <input id="v" type="hidden" name="v" value="${verificationToken}"/>
-          <section class="form-section section-edit-info">
-            <div class="form-section__field-container field-birthday">
-              <label for="field-birthday" class="required">Syntymäaika</label>
-              <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true">
-              <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
+    <c:choose>
+      <c:when test="${verified eq true}">
+
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
+              Sähköposti vahvistettu
             </div>
-          </section> 
-          <nav class="form-navigation">
-            <button type="button" class="button-edit-application">Lähetä</button>
-          </nav>
-        </form>
-      </section>
-    </main>
+            <div class="application-description__edit-content">Kiitos! Hakemuksesi on vastaanotettu ja olemme yhteydessä sen käsittelyn edetessä.</div>
+          </div>
+        </section>
+
+
+      </c:when>
+      <c:otherwise>
+
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
+              Sähköpostin vahvistus
+            </div>
+            <div class="application-description__edit-content">Tietojesi suojaamiseksi täytä vielä alla olevaan kenttään syntymäaikasi. Tämän myötä sähköpostiosoitteesi on vahvistettu ja voimme olla sinuun yhteydessä hakemukseen käsittelyn aikana.</div>
+          </div>
+        </section>
+        
+        <main class="application-content application-content--edit">
+          <section class="application-content__form">
+            <form class="application-form">
+              <input id="v" type="hidden" name="v" value="${verificationToken}"/>
+              <section class="form-section section-edit-info">
+                <div class="form-section__field-container field-birthday">
+                  <label for="field-birthday" class="required">Syntymäaika</label>
+                  <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true">
+                  <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
+                </div>
+              </section> 
+              <nav class="form-navigation">
+                <button type="button" class="button-verify-email">Lähetä</button>
+              </nav>
+            </form>
+          </section>
+        </main>
+
+      </c:otherwise>
+    </c:choose>
 	
     <footer class="application-footer">
       <div class="application-footer__contact">

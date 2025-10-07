@@ -37,6 +37,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
@@ -68,6 +69,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
@@ -257,7 +259,7 @@ public class ApplicationUtils {
     return applicationLineUiValue(line) != null;
   }
   
-  public static void sendVerificationMail(HttpServletRequest request, Application application, String email, boolean guardian) {
+  public static void sendVerificationMail(HttpServletRequest request, Application application, String email, String token, boolean guardian) {
     ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
     try {
       String subject = IOUtils.toString(request.getServletContext().getResourceAsStream(
@@ -265,6 +267,16 @@ public class ApplicationUtils {
       String content = guardian
           ? IOUtils.toString(request.getServletContext().getResourceAsStream(String.format("/templates/applications/mails/mail-verify-%s-content-guardian.html", application.getLine())), "UTF-8")
           : IOUtils.toString(request.getServletContext().getResourceAsStream(String.format("/templates/applications/mails/mail-verify-%s-content.html", application.getLine())), "UTF-8");
+
+      StringBuilder viewUrl = new StringBuilder();
+      viewUrl.append(request.getScheme());
+      viewUrl.append("://");
+      viewUrl.append(request.getServerName());
+      viewUrl.append(":");
+      viewUrl.append(request.getServerPort());
+      viewUrl.append("/applications/verify.page?token=");
+      viewUrl.append(token);
+      
       if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
         logger.log(Level.SEVERE, String.format("Applicant verification mail for line %s not defined", application.getLine()));
         return;
@@ -910,6 +922,12 @@ public class ApplicationUtils {
         application.getLine(),
         application.getCreated(),
         source));
+    // Delete mail verifications
+    ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
+    List<ApplicationEmailVerification> verifications = verificationDAO.listByApplication(application);
+    for (ApplicationEmailVerification verification : verifications) {
+      verificationDAO.delete(verification);
+    }
     // Delete signatures
     ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
     List<ApplicationSignatures> applicationSignatures = applicationSignaturesDAO.listByApplication(application);

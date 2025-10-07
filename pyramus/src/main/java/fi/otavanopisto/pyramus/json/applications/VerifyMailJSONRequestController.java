@@ -33,8 +33,8 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
     
     // Form validation 
     
-    String token = requestContext.getString("v");
-    String birthday = requestContext.getString("field-birthday");
+    String token = requestContext.getString("token");
+    String birthday = requestContext.getString("birthday");
     if (StringUtils.isAnyBlank(token, birthday)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Puuttuvia tietoja");
     }

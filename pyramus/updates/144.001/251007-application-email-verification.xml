@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table ApplicationEmailVerification (
+      id bigint not null auto_increment,
+      email varchar(255) not null,
+      token varchar(255) not null,
+      verified bit not null,
+      application bigint,
+      primary key (id)
+    );
+  </sql>
+  
+  <sql>alter table ApplicationEmailVerification add constraint FKquta2usxu9k9xwpsp3xy18x08 foreign key (application) references Application (id);</sql>
+
+</update>

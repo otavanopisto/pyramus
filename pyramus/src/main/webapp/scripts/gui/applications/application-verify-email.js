@@ -2,37 +2,25 @@
   $(document).ready(function() {
     $('#button-verify-email').on('click', function() {
       $('.error-container').hide();
-      var usr = $('#u').val();
-      var pwd1 = $('#p1').val();
-      var pwd2 = $('#p2').val();
-      if (!usr || !pwd1 || !pwd2) {
+      var token = $('#v').val();
+      var birthday = $('#field-birthday').val();
+      if (!birthday) {
         $('.error-container').text('Täytä kaikki kentät').show();
         return;
       }
-      if (pwd1 != pwd2) {
-        $('.error-container').text('Salasanat eivät täsmää').show();
-        return;
-      }
       $.ajax({
-        url: '/applications/createcredentials.json',
+        url: '/applications/verifyemail.json',
         type: 'POST',
         data: {
-          applicationId: $('#a').val(),
-          token: $('#t').val(),
-          username: usr,
-          password: pwd1
+          token: token,
+          birthday: birthday 
         },
         dataType: 'json',
         success: function(response) {
-          if (response.status == 'OK') {
-            window.location.search = '?status=ok'; 
-          }
-          else {
-            $('.error-container').text(response.reason).show();
-          }
+          window.location.search = '?status=ok'; 
         },
         error: function(err) {
-          $('.error-container').text(err.statusText).show();
+          $('.error-container').text(err.responseText).show();
         }
       });
     });

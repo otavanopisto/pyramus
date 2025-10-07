@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.dao.application;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,11 +12,6 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification_;
-import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
-import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification_;
-import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
-import fi.otavanopisto.pyramus.domainmodel.application.Application_;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class ApplicationEmailVerificationDAO extends PyramusEntityDAO<ApplicationEmailVerification> {
@@ -55,6 +49,35 @@ public class ApplicationEmailVerificationDAO extends PyramusEntityDAO<Applicatio
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public ApplicationEmailVerification findByApplicationAndEmail(Application application, String email) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ApplicationEmailVerification> criteria = criteriaBuilder.createQuery(ApplicationEmailVerification.class);
+    Root<ApplicationEmailVerification> root = criteria.from(ApplicationEmailVerification.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(ApplicationEmailVerification_.application), application),
+        criteriaBuilder.equal(root.get(ApplicationEmailVerification_.email), email)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public List<ApplicationEmailVerification> listByApplication(Application application) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ApplicationEmailVerification> criteria = criteriaBuilder.createQuery(ApplicationEmailVerification.class);
+    Root<ApplicationEmailVerification> root = criteria.from(ApplicationEmailVerification.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(ApplicationEmailVerification_.application), application)
+    );
+    return entityManager.createQuery(criteria).getResultList();
   }
 
 }
