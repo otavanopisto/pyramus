@@ -37,22 +37,26 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
     String birthday = requestContext.getString("birthday");
     if (StringUtils.isAnyBlank(token, birthday)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Puuttuvia tietoja");
+      return;
     }
     String applicationIdStr = StringUtils.substringBefore(token, "-");
     if (!NumberUtils.isDigits(applicationIdStr)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vahvistusvirhe");
+      return;
     }
     Long applicationId = Long.valueOf(applicationIdStr);
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
     Application application = applicationDAO.findById(applicationId);
     if (application == null) {
       requestContext.sendError(HttpServletResponse.SC_NOT_FOUND, "Hakemusta ei löytynyt");
+      return;
     }
     String verificationToken = StringUtils.substringAfter(token, "-");
     ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
     ApplicationEmailVerification verification = verificationDAO.findByApplicationAndToken(application, verificationToken);
     if (verification == null) {
       requestContext.sendError(HttpServletResponse.SC_NOT_FOUND, "Vahvistuspyyntöä ei löytynyt");
+      return;
     }
     
     // Birthday validation
@@ -60,6 +64,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
     String applicationBirthday = ApplicationUtils.extractBirthdayString(application);
     if (!StringUtils.equals(birthday, applicationBirthday)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syntymäaika ei vastaa hakemusta");
+      return;
     }
     
     // Email verified
@@ -113,7 +118,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
 
         applicationLogDAO.create(application,
             ApplicationLogType.HTML,
-            String.format("<p>Lähetetty sähköpostia. Vastaanottajat:<br/>%s</p><p><b>%s</b></p>%s", verification.getEmail(), subject, content),
+            String.format("<p>Lähetetty sähköpostia</p><p>%s</p><p><b>%s</b></p>%s", verification.getEmail(), subject, content),
             null);
       }
       catch (IOException e) {

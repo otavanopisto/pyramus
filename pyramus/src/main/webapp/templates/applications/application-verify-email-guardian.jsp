@@ -36,6 +36,19 @@
     </header>
 
     <c:choose>
+      <c:when test="${alreadyVerified eq true}">
+
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
+              Sähköposti vahvistettu
+            </div>
+            <div class="application-description__edit-content">Sähköpostiosoitteesi on jo vahvistettu</div>
+          </div>
+        </section>
+
+
+      </c:when>
       <c:when test="${verified eq true}">
 
         <section class="application-description application-description--edit">
@@ -53,6 +66,7 @@
 
         <section class="application-description application-description--edit">
           <div class="application-description__edit">
+            <div class="error-container" style="display:none;"></div>
             <div class="application-description__edit-header">
               Sähköpostin vahvistus
             </div>
@@ -67,12 +81,12 @@
               <section class="form-section section-edit-info">
                 <div class="form-section__field-container field-birthday">
                   <label for="field-birthday" class="required">Hakijan syntymäaika</label>
-                  <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true">
+                  <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true"><br/>
                   <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
                 </div>
               </section> 
               <nav class="form-navigation">
-                <button type="button" class="button-verify-email">Lähetä</button>
+                <button type="button" id="button-verify-email" class="button-verify-email">Lähetä</button>
               </nav>
             </form>
           </section>

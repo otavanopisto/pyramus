@@ -284,7 +284,7 @@ public class ApplicationUtils {
       Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, new ApplicationMailErrorHandler(application));
       applicationLogDAO.create(application,
           ApplicationLogType.HTML,
-          String.format("<p>Lähetetty sähköpostia. Vastaanottajat:<br/>%s</p><p><b>%s</b></p>%s", email, subject, content),
+          String.format("<p>Lähetetty sähköpostia</p><p>%s</p><p><b>%s</b></p>%s", email, subject, content),
           null);
     }
     catch (IOException e) {
@@ -745,7 +745,7 @@ public class ApplicationUtils {
         ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
         applicationLogDAO.create(application,
             ApplicationLogType.HTML,
-            String.format("<p>Lähetetty sähköpostia. Vastaanottajat:<br/>%s</p><p><b>%s</b></p>%s", applicantMail, subject, content),
+            String.format("<p>Lähetetty sähköpostia</p><p>%s</p><p><b>%s</b></p>%s", applicantMail, subject, content),
             null);
       }
     }

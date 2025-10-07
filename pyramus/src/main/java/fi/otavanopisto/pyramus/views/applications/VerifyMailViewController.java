@@ -24,8 +24,10 @@ public class VerifyMailViewController extends PyramusViewController {
   
   public void process(PageRequestContext pageRequestContext) {
     try {
+      boolean checkAlreadyVerified = true;
       if (StringUtils.equals(pageRequestContext.getString("status"), "ok")) {
         pageRequestContext.getRequest().setAttribute("verified", Boolean.TRUE);
+        checkAlreadyVerified = false;
       }
       String token = pageRequestContext.getString("v");
       if (StringUtils.isBlank(token)) {
@@ -57,6 +59,9 @@ public class VerifyMailViewController extends PyramusViewController {
       if (verification == null) {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
+      }
+      if (checkAlreadyVerified && verification.isVerified()) {
+        pageRequestContext.getRequest().setAttribute("alreadyVerified", Boolean.TRUE);
       }
       boolean applicant = StringUtils.equals(verification.getEmail(), application.getEmail());
       if (applicant) {

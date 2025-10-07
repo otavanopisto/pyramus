@@ -9,7 +9,7 @@
         return;
       }
       $.ajax({
-        url: '/applications/verifyemail.json',
+        url: '/applications/verifymail.json',
         type: 'POST',
         data: {
           token: token,
@@ -17,7 +17,7 @@
         },
         dataType: 'json',
         success: function(response) {
-          window.location.search = '?status=ok'; 
+          window.location.search = '?v=' + token + '&status=ok'; 
         },
         error: function(err) {
           $('.error-container').text(err.responseText).show();
