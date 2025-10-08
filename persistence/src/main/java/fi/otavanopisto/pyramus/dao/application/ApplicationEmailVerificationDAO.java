@@ -80,7 +80,7 @@ public class ApplicationEmailVerificationDAO extends PyramusEntityDAO<Applicatio
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<ApplicationEmailVerification> listByApplicationAndUnverified(Application application) {
+  public List<ApplicationEmailVerification> listUnverifiedByApplication(Application application) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<ApplicationEmailVerification> criteria = criteriaBuilder.createQuery(ApplicationEmailVerification.class);

@@ -254,9 +254,9 @@ public class ApplicationUtils {
   
   public static boolean isEmailVerificationEnabled(Long applicationId) {
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
-    SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
     SettingKey settingKey = settingKeyDAO.findByName(SETTINGKEY_VERIFICATION_THRESHOLD);
     if (settingKey != null) {
+      SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
       Setting setting = settingDAO.findByKey(settingKey);
       if (setting != null) {
         Long thresholdId = NumberUtils.toLong(setting.getValue());

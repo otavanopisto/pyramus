@@ -10,7 +10,7 @@
 
   <section class="form-section section-done internetix-submitted" data-skip="true" style="display:none;">
     <h2 class="form-section__header">Ilmoittautumisesi on tallennettu</h2>
-    <p>Pyydämme vielä vahvistamaan sähköpostiosoitteesi klikkaamalla linkkiä, jonka lähetimme osoitteeseen <span class="email" id="edit-info-email"></span></p>
+    <p>Pyydämme vielä vahvistamaan sähköpostiosoitteesi klikkaamalla linkkiä, jonka lähetimme osoitteeseen <span class="email" id="edit-info-email-internetix"></span></p>
   </section>
 
   <section class="form-section section-done registered" data-skip="true" style="display:none;">

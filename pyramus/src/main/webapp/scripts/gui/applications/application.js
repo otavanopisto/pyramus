@@ -403,6 +403,7 @@
                 $('#edit-info-last-name').text($('#field-last-name').val());
                 $('#edit-info-reference-code').text(response.referenceCode);
                 $('#edit-info-email').text($('#field-email').val());
+                $('#edit-info-email-internetix').text($('#field-email').val());
                 navigateTo('.section-done.submitted');
               }
             }

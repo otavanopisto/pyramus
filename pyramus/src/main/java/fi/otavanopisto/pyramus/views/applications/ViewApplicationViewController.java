@@ -545,7 +545,7 @@ public class ViewApplicationViewController extends PyramusViewController {
     // Email verifications
     
     ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
-    List<ApplicationEmailVerification> verifications = verificationDAO.listByApplicationAndUnverified(application);
+    List<ApplicationEmailVerification> verifications = verificationDAO.listUnverifiedByApplication(application);
     if (!verifications.isEmpty()) {
       conflicts.add("Hakemuksessa on vahvistamattomia sähköpostiosoitteita");
     }

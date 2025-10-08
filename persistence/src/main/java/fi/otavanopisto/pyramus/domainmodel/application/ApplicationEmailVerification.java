@@ -17,10 +17,6 @@ public class ApplicationEmailVerification {
     return id;
   }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
-
   public Application getApplication() {
     return application;
   }
