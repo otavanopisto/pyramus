@@ -100,7 +100,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           JSONObject formData = JSONObject.fromObject(application.getFormData());
           String line = application.getLine();
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
-          String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+          String email = getFormValue(formData, "field-email");
           String nickname = getFormValue(formData, "field-nickname");
           boolean underageApplicant = ApplicationUtils.isUnderage(application);
 

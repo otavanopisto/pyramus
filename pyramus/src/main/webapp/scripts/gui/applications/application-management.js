@@ -387,9 +387,16 @@
           if (response.recipients[i].checked == 'true') {
             $(rowInput).attr('checked', 'checked');
           }
+          var html;
+          if (response.recipients[i].verified == 'false') {
+            html = response.recipients[i].name + ' &lt;<span style="color:red;">' + response.recipients[i].mail + '</span>&gt;';
+          }
+          else {
+            html = response.recipients[i].name + ' &lt;' + response.recipients[i].mail + '&gt;';
+		  }
           var rowLabel = $('<label>')
             .attr('for', 'mail-form-recipient-' + i)
-            .text(response.recipients[i].name + ' <' + response.recipients[i].mail + '>');
+            .html(html);
           $(row).append(rowInput).append(rowLabel);
           $('div.application-mail-recipients').append(row);
         }

@@ -111,6 +111,7 @@ public class ApplicationUtils {
 
   private static final String SETTINGKEY_SIGNERID = "applications.defaultSignerId";
   public static final String SETTINGKEY_STUDENTPARENTREGISTRATIONENABLED = "applications.studentParentRegistrationEnabled";
+  public static final String SETTINGKEY_VERIFICATION_THRESHOLD = "applications.verificationThreshold";
   
   private static final String LINE_AINEOPISKELU = "aineopiskelu";
   private static final String LINE_AINEOPISKELU_PK = "aineopiskelupk";
@@ -251,6 +252,20 @@ public class ApplicationUtils {
     return null;
   }
   
+  public static boolean isEmailVerificationEnabled(Long applicationId) {
+    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
+    SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+    SettingKey settingKey = settingKeyDAO.findByName(SETTINGKEY_VERIFICATION_THRESHOLD);
+    if (settingKey != null) {
+      Setting setting = settingDAO.findByKey(settingKey);
+      if (setting != null) {
+        Long thresholdId = NumberUtils.toLong(setting.getValue());
+        return applicationId > thresholdId;
+      }
+    }
+    return false;
+  }
+  
   public static boolean isOtaviaLine(String line) {
     return !StringUtils.equals(line, "aikuislukio");
   }
@@ -259,7 +274,55 @@ public class ApplicationUtils {
     return applicationLineUiValue(line) != null;
   }
   
-  public static void sendVerificationMail(HttpServletRequest request, Application application, String email, String token, boolean guardian) {
+  /**
+   * Checks if the application contains emails that need to be added to verification. If so,
+   * create verification for them and send mail to the person in question.
+   * 
+   * @param application Application
+   */
+  public static void sendVerificationMails(HttpServletRequest request, Application application) {
+    if (!isEmailVerificationEnabled(application.getId())) {
+      return;
+    }
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String email = application.getEmail();
+    ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
+    ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, email);
+    if (verification == null) {
+      String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
+      verificationDAO.create(application, token, email);
+      sendVerificationMail(request, application, email, token, false);
+    }
+    String guardianMail = getFormValue(formData, "field-underage-email");
+    if (!StringUtils.isBlank(guardianMail)) {
+      verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+      if (verification == null) {
+        String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
+        verificationDAO.create(application, token, guardianMail);
+        sendVerificationMail(request, application, guardianMail, token, true);
+      }
+    }
+    guardianMail = getFormValue(formData, "field-underage-email-2");
+    if (!StringUtils.isBlank(guardianMail)) {
+      verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+      if (verification == null) {
+        String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
+        verificationDAO.create(application, token, guardianMail);
+        sendVerificationMail(request, application, guardianMail, token, true);
+      }
+    }
+    guardianMail = getFormValue(formData, "field-underage-email-3");
+    if (!StringUtils.isBlank(guardianMail)) {
+      verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+      if (verification == null) {
+        String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
+        verificationDAO.create(application, token, guardianMail);
+        sendVerificationMail(request, application, guardianMail, token, true);
+      }
+    }
+  }
+  
+  private static void sendVerificationMail(HttpServletRequest request, Application application, String email, String token, boolean guardian) {
     ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
     try {
       String subject = IOUtils.toString(request.getServletContext().getResourceAsStream(
@@ -274,8 +337,12 @@ public class ApplicationUtils {
       viewUrl.append(request.getServerName());
       viewUrl.append(":");
       viewUrl.append(request.getServerPort());
-      viewUrl.append("/applications/verify.page?token=");
+      viewUrl.append("/applications/verify.page?v=");
+      viewUrl.append(application.getId());
+      viewUrl.append("-");
       viewUrl.append(token);
+
+      content = String.format(content, viewUrl);
       
       if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
         logger.log(Level.SEVERE, String.format("Applicant verification mail for line %s not defined", application.getLine()));
@@ -698,62 +765,6 @@ public class ApplicationUtils {
     }
   }
   
-  public static void sendApplicationModifiedMail(Application application, HttpServletRequest httpRequest, String oldSurname) {
-
-    // Mail to the applicant
-
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
-    String line = formData.getString("field-line");
-    String surname = application.getLastName();
-    String referenceCode = application.getReferenceCode();
-    String applicantMail = application.getEmail();
-    try {
-
-      // #769: Do not mail application edit instructions to Internetix applicants 
-      if (!isInternetixLine(application.getLine())) {
-
-        // Modification mail subject and content
-        
-        String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            String.format("/templates/applications/mails/mail-modified-%s-subject.txt", line)), "UTF-8");
-        String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            String.format("/templates/applications/mails/mail-modified-%s-content.html", line)), "UTF-8");
-        
-        if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
-          logger.log(Level.SEVERE, String.format("Modification mail for line %s not defined", line));
-          return;
-        }
-
-        // Replace the dynamic parts of the mail content (old surname, new surname, edit link, surname and reference code)
-
-        StringBuilder viewUrl = new StringBuilder();
-        viewUrl.append(httpRequest.getScheme());
-        viewUrl.append("://");
-        viewUrl.append(httpRequest.getServerName());
-        viewUrl.append(":");
-        viewUrl.append(httpRequest.getServerPort());
-        viewUrl.append("/applications/edit.page");
-
-        content = String.format(content, oldSurname, surname, viewUrl, surname, referenceCode);
-
-        // Send mail
-
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
-
-        // #879: Add sent modification mail to application log
-        
-        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-        applicationLogDAO.create(application,
-            ApplicationLogType.HTML,
-            String.format("<p>Lähetetty sähköpostia</p><p>%s</p><p><b>%s</b></p>%s", applicantMail, subject, content),
-            null);
-      }
-    }
-    catch (IOException e) {
-      logger.log(Level.SEVERE, "Unable to retrieve modification mail template", e);
-    }
-  }
-  
   public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix, boolean doLogEntry) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
     List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(application.getLine(), application.getState());
@@ -1135,7 +1146,7 @@ public class ApplicationUtils {
 
     // Attach email
     
-    String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+    String email = getFormValue(formData, "field-email");
     emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email);
     
     // Attach address
@@ -1165,15 +1176,15 @@ public class ApplicationUtils {
       // Attach email
       
       contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
-      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+      email = getFormValue(formData, "field-underage-email");
       if (!StringUtils.isBlank(email)) {
         emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
       }
-      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
+      email = getFormValue(formData, "field-underage-email-2");
       if (!StringUtils.isBlank(email)) {
         emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
       }
-      email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
+      email = getFormValue(formData, "field-underage-email-3");
       if (!StringUtils.isBlank(email)) {
         emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
       }
@@ -1242,7 +1253,7 @@ public class ApplicationUtils {
       
       if (isStudentParentRegistrationsEnabled()) {
         // Guardian #1
-        email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
+        email = getFormValue(formData, "field-underage-email");
         if (StringUtils.isNotBlank(email)) {
           String firstName = getFormValue(formData, "field-underage-first-name");
           String lastName = getFormValue(formData, "field-underage-last-name");
@@ -1254,7 +1265,7 @@ public class ApplicationUtils {
         }
         
         // Guardian #2
-        email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")));
+        email = getFormValue(formData, "field-underage-email-2");
         if (StringUtils.isNotBlank(email)) {
           String firstName = getFormValue(formData, "field-underage-first-name-2");
           String lastName = getFormValue(formData, "field-underage-last-name-2");
@@ -1266,7 +1277,7 @@ public class ApplicationUtils {
         }
         
         // Guardian #3
-        email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")));
+        email = getFormValue(formData, "field-underage-email-3");
         if (StringUtils.isNotBlank(email)) {
           String firstName = getFormValue(formData, "field-underage-first-name-3");
           String lastName = getFormValue(formData, "field-underage-last-name-3");
@@ -1472,7 +1483,7 @@ public class ApplicationUtils {
     
     // Person by email address
     
-    String emailAddress = StringUtils.lowerCase(StringUtils.trim(application.getEmail()));
+    String emailAddress = application.getEmail();
     List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
     for (Email email : emails) {
       if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {

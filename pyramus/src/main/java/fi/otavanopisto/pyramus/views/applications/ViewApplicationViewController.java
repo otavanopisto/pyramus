@@ -24,12 +24,14 @@ import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.applications.InternetixStudyProgramme;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -78,6 +80,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       JSONObject formData = JSONObject.fromObject(application.getFormData());
 
       Map<String, Map<String, String>> sections = new LinkedHashMap<>();
+      
+      boolean mailVerificationEnabled = ApplicationUtils.isEmailVerificationEnabled(application.getId());
+      ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
       
       // Audit (not logging when returning to this page after save reloads it) 
       
@@ -158,7 +163,14 @@ public class ViewApplicationViewController extends PyramusViewController {
       fields.put("Kansallisuus", ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality")));
       fields.put("Äidinkieli", ApplicationUtils.languageUiValue(getFormValue(formData, "field-language")));
       fields.put("Puhelinnumero", getFormValue(formData, "field-phone"));
-      fields.put("Sähköposti", StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email"))));
+      String applicantMail = getFormValue(formData, "field-email");
+      if (mailVerificationEnabled) {
+        ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, applicantMail);
+        if (verification != null && !verification.isVerified()) {
+          applicantMail = String.format("<span style=\"color:red;\">%s</span>", applicantMail);
+        }
+      }
+      fields.put("Sähköposti", applicantMail);
 
       // Alaikäisen hakemustiedot
       
@@ -168,6 +180,13 @@ public class ViewApplicationViewController extends PyramusViewController {
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-grounds"))) { 
           fields.put("Hakemusperusteet", getFormValue(formData, "field-underage-grounds")); 
         }
+        String guardianMail = getFormValue(formData, "field-underage-email");
+        if (!StringUtils.isBlank(guardianMail) && mailVerificationEnabled) {
+          ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+          if (verification != null && !verification.isVerified()) {
+            guardianMail = String.format("<span style=\"color:red;\">%s</span>", guardianMail);
+          }
+        }
         fields.put("Huoltajan yhteystiedot", String.format("%s %s\n%s\n%s %s\n%s\n%s\n%s",
           getFormValue(formData, "field-underage-first-name"),
           getFormValue(formData, "field-underage-last-name"),
@@ -176,8 +195,15 @@ public class ViewApplicationViewController extends PyramusViewController {
           getFormValue(formData, "field-underage-city"),
           getFormValue(formData, "field-underage-country"),
           "Puh: " + getFormValue(formData, "field-underage-phone"),
-          "Sähköposti: " + StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")))));
+          "Sähköposti: " + guardianMail));
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-first-name-2"))) {
+          guardianMail = getFormValue(formData, "field-underage-email-2");
+          if (!StringUtils.isBlank(guardianMail) && mailVerificationEnabled) {
+            ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+            if (verification != null && !verification.isVerified()) {
+              guardianMail = String.format("<span style=\"color:red;\">%s</span>", guardianMail);
+            }
+          }
           fields.put("Huoltajan yhteystiedot 2", String.format("%s %s\n%s\n%s %s\n%s\n%s\n%s",
               getFormValue(formData, "field-underage-first-name-2"),
               getFormValue(formData, "field-underage-last-name-2"),
@@ -186,9 +212,16 @@ public class ViewApplicationViewController extends PyramusViewController {
               getFormValue(formData, "field-underage-city-2"),
               getFormValue(formData, "field-underage-country-2"),
               "Puh: " + getFormValue(formData, "field-underage-phone-2"),
-              "Sähköposti: " + StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-2")))));
+              "Sähköposti: " + guardianMail));
         }
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-first-name-3"))) {
+          guardianMail = getFormValue(formData, "field-underage-email-3");
+          if (!StringUtils.isBlank(guardianMail) && mailVerificationEnabled) {
+            ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+            if (verification != null && !verification.isVerified()) {
+              guardianMail = String.format("<span style=\"color:red;\">%s</span>", guardianMail);
+            }
+          }
           fields.put("Huoltajan yhteystiedot 3", String.format("%s %s\n%s\n%s %s\n%s\n%s\n%s",
               getFormValue(formData, "field-underage-first-name-3"),
               getFormValue(formData, "field-underage-last-name-3"),
@@ -197,7 +230,7 @@ public class ViewApplicationViewController extends PyramusViewController {
               getFormValue(formData, "field-underage-city-3"),
               getFormValue(formData, "field-underage-country-3"),
               "Puh: " + getFormValue(formData, "field-underage-phone-3"),
-              "Sähköposti: " + StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email-3")))));
+              "Sähköposti: " + guardianMail));
         }
       }
       
@@ -451,7 +484,7 @@ public class ViewApplicationViewController extends PyramusViewController {
     
     // Email checks
     
-    String emailAddress = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+    String emailAddress = getFormValue(formData, "field-email");
     if (!StringUtils.isBlank(emailAddress)) {
       List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
       for (Email email : emails) {
@@ -507,6 +540,14 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (ApplicationUtils.isUnderage(application)) {
         conflicts.add("Hakija on alaikäinen");
       }
+    }
+    
+    // Email verifications
+    
+    ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
+    List<ApplicationEmailVerification> verifications = verificationDAO.listByApplicationAndUnverified(application);
+    if (!verifications.isEmpty()) {
+      conflicts.add("Hakemuksessa on vahvistamattomia sähköpostiosoitteita");
     }
     
     return conflicts;
