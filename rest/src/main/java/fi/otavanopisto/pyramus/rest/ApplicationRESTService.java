@@ -501,7 +501,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       if (!StringUtils.isBlank(mail)) {
         formData.put("field-underage-email-2", StringUtils.lowerCase(StringUtils.trim(mail)));
       }
-      mail = ApplicationUtils.getFormValue(formData, "field-underage-email-2");
+      mail = ApplicationUtils.getFormValue(formData, "field-underage-email-3");
       if (!StringUtils.isBlank(mail)) {
         formData.put("field-underage-email-3", StringUtils.lowerCase(StringUtils.trim(mail)));
       }
