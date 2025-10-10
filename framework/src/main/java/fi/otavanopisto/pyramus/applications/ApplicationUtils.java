@@ -325,7 +325,7 @@ public class ApplicationUtils {
       return;
     }
     JSONObject formData = JSONObject.fromObject(application.getFormData());
-    String email = application.getEmail();
+    String email = getFormValue(formData, "field-email");
     ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
     ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, email);
     if (verification == null) {
@@ -333,31 +333,31 @@ public class ApplicationUtils {
       verificationDAO.create(application, token, email);
       sendVerificationMail(request, application, email, token, false);
     }
-    String guardianMail = getFormValue(formData, "field-underage-email");
-    if (!StringUtils.isBlank(guardianMail)) {
-      verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+    email = getFormValue(formData, "field-underage-email");
+    if (!StringUtils.isBlank(email)) {
+      verification = verificationDAO.findByApplicationAndEmail(application, email);
       if (verification == null) {
         String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
-        verificationDAO.create(application, token, guardianMail);
-        sendVerificationMail(request, application, guardianMail, token, true);
+        verificationDAO.create(application, token, email);
+        sendVerificationMail(request, application, email, token, true);
       }
     }
-    guardianMail = getFormValue(formData, "field-underage-email-2");
-    if (!StringUtils.isBlank(guardianMail)) {
-      verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+    email = getFormValue(formData, "field-underage-email-2");
+    if (!StringUtils.isBlank(email)) {
+      verification = verificationDAO.findByApplicationAndEmail(application, email);
       if (verification == null) {
         String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
-        verificationDAO.create(application, token, guardianMail);
-        sendVerificationMail(request, application, guardianMail, token, true);
+        verificationDAO.create(application, token, email);
+        sendVerificationMail(request, application, email, token, true);
       }
     }
-    guardianMail = getFormValue(formData, "field-underage-email-3");
-    if (!StringUtils.isBlank(guardianMail)) {
-      verification = verificationDAO.findByApplicationAndEmail(application, guardianMail);
+    email = getFormValue(formData, "field-underage-email-3");
+    if (!StringUtils.isBlank(email)) {
+      verification = verificationDAO.findByApplicationAndEmail(application, email);
       if (verification == null) {
         String token = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
-        verificationDAO.create(application, token, guardianMail);
-        sendVerificationMail(request, application, guardianMail, token, true);
+        verificationDAO.create(application, token, email);
+        sendVerificationMail(request, application, email, token, true);
       }
     }
   }
