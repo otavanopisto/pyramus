@@ -1,6 +1,9 @@
 package fi.otavanopisto.pyramus.json.applications;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,9 +20,12 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.mailer.Mailer;
@@ -79,10 +85,55 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
         String.format("<p>Sähköpostiosoite %s vahvistettu</p>", verification.getEmail()),
         null);
     
-    // Send application edit instructions to applicant
+    // Send application edit instructions to applicant (also notify staff about a verified email) 
     
     if (StringUtils.equals(application.getEmail(), verification.getEmail())) {
 
+      // Verification mail to staff
+      
+      ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
+      List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(application.getLine(), application.getState());
+      Set<String> emails = new HashSet<>();
+      for (ApplicationNotification notification : notifications) {
+        Set<User> users = notification.getUsers();
+        for (User user : users) {
+          if (user.getPrimaryEmail() != null) {
+            emails.add(user.getPrimaryEmail().getAddress());
+          }
+        }
+      }
+      if (!emails.isEmpty()) {
+        StringBuilder viewUrl = new StringBuilder();
+        viewUrl.append(requestContext.getRequest().getScheme());
+        viewUrl.append("://");
+        viewUrl.append(requestContext.getRequest().getServerName());
+        viewUrl.append(":");
+        viewUrl.append(requestContext.getRequest().getServerPort());
+        viewUrl.append("/applications/view.page?application=");
+        viewUrl.append(application.getId());
+
+        String subject = String.format("Sähköposti vahvistettu [%s %s]",
+            application.getFirstName(),
+            application.getLastName());
+        String content = String.format(
+            "<p>Hakija <b>%s %s</b> (%s) on vahvistanut sähköpostiosoitteensa.</p>" +
+            "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
+            application.getFirstName(),
+            application.getLastName(),
+            application.getEmail(),
+            viewUrl);
+
+        Mailer.sendMail(Mailer.JNDI_APPLICATION,
+            Mailer.HTML,
+            null,
+            emails,
+            subject,
+            content,
+            new ApplicationMailErrorHandler(application));
+      }
+      
+      // Confirmation mail to applicant
+      
       JSONObject formData = JSONObject.fromObject(application.getFormData());
       String line = formData.getString("field-line");
       String surname = application.getLastName();
@@ -122,7 +173,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
             null);
       }
       catch (IOException e) {
-        logger.log(Level.SEVERE, "Error sending application edit instructions", e);
+        logger.log(Level.SEVERE, "Error sending mails", e);
       }
     }
   }

@@ -181,7 +181,8 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           attachments.add(new MailAttachment(String.format("%s-oppilaitos.pdf", filename), "application/pdf", staffDocument));
           attachments.add(new MailAttachment(String.format("%s-hakija.pdf", filename), "application/pdf", applicantDocument));
 
-          String subject = "Hyväksyminen opiskelijaksi";
+          String subject = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+              String.format("/templates/applications/mails/mail-accept-study-place-%s-subject.txt", application.getLine())), "UTF-8");
 
           String content = null;
           if (underageApplicant) {
