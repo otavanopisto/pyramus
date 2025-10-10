@@ -277,6 +277,43 @@ public class ApplicationUtils {
     return applicationLineUiValue(line) != null;
   }
   
+  public static void removeDeprecatedVerifications(Application application, JSONObject newFormData) {
+    ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
+    JSONObject oldFormData = JSONObject.fromObject(application.getFormData());
+    String oldMail = getFormValue(oldFormData, "field-email");
+    String newMail = getFormValue(newFormData, "field-email");
+    if (!StringUtils.equals(oldMail, newMail)) {
+      ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, oldMail);
+      if (verification != null) {
+        verificationDAO.delete(verification);
+      }
+    }
+    oldMail = getFormValue(oldFormData, "field-underage-email");
+    newMail = getFormValue(newFormData, "field-underage-email");
+    if (!StringUtils.equals(oldMail, newMail)) {
+      ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, oldMail);
+      if (verification != null) {
+        verificationDAO.delete(verification);
+      }
+    }
+    oldMail = getFormValue(oldFormData, "field-underage-email-2");
+    newMail = getFormValue(newFormData, "field-underage-email-2");
+    if (!StringUtils.equals(oldMail, newMail)) {
+      ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, oldMail);
+      if (verification != null) {
+        verificationDAO.delete(verification);
+      }
+    }
+    oldMail = getFormValue(oldFormData, "field-underage-email-3");
+    newMail = getFormValue(newFormData, "field-underage-email-3");
+    if (!StringUtils.equals(oldMail, newMail)) {
+      ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, oldMail);
+      if (verification != null) {
+        verificationDAO.delete(verification);
+      }
+    }
+  }
+  
   /**
    * Checks if the application contains emails that need to be added to verification. If so,
    * create verification for them and send mail to the person in question.

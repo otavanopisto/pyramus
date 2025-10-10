@@ -144,6 +144,13 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
         return;
       }
+      
+      // Email verification; if existing mails in the application have been modified
+      // or removed, remove their verification so that we won't unnecessarily whine
+      // about unverified mails later on
+      
+      ApplicationUtils.removeDeprecatedVerifications(application, formData);
+      
       boolean lineChanged = !StringUtils.equals(line, application.getLine());
       String oldLine = application.getLine();
       application = applicationDAO.update(
