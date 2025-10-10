@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -21,6 +22,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -348,7 +351,17 @@ public class ApplicationUtils {
         logger.log(Level.SEVERE, String.format("Applicant verification mail for line %s not defined", application.getLine()));
         return;
       }
-      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, new ApplicationMailErrorHandler(application));
+      Mailer.sendMail(
+          Mailer.JNDI_APPLICATION,
+          Mailer.HTML,
+          null,
+          Collections.singleton(email),
+          Collections.emptySet(),
+          Collections.emptySet(),
+          subject,
+          content,
+          Collections.emptyList(),
+          new ApplicationMailErrorHandler(application));
       applicationLogDAO.create(application,
           ApplicationLogType.HTML,
           String.format("<p>Lähetetty sähköpostia</p><p>%s</p><p><b>%s</b></p>%s", email, subject, content),
@@ -822,8 +835,11 @@ public class ApplicationUtils {
           Mailer.HTML,
           staffMember == null ? null : staffMember.getPrimaryEmail().getAddress(),
           emails,
+          Collections.emptySet(),
+          Collections.emptySet(),
           mailSubject,
           mailContent,
+          Collections.emptyList(),
           new ApplicationMailErrorHandler(application));
     }
     
@@ -1409,9 +1425,12 @@ public class ApplicationUtils {
           Mailer.JNDI_APPLICATION,
           Mailer.HTML,
           null,
-          application.getEmail(),
+          Collections.singleton(application.getEmail()),
+          Collections.emptySet(),
+          Collections.emptySet(),
           subject,
           content,
+          Collections.emptyList(),
           new ApplicationMailErrorHandler(application));
       
       // Add notification about sent mail
@@ -1445,9 +1464,12 @@ public class ApplicationUtils {
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
             null,
-            guardian.getEmail(),
+            Stream.of(guardian.getEmail()).collect(Collectors.toSet()),
+            Collections.emptySet(),
+            Collections.emptySet(),
             subject,
             content,
+            Collections.emptyList(),
             new ApplicationMailErrorHandler(application));
 
         // Add notification about sent mail

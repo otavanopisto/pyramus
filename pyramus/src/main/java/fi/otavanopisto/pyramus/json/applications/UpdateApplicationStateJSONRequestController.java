@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.json.applications;
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -212,7 +213,17 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Send mail to applicant
           
-          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, attachments, new ApplicationMailErrorHandler(application));
+          Mailer.sendMail(
+              Mailer.JNDI_APPLICATION,
+              Mailer.HTML,
+              staffMember.getPrimaryEmail().getAddress(),
+              Collections.singleton(email),
+              Collections.emptySet(),
+              Collections.emptySet(),
+              subject,
+              content,
+              attachments,
+              new ApplicationMailErrorHandler(application));
           
           // Add notification about sent mail
           

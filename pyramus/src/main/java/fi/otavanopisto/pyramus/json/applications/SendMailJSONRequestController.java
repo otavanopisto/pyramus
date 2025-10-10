@@ -103,6 +103,7 @@ public class SendMailJSONRequestController extends JSONRequestController {
           recipients, // bcc
           subject,
           content,
+          Collections.emptyList(),
           new ApplicationMailErrorHandler(application));
       
       StringBuffer recipientMails = new StringBuffer();

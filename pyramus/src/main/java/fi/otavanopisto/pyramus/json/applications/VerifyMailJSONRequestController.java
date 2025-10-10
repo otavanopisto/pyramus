@@ -1,11 +1,14 @@
 package fi.otavanopisto.pyramus.json.applications;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -125,10 +128,13 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
 
         Mailer.sendMail(Mailer.JNDI_APPLICATION,
             Mailer.HTML,
-            null,
-            emails,
+            null, // from
+            emails, // to
+            Collections.emptySet(), // cc
+            Collections.emptySet(), // bcc
             subject,
             content,
+            Collections.emptyList(), // attachments
             new ApplicationMailErrorHandler(application));
       }
       
@@ -165,7 +171,17 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
           content = String.format(content, viewUrl, surname, referenceCode);
         }
 
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, verification.getEmail(), subject, content, new ApplicationMailErrorHandler(application));
+        Mailer.sendMail(
+            Mailer.JNDI_APPLICATION,
+            Mailer.HTML,
+            null,
+            Stream.of(verification.getEmail()).collect(Collectors.toSet()),
+            Collections.emptySet(),
+            Collections.emptySet(),
+            subject,
+            content,
+            Collections.emptyList(),
+            new ApplicationMailErrorHandler(application));
 
         applicationLogDAO.create(application,
             ApplicationLogType.HTML,

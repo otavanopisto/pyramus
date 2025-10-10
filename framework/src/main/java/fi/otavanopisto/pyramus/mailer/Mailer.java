@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.mailer;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -27,38 +26,6 @@ public class Mailer {
   public static final String JNDI_APPLICATION = "java:/mail/pyramus-haku";
 
   private static final Logger logger = Logger.getLogger(Mailer.class.getName());
-  
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), Collections.emptySet(), subject, content, Collections.emptyList(), errorHandler);
-  }
-
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), Collections.emptySet(), subject, content, Collections.emptyList(), errorHandler);
-  }
-
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content, List<MailAttachment> mailAttachments, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), Collections.emptySet(), subject, content, mailAttachments, errorHandler);
-  }
-
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailAttachment mailAttachment, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), Collections.emptySet(), subject, content, Collections.singletonList(mailAttachment), errorHandler);
-  }
-
-  public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, List<MailAttachment> mailAttachments, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), Collections.emptySet(), subject, content, mailAttachments, errorHandler);
-  }
-
-  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String subject, String content, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, to, Collections.emptySet(), Collections.emptySet(), subject, content, Collections.emptyList(), errorHandler);
-  }
-  
-  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String cc, String subject, String content, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, to, Collections.singleton(cc), Collections.emptySet(), subject, content, Collections.emptyList(), errorHandler);
-  }
-
-  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, Set<String> bcc, String subject, String content, MailErrorHandler errorHandler) {
-    sendMail(jndiName, mimeType, from, to, cc, bcc, subject, content, Collections.emptyList(), errorHandler);
-  }
   
   public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, Set<String> bcc, String subject, String content, List<MailAttachment> mailAttachments, MailErrorHandler errorHandler) {
     MailService mailService = (MailService) findByClass(MailService.class);
@@ -131,10 +98,6 @@ public class Mailer {
     } catch (NamingException e) {
       throw new PersistenceException(e);
     }
-  }
-
-  private static Set<String> toSet(String s) {
-    return s == null ? Collections.emptySet() : Collections.singleton(s);
   }
 
 }
