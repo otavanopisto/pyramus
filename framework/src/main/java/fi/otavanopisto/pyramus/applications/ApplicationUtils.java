@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -1501,7 +1499,7 @@ public class ApplicationUtils {
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
             null,
-            Stream.of(guardian.getEmail()).collect(Collectors.toSet()),
+            Collections.singleton(guardian.getEmail()),
             Collections.emptySet(),
             Collections.emptySet(),
             subject,

@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -175,7 +173,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
             null,
-            Stream.of(verification.getEmail()).collect(Collectors.toSet()),
+            Collections.singleton(verification.getEmail()),
             Collections.emptySet(),
             Collections.emptySet(),
             subject,
