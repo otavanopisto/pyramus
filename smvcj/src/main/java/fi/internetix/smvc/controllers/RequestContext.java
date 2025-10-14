@@ -247,7 +247,19 @@ public abstract class RequestContext {
     } catch (IOException | ServletException e) {
       return null;
     }
-  }  
+  }
+  
+  public void sendError(int statusCode, String message) {
+    try {
+      servletResponse.resetBuffer();
+      servletResponse.setStatus(statusCode);
+      servletResponse.setHeader("Content-Type", "text/plain; charset=UTF-8");
+      servletResponse.getOutputStream().write(message.getBytes("UTF-8"));
+      servletResponse.flushBuffer();
+    }
+    catch (Exception e) {
+    }
+  }
   
   /**
    * Once a page request has been processed, the context is responsible of writing it back to the

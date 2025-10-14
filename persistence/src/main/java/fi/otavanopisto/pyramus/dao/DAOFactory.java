@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.dao.accommodation.RoomDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomTypeDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationMailTemplateDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
@@ -188,6 +189,10 @@ public class DAOFactory {
 
   public fi.otavanopisto.pyramus.dao.application.ApplicationDAO getApplicationDAO() {
     return (ApplicationDAO) findByClass(fi.otavanopisto.pyramus.dao.application.ApplicationDAO.class);
+  }
+
+  public fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO getApplicationEmailVerificationDAO() {
+    return (ApplicationEmailVerificationDAO) findByClass(fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO.class);
   }
 
   public fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO getApplicationSignaturesDAO() {

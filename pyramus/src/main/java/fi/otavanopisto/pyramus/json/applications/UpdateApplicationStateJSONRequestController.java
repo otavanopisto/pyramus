@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.json.applications;
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,9 +101,8 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           JSONObject formData = JSONObject.fromObject(application.getFormData());
           String line = application.getLine();
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
-          String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+          String email = getFormValue(formData, "field-email");
           String nickname = getFormValue(formData, "field-nickname");
-          String guardianMail = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
           boolean underageApplicant = ApplicationUtils.isUnderage(application);
 
           // Make sure we have application signatures and school approval
@@ -181,21 +181,17 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           List<MailAttachment> attachments = new ArrayList<MailAttachment>();
           attachments.add(new MailAttachment(String.format("%s-oppilaitos.pdf", filename), "application/pdf", staffDocument));
           attachments.add(new MailAttachment(String.format("%s-hakija.pdf", filename), "application/pdf", applicantDocument));
-          
-          String lineOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavian" : "Otavan Opiston";
-          String signerOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavia" : "Otavan Opisto";
-          String subject = String.format("Hyväksyminen %s opiskelijaksi", lineOrganization);
+
+          String subject = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+              String.format("/templates/applications/mails/mail-accept-study-place-%s-subject.txt", application.getLine())), "UTF-8");
 
           String content = null;
           if (underageApplicant) {
             content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-                "/templates/applications/mails/mail-accept-study-place-underage.html"), "UTF-8");
+                "/templates/applications/mails/mail-accept-study-place-" + line  + "-underage.html"), "UTF-8");
             content = String.format(content,
                 nickname,
-                lineOrganization,
-                ApplicationUtils.applicationLineUiValue(line),
-                staffMember.getFullName(),
-                signerOrganization);
+                staffMember.getFullName());
           }
           else {
             StringBuilder signUpUrl = new StringBuilder();
@@ -208,33 +204,34 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             signUpUrl.append(application.getApplicationId());
 
             content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-                "/templates/applications/mails/mail-accept-study-place.html"), "UTF-8");
+                "/templates/applications/mails/mail-accept-study-place-" + line + ".html"), "UTF-8");
             content = String.format(content,
                 nickname,
-                lineOrganization,
-                ApplicationUtils.applicationLineUiValue(line),
                 signUpUrl.toString(),
-                staffMember.getFullName(),
-                signerOrganization);
+                staffMember.getFullName());
           }
           
-          // Send mail to applicant (and possible guardian)
+          // Send mail to applicant
           
-          if (StringUtils.isBlank(guardianMail)) {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content, attachments, new ApplicationMailErrorHandler(application));
-          }
-          else {
-            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, guardianMail, subject, content, attachments, new ApplicationMailErrorHandler(application));
-          }
+          Mailer.sendMail(
+              Mailer.JNDI_APPLICATION,
+              Mailer.HTML,
+              staffMember.getPrimaryEmail().getAddress(),
+              Collections.singleton(email),
+              Collections.emptySet(),
+              Collections.emptySet(),
+              subject,
+              content,
+              attachments,
+              new ApplicationMailErrorHandler(application));
           
           // Add notification about sent mail
           
           ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-          applicationLogDAO.create(
-            application,
-            ApplicationLogType.HTML,
-            String.format("<p>%s</p><p><b>%s</b></p>%s", "Hakijalle lähetetty ilmoitus opiskelijaksi hyväksymisestä", subject, content),
-            staffMember);
+          applicationLogDAO.create(application,
+              ApplicationLogType.HTML,
+              String.format("<p>Lähetetty sähköpostia</p><p>%s</p><p><b>%s</b></p>%s", email, subject, content),
+              staffMember);
 
         } // end of application has been approved logic
         else if (applicationState == ApplicationState.TRANSFERRED_AS_STUDENT) {
