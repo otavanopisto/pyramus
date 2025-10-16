@@ -23,7 +23,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 public class MatriculationGradeDAO extends PyramusEntityDAO<MatriculationGrade> {
 
   public MatriculationGrade create(Person person, MatriculationExamSubject subject, Integer year, 
-      MatriculationExamTerm term, MatriculationExamGrade grade, LocalDate gradeDate, StaffMember modifier) {
+      MatriculationExamTerm term, MatriculationExamGrade grade, LocalDate gradeDate, Integer totalPoints, StaffMember modifier) {
     MatriculationGrade entity = new MatriculationGrade();
 
     entity.setPerson(person);
@@ -32,6 +32,7 @@ public class MatriculationGradeDAO extends PyramusEntityDAO<MatriculationGrade> 
     entity.setTerm(term);
     entity.setGrade(grade);
     entity.setGradeDate(gradeDate);
+    entity.setTotalPoints(totalPoints);
     entity.setModifier(modifier);
     entity.setLastModified(LocalDateTime.now());
     
@@ -93,10 +94,11 @@ public class MatriculationGradeDAO extends PyramusEntityDAO<MatriculationGrade> 
   }
 
   public MatriculationGrade update(MatriculationGrade matriculationGrade, MatriculationExamGrade grade, LocalDate gradeDate,
-      StaffMember loggedUser) {
+      Integer totalPoints, StaffMember loggedUser) {
     
     matriculationGrade.setGrade(grade);
     matriculationGrade.setGradeDate(gradeDate);
+    matriculationGrade.setTotalPoints(totalPoints);
     matriculationGrade.setModifier(loggedUser);
     matriculationGrade.setLastModified(LocalDateTime.now());
 

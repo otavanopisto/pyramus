@@ -93,9 +93,16 @@
             editable: true,
             paramName: 'grade'
           }, {
+            header : 'Yhteispisteet',
+            width: 120,
+            left: 8 + 200 + 8 + 200,
+            dataType : 'number',
+            editable: true,
+            paramName: 'gradeTotalPoints'
+          }, {
             header : 'Arviointipäivämäärä',
             width: 140,
-            left: 8 + 200 + 8 + 200,
+            left: 8 + 200 + 8 + 200 + 8 + 120,
             dataType : 'date',
             editable: true,
             paramName: 'gradeDate'
@@ -112,6 +119,7 @@
             gradesArr.push([
               gradesJSON[i].subject,
               gradesJSON[i].grade,
+              gradesJSON[i].gradeTotalPoints ? gradesJSON[i].gradeTotalPoints : '',
               gradesJSON[i].gradeDate,
               gradesJSON[i].gradeId
             ]);
