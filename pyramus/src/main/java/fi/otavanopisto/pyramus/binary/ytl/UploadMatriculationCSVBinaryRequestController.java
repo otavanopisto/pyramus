@@ -35,7 +35,7 @@ import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class UploadMatriculationCSVJSONRequestController extends BinaryRequestController {
+public class UploadMatriculationCSVBinaryRequestController extends BinaryRequestController {
 
   public void process(BinaryRequestContext requestContext) {
     MatriculationExamDAO matriculationExamDAO = DAOFactory.getInstance().getMatriculationExamDAO();
