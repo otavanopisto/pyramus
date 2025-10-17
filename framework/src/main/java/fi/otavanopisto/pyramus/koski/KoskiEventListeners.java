@@ -22,6 +22,7 @@ import fi.otavanopisto.pyramus.events.CourseArchivedEvent;
 import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.StudentArchivedEvent;
+import fi.otavanopisto.pyramus.events.StudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentSubjectGradeEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.TransferCreditEvent;
@@ -48,6 +49,10 @@ public class KoskiEventListeners implements Serializable {
   
   @Inject
   private StudentDAO studentDAO;
+  
+  public void onStudentCreated(@Observes StudentCreatedEvent event) {
+    studentChanged(event.getStudentId());
+  }
   
   public void onStudentUpdated(@Observes StudentUpdatedEvent event) {
     studentChanged(event.getStudentId());

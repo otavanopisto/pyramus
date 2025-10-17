@@ -14,10 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -38,6 +41,8 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       }
       StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
       StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
+      ApplicationEmailVerificationDAO verificationDAO = DAOFactory.getInstance().getApplicationEmailVerificationDAO();
+      boolean verificationEnabled = ApplicationUtils.isEmailVerificationEnabled(application.getId());
       
       JSONObject applicationData = JSONObject.fromObject(application.getFormData());
 
@@ -46,41 +51,74 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
       // Applicant
       
       Map<String, Object> recipientInfo = new HashMap<>();
-      recipientInfo.put("type", "to");
+      recipientInfo.put("checked", "true");
       recipientInfo.put("name", String.format("%s %s", application.getFirstName(), application.getLastName()));
       recipientInfo.put("mail", application.getEmail());
+      recipientInfo.put("verified", "true");
+      if (verificationEnabled) {
+        ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, application.getEmail());
+        if (verification != null && !verification.isVerified()) {
+          recipientInfo.put("verified", "false");
+        }
+      }
       results.add(recipientInfo);
+      
       
       // Guardians
       
       if (applicationData.has("field-underage-email") && StringUtils.isNotBlank(applicationData.getString("field-underage-email"))) {
+        String mail = getFormValue(applicationData, "field-underage-email");
         recipientInfo = new HashMap<>();
-        recipientInfo.put("type", "to");
+        recipientInfo.put("checked", "true");
         recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name"), getFormValue(applicationData, "field-underage-last-name")));
-        recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email"))));
+        recipientInfo.put("mail", mail);
+        recipientInfo.put("verified", "true");
+        if (verificationEnabled) {
+          ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, mail);
+          if (verification != null && !verification.isVerified()) {
+            recipientInfo.put("verified", "false");
+          }
+        }
         results.add(recipientInfo);
       }
       if (applicationData.has("field-underage-email-2") && StringUtils.isNotBlank(applicationData.getString("field-underage-email-2"))) {
+        String mail = getFormValue(applicationData, "field-underage-email-2");
         recipientInfo = new HashMap<>();
-        recipientInfo.put("type", "to");
+        recipientInfo.put("checked", "true");
         recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name-2"), getFormValue(applicationData, "field-underage-last-name-2")));
-        recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email-2"))));
+        recipientInfo.put("mail", mail);
+        recipientInfo.put("verified", "true");
+        if (verificationEnabled) {
+          ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, mail);
+          if (verification != null && !verification.isVerified()) {
+            recipientInfo.put("verified", "false");
+          }
+        }
         results.add(recipientInfo);
       }
       if (applicationData.has("field-underage-email-3") && StringUtils.isNotBlank(applicationData.getString("field-underage-email-3"))) {
+        String mail = getFormValue(applicationData, "field-underage-email-3");
         recipientInfo = new HashMap<>();
-        recipientInfo.put("type", "to");
+        recipientInfo.put("checked", "true");
         recipientInfo.put("name", String.format("%s %s", getFormValue(applicationData, "field-underage-first-name-3"), getFormValue(applicationData, "field-underage-last-name-3")));
-        recipientInfo.put("mail", StringUtils.lowerCase(StringUtils.trim(getFormValue(applicationData, "field-underage-email-3"))));
+        recipientInfo.put("mail", mail);
+        recipientInfo.put("verified", "true");
+        if (verificationEnabled) {
+          ApplicationEmailVerification verification = verificationDAO.findByApplicationAndEmail(application, mail);
+          if (verification != null && !verification.isVerified()) {
+            recipientInfo.put("verified", "false");
+          }
+        }
         results.add(recipientInfo);
       }
       
       // Sender
 
       recipientInfo = new HashMap<>();
-      recipientInfo.put("type", "cc");
+      recipientInfo.put("checked", "false");
       recipientInfo.put("name", staffMember.getFullName());
       recipientInfo.put("mail", staffMember.getPrimaryEmail().getAddress());
+      recipientInfo.put("verified", "true");
       results.add(recipientInfo);
       
       requestContext.addResponseParameter("recipients", results);

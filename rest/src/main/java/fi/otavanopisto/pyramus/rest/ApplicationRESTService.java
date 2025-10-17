@@ -3,13 +3,13 @@ package fi.otavanopisto.pyramus.rest;
 import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -134,7 +134,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = application.getLine();
     String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
-    String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+    String email = getFormValue(formData, "field-email");
     String filename = StringUtils.replaceChars(StringUtils.lowerCase(applicantName), ' ', '-') + "-hakija.pdf";
 
     // Document generation
@@ -491,6 +491,22 @@ public class ApplicationRESTService extends AbstractRESTService {
         return Response.status(Status.BAD_REQUEST).build();
       }
       
+      // Ensure all emails are always trimmed + lowercase 
+      
+      formData.put("field-email", email);
+      String mail = ApplicationUtils.getFormValue(formData, "field-underage-email");
+      if (!StringUtils.isBlank(mail)) {
+        formData.put("field-underage-email", StringUtils.lowerCase(StringUtils.trim(mail)));
+      }
+      mail = ApplicationUtils.getFormValue(formData, "field-underage-email-2");
+      if (!StringUtils.isBlank(mail)) {
+        formData.put("field-underage-email-2", StringUtils.lowerCase(StringUtils.trim(mail)));
+      }
+      mail = ApplicationUtils.getFormValue(formData, "field-underage-email-3");
+      if (!StringUtils.isBlank(mail)) {
+        formData.put("field-underage-email-3", StringUtils.lowerCase(StringUtils.trim(mail)));
+      }
+      
       // Store application
 
       Map<String, String> response = new HashMap<String, String>();
@@ -581,16 +597,15 @@ public class ApplicationRESTService extends AbstractRESTService {
         }
       }
       else {
-        String oldSurname = null;
-        boolean referenceCodeModified = false;
-        if (!StringUtils.equalsIgnoreCase(application.getLastName(), lastName)) {
-          referenceCodeModified = true;
-          oldSurname = application.getLastName();
-          referenceCode = ApplicationUtils.generateReferenceCode(lastName, application.getReferenceCode());
-        }
-        else {
-          referenceCode = application.getReferenceCode();
-        }
+        
+        // Email verification; if existing mails in the application have been modified
+        // or removed, remove their verification so that we won't unnecessarily whine
+        // about unverified mails later on
+        
+        ApplicationUtils.removeDeprecatedVerifications(application, formData);
+
+        // Check if line changed
+        
         boolean lineChanged = !StringUtils.equals(line, application.getLine());
         String oldLine = application.getLine(); 
         application = applicationDAO.update(
@@ -606,6 +621,11 @@ public class ApplicationRESTService extends AbstractRESTService {
             null);
         logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
         modifiedApplicationPostProcessing(application);
+        
+        // Check new mails needing verification
+        
+        ApplicationUtils.sendVerificationMails(httpRequest, application);
+        
         if (lineChanged) {
           String notification = String.format("Hakija vaihtoi hakemustaan linjalta <b>%s</b> linjalle <b>%s</b>",
               ApplicationUtils.applicationLineUiValue(oldLine), ApplicationUtils.applicationLineUiValue(line));
@@ -616,9 +636,6 @@ public class ApplicationRESTService extends AbstractRESTService {
               notification,
               null);
           ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, false);
-        }
-        if (referenceCodeModified) {
-          ApplicationUtils.sendApplicationModifiedMail(application, httpRequest, oldSurname);
         }
       }
 
@@ -847,69 +864,8 @@ public class ApplicationRESTService extends AbstractRESTService {
    * @param application The new application
    */
   private void newApplicationPostProcessing(Application application) {
-
-    // Handle notification mails and log entries
-
     ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
-
-    // Mail to the applicant
-
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
-    String line = formData.getString("field-line");
-    String surname = application.getLastName();
-    String referenceCode = application.getReferenceCode();
-    String applicantMail = application.getEmail();
-    String guardianMail = StringUtils.lowerCase(StringUtils.trim(ApplicationUtils.getFormValue(formData, "field-underage-email")));
-    try {
-
-      // Confirmation mail subject and content
-
-      String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/mails/mail-confirmation-%s-subject.txt", line)), "UTF-8");
-      String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/mails/mail-confirmation-%s-content.html", line)), "UTF-8");
-
-      if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
-        logger.log(Level.SEVERE, String.format("Confirmation mail for line %s not defined", line));
-        return;
-      }
-
-      if (!ApplicationUtils.isInternetixLine(application.getLine())) {
-
-        // Replace the dynamic parts of the mail content (edit link, surname and reference code)
-        // #1487: Internetix confirmation mails do not have any dynamic content
-
-        StringBuilder viewUrl = new StringBuilder();
-        viewUrl.append(httpRequest.getScheme());
-        viewUrl.append("://");
-        viewUrl.append(httpRequest.getServerName());
-        viewUrl.append(":");
-        viewUrl.append(httpRequest.getServerPort());
-        viewUrl.append("/applications/edit.page");
-
-        content = String.format(content, viewUrl, surname, referenceCode);
-      }
-
-      // Send mail to applicant or, for minors, applicant and guardian
-
-      if (StringUtils.isEmpty(guardianMail)) {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content, new ApplicationMailErrorHandler(application));
-      }
-      else {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content, new ApplicationMailErrorHandler(application));
-      }
-
-      // #879: Add sent confirmation mail to application log
-
-      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-      applicationLogDAO.create(application,
-          ApplicationLogType.HTML,
-          String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
-          null);
-    }
-    catch (IOException e) {
-      logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);
-    }
+    ApplicationUtils.sendVerificationMails(httpRequest, application);
   }
   
   /**
@@ -940,8 +896,16 @@ public class ApplicationRESTService extends AbstractRESTService {
           application.getEmail(),
           ApplicationUtils.applicationLineUiValue(application.getLine()),
           viewUrl);
-      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, application.getEmail(),
-          application.getHandler().getPrimaryEmail().getAddress(), subject, content,
+      Mailer.sendMail(
+          Mailer.JNDI_APPLICATION,
+          Mailer.HTML,
+          application.getEmail(),
+          Collections.singleton(application.getHandler().getPrimaryEmail().getAddress()),
+          Collections.emptySet(),
+          Collections.emptySet(),
+          subject,
+          content,
+          Collections.emptyList(),
           new ApplicationMailErrorHandler(application));
     }
   }

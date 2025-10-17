@@ -382,14 +382,21 @@
           var rowInput = $('<input>').attr({
             'id': 'mail-form-recipient-' + i,
             'type': 'checkbox',
-            'name': 'mail-form-recipient-' + response.recipients[i].type,
+            'name': 'mail-form-recipient',
             'value': response.recipients[i].mail});
-          if (response.recipients[i].type == 'to') {
+          if (response.recipients[i].checked == 'true') {
             $(rowInput).attr('checked', 'checked');
           }
+          var html;
+          if (response.recipients[i].verified == 'false') {
+            html = response.recipients[i].name + ' &lt;<span style="color:red;">' + response.recipients[i].mail + '</span>&gt;';
+          }
+          else {
+            html = response.recipients[i].name + ' &lt;' + response.recipients[i].mail + '&gt;';
+		  }
           var rowLabel = $('<label>')
             .attr('for', 'mail-form-recipient-' + i)
-            .text(response.recipients[i].name + ' <' + response.recipients[i].mail + '>');
+            .html(html);
           $(row).append(rowInput).append(rowLabel);
           $('div.application-mail-recipients').append(row);
         }
@@ -413,7 +420,7 @@
             $('.notification-queue').notificationQueue('notification', 'info', 'Viesti lähetetty');
           },
           error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe lähetettäessä postia: ' + err.statusText);
+            $('.notification-queue').notificationQueue('notification', 'error', err.responseText);
             $(sendButton).removeClass('loading');
           }
         });

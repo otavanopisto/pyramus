@@ -82,6 +82,22 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
+
+      // Ensure all emails are always trimmed + lowercase 
+      
+      formData.put("field-email", email);
+      String mail = ApplicationUtils.getFormValue(formData, "field-underage-email");
+      if (!StringUtils.isBlank(mail)) {
+        formData.put("field-underage-email", StringUtils.lowerCase(StringUtils.trim(mail)));
+      }
+      mail = ApplicationUtils.getFormValue(formData, "field-underage-email-2");
+      if (!StringUtils.isBlank(mail)) {
+        formData.put("field-underage-email-2", StringUtils.lowerCase(StringUtils.trim(mail)));
+      }
+      mail = ApplicationUtils.getFormValue(formData, "field-underage-email-3");
+      if (!StringUtils.isBlank(mail)) {
+        formData.put("field-underage-email-3", StringUtils.lowerCase(StringUtils.trim(mail)));
+      }
       
       // Attachments
       
@@ -128,11 +144,13 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
         return;
       }
-      boolean referenceCodeModified = !StringUtils.equalsIgnoreCase(application.getLastName(), lastName);
-      String oldSurname = referenceCodeModified ? application.getLastName() : lastName;
-      String referenceCode = referenceCodeModified
-          ? ApplicationUtils.generateReferenceCode(lastName, application.getReferenceCode())
-          : application.getReferenceCode(); 
+      
+      // Email verification; if existing mails in the application have been modified
+      // or removed, remove their verification so that we won't unnecessarily whine
+      // about unverified mails later on
+      
+      ApplicationUtils.removeDeprecatedVerifications(application, formData);
+      
       boolean lineChanged = !StringUtils.equals(line, application.getLine());
       String oldLine = application.getLine();
       application = applicationDAO.update(
@@ -141,8 +159,8 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
           firstName,
           lastName,
           email,
-          referenceCode,
-          formDataStr,
+          application.getReferenceCode(),
+          formData.toString(),
           application.getState(),
           application.getApplicantEditable(),
           staffMember);
@@ -160,9 +178,10 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
             staffMember);
         ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, true, null, false);
       }
-      if (referenceCodeModified) {
-        ApplicationUtils.sendApplicationModifiedMail(application, requestContext.getRequest(), oldSurname);
-      }
+      
+      // Check new mails needing verification
+      
+      ApplicationUtils.sendVerificationMails(requestContext.getRequest(), application);
       
       String redirecUrl = requestContext.getRequest().getContextPath() + "/applications/view.page?application=" + application.getId();
       requestContext.setRedirectURL(redirecUrl);
