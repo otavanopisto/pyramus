@@ -63,16 +63,40 @@ public class YTLController {
   }
   
   /**
-   * Palauttaa YTLAineKoodi -vastineen YTL:n ainekoodille
+   * Palauttaa YTLAineKoodi -vastineen YTL:n ainekoodille. Jos aineessa on esim useita kielitasoja, palauttaa useamman tietueen.
+   * Tälle ei käytännössä pitäisi olla mitään käyttöä, koska ei pitäisi olla tilanteita, joissa pitäisi listata asioita ainekohtaisesti.
    * 
+   * @deprecated ytl_ainekoodit.json refaktoroitava niin, että ei ole erikseen ainekoodia+oppimäärää vain vain ytl:n koekoodi
    * @param ytlSubject
    * @param mapping
    * @return
    */
+  @Deprecated
   public static List<YTLAineKoodi> ytlSubjectToYTLAineKoodi(String ytlSubject, List<YTLAineKoodi> mapping) {
     return mapping.stream()
       .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYtlAine(), ytlSubject))
       .collect(Collectors.toList());
+  }
+  
+  
+  /**
+   * Palauttaa YTLAineKoodi-vastineen YTL:n kokeen tunnisteelle. Kokeen tunnisteiden
+   * pitäisi olla uniikkeja, mutta jos ei ole, niin palauttaa ensimmäisen. Palauttaa
+   * null, jos kokeen koodilla ei löydy YTLAineKoodi-tietuetta.
+   * 
+   * Lista YTL:n käyttämistä kokeista ja niiden tunnisteista:
+   * https://github.com/digabi/ilmoittautuminen/wiki/Ylioppilastutkinnon-kokeet
+   * https://github.com/digabi/ilmoittautuminen/blob/master/koekoodit_ja_nimet.csv
+   * 
+   * @param ytlKoe YTL:n käyttämä kokeen tunniste, esim M, A5, SA, ...
+   * @param mapping
+   * @return
+   */
+  public static YTLAineKoodi ytlKoeToYTLAineKoodi(String ytlKoe, List<YTLAineKoodi> mapping) {
+    return mapping.stream()
+      .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYhdistettyAineKoodi(), ytlKoe))
+      .findFirst()
+      .orElse(null);
   }
   
 }

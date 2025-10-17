@@ -302,6 +302,21 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
+  public MatriculationExamEnrollment findByExamAndCandidateNumber(MatriculationExam exam, int candidateNumber) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam),
+        criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.candidateNumber), candidateNumber)
+      )
+    );
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
   /**
    * Returns number of MatriculationExamEnrollments that are under the
    * given exam and have any of the given states.

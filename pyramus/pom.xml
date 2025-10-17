@@ -10,9 +10,13 @@
     <version>0.7.248-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
+  
   <properties>
     <mariadb-java-client.version>3.5.0</mariadb-java-client.version>
+    <!-- Check that this is compatible with the other Jackson modules -->
+    <version.com.fasterxml.jackson.datatype>2.12.7</version.com.fasterxml.jackson.datatype>
   </properties>
+  
   <dependencies>
 
     <!-- Servlet -->
@@ -262,6 +266,12 @@
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-csv</artifactId>
+      <version>${version.com.fasterxml.jackson.datatype}</version>
     </dependency>
 
     <!-- Pyramus -->

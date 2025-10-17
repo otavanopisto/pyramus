@@ -35,7 +35,23 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     return persist(exam);
   }
   
-  
+  public MatriculationExam findByYearAndTerm(int year, MatriculationExamTerm term) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExam> criteria = criteriaBuilder.createQuery(MatriculationExam.class);
+    Root<MatriculationExam> root = criteria.from(MatriculationExam.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(MatriculationExam_.examYear), year),
+            criteriaBuilder.equal(root.get(MatriculationExam_.examTerm), term)
+        )
+    );
+
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
   public MatriculationExam update(
       MatriculationExam exam,
       Date starts,
