@@ -4,6 +4,7 @@ import static fi.otavanopisto.pyramus.applications.ApplicationUtils.getFormValue
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -151,7 +152,17 @@ public class MonthlySourceSummary {
         }
       }
       
-      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, recipientSet, subject, summary.toString(), null);
+      Mailer.sendMail(
+          Mailer.JNDI_APPLICATION,
+          Mailer.HTML,
+          null, // from
+          recipientSet, // to
+          Collections.emptySet(), // cc
+          Collections.emptySet(), // bcc
+          subject,
+          summary.toString(),
+          Collections.emptyList(), // attachments
+          null); // error handler
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to send application monthly source summary", e);

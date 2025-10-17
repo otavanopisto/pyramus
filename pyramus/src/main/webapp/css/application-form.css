@@ -211,6 +211,7 @@ button {
 
 .button-save-application, 
 .button-edit-application,
+.button-verify-email,
 .button-create-credentials {
   background: #27b91c;
 }

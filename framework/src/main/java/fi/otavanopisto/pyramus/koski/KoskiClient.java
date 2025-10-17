@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -100,7 +101,7 @@ public class KoskiClient {
   public OppijaReturnVal findPersonByOid(String personOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), personOid);
     
-    Client client = ClientBuilder.newClient();
+    Client client = prepareClient();
     try {
       Builder request = prepareRequest(client, uri);
       
@@ -119,7 +120,7 @@ public class KoskiClient {
   public Oppija findOppijaByOid(String oppijaOid) throws Exception {
     String uri = String.format("%s/oppija/%s", getBaseUrl(), oppijaOid);
     
-    Client client = ClientBuilder.newClient();
+    Client client = prepareClient();
     try {
       Builder request = prepareRequest(client, uri);
       
@@ -273,7 +274,7 @@ public class KoskiClient {
 
       String uri = String.format("%s/oppija", getBaseUrl());
 
-      Client client = ClientBuilder.newClient();
+      Client client = prepareClient();
       try {
         Response response = prepareRequest(client, uri).put(Entity.json(requestStr));
   
@@ -426,6 +427,13 @@ public class KoskiClient {
     entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
   }
 
+  /**
+   * Invalidates all study permit OIDs from a student.
+   * 
+   * @param student
+   * @return
+   * @throws Exception
+   */
   public boolean invalidateAllStudentOIDs(Student student) throws Exception {
     if (settings.isEnabledStudyProgramme(student.getStudyProgramme())) {
       Set<String> studentOIDs = koskiController.listStudentOIDs(student);
@@ -435,6 +443,27 @@ public class KoskiClient {
     }
   }
 
+  /**
+   * Creates a new client to be used for the connection. Sets the
+   * connection defaults for the client.
+   * 
+   * Close the client when done with the request.
+   * 
+   * @return a new client
+   */
+  private Client prepareClient() {
+    return ClientBuilder.newBuilder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .build();
+  }
+
+  /**
+   * Prepares a request with the required headers.
+   * 
+   * @param client Client 
+   * @param uri URI
+   * @return Request Builder
+   */
   private Builder prepareRequest(Client client, String uri) {
     String auth = getSetting(KoskiConsts.Setting.KOSKI_SETTINGKEY_AUTH);
     WebTarget target = client.target(uri);
