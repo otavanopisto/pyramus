@@ -35,8 +35,55 @@
     <script type="text/javascript">
       function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
+        
+        // YTL CSV upload form
+        
+        var uploadForm = document.getElementById('csvUploadForm');
+        uploadForm.addEventListener('submit', async function(event) {
+          event.preventDefault();
+
+          clearCSVImportResults();
+
+          const formData = new FormData(this);
+          if (event.submitter && event.submitter.name == 'saveBtn') {
+            formData.set("save", "true");
+          }
+          
+          const response = await fetch('/ytl/uploadresultscsv.binary', {
+            method: 'POST',
+            body: formData
+          });
+          const result = await response.json();
+
+          if (result) {
+            document.getElementById('ytlCSVSaveBtn').disabled = !(result.rowsOk && result.rowsOk > 0);
+            
+            if (result.rows) {
+              var responseMessagesDiv = document.getElementById('csvUploadResponseMessages');
+              for (var i = 0; i < result.rows.length; i++) {
+                responseMessagesDiv.appendChild(new Element("div").update(result.rows[i]));
+              }
+            }
+          }
+        });
       };
 
+      function onYTLCSVFileChange(event) {
+        clearCSVImportResults();
+        const buttonDisabled = !document.getElementById("matriculationCSVFile").value;
+        document.getElementById('ytlCSVViewBtn').disabled = buttonDisabled;
+        // Always set the save button disabled, it's state is controlled by the view function
+        document.getElementById('ytlCSVSaveBtn').disabled = true;
+      }
+      
+      function clearCSVImportResults() {
+        var responseMessagesDiv = document.getElementById('csvUploadResponseMessages');
+        // Remove old results
+        while (responseMessagesDiv.firstChild) {
+          responseMessagesDiv.removeChild(responseMessagesDiv.lastChild);
+        }
+      }
+      
       function showJSONClick() {
         var form = $('ytlJSONForm');
 
@@ -127,6 +174,7 @@
     <div class="genericFormContainer">
       <div class="tabLabelsContainer" id="tabs">
         <a class="tabLabel" href="#settings">YTL JSON</a>
+        <a class="tabLabel" href="#upcsv">YTL YO-tulosten CSV</a>
       </div>
       <div id="settings" class="tabContent">
         <form method="get" action="${pageContext.request.contextPath}/ytl/report.binary" id="ytlJSONForm">
@@ -170,6 +218,28 @@
           <div id="showReportTableContainer" class="ktable"></div>
         </div>
       </div>
+      
+      <div id="upcsv" class="tabContent">
+        <form id="csvUploadForm" action="uploadresultscsv.json" method="post" enctype="multipart/form-data">
+        
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.settings.examYear"/>
+            </jsp:include>
+            
+            <input type="file" name="matriculationCSVFile" id="matriculationCSVFile" onchange="onYTLCSVFileChange(event);">
+          </div>
+
+          <div class="genericFormSubmitSection">
+            <input type="submit" id="ytlCSVViewBtn" name="viewBtn" value="Näytä tiedot" disabled="disabled">
+            <input type="submit" id="ytlCSVSaveBtn" name="saveBtn" value="Tallenna" disabled="disabled">
+          </div>
+        </form>
+        
+        <div id="csvUploadResponseMessages">
+        </div>
+      </div>
+      
     </div>
     <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
   </body>
