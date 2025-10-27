@@ -13,7 +13,7 @@
   
   <properties>
     <mariadb-java-client.version>3.5.0</mariadb-java-client.version>
-    <!-- Check that this is compatible with the other Jackson modules -->
+    <!-- Make sure this is a compatible version with the Jackson imported from Wildfly BOM -->
     <version.com.fasterxml.jackson.datatype>2.12.7</version.com.fasterxml.jackson.datatype>
   </properties>
   
