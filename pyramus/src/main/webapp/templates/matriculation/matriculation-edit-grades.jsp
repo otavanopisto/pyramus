@@ -87,7 +87,7 @@
           }, {
             header : 'Arvosana',
             width: 200,
-            left: 8 + 200,
+            left: 8 + 200 + 8,
             dataType : 'select',
             options: gradeOptions,
             editable: true,
@@ -95,14 +95,14 @@
           }, {
             header : 'Yhteispisteet',
             width: 120,
-            left: 8 + 200 + 8 + 200,
+            left: 8 + 200 + 8 + 200 + 8,
             dataType : 'number',
             editable: true,
             paramName: 'gradeTotalPoints'
           }, {
             header : 'Arviointipäivämäärä',
             width: 140,
-            left: 8 + 200 + 8 + 200 + 8 + 120,
+            left: 8 + 200 + 8 + 200 + 8 + 120 + 8,
             dataType : 'date',
             editable: true,
             paramName: 'gradeDate'
@@ -128,7 +128,7 @@
         gradesTable.addRows(gradesArr);
         
         document.getElementById("addGradeTableRow").addEventListener('click', function() {
-          var rowId = gradesTable.addRow(['', '', '', '-1']);
+          var rowId = gradesTable.addRow(['', '', '', '', '-1']);
           gradesTable.setCellEditable(rowId, gradesTable.getNamedColumnIndex('subject'), true);
         });
       };
