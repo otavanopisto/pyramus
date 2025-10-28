@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class YTLController {
 
@@ -98,5 +100,37 @@ public class YTLController {
       .findFirst()
       .orElse(null);
   }
+ 
   
+  /**
+   * Lataa YTL:n koelistauksen ja palauttaa kokeet JSON arrayna, jossa jokaisella
+   * kokeella on oma objektinsa kahdella jäsenellä: text (kokeen selkokielinen nimi)
+   * ja value (MatriculatinoExamSubject). Text/value-pari on yhteensopiva IxTablen kanssa.
+   * 
+   * Käytä ytlKokeetJSON(mapping), jos koelista on jo ladattu.
+   * 
+   * @return json-kuvaus, jossa name+value jokaisesta kokeesta
+   */
+  public static JSONArray ytlKokeetJSON() {
+    return ytlKokeetJSON(readMapping());
+  }
+
+  /**
+   * Palauttaa annetussa listassa olevat kokeet JSON arrayna, jossa jokaisella
+   * kokeella on oma objektinsa kahdella jäsenellä: text (kokeen selkokielinen nimi)
+   * ja value (MatriculatinoExamSubject). Text/value-pari on yhteensopiva IxTablen kanssa.
+   * 
+   * @param mapping koelista
+   * @return json-kuvaus, jossa name+value jokaisesta kokeesta
+   */
+  public static JSONArray ytlKokeetJSON(List<YTLAineKoodi> mapping) {
+    JSONArray result = new JSONArray();
+    for (YTLAineKoodi koe : mapping) {
+      JSONObject koeJson = new JSONObject();
+      koeJson.put("value", koe.getMatriculationExamSubject().name());
+      koeJson.put("text", koe.getAine());
+      result.add(koeJson);
+    }
+    return result;
+  }
 }

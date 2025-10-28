@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.binary.ytl.YTLController;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
@@ -113,6 +114,9 @@ public class EditMatriculationEnrollmentGradesViewController extends PyramusView
     }
     setJsDataVariable(pageRequestContext, "grades", jsonAttendances.toString());
 
+    JSONArray ytlKokeetJSON = YTLController.ytlKokeetJSON();
+    setJsDataVariable(pageRequestContext, "subjectOptions", ytlKokeetJSON.toString());
+    
     pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("term", term);
     pageRequestContext.getRequest().setAttribute("year", year);
