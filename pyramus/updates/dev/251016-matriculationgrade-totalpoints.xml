@@ -3,4 +3,6 @@
 
   <sql>alter table MatriculationGrade add column totalPoints integer;</sql>
 
+  <sql>alter table MatriculationExamEnrollment drop column nationalStudentNumber;</sql>
+
 </update>

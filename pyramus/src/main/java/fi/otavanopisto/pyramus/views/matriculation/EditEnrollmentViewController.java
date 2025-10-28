@@ -124,7 +124,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
       
       enrollment = enrollmentDAO.create(
           exam,
-          pageRequestContext.getLong("nationalStudentNumber"),
           SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
           DegreeType.valueOf(pageRequestContext.getString("degreeType")),
           ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),

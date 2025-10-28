@@ -13,14 +13,6 @@ public class MatriculationExamEnrollment {
     this.id = id;
   }
 
-  public Long getNationalStudentNumber() {
-    return nationalStudentNumber;
-  }
-
-  public void setNationalStudentNumber(Long nationalStudentNumber) {
-    this.nationalStudentNumber = nationalStudentNumber;
-  }
-
   public String getEnrollAs() {
     return enrollAs;
   }
@@ -134,7 +126,6 @@ public class MatriculationExamEnrollment {
   }
 
   private Long id;
-  private Long nationalStudentNumber;
   private String enrollAs;
   private String degreeType;
   private int numMandatoryCourses;

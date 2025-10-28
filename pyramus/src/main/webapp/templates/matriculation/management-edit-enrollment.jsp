@@ -496,10 +496,19 @@
 
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.nationalStudentNumber.help"/>
-                </jsp:include>            
-                <input type="text" name="nationalStudentNumber" value="${fn:escapeXml(enrollment.nationalStudentNumber)}">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.candidateNumber"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.candidateNumber.help"/>
+                </jsp:include>
+                <div>
+                  <c:choose>
+                    <c:when test="${!empty enrollment.candidateNumber}">
+                      ${enrollment.candidateNumber}
+                    </c:when>
+                    <c:otherwise>
+                      -
+                    </c:otherwise>
+                  </c:choose>
+                </div>
               </div>
   
               <div class="genericFormSection">

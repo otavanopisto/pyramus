@@ -48,7 +48,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
 
   public MatriculationExamEnrollment create(
       MatriculationExam exam,
-      Long nationalStudentNumber,
       SchoolType enrollAs,
       DegreeType degreeType,
       int numMandatoryCourses,
@@ -65,7 +64,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
 
     result.setExam(exam);
-    result.setNationalStudentNumber(nationalStudentNumber);
     result.setEnrollAs(enrollAs);
     result.setDegreeType(degreeType);
     result.setNumMandatoryCourses(numMandatoryCourses);
