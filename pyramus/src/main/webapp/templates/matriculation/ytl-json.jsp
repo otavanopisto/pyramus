@@ -224,7 +224,7 @@
         
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="matriculation.settings.examYear"/>
+              <jsp:param name="titleText" value="YTL:n yo-tulosten CSV-tiedosto"/>
             </jsp:include>
             
             <input type="file" name="matriculationCSVFile" id="matriculationCSVFile" onchange="onYTLCSVFileChange(event);">

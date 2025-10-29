@@ -117,8 +117,7 @@ public class UploadMatriculationCSVBinaryRequestController extends BinaryRequest
         // Parse total points
         int totalPointsInt = NumberUtils.toInt(matriculationResult.getYhteispisteet(), -1);
         if (totalPointsInt == -1) {
-          rowMessages.add(String.format("Rivi %d: Kokonaispistemäärä (%s) ei ole kokonaisluku.", rowNumber, matriculationResult.getYhteispisteet()));
-          continue;
+          rowMessages.add(String.format("Rivi %d: Kokonaispistemäärä (%s) ei ole kokonaisluku. Pisteitä ei tallenneta riville.", rowNumber, matriculationResult.getYhteispisteet()));
         }
         Integer totalPoints = totalPointsInt != -1 ? totalPointsInt : null;
 
