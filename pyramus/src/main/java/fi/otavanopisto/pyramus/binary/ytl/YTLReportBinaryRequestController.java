@@ -2,14 +2,12 @@ package fi.otavanopisto.pyramus.binary.ytl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -20,16 +18,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
-import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
-import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
-import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
@@ -44,24 +37,21 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
-import fi.otavanopisto.pyramus.tor.StudentTOR;
-import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
-import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.ytl.AbstractKokelas;
 import fi.otavanopisto.pyramus.ytl.Kokelas;
 import fi.otavanopisto.pyramus.ytl.Kokelas2022;
 import fi.otavanopisto.pyramus.ytl.Kokelas2022Koe;
 import fi.otavanopisto.pyramus.ytl.Koulutustyyppi;
-import fi.otavanopisto.pyramus.ytl.SuoritettuKurssi;
 import fi.otavanopisto.pyramus.ytl.Tutkintotyyppi;
 import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
-import fi.otavanopisto.pyramus.ytl.YTLAineKoodiSuoritettuKurssi;
 import fi.otavanopisto.pyramus.ytl.YTLSiirtotiedosto;
 
 /**
  * https://github.com/digabi/ilmoittautuminen/wiki/Ilmoittautumistiedot
  * https://github.com/digabi/ilmoittautuminen/blob/master/koekoodit_ja_nimet.csv
+ * 
+ * Kuvausten mukaan suoritettujen kurssien tietoja ei enää tarvitse välittää.
+ * Poistettu tämä toiminnallisuus issuen 1728 yhteydessä.
  */
 public class YTLReportBinaryRequestController extends BinaryRequestController {
 
@@ -199,7 +189,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
       MatriculationExamSubject examSubject = attendance.getSubject();
       YTLAineKoodi ytlAineKoodi = YTLController.examSubjectToYTLAineKoodi(examSubject, mapping);
 
-      String aineKoodi = ytlAineKoodi.getYhdistettyAineKoodi();
+      String aineKoodi = ytlAineKoodi.getYtlAine();
       boolean maksuton = MAKSUTTOMAT.contains(attendance.getFunding());
       kokelas.addKoe(new Kokelas2022Koe(aineKoodi, maksuton));
     });
@@ -210,6 +200,13 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
   /**
    * Muodostaa vanhantyylisen kokelas-tietueen. Käytetään opiskelijoille,
    * jotka ovat aloittaneet tutkinnon ennen kevättä 2022.
+   * 
+   * Tämän ei pitäisi enää olla käytössä, vanhan tutkintomuodon opiskelijoita
+   * ei enää pitäisi olla.
+   * 
+   * Poistettu suoritettujen kurssien lataaminen issuen 1728 yhteydessä,
+   * YTL:n kuvauksen mukaan ko. kentän käyttö on päättynyt ja sitä käytetiin
+   * vain vanhan tutkintomuodon opiskelijoille.
    */
   private Kokelas vanhaKokelas(Student student, List<MatriculationExamAttendance> attendances, List<YTLAineKoodi> mapping) {
     Kokelas kokelas = new Kokelas();
@@ -231,14 +228,6 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     
     kokelas.setÄidinkielenKoe(äidinkielenKoe);
 
-    StudentTOR tor;
-    try {
-      tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.NONE);
-    } catch (Exception ex) {
-      tor = new StudentTOR();
-      logger.log(Level.SEVERE, String.format("Failed to construct TOR for Student %d", student.getId()), ex);
-    }
-
     Set<String> suoritetutKurssitAineet = new HashSet<>();
     
     for (MatriculationExamAttendance attendance : attendances) {
@@ -249,9 +238,9 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         // Äidinkielelle on oma lokeronsa, ei lisätä pakolliseksi/ylimääräiseksi
         if (!isÄidinkieli(attendance)) {
           if (attendance.isMandatory()) {
-            kokelas.addPakollinenKoe(ytlAineKoodi.getYhdistettyAineKoodi());
+            kokelas.addPakollinenKoe(ytlAineKoodi.getYtlAine());
           } else {
-            kokelas.addYlimääräinenKoe(ytlAineKoodi.getYhdistettyAineKoodi());
+            kokelas.addYlimääräinenKoe(ytlAineKoodi.getYtlAine());
           }
         }
         
@@ -264,60 +253,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
       }
     }
 
-    List<SuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
-    
-    for (String suoritetutKurssitAine : suoritetutKurssitAineet) {
-      List<YTLAineKoodi> ytlAineKoodit = YTLController.ytlSubjectToYTLAineKoodi(suoritetutKurssitAine, mapping);
-      for (YTLAineKoodi ytlAineKoodi : ytlAineKoodit) {
-        lataaSuoritetutKurssit(student, tor, ytlAineKoodi, suoritetutKurssit);
-      }
-    }
-
-    kokelas.setSuoritetutKurssit(suoritetutKurssit);
-    
     return kokelas;
-  }
-
-  private void lataaSuoritetutKurssit(Student student, StudentTOR tor, YTLAineKoodi ytlAineKoodi, List<SuoritettuKurssi> suoritetutKurssit) {
-    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
-    EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();
-    
-    long kurssiLukumäärä = 0;
-    
-    for (YTLAineKoodiSuoritettuKurssi ytlAKSK : ytlAineKoodi.getSuoritetutKurssit()) {
-      EducationType educationType = educationTypeDAO.findById(ytlAKSK.getEducationType());
-      if (educationType != null) {
-        Subject subject = subjectDAO.findByEducationTypeAndCode(educationType, ytlAKSK.getSubjectCode());
-        if (subject != null) {
-          TORSubject torSubject = tor.findSubject(subject.getCode());
-          if (torSubject != null) {
-            kurssiLukumäärä += torSubject.getPassedCoursesCount();
-          }
-        } else {
-          logger.warning(String.format("Specified subjectcode %s for educationtype %d was not found", ytlAKSK.getSubjectCode(), ytlAKSK.getEducationType()));
-        }
-      } else {
-        logger.warning(String.format("Specified educationtype %d was not found", ytlAKSK.getEducationType()));
-      }
-    }
-
-    /**
-     * MAY lisätään ainevalinnan mukaan joko pitkän tai lyhyen matematiikan kurssilukumäärään
-     */
-    if (StringUtils.equals(ytlAineKoodi.getYtlAine(), "M") || StringUtils.equals(ytlAineKoodi.getYtlAine(), "N")) {
-      UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
-      String valittuMatematiikka = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
-      if ((StringUtils.equals(ytlAineKoodi.getYtlAine(), "M") && StringUtils.equals(valittuMatematiikka, "MAA")) || 
-          (StringUtils.equals(ytlAineKoodi.getYtlAine(), "N") && StringUtils.equals(valittuMatematiikka, "MAB"))) {
-        TORSubject torSubject = tor.findSubject("MAY");
-        if (torSubject != null) {
-          kurssiLukumäärä += torSubject.getPassedCoursesCount();
-        }
-      }
-    }
-    
-    SuoritettuKurssi suoritettuKurssi = new SuoritettuKurssi(ytlAineKoodi.getYtlAine(), ytlAineKoodi.getYtlOppimäärä(), (int) kurssiLukumäärä);
-    suoritetutKurssit.add(suoritettuKurssi);
   }
 
   private Tutkintotyyppi degreeTypeToTutkintoTyyppi(DegreeType degreeType) {

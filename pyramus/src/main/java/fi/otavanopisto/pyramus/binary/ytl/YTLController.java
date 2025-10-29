@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -65,23 +64,6 @@ public class YTLController {
   }
   
   /**
-   * Palauttaa YTLAineKoodi -vastineen YTL:n ainekoodille. Jos aineessa on esim useita kielitasoja, palauttaa useamman tietueen.
-   * Tälle ei käytännössä pitäisi olla mitään käyttöä, koska ei pitäisi olla tilanteita, joissa pitäisi listata asioita ainekohtaisesti.
-   * 
-   * @deprecated ytl_ainekoodit.json refaktoroitava niin, että ei ole erikseen ainekoodia+oppimäärää vain vain ytl:n koekoodi
-   * @param ytlSubject
-   * @param mapping
-   * @return
-   */
-  @Deprecated
-  public static List<YTLAineKoodi> ytlSubjectToYTLAineKoodi(String ytlSubject, List<YTLAineKoodi> mapping) {
-    return mapping.stream()
-      .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYtlAine(), ytlSubject))
-      .collect(Collectors.toList());
-  }
-  
-  
-  /**
    * Palauttaa YTLAineKoodi-vastineen YTL:n kokeen tunnisteelle. Kokeen tunnisteiden
    * pitäisi olla uniikkeja, mutta jos ei ole, niin palauttaa ensimmäisen. Palauttaa
    * null, jos kokeen koodilla ei löydy YTLAineKoodi-tietuetta.
@@ -96,12 +78,11 @@ public class YTLController {
    */
   public static YTLAineKoodi ytlKoeToYTLAineKoodi(String ytlKoe, List<YTLAineKoodi> mapping) {
     return mapping.stream()
-      .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYhdistettyAineKoodi(), ytlKoe))
+      .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYtlAine(), ytlKoe))
       .findFirst()
       .orElse(null);
   }
  
-  
   /**
    * Lataa YTL:n koelistauksen ja palauttaa kokeet JSON arrayna, jossa jokaisella
    * kokeella on oma objektinsa kahdella jäsenellä: text (kokeen selkokielinen nimi)
