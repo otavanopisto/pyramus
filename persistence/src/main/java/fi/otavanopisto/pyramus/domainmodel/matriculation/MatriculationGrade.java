@@ -104,6 +104,14 @@ public class MatriculationGrade {
     this.lastModified = lastModified;
   }
 
+  public Integer getTotalPoints() {
+    return totalPoints;
+  }
+
+  public void setTotalPoints(Integer totalPoints) {
+    this.totalPoints = totalPoints;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)  
   private Long id;
@@ -134,4 +142,6 @@ public class MatriculationGrade {
 
   @Column(nullable = false)
   private LocalDateTime lastModified;
+  
+  private Integer totalPoints;
 }

@@ -42,14 +42,6 @@ public class MatriculationExamEnrollment {
     return id;
   }
   
-  public Long getNationalStudentNumber() {
-    return nationalStudentNumber;
-  }
-
-  public void setNationalStudentNumber(Long nationalStudentNumber) {
-    this.nationalStudentNumber = nationalStudentNumber;
-  }
-
   public int getNumMandatoryCourses() {
     return numMandatoryCourses;
   }
@@ -190,9 +182,6 @@ public class MatriculationExamEnrollment {
  
   @ManyToOne
   private MatriculationExam exam;
-  
-  @Column
-  private Long nationalStudentNumber;
   
   @Column
   @Enumerated(EnumType.STRING)

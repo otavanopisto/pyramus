@@ -40,16 +40,7 @@ public class Kokelas extends AbstractKokelas {
     this.ylimääräisetKokeet = ylimääräisetKokeet;
   }
 
-  public List<SuoritettuKurssi> getSuoritetutKurssit() {
-    return suoritetutKurssit;
-  }
-
-  public void setSuoritetutKurssit(List<SuoritettuKurssi> suoritetutKurssit) {
-    this.suoritetutKurssit = suoritetutKurssit;
-  }
-
   private String äidinkielenKoe;
   private List<String> pakollisetKokeet = new ArrayList<>();
   private List<String> ylimääräisetKokeet = new ArrayList<>();
-  private List<SuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
 }

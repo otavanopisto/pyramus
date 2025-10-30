@@ -78,6 +78,10 @@
     <aether-connector-wagon.version>1.13.1</aether-connector-wagon.version>
     <wagon-http-lightweight.version>2.3</wagon-http-lightweight.version>
 
+    <!-- Jackson, make sure these are compatible with the Jackson version imported from Wildfly BOM -->
+
+    <version.com.fasterxml.jackson.datatype>2.12.7</version.com.fasterxml.jackson.datatype>
+
     <!-- JavaFaker -->
 
     <javafaker.version>0.4</javafaker.version>
@@ -184,6 +188,14 @@
         <version>${wagon-http-lightweight.version}</version>
       </dependency>
 
+      <!-- Jackson -->
+      
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-csv</artifactId>
+        <version>${version.com.fasterxml.jackson.datatype}</version>
+      </dependency>
+    
       <!-- JavaFaker -->
 
       <dependency>

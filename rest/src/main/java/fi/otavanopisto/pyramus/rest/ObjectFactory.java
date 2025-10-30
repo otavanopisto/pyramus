@@ -1114,6 +1114,7 @@ public class ObjectFactory {
           restModel.setYear(entity.getYear());
           restModel.setTerm(entity.getTerm());
           restModel.setGrade(entity.getGrade());
+          restModel.setTotalPoints(entity.getTotalPoints());
           restModel.setGradeDate(entity.getGradeDate());
           restModel.setModifierId(entity.getModifier() != null ? entity.getModifier().getId() : null);
           restModel.setLastModified(entity.getLastModified());

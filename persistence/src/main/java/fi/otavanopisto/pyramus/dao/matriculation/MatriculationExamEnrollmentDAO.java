@@ -48,7 +48,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
 
   public MatriculationExamEnrollment create(
       MatriculationExam exam,
-      Long nationalStudentNumber,
       SchoolType enrollAs,
       DegreeType degreeType,
       int numMandatoryCourses,
@@ -65,7 +64,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
 
     result.setExam(exam);
-    result.setNationalStudentNumber(nationalStudentNumber);
     result.setEnrollAs(enrollAs);
     result.setDegreeType(degreeType);
     result.setNumMandatoryCourses(numMandatoryCourses);
@@ -297,6 +295,21 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       criteriaBuilder.and(
         criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam),
         criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.student), student)
+      )
+    );
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public MatriculationExamEnrollment findByExamAndCandidateNumber(MatriculationExam exam, int candidateNumber) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam),
+        criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.candidateNumber), candidateNumber)
       )
     );
     return getSingleResult(entityManager.createQuery(criteria));

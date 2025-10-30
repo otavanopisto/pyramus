@@ -81,12 +81,21 @@ public class MatriculationGrade {
     this.lastModified = lastModified;
   }
   
+  public Integer getTotalPoints() {
+    return totalPoints;
+  }
+
+  public void setTotalPoints(Integer totalPoints) {
+    this.totalPoints = totalPoints;
+  }
+
   private Long id;
   private Long personId;
   private MatriculationExamSubject subject;
   private Integer year;
   private MatriculationExamTerm term;
   private MatriculationExamGrade grade;
+  private Integer totalPoints;
   private LocalDate gradeDate;
   private Long modifierId;
   private LocalDateTime lastModified;

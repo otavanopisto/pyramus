@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.binary.ytl.YTLController;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
@@ -48,6 +49,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
+import net.sf.json.JSONArray;
 
 public class EditEnrollmentViewController extends PyramusViewController {
   
@@ -124,7 +126,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
       
       enrollment = enrollmentDAO.create(
           exam,
-          pageRequestContext.getLong("nationalStudentNumber"),
           SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
           DegreeType.valueOf(pageRequestContext.getString("degreeType")),
           ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),
@@ -347,6 +348,9 @@ public class EditEnrollmentViewController extends PyramusViewController {
       .flatMap(studentGroup -> studentGroup.getUsers().stream())
       .filter(studentGroupUser -> studentGroupUser.isStudyAdvisor())
       .collect(Collectors.toList());
+    
+    JSONArray ytlKokeetJSON = YTLController.ytlKokeetJSON();
+    setJsDataVariable(pageRequestContext, "subjectOptions", ytlKokeetJSON.toString());
     
     pageRequestContext.getRequest().setAttribute("formMode", formMode);
     pageRequestContext.getRequest().setAttribute("exams", exams);

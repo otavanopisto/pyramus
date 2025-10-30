@@ -1,8 +1,7 @@
 [
   {
     "ytlAine": "A",
-    "ytlOppimäärä": "",
-    "aine": "äidinkieli, suomi",
+    "aine": "Äidinkieli ja kirjallisuus, suomi",
     "aineKoodi": "ÄI",
     "matriculationExamSubject": "AI",
     "suoritetutKurssit": [
@@ -11,8 +10,7 @@
   },
   {
     "ytlAine": "A5",
-    "ytlOppimäärä": "",
-    "aine": "suomi toisena kielenä",
+    "aine": "Äidinkieli ja kirjallisuus, suomi toisena kielenä",
     "aineKoodi": "S2",
     "matriculationExamSubject": "S2",
     "suoritetutKurssit": [
@@ -20,9 +18,16 @@
     ]
   },
   {
+    "ytlAine": "O5",
+    "aine": "Äidinkieli ja kirjallisuus, ruotsi toisena kielenä",
+    "aineKoodi": "O5",
+    "matriculationExamSubject": "O5",
+    "suoritetutKurssit": [
+    ]
+  },
+  {
     "ytlAine": "M",
-    "ytlOppimäärä": "",
-    "aine": "pitkä matematiikka",
+    "aine": "Matematiikka, pitkä oppimäärä",
     "aineKoodi": "MAA",
     "matriculationExamSubject": "MAA",
     "suoritetutKurssit": [
@@ -32,8 +37,7 @@
   },
   {
     "ytlAine": "N",
-    "ytlOppimäärä": "",
-    "aine": "lyhyt matematiikka",
+    "aine": "Matematiikka, lyhyt oppimäärä",
     "aineKoodi": "MAB",
     "matriculationExamSubject": "MAB",
     "suoritetutKurssit": [
@@ -43,9 +47,8 @@
   },
 
   {
-    "ytlAine": "B",
-    "ytlOppimäärä": "A",
-    "aine": "ruotsi, pitkä oppimäärä",
+    "ytlAine": "BA",
+    "aine": "Ruotsi, pitkä oppimäärä",
     "aineKoodi": "RUA",
     "matriculationExamSubject": "RUA",
     "suoritetutKurssit": [
@@ -53,9 +56,8 @@
     ]
   },
   {
-    "ytlAine": "B",
-    "ytlOppimäärä": "B",
-    "aine": "ruotsi, keskipitkä oppimäärä",
+    "ytlAine": "BB",
+    "aine": "Ruotsi, keskipitkä oppimäärä",
     "aineKoodi": "RUB1",
     "matriculationExamSubject": "RUB",
     "suoritetutKurssit": [
@@ -63,9 +65,8 @@
     ]
   },
   {
-    "ytlAine": "E",
-    "ytlOppimäärä": "A",
-    "aine": "englanti, pitkä oppimäärä",
+    "ytlAine": "EA",
+    "aine": "Englanti, pitkä oppimäärä",
     "aineKoodi": "ENA",
     "matriculationExamSubject": "ENA",
     "suoritetutKurssit": [
@@ -73,9 +74,8 @@
     ]
   },
   {
-    "ytlAine": "E",
-    "ytlOppimäärä": "C",
-    "aine": "englanti, lyhyt oppimäärä",
+    "ytlAine": "EC",
+    "aine": "Englanti, lyhyt oppimäärä",
     "aineKoodi": "ENB3",
     "matriculationExamSubject": "ENC",
     "suoritetutKurssit": [
@@ -83,9 +83,8 @@
     ]
   },
   {
-    "ytlAine": "F",
-    "ytlOppimäärä": "A",
-    "aine": "ranska, pitkä oppimäärä",
+    "ytlAine": "FA",
+    "aine": "Ranska, pitkä oppimäärä",
     "aineKoodi": "RAA",
     "matriculationExamSubject": "RAA",
     "suoritetutKurssit": [
@@ -93,9 +92,8 @@
     ]
   },
   {
-    "ytlAine": "F",
-    "ytlOppimäärä": "C",
-    "aine": "ranska, lyhyt oppimäärä",
+    "ytlAine": "FC",
+    "aine": "Ranska, lyhyt oppimäärä",
     "aineKoodi": "RAB3",
     "matriculationExamSubject": "RAC",
     "suoritetutKurssit": [
@@ -103,9 +101,8 @@
     ]
   },
   {
-    "ytlAine": "P",
-    "ytlOppimäärä": "A",
-    "aine": "espanja, pitkä oppimäärä",
+    "ytlAine": "PA",
+    "aine": "Espanja, pitkä oppimäärä",
     "aineKoodi": "ESA",
     "matriculationExamSubject": "ESA",
     "suoritetutKurssit": [
@@ -113,9 +110,8 @@
     ]
   },
   {
-    "ytlAine": "P",
-    "ytlOppimäärä": "C",
-    "aine": "espanja, lyhyt oppimäärä",
+    "ytlAine": "PC",
+    "aine": "Espanja, lyhyt oppimäärä",
     "aineKoodi": "ESB3",
     "matriculationExamSubject": "ESC",
     "suoritetutKurssit": [
@@ -123,9 +119,8 @@
     ]
   },
   {
-    "ytlAine": "S",
-    "ytlOppimäärä": "A",
-    "aine": "saksa, pitkä oppimäärä",
+    "ytlAine": "SA",
+    "aine": "Saksa, pitkä oppimäärä",
     "aineKoodi": "SAA",
     "matriculationExamSubject": "SAA",
     "suoritetutKurssit": [
@@ -133,9 +128,8 @@
     ]
   },
   {
-    "ytlAine": "S",
-    "ytlOppimäärä": "C",
-    "aine": "saksa, lyhyt oppimäärä",
+    "ytlAine": "SC",
+    "aine": "Saksa, lyhyt oppimäärä",
     "aineKoodi": "SAB3",
     "matriculationExamSubject": "SAC",
     "suoritetutKurssit": [
@@ -143,9 +137,8 @@
     ]
   },
   {
-    "ytlAine": "V",
-    "ytlOppimäärä": "A",
-    "aine": "venäjä, pitkä oppimäärä",
+    "ytlAine": "VA",
+    "aine": "Venäjä, pitkä oppimäärä",
     "aineKoodi": "VEA",
     "matriculationExamSubject": "VEA",
     "suoritetutKurssit": [
@@ -153,9 +146,8 @@
     ]
   },
   {
-    "ytlAine": "V",
-    "ytlOppimäärä": "C",
-    "aine": "venäjä, lyhyt oppimäärä",
+    "ytlAine": "VC",
+    "aine": "Venäjä, lyhyt oppimäärä",
     "aineKoodi": "VEB3",
     "matriculationExamSubject": "VEC",
     "suoritetutKurssit": [
@@ -163,9 +155,8 @@
     ]
   },
   {
-    "ytlAine": "T",
-    "ytlOppimäärä": "C",
-    "aine": "italia, lyhyt oppimäärä",
+    "ytlAine": "TC",
+    "aine": "Italia, lyhyt oppimäärä",
     "aineKoodi": "ITB3",
     "matriculationExamSubject": "ITC",
     "suoritetutKurssit": [
@@ -173,9 +164,8 @@
     ]
   },
   {
-    "ytlAine": "G",
-    "ytlOppimäärä": "C",
-    "aine": "portugali, lyhyt oppimäärä",
+    "ytlAine": "GC",
+    "aine": "Portugali, lyhyt oppimäärä",
     "aineKoodi": "POB3",
     "matriculationExamSubject": "POC",
     "suoritetutKurssit": [
@@ -183,9 +173,8 @@
     ]
   },
   {
-    "ytlAine": "L",
-    "ytlOppimäärä": "C",
-    "aine": "latina, lyhyt oppimäärä",
+    "ytlAine": "L1",
+    "aine": "Latina, lyhyt oppimäärä",
     "aineKoodi": "LAB3",
     "matriculationExamSubject": "LAC",
     "suoritetutKurssit": [
@@ -193,9 +182,16 @@
     ]
   },
   {
-    "ytlAine": "D",
-    "ytlOppimäärä": "C",
-    "aine": "pohjoissaame, lyhyt oppimäärä",
+    "ytlAine": "L7",
+    "aine": "Latina, laajempi lyhyt oppimäärä",
+    "aineKoodi": "LAB3",
+    "matriculationExamSubject": "L7",
+    "suoritetutKurssit": [
+    ]
+  },
+  {
+    "ytlAine": "DC",
+    "aine": "Pohjoissaame, lyhyt oppimäärä",
     "aineKoodi": "SMB3",
     "matriculationExamSubject": "SM_DC",
     "suoritetutKurssit": [
@@ -204,8 +200,7 @@
   },
   {
     "ytlAine": "IC",
-    "ytlOppimäärä": "C",
-    "aine": "inarinsaame, lyhyt oppimäärä",
+    "aine": "Inarinsaame, lyhyt oppimäärä",
     "aineKoodi": "SMB3",
     "matriculationExamSubject": "SM_ICC",
     "suoritetutKurssit": [
@@ -213,9 +208,8 @@
     ]
   },
   {
-    "ytlAine": "Q",
-    "ytlOppimäärä": "C",
-    "aine": "koltansaame, lyhyt oppimäärä",
+    "ytlAine": "QC",
+    "aine": "Koltansaame, lyhyt oppimäärä",
     "aineKoodi": "SMB3",
     "matriculationExamSubject": "SM_QC",
     "suoritetutKurssit": [
@@ -225,8 +219,7 @@
 
   {
     "ytlAine": "BI",
-    "ytlOppimäärä": "",
-    "aine": "biologia",
+    "aine": "Biologia",
     "aineKoodi": "BI",
     "matriculationExamSubject": "BI",
     "suoritetutKurssit": [
@@ -235,8 +228,7 @@
   },
   {
     "ytlAine": "FF",
-    "ytlOppimäärä": "",
-    "aine": "filosofia",
+    "aine": "Filosofia",
     "aineKoodi": "FI",
     "matriculationExamSubject": "FI",
     "suoritetutKurssit": [
@@ -245,8 +237,7 @@
   },
   {
     "ytlAine": "FY",
-    "ytlOppimäärä": "",
-    "aine": "fysiikka",
+    "aine": "Fysiikka",
     "aineKoodi": "FY",
     "matriculationExamSubject": "FY",
     "suoritetutKurssit": [
@@ -255,8 +246,7 @@
   },
   {
     "ytlAine": "GE",
-    "ytlOppimäärä": "",
-    "aine": "maantiede",
+    "aine": "Maantiede",
     "aineKoodi": "GE",
     "matriculationExamSubject": "GE",
     "suoritetutKurssit": [
@@ -265,8 +255,7 @@
   },
   {
     "ytlAine": "HI",
-    "ytlOppimäärä": "",
-    "aine": "historia",
+    "aine": "Historia",
     "aineKoodi": "HI",
     "matriculationExamSubject": "HI",
     "suoritetutKurssit": [
@@ -275,8 +264,7 @@
   },
   {
     "ytlAine": "KE",
-    "ytlOppimäärä": "",
-    "aine": "kemia",
+    "aine": "Kemia",
     "aineKoodi": "KE",
     "matriculationExamSubject": "KE",
     "suoritetutKurssit": [
@@ -285,8 +273,7 @@
   },
   {
     "ytlAine": "PS",
-    "ytlOppimäärä": "",
-    "aine": "psykologia",
+    "aine": "Psykologia",
     "aineKoodi": "PS",
     "matriculationExamSubject": "PS",
     "suoritetutKurssit": [
@@ -295,8 +282,7 @@
   },
   {
     "ytlAine": "TE",
-    "ytlOppimäärä": "",
-    "aine": "terveystieto",
+    "aine": "Terveystieto",
     "aineKoodi": "TE",
     "matriculationExamSubject": "TT",
     "suoritetutKurssit": [
@@ -306,8 +292,7 @@
 
   {
     "ytlAine": "UE",
-    "ytlOppimäärä": "",
-    "aine": "uskonto, ev.-lut.",
+    "aine": "Evankelisluterilainen uskonto",
     "aineKoodi": "UE",
     "matriculationExamSubject": "UE",
     "suoritetutKurssit": [
@@ -315,9 +300,17 @@
     ]
   },
   {
+    "ytlAine": "UO",
+    "aine": "Ortodoksinen uskonto",
+    "aineKoodi": "UO",
+    "matriculationExamSubject": "UO",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "UO" }
+    ]
+  },
+  {
     "ytlAine": "ET",
-    "ytlOppimäärä": "",
-    "aine": "elämänkatsomustieto",
+    "aine": "Elämänkatsomustieto",
     "aineKoodi": "ET",
     "matriculationExamSubject": "ET",
     "suoritetutKurssit": [
@@ -326,8 +319,7 @@
   },
   {
     "ytlAine": "YH",
-    "ytlOppimäärä": "",
-    "aine": "yhteiskuntaoppi",
+    "aine": "Yhteiskuntaoppi",
     "aineKoodi": "YH",
     "matriculationExamSubject": "YO",
     "suoritetutKurssit": [
@@ -336,7 +328,6 @@
   },
   {
     "ytlAine": "I",
-    "ytlOppimäärä": "",
     "aine": "Äidinkieli ja kirjallisuus, inarinsaame",
     "aineKoodi": "ÄIS",
     "matriculationExamSubject": "I",
@@ -346,7 +337,6 @@
   },
   {
     "ytlAine": "W",
-    "ytlOppimäärä": "",
     "aine": "Äidinkieli ja kirjallisuus, koltansaame",
     "aineKoodi": "ÄIS",
     "matriculationExamSubject": "W",
@@ -356,7 +346,6 @@
   },
   {
     "ytlAine": "Z",
-    "ytlOppimäärä": "",
     "aine": "Äidinkieli ja kirjallisuus, pohjoissaame",
     "aineKoodi": "ÄIS",
     "matriculationExamSubject": "Z",

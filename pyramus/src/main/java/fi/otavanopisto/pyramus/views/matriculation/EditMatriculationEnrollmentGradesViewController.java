@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.binary.ytl.YTLController;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
@@ -108,10 +109,14 @@ public class EditMatriculationEnrollmentGradesViewController extends PyramusView
       obj.put("gradeId", grade != null ? grade.getId() : NEW_ROW_ID);
       obj.put("grade", grade != null ? grade.getGrade().name() : null);
       obj.put("gradeDate", gradeDate != null ? gradeDate.getTime() : null);
+      obj.put("gradeTotalPoints", grade != null ? grade.getTotalPoints() : null);
       jsonAttendances.add(obj);
     }
     setJsDataVariable(pageRequestContext, "grades", jsonAttendances.toString());
 
+    JSONArray ytlKokeetJSON = YTLController.ytlKokeetJSON();
+    setJsDataVariable(pageRequestContext, "subjectOptions", ytlKokeetJSON.toString());
+    
     pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("term", term);
     pageRequestContext.getRequest().setAttribute("year", year);
@@ -144,17 +149,18 @@ public class EditMatriculationEnrollmentGradesViewController extends PyramusView
       MatriculationExamSubject subject = MatriculationExamSubject.valueOf(gradeRow.getString("subject"));
       MatriculationExamGrade grade = gradeRow.getString("grade") != null ? MatriculationExamGrade.valueOf(gradeRow.getString("grade")) : null;
       LocalDate gradeDate = DateUtils.toLocalDate(gradeRow.getDate("gradeDate"));
+      Integer totalPoints = gradeRow.getInteger("gradeTotalPoints");
       
       if (NEW_ROW_ID.equals(gradeId)) {
         if (grade != null) {
-          matriculationGradeDAO.create(person, subject, year, term, grade, gradeDate, loggedUser);
+          matriculationGradeDAO.create(person, subject, year, term, grade, gradeDate, totalPoints, loggedUser);
         }
       }
       else {
         MatriculationGrade matriculationGrade = matriculationGradeDAO.findById(gradeId);
         if (matriculationGrade != null) {
           if (grade != null) {
-            matriculationGradeDAO.update(matriculationGrade, grade, gradeDate, loggedUser);
+            matriculationGradeDAO.update(matriculationGrade, grade, gradeDate, totalPoints, loggedUser);
           }
           else {
             matriculationGradeDAO.delete(matriculationGrade);

@@ -5,12 +5,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 
+/**
+ * TODO Kenttien nimeäminen voisi olla järkevämpi
+ */
 public class YTLAineKoodi {
   
+  /**
+   * Kokeen selkokielinen nimi
+   * 
+   * @return Kokeen selkokielinen nimi
+   */
   public String getAine() {
     return aine;
   }
@@ -19,6 +25,11 @@ public class YTLAineKoodi {
     this.aine = aine;
   }
 
+  /**
+   * Aineen koodi, johon koe liittyy. Tämä viittaa Subject.code -kentän arvoon
+   * 
+   * @return aineen koodi
+   */
   public String getAineKoodi() {
     return aineKoodi;
   }
@@ -27,6 +38,11 @@ public class YTLAineKoodi {
     this.aineKoodi = aineKoodi;
   }
 
+  /**
+   * Kokeen tunniste Pyramuksessa
+   * 
+   * @return kokeen tunniste Pyramuksessa
+   */
   public MatriculationExamSubject getMatriculationExamSubject() {
     return matriculationExamSubject;
   }
@@ -43,6 +59,11 @@ public class YTLAineKoodi {
     this.suoritetutKurssit = suoritetutKurssit;
   }
 
+  /**
+   * YTL:n käyttämä kokeen koodi
+   * 
+   * @return YTL:n käyttämä kokeen koodi
+   */
   public String getYtlAine() {
     return ytlAine;
   }
@@ -51,18 +72,6 @@ public class YTLAineKoodi {
     this.ytlAine = ytlAine;
   }
 
-  public String getYtlOppimäärä() {
-    return ytlOppimäärä;
-  }
-
-  public void setYtlOppimäärä(String ytlOppimäärä) {
-    this.ytlOppimäärä = ytlOppimäärä;
-  }
-
-  public String getYhdistettyAineKoodi() {
-    return ytlAine + (StringUtils.isNotBlank(ytlOppimäärä) ? ytlOppimäärä : "");
-  }
-  
   public Set<String> getSuoritetutKurssitLisäaineet() {
     return suoritetutKurssitLisäaineet;
   }
@@ -72,7 +81,6 @@ public class YTLAineKoodi {
   }
 
   private String ytlAine;
-  private String ytlOppimäärä;
   private String aine;
   private String aineKoodi;
   private MatriculationExamSubject matriculationExamSubject;

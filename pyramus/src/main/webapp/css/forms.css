@@ -61,6 +61,10 @@ input[type='submit']{
   font-size:13px;
 }
 
+input[type='submit']:disabled{
+  background-color:#AAAAAA;
+}
+
 input.submitButton{
   -moz-border-radius:5px;
   -webkit-border-radius:5px;

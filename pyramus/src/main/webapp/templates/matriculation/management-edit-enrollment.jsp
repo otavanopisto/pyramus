@@ -27,45 +27,9 @@
           termOptions.push({value: "SPRING" + y, text: "Kevät " + y});
           termOptions.push({value: "AUTUMN" + y, text: "Syksy " + y});
         }
-
-        var subjectOptions = [
-          {value:"AI", text:"Äidinkieli"},
-          {value:"S2", text:"Suomi toisena kielenä"},
-          {value:"ENA", text:"Englanti, A-taso"},
-          {value:"RAA", text:"Ranska, A-taso"},
-          {value:"ESA", text:"Espanja, A-taso"},
-          {value:"SAA", text:"Saksa, A-taso"},
-          {value:"VEA", text:"Venäjä, A-taso"},
-          {value:"UE", text:"Uskonto"},
-          {value:"ET", text:"Elämänkatsomustieto"},
-          {value:"YO", text:"Yhteiskuntaoppi"},
-          {value:"KE", text:"Kemia"},
-          {value:"GE", text:"Maantiede"},
-          {value:"TT", text:"Terveystieto"},
-          {value:"ENC", text:"Englanti, C-taso"},
-          {value:"RAC", text:"Ranska, C-taso"},
-          {value:"ESC", text:"Espanja, C-taso"},
-          {value:"SAC", text:"Saksa, C-taso"},
-          {value:"VEC", text:"Venäjä, C-taso"},
-          {value:"ITC", text:"Italia, C-taso"},
-          {value:"POC", text:"Portugali, C-taso"},
-          {value:"LAC", text:"Latina, C-taso"},
-          {value:"SM_DC", text:"Pohjoissaame, C-taso"},
-          {value:"SM_ICC", text:"Inarinsaame, C-taso"},
-          {value:"SM_QC", text:"Koltansaame, C-taso"},
-          {value:"RUA", text:"Ruotsi, A-taso"},
-          {value:"RUB", text:"Ruotsi, B-taso"},
-          {value:"PS", text:"Psykologia"},
-          {value:"FI", text:"Filosofia"},
-          {value:"HI", text:"Historia"},
-          {value:"FY", text:"Fysiikka"},
-          {value:"BI", text:"Biologia"},
-          {value:"MAA", text:"Matematiikka, pitkä"},
-          {value:"MAB", text:"Matematiikka, lyhyt"},
-          {value:"I", text:"Äidinkieli ja kirjallisuus, inarinsaame"},
-          {value:"W", text:"Äidinkieli ja kirjallisuus, koltansaame"},
-          {value:"Z", text:"Äidinkieli ja kirjallisuus, pohjoissaame"}
-        ];
+        
+        var subjectOptions = JSON.parse(JSDATA["subjectOptions"]);
+        
         var mandatorityOptions = [
           {value: "", text: ""},
           {value: "MANDATORY", text: "Pakollinen"},
@@ -496,10 +460,19 @@
 
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
-                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.nationalStudentNumber.help"/>
-                </jsp:include>            
-                <input type="text" name="nationalStudentNumber" value="${fn:escapeXml(enrollment.nationalStudentNumber)}">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.candidateNumber"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.candidateNumber.help"/>
+                </jsp:include>
+                <div>
+                  <c:choose>
+                    <c:when test="${!empty enrollment.candidateNumber}">
+                      ${enrollment.candidateNumber}
+                    </c:when>
+                    <c:otherwise>
+                      -
+                    </c:otherwise>
+                  </c:choose>
+                </div>
               </div>
   
               <div class="genericFormSection">
