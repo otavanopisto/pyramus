@@ -148,6 +148,7 @@ import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
 import fi.otavanopisto.pyramus.rest.model.StudentParentRelation;
 import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistCoursePrice;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -2252,7 +2253,7 @@ public class StudentRESTService extends AbstractRESTService {
         
         // Price
         
-        Double price = worklistController.getCourseModuleBasePrice(courseModule, sessionController.getUser());
+        WorklistCoursePrice price = worklistController.getCourseModulePrice(courseModule, sessionController.getUser());
         if (price != null) {
 
           // Determine billing number from student's study programme
@@ -2301,7 +2302,7 @@ public class StudentRESTService extends AbstractRESTService {
               template,
               new Date(),
               String.format("%s - %s - %s", description, studentDisplayName, courseDisplayName),
-              price,
+              isRaisedGrade ? price.getHalf() : price.getFull(),
               template.getFactor(),
               billingNumber,
               courseAssessment,

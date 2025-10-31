@@ -1210,6 +1210,14 @@ IxTableEditorController = Class.create({
   },
   _copyState: function (target, source) {
     this.copyCellValue(target, source);
+    
+    if (this.isVisible(source)) {
+      this.show(target);
+    }
+    else {
+      this.hide(target);
+    }
+    
     return this.setEditable(target, this.getEditable(source));
     // TODO: disabled, datatype yms tiedot
   },

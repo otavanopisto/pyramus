@@ -776,7 +776,7 @@
                       // Hide modify button for new entries
                       table.hideCell(rowIndex, table.getNamedColumnIndex('modifyButton'));
     
-                      if (!credit.convertedOk) {
+                      if (!credit.convertedOk || credit.manualDoubleCheck) {
                         table.showCell(rowIndex, table.getNamedColumnIndex('importNotification'));
                       }
                       
@@ -969,8 +969,8 @@
                   <div id="koskiImportNotesContainer" class="pyramusAccordionContent" style="display: none;"></div>
                 </div>
                 <div class="pyramusAccordion">
-                  <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.curriculumErrors"/><span id="koskiImportCurriculumErrorsContainerCount" style="margin-left: 2pt;"></span></div>
-                  <div id="koskiImportCurriculumErrorsContainer" class="pyramusAccordionContent" style="display: none;"></div>
+                  <div class="pyramusAccordionButton pyramusAccordionButtonOpened"><fmt:message key="grading.manageTransferCredits.jsonimport.curriculumErrors"/><span id="koskiImportCurriculumErrorsContainerCount" style="margin-left: 2pt;"></span></div>
+                  <div id="koskiImportCurriculumErrorsContainer" class="pyramusAccordionContent" style="display: block;"></div>
                 </div>
                 <div class="pyramusAccordion">
                   <div class="pyramusAccordionButton"><fmt:message key="grading.manageTransferCredits.jsonimport.curriculumNotes"/><span id="koskiImportCurriculumNotesContainerCount" style="margin-left: 2pt;"></span></div>

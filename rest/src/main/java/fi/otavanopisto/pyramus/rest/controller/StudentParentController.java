@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -130,9 +131,12 @@ public class StudentParentController {
         Mailer.JNDI_APPLICATION,
         Mailer.HTML,
         null,
-        invitation.getEmail(),
+        Collections.singleton(invitation.getEmail()),
+        Collections.emptySet(),
+        Collections.emptySet(),
         subject,
         content,
+        Collections.emptyList(),
         null);
   }
   

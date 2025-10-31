@@ -12,12 +12,17 @@ public enum MatriculationExamSubject {
 
   AI,
   S2,
+  O,            // Äidinkieli ja kirjallisuus, ruotsi (ei käytössä)
+  O5,           // Äidinkieli ja kirjallisuus, ruotsi toisena kielenä
+  CA,           // Suomi, pitkä oppimäärä (ei käytössä)
+  CB,           // Suomi, keskipitkä oppimäärä (ei käytössä)
   ENA,
   RAA,
   ESA,
   SAA,
   VEA,
   UE,
+  UO,
   ET,
   YO,
   KE,
@@ -30,7 +35,8 @@ public enum MatriculationExamSubject {
   VEC,
   ITC,
   POC,
-  LAC,
+  LAC,          // Latina, lyhyt oppimäärä - TODO YTL-koodi on L1
+  L7,           // Latina, laajempi lyhyt oppimäärä
   SMC,
   SM_DC,
   SM_ICC,

@@ -855,14 +855,21 @@
           
               switch (event.name) {
                 case 'okClick':
+                  var glassPane = new IxGlassPane(document.body, { });
+                  glassPane.show();
+
                   JSONRequest.request("students/archivestudent.json", {
                     parameters: {
                       student: studentId
                     },
                     onSuccess: function (jsonResponse) {
                       window.location.reload();
+                    },
+                    onComplete: function () {
+                      glassPane.hide();
+                      delete glassPane;
                     }
-                  });   
+                  });
                 break;
               }
             });

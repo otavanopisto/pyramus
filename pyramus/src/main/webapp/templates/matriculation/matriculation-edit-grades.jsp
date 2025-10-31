@@ -21,44 +21,8 @@
       function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
 
-        var subjectOptions = [
-          {value:"AI", text:"Äidinkieli"},
-          {value:"S2", text:"Suomi toisena kielenä"},
-          {value:"ENA", text:"Englanti, A-taso"},
-          {value:"RAA", text:"Ranska, A-taso"},
-          {value:"ESA", text:"Espanja, A-taso"},
-          {value:"SAA", text:"Saksa, A-taso"},
-          {value:"VEA", text:"Venäjä, A-taso"},
-          {value:"UE", text:"Uskonto"},
-          {value:"ET", text:"Elämänkatsomustieto"},
-          {value:"YO", text:"Yhteiskuntaoppi"},
-          {value:"KE", text:"Kemia"},
-          {value:"GE", text:"Maantiede"},
-          {value:"TT", text:"Terveystieto"},
-          {value:"ENC", text:"Englanti, C-taso"},
-          {value:"RAC", text:"Ranska, C-taso"},
-          {value:"ESC", text:"Espanja, C-taso"},
-          {value:"SAC", text:"Saksa, C-taso"},
-          {value:"VEC", text:"Venäjä, C-taso"},
-          {value:"ITC", text:"Italia, C-taso"},
-          {value:"POC", text:"Portugali, C-taso"},
-          {value:"LAC", text:"Latina, C-taso"},
-          {value:"SM_DC", text:"Pohjoissaame, C-taso"},
-          {value:"SM_ICC", text:"Inarinsaame, C-taso"},
-          {value:"SM_QC", text:"Koltansaame, C-taso"},
-          {value:"RUA", text:"Ruotsi, A-taso"},
-          {value:"RUB", text:"Ruotsi, B-taso"},
-          {value:"PS", text:"Psykologia"},
-          {value:"FI", text:"Filosofia"},
-          {value:"HI", text:"Historia"},
-          {value:"FY", text:"Fysiikka"},
-          {value:"BI", text:"Biologia"},
-          {value:"MAA", text:"Matematiikka, pitkä"},
-          {value:"MAB", text:"Matematiikka, lyhyt"},
-          {value:"I", text:"Äidinkieli ja kirjallisuus, inarinsaame"},
-          {value:"W", text:"Äidinkieli ja kirjallisuus, koltansaame"},
-          {value:"Z", text:"Äidinkieli ja kirjallisuus, pohjoissaame"}
-        ];
+        var subjectOptions = JSON.parse(JSDATA["subjectOptions"]);
+
         var gradeOptions = [
           {value: "", text: ""},
           {value: "IMPROBATUR", text: "Improbatur"},
@@ -87,15 +51,22 @@
           }, {
             header : 'Arvosana',
             width: 200,
-            left: 8 + 200,
+            left: 8 + 200 + 8,
             dataType : 'select',
             options: gradeOptions,
             editable: true,
             paramName: 'grade'
           }, {
+            header : 'Yhteispisteet',
+            width: 120,
+            left: 8 + 200 + 8 + 200 + 8,
+            dataType : 'number',
+            editable: true,
+            paramName: 'gradeTotalPoints'
+          }, {
             header : 'Arviointipäivämäärä',
             width: 140,
-            left: 8 + 200 + 8 + 200,
+            left: 8 + 200 + 8 + 200 + 8 + 120 + 8,
             dataType : 'date',
             editable: true,
             paramName: 'gradeDate'
@@ -112,6 +83,7 @@
             gradesArr.push([
               gradesJSON[i].subject,
               gradesJSON[i].grade,
+              gradesJSON[i].gradeTotalPoints ? gradesJSON[i].gradeTotalPoints : '',
               gradesJSON[i].gradeDate,
               gradesJSON[i].gradeId
             ]);
@@ -120,7 +92,7 @@
         gradesTable.addRows(gradesArr);
         
         document.getElementById("addGradeTableRow").addEventListener('click', function() {
-          var rowId = gradesTable.addRow(['', '', '', '-1']);
+          var rowId = gradesTable.addRow(['', '', '', '', '-1']);
           gradesTable.setCellEditable(rowId, gradesTable.getNamedColumnIndex('subject'), true);
         });
       };

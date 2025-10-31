@@ -103,6 +103,17 @@ public class KoskiController {
       return Collections.emptySet();
     }
   }
+
+  /**
+   * Returns true if the given Student has a studyprogramme which is
+   * enabled in the integration and which also has some OID(s).
+   * 
+   * @param student student
+   * @return
+   */
+  public boolean hasKoskiOIDs(Student student) {
+    return settings.isEnabledStudyProgramme(student.getStudyProgramme()) && CollectionUtils.isNotEmpty(listStudentOIDs(student));
+  }
   
   public KoskiStudentHandler getStudentHandler(KoskiStudyProgrammeHandler handlerType) {
     switch (handlerType) {

@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.json.studentparents;
 
+import java.util.Collections;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -97,9 +98,12 @@ public class EditStudentParentInvitationJSONRequestController extends JSONReques
             Mailer.JNDI_APPLICATION,
             Mailer.HTML,
             null,
-            guardian.getEmail(),
+            Collections.singleton(guardian.getEmail()),
+            Collections.emptySet(),
+            Collections.emptySet(),
             subject,
             content,
+            Collections.emptyList(),
             null);
       } catch (Exception ex) {
         throw new SmvcRuntimeException(ex);
