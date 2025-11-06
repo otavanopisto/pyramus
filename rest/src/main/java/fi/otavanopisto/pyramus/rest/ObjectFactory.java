@@ -872,6 +872,7 @@ public class ObjectFactory {
                 entity.getId(), 
                 entity.getFirstName(),
                 entity.getLastName(),
+                entity.getEmail(),
                 entity.isContinuedViewPermission()
             );
           }
