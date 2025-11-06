@@ -100,6 +100,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
@@ -861,6 +862,18 @@ public class ObjectFactory {
             Long billingDetailsId = entity.getBillingDetails() != null ? entity.getBillingDetails().getId() : null;
             
             return new fi.otavanopisto.pyramus.rest.model.CourseStudent(entity.getId(), courseId, studentId, toOffsetDateTime(entity.getEnrolmentTime()), entity.getArchived(), participantTypeId, courseEnrolmentTypeId, entity.getLodging(), optionality, billingDetailsId);
+          }
+        },
+        
+        new Mapper<StudentParentInvitation>() {
+          
+          public Object map(StudentParentInvitation entity) {
+            return new fi.otavanopisto.pyramus.rest.model.StudentParentInvitation(
+                entity.getId(), 
+                entity.getFirstName(),
+                entity.getLastName(),
+                entity.isContinuedViewPermission()
+            );
           }
         },
         

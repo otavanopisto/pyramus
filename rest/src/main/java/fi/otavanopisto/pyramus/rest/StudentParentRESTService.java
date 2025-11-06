@@ -119,7 +119,7 @@ public class StudentParentRESTService extends AbstractRESTService {
   @Path("/studentparents")
   @GET
   @RESTPermit (UserPermissions.LIST_STUDENTPARENTS)
-  public Response listStaffMembers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email) {
+  public Response listStudentParents(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email) {
     List<StudentParent> studentParents;
     
     if (StringUtils.isNotBlank(email)) {
@@ -138,7 +138,7 @@ public class StudentParentRESTService extends AbstractRESTService {
   @Path("/studentparents/{ID:[0-9]*}")
   @GET
   @RESTPermit (handling = Handling.INLINE)
-  public Response findStaffMemberById(@PathParam("ID") Long id, @Context Request request) {
+  public Response findStudentParentById(@PathParam("ID") Long id, @Context Request request) {
     StudentParent studentParent = studentParentController.findStudentParentById(id);
     
     if (studentParent == null || studentParent.getArchived()) {
@@ -168,7 +168,7 @@ public class StudentParentRESTService extends AbstractRESTService {
   @Path("/studentparents/{ID:[0-9]*}/emails")
   @GET
   @RESTPermit (handling = Handling.INLINE)
-  public Response listStaffMembersEmails(@PathParam("ID") Long id) {
+  public Response listStudentParentsEmails(@PathParam("ID") Long id) {
     StudentParent studentParent = studentParentController.findStudentParentById(id);
     if (studentParent == null) {
       return Response.status(Status.NOT_FOUND).build();

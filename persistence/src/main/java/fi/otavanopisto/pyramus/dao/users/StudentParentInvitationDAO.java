@@ -79,6 +79,11 @@ public class StudentParentInvitationDAO extends PyramusEntityDAO<StudentParentIn
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public StudentParentInvitation updateContinuedViewPermission(StudentParentInvitation invitation, boolean continuedViewPermission) {
+    invitation.setContinuedViewPermission(continuedViewPermission);
+    return persist(invitation);
+  }
+
   public StudentParentInvitation updateName(StudentParentInvitation invitation, String firstName, String lastName) {
     invitation.setFirstName(firstName);
     invitation.setLastName(lastName);

@@ -98,6 +98,14 @@ public class StudentParentInvitation {
     this.created = created;
   }
 
+  public boolean isContinuedViewPermission() {
+    return continuedViewPermission;
+  }
+
+  public void setContinuedViewPermission(boolean continuedViewPermission) {
+    this.continuedViewPermission = continuedViewPermission;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -132,4 +140,5 @@ public class StudentParentInvitation {
   @Temporal (value = TemporalType.TIMESTAMP)
   private Date created;
   
+  private boolean continuedViewPermission;
 }
