@@ -8,11 +8,12 @@ public class StudentParentRelation {
   public StudentParentRelation() {
   }
 
-  public StudentParentRelation(Long id, String firstName, String lastName, String email, boolean continuedViewPermission) {
+  public StudentParentRelation(Long id, String firstName, String lastName, String email, boolean activeParent, boolean continuedViewPermission) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
+    this.activeParent = activeParent;
     this.continuedViewPermission = continuedViewPermission;
   }
   
@@ -56,9 +57,18 @@ public class StudentParentRelation {
     this.email = email;
   }
 
+  public boolean isActiveParent() {
+    return activeParent;
+  }
+
+  public void setActiveParent(boolean activeParent) {
+    this.activeParent = activeParent;
+  }
+
   private Long id;
   private String firstName;
   private String lastName;
   private String email;
+  private boolean activeParent;
   private boolean continuedViewPermission;
 }
