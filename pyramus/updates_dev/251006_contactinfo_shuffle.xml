@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
 
-  <sql></sql>
-
   <sql>
     alter table ContactInfo add column DTYPE varchar(31) not null;
   </sql>
   
-  update ContactInfo set DTYPE = 'PersonalContactInfo';
+  <sql>
+    update ContactInfo set DTYPE = 'PersonalContactInfo';
+  </sql>
 
   <sql>
     alter table ContactInfo add column contactType bigint;
@@ -31,89 +31,111 @@
 
 
   <sql>
-    create table __StudentAdditionalContactInfos (
-       student bigint not null,
-        additionalContactInfo bigint not null
+    create table __UserAdditionalContactInfos (
+      user bigint not null,
+      additionalContactInfo bigint not null
     );
   </sql>
 
   <sql>
-    alter table __StudentAdditionalContactInfos 
-       add constraint UK_bti7xfg1cn32y7vk8iunrxua1 unique (typedContactInfo);
+    alter table __UserAdditionalContactInfos 
+       add constraint UK_4oyenm6vkd744d5rmen4bat1r unique (additionalContactInfo);
   </sql>
 
   <sql>
-    alter table __StudentAdditionalContactInfos 
-       add constraint FKhkx3xqmbiuo1t8assbjentlfp 
-       foreign key (typedContactInfo) 
+    alter table __UserAdditionalContactInfos 
+       add constraint FKor7m05ky7xqus3jad6bu5dp66 
+       foreign key (additionalContactInfo) 
        references ContactInfo (id);
   </sql>
 
   <sql>
-    alter table __StudentAdditionalContactInfos 
-       add constraint FK2goixxqasxeqnfraope935ohy 
-       foreign key (student) 
-       references Student (id);
+    alter table __UserAdditionalContactInfos 
+       add constraint FK7ymnkrj242ovi6yuanmpd53ln 
+       foreign key (user) 
+       references User (id);
   </sql>
 
   <sql>
     create table __SchoolContactInfos (
-       school bigint not null,
-        typedContactInfo bigint not null
+      school bigint not null,
+      typedContactInfo bigint not null
     );
   </sql>
 
+  <sql>
     alter table __SchoolContactInfos 
-       add constraint FKecnvvqf3tapcgndeww9q03em8 
-       foreign key (typedContactInfo) 
-       references ContactInfo (id);
+      add constraint FKecnvvqf3tapcgndeww9q03em8 
+      foreign key (typedContactInfo) 
+      references ContactInfo (id);
+  </sql>
 
+  <sql>
     alter table __SchoolContactInfos 
-       add constraint FKfks335riv1m0172u4y0405rbp 
-       foreign key (school) 
-       references School (id);
-
-  <sql>
+      add constraint FKfks335riv1m0172u4y0405rbp 
+      foreign key (school) 
+      references School (id);
   </sql>
 
   <sql>
+    update ContactInfo set DTYPE = 'TypedContactInfo' where id in (select contactInfo from School where contactInfo is not null);
   </sql>
 
   <sql>
+    insert into __SchoolContactInfos (school, typedContactInfo)
+    select id, contactInfo
+    from School
+    where contactInfo is not null;
   </sql>
 
   <sql>
+    alter table School drop column contactInfo;
   </sql>
 
   <sql>
+    create table ContactInfoMigrationUser (
+      id bigint not null auto_increment,
+      user_id bigint,
+      primary key (id)
+    );
   </sql>
 
   <sql>
+    alter table ContactInfoMigrationUser 
+      add constraint FKk55oelsxcian3wric1x9ykwem 
+      foreign key (user_id) 
+      references User (id);
   </sql>
 
   <sql>
+    insert into ContactInfoMigrationUser (user_id)
+    select id
+    from User 
+    where contactInfo in (
+      select e.contactInfo  
+      from Email e
+      join ContactType ct on ct.id = e.contactType 
+      where ct.nonUnique = true
+      union
+      select pn.contactInfo  
+      from PhoneNumber pn
+      join ContactType ct on ct.id = pn.contactType 
+      where ct.nonUnique = true
+      union
+      select a.contactInfo  
+      from Address a
+      join ContactType ct on ct.id = a.contactType 
+      where ct.nonUnique = true
+    );
   </sql>
 
-  TODO KONVERSIOT
-
-select * 
-from Email e
-join ContactType ct on ct.id = e.contactType 
-join ContactInfo ci on ci.id = e.contactInfo 
-where ct.nonUnique = true
-
-  TODO KONVERSIOT
+  <sql>
+    alter table Defaults drop column studentDefaultContactType;
+  </sql>
   
-  
-  
-  alter table Address drop column contactType;
-  alter table Email drop column contactType;
-  alter table PhoneNumber drop column contactType;
-
-  alter table School drop column contactInfo;
-  
-  alter table Defaults drop column studentDefaultContactType;
-  alter table Defaults drop column userDefaultContactType;
+  <sql>
+    alter table Defaults drop column userDefaultContactType;
+  </sql>
 
   <sql>alter table StudentParentInvitation add column continuedViewPermission bit not null;</sql>
   <sql>alter table StudentParentChild add column continuedViewPermission bit not null;</sql>
