@@ -25,12 +25,6 @@
   </sql>
 
   <sql>
-  ???
-    update ContactInfo set allowStudyDiscussions = false;
-  </sql>
-
-
-  <sql>
     create table __UserAdditionalContactInfos (
       user bigint not null,
       additionalContactInfo bigint not null
