@@ -8,11 +8,12 @@ public class StudentParentInvitation implements ContextReference {
     super();
   }
 
-  public StudentParentInvitation(Long id, String firstName, String lastName, boolean continuedViewPermission) {
+  public StudentParentInvitation(Long id, String firstName, String lastName, String email, boolean continuedViewPermission) {
     super();
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.email = email;
     this.continuedViewPermission = continuedViewPermission;
   }
 
@@ -48,8 +49,17 @@ public class StudentParentInvitation implements ContextReference {
     this.continuedViewPermission = continuedViewPermission;
   }
 
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
   private Long id;
   private String firstName;
   private String lastName;
+  private String email;
   private boolean continuedViewPermission;
 }

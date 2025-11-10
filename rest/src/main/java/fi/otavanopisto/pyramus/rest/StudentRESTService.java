@@ -3795,10 +3795,16 @@ public class StudentRESTService extends AbstractRESTService {
     
     List<StudentParentRelation> result = new ArrayList<>(studentParentChilds.size());
     for (StudentParentChild studentParentChild : studentParentChilds) {
+      StudentParent studentParent = studentParentChild.getStudentParent();
+      boolean activeParent = studentParent.isActiveParentOf(student);
+      String email = studentParent.getPrimaryEmail() != null ? studentParent.getPrimaryEmail().getAddress() : null;
+
       result.add(new StudentParentRelation(
         studentParentChild.getId(),
-        studentParentChild.getStudentParent().getFirstName(),
-        studentParentChild.getStudentParent().getLastName(),
+        studentParent.getFirstName(),
+        studentParent.getLastName(),
+        email,
+        activeParent,
         studentParentChild.isContinuedViewPermission()
       ));
     }
@@ -3832,10 +3838,16 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentParentChild != null && studentParentChild.getStudent().getId().equals(student.getId())) {
       studentParentChild = studentParentController.updateContinuedViewPermission(studentParentChild, continuedViewPermission);
       
+      StudentParent studentParent = studentParentChild.getStudentParent();
+      boolean activeParent = studentParent.isActiveParentOf(student);
+      String email = studentParent.getPrimaryEmail() != null ? studentParent.getPrimaryEmail().getAddress() : null;
+      
       StudentParentRelation studentParentRelation = new StudentParentRelation(
         studentParentChild.getId(),
-        studentParentChild.getStudentParent().getFirstName(),
-        studentParentChild.getStudentParent().getLastName(),
+        studentParent.getFirstName(),
+        studentParent.getLastName(),
+        email,
+        activeParent,
         studentParentChild.isContinuedViewPermission()
       );
       return Response.ok().entity(studentParentRelation).build();
