@@ -1,22 +1,17 @@
 package fi.otavanopisto.pyramus.domainmodel.students;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -317,10 +312,6 @@ public class Student extends User implements ArchivableEntity {
     this.parentBillingDetails = parentBillingDetails;
   }
 
-  public List<StudentAdditionalContactInfo> getAdditionalContactInfos() {
-    return additionalContactInfos;
-  }
-
   private String nickname;
     
   @Lob
@@ -397,9 +388,4 @@ public class Student extends User implements ArchivableEntity {
   @Basic (fetch = FetchType.LAZY)
   private String parentBillingDetails;
   
-  @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinTable (name = "__StudentAdditionalContactInfos", joinColumns = @JoinColumn(name = "student"), inverseJoinColumns = @JoinColumn(name = "additionalContactInfo"))
-  @IndexedEmbedded
-  private List<StudentAdditionalContactInfo> additionalContactInfos = new ArrayList<>();
-
 }

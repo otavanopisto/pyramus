@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -44,6 +47,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
 import fi.otavanopisto.security.ContextReference;
 
 @Entity
@@ -206,6 +210,10 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
         .collect(Collectors.toSet());
   }
   
+  public List<UserAdditionalContactInfo> getAdditionalContactInfos() {
+    return additionalContactInfos;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="User")  
   @TableGenerator(name="User", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -245,5 +253,10 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   @Version
   @Column(nullable = false)
   private Long version;
+
+  @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinTable (name = "__UserAdditionalContactInfos", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "additionalContactInfo"))
+  @IndexedEmbedded
+  private List<UserAdditionalContactInfo> additionalContactInfos = new ArrayList<>();
 
 }

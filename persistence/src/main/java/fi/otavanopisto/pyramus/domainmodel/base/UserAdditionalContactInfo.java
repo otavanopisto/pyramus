@@ -1,11 +1,9 @@
-package fi.otavanopisto.pyramus.domainmodel.students;
+package fi.otavanopisto.pyramus.domainmodel.base;
 
 import javax.persistence.Entity;
 
-import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
-
 @Entity
-public class StudentAdditionalContactInfo extends TypedContactInfo {
+public class UserAdditionalContactInfo extends TypedContactInfo {
   
   public boolean isAllowStudyDiscussions() {
     return allowStudyDiscussions;

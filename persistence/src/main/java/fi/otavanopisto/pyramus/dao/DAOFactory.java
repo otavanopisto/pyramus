@@ -55,6 +55,7 @@ import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.base.TypedContactInfoDAO;
+import fi.otavanopisto.pyramus.dao.base.UserAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.changelog.ChangeLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.changelog.ChangeLogEntryEntityDAO;
 import fi.otavanopisto.pyramus.dao.changelog.ChangeLogEntryEntityPropertyDAO;
@@ -131,7 +132,6 @@ import fi.otavanopisto.pyramus.dao.resources.WorkResourceDAO;
 import fi.otavanopisto.pyramus.dao.security.EnvironmentRolePermissionDAO;
 import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryDAO;
@@ -661,8 +661,8 @@ public class DAOFactory {
     return (TypedContactInfoDAO) findByClass(TypedContactInfoDAO.class);
   }
   
-  public StudentAdditionalContactInfoDAO getStudentAdditionalContactInfoDAO() {
-    return (StudentAdditionalContactInfoDAO) findByClass(StudentAdditionalContactInfoDAO.class);
+  public UserAdditionalContactInfoDAO getStudentAdditionalContactInfoDAO() {
+    return (UserAdditionalContactInfoDAO) findByClass(UserAdditionalContactInfoDAO.class);
   }
   
   public ContactTypeDAO getContactTypeDAO() {

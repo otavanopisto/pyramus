@@ -20,8 +20,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
+import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentAdditionalContactInfo;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 import net.sf.json.JSONArray;
@@ -37,15 +37,15 @@ public class ContactInfoUtils {
    * @param contactInfoEditorName the parameter name used for the front end contact info editor
    * @param contactInfos the list of current contact infos to update
    */
-  public static void readAndUpdateStudentAdditionalContactInfos(RequestContext requestContext, String contactInfoEditorName, List<StudentAdditionalContactInfo> contactInfos) {
-    readAndUpdateTypedContactInfos(requestContext, contactInfoEditorName, contactInfos, new ContactInfoConstructor<StudentAdditionalContactInfo>() {
+  public static void readAndUpdateStudentAdditionalContactInfos(RequestContext requestContext, String contactInfoEditorName, List<UserAdditionalContactInfo> contactInfos) {
+    readAndUpdateTypedContactInfos(requestContext, contactInfoEditorName, contactInfos, new ContactInfoConstructor<UserAdditionalContactInfo>() {
       @Override
-      public StudentAdditionalContactInfo create(ContactType contactType) {
+      public UserAdditionalContactInfo create(ContactType contactType) {
         return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().create(contactType, false);
       }
 
       @Override
-      public StudentAdditionalContactInfo update(StudentAdditionalContactInfo contactInfo, ContactType contactType) {
+      public UserAdditionalContactInfo update(UserAdditionalContactInfo contactInfo, ContactType contactType) {
         return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().update(contactInfo, contactType, contactInfo.isAllowStudyDiscussions());
       }
     });
@@ -243,8 +243,8 @@ public class ContactInfoUtils {
         contactInfoJSON.put("typeId", contactInfo.getContactType() != null ? contactInfo.getContactType().getId() : null);
         contactInfoJSON.put("typeName", contactInfo.getContactType() != null ? contactInfo.getContactType().getName() : null);
         
-        if (contactInfo instanceof StudentAdditionalContactInfo) {
-          contactInfoJSON.put("allowStudyDiscussions", ((StudentAdditionalContactInfo) contactInfo).isAllowStudyDiscussions());
+        if (contactInfo instanceof UserAdditionalContactInfo) {
+          contactInfoJSON.put("allowStudyDiscussions", ((UserAdditionalContactInfo) contactInfo).isAllowStudyDiscussions());
         }
         
         JSONArray addressesJSON = new JSONArray();

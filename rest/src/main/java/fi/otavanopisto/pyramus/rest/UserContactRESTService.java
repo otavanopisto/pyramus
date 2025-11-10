@@ -15,13 +15,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import fi.otavanopisto.pyramus.dao.students.StudentAdditionalContactInfoDAO;
+import fi.otavanopisto.pyramus.dao.base.UserAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
+import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
@@ -43,7 +43,7 @@ public class UserContactRESTService extends AbstractRESTService {
   private UserController userController;
 
   @Inject
-  private StudentAdditionalContactInfoDAO studentAdditionalContactInfoDAO;
+  private UserAdditionalContactInfoDAO studentAdditionalContactInfoDAO;
   
   @Inject
   private RESTSecurity restSecurity;
@@ -128,7 +128,7 @@ public class UserContactRESTService extends AbstractRESTService {
     if (user instanceof Student) {
       Student student = (Student) user;
       
-      for (StudentAdditionalContactInfo additionalContactInfo : student.getAdditionalContactInfos()) {
+      for (UserAdditionalContactInfo additionalContactInfo : student.getAdditionalContactInfos()) {
         userContactList.add(restModel(additionalContactInfo));
       }
     }
@@ -159,7 +159,7 @@ public class UserContactRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("User is not a student").build();
     }
     
-    StudentAdditionalContactInfo studentAdditionalContactInfo = studentAdditionalContactInfoDAO.findById(contactInfoId);
+    UserAdditionalContactInfo studentAdditionalContactInfo = studentAdditionalContactInfoDAO.findById(contactInfoId);
     if (studentAdditionalContactInfo == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -174,7 +174,7 @@ public class UserContactRESTService extends AbstractRESTService {
     return Response.ok(restModel(studentAdditionalContactInfo)).build();
   }
   
-  private UserContact restModel(StudentAdditionalContactInfo additionalContactInfo) {
+  private UserContact restModel(UserAdditionalContactInfo additionalContactInfo) {
     UserContact userContact = new UserContact();
     userContact.setId(additionalContactInfo.getId());
     userContact.setContactType(additionalContactInfo.getContactType() != null ? additionalContactInfo.getContactType().getName() : null);

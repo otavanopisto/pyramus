@@ -54,9 +54,9 @@ import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.base.UserAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
@@ -86,10 +86,10 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCardActivity;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
@@ -1043,7 +1043,7 @@ public class ApplicationUtils {
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StudentParentInvitationDAO studentParentInvitationDAO = DAOFactory.getInstance().getStudentParentInvitationDAO();
-    StudentAdditionalContactInfoDAO additionalContactInfoDAO = DAOFactory.getInstance().getStudentAdditionalContactInfoDAO();
+    UserAdditionalContactInfoDAO additionalContactInfoDAO = DAOFactory.getInstance().getStudentAdditionalContactInfoDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -1226,9 +1226,9 @@ public class ApplicationUtils {
       ContactType contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
 
       // Guardian's contact infos for guardians 1-3
-      StudentAdditionalContactInfo underageContactInfo1 = null;
-      StudentAdditionalContactInfo underageContactInfo2 = null;
-      StudentAdditionalContactInfo underageContactInfo3 = null;
+      UserAdditionalContactInfo underageContactInfo1 = null;
+      UserAdditionalContactInfo underageContactInfo2 = null;
+      UserAdditionalContactInfo underageContactInfo3 = null;
       
       email = getFormValue(formData, "field-underage-email");
 
