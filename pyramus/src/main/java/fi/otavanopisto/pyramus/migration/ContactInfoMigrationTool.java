@@ -17,7 +17,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fi.otavanopisto.pyramus.dao.base.UserAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.migration.ContactInfoMigrationUserDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -31,7 +30,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 @TransactionManagement(TransactionManagementType.BEAN) 
 public class ContactInfoMigrationTool {
 
-  private final static int BATCHSIZE = 2;
+  private final static int BATCHSIZE = 10;
   
   @Inject
   private Logger logger;
