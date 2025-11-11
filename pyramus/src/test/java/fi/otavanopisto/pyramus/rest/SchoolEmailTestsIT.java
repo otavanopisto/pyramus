@@ -15,7 +15,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateSchoolEmail() {
-    Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
+    Email email = new Email(null, Boolean.FALSE, "bogus@norealmail.org");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -25,7 +25,6 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
     response.then()
       .body("id", not(is((Long) null)))
       .body("address", is(email.getAddress()))
-      .body("contactTypeId", is(email.getContactTypeId().intValue()))
       .body("defaultAddress", is( email.getDefaultAddress()));
       
     int id = response.body().jsonPath().getInt("id");
@@ -63,7 +62,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testDeleteSchoolEmail() {
-    Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
+    Email email = new Email(null, Boolean.FALSE, "bogus@norealmail.org");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -73,7 +72,6 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
     response.then()
       .body("id", not(is((Long) null)))
       .body("address", is(email.getAddress()))
-      .body("contactTypeId", is(email.getContactTypeId().intValue()))
       .body("defaultAddress", is( email.getDefaultAddress()));
       
     Long id = response.body().jsonPath().getLong("id");

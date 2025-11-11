@@ -17,7 +17,7 @@ public class SchoolAddressPermissionsTestsIT extends AbstractRESTPermissionsTest
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsCreateSchoolAddress(Role role) throws NoSuchFieldException {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
@@ -51,7 +51,7 @@ public class SchoolAddressPermissionsTestsIT extends AbstractRESTPermissionsTest
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsDeleteSchoolAddress(Role role) throws NoSuchFieldException {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")

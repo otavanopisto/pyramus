@@ -17,7 +17,7 @@ public class SchoolEmailPermissionsTestsIT extends AbstractRESTPermissionsTestJU
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsCreateSchoolEmail(Role role) throws NoSuchFieldException {
-    Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
+    Email email = new Email(null, Boolean.FALSE, "bogus@norealmail.org");
     
     Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
@@ -52,7 +52,7 @@ public class SchoolEmailPermissionsTestsIT extends AbstractRESTPermissionsTestJU
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsDeleteSchoolEmail(Role role) throws NoSuchFieldException {
-    Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
+    Email email = new Email(null, Boolean.FALSE, "bogus@norealmail.org");
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
