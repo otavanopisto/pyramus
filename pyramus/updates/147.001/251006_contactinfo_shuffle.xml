@@ -83,6 +83,10 @@
   </sql>
 
   <sql>
+    alter table School drop foreign key FK93464794C028436E;
+  </sql>
+
+  <sql>
     alter table School drop column contactInfo;
   </sql>
 
@@ -124,9 +128,17 @@
   </sql>
 
   <sql>
+    alter table Defaults drop foreign key FKo2u8jfh1xnae7vab3xwoamrnd;
+  </sql>
+
+  <sql>
     alter table Defaults drop column studentDefaultContactType;
   </sql>
   
+  <sql>
+    alter table Defaults drop foreign key FKqfam2uqi4wjws4m9blauq2q54;
+  </sql>
+
   <sql>
     alter table Defaults drop column userDefaultContactType;
   </sql>
