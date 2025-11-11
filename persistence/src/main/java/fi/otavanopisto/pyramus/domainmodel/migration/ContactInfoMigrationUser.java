@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.domainmodel.matriculation;
+package fi.otavanopisto.pyramus.domainmodel.migration;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

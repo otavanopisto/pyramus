@@ -9,7 +9,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.ContactInfoMigrationUser;
+import fi.otavanopisto.pyramus.domainmodel.migration.ContactInfoMigrationUser;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
