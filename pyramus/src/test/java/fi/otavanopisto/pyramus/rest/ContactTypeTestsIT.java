@@ -43,7 +43,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id.size()", is(1))
       .body("id[0]", is(1) )
-      .body("name[0]", is("Home" ))
+      .body("name[0]", is("Contact person" ))
       .body("archived[0]", is( false ));
   }
   
@@ -54,7 +54,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(200)
       .body("id", is(1) )
-      .body("name", is("Home" ))
+      .body("name", is("Contact person" ))
       .body("archived", is( false ));
   }
   
