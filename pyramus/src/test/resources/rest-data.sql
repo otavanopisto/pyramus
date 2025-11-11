@@ -351,7 +351,7 @@ values
   (4, 'http://www.student2webpage.com', 4, 1, 0, 1);
   
 insert into 
-  School (id, name, code, contactInfo, version, field, archived)
+  School (id, name, code, version, field, archived)
 values 
   (1, 'School #1', 'TST1', 1, 1, false),
   (2, 'School #2', 'TST2', 1, 1, false);
