@@ -142,5 +142,11 @@
   <sql>
     alter table Defaults drop column userDefaultContactType;
   </sql>
+  
+  <sql>
+		update ContactType 
+		set archived = true
+		where nonUnique = false;
+  </sql>
 
 </update>
