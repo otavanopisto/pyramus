@@ -3,12 +3,15 @@ package fi.otavanopisto.pyramus.util;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.RequestContext;
+import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
@@ -22,6 +25,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.TypedContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 import net.sf.json.JSONArray;
@@ -135,7 +139,12 @@ public class ContactInfoUtils {
           }
           else if (addressId > 0) {
             Address address = contactInfo.getAddresses().stream().filter(addr -> addr.getId().equals(addressId)).findFirst().orElse(null);
-            // TODO not found?
+            if (address == null) {
+              Locale locale = requestContext.getRequest().getLocale();
+              String msg = Messages.getInstance().getText(locale, "generic.errors.contactInfos.entityNotFound", 
+                  new Object[] { String.format("Address: %d", addressId)});
+              throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, msg);
+            }
             existingAddresses.add(addressId);
             addressDAO.update(address, defaultAddress, name, street, postal, city, country);
           }
@@ -165,7 +174,12 @@ public class ContactInfoUtils {
           }
           else if (emailId > 0) {
             Email email = contactInfo.getEmails().stream().filter(ema -> ema.getId().equals(emailId)).findFirst().orElse(null);
-            // TODO not found?
+            if (email == null) {
+              Locale locale = requestContext.getRequest().getLocale();
+              String msg = Messages.getInstance().getText(locale, "generic.errors.contactInfos.entityNotFound", 
+                  new Object[] { String.format("Email: %d", emailId)});
+              throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, msg);
+            }
             existingEmails.add(emailId);
             emailDAO.update(email, defaultAddress, emailAddress);
           }
@@ -196,7 +210,12 @@ public class ContactInfoUtils {
           }
           else if (phoneId > 0) {
             PhoneNumber phoneNumber = contactInfo.getPhoneNumbers().stream().filter(phonenum -> phonenum.getId().equals(phoneId)).findFirst().orElse(null);
-            // TODO not found?
+            if (phoneNumber == null) {
+              Locale locale = requestContext.getRequest().getLocale();
+              String msg = Messages.getInstance().getText(locale, "generic.errors.contactInfos.entityNotFound", 
+                  new Object[] { String.format("PhoneNumber: %d", phoneId)});
+              throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, msg);
+            }
             phoneNumberDAO.update(phoneNumber, defaultNumber, number);
             existingPhoneNumbers.add(phoneId);
           }
