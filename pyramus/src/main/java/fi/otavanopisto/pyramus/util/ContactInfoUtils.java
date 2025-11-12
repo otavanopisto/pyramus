@@ -119,7 +119,7 @@ public class ContactInfoUtils {
       Set<Long> existingAddresses = new HashSet<>();
       PyramusIxTableFacade addressTable = PyramusIxTableFacade.from(requestContext, String.format("%s.%d.addressTable", contactInfoEditorName, contactInfoIndex));
       for (PyramusIxTableRowFacade addressRow : addressTable.rows()) {
-        Long addressId = addressRow.getLong("addressId");
+        long addressId = addressRow.getLong("addressId", -1);
         Boolean defaultAddress = addressRow.getBoolean("defaultAddress");
         String name = addressRow.getString("name");
         String street = addressRow.getString("street");
@@ -154,7 +154,7 @@ public class ContactInfoUtils {
       Set<Long> existingEmails = new HashSet<>();
       PyramusIxTableFacade emailTable = PyramusIxTableFacade.from(requestContext, String.format("%s.%d.emailTable", contactInfoEditorName, contactInfoIndex));
       for (PyramusIxTableRowFacade emailRow : emailTable.rows()) {
-        Long emailId = emailRow.getLong("emailId");
+        long emailId = emailRow.getLong("emailId", -1);
         Boolean defaultAddress = emailRow.getBoolean("defaultAddress");
         String emailAddress = StringUtils.trim(emailRow.getString("email"));
         
@@ -185,7 +185,7 @@ public class ContactInfoUtils {
       Set<Long> existingPhoneNumbers = new HashSet<>();
       PyramusIxTableFacade phoneTable = PyramusIxTableFacade.from(requestContext, String.format("%s.%d.phoneTable", contactInfoEditorName, contactInfoIndex));
       for (PyramusIxTableRowFacade phoneRow : phoneTable.rows()) {
-        Long phoneId = phoneRow.getLong("phoneId");
+        long phoneId = phoneRow.getLong("phoneId", -1);
         Boolean defaultNumber = phoneRow.getBoolean("defaultNumber");
         String number = StringUtils.trim(phoneRow.getString("phone"));
         
