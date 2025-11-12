@@ -22,7 +22,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
-import fi.otavanopisto.pyramus.domainmodel.matriculation.ContactInfoMigrationUser;
+import fi.otavanopisto.pyramus.domainmodel.migration.ContactInfoMigrationUser;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Startup
@@ -109,7 +109,7 @@ public class ContactInfoMigrationTool {
                   newContactInfo = additionalContactInfoDAO.create(email.getContactType(), false);
                 }
                 
-                newContactInfo.addEmail(email);
+                newContactInfo.addEmail(migrationDAO.setAsDefault(email));
               }
             }
             
@@ -122,7 +122,7 @@ public class ContactInfoMigrationTool {
                   newContactInfo = additionalContactInfoDAO.create(address.getContactType(), false);
                 }
                 
-                newContactInfo.addAddress(address);
+                newContactInfo.addAddress(migrationDAO.setAsDefault(address));
               }
             }
             
@@ -134,8 +134,8 @@ public class ContactInfoMigrationTool {
                 if (newContactInfo == null) {
                   newContactInfo = additionalContactInfoDAO.create(phoneNumber.getContactType(), false);
                 }
-                
-                newContactInfo.addPhoneNumber(phoneNumber);
+
+                newContactInfo.addPhoneNumber(migrationDAO.setAsDefault(phoneNumber));
               }
             }
             
