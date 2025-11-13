@@ -36,8 +36,11 @@ function initializeContactInfoView(container, contactInfos) {
         contactInfo.addresses.forEach((address) => {
           dataContainer.appendChild(new Element("div").update(address.name));
           dataContainer.appendChild(new Element("div").update(address.streetAddress));
-          dataContainer.appendChild(new Element("div").update(address.city));
-          dataContainer.appendChild(new Element("div").update(address.postalCode));
+          var postalAndCity = address.postalCode ? address.postalCode + " " : "";
+          if (address.city) {
+            postalAndCity += address.city;
+          }
+          dataContainer.appendChild(new Element("div").update(postalAndCity));
           dataContainer.appendChild(new Element("div").update(address.country));
         });
       }
