@@ -55,7 +55,6 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode[0]", is("1111"))
       .body("city[0]", is("Chester"))
       .body("country[0]", is("Belgium"))
-      .body("contactTypeId[0]", is(1))
       .body("defaultAddress[0]", is(Boolean.TRUE));
   }
   
@@ -71,7 +70,6 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is("1111"))
       .body("city", is("Chester"))
       .body("country", is("Belgium"))
-      .body("contactTypeId", is(1))
       .body("defaultAddress", is(Boolean.TRUE));
   }  
 

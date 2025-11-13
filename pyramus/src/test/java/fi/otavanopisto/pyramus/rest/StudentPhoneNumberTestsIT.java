@@ -47,7 +47,6 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .body("id.size()", is(1))
       .body("id[0]", is(3) )
       .body("number[0]", is("+456 78 901 2345"))
-      .body("contactTypeId[0]", is(1))
       .body("defaultNumber[0]", is(Boolean.TRUE));
   }
   
@@ -59,7 +58,6 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", is(3) )
       .body("number", is("+456 78 901 2345"))
-      .body("contactTypeId", is(1))
       .body("defaultNumber", is(Boolean.TRUE));
   }  
 

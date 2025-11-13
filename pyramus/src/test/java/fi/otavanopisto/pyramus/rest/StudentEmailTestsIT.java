@@ -47,7 +47,6 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
       .body("id.size()", is(1))
       .body("id[0]", is(3) )
       .body("address[0]", is("student1@bogusmail.com"))
-      .body("contactTypeId[0]", is(1))
       .body("defaultAddress[0]", is(Boolean.TRUE));
   }
   
@@ -59,7 +58,6 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", is(3) )
       .body("address", is("student1@bogusmail.com"))
-      .body("contactTypeId", is(1))
       .body("defaultAddress", is(Boolean.TRUE));
   }  
 

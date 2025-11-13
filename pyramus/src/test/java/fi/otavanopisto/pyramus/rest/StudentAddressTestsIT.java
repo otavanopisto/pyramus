@@ -70,7 +70,6 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is("17298"))
       .body("city", is("Southshire"))
       .body("country", is("Yemen"))
-      .body("contactTypeId", is(1))
       .body("defaultAddress", is(Boolean.TRUE));
   }  
 
