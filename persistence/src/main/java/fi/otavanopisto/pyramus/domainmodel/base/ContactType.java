@@ -53,15 +53,18 @@ public class ContactType implements ArchivableEntity {
    * 
    * @return true if the Contact Type needs to have unique email values
    */
+  @Deprecated
   @Transient
   public boolean isUniqueEmails() {
     return !Boolean.TRUE.equals(getNonUnique());
   }
   
+  @Deprecated
   public Boolean getNonUnique() {
     return nonUnique;
   }
 
+  @Deprecated
   public void setNonUnique(Boolean nonUnique) {
     this.nonUnique = nonUnique;
   }

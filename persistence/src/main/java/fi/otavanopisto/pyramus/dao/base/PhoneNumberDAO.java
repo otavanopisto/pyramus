@@ -10,7 +10,6 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -18,12 +17,11 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 @Stateless
 public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
 
-  public PhoneNumber create(ContactInfo contactInfo, ContactType contactType, Boolean defaultNumber, String number) {
+  public PhoneNumber create(ContactInfo contactInfo, Boolean defaultNumber, String number) {
     EntityManager entityManager = getEntityManager();
 
     PhoneNumber phoneNumber = new PhoneNumber();
     phoneNumber.setContactInfo(contactInfo);
-    phoneNumber.setContactType(contactType);
     phoneNumber.setDefaultNumber(defaultNumber);
     phoneNumber.setNumber(number);
     entityManager.persist(phoneNumber);
@@ -40,7 +38,7 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
     return phoneNumber;
   }
 
-  public PhoneNumber update(PhoneNumber phoneNumber, ContactType contactType, Boolean defaultNumber, String number) {
+  public PhoneNumber update(PhoneNumber phoneNumber, Boolean defaultNumber, String number) {
     EntityManager entityManager = getEntityManager();
 
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
@@ -49,7 +47,6 @@ public class PhoneNumberDAO extends PyramusEntityDAO<PhoneNumber> {
       auditUpdate(user.getPersonId(), user.getId(), phoneNumber, PhoneNumber_.number, number, true);
     }
 
-    phoneNumber.setContactType(contactType);
     phoneNumber.setDefaultNumber(defaultNumber);
     phoneNumber.setNumber(number);
     entityManager.persist(phoneNumber);

@@ -16,7 +16,7 @@ values
 insert into 
   ContactType (id, name, version, nonUnique, archived)
 values 
-  (1, 'Home', 1, false, false);
+  (1, 'Contact person', 1, true, false);
 
 insert into 
   GradingScale (id, archived, name, description, version)
@@ -39,43 +39,43 @@ values
   (9, 10, false, '10', 'grade for testing #9', true, 'qualification #1', 3, 1, 1);
   
 insert into 
-  ContactInfo (id, additionalInfo, version)
-values   
-  (1, 'For test school #1', 1),
-  (2, 'For test school #2', 1),
-  (3, 'For test student #3', 1),
-  (4, 'For test student #4', 1),
-  (5, 'Test Guest #1', 1),
-  (6, 'Test Guest #2', 1),
-  (7, 'Test User  #1', 1),
-  (8, 'Test Manager #1', 1),
-  (9, 'Test Administrator #1', 1),
-  (10, 'Test Student #1', 1),
-  (11, 'Trusted System', 1),
-  (12, 'Study Guider', 1),
-  (13, 'Teacher', 1),
-  (14, 'Study Programme Leader', 1),
-  (15, 'Test Student #2', 1),
-  (16, 'Closed', 1),
-  (17, 'Student Parent', 1);
+  ContactInfo (id, DTYPE, contactType, additionalInfo, version)
+values
+  (1, 'TypedContactInfo', 1, 'For test school #1', 1),
+  (2, 'TypedContactInfo', 1, 'For test school #2', 1),
+  (3, 'PersonalContactInfo', null, 'For test student #3', 1),
+  (4, 'PersonalContactInfo', null, 'For test student #4', 1),
+  (5, 'PersonalContactInfo', null, 'Test Guest #1', 1),
+  (6, 'PersonalContactInfo', null, 'Test Guest #2', 1),
+  (7, 'PersonalContactInfo', null, 'Test User  #1', 1),
+  (8, 'PersonalContactInfo', null, 'Test Manager #1', 1),
+  (9, 'PersonalContactInfo', null, 'Test Administrator #1', 1),
+  (10, 'PersonalContactInfo', null, 'Test Student #1', 1),
+  (11, 'PersonalContactInfo', null, 'Trusted System', 1),
+  (12, 'PersonalContactInfo', null, 'Study Guider', 1),
+  (13, 'PersonalContactInfo', null, 'Teacher', 1),
+  (14, 'PersonalContactInfo', null, 'Study Programme Leader', 1),
+  (15, 'PersonalContactInfo', null, 'Test Student #2', 1),
+  (16, 'PersonalContactInfo', null, 'Closed', 1),
+  (17, 'PersonalContactInfo', null, 'Student Parent', 1);
   
 insert into 
-  Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
+  Email (id, address, defaultAddress, contactInfo, indexColumn, version)
 values 
-  (1, 'school1@bogusmail.com', true, 1, 1, 0, 1),
-  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1),
-  (3, 'student1@bogusmail.com', true, 3, 1, 0, 1),
-  (4, 'student2@bogusmail.com', true, 4, 1, 0, 1),
-  (5, 'guest1@bogusmail.com', true, 5, 1, 0, 1),
-  (6, 'guest2@bogusmail.com', true, 6, 1, 0, 1),
-  (7, 'user1@bogusmail.com', true, 7, 1, 0, 1),
-  (8, 'manager1@bogusmail.com', true, 8, 1, 0, 1),
-  (9, 'administrator1@bogusmail.com', true, 9, 1, 0, 1),
-  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1),
-  (11, 'trusted@bogusmail.com', true, 11, 1, 0, 1),
-  (12, 'guider@bogusmail.com', true, 12, 1, 0, 1),
-  (13, 'teacher@bogusmail.com', true, 13, 1, 0, 1),
-  (14, 'stuproleader@bogusmail.com', true, 14, 1, 0, 1);
+  (1, 'school1@bogusmail.com', true, 1, 0, 1),
+  (2, 'school2@bogusmail.com', true, 2, 0, 1),
+  (3, 'student1@bogusmail.com', true, 3, 0, 1),
+  (4, 'student2@bogusmail.com', true, 4, 0, 1),
+  (5, 'guest1@bogusmail.com', true, 5, 0, 1),
+  (6, 'guest2@bogusmail.com', true, 6, 0, 1),
+  (7, 'user1@bogusmail.com', true, 7, 0, 1),
+  (8, 'manager1@bogusmail.com', true, 8, 0, 1),
+  (9, 'administrator1@bogusmail.com', true, 9, 0, 1),
+  (10, 'student1@bogusmail.com', true, 10, 0, 1),
+  (11, 'trusted@bogusmail.com', true, 11, 0, 1),
+  (12, 'guider@bogusmail.com', true, 12, 0, 1),
+  (13, 'teacher@bogusmail.com', true, 13, 0, 1),
+  (14, 'stuproleader@bogusmail.com', true, 14, 0, 1);
 
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
@@ -314,28 +314,28 @@ values
   (2, 'Field #2', false);
   
 insert into 
-  Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)
+  Address (id, city, country, postalCode, streetAddress, name, contactInfo, indexColumn, defaultAddress, version)
 values 
-  (1, 'Eastbury', 'Senegal', '76763-3962', '2636 Johnston Harbors', null, 1, 1, 0, true, 1),
-  (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 1, 0, true, 1),
-  (3, 'Southshire', 'Yemen', '17298', '6967 Bailee Mission', null, 3, 1, 0, true, 1),
-  (4, 'Northchester', 'Cuba', '97733', '556 Lupe Mountains', null, 4, 1, 0, true, 1),
-  (5, 'Shire', 'New-Zealand', '17298', '123 Mission', null, 7, 1, 0, true, 1),
-  (6, 'Chester', 'Belgium', '1111', '456 Mountains', null, 8, 1, 0, true, 1),
-  (7, 'Ushire', 'China', '17298', '123 Missions', null, 9, 1, 0, true, 1),
-  (8, 'Kishter', 'Brazil', '1111', '456 Tains', null, 10, 1, 0, true, 1);
+  (1, 'Eastbury', 'Senegal', '76763-3962', '2636 Johnston Harbors', null, 1, 0, true, 1),
+  (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 0, true, 1),
+  (3, 'Southshire', 'Yemen', '17298', '6967 Bailee Mission', null, 3, 0, true, 1),
+  (4, 'Northchester', 'Cuba', '97733', '556 Lupe Mountains', null, 4, 0, true, 1),
+  (5, 'Shire', 'New-Zealand', '17298', '123 Mission', null, 7, 0, true, 1),
+  (6, 'Chester', 'Belgium', '1111', '456 Mountains', null, 8, 0, true, 1),
+  (7, 'Ushire', 'China', '17298', '123 Missions', null, 9, 0, true, 1),
+  (8, 'Kishter', 'Brazil', '1111', '456 Tains', null, 10, 0, true, 1);
   
 insert into 
-  PhoneNumber (id, number, defaultNumber, contactInfo, contactType, indexColumn, version)
+  PhoneNumber (id, number, defaultNumber, contactInfo, indexColumn, version)
 values 
-  (1, '+123 45 678 9012', true, 1, 1, 0, 1),
-  (2, '+234 56 789 0123', true, 2, 1, 0, 1),
-  (3, '+456 78 901 2345', true, 3, 1, 0, 1),
-  (4, '+567 89 012 3456', true, 4, 1, 0, 1),
-  (5, '+456 78 901 2347', true, 7, 1, 0, 1),
-  (6, '+567 89 012 3458', true, 8, 1, 0, 1),
-  (7, '+56 78 901 2347', true, 9, 1, 0, 1),
-  (8, '+67 89 012 3458', true, 10, 1, 0, 1);
+  (1, '+123 45 678 9012', true, 1, 0, 1),
+  (2, '+234 56 789 0123', true, 2, 0, 1),
+  (3, '+456 78 901 2345', true, 3, 0, 1),
+  (4, '+567 89 012 3456', true, 4, 0, 1),
+  (5, '+456 78 901 2347', true, 7, 0, 1),
+  (6, '+567 89 012 3458', true, 8, 0, 1),
+  (7, '+56 78 901 2347', true, 9, 0, 1),
+  (8, '+67 89 012 3458', true, 10, 0, 1);
   
 insert into
   ContactURLType (id, name, version, archived)
@@ -351,10 +351,16 @@ values
   (4, 'http://www.student2webpage.com', 4, 1, 0, 1);
   
 insert into 
-  School (id, name, code, contactInfo, version, field, archived)
+  School (id, name, code, version, field, archived)
 values 
-  (1, 'School #1', 'TST1', 1, 1, 1, false),
-  (2, 'School #2', 'TST2', 2, 1, 1, false);
+  (1, 'School #1', 'TST1', 1, 1, false),
+  (2, 'School #2', 'TST2', 1, 1, false);
+
+insert into
+  __SchoolContactInfos (school, typedContactInfo)
+values
+  (1, 1),
+  (2, 2);
   
 insert into 
   SchoolVariableKey (id, userEditable, variableKey, variableName, variableType, version)
@@ -552,9 +558,9 @@ values
   (1, 5, 1);
 
 insert into Defaults 
-  (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization, studentDefaultContactType, userDefaultContactType)
+  (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization)
 values
-  (1, 1, 1, 1, 1, 1, 1, 1, 1);
+  (1, 1, 1, 1, 1, 1, 1);
 
 DELETE FROM hibernate_sequences WHERE sequence_name = 'CourseModule';
 INSERT INTO hibernate_sequences (sequence_name, sequence_next_hi_value) 

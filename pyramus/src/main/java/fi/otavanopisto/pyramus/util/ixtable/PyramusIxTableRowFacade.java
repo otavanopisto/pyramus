@@ -32,6 +32,18 @@ public class PyramusIxTableRowFacade {
     return getRequestContext().getLong(getRowFieldName(row, field));
   }
 
+  /**
+   * Get named parameter value as long. If it doesn't exist or
+   * cannot be parsed to long, returns default value.
+   * 
+   * @param field name of the parameter
+   * @param defaultValue default value if the parameter doesn't exist or cannot be parsed to long
+   * @return long value of the parameter or default value in case the parameter value doesn't exist
+   */
+  public long getLong(String field, long defaultValue) {
+    return getRequestContext().getLong(getRowFieldName(row, field), defaultValue);
+  }
+
   public String getString(String field) {
     return getRequestContext().getString(getRowFieldName(row, field));
   }
