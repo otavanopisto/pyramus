@@ -15,7 +15,7 @@ function onLoad(event) {
   var tabControl = new IxProtoTabs($('tabs'));
   setupTags();
   
-  initializeContactInfoEditor($('contactInfos'), 'contactInfos', contactTypes);
+  initializeContactInfoEditor($('contactInfos'), contactTypes);
   
   // Variables
 
