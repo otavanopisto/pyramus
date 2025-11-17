@@ -126,6 +126,13 @@ public class HopsController {
     }
     
     // Opiskelijan ainevalinnat
+    //
+    // Jatkokehitysideana olisi parempi, jos opiskelijalla olisi vain asetus chosenSubjects
+    // (pilkkueroteltu lista valituista ainekoodeista), jonka lisäksi sekä lukiolle että
+    // perusopetukselle erilliset ainevalintakonffit about tyyliin
+    //
+    // nativeLanguageChoices: ÄIM,ÄI,S2
+    // mathChoices: MAA,MAB
     
     boolean hasNativeLanguage = false;
     boolean hasMath = false;
