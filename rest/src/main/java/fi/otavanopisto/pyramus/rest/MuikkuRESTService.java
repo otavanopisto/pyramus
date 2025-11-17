@@ -83,6 +83,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.hops.HopsController;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -135,6 +136,9 @@ public class MuikkuRESTService {
 
   @Inject
   private StudentController studentController;
+  
+  @Inject
+  private HopsController hopsController;
 
   @Inject
   private StudentGroupController studentGroupController;
@@ -165,6 +169,31 @@ public class MuikkuRESTService {
   
   @Inject
   private CreditLinkDAO creditLinkDAO;
+  
+  @Path("/students/{ID:[0-9]*}/courseMatrix")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getCourseMatrix(@PathParam("ID") Long id) {
+    
+    // Access check
+    
+    Student student = studentController.findStudentById(id);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEMATRIX, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    // Serve the request
+    
+    return Response.ok().entity(hopsController.getCourseMatrix(student)).build();
+  }
   
   @Path("/students/{ID:[0-9]*}/studyActivity")
   @GET
