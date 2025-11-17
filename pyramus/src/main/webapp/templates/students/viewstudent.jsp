@@ -2786,11 +2786,11 @@
 
                   <c:if test="${!empty student.additionalContactInfos}">
                     <div class="genericFormSection">
-                      <jsp:include
-                        page="/templates/generic/fragments/formtitle.jsp">
-                        <jsp:param name="titleLocale" value="generic.forms.contactInfosTitle" />
-                        <jsp:param name="helpLocale" value="generic.forms.contactInfosHelp" />
-                      </jsp:include>
+<%--                       <jsp:include --%>
+<%--                         page="/templates/generic/fragments/formtitle.jsp"> --%>
+<%--                         <jsp:param name="titleLocale" value="generic.forms.contactInfosTitle" /> --%>
+<%--                         <jsp:param name="helpLocale" value="generic.forms.contactInfosHelp" /> --%>
+<%--                       </jsp:include> --%>
                       
                       <div id="additionalContactInfos.${student.id}"></div>
                     </div>

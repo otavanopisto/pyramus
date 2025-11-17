@@ -15,7 +15,7 @@ function getContactInfoEditors() {
 function initializeContactInfoView(container, contactInfos) {
   if (contactInfos) {
     contactInfos.forEach((contactInfo) => {
-      var contactInfoContainer = new Element("div", { className: "genericViewInfoWapper" });
+      var contactInfoContainer = new Element("div", { className: "genericViewInfoWapper genericViewInfoWapper--student-view" });
       container.appendChild(contactInfoContainer);
       var sectionContainer = new Element("div", { className: "genericFormSection" });
       contactInfoContainer.appendChild(sectionContainer);
@@ -119,7 +119,7 @@ IxTypedContactInfoEditor = Class.create({
     var contactInfoIndex = container.childElementCount;
     var contactInfoID = this._containerId + "." + contactInfoIndex;
     
-    var rowElem = new Element("div", { id: contactInfoID, className: "genericViewInfoWapper" });
+    var rowElem = new Element("div", { id: contactInfoID, className: "genericViewInfoWapper genericViewInfoWapper--student-edit" });
     container.appendChild(rowElem);
     
     var contactInfoIdElem = new Element("input", { type: "hidden", name: contactInfoID + ".id", value: (data ? data.id : "-1") });
