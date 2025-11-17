@@ -371,7 +371,10 @@ a[target="_blank"]::after {
 }
 
 .contactInfoAllowStudyDiscussions {
-  background: #FFDDDD;
+  background: #FBC6ED;
+  padding: 4px;
+  border-radius: 3px;
+  font-weight: bold;
 }
 
 .viewStudentProject {
