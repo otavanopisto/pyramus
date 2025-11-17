@@ -47,7 +47,7 @@ public class HopsController {
   private static final String PK = "peruskoulu";
   private static final String OPS_LUKIO = "OPS 2021";
   private static final String OPS_PK = "OPS 2018";
-  private static final String SUBJECTS_CHOSEN = "hops.chosenSubjects";
+  private static final String SUBJECTS_CHOICE = "hops.choiceSubjects";
   private static final String SUBJECTS_HIDDEN = "hops.hiddenSubjects";
   
   public HopsCourseMatrix getCourseMatrix(Student student) {
@@ -55,11 +55,11 @@ public class HopsController {
     
     // Listat ainevalinta-aineista ja oletuksena piilotettavista aineista
     
-    String chosenStr = SettingUtils.getSettingValue(SUBJECTS_CHOSEN);
-    Set<String> chosenSubjects = new HashSet<>();
-    StringTokenizer st = new StringTokenizer(chosenStr, ",");
+    String choiceStr = SettingUtils.getSettingValue(SUBJECTS_CHOICE);
+    Set<String> choiceSubjects = new HashSet<>();
+    StringTokenizer st = new StringTokenizer(choiceStr, ",");
     while (st.hasMoreTokens()) {
-      chosenSubjects.add(st.nextToken());
+      choiceSubjects.add(st.nextToken());
     }
     String hiddenStr = SettingUtils.getSettingValue(SUBJECTS_HIDDEN);
     Set<String> hiddenSubjects = new HashSet<>();
@@ -135,39 +135,39 @@ public class HopsController {
     boolean hasReligion = false;
     boolean hasPrimaryForeignLangauge = false;
     boolean hasSecondaryForeignLanguage = false;
-    Set<String> studentChosenSubjects = new HashSet<>();
+    Set<String> chosenSubjects = new HashSet<>();
     String s = userVariableDAO.findByUserAndKey(student, "lukioAidinkieli");
     if (s != null) {
       hasNativeLanguage = true;
-      studentChosenSubjects.add(s);
+      chosenSubjects.add(s);
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
     if (s != null) {
       hasMath = true;
-      studentChosenSubjects.add(s);
+      chosenSubjects.add(s);
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioUskonto");
     if (s != null) {
       hasReligion = true;
-      studentChosenSubjects.add(s);
+      chosenSubjects.add(s);
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliA");
     if (s != null) {
       hasPrimaryForeignLangauge = true;
-      studentChosenSubjects.add(s);
+      chosenSubjects.add(s);
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB1");
     if (s != null) {
       hasSecondaryForeignLanguage = true;
-      studentChosenSubjects.add(s);
+      chosenSubjects.add(s);
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB2");
     if (s != null) {
-      studentChosenSubjects.add(s);
+      chosenSubjects.add(s);
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB3");
     if (s != null) {
-      studentChosenSubjects.add(s);
+      chosenSubjects.add(s);
     }
     
     // Nillitystä puuttuvista ainevalinnoista
@@ -219,7 +219,7 @@ public class HopsController {
       
       // Jos aine on ainevalinta-aine mutta ei opiskelijan valitsema, ei näytetä
       
-      if (chosenSubjects.contains(subject) && !studentChosenSubjects.contains(subject)) {
+      if (choiceSubjects.contains(subject) && !chosenSubjects.contains(subject)) {
         matrix.removeSubject(subject);
       }
       
