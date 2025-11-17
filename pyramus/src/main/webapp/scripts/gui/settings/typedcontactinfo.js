@@ -95,7 +95,10 @@ IxTypedContactInfoEditor = Class.create({
       contactInfoListElem.setAttribute("data-typedContactInfosEditor-id", container.id);
     }
   
-    container.appendChild(addNewRowElem);
+    var sectionElem = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
+    sectionElem.appendChild(addNewRowElem);;
+    
+    container.appendChild(sectionElem);
     container.appendChild(contactInfoListElem);
     container.appendChild(contactInfoCountElem);
   
@@ -118,8 +121,6 @@ IxTypedContactInfoEditor = Class.create({
     
     var rowElem = new Element("div", { id: contactInfoID, className: "genericViewInfoWapper" });
     container.appendChild(rowElem);
-
-    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("typedcontactinfo.contactType")));
     
     var contactInfoIdElem = new Element("input", { type: "hidden", name: contactInfoID + ".id", value: (data ? data.id : "-1") });
     rowElem.appendChild(contactInfoIdElem);
@@ -133,19 +134,29 @@ IxTypedContactInfoEditor = Class.create({
       typeSelector.value = data.typeId;
     }
     
-    rowElem.appendChild(typeSelector);
+    var sectionElemTypes = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
+    sectionElemTypes.appendChild(this._initializeContactInfoTitle(getLocale().getText("typedcontactinfo.contactType")));
+    sectionElemTypes.appendChild(typeSelector);
+    rowElem.appendChild(sectionElemTypes);
     
     var addresses = new Element("div", { id: contactInfoID + ".addresses" });
     var emails = new Element("div", { id: contactInfoID + ".emails" });
     var phonenumbers = new Element("div", { id: contactInfoID + ".phonenumbers" });
-
-    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.addresses")));
-    rowElem.appendChild(addresses);
-    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.emails")));
-    rowElem.appendChild(emails);
-    rowElem.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.phoneNumbers")));
-    rowElem.appendChild(phonenumbers);
     
+    var sectionElemAddresses = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
+    sectionElemAddresses.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.addresses")));
+    sectionElemAddresses.appendChild(addresses);
+    rowElem.appendChild(sectionElemAddresses);
+    
+    var sectionElemEmails = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
+    sectionElemEmails.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.emails")));
+    sectionElemEmails.appendChild(emails);
+    rowElem.appendChild(sectionElemEmails);
+    
+    var sectionElemPhoneNumbers = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
+    sectionElemPhoneNumbers.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.phoneNumbers")));
+    sectionElemPhoneNumbers.appendChild(phonenumbers);
+    rowElem.appendChild(sectionElemPhoneNumbers);
     
     var emailTable = new IxTable($(contactInfoID + ".emails"), {
       id : contactInfoID + ".emailTable",

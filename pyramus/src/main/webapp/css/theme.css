@@ -181,7 +181,7 @@ a[target="_blank"]::after {
   padding:4px 10px;
   margin-bottom:10px;
   position:relative;
-  width:48%;
+  width:auto;
 }
 
 .genericViewFormDataText{
