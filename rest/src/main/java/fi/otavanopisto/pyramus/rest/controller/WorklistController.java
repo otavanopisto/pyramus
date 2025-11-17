@@ -111,11 +111,11 @@ public class WorklistController {
     CourseBillingRestModel courseBillingRestModel = getCourseBillingRestModel();
     if (courseBillingRestModel != null) {
       String type = courseModule.getSubject() != null && courseModule.getSubject().getEducationType() != null
-          ? courseModule.getSubject().getEducationType().getName() : null;
-      if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_PERUSOPETUS)) {
+          ? courseModule.getSubject().getEducationType().getCode() : null;
+      if (StringUtils.equalsIgnoreCase(type, PyramusConsts.EDUCATION_TYPE_PK)) {
         return new WorklistCoursePrice(courseBillingRestModel.getElementaryPrice(), courseBillingRestModel.getElementaryHalfPrice());
       }
-      else if (StringUtils.equalsIgnoreCase(type, PyramusConsts.SUBJECT_LUKIO)) {
+      else if (StringUtils.equalsIgnoreCase(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
         String symbol = courseModule.getCourseLength().getUnit().getSymbol();
         if (StringUtils.equals(symbol, PyramusConsts.TIMEUNIT_OP)) {
           // pituus opintopisteinä 

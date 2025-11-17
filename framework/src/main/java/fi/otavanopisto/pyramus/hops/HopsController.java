@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
@@ -43,10 +44,6 @@ public class HopsController {
   @Inject
   private UserVariableDAO userVariableDAO;
   
-  private static final String LUKIO = "lukio";
-  private static final String PK = "peruskoulu";
-  private static final String OPS_LUKIO = "OPS 2021";
-  private static final String OPS_PK = "OPS 2018";
   private static final String SUBJECTS_CHOICE = "hops.choiceSubjects";
   private static final String SUBJECTS_HIDDEN = "hops.hiddenSubjects";
   
@@ -71,7 +68,7 @@ public class HopsController {
     // Onko opiskelijalla opetussuunnitelma ja onko se joko OPS 2021 tai OPS 2018
 
     String ops = student.getCurriculum().getName();
-    if (StringUtils.isEmpty(ops) || !StringUtils.equalsAny(ops, OPS_LUKIO, OPS_PK)) {
+    if (StringUtils.isEmpty(ops) || !StringUtils.equalsAny(ops, PyramusConsts.OPS_2021, PyramusConsts.OPS_2018)) {
       matrix.addProblem(HopsCourseMatrixProblem.INCOMPATIBLE_STUDENT);
       return matrix;
     }
@@ -79,21 +76,21 @@ public class HopsController {
     // Onko opiskelijan koulutusaste lukio tai peruskoulu
     
     String type = student.getStudyProgramme().getCategory().getEducationType().getCode();
-    if (!StringUtils.equalsAny(type, LUKIO, PK)) {
+    if (!StringUtils.equalsAny(type, PyramusConsts.EDUCATION_TYPE_LUKIO, PyramusConsts.EDUCATION_TYPE_PK)) {
       matrix.addProblem(HopsCourseMatrixProblem.INCOMPATIBLE_STUDENT);
       return matrix;
     }
     
     // Onko lukiolaisen opetussuunnitelma 2021
     
-    if (StringUtils.equals(type, LUKIO) && !StringUtils.equals(ops, OPS_LUKIO)) {
+    if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO) && !StringUtils.equals(ops, PyramusConsts.OPS_2021)) {
       matrix.addProblem(HopsCourseMatrixProblem.INCOMPATIBLE_STUDENT);
       return matrix;
     }
 
     // Onko perusopetuksessa opiskelevan opetussuunnitelma 2018
     
-    if (StringUtils.equals(type, PK) && !StringUtils.equals(ops, OPS_PK)) {
+    if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_PK) && !StringUtils.equals(ops, PyramusConsts.OPS_2018)) {
       matrix.addProblem(HopsCourseMatrixProblem.INCOMPATIBLE_STUDENT);
       return matrix;
     }
@@ -102,7 +99,7 @@ public class HopsController {
 
     try {
       ObjectMapper mapper = new ObjectMapper();
-      String jsonSrc = StringUtils.equals(type, LUKIO)
+      String jsonSrc = StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)
           ? "fi/otavanopisto/pyramus/tor/curriculum_2021.json"
           : "fi/otavanopisto/pyramus/tor/curriculum_2018.json";
       InputStream json = HopsController.class.getClassLoader().getResourceAsStream(jsonSrc);
