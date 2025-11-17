@@ -122,11 +122,6 @@ public class SchoolController {
     return schoolDAO.removeTag(school, tag);
   }
   
-//  public School updateSchoolAdditionalContactInfo(School school, String additionalContactInfo) {
-//    contactInfoDAO.update(school.getContactInfo(), additionalContactInfo);
-//    return school;
-//  }
-
   public synchronized School updateSchoolTags(School school, List<String> tags) {
     Set<String> newTags = new HashSet<>(tags);
     Set<Tag> schoolTags = new HashSet<>(school.getTags());
