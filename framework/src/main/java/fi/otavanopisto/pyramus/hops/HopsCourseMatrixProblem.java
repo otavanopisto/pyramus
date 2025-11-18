@@ -8,6 +8,5 @@ public enum HopsCourseMatrixProblem {
   NO_RELIGION,                    // Ei ainevalintaa uskonnolle
   NO_PRIMARY_FOREIGN_LANGUAGE,    // Ei ainevalintaa A-kielelle
   NO_SECONDARY_FOREIGN_LANGUAGE,  // Ei ainevalintaa B1-kielelle
-  INTERNAL_ERROR                  // Esim. opetussuunnitelma-jsonissa häikkää
 
 }

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
@@ -107,8 +108,7 @@ public class HopsController {
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error parsing OPS", e);
-      matrix = new HopsCourseMatrix();
-      matrix.addProblem(HopsCourseMatrixProblem.INTERNAL_ERROR);
+      throw new SmvcRuntimeException(e);
     }
     
     // Opiskelijan kaikki mahdolliset suoritukset
