@@ -1288,7 +1288,7 @@
                 <textarea name="otherContactInfo.${student.id}" rows="5" cols="50">${student.contactInfo.additionalInfo}</textarea>
               </div>
 
-              <div class="genericFormSection biggaboo">
+              <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="generic.forms.contactInfosTitle" />
                   <jsp:param name="helpLocale" value="generic.forms.contactInfosHelp" />
