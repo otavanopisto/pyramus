@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,7 +46,17 @@ public class LukionOpiskeluoikeus extends Opiskeluoikeus {
     this.oppimaaraSuoritettu = oppimaaraSuoritettu;
   }
 
+  @JsonProperty("arvioituPäättymispäivä")
+  public Date getArvioituPaattymispaiva() {
+    return arvioituPaattymispaiva;
+  }
+
+  public void setArvioituPaattymispaiva(Date arvioituPaattymispaiva) {
+    this.arvioituPaattymispaiva = arvioituPaattymispaiva;
+  }
+
   private final Set<LukionSuoritus> suoritukset = new HashSet<>();
   private LukionOpiskeluoikeudenLisatiedot lisatiedot;
+  private Date arvioituPaattymispaiva;
   private boolean oppimaaraSuoritettu;
 }
