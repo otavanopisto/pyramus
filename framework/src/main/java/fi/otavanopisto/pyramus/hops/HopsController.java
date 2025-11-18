@@ -82,15 +82,6 @@ public class HopsController {
       return matrix;
     }
 
-    // Matriisin tyyppi on nyt tiedossa
-    
-    if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
-      matrix.setType(HopsCourseMatrixType.UPPER_SECONDARY);
-    }
-    else {
-      matrix.setType(HopsCourseMatrixType.COMPULSORY);
-    }
-    
     // Onko lukiolaisen opetussuunnitelma 2021
     
     if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO) && !StringUtils.equals(ops, PyramusConsts.OPS_2021)) {
@@ -119,6 +110,16 @@ public class HopsController {
       logger.log(Level.SEVERE, "Error parsing OPS", e);
       throw new SmvcRuntimeException(e);
     }
+
+    // Matriisin tyyppi
+    
+    if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+      matrix.setType(HopsCourseMatrixType.UPPER_SECONDARY);
+    }
+    else {
+      matrix.setType(HopsCourseMatrixType.COMPULSORY);
+    }
+    
     
     // Opiskelijan kaikki mahdolliset suoritukset
     
