@@ -81,6 +81,15 @@ public class HopsController {
       matrix.addProblem(HopsCourseMatrixProblem.INCOMPATIBLE_STUDENT);
       return matrix;
     }
+
+    // Matriisin tyyppi on nyt tiedossa
+    
+    if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+      matrix.setType(HopsCourseMatrixType.UPPER_SECONDARY);
+    }
+    else {
+      matrix.setType(HopsCourseMatrixType.COMPULSORY);
+    }
     
     // Onko lukiolaisen opetussuunnitelma 2021
     

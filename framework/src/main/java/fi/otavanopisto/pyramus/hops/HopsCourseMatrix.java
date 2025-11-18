@@ -61,6 +61,15 @@ public class HopsCourseMatrix {
     }
   }
 
+  public HopsCourseMatrixType getType() {
+    return type;
+  }
+
+  public void setType(HopsCourseMatrixType type) {
+    this.type = type;
+  }
+
+  private HopsCourseMatrixType type;
   private List<HopsCourseMatrixSubject> subjects;
   private Set<HopsCourseMatrixProblem> problems;
 
