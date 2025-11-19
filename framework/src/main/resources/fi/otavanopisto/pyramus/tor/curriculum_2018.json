@@ -2,7 +2,7 @@
   "name": "OPS 2018",
   "subjects": [
     {
-      "name": "Äidinkieli ja kirjallisuus",
+      "name": "Äidinkieli ja kirjallisuus, suomi äidinkielenä",
       "code": "äi",
       "modules": [
         {
@@ -68,7 +68,7 @@
       ]
     },
     {
-      "name": "Suomi toisena kielenä ja kirjallisuus",
+      "name": "Äidinkieli ja kirjallisuus, suomi toisena kielenä",
       "code": "s2",
       "modules": [
         {
@@ -152,7 +152,7 @@
       ]
     },
     {
-      "name": "Ruotsi",
+      "name": "Ruotsi, B1-oppimäärä",
       "code": "rub",
       "modules": [
         {
@@ -212,28 +212,25 @@
       ]
     },
     {
-      "name": "Englanti",
+      "name": "Englanti, A-oppimäärä",
       "code": "ena",
       "modules": [
         {
           "name": "Kehittyvä kielitaito: Työelämässä toimiminen ja muita muodollisia tilanteita",
           "courseNumber": 1,
           "length": 28,
-
           "mandatory": true
         },
         {
           "name": "Kehittyvä kielitaito: Palvelu- ja viranomaistilanteet ja osallistuva kansalainen",
           "courseNumber": 2,
           "length": 28,
-
           "mandatory": true
         },
         {
           "name": "Kehittyvä kielitaito: Kertomuksia minusta ja ympäristöstäni",
           "courseNumber": 3,
           "length": 28,
-
           "mandatory": true
         },
         {
@@ -285,6 +282,66 @@
           "mandatory": false
         }
       ]
+    },
+    {
+      "name": "Espanja, A-oppimäärä",
+      "code": "eaa",
+      "modules": []
+    },
+    {
+      "name": "Espanja, B2-oppimäärä",
+      "code": "eab",
+      "modules": []
+    },
+    {
+      "name": "Italia, B2-oppimäärä",
+      "code": "iab",
+      "modules": []
+    },
+    {
+      "name": "Ranska, A-oppimäärä",
+      "code": "raa",
+      "modules": []
+    },
+    {
+      "name": "Ranska, B2-oppimäärä",
+      "code": "rab",
+      "modules": []
+    },
+    {
+      "name": "Ruotsi, A-oppimäärä",
+      "code": "rua",
+      "modules": []
+    },
+    {
+      "name": "Saksa, A-oppimäärä",
+      "code": "saa",
+      "modules": []
+    },
+    {
+      "name": "Saksa, B2-oppimäärä",
+      "code": "sab",
+      "modules": []
+    },
+    {
+      "name": "Suomi, B2-oppimäärä",
+      "code": "fib",
+      "modules": []
+    },
+    {
+      "name": "Venäjä, A-oppimäärä",
+      "code": "vea",
+      "modules": []
+    },
+    {
+      "name": "Venäjä, B2-oppimäärä",
+      "code": "veb",
+      "modules": []
+    },
+    {
+      "name": "Saame, B2-oppimäärä",
+      "code": "smb",
+      "modules": []
     },
     {
       "name": "Matematiikka",
@@ -347,7 +404,7 @@
       ]
     },
     {
-      "name": "Uskonto",
+      "name": "Uskonto, evankelisluterilainen",
       "code": "ue",
       "modules": [
         {
@@ -355,12 +412,30 @@
           "courseNumber": 1,
           "length": 28,
           "mandatory": true
-        },
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, ortodoksinen",
+      "code": "uo",
+      "modules": [
         {
-          "name": "Valinnainen",
-          "courseNumber": 2,
+          "name": "Uskonnot maailmassa",
+          "courseNumber": 1,
           "length": 28,
-          "mandatory": false
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, islam",
+      "code": "uo",
+      "modules": [
+        {
+          "name": "Uskonnot maailmassa",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
         }
       ]
     },
@@ -385,18 +460,6 @@
           "courseNumber": 1,
           "length": 28,
           "mandatory": true
-        },
-        {
-          "name": "Teollisuusyhteiskunnan synnystä nykyaikaan",
-          "courseNumber": 2,
-          "length": 28,
-          "mandatory": false
-        },
-        {
-          "name": "Antiikista uuden ajan murrokseen",
-          "courseNumber": 3,
-          "length": 28,
-          "mandatory": false
         }
       ]
     },
@@ -457,12 +520,6 @@
           "courseNumber": 2,
           "length": 28,
           "mandatory": false
-        },
-        {
-          "name": "Kemia yhteiskunnassa",
-          "courseNumber": 3,
-          "length": 28,
-          "mandatory": false
         }
       ]
     },
@@ -501,19 +558,19 @@
           "mandatory": true
         },
         {
-          "name": "Kotiplaneettamme Maa",
+          "name": "Elämän perusedellytykset maapallolla",
           "courseNumber": 2,
           "length": 28,
           "mandatory": false
         },
         {
-          "name": "Maapallo ihmisen elinympäristönä",
+          "name": "Ihmiset ja kulttuurit maapallolla",
           "courseNumber": 3,
           "length": 28,
           "mandatory": false
         },
         {
-          "name": "Eurooppa",
+          "name": "Kestävä elämäntapa ja luonnonvarojen kestävä käyttö",
           "courseNumber": 4,
           "length": 28,
           "mandatory": false
@@ -559,8 +616,50 @@
           "courseNumber": 4,
           "length": 28,
           "mandatory": false
+        },
+        {
+          "name": "Tutorkurssi",
+          "courseNumber": 5,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Työelämäosaaminen II",
+          "courseNumber": 6,
+          "length": 28,
+          "mandatory": false
         }
       ]
+    },
+    {
+      "name": "Liikunta",
+      "code": "li",
+      "modules": []
+    },
+    {
+      "name": "Kuvataide",
+      "code": "ku",
+      "modules": []
+    },
+    {
+      "name": "Musiikki",
+      "code": "mu",
+      "modules": []
+    },
+    {
+      "name": "Käsityö",
+      "code": "ks",
+      "modules": []
+    },
+    {
+      "name": "Kotitalous",
+      "code": "ko",
+      "modules": []
+    },
+    {
+      "name": "Tietotekniikka",
+      "code": "at",
+      "modules": []
     }
   ]
 }

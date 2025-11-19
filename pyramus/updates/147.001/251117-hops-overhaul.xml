@@ -4,13 +4,13 @@
   <sql>insert into SettingKey (id,name) select coalesce(max(id),0) + 1, 'hops.choiceSubjects' from SettingKey;</sql>
   <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from SettingKey) where sequence_name = 'SettingKey';</sql>
 
-  <sql>insert into Setting (id, value, settingKey) select coalesce(max(se.id),0) + 1, "ÄIM,ÄI,S2,ARB3,ET,ENA,ENB3,EAA,EAB3,IAB3,JPB3,KIB3,KOB3,LAB3,MAB,MAA,KXB3,POB3,RAA,RAB2,RAB3,RUA,RUB1,RUB3,SMB3,SAA,SAB2,SAB3,UE,UI,UJ,UK,UX,UO,VEA,VEB3,äi,et,s2,ue,uo,ui,eab,iab,raa,rab,rua,saa,sab,fib,vea,veb,smb", max(sk.id) from Setting se, SettingKey sk;</sql>
+  <sql>insert into Setting (id, value, settingKey) select coalesce(max(se.id),0) + 1, "ÄIM,ÄI,S2,ARB3,ET,ENA,ENB3,EAA,EAB3,IAB3,JPB3,KIB3,KOB3,LAB3,MAB,MAA,KXB3,POB3,RAA,RAB2,RAB3,RUA,RUB1,RUB3,SMB3,SAA,SAB2,SAB3,UE,UI,UJ,UK,UX,UO,VEA,VEB3,äi,et,s2,ue,uo,ui,ena,rub", max(sk.id) from Setting se, SettingKey sk;</sql>
   <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from Setting) where sequence_name = 'Setting';</sql>
 
   <sql>insert into SettingKey (id,name) select coalesce(max(id),0) + 1, 'hops.hiddenSubjects' from SettingKey;</sql>
   <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from SettingKey) where sequence_name = 'SettingKey';</sql>
 
-  <sql>insert into Setting (id, value, settingKey) select coalesce(max(se.id),0) + 1, "MU", max(sk.id) from Setting se, SettingKey sk;</sql>
+  <sql>insert into Setting (id, value, settingKey) select coalesce(max(se.id),0) + 1, "MU,li,ku,mu,ks,ko,at,eaa,eab,iab,raa,rab,rua,saa,sab,fib,vea,veb,smb", max(sk.id) from Setting se, SettingKey sk;</sql>
   <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from Setting) where sequence_name = 'Setting';</sql>
 
 </update>
