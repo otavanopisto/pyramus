@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
@@ -211,14 +213,37 @@ public class HopsController {
       // - oikea aine
       // - kurssin tai hyväksiluvun opetussuunnitelman pitää olla joko tyhjä tai vastata opiskelijan opetussuunnitelmaa
       
-      boolean hasCredit = transferCredits.stream().anyMatch(tc ->
+      List<TransferCredit> applicableTransferCredits = transferCredits.stream().filter(tc ->  
         StringUtils.equals(subject, tc.getSubject().getCode()) &&
-        (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops)));
-      if (!hasCredit) {
-        hasCredit = courseAssessments.stream().anyMatch(ca ->
-          StringUtils.equals(subject, ca.getSubject().getCode()) &&
-          (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
-            ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops))));
+        (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops))).collect(Collectors.toList());
+      List<CourseAssessment> applicableAssessments = courseAssessments.stream().filter(ca ->
+        StringUtils.equals(subject, ca.getSubject().getCode()) &&
+        (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
+         ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops)))).collect(Collectors.toList());
+      
+      boolean hasCredit = !applicableTransferCredits.isEmpty() || !applicableAssessments.isEmpty();
+      if (hasCredit) {
+
+        // Lisää opetussuunnitelmaan niiden suoritusten ja hyväksilukujen mukaiset aine + kurssinumero,
+        // joita siellä ei vielä ole. Esim. jos hyväksiluetaan hi6 niin hi on opintosuunnitelman mukainen
+        // aine mutta kurssia 6 ei paikallisesta tarjonnasta löydy. Lisätään se siis sinne lennossa.
+        
+        for (TransferCredit transferCredit : applicableTransferCredits) {
+          matrix.ensureSubjectCourseNumberPairExists(
+            transferCredit.getSubject().getCode(),
+            transferCredit.getCourseNumber(),
+            transferCredit.getCourseName(),
+            transferCredit.getCourseLength().getUnits().intValue(),
+            transferCredit.getOptionality() == CourseOptionality.MANDATORY);
+        }
+        for (CourseAssessment assessment : applicableAssessments) {
+          matrix.ensureSubjectCourseNumberPairExists(
+              assessment.getSubject().getCode(),
+              assessment.getCourseModule().getCourseNumber(),
+              assessment.getCourseModule().getCourse().getName(),
+              assessment.getCourseModule().getCourseLength().getUnits().intValue(),
+              false); // Jos kurssi ei alunperin edes ollut opetussuunnitelmassa, ei se pakollinenkaan voi olla
+        }
       }
       
       // Jos suorituksia on, aine jää aina matriisiin

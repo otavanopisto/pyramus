@@ -38,6 +38,23 @@ public class HopsCourseMatrix {
   }
   
   @JsonIgnore
+  public void ensureSubjectCourseNumberPairExists(String subjectCode, int courseNumber, String courseName, int length, boolean mandatory) {
+    HopsCourseMatrixSubject matrixSubject = subjects.stream().filter(s -> StringUtils.equals(s.getCode(), subjectCode)).findFirst().orElse(null);
+    if (matrixSubject == null) {
+      return; // Metodia kutsutaan vain OPSin sisältämillä aineilla. Kädet pystyyn jos ainetta ei edes löytyisi 
+    }
+    HopsCourseMatrixModule module = matrixSubject.getModules().stream().filter(m -> m.getCourseNumber() == courseNumber).findFirst().orElse(null);
+    if (module == null) {
+      module = new HopsCourseMatrixModule();
+      module.setName(courseName);
+      module.setCourseNumber(courseNumber);
+      module.setLength(length);
+      module.setMandatory(mandatory);
+      matrixSubject.addModule(module);
+    }
+  }
+  
+  @JsonIgnore
   public void addProblem(HopsCourseMatrixProblem problem) {
     problems.add(problem);
   }
