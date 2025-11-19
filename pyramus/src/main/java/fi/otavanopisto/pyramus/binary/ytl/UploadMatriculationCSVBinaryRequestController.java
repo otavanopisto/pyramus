@@ -114,9 +114,9 @@ public class UploadMatriculationCSVBinaryRequestController extends BinaryRequest
           continue;
         }
 
-        // Parse total points
+        // Parse total points, if grade is K, there's no points so skip the error message
         int totalPointsInt = NumberUtils.toInt(matriculationResult.getYhteispisteet(), -1);
-        if (totalPointsInt == -1) {
+        if (totalPointsInt == -1 && examGrade != MatriculationExamGrade.K) {
           rowMessages.add(String.format("Rivi %d: Kokonaispistemäärä (%s) ei ole kokonaisluku. Pisteitä ei tallenneta riville.", rowNumber, matriculationResult.getYhteispisteet()));
         }
         Integer totalPoints = totalPointsInt != -1 ? totalPointsInt : null;
