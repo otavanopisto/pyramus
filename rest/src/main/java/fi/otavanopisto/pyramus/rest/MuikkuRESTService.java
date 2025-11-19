@@ -1121,6 +1121,7 @@ public class MuikkuRESTService {
       item.setGrade(transferCredit.getGrade().getName());
       item.setPassing(transferCredit.getGrade().getPassingGrade());    
     }
+    item.setTransferCreditLength(transferCredit.getCourseLength().getUnits().intValue());
     item.setStatus(StudyActivityItemStatus.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
     item.setSubjectName(transferCredit.getSubject().getName());
