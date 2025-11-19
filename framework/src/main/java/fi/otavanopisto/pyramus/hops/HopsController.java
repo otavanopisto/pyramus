@@ -184,12 +184,12 @@ public class HopsController {
       chosenSubjects.add(s);
     }
     
-    // Nillitystä puuttuvista ainevalinnoista
+    // Nillitystä puuttuvista ainevalinnoista (matematiikka koskee vain lukiota)
     
     if (!hasNativeLanguage) {
       matrix.addProblem(HopsCourseMatrixProblem.NO_NATIVE_LANGUAGE);
     }
-    if (!hasMath) {
+    if (!hasMath && StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
       matrix.addProblem(HopsCourseMatrixProblem.NO_MATH);
     }
     if (!hasReligion) {
@@ -206,21 +206,17 @@ public class HopsController {
     
     Set<String> subjects = matrix.listSubjectCodes();
     for (String subject : subjects) {
-      Set<Integer> courseNumbers = matrix.listCourseNumbers(subject);
       
       // Onko opiskelijalla suorituksia tästä aineesta:
       // - oikea aine
-      // - opetussuunnitelman mukainen kurssinumero
       // - kurssin tai hyväksiluvun opetussuunnitelman pitää olla joko tyhjä tai vastata opiskelijan opetussuunnitelmaa
       
       boolean hasCredit = transferCredits.stream().anyMatch(tc ->
         StringUtils.equals(subject, tc.getSubject().getCode()) &&
-        courseNumbers.contains(tc.getCourseNumber()) &&
         (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops)));
       if (!hasCredit) {
         hasCredit = courseAssessments.stream().anyMatch(ca ->
           StringUtils.equals(subject, ca.getSubject().getCode()) &&
-          courseNumbers.contains(ca.getCourseNumber()) &&
           (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
             ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops))));
       }
