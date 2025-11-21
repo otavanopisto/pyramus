@@ -343,7 +343,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .getSingleResult();
   }
   
-  public MatriculationExamEnrollment updateCandidateNumber(MatriculationExamEnrollment enrollment, int candidateNumber) {
+  public MatriculationExamEnrollment updateCandidateNumber(MatriculationExamEnrollment enrollment, Integer candidateNumber) {
     enrollment.setCandidateNumber(candidateNumber);
     return persist(enrollment);
   }

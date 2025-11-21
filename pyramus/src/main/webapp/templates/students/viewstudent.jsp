@@ -3879,6 +3879,13 @@
                         <span class="viewStudentProjectHeaderAssessmentGrade">
                           <fmt:message key="generic.matriculation.examGrades.${attendanceBean.grade}"/>
                         </span>
+                        <c:if test="${not empty attendanceBean.totalPoints}">
+	                        <span>
+	                         <fmt:message key="students.viewStudent.matriculationTotalPoints">
+	                           <fmt:param value="${attendanceBean.totalPoints}"/>
+	                         </fmt:message>
+	                        </span>
+                        </c:if>
                       </span>
                     </c:if>
                   </div>

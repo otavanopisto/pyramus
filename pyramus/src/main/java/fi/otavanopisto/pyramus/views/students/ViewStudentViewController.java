@@ -1113,8 +1113,6 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       List<MatriculationGrade> personGrades = matriculationGradeDAO.listBy(person);
       for (MatriculationGrade matriculationGrade : personGrades) {
         String term = matriculationGrade.getTerm().name() + matriculationGrade.getYear();
-        MatriculationExamGrade grade = matriculationGrade != null ? matriculationGrade.getGrade() : null;
-        LocalDate gradeDate = matriculationGrade != null ? matriculationGrade.getGradeDate() : null;
         
         MatriculationEnrollmentBean termBean = termBeans.get(term);
         if (termBean == null) {
@@ -1133,8 +1131,9 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         }
         
         if (attendanceBean != null) {
-          attendanceBean.setGrade(grade);
-          attendanceBean.setGradeDate(gradeDate);
+          attendanceBean.setGrade(matriculationGrade.getGrade());
+          attendanceBean.setGradeDate(matriculationGrade.getGradeDate());
+          attendanceBean.setTotalPoints(matriculationGrade.getTotalPoints());
         }
       }
   
@@ -1292,6 +1291,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     private final String subjectName;
     private MatriculationExamGrade grade;
     private LocalDate gradeDate;
+    private Integer totalPoints;
 
     public MatriculationAttendanceBean(MatriculationExamSubject subject, String subjectName, Double sumMandatoryModuleLength, Double sumCompletedMandatoryModuleLength, List<MatriculationAttendanceModuleBean> modules) {
       this.subject = subject;
@@ -1335,6 +1335,14 @@ public class ViewStudentViewController extends PyramusViewController2 implements
 
     public MatriculationExamSubject getSubject() {
       return subject;
+    }
+
+    public Integer getTotalPoints() {
+      return totalPoints;
+    }
+
+    public void setTotalPoints(Integer totalPoints) {
+      this.totalPoints = totalPoints;
     }
   }
   
