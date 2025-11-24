@@ -30,7 +30,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 @TransactionManagement(TransactionManagementType.BEAN) 
 public class ContactInfoMigrationTool {
 
-  private final static int BATCHSIZE = 10;
+  private final static int BATCHSIZE = 25;
   
   @Inject
   private Logger logger;
