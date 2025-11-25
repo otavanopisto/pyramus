@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.tor.curriculum;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TORCurriculumModule {
 
   public String getName() {

@@ -4,6 +4,7 @@
     {
       "name": "Äidinkieli ja kirjallisuus, suomi äidinkielenä",
       "code": "äi",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Suomen kielen ja kirjallisuuden perusteet",
@@ -70,6 +71,7 @@
     {
       "name": "Äidinkieli ja kirjallisuus, suomi toisena kielenä",
       "code": "s2",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Opiskelutaitojen vahvistaminen",
@@ -154,6 +156,7 @@
     {
       "name": "Ruotsi, B1-oppimäärä",
       "code": "rub",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Kielitaidon alkeet: Lähtökohtia ruotsin opiskelulle",
@@ -214,6 +217,7 @@
     {
       "name": "Englanti, A-oppimäärä",
       "code": "ena",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Kehittyvä kielitaito: Työelämässä toimiminen ja muita muodollisia tilanteita",
@@ -286,61 +290,73 @@
     {
       "name": "Espanja, A-oppimäärä",
       "code": "eaa",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Espanja, B2-oppimäärä",
       "code": "eab",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Italia, B2-oppimäärä",
       "code": "iab",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Ranska, A-oppimäärä",
       "code": "raa",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Ranska, B2-oppimäärä",
       "code": "rab",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Ruotsi, A-oppimäärä",
       "code": "rua",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Saksa, A-oppimäärä",
       "code": "saa",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Saksa, B2-oppimäärä",
       "code": "sab",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Suomi, B2-oppimäärä",
       "code": "fib",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Venäjä, A-oppimäärä",
       "code": "vea",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Venäjä, B2-oppimäärä",
       "code": "veb",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Saame, B2-oppimäärä",
       "code": "smb",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
@@ -406,6 +422,7 @@
     {
       "name": "Uskonto, evankelisluterilainen",
       "code": "ue",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Uskonnot maailmassa",
@@ -418,6 +435,7 @@
     {
       "name": "Uskonto, ortodoksinen",
       "code": "uo",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Uskonnot maailmassa",
@@ -430,6 +448,7 @@
     {
       "name": "Uskonto, islam",
       "code": "uo",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Uskonnot maailmassa",
@@ -442,6 +461,7 @@
     {
       "name": "Elämänkatsomustieto",
       "code": "et",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Katsomukset ja ihmisoikeudet",
@@ -634,31 +654,37 @@
     {
       "name": "Liikunta",
       "code": "li",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Kuvataide",
       "code": "ku",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Musiikki",
       "code": "mu",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Käsityö",
       "code": "ks",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Kotitalous",
       "code": "ko",
+      "hiddenFromHops": true,
       "modules": []
     },
     {
       "name": "Tietotekniikka",
       "code": "at",
+      "hiddenFromHops": true,
       "modules": []
     }
   ]
