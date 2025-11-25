@@ -36,6 +36,19 @@ public class HopsCourseMatrix {
   public void setProblems(Set<HopsCourseMatrixProblem> problems) {
     this.problems = problems;
   }
+
+  public HopsCourseMatrixType getType() {
+    return type;
+  }
+
+  public void setType(HopsCourseMatrixType type) {
+    this.type = type;
+  }
+  
+  @JsonIgnore
+  public HopsCourseMatrixSubject getSubject(String subjectCode) {
+    return subjects.stream().filter(s -> StringUtils.equals(s.getCode(), subjectCode)).findFirst().orElse(null);
+  }
   
   @JsonIgnore
   public void ensureSubjectCourseNumberPairExists(String subjectCode, int courseNumber, String courseName, int length, boolean mandatory) {
@@ -77,13 +90,15 @@ public class HopsCourseMatrix {
       subjects.remove(subject);
     }
   }
-
-  public HopsCourseMatrixType getType() {
-    return type;
+  
+  @JsonIgnore
+  public Set<String> getChoiceSubjects() {
+    return subjects.stream().filter(s -> s.isChoiceSubject()).map(s -> s.getCode()).collect(Collectors.toSet());
   }
 
-  public void setType(HopsCourseMatrixType type) {
-    this.type = type;
+  @JsonIgnore
+  public Set<String> getHiddenSubjects() {
+    return subjects.stream().filter(s -> s.isHiddenFromHops()).map(s -> s.getCode()).collect(Collectors.toSet());
   }
 
   private HopsCourseMatrixType type;

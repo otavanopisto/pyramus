@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -27,7 +26,6 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.framework.SettingUtils;
 
 @ApplicationScoped
 public class HopsController {
@@ -47,26 +45,8 @@ public class HopsController {
   @Inject
   private UserVariableDAO userVariableDAO;
   
-  private static final String SUBJECTS_CHOICE = "hops.choiceSubjects";
-  private static final String SUBJECTS_HIDDEN = "hops.hiddenSubjects";
-  
   public HopsCourseMatrix getCourseMatrix(Student student) {
     HopsCourseMatrix matrix = new HopsCourseMatrix();
-    
-    // Listat ainevalinta-aineista ja oletuksena piilotettavista aineista
-    
-    String choiceStr = SettingUtils.getSettingValue(SUBJECTS_CHOICE);
-    Set<String> choiceSubjects = new HashSet<>();
-    StringTokenizer st = new StringTokenizer(choiceStr, ",");
-    while (st.hasMoreTokens()) {
-      choiceSubjects.add(st.nextToken());
-    }
-    String hiddenStr = SettingUtils.getSettingValue(SUBJECTS_HIDDEN);
-    Set<String> hiddenSubjects = new HashSet<>();
-    st = new StringTokenizer(hiddenStr, ",");
-    while (st.hasMoreTokens()) {
-      hiddenSubjects.add(st.nextToken());
-    }
     
     // Onko opiskelijalla opetussuunnitelma ja onko se joko OPS 2021 tai OPS 2018
 
@@ -113,6 +93,11 @@ public class HopsController {
       throw new SmvcRuntimeException(e);
     }
 
+    // Listat ainevalinta-aineista ja oletuksena piilotettavista aineista
+    
+    Set<String> choiceSubjects = matrix.getChoiceSubjects();
+    Set<String> hiddenSubjects = matrix.getHiddenSubjects();
+
     // Matriisin tyyppi
     
     if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
@@ -121,7 +106,6 @@ public class HopsController {
     else {
       matrix.setType(HopsCourseMatrixType.COMPULSORY);
     }
-    
     
     // Opiskelijan kaikki mahdolliset suoritukset
     
@@ -209,32 +193,33 @@ public class HopsController {
     Set<String> subjects = matrix.listSubjectCodes();
     for (String subject : subjects) {
       
+      boolean hasCredit = false;
+
       // Onko opiskelijalla suorituksia tästä aineesta:
       // - oikea aine
       // - kurssin tai hyväksiluvun opetussuunnitelman pitää olla joko tyhjä tai vastata opiskelijan opetussuunnitelmaa
-      
+
       List<TransferCredit> applicableTransferCredits = transferCredits.stream().filter(tc ->  
-        StringUtils.equals(subject, tc.getSubject().getCode()) &&
-        (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops))).collect(Collectors.toList());
+      StringUtils.equals(subject, tc.getSubject().getCode()) &&
+      (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops))).collect(Collectors.toList());
       List<CourseAssessment> applicableAssessments = courseAssessments.stream().filter(ca ->
-        StringUtils.equals(subject, ca.getSubject().getCode()) &&
-        (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
-         ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops)))).collect(Collectors.toList());
-      
-      boolean hasCredit = !applicableTransferCredits.isEmpty() || !applicableAssessments.isEmpty();
+      StringUtils.equals(subject, ca.getSubject().getCode()) &&
+      (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
+          ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops)))).collect(Collectors.toList());
+      hasCredit = !applicableTransferCredits.isEmpty() || !applicableAssessments.isEmpty();
       if (hasCredit) {
 
         // Lisää opetussuunnitelmaan niiden suoritusten ja hyväksilukujen mukaiset aine + kurssinumero,
         // joita siellä ei vielä ole. Esim. jos hyväksiluetaan hi6 niin hi on opintosuunnitelman mukainen
         // aine mutta kurssia 6 ei paikallisesta tarjonnasta löydy. Lisätään se siis sinne lennossa.
-        
+
         for (TransferCredit transferCredit : applicableTransferCredits) {
           matrix.ensureSubjectCourseNumberPairExists(
-            transferCredit.getSubject().getCode(),
-            transferCredit.getCourseNumber(),
-            transferCredit.getCourseName(),
-            transferCredit.getCourseLength().getUnits().intValue(),
-            transferCredit.getOptionality() == CourseOptionality.MANDATORY);
+              transferCredit.getSubject().getCode(),
+              transferCredit.getCourseNumber(),
+              transferCredit.getCourseName(),
+              transferCredit.getCourseLength().getUnits().intValue(),
+              transferCredit.getOptionality() == CourseOptionality.MANDATORY);
         }
         for (CourseAssessment assessment : applicableAssessments) {
           matrix.ensureSubjectCourseNumberPairExists(
@@ -243,6 +228,27 @@ public class HopsController {
               assessment.getCourseModule().getCourse().getName(),
               assessment.getCourseModule().getCourseLength().getUnits().intValue(),
               false); // Jos kurssi ei alunperin edes ollut opetussuunnitelmassa, ei se pakollinenkaan voi olla
+        }
+
+        // Poista aineen modulit, joita ei haluta näyttää ja joista ei ole suorituksia
+        
+        HopsCourseMatrixSubject matrixSubject = matrix.getSubject(subject);
+        Set<Integer> hiddenCourseNumbers = matrixSubject.listHiddenCourseNumbers();
+        for (Integer hiddenCourseNumber : hiddenCourseNumbers) {
+          hasCredit = applicableTransferCredits.stream().filter(tc ->  
+            StringUtils.equals(subject, tc.getSubject().getCode()) &&
+            hiddenCourseNumber.equals(tc.getCourseNumber()) &&
+            (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops))).findFirst().orElse(null) != null;
+          if (!hasCredit) {
+            hasCredit = applicableAssessments.stream().filter(ca ->
+              StringUtils.equals(subject, ca.getSubject().getCode()) &&
+              hiddenCourseNumber.equals(ca.getCourseNumber()) &&
+              (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
+               ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops)))).findFirst().orElse(null) != null;
+          }
+          if (!hasCredit) {
+            matrixSubject.removeModuleByCourseNumber(hiddenCourseNumber);
+          }
         }
       }
       

@@ -37,9 +37,18 @@ public class HopsCourseMatrixModule {
     this.mandatory = mandatory;
   }
 
+  public boolean isHiddenFromHops() {
+    return hiddenFromHops;
+  }
+
+  public void setHiddenFromHops(boolean hiddenFromHops) {
+    this.hiddenFromHops = hiddenFromHops;
+  }
+
   private String name;
   private int courseNumber;
   private int length;
   private boolean mandatory;
+  private boolean hiddenFromHops;
 
 }
