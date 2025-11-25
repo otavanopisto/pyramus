@@ -2991,8 +2991,8 @@
         },
         {
           "name": "Motivaatiota opiskeluun",
-          "courseNumber": 1,
-          "length": 4,
+          "courseNumber": 4,
+          "length": 1,
           "lengthUnitSymbol": "op",
           "mandatory": false
         },
