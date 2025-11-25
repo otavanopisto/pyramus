@@ -81,6 +81,27 @@
           "length": 2,
           "lengthUnitSymbol": "op",
           "mandatory": false
+        },
+        {
+          "name": "Teksti ja konteksti",
+          "courseNumber": 14,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false
+        },
+        {
+          "name": "Nykykulttuuri ja kertomukset",
+          "courseNumber": 15,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false
+        },
+        {
+          "name": "Puhe- ja vuorovaikutustaitojen syventäminen",
+          "courseNumber": 16,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false
         }
       ]
     },
@@ -319,6 +340,20 @@
           "name": "Englantia abeille",
           "courseNumber": 11,
           "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false
+        },
+        {
+          "name": "Ihminen verkostoissa",
+          "courseNumber": 12,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false
+        },
+        {
+          "name": "Englannin kieli ja maailmani",
+          "courseNumber": 13,
+          "length": 1,
           "lengthUnitSymbol": "op",
           "mandatory": false
         }
