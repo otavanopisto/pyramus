@@ -85,15 +85,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       return null;
     }
     
-    LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
-    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(handler, student.getId()));
-    opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
-    opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
-    if (StringUtils.isNotBlank(studyOid)) {
-      opiskeluoikeus.setOid(studyOid);
-    }
-
-    opiskeluoikeus.setLisatiedot(getLisatiedot(student));
+    LukionOpiskeluoikeus opiskeluoikeus = lukionOpiskeluokeudenPerustiedot(handler, student, studyOid);
 
     OpintojenRahoitus opintojenRahoitus = opintojenRahoitus(student);
     StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);

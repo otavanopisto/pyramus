@@ -5,12 +5,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 
 /**
@@ -20,6 +23,31 @@ public abstract class AbstractKoskiLukioStudentHandler extends KoskiStudentHandl
 
   @Inject
   private StudentStudyPeriodDAO studentStudyPeriodDAO;
+  
+  /**
+   * Luo uuden LukionOpiskeluoikeus-instanssin ja asettaa sille perustiedot kohdalleen.
+   * 
+   * @param handlerType Käsittelijän tyyppi
+   * @param student Opiskelija
+   * @param studyPermissionOid opiskeluoikeuden OID
+   * @return LukionOpiskeluoikeus, jossa yleiset perustiedot paikallaan
+   */
+  protected LukionOpiskeluoikeus lukionOpiskeluokeudenPerustiedot(KoskiStudyProgrammeHandler handlerType, Student student, String studyPermissionOid) {
+    LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
+
+    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(handlerType, student.getId()));
+    opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
+    opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
+    opiskeluoikeus.setArvioituPaattymispaiva(student.getStudyTimeEnd());
+
+    if (StringUtils.isNotBlank(studyPermissionOid)) {
+      opiskeluoikeus.setOid(studyPermissionOid);
+    }
+
+    opiskeluoikeus.setLisatiedot(getLisatiedot(student));
+    
+    return opiskeluoikeus;
+  }
   
   protected LukionOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
     List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);

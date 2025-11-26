@@ -115,8 +115,10 @@ function updateTable(event) {
             selectController.addOption(selectHandlerInstance, "smb", "Saame (smb)");
           } else {
             selectController.addOption(selectHandlerInstance, "ENA", "Englanti (ENA)");
+            selectController.addOption(selectHandlerInstance, "EAA", "Espanja (EAA)");
             selectController.addOption(selectHandlerInstance, "EAB2", "Espanja (EAB2)");
             selectController.addOption(selectHandlerInstance, "EAB3", "Espanja (EAB3)");
+            selectController.addOption(selectHandlerInstance, "IAA", "Italia (IAA)");
             selectController.addOption(selectHandlerInstance, "IAB2", "Italia (IAB2)");
             selectController.addOption(selectHandlerInstance, "IAB3", "Italia (IAB3)");
             selectController.addOption(selectHandlerInstance, "RAA", "Ranska (RAA)");
