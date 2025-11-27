@@ -680,10 +680,17 @@ public class ApplicationUtils {
     }
   }
   
-  public static String generateReferenceCode(String lastName, String initialReferenceCode) {
+  public static String generateReferenceCode(Application application, String lastName) {
+    if (application != null && StringUtils.equals(lastName, application.getLastName())) {
+      return application.getReferenceCode();
+    }
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-    String referenceCode = initialReferenceCode == null ? RandomStringUtils.randomAlphabetic(6).toUpperCase() : initialReferenceCode; 
-    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
+    String referenceCode = application == null ? RandomStringUtils.randomAlphabetic(6).toUpperCase() : application.getReferenceCode();
+    while (true) {
+      Application a = applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode);
+      if (a == null || a.getId().equals(application.getId())) {
+        break;
+      }
       referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
     }
     return referenceCode;
