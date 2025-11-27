@@ -200,12 +200,12 @@ public class HopsController {
       // - kurssin tai hyväksiluvun opetussuunnitelman pitää olla joko tyhjä tai vastata opiskelijan opetussuunnitelmaa
 
       List<TransferCredit> applicableTransferCredits = transferCredits.stream().filter(tc ->  
-      StringUtils.equals(subject, tc.getSubject().getCode()) &&
-      (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops))).collect(Collectors.toList());
+        StringUtils.equals(subject, tc.getSubject().getCode()) &&
+        (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops))).collect(Collectors.toList());
       List<CourseAssessment> applicableAssessments = courseAssessments.stream().filter(ca ->
-      StringUtils.equals(subject, ca.getSubject().getCode()) &&
-      (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
-          ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops)))).collect(Collectors.toList());
+        StringUtils.equals(subject, ca.getSubject().getCode()) &&
+        (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
+         ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops)))).collect(Collectors.toList());
       hasCredit = !applicableTransferCredits.isEmpty() || !applicableAssessments.isEmpty();
       if (hasCredit) {
 
@@ -232,21 +232,22 @@ public class HopsController {
 
         // Poista aineen modulit, joita ei haluta näyttää ja joista ei ole suorituksia
         
+        boolean creditFromHiddenModule = false;
         HopsCourseMatrixSubject matrixSubject = matrix.getSubject(subject);
         Set<Integer> hiddenCourseNumbers = matrixSubject.listHiddenCourseNumbers();
         for (Integer hiddenCourseNumber : hiddenCourseNumbers) {
-          hasCredit = applicableTransferCredits.stream().filter(tc ->  
+          creditFromHiddenModule = applicableTransferCredits.stream().filter(tc ->  
             StringUtils.equals(subject, tc.getSubject().getCode()) &&
             hiddenCourseNumber.equals(tc.getCourseNumber()) &&
             (tc.getCurriculum() == null || StringUtils.equals(tc.getCurriculum().getName(), ops))).findFirst().orElse(null) != null;
-          if (!hasCredit) {
-            hasCredit = applicableAssessments.stream().filter(ca ->
+          if (!creditFromHiddenModule) {
+            creditFromHiddenModule = applicableAssessments.stream().filter(ca ->
               StringUtils.equals(subject, ca.getSubject().getCode()) &&
               hiddenCourseNumber.equals(ca.getCourseNumber()) &&
               (ca.getCourseModule().getCourse().getCurriculums().isEmpty() ||
                ca.getCourseModule().getCourse().getCurriculums().stream().anyMatch(c -> StringUtils.equals(c.getName(), ops)))).findFirst().orElse(null) != null;
           }
-          if (!hasCredit) {
+          if (!creditFromHiddenModule) {
             matrixSubject.removeModuleByCourseNumber(hiddenCourseNumber);
           }
         }
