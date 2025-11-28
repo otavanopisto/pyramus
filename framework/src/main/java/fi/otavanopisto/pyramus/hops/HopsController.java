@@ -50,7 +50,7 @@ public class HopsController {
     
     // Onko opiskelijalla opetussuunnitelma ja onko se joko OPS 2021 tai OPS 2018
 
-    String ops = student.getCurriculum().getName();
+    String ops = student.getCurriculum() == null ? null : student.getCurriculum().getName();
     if (StringUtils.isEmpty(ops) || !StringUtils.equalsAny(ops, PyramusConsts.OPS_2021, PyramusConsts.OPS_2018)) {
       matrix.addProblem(HopsCourseMatrixProblem.INCOMPATIBLE_STUDENT);
       return matrix;
