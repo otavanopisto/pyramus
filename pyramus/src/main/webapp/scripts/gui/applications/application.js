@@ -396,13 +396,14 @@
               if (response.autoRegistered == 'true') {
                 navigateTo('.section-done.registered');
               }
+              else if (existingApplication) {
+                navigateTo('.section-done.modified');
+			  }
               else if ($('#field-line').val() == 'aineopiskelu' || $('#field-line').val() == 'aineopiskelupk') {
                 $('#edit-info-email-internetix').text($('#field-email').val());
                 navigateTo('.section-done.internetix-submitted');
               }
               else {
-                $('#edit-info-last-name').text($('#field-last-name').val());
-                $('#edit-info-reference-code').text(response.referenceCode);
                 $('#edit-info-email').text($('#field-email').val());
                 navigateTo('.section-done.submitted');
               }

@@ -3,6 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+  <section class="form-section section-done modified" data-skip="true" style="display:none;">
+    <h2 class="form-section__header">Hakemuksesi on päivitetty</h2>
+  </section>
+  
   <section class="form-section section-done submitted" data-skip="true" style="display:none;">
     <h2 class="form-section__header">Hakemuksesi on vastaanotettu</h2>
     <p>Pyydämme vielä vahvistamaan sähköpostiosoitteesi klikkaamalla linkkiä, jonka lähetimme osoitteeseen <span class="email" id="edit-info-email"></span></p>
