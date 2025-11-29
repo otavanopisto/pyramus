@@ -17,7 +17,7 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testCreateStaffMemberAddress() {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -32,7 +32,6 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is(address.getPostalCode()))
       .body("city", is(address.getCity()))
       .body("country", is(address.getCountry()))
-      .body("contactTypeId", is(address.getContactTypeId().intValue()))
       .body("defaultAddress", is( address.getDefaultAddress()));
     
     int id = response.body().jsonPath().getInt("id");
@@ -56,7 +55,6 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode[0]", is("1111"))
       .body("city[0]", is("Chester"))
       .body("country[0]", is("Belgium"))
-      .body("contactTypeId[0]", is(1))
       .body("defaultAddress[0]", is(Boolean.TRUE));
   }
   
@@ -72,13 +70,12 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is("1111"))
       .body("city", is("Chester"))
       .body("country", is("Belgium"))
-      .body("contactTypeId", is(1))
       .body("defaultAddress", is(Boolean.TRUE));
   }  
 
   @Test
   public void testDeleteStaffMemberAddress() {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -93,7 +90,6 @@ public class StaffMemberAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is(address.getPostalCode()))
       .body("city", is(address.getCity()))
       .body("country", is(address.getCountry()))
-      .body("contactTypeId", is(address.getContactTypeId().intValue()))
       .body("defaultAddress", is( address.getDefaultAddress()));
       
     Long id = response.body().jsonPath().getLong("id");

@@ -20,7 +20,7 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testCreateStudentPhoneNumber(Role role) throws NoSuchFieldException {
-    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 12 234 5678");
     
     Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
@@ -41,7 +41,7 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   @EnumSource(Role.class)
   public void testCreateStudentPhoneNumberOwner(Role role) throws NoSuchFieldException {
     if (Role.STUDENT == role) {
-      PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+      PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 12 234 5678");
       
       Response response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
@@ -125,7 +125,7 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testDeleteStudentPhoneNumber(Role role) throws NoSuchFieldException {
-    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 12 234 5678");
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")

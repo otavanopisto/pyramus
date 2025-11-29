@@ -129,6 +129,11 @@ input[type='button']{
   padding-bottom: 4px;
 }
 
+.genericFormSection--contact-section {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 .genericFormSubmitSection {
   padding:8px 0px 4px 0px;
 }

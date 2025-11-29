@@ -27,7 +27,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -203,7 +202,6 @@ public class StaffRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    Long contactTypeId = address.getContactTypeId();
     Boolean defaultAddress = address.getDefaultAddress();
     String name = address.getName();
     String streetAddress = address.getStreetAddress();
@@ -211,17 +209,12 @@ public class StaffRESTService extends AbstractRESTService {
     String country = address.getCountry();
     String city = address.getCity();
 
-    if (contactTypeId == null || defaultAddress == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-
-    ContactType contactType = commonController.findContactTypeById(contactTypeId);
-    if (contactType == null) {
+    if (defaultAddress == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     return Response.ok(
-        objectFactory.createModel(userController.addStaffMemberAddress(staffMember, contactType, defaultAddress, name, streetAddress, postalCode, city, country)))
+        objectFactory.createModel(userController.addStaffMemberAddress(staffMember, defaultAddress, name, streetAddress, postalCode, city, country)))
         .build();
   }
 
@@ -331,20 +324,14 @@ public class StaffRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    Long contactTypeId = phoneNumber.getContactTypeId();
     Boolean defaultNumber = phoneNumber.getDefaultNumber();
     String number = phoneNumber.getNumber();
 
-    if (contactTypeId == null || defaultNumber == null || StringUtils.isBlank(number)) {
+    if (defaultNumber == null || StringUtils.isBlank(number)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    ContactType contactType = commonController.findContactTypeById(contactTypeId);
-    if (contactType == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-
-    return Response.ok(objectFactory.createModel(userController.addStaffMemberPhoneNumber(staffMember, contactType, number, defaultNumber))).build();
+    return Response.ok(objectFactory.createModel(userController.addStaffMemberPhoneNumber(staffMember, number, defaultNumber))).build();
   }
 
   @Path("/members/{STAFFMEMBERID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
