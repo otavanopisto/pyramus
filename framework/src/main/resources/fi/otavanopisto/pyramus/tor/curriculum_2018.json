@@ -128,7 +128,7 @@
           "mandatory": true
         },
         {
-          "name": "Ajankohtaiset ilmiöt SUomessa ja maailmassa",
+          "name": "Ajankohtaiset ilmiöt Suomessa ja maailmassa",
           "courseNumber": 10,
           "length": 28,
           "mandatory": false
@@ -146,7 +146,7 @@
           "mandatory": false
         },
         {
-          "name": "Suomen kielen perusteinen varmentaminen",
+          "name": "Suomen kielen perusteiden varmentaminen",
           "courseNumber": 14,
           "length": 28,
           "mandatory": false
