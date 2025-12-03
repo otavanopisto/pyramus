@@ -25,7 +25,7 @@
   <table>
     <tr bgcolor="#ddd">
       <td><b>Date</b></td>
-      <td><b>Author</b></td>
+      <td style="white-space:nowrap;"><b>Author</b></td>
       <td><b>Person</b></td>
       <td><b>User</b></td>
       <td><b>Target</b></td>
@@ -37,7 +37,7 @@
     <c:forEach var="e" items="${entries}">
       <tr>
         <td><fmt:formatDate value="${e.date}" pattern="d.M.y H.mm"/></td>
-        <td align="right">${e.authorId}</td>
+        <td>${names[e.authorId]}</td>
         <td align="right">${e.personId}</td>
         <td align="right">${e.userId}</td>
         <td>${e.target}</td>
