@@ -203,77 +203,88 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 9,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 10,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "",
           "courseNumber": 11,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -457,56 +468,64 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -520,56 +539,64 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -583,56 +610,64 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -646,56 +681,64 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -709,56 +752,64 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -772,56 +823,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 1",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 2",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 3",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 4",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 5",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason jatko 1",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason jatko 2",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -835,56 +894,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 1",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 2",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 3",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 4",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustaso 5",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason jatko 1",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason jatko 2",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -892,63 +959,70 @@
       "name": "Espanja, B3-oppimäärä",
       "code": "EAB3",
       "matriculationRequiredStudies": 6,
-      "choiceSubject": true,
       "modules": [
         {
           "name": "Tutustutaan",
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Arkielämää",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Opiskelu ja harrastukset",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Kotona maailmalla",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Hyvinvoiva ihminen",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Kulttuurien matkassa",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Omannäköinen tulevaisuus",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Ajankohtaista mediassa",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -956,7 +1030,6 @@
       "name": "Japani, B3-oppimäärä",
       "code": "JPB3",
       "matriculationRequiredStudies": 6,
-      "choiceSubject": true,
       "modules": [
         {
           "name": "Tutustutaan",
@@ -1020,7 +1093,6 @@
       "name": "Saksa, B3-oppimäärä",
       "code": "SAB3",
       "matriculationRequiredStudies": 6,
-      "choiceSubject": true,
       "modules": [
         {
           "name": "Tutustutaan",
@@ -1084,7 +1156,6 @@
       "name": "Venäjä, B3-oppimäärä",
       "code": "VEB3",
       "matriculationRequiredStudies": 6,
-      "choiceSubject": true,
       "modules": [
         {
           "name": "Tutustutaan",
@@ -1155,56 +1226,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1219,56 +1298,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1283,56 +1370,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1347,56 +1442,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1411,56 +1514,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1475,56 +1586,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1539,56 +1658,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1603,56 +1730,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1667,56 +1802,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1731,56 +1874,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -1795,56 +1946,64 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -2447,42 +2606,48 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Maailmanlaajuinen kristinusko",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto taiteissa ja kulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -2496,42 +2661,48 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Maailmanlaajuinen islam",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto taiteissa ja populaarikulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -2545,42 +2716,48 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "Maailmanlaajuinen juutalaisuus",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto taiteissa ja populaarikulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -2594,42 +2771,48 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatory": true,
+          "hiddenFromHops": true
         },
         {
           "name": "UX2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto taiteissa ja populaarikulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
