@@ -45,10 +45,19 @@ public class HopsCourseMatrixModule {
     this.hiddenFromHops = hiddenFromHops;
   }
 
+  public boolean isAvailable() {
+    return available;
+  }
+
+  public void setAvailable(boolean available) {
+    this.available = available;
+  }
+
   private String name;
   private int courseNumber;
   private int length;
   private boolean mandatory;
   private boolean hiddenFromHops;
+  private boolean available;
 
 }
