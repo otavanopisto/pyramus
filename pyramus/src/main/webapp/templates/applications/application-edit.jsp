@@ -82,9 +82,9 @@
 
       <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
         <h1 class="application-description__line-header">
-          Olet hakemassa <span class="application-description__line-label--aikuislukio">aikuislukioon</span>
+          Olet hakemassa Otavan Opiston <span class="application-description__line-label--aikuislukio">aikuislukioon</span>
         </h1>
-        <div class="application-description__line-content">Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.</div>
+        <div class="application-description__line-content">Otavan Opiston aikuislukio toimii Mikkelin Otavassa, ja opinnot toteutetaan joustavasti lähi- ja etäopetusta yhdistellen. Voit suorittaa meillä koko aikuislukion oppimäärän (päättötodistus ja/tai ylioppilastutkinto) tai suorittaa loppuun aiemmin keskeytyneet lukio-opinnot.</div>
       </header>
 
       <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
