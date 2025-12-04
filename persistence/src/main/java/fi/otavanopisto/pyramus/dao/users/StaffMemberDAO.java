@@ -33,12 +33,11 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PersonalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -67,7 +66,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
   
   public StaffMember create(Organization organization, String firstName, String lastName, Set<Role> roles, Person person, Boolean archived) {
-    ContactInfo contactInfo = new ContactInfo();
+    PersonalContactInfo contactInfo = new PersonalContactInfo();
     
     StaffMember staffMember = new StaffMember();
 
@@ -195,13 +194,11 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     
     Join<StaffMember, ContactInfo> contactInfoJoin = root.join(StaffMember_.contactInfo);
     ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
-    Join<Email, ContactType> contactTypeJoin = emailJoin.join(Email_.contactType);
     
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(emailJoin.get(Email_.address), email),
-            criteriaBuilder.equal(contactTypeJoin.get(ContactType_.nonUnique), Boolean.FALSE),
             criteriaBuilder.equal(root.get(StaffMember_.archived), Boolean.FALSE)
         )
     );

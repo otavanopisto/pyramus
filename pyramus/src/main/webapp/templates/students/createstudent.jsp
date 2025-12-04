@@ -19,8 +19,8 @@
     <jsp:include page="/templates/generic/ckeditor_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
     
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/createstudent.js">
-    </script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/createstudent.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/typedcontactinfo.js"></script>
     
   </head>
   <body onload="onLoad(event);" ix:enabledrafting="true">
@@ -187,6 +187,14 @@
               <textarea name="otherContactInfo" rows="5" cols="50"></textarea>
             </div>
       
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="generic.forms.contactInfosTitle" />
+                <jsp:param name="helpLocale" value="generic.forms.contactInfosHelp" />
+              </jsp:include>
+              <div id="additionalContactInfos"></div>
+            </div>
+
             <div class="genericFormSection">  
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="students.createStudent.municipalityTitle"/>

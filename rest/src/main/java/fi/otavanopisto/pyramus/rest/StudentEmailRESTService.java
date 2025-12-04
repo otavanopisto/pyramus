@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
@@ -91,21 +90,15 @@ public class StudentEmailRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    Long contactTypeId = email.getContactTypeId();
     Boolean defaultAddress = email.getDefaultAddress();
     String address = email.getAddress();
 
-    if (contactTypeId == null || defaultAddress == null || StringUtils.isBlank(address)) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-
-    ContactType contactType = commonController.findContactTypeById(contactTypeId);
-    if (contactType == null) {
+    if (defaultAddress == null || StringUtils.isBlank(address)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     try {
-      return Response.ok(objectFactory.createModel(studentController.addStudentEmail(student, contactType, address, defaultAddress))).build();
+      return Response.ok(objectFactory.createModel(studentController.addStudentEmail(student, address, defaultAddress))).build();
     } catch (UserEmailInUseException ueiue) {
       return Response.status(Status.FORBIDDEN).build();
     }
@@ -165,13 +158,10 @@ public class StudentEmailRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    ContactType contactType = commonController.findContactTypeById(body.getContactTypeId());
-    
     try {
       email = studentController.updateStudentEmail(
           student,
           email,
-          contactType,
           body.getAddress(),
           body.getDefaultAddress()
       );

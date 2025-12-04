@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
@@ -88,7 +87,6 @@ public class StudentAddressRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    Long contactTypeId = address.getContactTypeId();
     Boolean defaultAddress = address.getDefaultAddress();
     String name = address.getName();
     String streetAddress = address.getStreetAddress();
@@ -96,17 +94,12 @@ public class StudentAddressRESTService extends AbstractRESTService {
     String country = address.getCountry();
     String city = address.getCity();
 
-    if (contactTypeId == null || defaultAddress == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-
-    ContactType contactType = commonController.findContactTypeById(contactTypeId);
-    if (contactType == null) {
+    if (defaultAddress == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     return Response.ok(
-        objectFactory.createModel(studentController.addStudentAddress(student, contactType, defaultAddress, name, streetAddress, postalCode, city, country)))
+        objectFactory.createModel(studentController.addStudentAddress(student, defaultAddress, name, streetAddress, postalCode, city, country)))
         .build();
   }
 
@@ -164,11 +157,8 @@ public class StudentAddressRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    ContactType contactType = commonController.findContactTypeById(body.getContactTypeId());
-    
     address = studentController.updateStudentAddress(
         address,
-        contactType,
         body.getDefaultAddress(),
         body.getName(),
         body.getStreetAddress(),

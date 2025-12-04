@@ -12,6 +12,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PersonalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -138,7 +139,7 @@ public class DataImportStrategyProvider {
       private ContactInfo getStudentContactInfo(Student student) {
         ContactInfo result = student.getContactInfo();
         if (result == null) {
-          result = new ContactInfo();
+          result = new PersonalContactInfo();
           student.setContactInfo(result);
         }
         return result;

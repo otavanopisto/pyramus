@@ -15,12 +15,11 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PersonalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
@@ -43,7 +42,7 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
   private Event<StudentParentDeletedEvent> studentParentDeletedEvent;
   
   public StudentParent create(String firstName, String lastName, Organization organization) {
-    ContactInfo contactInfo = new ContactInfo();
+    PersonalContactInfo contactInfo = new PersonalContactInfo();
     Person person = new Person();
     
     StudentParent studentParent = new StudentParent();
@@ -75,13 +74,11 @@ public class StudentParentDAO extends PyramusEntityDAO<StudentParent> {
     
     Join<StudentParent, ContactInfo> contactInfoJoin = root.join(StudentParent_.contactInfo);
     ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
-    Join<Email, ContactType> contactTypeJoin = emailJoin.join(Email_.contactType);
     
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(emailJoin.get(Email_.address), email),
-            criteriaBuilder.equal(contactTypeJoin.get(ContactType_.nonUnique), Boolean.FALSE),
             criteriaBuilder.equal(root.get(StudentParent_.archived), Boolean.FALSE)
         )
     );

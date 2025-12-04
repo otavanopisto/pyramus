@@ -5,9 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
@@ -21,18 +18,18 @@ import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
-import fi.otavanopisto.pyramus.domainmodel.base.Email;
-import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.util.ContactInfoUtils;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * The controller responsible of the Edit School view of the application.
@@ -78,39 +75,6 @@ public class EditSchoolViewController extends PyramusViewController implements B
     
     String jsonContactTypes = new JSONArrayExtractor("id", "name").extractString(contactTypes);
     
-    List<Address> addresses = school.getContactInfo() == null ? Collections.emptyList() : school.getContactInfo().getAddresses();
-    JSONArray jsonAddresses = new JSONArrayExtractor("id",
-    												"defaultAddress",
-    												"name",
-    												"streetAddress",
-    												"postalCode",
-    												"city",
-                                                   	"country").extract(addresses);
-    for (int i = 0; i < jsonAddresses.size(); i++) {
-      JSONObject jsonAddress = jsonAddresses.getJSONObject(i);
-      if (addresses.get(i).getContactType() != null) {
-        jsonAddress.put("contactTypeId", addresses.get(i).getContactType().getId());
-      }
-    }
-    
-    List<Email> emails = school.getContactInfo() == null ? Collections.emptyList() : school.getContactInfo().getEmails();
-    JSONArray jsonEmails = new JSONArrayExtractor("id", "defaultAddress", "address").extract(emails);
-    for (int i = 0; i < jsonEmails.size(); i++) {
-      JSONObject jsonEmail = jsonEmails.getJSONObject(i);
-      if (emails.get(i).getContactType() != null) {
-        jsonEmail.put("contactTypeId", emails.get(i).getContactType().getId());
-      }
-    }
-    
-    List<PhoneNumber> phoneNumbers = school.getContactInfo() == null ? Collections.emptyList() : school.getContactInfo().getPhoneNumbers();
-    JSONArray jsonPhoneNumbers = new JSONArrayExtractor("id", "defaultNumber", "number").extract(phoneNumbers);
-    for (int i = 0; i < jsonPhoneNumbers.size(); i++) {
-      JSONObject jsonPhoneNumber = jsonPhoneNumbers.getJSONObject(i);
-      if (phoneNumbers.get(i).getContactType() != null) {
-        jsonPhoneNumber.put("contactTypeId", phoneNumbers.get(i).getContactType().getId());
-      }
-    }
-    
     JSONArray jsonVariableKeys = new JSONArrayExtractor("variableKey", "variableName", "variableType").extract(schoolUserEditableVariableKeys);
     for (int i = 0; i < jsonVariableKeys.size(); i++) {
       JSONObject jsonVariableKey = jsonVariableKeys.getJSONObject(i);
@@ -122,9 +86,9 @@ public class EditSchoolViewController extends PyramusViewController implements B
         jsonVariableKey.put("variableValue", value);
     }
     
-    this.setJsDataVariable(pageRequestContext, "addresses", jsonAddresses.toString());
-    this.setJsDataVariable(pageRequestContext, "emails", jsonEmails.toString());
-    this.setJsDataVariable(pageRequestContext, "phoneNumbers", jsonPhoneNumbers.toString());
+    JSONArray contactInfosJSON = ContactInfoUtils.toJSON(school.getContactInfos());
+    this.setJsDataVariable(pageRequestContext, "contactInfos", contactInfosJSON.toString());
+
     this.setJsDataVariable(pageRequestContext, "contactTypes", jsonContactTypes);
     this.setJsDataVariable(pageRequestContext, "variableKeys", jsonVariableKeys.toString());
 
