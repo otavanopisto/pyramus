@@ -2,14 +2,13 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
@@ -61,7 +60,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
-import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
@@ -215,21 +213,17 @@ public class MuikkuRESTService {
       }
     }
     
-    Map<String, StudyActivityItemRestModel> items = new HashMap<>();
+    List<StudyActivityItemRestModel> items = new ArrayList<>();
     
-    // Transfer credits
+    // Kaikki hyväksiluvut. Voi sisältää useita merkintöjä samalle aineelle ja kurssinumerolle
 
     List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
     transferCredits.sort(Comparator.comparing(TransferCredit::getDate).reversed());
     for (TransferCredit transferCredit : transferCredits) {
-      String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
-      StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
-      if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
-        items.put(key, item);
-      }
+      items.add(getTransferCreditActivityItem(transferCredit));
     }
     
-    // Course assessments
+    // Kurssiarvioinnit
     
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
     courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
@@ -245,60 +239,27 @@ public class MuikkuRESTService {
           continue;
         }
       }
+      
+      // TODO Mitä jos opiskelijalla on kurssista sekä arvosana että hyväksiluku tai useampikin?
+      // Pitäisikö hyväksiluvut silloin riipiä mäkeen vai jättää jäljelle kaikista vain tuorein?
 
-      String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
-      StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-      if (!items.containsKey(key)) {
-        items.put(key, item);
-      }
-      else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
-        // #1646: Don't override passing grades with non-passing grades
-        if (items.get(key).isPassing() && !item.isPassing()) {
-          continue;
-        }
-        items.put(key, item);
-      }
+      items.add(getCourseAssessmentActivityItem(courseAssessment));
     }
     
-    // Linked credits
+    // Siirtosuoritukset
     
     List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
     for (CreditLink creditLink : creditLinks) {
       Credit credit = creditLink.getCredit();
       if (credit.getCreditType() == CreditType.CourseAssessment) {
-        CourseAssessment courseAssessment = (CourseAssessment) credit;
-        String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
-        StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-        if (!items.containsKey(key)) {
-          items.put(key, item);
-        }
-        else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
-          // #1646: Don't override passing grades with non-passing grades
-          if (items.get(key).isPassing() && !item.isPassing()) {
-            continue;
-          }
-          items.put(key, item);
-        }
+        items.add(getCourseAssessmentActivityItem((CourseAssessment) credit));
       }
       else if (credit.getCreditType() == CreditType.TransferCredit) {
-        TransferCredit transferCredit = (TransferCredit) credit;
-        String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
-        StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
-        if (!items.containsKey(key)) {
-          items.put(key, item);
-        }
-        else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
-          // #1646: Don't override passing grades with non-passing grades
-          if (items.get(key).isPassing() && !item.isPassing()) {
-            continue;
-          }
-          items.put(key, item);
-        }
+        items.add(getTransferCreditActivityItem((TransferCredit) credit));
       }
     }
     
-    
-    // Courses
+    // Kurssit, joilla opiskelija on mukana
     
     List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
     for (CourseStudent courseStudent : courseStudents) {
@@ -320,24 +281,31 @@ public class MuikkuRESTService {
        * more than one CourseModules.
        */
       for (CourseModule courseModule : course.getCourseModules()) {
-        String key = getActivityItemKey(courseModule.getSubject(),  courseModule.getCourseNumber());
-        if (!items.containsKey(key)) {
-          StudyActivityItemRestModel item = new StudyActivityItemRestModel();
-          item.setCourseId(course.getId());
-          item.setCourseName(course.getName());
-          if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
-            item.setCourseNumber(courseModule.getCourseNumber());
-          }
-          item.setDate(courseStudent.getEnrolmentTime());
-          item.setStatus(StudyActivityItemStatus.ONGOING);
-          item.setSubject(courseModule.getSubject().getCode());
-          item.setSubjectName(courseModule.getSubject().getName());
-          items.put(key, item);
+        StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+        item.setCourseId(course.getId());
+        item.setCourseName(course.getName());
+        if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
+          item.setCourseNumber(courseModule.getCourseNumber());
+        }
+        item.setDate(courseStudent.getEnrolmentTime());
+        item.setStatus(StudyActivityItemStatus.ONGOING);
+        item.setSubject(courseModule.getSubject().getCode());
+        item.setSubjectName(courseModule.getSubject().getName());
+        
+        // Jos kurssista on jo arvosana tai hyväksiluku niin älä lisää toistamiseen
+        
+        StudyActivityItemRestModel existingItem = items.stream().filter(s ->
+          StringUtils.equals(s.getSubject(), item.getSubject()) &&
+          StringUtils.equals(s.getCourseNumber().toString(), item.getCourseNumber().toString())
+        ).findFirst().orElse(null);
+        
+        if (existingItem == null) {
+          items.add(item);
         }
       }
     }
 
-    return Response.ok(items.values()).build();
+    return Response.ok(items).build();
   }
   
   @Path("/users")
@@ -1085,10 +1053,6 @@ public class MuikkuRESTService {
   private String getMessage(Locale locale, String key) {
     ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
     return bundle.getString(key);
-  }
-
-  private String getActivityItemKey(Subject subject, Integer courseNumber) {
-    return courseNumber == null ? subject.getCode() : subject.getCode() + courseNumber;
   }
   
   private StudyActivityItemRestModel getCourseAssessmentActivityItem(CourseAssessment courseAssessment) {
