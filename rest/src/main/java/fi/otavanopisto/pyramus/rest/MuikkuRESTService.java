@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
@@ -296,7 +297,7 @@ public class MuikkuRESTService {
         
         StudyActivityItemRestModel existingItem = items.stream().filter(s ->
           StringUtils.equals(s.getSubject(), item.getSubject()) &&
-          StringUtils.equals(s.getCourseNumber().toString(), item.getCourseNumber().toString())
+          Objects.equals(s.getCourseNumber(), item.getCourseNumber())
         ).findFirst().orElse(null);
         
         if (existingItem == null) {
