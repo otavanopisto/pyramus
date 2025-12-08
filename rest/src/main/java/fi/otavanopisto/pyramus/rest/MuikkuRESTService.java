@@ -4,12 +4,12 @@ import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
@@ -215,19 +215,36 @@ public class MuikkuRESTService {
     }
     
     List<StudyActivityItemRestModel> items = new ArrayList<>();
+    List<CourseAssessment> courseAssessments = new ArrayList<>();
+    Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
+
+    // Siirtosuoritukset
     
-    // Kaikki hyväksiluvut. Voi sisältää useita merkintöjä samalle aineelle ja kurssinumerolle
+    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
+    for (CreditLink creditLink : creditLinks) {
+      Credit credit = creditLink.getCredit();
+      if (credit.getCreditType() == CreditType.CourseAssessment) {
+        courseAssessments.add((CourseAssessment) credit);
+      }
+      else if (credit.getCreditType() == CreditType.TransferCredit) {
+        StudyActivityItemRestModel item = getTransferCreditActivityItem((TransferCredit) credit); 
+        items.add(item);
+        itemCache.put(item.getSubject() + item.getCourseNumber(), item);
+      }
+    }
+    
+    // Hyväksiluvut
 
     List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
-    transferCredits.sort(Comparator.comparing(TransferCredit::getDate).reversed());
     for (TransferCredit transferCredit : transferCredits) {
-      items.add(getTransferCreditActivityItem(transferCredit));
+      StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit); 
+      items.add(item);
+      itemCache.put(item.getSubject() + item.getCourseNumber(), item);
     }
     
     // Kurssiarvioinnit
     
-    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
-    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+    courseAssessments.addAll(courseAssessmentDAO.listByStudent(student));
     for (CourseAssessment courseAssessment : courseAssessments) {
 
       // #1640: Course must not have OPS or has to match student's OPS 
@@ -241,23 +258,39 @@ public class MuikkuRESTService {
         }
       }
       
-      // TODO Mitä jos opiskelijalla on kurssista sekä arvosana että hyväksiluku tai useampikin?
-      // Pitäisikö hyväksiluvut silloin riipiä mäkeen vai jättää jäljelle kaikista vain tuorein?
+      // Jos aine + kurssinumero löytyy jo listasta, jätä voimaan korkein arvosana
 
-      items.add(getCourseAssessmentActivityItem(courseAssessment));
-    }
-    
-    // Siirtosuoritukset
-    
-    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
-    for (CreditLink creditLink : creditLinks) {
-      Credit credit = creditLink.getCredit();
-      if (credit.getCreditType() == CreditType.CourseAssessment) {
-        items.add(getCourseAssessmentActivityItem((CourseAssessment) credit));
+      StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
+      if (existingItem != null) {
+        boolean exPass = existingItem.isPassing();
+        boolean pass = courseAssessment.getGrade() == null ? true : courseAssessment.getGrade().getPassingGrade();
+        if (exPass != pass) {
+          if (!exPass) {
+            itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
+            items.remove(existingItem); // aiempi suoritus oli ei-läpäisevä; se
+          }
+          else {
+            continue; // aiempi suoritus oli läpäisevä; unohda tämä
+          }
+        }
+        else {
+          int exGrade = NumberUtils.isCreatable(existingItem.getGrade()) ? Integer.parseInt(existingItem.getGrade()) : 0;
+          int grade = courseAssessment.getGrade() != null && NumberUtils.isCreatable(courseAssessment.getGrade().getName())
+              ? Integer.parseInt(courseAssessment.getGrade().getName())
+              : 0;
+          if (exGrade <= grade) {
+            itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
+            items.remove(existingItem); // aiemmassa suorituksessa on sama tai matalampi arvosana; unohda se
+          }
+          else {
+            continue; //  aiemmassa suorituksessa on korkeampi arvosana; unohda tämä
+          }
+        }
       }
-      else if (credit.getCreditType() == CreditType.TransferCredit) {
-        items.add(getTransferCreditActivityItem((TransferCredit) credit));
-      }
+
+      StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+      items.add(item);
+      itemCache.put(item.getSubject() + item.getCourseNumber(), item);
     }
     
     // Kurssit, joilla opiskelija on mukana
@@ -282,6 +315,13 @@ public class MuikkuRESTService {
        * more than one CourseModules.
        */
       for (CourseModule courseModule : course.getCourseModules()) {
+        
+        // Jos kurssista on jo suoritus niin älä lisää toistamiseen
+        
+        if (itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
+          continue;
+        }
+
         StudyActivityItemRestModel item = new StudyActivityItemRestModel();
         item.setCourseId(course.getId());
         item.setCourseName(course.getName());
@@ -292,17 +332,7 @@ public class MuikkuRESTService {
         item.setStatus(StudyActivityItemStatus.ONGOING);
         item.setSubject(courseModule.getSubject().getCode());
         item.setSubjectName(courseModule.getSubject().getName());
-        
-        // Jos kurssista on jo arvosana tai hyväksiluku niin älä lisää toistamiseen
-        
-        StudyActivityItemRestModel existingItem = items.stream().filter(s ->
-          StringUtils.equals(s.getSubject(), item.getSubject()) &&
-          Objects.equals(s.getCourseNumber(), item.getCourseNumber())
-        ).findFirst().orElse(null);
-        
-        if (existingItem == null) {
-          items.add(item);
-        }
+        items.add(item);
       }
     }
 
