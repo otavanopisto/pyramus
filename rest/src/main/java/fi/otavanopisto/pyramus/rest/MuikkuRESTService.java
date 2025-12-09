@@ -267,7 +267,7 @@ public class MuikkuRESTService {
         if (exPass != pass) {
           if (!exPass) {
             itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
-            items.remove(existingItem); // aiempi suoritus oli ei-läpäisevä; se
+            items.remove(existingItem); // aiempi suoritus oli ei-läpäisevä; unohda se
           }
           else {
             continue; // aiempi suoritus oli läpäisevä; unohda tämä
