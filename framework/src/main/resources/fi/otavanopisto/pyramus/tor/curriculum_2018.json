@@ -2,38 +2,44 @@
   "name": "OPS 2018",
   "subjects": [
     {
-      "name": "Äidinkieli ja kirjallisuus",
+      "name": "Äidinkieli ja kirjallisuus, suomi äidinkielenä",
       "code": "äi",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Suomen kielen ja kirjallisuuden perusteet",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Monimuotoiset tekstit",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Tekstien tuottaminen ja tulkitseminen",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kieli ja kulttuuri",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Puhe- ja vuorovaikutustaidot",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
           "name": "Median maailma",
@@ -68,38 +74,44 @@
       ]
     },
     {
-      "name": "Suomi toisena kielenä ja kirjallisuus",
+      "name": "Äidinkieli ja kirjallisuus, suomi toisena kielenä",
       "code": "s2",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Opiskelutaitojen vahvistaminen",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Luonnontieteen tekstit tutummiksi",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
           "name": "Yhteiskunnallisten aineiden tekstit tutummiksi",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
           "name": "Median tekstejä ja kuvia",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Tiedonhankintataitojen syventäminen",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Uutistekstit",
@@ -111,22 +123,25 @@
           "name": "Mielipiteen ilmaiseminen ja perusteleminen",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kaunokirjalliset tekstit tutuiksi",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kulttuurinen moninaisuus - moninainen kulttuuri",
           "courseNumber": 9,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
-          "name": "Ajankohtaiset ilmiöt SUomessa ja maailmassa",
+          "name": "Ajankohtaiset ilmiöt Suomessa ja maailmassa",
           "courseNumber": 10,
           "length": 28,
           "mandatory": false
@@ -144,7 +159,7 @@
           "mandatory": false
         },
         {
-          "name": "Suomen kielen perusteinen varmentaminen",
+          "name": "Suomen kielen perusteiden varmentaminen",
           "courseNumber": 14,
           "length": 28,
           "mandatory": false
@@ -152,44 +167,51 @@
       ]
     },
     {
-      "name": "Ruotsi",
+      "name": "Ruotsi, B1-oppimäärä",
       "code": "rub",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Kielitaidon alkeet: Lähtökohtia ruotsin opiskelulle",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kielitaidon alkeet: Perusviestintää arkipäivän sosiaalisissa tilanteissa",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kielitaidon alkeet: Vuorovaikutus asiointitilanteissa",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kielitaidon alkeet: Selviytyminen muodollisemmista tilanteista ",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kielitaidon alkeet: Palvelu- ja viranomaistilanteet",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kielitaidon alkeet: Ajankohtaiset ilmiöt",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Miksi Suomessa puhutaan ruotsia?",
@@ -212,71 +234,79 @@
       ]
     },
     {
-      "name": "Englanti",
+      "name": "Englanti, A-oppimäärä",
       "code": "ena",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Kehittyvä kielitaito: Työelämässä toimiminen ja muita muodollisia tilanteita",
           "courseNumber": 1,
           "length": 28,
-
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Palvelu- ja viranomaistilanteet ja osallistuva kansalainen",
           "courseNumber": 2,
           "length": 28,
-
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Kertomuksia minusta ja ympäristöstäni",
           "courseNumber": 3,
           "length": 28,
-
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Ajankohtaiset ilmiöt",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kulttuurikohtaamisia",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Globaalienglanti",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Liikkuvuus ja kansainvälisyys",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Avaimet elinikäiseen kieltenopiskeluun",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Peruskoulun niveltävä kurssi 1",
           "courseNumber": 9,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
           "name": "Peruskoulun niveltävä kurssi 2",
           "courseNumber": 10,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
           "name": "Suullisen kielitaidon kurssi",
@@ -287,6 +317,78 @@
       ]
     },
     {
+      "name": "Espanja, A-oppimäärä",
+      "code": "eaa",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Espanja, B2-oppimäärä",
+      "code": "eab",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Italia, B2-oppimäärä",
+      "code": "iab",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Ranska, A-oppimäärä",
+      "code": "raa",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Ranska, B2-oppimäärä",
+      "code": "rab",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Ruotsi, A-oppimäärä",
+      "code": "rua",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Saksa, A-oppimäärä",
+      "code": "saa",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Saksa, B2-oppimäärä",
+      "code": "sab",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Suomi, B2-oppimäärä",
+      "code": "fib",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Venäjä, A-oppimäärä",
+      "code": "vea",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Venäjä, B2-oppimäärä",
+      "code": "veb",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Saame, B2-oppimäärä",
+      "code": "smb",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
       "name": "Matematiikka",
       "code": "ma",
       "modules": [
@@ -294,49 +396,57 @@
           "name": "Luvut ja laskutoimitukset I",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Luvut ja laskutoimitukset II",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Lausekkeet",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Yhtälöt",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Geometria",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Prosentit",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Funktiot ja tilastot",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Geometria ja trigonometria",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Lausekkeita ja yhtälöitä",
@@ -347,14 +457,16 @@
       ]
     },
     {
-      "name": "Uskonto",
+      "name": "Uskonto, evankelisluterilainen",
       "code": "ue",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Uskonnot maailmassa",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Valinnainen",
@@ -365,14 +477,42 @@
       ]
     },
     {
+      "name": "Uskonto, ortodoksinen",
+      "code": "uo",
+      "choiceSubject": true,
+      "modules": [
+        {
+          "name": "Uskonnot maailmassa",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "name": "Uskonto, islam",
+      "code": "ui",
+      "choiceSubject": true,
+      "modules": [
+        {
+          "name": "Uskonnot maailmassa",
+          "courseNumber": 1,
+          "length": 28,
+          "mandatory": true
+        }
+      ]
+    },
+    {
       "name": "Elämänkatsomustieto",
       "code": "et",
+      "choiceSubject": true,
       "modules": [
         {
           "name": "Katsomukset ja ihmisoikeudet",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         }
       ]
     },
@@ -384,7 +524,8 @@
           "name": "Suomen historian käännekohdat",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Teollisuusyhteiskunnan synnystä nykyaikaan",
@@ -408,13 +549,15 @@
           "name": "Yhteiskuntajärjestelmä sekä julkiset palvelut",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Työelämän tuntemus ja oma talous",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         }
       ]
     },
@@ -426,7 +569,8 @@
           "name": "Fysiikka omassa elämässä ja elinympäristössä",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Fysiikka maailmankuvan rakentajana",
@@ -450,7 +594,8 @@
           "name": "Kemia omassa elämässä ja elinympäristössä",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kemia maailmankuvan rakentajana",
@@ -474,19 +619,22 @@
           "name": "Mitä elämä on?",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Kaupunkiekologia ja kestävä tulevaisuus",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
           "name": "Ihminen",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         }
       ]
     },
@@ -498,22 +646,25 @@
           "name": "Muuttuva maapallo ja kestävä tulevaisuus",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
-          "name": "Kotiplaneettamme Maa",
+          "name": "Elämän perusedellytykset maapallolla",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
-          "name": "Maapallo ihmisen elinympäristönä",
+          "name": "Ihmiset ja kulttuurit maapallolla",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false
+          "mandatory": false,
+          "available": true
         },
         {
-          "name": "Eurooppa",
+          "name": "Kestävä elämäntapa ja luonnonvarojen kestävä käyttö",
           "courseNumber": 4,
           "length": 28,
           "mandatory": false
@@ -528,7 +679,8 @@
           "name": "Terve elämä",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         }
       ]
     },
@@ -540,13 +692,15 @@
           "name": "Jatko-opinnot ja ammatinvalinta",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Työelämäosaaminen",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true
+          "mandatory": true,
+          "available": true
         },
         {
           "name": "Minä oppijana",
@@ -559,8 +713,56 @@
           "courseNumber": 4,
           "length": 28,
           "mandatory": false
+        },
+        {
+          "name": "Tutorkurssi",
+          "courseNumber": 5,
+          "length": 28,
+          "mandatory": false
+        },
+        {
+          "name": "Työelämäosaaminen II",
+          "courseNumber": 6,
+          "length": 28,
+          "mandatory": false
         }
       ]
+    },
+    {
+      "name": "Liikunta",
+      "code": "li",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Kuvataide",
+      "code": "ku",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Musiikki",
+      "code": "mu",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Käsityö",
+      "code": "ks",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Kotitalous",
+      "code": "ko",
+      "hiddenFromHops": true,
+      "modules": []
+    },
+    {
+      "name": "Tietotekniikka",
+      "code": "at",
+      "hiddenFromHops": true,
+      "modules": []
     }
   ]
 }
