@@ -81,6 +81,8 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.util.ContactInfoUtils;
+import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import net.sf.json.JSONArray;
@@ -383,7 +385,14 @@ public class EditStudentViewController extends PyramusViewController2 implements
     }
 
     readUserVariablePresets(pageRequestContext);
+
+    String jsonContactTypes = new JSONArrayExtractor("name", "id").extractString(contactTypes);
+    this.setJsDataVariable(pageRequestContext, "contactTypes", jsonContactTypes);
     
+    // AdditionalInfos
+    JSONObject studentAdditionalContactInfosJSON = ContactInfoUtils.getPersonAdditionalContactInfos(students);
+    setJsDataVariable(pageRequestContext, "studentAdditionalContactInfos", studentAdditionalContactInfosJSON.toString());
+
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("studentCards", studentCards);

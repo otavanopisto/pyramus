@@ -22,7 +22,6 @@ import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -101,7 +100,7 @@ public class UserController {
     return staffMemberDAO.findById(userId);
   }
 
-  public Email addUserEmail(User user, ContactType contactType, String address, Boolean defaultAddress) {
+  public Email addUserEmail(User user, String address, Boolean defaultAddress) {
     // Trim the email address
     address = StringUtils.trim(address);
 
@@ -109,7 +108,7 @@ public class UserController {
       throw new IllegalArgumentException("Email cannot be blank.");
     }
     
-    Email email = emailDAO.create(user.getContactInfo(), contactType, defaultAddress, address);
+    Email email = emailDAO.create(user.getContactInfo(), defaultAddress, address);
     if (user.hasRole(Role.STUDENT)) {
       studentDAO.fireUpdate(user.getId());
     }
@@ -127,7 +126,7 @@ public class UserController {
     return emailDAO.listByContactInfo(staffMember.getContactInfo());
   }
   
-  public Email updateStaffMemberEmail(StaffMember staffMember, Email email, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
+  public Email updateStaffMemberEmail(StaffMember staffMember, Email email, String address, Boolean defaultAddress) throws UserEmailInUseException {
     // Trim the email address
     address = StringUtils.trim(address);
 
@@ -135,11 +134,11 @@ public class UserController {
       throw new IllegalArgumentException("Email cannot be blank.");
     }
     
-    if (!UserUtils.isAllowedEmail(address, contactType, staffMember.getPerson().getId())) {
+    if (!UserUtils.isAllowedUniqueEmail(address, staffMember.getPerson())) {
       throw new UserEmailInUseException();
     }
     
-    return emailDAO.update(email, contactType, defaultAddress, address);
+    return emailDAO.update(email, defaultAddress, address);
   }
 
   public List<StaffMember> listStaffMembers() {
@@ -264,14 +263,14 @@ public class UserController {
 
   /* Address */
 
-  public Address addStaffMemberAddress(StaffMember staffMember, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
-    return addressDAO.create(staffMember.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
+  public Address addStaffMemberAddress(StaffMember staffMember, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.create(staffMember.getContactInfo(), name, streetAddress, postalCode, city, country, defaultAddress);
   }
   
   /* PhoneNumber */
 
-  public PhoneNumber addStaffMemberPhoneNumber(StaffMember staffMember, ContactType contactType, String number, Boolean defaultNumber) {
-    return phoneNumberDAO.create(staffMember.getContactInfo(), contactType, defaultNumber, number);
+  public PhoneNumber addStaffMemberPhoneNumber(StaffMember staffMember, String number, Boolean defaultNumber) {
+    return phoneNumberDAO.create(staffMember.getContactInfo(), defaultNumber, number);
   }
 
 }

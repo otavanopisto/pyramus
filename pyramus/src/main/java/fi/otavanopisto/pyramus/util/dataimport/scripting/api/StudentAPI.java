@@ -5,13 +5,11 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -37,7 +35,6 @@ public class StudentAPI {
 
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
-    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
@@ -110,12 +107,7 @@ public class StudentAPI {
     }
     
     if (StringUtils.isNotBlank(email)) {
-      ContactType emailContactType = contactTypeDAO.findById(emailContactTypeId);
-      if (emailContactType == null) {
-        throw new InvalidScriptException("Could not find contact type for email");
-      }
-      
-      emailDAO.create(student.getContactInfo(), emailContactType, true, email);
+      emailDAO.create(student.getContactInfo(), true, email);
     }
     
     return student.getId();

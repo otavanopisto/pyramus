@@ -191,6 +191,19 @@ public abstract class RequestContext {
     return NumberUtils.isNumber(value) ? NumberUtils.toLong(value) : null;  
   }
 
+  /**
+   * Get named parameter value as long. If it doesn't exist or
+   * cannot be parsed to long, returns default value.
+   * 
+   * @param paramName name of the parameter
+   * @param defaultValue default value if the parameter doesn't exist or cannot be parsed to long
+   * @return long value of the parameter or default value in case the parameter value doesn't exist
+   */
+  public long getLong(String paramName, long defaultValue) {
+    String value = getString(paramName);
+    return NumberUtils.toLong(value, defaultValue);
+  }
+
   public BigDecimal getBigDecimal(String paramName) {
     String value = getString(paramName);
     // Since '.' is a universal decimal separator in Java, let's be lenient with ',' as well

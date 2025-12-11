@@ -12,7 +12,6 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -20,12 +19,11 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 @Stateless
 public class EmailDAO extends PyramusEntityDAO<Email> {
 
-  public Email create(ContactInfo contactInfo, ContactType contactType, Boolean defaultAddress, String address) {
+  public Email create(ContactInfo contactInfo, Boolean defaultAddress, String address) {
     EntityManager entityManager = getEntityManager();
 
     Email email = new Email();
     email.setContactInfo(contactInfo);
-    email.setContactType(contactType);
     email.setDefaultAddress(defaultAddress);
     email.setAddress(address);
     entityManager.persist(email);
@@ -88,7 +86,7 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public Email update(Email email, ContactType contactType, Boolean defaultAddress, String address) {
+  public Email update(Email email, Boolean defaultAddress, String address) {
     EntityManager entityManager = getEntityManager();
 
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
@@ -97,7 +95,6 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
       auditUpdate(user.getPersonId(), user.getId(), email, Email_.address, address, true);
     }
 
-    email.setContactType(contactType);
     email.setDefaultAddress(defaultAddress);
     email.setAddress(address);
     entityManager.persist(email);

@@ -20,7 +20,7 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testCreateStudentAddress(Role role) throws NoSuchFieldException {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
@@ -41,7 +41,7 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   @EnumSource(Role.class)
   public void testCreateStudentAddressOwner(Role role) throws NoSuchFieldException {
     if (Role.STUDENT == role) {
-      Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+      Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
       
       Response response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
@@ -126,7 +126,7 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testDeleteStudentAddress(Role role) throws NoSuchFieldException {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")

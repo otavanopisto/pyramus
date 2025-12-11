@@ -10,23 +10,12 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import fi.otavanopisto.pyramus.dao.base.AddressDAO;
-import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
-import fi.otavanopisto.pyramus.dao.base.ContactURLDAO;
-import fi.otavanopisto.pyramus.dao.base.EmailDAO;
-import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
-import fi.otavanopisto.pyramus.domainmodel.base.Email;
-import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable;
@@ -56,21 +45,6 @@ public class SchoolController {
   @Inject
   private TagDAO tagDAO;
 
-  @Inject
-  private EmailDAO emailDAO;
-
-  @Inject
-  private PhoneNumberDAO phoneNumberDAO;
-  
-  @Inject
-  private AddressDAO addressDAO;
-
-  @Inject
-  private ContactURLDAO contactURLDAO;
-
-  @Inject
-  private ContactInfoDAO contactInfoDAO;
-  
   /* School */
 
   public School createSchool(String code, String name, SchoolField schoolField, StudentGroup studentGroup, BillingDetails billingDetails) {
@@ -148,11 +122,6 @@ public class SchoolController {
     return schoolDAO.removeTag(school, tag);
   }
   
-  public School updateSchoolAdditionalContactInfo(School school, String additionalContactInfo) {
-    contactInfoDAO.update(school.getContactInfo(), additionalContactInfo);
-    return school;
-  }
-
   public synchronized School updateSchoolTags(School school, List<String> tags) {
     Set<String> newTags = new HashSet<>(tags);
     Set<Tag> schoolTags = new HashSet<>(school.getTags());
@@ -307,31 +276,4 @@ public class SchoolController {
     schoolVariableKeyDAO.delete(schoolVariableKey);
   }
 
-  /* Email */
-
-  public Email addSchoolEmail(School school, ContactType contactType, String address, Boolean defaultAddress) {
-    // Trim the email address
-    address = address != null ? address.trim() : null;
-
-    return emailDAO.create(school.getContactInfo(), contactType, defaultAddress, address);
-  }
-  
-  /* Address */
-
-  public Address addSchoolAddress(School school, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
-    return addressDAO.create(school.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
-  }
-
-  /* PhoneNumber */
-
-  public PhoneNumber addSchoolPhoneNumber(School school, ContactType contactType, String number, Boolean defaultNumber) {
-    return phoneNumberDAO.create(school.getContactInfo(), contactType, defaultNumber, number);
-  }
-  
-  /* ContactURL */
-
-  public ContactURL addSchoolContactURL(School school, ContactURLType contactURLType, String url) {
-    return contactURLDAO.create(school.getContactInfo(), contactURLType, url);
-  }
-  
 }

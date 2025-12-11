@@ -17,7 +17,7 @@ public class StaffMemberPhoneNumberTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateStudentPhoneNumber() {
-    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 12 234 5678");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -28,7 +28,6 @@ public class StaffMemberPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("number", is(phoneNumber.getNumber()))
-      .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
       .body("defaultNumber", is( phoneNumber.getDefaultNumber()));
       
     int id = response.body().jsonPath().getInt("id");
@@ -48,7 +47,6 @@ public class StaffMemberPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .body("id.size()", is(1))
       .body("id[0]", is(6) )
       .body("number[0]", is("+567 89 012 3458"))
-      .body("contactTypeId[0]", is(1))
       .body("defaultNumber[0]", is(Boolean.TRUE));
   }
   
@@ -60,13 +58,12 @@ public class StaffMemberPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", is(6) )
       .body("number", is("+567 89 012 3458"))
-      .body("contactTypeId", is(1))
       .body("defaultNumber", is(Boolean.TRUE));
   }  
 
   @Test
   public void testDeleteStudentPhoneNumber() {
-    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    PhoneNumber phoneNumber = new PhoneNumber(null, Boolean.FALSE, "(123) 12 234 5678");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -77,7 +74,6 @@ public class StaffMemberPhoneNumberTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("number", is(phoneNumber.getNumber()))
-      .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
       .body("defaultNumber", is( phoneNumber.getDefaultNumber()));
       
     Long id = response.body().jsonPath().getLong("id");

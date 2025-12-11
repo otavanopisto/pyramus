@@ -38,6 +38,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PersonalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme_;
@@ -155,7 +156,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
 
     EntityManager entityManager = getEntityManager();
 
-    ContactInfo contactInfo = new ContactInfo();
+    PersonalContactInfo contactInfo = new PersonalContactInfo();
     
     Student student = new Student();
     student.setFirstName(firstName);
