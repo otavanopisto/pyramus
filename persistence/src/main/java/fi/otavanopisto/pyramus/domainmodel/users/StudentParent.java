@@ -42,18 +42,8 @@ public class StudentParent extends User {
    */
   @Override
   public boolean isAccountEnabled() {
-    List<StudentParentChild> currentChildren = getChildren();
-    
-    for (StudentParentChild parentChild : currentChildren) {
-      Student child = parentChild.getStudent();
-      
-      // Account is enabled if any of the students are active
-      if (isActiveChild(child)) {
-        return true;
-      }
-    }
-    
-    return false;
+    List<StudentParentChild> childs = getChildren();
+    return CollectionUtils.isNotEmpty(childs) && childs.stream().anyMatch(child -> isActiveChild(child));
   }
   
   public List<StudentParentChild> getChildren() {
@@ -64,10 +54,25 @@ public class StudentParent extends User {
   public List<StudentParentChild> getActiveChildren() {
     List<StudentParentChild> childs = getChildren();
     return CollectionUtils.isNotEmpty(childs)
-        ? childs.stream().filter(child -> isActiveChild(child.getStudent())).collect(Collectors.toList())
+        ? childs.stream().filter(child -> isActiveChild(child)).collect(Collectors.toList())
         : Collections.emptyList();
   }
 
+  /**
+   * Returns true if this StudentParent is a parent of given Student.
+   * 
+   * @param student Student
+   * @return true if this StudentParent is a parent of given Student
+   */
+  @Transient
+  public boolean isParentOf(Student student) {
+    if (student == null) {
+      throw new IllegalArgumentException();
+    }
+    
+    return findStudentParentChild(student) != null;
+  }
+  
   /**
    * Returns true if this StudentParent is active parent of given Student.
    * StudentParent is active if the student is underage or otherwise has
@@ -82,17 +87,28 @@ public class StudentParent extends User {
       throw new IllegalArgumentException();
     }
     
+    StudentParentChild studentParentChild = findStudentParentChild(student);
+    return studentParentChild != null && isActiveChild(studentParentChild);
+  }
+
+  /**
+   * Returns StudentParentChild for a Student if such exists.
+   * 
+   * @param student student
+   * @return StudentParentChild for the student or null if student is not in the list
+   */
+  @Transient
+  private StudentParentChild findStudentParentChild(Student student) {
     List<StudentParentChild> studentParentChildren = getChildren();
     for (StudentParentChild studentParentChild : studentParentChildren) {
       if (studentParentChild != null && studentParentChild.getStudent() != null && Boolean.FALSE.equals(studentParentChild.getStudent().getArchived())) {
         if (studentParentChild.getStudent().getId().equals(student.getId())) {
-          // Student is in the list, check that the time/age restriction holds
-          return isActiveChild(studentParentChild.getStudent());
+          return studentParentChild;
         }
       }
     }
-
-    return false;
+    
+    return null;
   }
   
   /**
@@ -105,14 +121,16 @@ public class StudentParent extends User {
    * @return
    */
   @Transient
-  private boolean isActiveChild(Student student) {
+  private boolean isActiveChild(StudentParentChild studentParentChild) {
+    Student student = studentParentChild.getStudent();
+    
     // Archived student or student who is not active is never active
     if (student.getArchived() || !student.getActive()) {
       return false;
     }
     
-    // Check for underage
-    return student.getPerson() != null && Boolean.TRUE.equals(student.getPerson().isUnderAge());
+    // Check that the student is either underage (implicit permission) or that the continued permission is granted
+    return student.getPerson() != null && (Boolean.TRUE.equals(student.getPerson().isUnderAge()) || studentParentChild.isContinuedViewPermission());
   }
   
   @OneToMany (mappedBy = "studentParent")

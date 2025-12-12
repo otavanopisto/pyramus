@@ -1358,6 +1358,12 @@
             dataType: 'hidden',
             paramName: 'studentParentId'
           }, {
+            right: 8 + 22 + 8 + 22 + 8,
+            width: 40,
+            dataType: 'text',
+            editable: false,
+            paramName: 'continuedViewPermission'
+          }, {
             right: 8 + 22 + 8,
             width: 22,
             dataType: 'button',
@@ -1416,6 +1422,7 @@
             name,
             studentParentData[i].email,
             studentParentData[i].userId,
+            studentParentData[i].continuedViewPermission ? getLocale().getText("students.viewStudent.parentTables.continuedViewPermissionAbbr") : "",
             '',
             ''
           ]);
@@ -1451,12 +1458,12 @@
             paramName: 'name'
           }, {
             left : 0 + 160 + 8,
-            right: 8 + 22 + 8 + 22 + 8 + 22 + 8 + 100 + 8,
+            right: 8 + 22 + 8 + 22 + 8 + 22 + 8 + 40 + 8 + 100 + 8,
             dataType: 'text',
             editable: false,
             paramName: 'email'
           }, {
-            right: 8 + 22 + 8 + 22 + 8 + 22 + 8,
+            right: 8 + 22 + 8 + 22 + 8 + 22 + 8 + 40 + 8,
             width: 100,
             dataType: 'select',
             editable: false,
@@ -1468,6 +1475,12 @@
           }, {
             dataType: 'hidden',
             paramName: 'invitationId'
+          }, {
+            right: 8 + 22 + 8 + 22 + 8 + 22 + 8,
+            width: 40,
+            dataType: 'text',
+            editable: false,
+            paramName: 'continuedViewPermission'
           }, {
             right: 8 + 22 + 8 + 22 + 8,
             width: 22,
@@ -1568,6 +1581,7 @@
             studentParentData[i].email,
             status,
             studentParentData[i].invitationId,
+            studentParentData[i].continuedViewPermission ? getLocale().getText("students.viewStudent.parentTables.continuedViewPermissionAbbr") : "",
             '',
             '',
             ''
@@ -3865,6 +3879,13 @@
                         <span class="viewStudentProjectHeaderAssessmentGrade">
                           <fmt:message key="generic.matriculation.examGrades.${attendanceBean.grade}"/>
                         </span>
+                        <c:if test="${not empty attendanceBean.totalPoints}">
+	                        <span>
+	                         <fmt:message key="students.viewStudent.matriculationTotalPoints">
+	                           <fmt:param value="${attendanceBean.totalPoints}"/>
+	                         </fmt:message>
+	                        </span>
+                        </c:if>
                       </span>
                     </c:if>
                   </div>

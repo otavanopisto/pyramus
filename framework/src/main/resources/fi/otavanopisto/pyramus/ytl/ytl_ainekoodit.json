@@ -103,7 +103,7 @@
   {
     "ytlAine": "PA",
     "aine": "Espanja, pitkä oppimäärä",
-    "aineKoodi": "ESA",
+    "aineKoodi": "EAA",
     "matriculationExamSubject": "ESA",
     "suoritetutKurssit": [
       { "educationType": "2", "subjectCode": "ESA" }
@@ -112,7 +112,7 @@
   {
     "ytlAine": "PC",
     "aine": "Espanja, lyhyt oppimäärä",
-    "aineKoodi": "ESB3",
+    "aineKoodi": "EAB3",
     "matriculationExamSubject": "ESC",
     "suoritetutKurssit": [
       { "educationType": "2", "subjectCode": "ESB3" }
@@ -157,7 +157,7 @@
   {
     "ytlAine": "TC",
     "aine": "Italia, lyhyt oppimäärä",
-    "aineKoodi": "ITB3",
+    "aineKoodi": "IAB3",
     "matriculationExamSubject": "ITC",
     "suoritetutKurssit": [
       { "educationType": "2", "subjectCode": "ITB3" }

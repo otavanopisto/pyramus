@@ -514,7 +514,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
       
       Application application = applicationDAO.findByApplicationId(applicationId);
-      String referenceCode = ApplicationUtils.generateReferenceCode(lastName, application == null ? null : application.getReferenceCode());
+      String referenceCode = ApplicationUtils.generateReferenceCode(application, lastName);
 
       // Access check
       

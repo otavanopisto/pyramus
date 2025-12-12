@@ -99,15 +99,7 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
     boolean defaultStudyProgramme = 
         settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId()) == HANDLER_TYPE;
 
-    LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
-    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(HANDLER_TYPE, student.getId()));
-    opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
-    opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
-    if (StringUtils.isNotBlank(studyOid)) {
-      opiskeluoikeus.setOid(studyOid);
-    }
-
-    opiskeluoikeus.setLisatiedot(getLisatiedot(student));
+    LukionOpiskeluoikeus opiskeluoikeus = lukionOpiskeluokeudenPerustiedot(HANDLER_TYPE, student, studyOid);
 
     OpintojenRahoitus opintojenRahoitus = opintojenRahoitus(student);
     StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);

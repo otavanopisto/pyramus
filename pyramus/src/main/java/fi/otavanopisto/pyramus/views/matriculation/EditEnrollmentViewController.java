@@ -80,6 +80,12 @@ public class EditEnrollmentViewController extends PyramusViewController {
 
     MatriculationExamEnrollmentState enrollmentState = MatriculationExamEnrollmentState.valueOf(
         pageRequestContext.getString("state"));
+
+    // Candidate number is only editable when form state is FILLED_ON_BEHALF and it needs to be positive integer
+    Integer candidateNumber = pageRequestContext.getInteger("candidateNumber");
+    if (candidateNumber != null && candidateNumber <= 0) {
+      candidateNumber = null;
+    }
     
     Long enrollmentId = pageRequestContext.getLong("enrollment");
     MatriculationExamEnrollment enrollment = enrollmentId != null ? enrollmentDAO.findById(enrollmentId) : null;
@@ -106,6 +112,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
           enrollment.getStudent(),
           MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure"))
       );
+      
+      if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
+        enrollment = enrollmentDAO.updateCandidateNumber(enrollment, candidateNumber);
+      }
     }
     else {
       // Create new enrollment
@@ -139,6 +149,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
           MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
           new Date()
       );
+
+      if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
+        enrollment = enrollmentDAO.updateCandidateNumber(enrollment, candidateNumber);
+      }
     }
     
 
