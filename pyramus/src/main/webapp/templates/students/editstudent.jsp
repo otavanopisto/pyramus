@@ -1124,7 +1124,7 @@
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="students.editStudent.emailTableEmailsTitle"/>
                     </jsp:include>
-                    <c:set var="email" value="${student.contactInfo.emails[0]}"/>
+                    <c:set var="email" value="${student.contactInfo.defaultEmail}"/>
                     <div>${fn:escapeXml(email.address)}</div>
                   </div>
                   

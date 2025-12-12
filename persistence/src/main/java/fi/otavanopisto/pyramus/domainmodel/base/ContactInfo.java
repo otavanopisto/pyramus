@@ -16,16 +16,15 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
-@Indexed
 public class ContactInfo {
-
+  
   public Long getId() {
     return id;
   }
@@ -52,6 +51,16 @@ public class ContactInfo {
     addresses.remove(address);
   } 
 
+  @Transient  
+  public Address getDefaultAddress() {
+    for (Address address : getAddresses()) {
+      if (address.getDefaultAddress()) {
+        return address;
+      }
+    }
+    return null;
+  }
+  
   @SuppressWarnings("unused")
   private void setEmails(List<Email> emails) {
     this.emails = emails;
@@ -74,6 +83,16 @@ public class ContactInfo {
     emails.remove(email);
   } 
 
+  @Transient
+  public Email getDefaultEmail() {
+    for (Email email : getEmails()) {
+      if (email.getDefaultAddress()) {
+        return email;
+      }
+    }
+    return null;
+  }
+  
   @SuppressWarnings("unused")
   private void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
     this.phoneNumbers = phoneNumbers;
@@ -95,6 +114,16 @@ public class ContactInfo {
     phoneNumber.setContactInfo(null);
     phoneNumbers.remove(phoneNumber);
   } 
+  
+  @Transient
+  public PhoneNumber getDefaultPhoneNumber() {
+    for (PhoneNumber phoneNumber : getPhoneNumbers()) {
+      if (phoneNumber.getDefaultNumber()) {
+        return phoneNumber;
+      }
+    }
+    return null;
+  }
 
   @SuppressWarnings("unused")
   private void setContactURLs(List<ContactURL> contactURLs) {
