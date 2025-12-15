@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TORCurriculumSubject {
 
   public String getName() {
