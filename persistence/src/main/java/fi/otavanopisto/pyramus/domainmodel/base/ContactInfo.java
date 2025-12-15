@@ -20,9 +20,11 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
+@Indexed
 public class ContactInfo {
   
   public Long getId() {
