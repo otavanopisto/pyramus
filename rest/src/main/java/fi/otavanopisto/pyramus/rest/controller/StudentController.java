@@ -28,6 +28,7 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
@@ -135,6 +136,9 @@ public class StudentController {
 
   @Inject
   private CourseAssessmentDAO courseAssessmentDAO;
+  
+  @Inject
+  private CourseStudentDAO courseStudentDAO;
   
   @Inject
   private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
@@ -428,14 +432,44 @@ public class StudentController {
   
   /* Course activity */
   
-  public CourseActivityInfo listCourseActivities(Student student, List<CourseStudent> courseStudents, boolean includeTransferCredits) {
+  public CourseActivityInfo listCourseActivities(Student student, List<Course> courses, boolean includeTransferCredits) {
     List<CourseActivity> courseActivities = new ArrayList<>();
-    List<CreditLink> linkedAssessments = creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment); 
+    List<CreditLink> linkedAssessments = creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment);
+    
+    // Jos emme ole kiinnostuneet tietyistä kursseista, listaa opiskelijan kaikki kurssit + siirtosuorituskurssit
+    
+    if (courses == null || courses.isEmpty()) {
+      List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
+      for (CourseStudent courseStudent : courseStudents) {
+        if (!courses.contains(courseStudent.getCourse())) {
+          courses.add(courseStudent.getCourse());
+        }
+      }
+      for (CreditLink creditLink : linkedAssessments) {
+        CourseAssessment courseAssessment = (CourseAssessment) creditLink.getCredit();
+        Course course = courses.stream().filter(c -> c.getId().equals(courseAssessment.getCourseStudent().getCourse().getId())).findFirst().orElse(null);
+        if (course == null) {
+          courses.add(courseAssessment.getCourseStudent().getCourse());
+        }
+      }
+    }
     
     // Go through the courses
     
-    for (CourseStudent courseStudent : courseStudents) {
-      Course course = courseStudent.getCourse();
+    for (Course course : courses) {
+      CourseStudent courseStudent = courseStudentDAO.findByCourseAndStudent(course, student);
+      if (courseStudent == null) {
+        for (CreditLink creditLink : linkedAssessments) {
+          CourseAssessment courseAssessment = (CourseAssessment) creditLink.getCredit();
+          if (course.getId().equals(courseAssessment.getCourseStudent().getCourse().getId())) {
+            courseStudent = courseAssessment.getCourseStudent();
+            break;
+          }
+        }
+        if (courseStudent == null) {
+          continue;
+        }
+      }
       CourseAssessmentRequest request = courseAssessmentRequestDAO.findLatestByCourseStudent(courseStudent);
       
       // Course basic information
@@ -542,7 +576,7 @@ public class StudentController {
         
       }
       courseActivities.add(courseActivity);
-    }    
+    }
 
     // Optionally include transfer credits as well
     

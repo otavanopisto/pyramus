@@ -3308,30 +3308,20 @@ public class StudentRESTService extends AbstractRESTService {
     
     // Get courses of the student (all or those specified with courseIds)
     
-    List<CourseStudent> courseStudents;
-    if (StringUtils.isEmpty(courseIds)) {
-      courseStudents = courseController.listByStudent(student);
-    }
-    else {
-      courseStudents = new ArrayList<>();
+    List<Course> courses = new ArrayList<>();
+    if (!StringUtils.isEmpty(courseIds)) {
       String[] courseIdArray = courseIds.split(",");
       for (int i = 0; i < courseIdArray.length; i++) {
         Course course = courseController.findCourseById(Long.valueOf(courseIdArray[i]));
         if (course != null) {
-          CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
-          if (courseStudent != null) {
-            courseStudents.add(courseStudent);
-          }
-          else {
-            logger.warning(String.format("Course student not found asking activity for student %d in course %d", student.getId(), course.getId()));
-          }
+          courses.add(course);
         }
       }
     }
     
     // Serve data
     
-    CourseActivityInfo courseActivityInfo = studentController.listCourseActivities(student, courseStudents, includeTransferCredits);
+    CourseActivityInfo courseActivityInfo = studentController.listCourseActivities(student, courses, includeTransferCredits);
     return Response.ok(courseActivityInfo).build();
   }
   
