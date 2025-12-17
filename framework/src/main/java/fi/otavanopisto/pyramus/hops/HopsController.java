@@ -141,25 +141,67 @@ public class HopsController {
       hasNativeLanguage = true;
       chosenSubjects.add(s);
     }
+    else {
+      if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+        chosenSubjects.add("ÄI");
+        chosenSubjects.add("S2");
+      }
+      else {
+        chosenSubjects.add("äi");
+        chosenSubjects.add("s2");
+      }
+    }
     s = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
     if (s != null) {
       hasMath = true;
       chosenSubjects.add(s);
+    }
+    else if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+      chosenSubjects.add("MAA");
+      chosenSubjects.add("MAB");
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioUskonto");
     if (s != null) {
       hasReligion = true;
       chosenSubjects.add(s);
     }
+    else {
+      if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+        chosenSubjects.add("UE");
+        chosenSubjects.add("UO");
+        chosenSubjects.add("ET");
+      }
+      else {
+        chosenSubjects.add("ue");
+        chosenSubjects.add("uo");
+        chosenSubjects.add("et");
+      }
+    }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliA");
     if (s != null) {
       hasPrimaryForeignLangauge = true;
       chosenSubjects.add(s);
     }
+    else {
+      if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+        chosenSubjects.add("ENA");
+      }
+      else {
+        chosenSubjects.add("ena");
+      }
+    }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB1");
     if (s != null) {
       hasSecondaryForeignLanguage = true;
       chosenSubjects.add(s);
+    }
+    else {
+      if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+        chosenSubjects.add("RUB1");
+      }
+      else {
+        chosenSubjects.add("rub");
+      }
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB2");
     if (s != null) {
