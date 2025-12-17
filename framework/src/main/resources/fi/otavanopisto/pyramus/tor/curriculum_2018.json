@@ -492,7 +492,7 @@
     {
       "name": "Uskonto, islam",
       "code": "ui",
-      "choiceSubject": true,
+      "hiddenFromHops": true,
       "modules": [
         {
           "name": "Uskonnot maailmassa",
