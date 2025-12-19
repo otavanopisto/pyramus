@@ -36,7 +36,7 @@
     <div class="form-section__field-container field-birthday dependent" data-dependent-field="field-has-ssn" data-dependent-values="ei" style="display:none;">
       <label for="field-birthday" class="required">Syntymäaika</label>
       <input type="text" id="field-birthday" name="field-birthday" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-date-format="">
-      <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
+      <span class="field-help">Syntymäaika muodossa 15.3.1995</span>
     </div>
 
     <div class="form-section__field-container field-ssn dependent" data-dependent-field="field-has-ssn" data-dependent-values="kylla" style="display:none;">
