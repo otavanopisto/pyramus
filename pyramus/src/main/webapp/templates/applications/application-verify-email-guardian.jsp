@@ -82,7 +82,7 @@
                 <div class="form-section__field-container field-birthday">
                   <label for="field-birthday" class="required">Hakijan syntymäaika</label>
                   <input type="text" id="field-birthday" name="field-birthday" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-date-format="">
-                  <span class="field-help">Syntymäaika muodossa 15.3.1995</span>
+                  <span class="field-help">Esitysmuoto <span translate="no">p.k.vvvv</span> (esim. 15.3.1995)</span>
                 </div>
               </section> 
               <nav class="form-navigation">
