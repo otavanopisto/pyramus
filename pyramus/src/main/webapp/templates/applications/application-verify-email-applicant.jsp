@@ -78,7 +78,7 @@
           <section class="application-content__form">
             <form class="application-form">
               <input id="v" type="hidden" name="v" value="${verificationToken}"/>
-              <section class="form-section section-edit-info">
+              <section class="form-section">
                 <div class="form-section__field-container field-birthday">
                   <label for="field-birthday" class="required">Syntymäaika</label>
                   <input type="text" id="field-birthday" name="field-birthday" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-date-format="">
