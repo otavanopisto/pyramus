@@ -78,11 +78,11 @@
           <section class="application-content__form">
             <form class="application-form">
               <input id="v" type="hidden" name="v" value="${verificationToken}"/>
-              <section class="form-section section-edit-info">
+              <section class="form-section">
                 <div class="form-section__field-container field-birthday">
                   <label for="field-birthday" class="required">Syntymäaika</label>
-                  <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true"><br/>
-                  <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
+                  <input type="text" id="field-birthday" name="field-birthday" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-date-format="">
+                  <span class="field-help">Esitysmuoto <span translate="no">p.k.vvvv</span> (esim. 15.3.1995)</span>
                 </div>
               </section> 
               <nav class="form-navigation">

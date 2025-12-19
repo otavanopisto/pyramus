@@ -105,7 +105,7 @@
         <main class="application-content application-content--edit">
           <section class="application-content__form">
             <form class="application-form">
-              <section class="form-section section-edit-info">
+              <section class="form-section">
                 <div class="form-section__field-container field-last-name">
                   <label for="field-last-name" class="required">Sukunimi</label>
                   <input type="text" id="field-last-name" name="field-last-name" data-parsley-required="true">

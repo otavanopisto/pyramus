@@ -4,25 +4,23 @@
       $('.error-container').hide();
       var token = $('#v').val();
       var birthday = $('#field-birthday').val();
-      if (!birthday) {
-        $('.error-container').text('Täytä kaikki kentät').show();
-        return;
+      if ($('.application-form').parsley().validate()) {
+        $.ajax({
+          url: '/applications/verifymail.json',
+          type: 'POST',
+          data: {
+            token: token,
+            birthday: birthday 
+          },
+          dataType: 'json',
+          success: function(response) {
+            window.location.search = '?v=' + token + '&status=ok'; 
+          },
+          error: function(err) {
+            $('.error-container').text(err.responseText).show();
+          }
+        });
       }
-      $.ajax({
-        url: '/applications/verifymail.json',
-        type: 'POST',
-        data: {
-          token: token,
-          birthday: birthday 
-        },
-        dataType: 'json',
-        success: function(response) {
-          window.location.search = '?v=' + token + '&status=ok'; 
-        },
-        error: function(err) {
-          $('.error-container').text(err.responseText).show();
-        }
-      });
     });
   });
 }).call(this);
