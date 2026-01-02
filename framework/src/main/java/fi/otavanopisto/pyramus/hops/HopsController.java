@@ -137,9 +137,12 @@ public class HopsController {
     boolean hasSecondaryForeignLanguage = false;
     Set<String> chosenSubjects = new HashSet<>();
     String s = userVariableDAO.findByUserAndKey(student, "lukioAidinkieli");
-    if (s != null) {
+    if (!StringUtils.isBlank(s)) {
       hasNativeLanguage = true;
-      chosenSubjects.add(s);
+      String[] sArr = StringUtils.split(s, ",");
+      for (int i = 0; i < sArr.length; i++) {
+        chosenSubjects.add(sArr[i]);
+      }
     }
     else {
       if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
@@ -152,18 +155,24 @@ public class HopsController {
       }
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
-    if (s != null) {
+    if (!StringUtils.isBlank(s)) {
       hasMath = true;
-      chosenSubjects.add(s);
+      String[] sArr = StringUtils.split(s, ",");
+      for (int i = 0; i < sArr.length; i++) {
+        chosenSubjects.add(sArr[i]);
+      }
     }
     else if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
       chosenSubjects.add("MAA");
       chosenSubjects.add("MAB");
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioUskonto");
-    if (s != null) {
+    if (!StringUtils.isBlank(s)) {
       hasReligion = true;
-      chosenSubjects.add(s);
+      String[] sArr = StringUtils.split(s, ",");
+      for (int i = 0; i < sArr.length; i++) {
+        chosenSubjects.add(sArr[i]);
+      }
     }
     else {
       if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
@@ -178,9 +187,12 @@ public class HopsController {
       }
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliA");
-    if (s != null) {
+    if (!StringUtils.isBlank(s)) {
       hasPrimaryForeignLangauge = true;
-      chosenSubjects.add(s);
+      String[] sArr = StringUtils.split(s, ",");
+      for (int i = 0; i < sArr.length; i++) {
+        chosenSubjects.add(sArr[i]);
+      }
     }
     else {
       if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
@@ -191,9 +203,12 @@ public class HopsController {
       }
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB1");
-    if (s != null) {
+    if (!StringUtils.isBlank(s)) {
       hasSecondaryForeignLanguage = true;
-      chosenSubjects.add(s);
+      String[] sArr = StringUtils.split(s, ",");
+      for (int i = 0; i < sArr.length; i++) {
+        chosenSubjects.add(sArr[i]);
+      }
     }
     else {
       if (StringUtils.equals(type, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
@@ -204,12 +219,18 @@ public class HopsController {
       }
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB2");
-    if (s != null) {
-      chosenSubjects.add(s);
+    if (!StringUtils.isBlank(s)) {
+      String[] sArr = StringUtils.split(s, ",");
+      for (int i = 0; i < sArr.length; i++) {
+        chosenSubjects.add(sArr[i]);
+      }
     }
     s = userVariableDAO.findByUserAndKey(student, "lukioKieliB3");
-    if (s != null) {
-      chosenSubjects.add(s);
+    if (!StringUtils.isBlank(s)) {
+      String[] sArr = StringUtils.split(s, ",");
+      for (int i = 0; i < sArr.length; i++) {
+        chosenSubjects.add(sArr[i]);
+      }
     }
     
     // Nillitystä puuttuvista ainevalinnoista (matematiikka koskee vain lukiota)
