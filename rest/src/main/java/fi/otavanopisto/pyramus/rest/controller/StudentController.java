@@ -441,7 +441,8 @@ public class StudentController {
     if (courses == null || courses.isEmpty()) {
       List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
       for (CourseStudent courseStudent : courseStudents) {
-        if (!courses.contains(courseStudent.getCourse())) {
+        Course course = courses.stream().filter(c -> c.getId().equals(courseStudent.getCourse().getId())).findFirst().orElse(null);
+        if (course == null) {
           courses.add(courseStudent.getCourse());
         }
       }
