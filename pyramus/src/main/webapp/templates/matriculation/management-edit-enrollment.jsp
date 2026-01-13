@@ -464,14 +464,7 @@
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.candidateNumber.help"/>
                 </jsp:include>
                 <div>
-                  <c:choose>
-                    <c:when test="${!empty enrollment.candidateNumber}">
-                      ${enrollment.candidateNumber}
-                    </c:when>
-                    <c:otherwise>
-                      -
-                    </c:otherwise>
-                  </c:choose>
+                  <input type="number" name="candidateNumber" ${state != 'FILLED_ON_BEHALF' ? 'disabled="disabled"' : ''} value="${enrollment.candidateNumber}" style="width: 70px;" />
                 </div>
               </div>
   

@@ -77,6 +77,7 @@ public class UploadMatriculationCSVBinaryRequestController extends BinaryRequest
         MatriculationExamEnrollment examEnrollment = null;
         MatriculationExamSubject examSubject;
         MatriculationGrade matriculationGrade;
+        String subjectDisplayText = matriculationResult.getKoe();
 
         // Sanity checks
         String tutkintokerta = matriculationResult.getTutkintokerta();
@@ -105,6 +106,10 @@ public class UploadMatriculationCSVBinaryRequestController extends BinaryRequest
         }
         else {
           examSubject = ytlAineKoodi.getMatriculationExamSubject();
+          
+          if (StringUtils.isNotBlank(ytlAineKoodi.getAineKoodi()) && !StringUtils.equals(matriculationResult.getKoe(), ytlAineKoodi.getAineKoodi())) {
+            subjectDisplayText = String.format("%s [%s]", matriculationResult.getKoe(), ytlAineKoodi.getAineKoodi());
+          }
         }
         
         // Parse candidate number
@@ -114,9 +119,9 @@ public class UploadMatriculationCSVBinaryRequestController extends BinaryRequest
           continue;
         }
 
-        // Parse total points
+        // Parse total points, if grade is K, there's no points so skip the error message
         int totalPointsInt = NumberUtils.toInt(matriculationResult.getYhteispisteet(), -1);
-        if (totalPointsInt == -1) {
+        if (totalPointsInt == -1 && examGrade != MatriculationExamGrade.K) {
           rowMessages.add(String.format("Rivi %d: Kokonaispistemäärä (%s) ei ole kokonaisluku. Pisteitä ei tallenneta riville.", rowNumber, matriculationResult.getYhteispisteet()));
         }
         Integer totalPoints = totalPointsInt != -1 ? totalPointsInt : null;
@@ -176,7 +181,7 @@ public class UploadMatriculationCSVBinaryRequestController extends BinaryRequest
           continue;
         }
 
-        rowMessages.add(String.format("Rivi %d: OK Tutkintokerta (%s), kokelasnro (%d), arvosana (%s), yhteispisteet (%s)", rowNumber, matriculationResult.getTutkintokerta(), candidateNumber, matriculationResult.getArvosana(), totalPoints));
+        rowMessages.add(String.format("Rivi %d: OK Tutkintokerta (%s), kokelasnro (%d), koe (%s), arvosana (%s), yhteispisteet (%s)", rowNumber, matriculationResult.getTutkintokerta(), candidateNumber, subjectDisplayText, matriculationResult.getArvosana(), totalPoints));
         rowsOk++;
         result.put("rowsOk", rowsOk);
 

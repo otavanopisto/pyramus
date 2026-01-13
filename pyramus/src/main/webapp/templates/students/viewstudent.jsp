@@ -4,6 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="/ix" prefix="ix"%>
+<%@ page import="java.util.Calendar" %>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.base.Person" %>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType" %>
 <%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -30,9 +33,22 @@
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/viewstudent.js"></script>
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/typedcontactinfo.js"></script>
 
-<!-- Used to render memo values with line breaks; for some reason this is the only approach that works -->
 <%
+  // Used to render memo values with line breaks; for some reason this is the only approach that works
   pageContext.setAttribute("newLineChar", "\n");
+%>
+
+<%
+  // Set compulsoryEducationEndDate - the end of the year when student is 20 years old
+  Person person = (Person) request.getAttribute("person");
+  if (person != null && person.getBirthday() != null) {
+    Calendar c = Calendar.getInstance();
+    c.setTime(person.getBirthday());
+    c.add(Calendar.YEAR, 20);
+    c.set(Calendar.DATE, 31);
+    c.set(Calendar.MONTH, 11);
+    pageContext.setAttribute("compulsoryEducationEndDate", c.getTime());
+  }
 %>
 
 <script type="text/javascript">
@@ -3046,6 +3062,15 @@
                             <div>
                               <fmt:message key="generic.studentStudyPeriods.${period.periodType}"/>
                               <fmt:formatDate value="${period.begin}"/> - <fmt:formatDate value="${period.end}"/>
+                              <c:if test="${period.periodType == StudentStudyPeriodType.COMPULSORY_EDUCATION && not empty compulsoryEducationEndDate}">
+                                <span style="color: gray; font-style: italic;">
+                                  <fmt:message key="students.viewStudent.studyPeriodCompulsoryEducationEndDate">
+                                    <fmt:param>
+                                      <fmt:formatDate value="${compulsoryEducationEndDate}"/>
+                                    </fmt:param>
+                                  </fmt:message>
+                                </span>
+                              </c:if>
                             </div>
                           </c:forEach>
                         </div>
@@ -3404,7 +3429,7 @@
                           value="students.viewStudent.emailHelp" />
                       </jsp:include>
                       <div class="genericViewFormDataText">
-                        <c:set var="email" value="${student.contactInfo.emails[0]}"/>
+                        <c:set var="email" value="${student.contactInfo.defaultEmail}"/>
                         <div>${fn:escapeXml(email.address)}</div>
                       </div>
                     </div>
@@ -3871,6 +3896,13 @@
                         <span class="viewStudentProjectHeaderAssessmentGrade">
                           <fmt:message key="generic.matriculation.examGrades.${attendanceBean.grade}"/>
                         </span>
+                        <c:if test="${not empty attendanceBean.totalPoints}">
+	                        <span>
+	                         <fmt:message key="students.viewStudent.matriculationTotalPoints">
+	                           <fmt:param value="${attendanceBean.totalPoints}"/>
+	                         </fmt:message>
+	                        </span>
+                        </c:if>
                       </span>
                     </c:if>
                   </div>

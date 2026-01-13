@@ -513,6 +513,10 @@ a[target="_blank"]::after {
   margin: 8px 0px;
 }
 
+.viewStudentProjectHeaderAssessmentGrade {
+	font-weight: bold;
+}
+
 /* Manage Course Assessments */
 
 #manageCourseAssessmentsStudentsTableContainer {

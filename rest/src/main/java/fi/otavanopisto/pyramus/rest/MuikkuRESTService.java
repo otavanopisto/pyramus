@@ -2,8 +2,8 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -59,7 +59,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
-import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
@@ -81,6 +80,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.hops.HopsController;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -133,6 +133,9 @@ public class MuikkuRESTService {
 
   @Inject
   private StudentController studentController;
+  
+  @Inject
+  private HopsController hopsController;
 
   @Inject
   private StudentGroupController studentGroupController;
@@ -164,6 +167,31 @@ public class MuikkuRESTService {
   @Inject
   private CreditLinkDAO creditLinkDAO;
   
+  @Path("/students/{ID:[0-9]*}/courseMatrix")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getCourseMatrix(@PathParam("ID") Long id) {
+    
+    // Access check
+    
+    Student student = studentController.findStudentById(id);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEMATRIX, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    // Serve the request
+    
+    return Response.ok().entity(hopsController.getCourseMatrix(student)).build();
+  }
+  
   @Path("/students/{ID:[0-9]*}/studyActivity")
   @GET
   @RESTPermit(handling = Handling.INLINE)
@@ -184,24 +212,37 @@ public class MuikkuRESTService {
       }
     }
     
-    Map<String, StudyActivityItemRestModel> items = new HashMap<>();
-    
-    // Transfer credits
+    List<StudyActivityItemRestModel> items = new ArrayList<>();
+    List<CourseAssessment> courseAssessments = new ArrayList<>();
+    Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
 
-    List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
-    transferCredits.sort(Comparator.comparing(TransferCredit::getDate).reversed());
-    for (TransferCredit transferCredit : transferCredits) {
-      String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
-      StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
-      if (!items.containsKey(key) || items.get(key).getDate().getTime() < item.getDate().getTime()) {
-        items.put(key, item);
+    // Siirtosuoritukset
+    
+    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
+    for (CreditLink creditLink : creditLinks) {
+      Credit credit = creditLink.getCredit();
+      if (credit.getCreditType() == CreditType.CourseAssessment) {
+        courseAssessments.add((CourseAssessment) credit);
+      }
+      else if (credit.getCreditType() == CreditType.TransferCredit) {
+        StudyActivityItemRestModel item = getTransferCreditActivityItem((TransferCredit) credit); 
+        items.add(item);
+        itemCache.put(item.getSubject() + item.getCourseNumber(), item);
       }
     }
     
-    // Course assessments
+    // Hyväksiluvut
+
+    List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
+    for (TransferCredit transferCredit : transferCredits) {
+      StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit); 
+      items.add(item);
+      itemCache.put(item.getSubject() + item.getCourseNumber(), item);
+    }
     
-    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
-    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+    // Kurssiarvioinnit
+    
+    courseAssessments.addAll(courseAssessmentDAO.listByStudent(student));
     for (CourseAssessment courseAssessment : courseAssessments) {
 
       // #1640: Course must not have OPS or has to match student's OPS 
@@ -214,60 +255,43 @@ public class MuikkuRESTService {
           continue;
         }
       }
+      
+      // Jos aine + kurssinumero löytyy jo listasta, jätä voimaan korkein arvosana
 
-      String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
+      StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
+      if (existingItem != null) {
+        boolean exPass = existingItem.isPassing();
+        boolean pass = courseAssessment.getGrade() == null ? true : courseAssessment.getGrade().getPassingGrade();
+        if (exPass != pass) {
+          if (!exPass) {
+            itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
+            items.remove(existingItem); // aiempi suoritus oli ei-läpäisevä; unohda se
+          }
+          else {
+            continue; // aiempi suoritus oli läpäisevä; unohda tämä
+          }
+        }
+        else {
+          int exGrade = NumberUtils.isCreatable(existingItem.getGrade()) ? Integer.parseInt(existingItem.getGrade()) : 0;
+          int grade = courseAssessment.getGrade() != null && NumberUtils.isCreatable(courseAssessment.getGrade().getName())
+              ? Integer.parseInt(courseAssessment.getGrade().getName())
+              : 0;
+          if (exGrade <= grade) {
+            itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
+            items.remove(existingItem); // aiemmassa suorituksessa on sama tai matalampi arvosana; unohda se
+          }
+          else {
+            continue; //  aiemmassa suorituksessa on korkeampi arvosana; unohda tämä
+          }
+        }
+      }
+
       StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-      if (!items.containsKey(key)) {
-        items.put(key, item);
-      }
-      else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
-        // #1646: Don't override passing grades with non-passing grades
-        if (items.get(key).isPassing() && !item.isPassing()) {
-          continue;
-        }
-        items.put(key, item);
-      }
+      items.add(item);
+      itemCache.put(item.getSubject() + item.getCourseNumber(), item);
     }
     
-    // Linked credits
-    
-    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
-    for (CreditLink creditLink : creditLinks) {
-      Credit credit = creditLink.getCredit();
-      if (credit.getCreditType() == CreditType.CourseAssessment) {
-        CourseAssessment courseAssessment = (CourseAssessment) credit;
-        String key = getActivityItemKey(courseAssessment.getSubject(), courseAssessment.getCourseNumber());
-        StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-        if (!items.containsKey(key)) {
-          items.put(key, item);
-        }
-        else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
-          // #1646: Don't override passing grades with non-passing grades
-          if (items.get(key).isPassing() && !item.isPassing()) {
-            continue;
-          }
-          items.put(key, item);
-        }
-      }
-      else if (credit.getCreditType() == CreditType.TransferCredit) {
-        TransferCredit transferCredit = (TransferCredit) credit;
-        String key = getActivityItemKey(transferCredit.getSubject(), transferCredit.getCourseNumber());
-        StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
-        if (!items.containsKey(key)) {
-          items.put(key, item);
-        }
-        else if (items.get(key).getDate().getTime() < item.getDate().getTime()) {
-          // #1646: Don't override passing grades with non-passing grades
-          if (items.get(key).isPassing() && !item.isPassing()) {
-            continue;
-          }
-          items.put(key, item);
-        }
-      }
-    }
-    
-    
-    // Courses
+    // Kurssit, joilla opiskelija on mukana
     
     List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
     for (CourseStudent courseStudent : courseStudents) {
@@ -289,24 +313,28 @@ public class MuikkuRESTService {
        * more than one CourseModules.
        */
       for (CourseModule courseModule : course.getCourseModules()) {
-        String key = getActivityItemKey(courseModule.getSubject(),  courseModule.getCourseNumber());
-        if (!items.containsKey(key)) {
-          StudyActivityItemRestModel item = new StudyActivityItemRestModel();
-          item.setCourseId(course.getId());
-          item.setCourseName(course.getName());
-          if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
-            item.setCourseNumber(courseModule.getCourseNumber());
-          }
-          item.setDate(courseStudent.getEnrolmentTime());
-          item.setStatus(StudyActivityItemStatus.ONGOING);
-          item.setSubject(courseModule.getSubject().getCode());
-          item.setSubjectName(courseModule.getSubject().getName());
-          items.put(key, item);
+        
+        // Jos kurssista on jo suoritus niin älä lisää toistamiseen
+        
+        if (itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
+          continue;
         }
+
+        StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+        item.setCourseId(course.getId());
+        item.setCourseName(course.getName());
+        if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
+          item.setCourseNumber(courseModule.getCourseNumber());
+        }
+        item.setDate(courseStudent.getEnrolmentTime());
+        item.setStatus(StudyActivityItemStatus.ONGOING);
+        item.setSubject(courseModule.getSubject().getCode());
+        item.setSubjectName(courseModule.getSubject().getName());
+        items.add(item);
       }
     }
 
-    return Response.ok(items.values()).build();
+    return Response.ok(items).build();
   }
   
   @Path("/users")
@@ -1040,10 +1068,6 @@ public class MuikkuRESTService {
     ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
     return bundle.getString(key);
   }
-
-  private String getActivityItemKey(Subject subject, Integer courseNumber) {
-    return courseNumber == null ? subject.getCode() : subject.getCode() + courseNumber;
-  }
   
   private StudyActivityItemRestModel getCourseAssessmentActivityItem(CourseAssessment courseAssessment) {
     Course course = courseAssessment.getCourseStudent().getCourse();
@@ -1075,6 +1099,7 @@ public class MuikkuRESTService {
       item.setGrade(transferCredit.getGrade().getName());
       item.setPassing(transferCredit.getGrade().getPassingGrade());    
     }
+    item.setTransferCreditLength(transferCredit.getCourseLength().getUnits().intValue());
     item.setStatus(StudyActivityItemStatus.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
     item.setSubjectName(transferCredit.getSubject().getName());

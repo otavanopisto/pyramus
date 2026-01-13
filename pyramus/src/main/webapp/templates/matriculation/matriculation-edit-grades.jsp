@@ -25,17 +25,17 @@
 
         var gradeOptions = [
           {value: "", text: ""},
-          {value: "IMPROBATUR", text: "Improbatur"},
-          {value: "APPROBATUR", text: "Approbatur"},
-          {value: "LUBENTER_APPROBATUR", text: "Lubenter approbatur"},
-          {value: "CUM_LAUDE_APPROBATUR", text: "Cum laude approbatur"},
-          {value: "MAGNA_CUM_LAUDE_APPROBATUR", text: "Magna cum laude approbatur"},
-          {value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "Eximia cum laude approbatur"},
-          {value: "LAUDATUR", text: "Laudatur"},
+          {value: "IMPROBATUR", text: "I (improbatur)"},
+          {value: "APPROBATUR", text: "A (approbatur)"},
+          {value: "LUBENTER_APPROBATUR", text: "B (lubenter approbatur)"},
+          {value: "CUM_LAUDE_APPROBATUR", text: "C (cum laude approbatur)"},
+          {value: "MAGNA_CUM_LAUDE_APPROBATUR", text: "M (magna cum laude approbatur)"},
+          {value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "E (eximia cum laude approbatur)"},
+          {value: "LAUDATUR", text: "L (laudatur)"},
           {value: "UNKNOWN", text: "Ei tiedossa"},
           {value: "NO_RIGHT_TO_PARTICIPATE", text: "Ei osallistumisoikeutta"},
           {value: "INVALIDATED", text: "Mitätöity"},
-          {value: "K", text: "Keskeytynyt"}
+          {value: "K", text: "K (keskeytynyt)"}
         ];
 
         var gradesTable = new IxTable($('enrolledAttendanceGradesTableContainer'), {

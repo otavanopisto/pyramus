@@ -3,7 +3,33 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="/ix" prefix="ix"%>
+<%@ page import="java.util.Calendar" %>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.base.Person" %>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType" %>
 <%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
+
+<%
+  // Set compulsoryEducationEndDate - the end of the year when student is 20 years old
+  Person person = (Person) request.getAttribute("person");
+  if (person != null && person.getBirthday() != null) {
+    Calendar c = Calendar.getInstance();
+    c.setTime(person.getBirthday());
+    c.add(Calendar.YEAR, 20);
+    c.set(Calendar.DATE, 31);
+    c.set(Calendar.MONTH, 11);
+    pageContext.setAttribute("compulsoryEducationEndDate", c.getTime());
+  }
+%>
+
+<c:if test="${not empty compulsoryEducationEndDate}">
+  <c:set var="compulsoryEducationEndDateMessage">
+    <fmt:message key="students.viewStudent.studyPeriodCompulsoryEducationEndDate">
+      <fmt:param>
+        <fmt:formatDate value="${compulsoryEducationEndDate}"/>
+      </fmt:param>
+    </fmt:message>
+  </c:set>
+</c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -47,7 +73,7 @@
       }
 
       function addStudyPeriodTableRow(studyPeriodTable) {
-        studyPeriodTable.addRow([-1, '', 'TEMPORARILY_SUSPENDED', '', '']);
+        studyPeriodTable.addRow([-1, '', 'TEMPORARILY_SUSPENDED', '', '', '${compulsoryEducationEndDateMessage}']);
       }
 
       function initPhoneTable(studentId) {
@@ -463,6 +489,13 @@
             onclick: function (event) {
               event.tableComponent.deleteRow(event.row);
             }
+          }, {
+            header: '',
+            left : 8 + 160 + 8 + 200 + 8 + 160 + 8 + 22 + 8,
+            width: 300,
+            dataType : 'text',
+            editable: false,
+            paramName: 'message'
           }]
         });
 
@@ -478,6 +511,13 @@
                     ? table.hideCell(event.row, endDateColumnIndex)
                     : table.showCell(event.row, endDateColumnIndex);
               }
+            }
+            
+            if (event.value == 'COMPULSORY_EDUCATION') {
+              table.showCell(event.row, table.getNamedColumnIndex('message'));
+            }
+            else {
+              table.hideCell(event.row, table.getNamedColumnIndex('message'));
             }
           }
         });
@@ -704,7 +744,8 @@
               studyPeriods[i].begin,
               studyPeriods[i].type,
               studyPeriods[i].end,
-              ''
+              '',
+              '${compulsoryEducationEndDateMessage}'
             ]);
           }
           studyPeriodsTable.addRows(studyPeriodRows);
@@ -1087,7 +1128,7 @@
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="students.editStudent.emailTableEmailsTitle"/>
                     </jsp:include>
-                    <c:set var="email" value="${student.contactInfo.emails[0]}"/>
+                    <c:set var="email" value="${student.contactInfo.defaultEmail}"/>
                     <div>${fn:escapeXml(email.address)}</div>
                   </div>
                   
