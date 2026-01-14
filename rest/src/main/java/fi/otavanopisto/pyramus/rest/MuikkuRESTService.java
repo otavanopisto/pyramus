@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -47,13 +48,18 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
+import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -65,6 +71,7 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
@@ -97,8 +104,9 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.hops.Mandatority;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemRestModel;
-import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemStatus;
+import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemState;
 import fi.otavanopisto.pyramus.rest.model.muikku.CredentialResetPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StaffMemberPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StudentGroupMembersPayload;
@@ -162,6 +170,12 @@ public class MuikkuRESTService {
 
   @Inject
   private CourseAssessmentDAO courseAssessmentDAO;
+
+  @Inject
+  private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
+  
+  @Inject
+  private CourseDAO courseDAO;
 
   @Inject
   private CourseStudentDAO courseStudentDAO;
@@ -247,7 +261,7 @@ public class MuikkuRESTService {
     courseAssessments.addAll(courseAssessmentDAO.listByStudent(student));
     for (CourseAssessment courseAssessment : courseAssessments) {
 
-      // #1640: Course must not have OPS or has to match student's OPS 
+      // #1640: Course must not have OPS or has to match student's OPS
       
       Set<Curriculum> curriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
       boolean eligible = student.getCurriculum() == null || curriculums.isEmpty();
@@ -324,15 +338,44 @@ public class MuikkuRESTService {
 
         StudyActivityItemRestModel item = new StudyActivityItemRestModel();
         item.setCourseId(course.getId());
-        item.setCourseName(course.getName());
+        String courseName = course.getName();
+        if (!StringUtils.isEmpty(course.getNameExtension())) {
+          courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+        }
+        item.setCourseName(courseName);
+        if (courseModule.getCourse().getCurriculums() != null) {
+          item.setCurriculums(courseModule.getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
+        }
+        if (courseModule.getCourseLength() != null) {
+          item.setLength(courseModule.getCourseLength().getUnits().intValue());
+          item.setLengthSymbol(courseModule.getCourseLength().getUnit().getSymbol());
+        }
+        item.setMandatority(getMandatority(courseModule.getCourse()));
         if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
           item.setCourseNumber(courseModule.getCourseNumber());
         }
         item.setDate(courseStudent.getEnrolmentTime());
-        item.setStatus(StudyActivityItemStatus.ONGOING);
+        item.setState(StudyActivityItemState.ONGOING);
         item.setSubject(courseModule.getSubject().getCode());
         item.setSubjectName(courseModule.getSubject().getName());
         items.add(item);
+      }
+    }
+    
+    // Päivitä listaa arviointipyynnöillä :|
+    
+    for (StudyActivityItemRestModel item : items) {
+      if (item.getCourseId() != null) {
+        Course c = courseDAO.findById(item.getCourseId());
+        CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
+        if (cs != null) {
+          CourseAssessmentRequest car = courseAssessmentRequestDAO.findLatestByCourseStudent(cs);
+          if (car != null && !car.getHandled() && car.getCreated().after(item.getDate())) {
+            item.setState(StudyActivityItemState.PENDING);
+            item.setDate(car.getCreated());
+            item.setText(car.getRequestText());
+          }
+        }
       }
     }
 
@@ -1090,16 +1133,31 @@ public class MuikkuRESTService {
     Course course = courseAssessment.getCourseStudent().getCourse();
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseId(course.getId());
-    item.setCourseName(course.getName());
+    String courseName = course.getName();
+    if (!StringUtils.isEmpty(course.getNameExtension())) {
+      courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+    }
+    item.setCourseName(courseName);
+    if (courseAssessment.getCourseModule().getCourse().getCurriculums() != null) {
+      item.setCurriculums(courseAssessment.getCourseModule().getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
+    }
+    if (courseAssessment.getCourseModule().getCourseLength() != null) {
+      item.setLength(courseAssessment.getCourseLength().getUnits().intValue());
+      item.setLengthSymbol(courseAssessment.getCourseLength().getUnit().getSymbol());
+    }
+    item.setMandatority(getMandatority(courseAssessment.getCourseModule().getCourse()));
     if (courseAssessment.getCourseNumber() != null && courseAssessment.getCourseNumber() > 0) {
       item.setCourseNumber(courseAssessment.getCourseNumber());
     }
     item.setDate(courseAssessment.getDate());
+    item.setGradeDate(courseAssessment.getDate());
     if (courseAssessment.getGrade() != null) {
       item.setGrade(courseAssessment.getGrade().getName());
-      item.setPassing(courseAssessment.getGrade().getPassingGrade());    
+      item.setPassing(courseAssessment.getGrade().getPassingGrade());
     }
-    item.setStatus(StudyActivityItemStatus.GRADED);
+    item.setText(courseAssessment.getVerbalAssessment());
+    item.setEvaluatorName(courseAssessment.getAssessor().getFullName());
+    item.setState(StudyActivityItemState.GRADED);
     item.setSubject(courseAssessment.getSubject().getCode());
     item.setSubjectName(courseAssessment.getSubject().getName());
     return item;
@@ -1108,6 +1166,9 @@ public class MuikkuRESTService {
   private StudyActivityItemRestModel getTransferCreditActivityItem(TransferCredit transferCredit) {
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseName(transferCredit.getCourseName());
+    if (transferCredit.getCurriculum() != null) {
+      item.setCurriculums(Arrays.asList(transferCredit.getCurriculum().getName()));
+    }
     if (transferCredit.getCourseNumber() != null && transferCredit.getCourseNumber() > 0) {
       item.setCourseNumber(transferCredit.getCourseNumber());
     }
@@ -1116,13 +1177,47 @@ public class MuikkuRESTService {
       item.setGrade(transferCredit.getGrade().getName());
       item.setPassing(transferCredit.getGrade().getPassingGrade());    
     }
-    item.setTransferCreditLength(transferCredit.getCourseLength().getUnits().intValue());
-    item.setStatus(StudyActivityItemStatus.TRANSFERRED);
+    if (transferCredit.getCourseLength() != null) {
+      item.setLength(transferCredit.getCourseLength().getUnits().intValue());
+      item.setLengthSymbol(transferCredit.getCourseLength().getUnit().getSymbol());
+    }
+    item.setMandatority(transferCredit.getOptionality() == CourseOptionality.MANDATORY ? Mandatority.MANDATORY : Mandatority.UNSPECIFIED_OPTIONAL);
+    item.setState(StudyActivityItemState.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
     item.setSubjectName(transferCredit.getSubject().getName());
-    item.setTransferCreditMandatory(transferCredit.getOptionality() == CourseOptionality.MANDATORY
-        ? true : transferCredit.getOptionality() == CourseOptionality.OPTIONAL ? false : null);
     return item;
+  }
+  
+  private Mandatority getMandatority(CourseBase courseBase) {
+    // Education type = 2 (Lukio)
+    CourseEducationType cet = courseBase.getCourseEducationTypes().stream().filter(c -> c.getEducationType().getId().equals(2L)).findFirst().orElse(null);
+    if (cet != null) {
+      // Education subtype = 1 (Valtakunnallinen pakollinen)
+      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(1L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.MANDATORY;
+      }
+      // Education subtype = 2 (Valtakunnallinen syventävä)
+      cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(2L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.NATIONAL_LEVEL_OPTIONAL;
+      }
+      // Education subtype = 3 (Paikallinen syventävä)
+      cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(2L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.SCHOOL_LEVEL_OPTIONAL;
+      }
+    }
+    // Education type = 1 (Perusopetus)
+    cet = courseBase.getCourseEducationTypes().stream().filter(c -> c.getEducationType().getId().equals(1L)).findFirst().orElse(null);
+    if (cet != null) {
+      // Education subtype = 4 (Pakollinen)
+      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(4L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.MANDATORY;
+      }
+    }
+    return Mandatority.UNSPECIFIED_OPTIONAL;
   }
 
 }
