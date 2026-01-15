@@ -364,10 +364,18 @@ public class MuikkuRESTService {
       }
     }
     
-    // Päivitä listaa arviointipyynnöillä :| (ja tuuppaa merkintöihin myös opiskelijan koulutusohjelma)
+    // Jälkihuoltoa jokaiselle merkinnälle
     
+    int completedCourseCredits = 0;
+    int mandatoryCourseCredits = 0;
     for (StudyActivityItemRestModel item : items) {
+      
+      // Opiskelijan koulutusohjelam
+      
       item.setStudyProgramme(student.getStudyProgramme().getName());
+      
+      // Aktiivinen arviointipyyntö voi muuttaa merkinnän tilaa
+      
       if (item.getCourseId() != null) {
         Course c = courseDAO.findById(item.getCourseId());
         CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
@@ -380,9 +388,21 @@ public class MuikkuRESTService {
           }
         }
       }
+      
+      // Opintopisteiden laskenta; on saatu läpäisevä arvosana ja kurssin tai hyväksiluvun pituus on tiedossa
+      
+      if (item.getGrade() != null && item.isPassing() && item.getLength() > 0) {
+        completedCourseCredits += item.getLength();
+        if (item.getMandatority() == Mandatority.MANDATORY) {
+          mandatoryCourseCredits += item.getLength();
+        }
+      }
     }
     
+    activity.setEducationType(student.getStudyProgramme().getCategory().getEducationType().getName());
     activity.setItems(items);
+    activity.setCompletedCourseCredits(completedCourseCredits);
+    activity.setMandatoryCourseCredits(mandatoryCourseCredits);
 
     return Response.ok(activity).build();
   }
