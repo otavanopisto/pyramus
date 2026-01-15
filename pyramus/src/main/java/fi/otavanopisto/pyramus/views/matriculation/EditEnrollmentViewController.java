@@ -110,7 +110,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
           ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
           pageRequestContext.getBoolean("canPublishName"),
           enrollment.getStudent(),
-          MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure"))
+          MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), "")
       );
       
       if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
@@ -147,7 +148,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
           student,
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
-          new Date()
+          new Date(),
+          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), "")
       );
 
       if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
@@ -213,8 +215,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
       attendanceId = attendanceId != null ? attendanceId : -1;
 
       String termString = pageRequestContext.getString("finishedAttendances." + i + ".term");
-      MatriculationExamTerm term = MatriculationExamTerm.valueOf(termString.substring(0, 6));
-      int year = Integer.parseInt(termString.substring(6));
+      MatriculationExamTerm term = StringUtils.isNotBlank(termString) ? MatriculationExamTerm.valueOf(termString.substring(0, 6)) : null;
+      Integer year = StringUtils.isNotBlank(termString) ? Integer.parseInt(termString.substring(6)) : null;
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("finishedAttendances." + i + ".subject"));
       Boolean mandatory = parseMandatory(pageRequestContext.getString("finishedAttendances." + i + ".mandatority"));
@@ -405,7 +407,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
         finishedAttendances.add(
             Arrays.asList(
                 attendance.getId(),
-                attendance.getTerm().name() + attendance.getYear(),
+                (attendance.getTerm() != null && attendance.getYear() != null) ? attendance.getTerm().name() + attendance.getYear() : "",
                 attendance.getSubject().name(),
                 mandatoryToString(attendance.isMandatory()),
                 attendance.getFunding() != null ? attendance.getFunding().toString() : "",

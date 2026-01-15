@@ -389,12 +389,23 @@ public class MatriculationRESTService extends AbstractRESTService {
       }
       
       /*
-       * Validate term and year. For finished and planned attendances they just need to exist,
-       * while for enrolled they either need to match the exam's term and year or need to be null,
-       * in which case they will be set to the exam's values automatically.
+       * Validate term and year. For enrolled attendances they either need to match the 
+       * exam's term and year or need to be null in which case they will be set to the 
+       * exam's values automatically. For planned attendances they need to exist. For
+       * finished attendances they need to exist or they may both be null.
        */
       switch (attendance.getStatus()) {
         case FINISHED:
+          if (attendance.getTerm() != null || attendance.getYear() != null) {
+            if (attendance.getTerm() == null) {
+              return Response.status(Status.BAD_REQUEST).entity("Attendance missing term").build();
+            }
+            if (attendance.getYear() == null) {
+              return Response.status(Status.BAD_REQUEST).entity("Attendance missing year").build();
+            }
+          }
+        break;
+        
         case PLANNED:
           if (attendance.getTerm() == null) {
             return Response.status(Status.BAD_REQUEST).entity("Attendance missing term").build();
@@ -440,7 +451,9 @@ public class MatriculationRESTService extends AbstractRESTService {
           student,
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-          new Date());
+          new Date(),
+          enrollment.getOpintopolkuUrl()
+        );
   
         matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, null, null);
         
@@ -483,7 +496,9 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.getMessage(),
           enrollment.isCanPublishName(),
           student,
-          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()));
+          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
+          enrollment.getOpintopolkuUrl()
+        );
   
         if (enrollmentState != enrollmentEntity.getState()) {
           changeLogNewState = enrollmentState;
@@ -671,6 +686,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setState(matriculationEligibilityController.translateState(examEnrollment.getState()));
     result.setEnrollmentDate(enrollmentDate);
     result.setDegreeStructure(examEnrollment.getDegreeStructure() != null ? examEnrollment.getDegreeStructure().name() : null);
+    result.setOpintopolkuUrl(examEnrollment.getOpintopolkuUrl());
     
     List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDao.listByEnrollment(examEnrollment);
     

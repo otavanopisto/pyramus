@@ -59,7 +59,8 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       Student student,
       MatriculationExamEnrollmentState state,
       MatriculationExamEnrollmentDegreeStructure degreeStructure,
-      Date enrollmentDate
+      Date enrollmentDate,
+      String opintopolkuUrl
   ) {
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
 
@@ -76,6 +77,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setState(state);
     result.setDegreeStructure(degreeStructure);
     result.setEnrollmentDate(enrollmentDate);
+    result.setOpintopolkuUrl(opintopolkuUrl);
     
     return persist(result);
   }
@@ -91,7 +93,8 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String message,
     boolean canPublishName,
     Student student,
-    MatriculationExamEnrollmentDegreeStructure degreeStructure
+    MatriculationExamEnrollmentDegreeStructure degreeStructure,
+    String opintopolkuUrl
   ) {
     enrollment.setEnrollAs(enrollAs);
     enrollment.setDegreeType(degreeType);
@@ -103,6 +106,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setCanPublishName(canPublishName);
     enrollment.setStudent(student);
     enrollment.setDegreeStructure(degreeStructure);
+    enrollment.setOpintopolkuUrl(opintopolkuUrl);
     
     return persist(enrollment);
   }

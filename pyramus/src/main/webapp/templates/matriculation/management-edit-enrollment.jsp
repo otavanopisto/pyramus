@@ -28,6 +28,9 @@
           termOptions.push({value: "AUTUMN" + y, text: "Syksy " + y});
         }
         
+        var finishedTermOptions = termOptions.slice(); // Copy of termOptions
+        finishedTermOptions.push({value: "", text: "Ei tiedossa tai yli 2,5v vanha"});
+        
         var subjectOptions = JSON.parse(JSDATA["subjectOptions"]);
         
         var mandatorityOptions = [
@@ -140,7 +143,7 @@
             dataType : 'select',
             editable: true,
             paramName: 'term',
-            options: termOptions
+            options: finishedTermOptions
           }, {
             header : 'Aine',
             width: 300,
@@ -548,6 +551,14 @@
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.message.help"/>
                 </jsp:include>            
                 <textarea name="message" cols="80" rows="8">${fn:escapeXml(enrollment.message)}</textarea>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.opintopolkuUrl"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.opintopolkuUrl.help"/>
+                </jsp:include>
+                <input type="text" name="opintopolkuUrl" size="50" value="${fn:escapeXml(enrollment.opintopolkuUrl)}" />
               </div>
   
               <div class="genericFormSection">
