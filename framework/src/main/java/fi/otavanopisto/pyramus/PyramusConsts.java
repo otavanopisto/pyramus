@@ -14,8 +14,8 @@ public class PyramusConsts {
   public static final String OPS_2021 = "OPS 2021";
   
   // Subject education types
-  public static final String SUBJECT_PERUSOPETUS = "Perusopetus";
-  public static final String SUBJECT_LUKIO = "Lukio";
+  public static final String EDUCATION_TYPE_PK = "peruskoulu";
+  public static final String EDUCATION_TYPE_LUKIO = "lukio";
   
   // Education time unit symbols
   public static final String TIMEUNIT_OP = "op";

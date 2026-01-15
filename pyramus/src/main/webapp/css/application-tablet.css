@@ -108,14 +108,6 @@ body {
   margin: 20px;
 }
 
-.section-edit-info {
-  white-space: nowrap;
-}
-
-.section-edit-info .form-section__field-container {
-  vertical-align: top;
-}
-
 .application-description {
   padding: 20px;
 }

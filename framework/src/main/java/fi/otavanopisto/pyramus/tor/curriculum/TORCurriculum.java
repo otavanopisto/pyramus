@@ -3,9 +3,12 @@ package fi.otavanopisto.pyramus.tor.curriculum;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Model for JSON Curriculums used for StudentTOR
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TORCurriculum {
 
   public String getName() {
