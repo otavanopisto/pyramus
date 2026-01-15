@@ -107,6 +107,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.hops.Mandatority;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemRestModel;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemState;
+import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityRestModel;
 import fi.otavanopisto.pyramus.rest.model.muikku.CredentialResetPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StaffMemberPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StudentGroupMembersPayload;
@@ -228,6 +229,7 @@ public class MuikkuRESTService {
       }
     }
     
+    StudyActivityRestModel activity = new StudyActivityRestModel();
     List<StudyActivityItemRestModel> items = new ArrayList<>();
     List<CourseAssessment> courseAssessments = new ArrayList<>();
     Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
@@ -362,9 +364,10 @@ public class MuikkuRESTService {
       }
     }
     
-    // Päivitä listaa arviointipyynnöillä :|
+    // Päivitä listaa arviointipyynnöillä :| (ja tuuppaa merkintöihin myös opiskelijan koulutusohjelma)
     
     for (StudyActivityItemRestModel item : items) {
+      item.setStudyProgramme(student.getStudyProgramme().getName());
       if (item.getCourseId() != null) {
         Course c = courseDAO.findById(item.getCourseId());
         CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
@@ -378,8 +381,10 @@ public class MuikkuRESTService {
         }
       }
     }
+    
+    activity.setItems(items);
 
-    return Response.ok(items).build();
+    return Response.ok(activity).build();
   }
   
   @Path("/users")

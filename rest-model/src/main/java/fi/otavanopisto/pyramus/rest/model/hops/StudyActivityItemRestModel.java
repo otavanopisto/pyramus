@@ -133,6 +133,14 @@ public class StudyActivityItemRestModel {
     this.evaluatorName = evaluatorName;
   }
 
+  public String getStudyProgramme() {
+    return studyProgramme;
+  }
+
+  public void setStudyProgramme(String studyProgramme) {
+    this.studyProgramme = studyProgramme;
+  }
+
   private String subject;
   private String subjectName;
   private Long courseId;
@@ -149,5 +157,6 @@ public class StudyActivityItemRestModel {
   private List<String> curriculums;
   private String text;
   private String evaluatorName;
+  private String studyProgramme;
 
 }
