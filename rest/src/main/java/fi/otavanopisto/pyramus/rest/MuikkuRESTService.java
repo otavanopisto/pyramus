@@ -227,7 +227,8 @@ public class MuikkuRESTService {
     List<StudyActivityItemRestModel> items = new ArrayList<>();
     Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
     
-    // Kaikki saman koulutusasteen välilehdet, käsitellään vanhimmasta uusimpaan
+    // Kaikki saman koulutusasteen välilehdet, jotka käsitellään vanhimmasta uusimpaan
+    // Huom! Tämän vuoksi emme ole kiinnostuneet siirtosuorituksista lainkaan
     
     List<Student> students = studentController.listStudentByPerson(baseStudent.getPerson());
     students.removeIf(s -> !s.getStudyProgramme().getCategory().getEducationType().getId().equals(baseStudent.getStudyProgramme().getCategory().getEducationType().getId()));
