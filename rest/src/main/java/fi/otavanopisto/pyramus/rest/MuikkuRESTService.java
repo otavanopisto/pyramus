@@ -223,6 +223,7 @@ public class MuikkuRESTService {
       }
     }
     
+    String educationTypeName = baseStudent.getStudyProgramme().getCategory().getEducationType().getName();
     StudyActivityRestModel activity = new StudyActivityRestModel();
     List<StudyActivityItemRestModel> items = new ArrayList<>();
     Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
@@ -280,8 +281,13 @@ public class MuikkuRESTService {
         }
 
         // Jos aine + kurssinumero löytyy jo listasta, jätä voimaan korkein arvosana
+        // Huom! Tätä ehtoa ei noudateta, mikäli aineen koulutusaste on eri kuin
+        // pohjana käytettävän opiskelijan, koska tällaiset suoritukset näytetään aina
 
         StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
+        if (!StringUtils.equals(courseAssessment.getSubject().getEducationType().getName(), educationTypeName)) {
+          existingItem = null;
+        }
         if (existingItem != null) {
           boolean exPass = existingItem.isPassing();
           boolean pass = courseAssessment.getGrade() == null ? true : courseAssessment.getGrade().getPassingGrade();
@@ -340,10 +346,13 @@ public class MuikkuRESTService {
 
         for (CourseModule courseModule : course.getCourseModules()) {
 
-          // Jos kurssista on jo suoritus niin älä lisää toistamiseen
+          // Jos kurssista on jo suoritus niin älä lisää toistamiseen (pl. kurssit, joiden aineen
+          // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
 
           if (itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
-            continue;
+            if (StringUtils.equals(courseModule.getSubject().getEducationType().getName(), educationTypeName)) {
+              continue;
+            }
           }
 
           StudyActivityItemRestModel item = new StudyActivityItemRestModel();
@@ -389,7 +398,7 @@ public class MuikkuRESTService {
       }
     }
     
-    activity.setEducationType(baseStudent.getStudyProgramme().getCategory().getEducationType().getName());
+    activity.setEducationType(educationTypeName);
     activity.setItems(items);
     activity.setCompletedCourseCredits(completedCourseCredits);
     activity.setMandatoryCourseCredits(mandatoryCourseCredits);
