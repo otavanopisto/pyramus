@@ -349,10 +349,15 @@ public class MuikkuRESTService {
           // Jos kurssista on jo suoritus niin älä lisää toistamiseen (pl. kurssit, joiden aineen
           // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
 
-          if (itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
-            if (StringUtils.equals(courseModule.getSubject().getEducationType().getName(), educationTypeName)) {
-              continue;
-            }
+          boolean validSubject = StringUtils.equals(courseModule.getSubject().getEducationType().getName(), educationTypeName);
+          if (validSubject && itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
+            continue;
+          }
+          
+          // Varmista ns. epävirallisen oppiaineen tapauksessa vielä se, ettei kurssia ole jo lisätty listaan
+          
+          if (!validSubject && items.stream().filter(s -> course.getId().equals(s.getCourseId())).count() > 0) {
+            continue;
           }
 
           StudyActivityItemRestModel item = new StudyActivityItemRestModel();
