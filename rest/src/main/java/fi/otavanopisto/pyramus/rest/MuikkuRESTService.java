@@ -206,7 +206,7 @@ public class MuikkuRESTService {
   @Path("/students/{ID:[0-9]*}/studyActivity")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response getStudentStudyActivity(@PathParam("ID") Long id) {
+  public Response getStudentStudyActivity(@PathParam("ID") Long id, @QueryParam("courseId") Long courseId) {
     
     // Access check
     
@@ -229,36 +229,51 @@ public class MuikkuRESTService {
     
     // Kaikki saman koulutusasteen välilehdet, jotka käsitellään vanhimmasta uusimpaan
     // Huom! Tämän vuoksi emme ole kiinnostuneet siirtosuorituksista lainkaan
+    // Huom! Jos kysytään vain yhden kurssin tietoja, käytä vain pohjana olevaa opiskelijaa
     
-    List<Student> students = studentController.listStudentByPerson(baseStudent.getPerson());
-    students.removeIf(s -> !s.getStudyProgramme().getCategory().getEducationType().getId().equals(baseStudent.getStudyProgramme().getCategory().getEducationType().getId()));
-    students.sort(Comparator.comparing(Student::getId));
+    List<Student> students = new ArrayList<>();
+    if (courseId == null) {
+      students = studentController.listStudentByPerson(baseStudent.getPerson());
+      students.removeIf(s -> !s.getStudyProgramme().getCategory().getEducationType().getId().equals(baseStudent.getStudyProgramme().getCategory().getEducationType().getId()));
+      students.sort(Comparator.comparing(Student::getId));
+    }
+    else {
+      students = Arrays.asList(baseStudent);
+    }
     
     // Käydään välilehdet läpi
     
     for (Student student : students) {
 
-      // Hyväksiluvut
+      // Hyväksiluvut (vain pohjana käytettävän opiskelijan OPSia vastaavat)
 
-      List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
-      for (TransferCredit transferCredit : transferCredits) {
-        StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
-        item.setStudyProgramme(student.getStudyProgramme().getName());
-        items.add(item);
-        itemCache.put(item.getSubject() + item.getCourseNumber(), item);
+      if (courseId == null) {
+        List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
+        transferCredits.removeIf(tc -> tc.getCurriculum() != null &&
+            baseStudent.getCurriculum() != null &&
+            !tc.getCurriculum().getId().equals(baseStudent.getCurriculum().getId()));
+        for (TransferCredit transferCredit : transferCredits) {
+          StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
+          item.setStudyProgramme(student.getStudyProgramme().getName());
+          items.add(item);
+          itemCache.put(item.getSubject() + item.getCourseNumber(), item);
+        }
       }
 
       // Kurssiarvioinnit
 
       List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
+      if (courseId != null) {
+        courseAssessments.removeIf(ca -> !ca.getCourseStudent().getCourse().getId().equals(courseId));
+      }
       for (CourseAssessment courseAssessment : courseAssessments) {
 
-        // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata opiskelijan OPSia
+        // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia
 
         Set<Curriculum> curriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
-        boolean eligible = student.getCurriculum() == null || curriculums.isEmpty();
+        boolean eligible = baseStudent.getCurriculum() == null || curriculums.isEmpty();
         if (!eligible) {
-          eligible = curriculums.stream().filter(c -> c.getId().equals(student.getCurriculum().getId())).findFirst().orElse(null) != null;
+          eligible = curriculums.stream().filter(c -> c.getId().equals(baseStudent.getCurriculum().getId())).findFirst().orElse(null) != null;
           if (!eligible) {
             continue;
           }
@@ -302,17 +317,20 @@ public class MuikkuRESTService {
       }
 
       // Kurssit, joilla opiskelija on mukana
-
+      
       List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
+      if (courseId != null) {
+        courseStudents.removeIf(cs -> !cs.getCourse().getId().equals(courseId));
+      }
       for (CourseStudent courseStudent : courseStudents) {
         Course course = courseStudent.getCourse();
 
-        // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata opiskelijan OPSia 
+        // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia 
 
         Set<Curriculum> curriculums = courseStudent.getCourse().getCurriculums();
-        boolean eligible = student.getCurriculum() == null || curriculums.isEmpty();
+        boolean eligible = baseStudent.getCurriculum() == null || curriculums.isEmpty();
         if (!eligible) {
-          eligible = curriculums.stream().filter(c -> c.getId().equals(student.getCurriculum().getId())).findFirst().orElse(null) != null;
+          eligible = curriculums.stream().filter(c -> c.getId().equals(baseStudent.getCurriculum().getId())).findFirst().orElse(null) != null;
           if (!eligible) {
             continue;
           }
