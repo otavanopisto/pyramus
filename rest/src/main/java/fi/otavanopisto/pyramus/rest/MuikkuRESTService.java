@@ -299,12 +299,12 @@ public class MuikkuRESTService {
             int grade = courseAssessment.getGrade() != null && NumberUtils.isCreatable(courseAssessment.getGrade().getName())
                 ? Integer.parseInt(courseAssessment.getGrade().getName())
                 : 0;
-            if (exGrade <= grade) {
+            if (exGrade < grade || (exGrade == grade && isEarlier(existingItem.getGradeDate(), courseAssessment.getDate()))) {
               itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
-              items.remove(existingItem); // aiemmassa suorituksessa on sama tai matalampi arvosana; unohda se
+              items.remove(existingItem); // aiemmassa suorituksessa on matalampi arvosana (tai sama mutta se on vanhempi); unohda se
             }
             else {
-              continue; //  aiemmassa suorituksessa on korkeampi arvosana; unohda tämä
+              continue; //  aiemmassa suorituksessa on korkeampi arvosana (tai sama mutta se on uudempi); unohda tämä
             }
           }
         }
@@ -395,6 +395,16 @@ public class MuikkuRESTService {
     activity.setMandatoryCourseCredits(mandatoryCourseCredits);
 
     return Response.ok(activity).build();
+  }
+  
+  private boolean isEarlier(Date d1, Date d2) {
+    if (d1 == null) {
+      return d2 != null;
+    }
+    else if (d2 == null) {
+      return false;
+    }
+    else return d1.before(d2);
   }
   
   private void assessmentRequestStateCheck(StudyActivityItemRestModel item, Student student) {
