@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
@@ -396,8 +397,7 @@ public class MuikkuRESTService {
     int completedCourseCredits = 0;
     int mandatoryCourseCredits = 0;
     for (StudyActivityItemRestModel item : items) {
-      // TODO Opintotuntien käsittely perusopetuksen suhteen
-      if (item.getGrade() != null && item.isPassing() && item.getLength() > 0) {
+      if (item.getGrade() != null && item.isPassing() && item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
         completedCourseCredits += item.getLength();
         if (item.getMandatority() == Mandatority.MANDATORY) {
           mandatoryCourseCredits += item.getLength();
