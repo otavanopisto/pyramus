@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +51,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
+import fi.otavanopisto.pyramus.rest.controller.MatriculationController;
 import net.sf.json.JSONArray;
 
 public class EditEnrollmentViewController extends PyramusViewController {
@@ -258,6 +261,12 @@ public class EditEnrollmentViewController extends PyramusViewController {
         attendanceDAO.update(examAttendance, enrollment, subject, mandatory, null, year, term,
             MatriculationExamAttendanceStatus.PLANNED, funding, null);
       }
+    }
+    
+    // Send notification if the state has changed
+    if (changeLogNewState != null) {
+      MatriculationController matriculationController = CDI.current().select(MatriculationController.class).get();
+      matriculationController.sendNotificationOnStateChange(pageRequestContext.getRequest(), enrollment);
     }
     
     pageRequestContext.setRedirectURL(pageRequestContext.getRequest().getRequestURI() + "?enrollment=" + enrollment.getId());

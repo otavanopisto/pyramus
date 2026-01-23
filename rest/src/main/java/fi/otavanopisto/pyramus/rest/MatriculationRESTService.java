@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -59,6 +60,7 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
+import fi.otavanopisto.pyramus.rest.controller.MatriculationController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentMatriculationEligibilityResultOPS2021;
@@ -92,6 +94,9 @@ public class MatriculationRESTService extends AbstractRESTService {
   private RESTSecurity restSecurity;
 
   @Inject
+  private MatriculationController matriculationController;
+  
+  @Inject
   private MatriculationExamDAO matriculationExamDao;
 
   @Inject
@@ -120,6 +125,9 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject
   private ObjectFactory objectFactory;
+  
+  @Inject
+  private HttpServletRequest servletRequest;
 
   @Path("/eligibility")
   @GET
@@ -299,6 +307,9 @@ public class MatriculationRESTService extends AbstractRESTService {
       // Make a log entry for state change with new state
       matriculationExamEnrollmentChangeLogDAO.create(examEnrollment, loggedUser, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, newState, null);
 
+      // Send a notification on state change
+      matriculationController.sendNotificationOnStateChange(servletRequest, examEnrollment);
+      
       return Response.ok(restModel(examEnrollment)).build();
     }
   }
@@ -476,6 +487,9 @@ public class MatriculationRESTService extends AbstractRESTService {
             attendance.getFunding(),
             attendance.getGrade());
         }
+        
+        // Send notification about the new enrollment
+        matriculationController.sendNotificationOnStateChange(servletRequest, enrollmentEntity);
       }
       else {
         /*
@@ -560,6 +574,11 @@ public class MatriculationRESTService extends AbstractRESTService {
         
         for (int i = storedAttendances.size() - 1; i >= 0; i--) {
           matriculationExamAttendanceDao.delete(storedAttendances.get(i));
+        }
+        
+        // Send notification about the modification if the state changed
+        if (changeLogNewState != null) {
+          matriculationController.sendNotificationOnStateChange(servletRequest, enrollmentEntity);
         }
       }
     } catch (IllegalArgumentException ex) {
