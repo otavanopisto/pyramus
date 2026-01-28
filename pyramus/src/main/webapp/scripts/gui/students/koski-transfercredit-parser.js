@@ -623,8 +623,8 @@ function opsVastaavuustaulukko(diaarinumero) {
         ] },
         3: { type: "KNRO", to: 4 },
         4: { type: "KNRO", to: 5 },
-        5: { type: "KNRO", to: 12 },
-        6: { type: "KNRO", to: 13 },
+        5: { type: "KNRO", to: 12, grade: "S" },
+        6: { type: "KNRO", to: 13, grade: "S" },
         7: { type: "MONI", moni: [
           { no: 7 },
           { no: 14 }
@@ -671,7 +671,7 @@ function opsVastaavuustaulukko(diaarinumero) {
         5: { type: "KORJAA_KÄSIN" },
         6: { type: "OK" },
         7: { type: "KNRO", to: 5 },
-        8: { type: "KNRO", to: 18 },
+        8: { type: "KNRO", to: 18, grade: "S" },
         9: { type: "KNRO", to: 7 },
         10: { type: "KNRO", to: 8 },
         11: { type: "KORJAA_KÄSIN" },
@@ -780,7 +780,7 @@ function opsVastaavuustaulukko(diaarinumero) {
         6: { type: "OK" }
       },
       "ET": {
-        1: { type: "KNRO", to: 7 }, // S ?
+        1: { type: "KNRO", to: 7, grade: "S" },
         2: { type: "KNRO", to: 1 },
         3: { type: "KNRO", to: 2 },
         4: { type: "KNRO", to: 3 },
