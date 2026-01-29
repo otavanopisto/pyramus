@@ -532,7 +532,7 @@ public class StudentController {
             .filter(creditLink -> course.getId().equals(((CourseAssessment) creditLink.getCredit()).getCourseStudent().getCourse().getId()))
             .findAny()
             .orElse(null);
-        if (linkedAssessment != null) {
+        if (linkedAssessment != null && linkedAssessment.getCredit().getGrade() != null) {
           assessment.setText(((CourseAssessment) linkedAssessment.getCredit()).getVerbalAssessment());
           assessment.setGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getName());
           assessment.setPassingGrade(((CourseAssessment) linkedAssessment.getCredit()).getGrade().getPassingGrade());

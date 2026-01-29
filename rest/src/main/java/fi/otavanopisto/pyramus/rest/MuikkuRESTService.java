@@ -3,7 +3,9 @@ package fi.otavanopisto.pyramus.rest;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -43,17 +45,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
-import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
+import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -65,9 +72,7 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
-import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
-import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
-import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -97,8 +102,10 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.hops.Mandatority;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemRestModel;
-import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemStatus;
+import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemState;
+import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityRestModel;
 import fi.otavanopisto.pyramus.rest.model.muikku.CredentialResetPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StaffMemberPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StudentGroupMembersPayload;
@@ -164,10 +171,13 @@ public class MuikkuRESTService {
   private CourseAssessmentDAO courseAssessmentDAO;
 
   @Inject
-  private CourseStudentDAO courseStudentDAO;
+  private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
   
   @Inject
-  private CreditLinkDAO creditLinkDAO;
+  private CourseDAO courseDAO;
+
+  @Inject
+  private CourseStudentDAO courseStudentDAO;
   
   @Path("/students/{ID:[0-9]*}/courseMatrix")
   @GET
@@ -197,146 +207,235 @@ public class MuikkuRESTService {
   @Path("/students/{ID:[0-9]*}/studyActivity")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response getStudentStudyActivity(@PathParam("ID") Long id) {
+  public Response getStudentStudyActivity(@PathParam("ID") Long id, @QueryParam("courseId") Long courseId) {
     
     // Access check
     
-    Student student = studentController.findStudentById(id);
-    if (student == null || student.getArchived()) {
+    Student baseStudent = studentController.findStudentById(id);
+    if (baseStudent == null || baseStudent.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, baseStudent, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), baseStudent.getOrganization())) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
     
+    String educationTypeName = baseStudent.getStudyProgramme().getCategory().getEducationType().getName();
+    StudyActivityRestModel activity = new StudyActivityRestModel();
     List<StudyActivityItemRestModel> items = new ArrayList<>();
-    List<CourseAssessment> courseAssessments = new ArrayList<>();
     Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
-
-    // Siirtosuoritukset
     
-    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
-    for (CreditLink creditLink : creditLinks) {
-      Credit credit = creditLink.getCredit();
-      if (credit.getCreditType() == CreditType.CourseAssessment) {
-        courseAssessments.add((CourseAssessment) credit);
+    // Kaikki saman koulutusasteen välilehdet, jotka käsitellään vanhimmasta uusimpaan
+    // Huom! Tämän vuoksi emme ole kiinnostuneet siirtosuorituksista lainkaan
+    // Huom! Jos kysytään vain yhden kurssin tietoja, käytä vain pohjana olevaa opiskelijaa
+    
+    List<Student> students = new ArrayList<>();
+    if (courseId == null) {
+      students = studentController.listStudentByPerson(baseStudent.getPerson());
+      students.removeIf(s -> !s.getStudyProgramme().getCategory().getEducationType().getId().equals(baseStudent.getStudyProgramme().getCategory().getEducationType().getId()));
+      students.sort(Comparator.comparing(Student::getId));
+    }
+    else {
+      students = Arrays.asList(baseStudent);
+    }
+    
+    // Käydään välilehdet läpi
+    
+    for (Student student : students) {
+
+      // Hyväksiluvut (vain pohjana käytettävän opiskelijan OPSia vastaavat)
+
+      if (courseId == null) {
+        List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
+        transferCredits.removeIf(tc -> tc.getCurriculum() != null &&
+            baseStudent.getCurriculum() != null &&
+            !tc.getCurriculum().getId().equals(baseStudent.getCurriculum().getId()));
+        for (TransferCredit transferCredit : transferCredits) {
+          StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
+          item.setStudyProgramme(student.getStudyProgramme().getName());
+          items.add(item);
+          itemCache.put(item.getSubject() + item.getCourseNumber(), item);
+        }
       }
-      else if (credit.getCreditType() == CreditType.TransferCredit) {
-        StudyActivityItemRestModel item = getTransferCreditActivityItem((TransferCredit) credit); 
+
+      // Kurssiarvioinnit
+
+      List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
+      if (courseId != null) {
+        courseAssessments.removeIf(ca -> !ca.getCourseStudent().getCourse().getId().equals(courseId));
+      }
+      for (CourseAssessment courseAssessment : courseAssessments) {
+
+        // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia
+
+        Set<Curriculum> curriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
+        boolean eligible = baseStudent.getCurriculum() == null || curriculums.isEmpty();
+        if (!eligible) {
+          eligible = curriculums.stream().filter(c -> c.getId().equals(baseStudent.getCurriculum().getId())).findFirst().orElse(null) != null;
+          if (!eligible) {
+            continue;
+          }
+        }
+
+        // Jos aine + kurssinumero löytyy jo listasta, jätä voimaan korkein arvosana
+        // Huom! Tätä ehtoa ei noudateta, mikäli aineen koulutusaste on eri kuin
+        // pohjana käytettävän opiskelijan, koska tällaiset suoritukset näytetään aina
+
+        StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
+        if (courseAssessment.getSubject().getEducationType() == null ||
+            !StringUtils.equals(courseAssessment.getSubject().getEducationType().getName(), educationTypeName)) {
+          existingItem = null;
+        }
+        if (existingItem != null) {
+          boolean exPass = existingItem.isPassing();
+          boolean pass = courseAssessment.getGrade() == null ? true : courseAssessment.getGrade().getPassingGrade();
+          if (exPass != pass) {
+            if (!exPass) {
+              itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
+              items.remove(existingItem); // aiempi suoritus oli ei-läpäisevä; unohda se
+            }
+            else {
+              continue; // aiempi suoritus oli läpäisevä; unohda tämä
+            }
+          }
+          else {
+            int exGrade = NumberUtils.isCreatable(existingItem.getGrade()) ? Integer.parseInt(existingItem.getGrade()) : 0;
+            int grade = courseAssessment.getGrade() != null && NumberUtils.isCreatable(courseAssessment.getGrade().getName())
+                ? Integer.parseInt(courseAssessment.getGrade().getName())
+                : 0;
+            if (exGrade < grade || (exGrade == grade && isEarlier(existingItem.getGradeDate(), courseAssessment.getDate()))) {
+              itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
+              items.remove(existingItem); // aiemmassa suorituksessa on matalampi arvosana (tai sama mutta se on vanhempi); unohda se
+            }
+            else {
+              continue; //  aiemmassa suorituksessa on korkeampi arvosana (tai sama mutta se on uudempi); unohda tämä
+            }
+          }
+        }
+
+        StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+        item.setStudyProgramme(student.getStudyProgramme().getName());
+        assessmentRequestStateCheck(item, student);
         items.add(item);
         itemCache.put(item.getSubject() + item.getCourseNumber(), item);
       }
-    }
-    
-    // Hyväksiluvut
 
-    List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
-    for (TransferCredit transferCredit : transferCredits) {
-      StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit); 
-      items.add(item);
-      itemCache.put(item.getSubject() + item.getCourseNumber(), item);
-    }
-    
-    // Kurssiarvioinnit
-    
-    courseAssessments.addAll(courseAssessmentDAO.listByStudent(student));
-    for (CourseAssessment courseAssessment : courseAssessments) {
-
-      // #1640: Course must not have OPS or has to match student's OPS 
+      // Kurssit, joilla opiskelija on mukana
       
-      Set<Curriculum> curriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
-      boolean eligible = student.getCurriculum() == null || curriculums.isEmpty();
-      if (!eligible) {
-        eligible = curriculums.stream().filter(c -> c.getId().equals(student.getCurriculum().getId())).findFirst().orElse(null) != null;
+      List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
+      if (courseId != null) {
+        courseStudents.removeIf(cs -> !cs.getCourse().getId().equals(courseId));
+      }
+      for (CourseStudent courseStudent : courseStudents) {
+        Course course = courseStudent.getCourse();
+
+        // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia 
+
+        Set<Curriculum> curriculums = courseStudent.getCourse().getCurriculums();
+        boolean eligible = baseStudent.getCurriculum() == null || curriculums.isEmpty();
         if (!eligible) {
-          continue;
+          eligible = curriculums.stream().filter(c -> c.getId().equals(baseStudent.getCurriculum().getId())).findFirst().orElse(null) != null;
+          if (!eligible) {
+            continue;
+          }
+        }
+        
+        // Kurssi palastellaan useammaksi merkinnäksi, jos kyseessä on yhdistelmäopintokurssi
+
+        for (CourseModule courseModule : course.getCourseModules()) {
+
+          // Jos kurssista on jo suoritus niin älä lisää toistamiseen (pl. kurssit, joiden aineen
+          // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
+
+          boolean validSubject = courseModule.getSubject().getEducationType() != null &&
+              StringUtils.equals(courseModule.getSubject().getEducationType().getName(), educationTypeName);
+          if (validSubject && itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
+            continue;
+          }
+          
+          // Varmista ns. epävirallisen oppiaineen tapauksessa vielä se, ettei kurssia ole jo lisätty listaan
+          
+          if (!validSubject && items.stream().filter(s -> course.getId().equals(s.getCourseId())).count() > 0) {
+            continue;
+          }
+
+          StudyActivityItemRestModel item = new StudyActivityItemRestModel();
+          item.setStudyProgramme(student.getStudyProgramme().getName());
+          item.setCourseId(course.getId());
+          String courseName = course.getName();
+          if (!StringUtils.isEmpty(course.getNameExtension())) {
+            courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+          }
+          item.setCourseName(courseName);
+          if (courseModule.getCourse().getCurriculums() != null) {
+            item.setCurriculums(courseModule.getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
+          }
+          if (courseModule.getCourseLength() != null) {
+            item.setLength(courseModule.getCourseLength().getUnits().intValue());
+            item.setLengthSymbol(courseModule.getCourseLength().getUnit().getSymbol());
+          }
+          item.setMandatority(getMandatority(courseModule.getCourse()));
+          if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
+            item.setCourseNumber(courseModule.getCourseNumber());
+          }
+          item.setDate(courseStudent.getEnrolmentTime());
+          item.setState(StudyActivityItemState.ONGOING);
+          item.setSubject(courseModule.getSubject().getCode());
+          item.setSubjectName(courseModule.getSubject().getName());
+          assessmentRequestStateCheck(item, student);
+          items.add(item);
         }
       }
-      
-      // Jos aine + kurssinumero löytyy jo listasta, jätä voimaan korkein arvosana
-
-      StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
-      if (existingItem != null) {
-        boolean exPass = existingItem.isPassing();
-        boolean pass = courseAssessment.getGrade() == null ? true : courseAssessment.getGrade().getPassingGrade();
-        if (exPass != pass) {
-          if (!exPass) {
-            itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
-            items.remove(existingItem); // aiempi suoritus oli ei-läpäisevä; unohda se
-          }
-          else {
-            continue; // aiempi suoritus oli läpäisevä; unohda tämä
-          }
-        }
-        else {
-          int exGrade = NumberUtils.isCreatable(existingItem.getGrade()) ? Integer.parseInt(existingItem.getGrade()) : 0;
-          int grade = courseAssessment.getGrade() != null && NumberUtils.isCreatable(courseAssessment.getGrade().getName())
-              ? Integer.parseInt(courseAssessment.getGrade().getName())
-              : 0;
-          if (exGrade <= grade) {
-            itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
-            items.remove(existingItem); // aiemmassa suorituksessa on sama tai matalampi arvosana; unohda se
-          }
-          else {
-            continue; //  aiemmassa suorituksessa on korkeampi arvosana; unohda tämä
-          }
-        }
-      }
-
-      StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
-      items.add(item);
-      itemCache.put(item.getSubject() + item.getCourseNumber(), item);
     }
     
-    // Kurssit, joilla opiskelija on mukana
+    // Opintopisteiden laskenta; on saatu läpäisevä arvosana ja kurssin tai hyväksiluvun pituus on tiedossa
     
-    List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
-    for (CourseStudent courseStudent : courseStudents) {
-      Course course = courseStudent.getCourse();
-
-      // #1640: Course must not have OPS or has to match student's OPS 
-      
-      Set<Curriculum> curriculums = courseStudent.getCourse().getCurriculums();
-      boolean eligible = student.getCurriculum() == null || curriculums.isEmpty();
-      if (!eligible) {
-        eligible = curriculums.stream().filter(c -> c.getId().equals(student.getCurriculum().getId())).findFirst().orElse(null) != null;
-        if (!eligible) {
-          continue;
+    int completedCourseCredits = 0;
+    int mandatoryCourseCredits = 0;
+    for (StudyActivityItemRestModel item : items) {
+      if (item.getGrade() != null && item.isPassing() && item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
+        completedCourseCredits += item.getLength();
+        if (item.getMandatority() == Mandatority.MANDATORY) {
+          mandatoryCourseCredits += item.getLength();
         }
-      }
-      
-      /**
-       * Courses get split potentially into multiple ActivityItemKeys if they have
-       * more than one CourseModules.
-       */
-      for (CourseModule courseModule : course.getCourseModules()) {
-        
-        // Jos kurssista on jo suoritus niin älä lisää toistamiseen
-        
-        if (itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
-          continue;
-        }
-
-        StudyActivityItemRestModel item = new StudyActivityItemRestModel();
-        item.setCourseId(course.getId());
-        item.setCourseName(course.getName());
-        if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber() > 0) {
-          item.setCourseNumber(courseModule.getCourseNumber());
-        }
-        item.setDate(courseStudent.getEnrolmentTime());
-        item.setStatus(StudyActivityItemStatus.ONGOING);
-        item.setSubject(courseModule.getSubject().getCode());
-        item.setSubjectName(courseModule.getSubject().getName());
-        items.add(item);
       }
     }
+    
+    activity.setEducationType(educationTypeName);
+    activity.setItems(items);
+    activity.setCompletedCourseCredits(completedCourseCredits);
+    activity.setMandatoryCourseCredits(mandatoryCourseCredits);
 
-    return Response.ok(items).build();
+    return Response.ok(activity).build();
+  }
+  
+  private boolean isEarlier(Date d1, Date d2) {
+    if (d1 == null) {
+      return d2 != null;
+    }
+    else if (d2 == null) {
+      return false;
+    }
+    else return d1.before(d2);
+  }
+  
+  private void assessmentRequestStateCheck(StudyActivityItemRestModel item, Student student) {
+    if (item.getCourseId() != null) {
+      Course c = courseDAO.findById(item.getCourseId());
+      CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
+      if (cs != null) {
+        CourseAssessmentRequest car = courseAssessmentRequestDAO.findLatestByCourseStudent(cs);
+        if (car != null && !car.getHandled() && car.getCreated().after(item.getDate())) {
+          item.setState(StudyActivityItemState.PENDING);
+          item.setDate(car.getCreated());
+          item.setText(car.getRequestText());
+        }
+      }
+    }
   }
   
   @Path("/users")
@@ -1090,16 +1189,31 @@ public class MuikkuRESTService {
     Course course = courseAssessment.getCourseStudent().getCourse();
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseId(course.getId());
-    item.setCourseName(course.getName());
+    String courseName = course.getName();
+    if (!StringUtils.isEmpty(course.getNameExtension())) {
+      courseName = String.format("%s (%s)", courseName, course.getNameExtension());
+    }
+    item.setCourseName(courseName);
+    if (courseAssessment.getCourseModule().getCourse().getCurriculums() != null) {
+      item.setCurriculums(courseAssessment.getCourseModule().getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
+    }
+    if (courseAssessment.getCourseModule().getCourseLength() != null) {
+      item.setLength(courseAssessment.getCourseLength().getUnits().intValue());
+      item.setLengthSymbol(courseAssessment.getCourseLength().getUnit().getSymbol());
+    }
+    item.setMandatority(getMandatority(courseAssessment.getCourseModule().getCourse()));
     if (courseAssessment.getCourseNumber() != null && courseAssessment.getCourseNumber() > 0) {
       item.setCourseNumber(courseAssessment.getCourseNumber());
     }
     item.setDate(courseAssessment.getDate());
+    item.setGradeDate(courseAssessment.getDate());
     if (courseAssessment.getGrade() != null) {
       item.setGrade(courseAssessment.getGrade().getName());
-      item.setPassing(courseAssessment.getGrade().getPassingGrade());    
+      item.setPassing(courseAssessment.getGrade().getPassingGrade());
     }
-    item.setStatus(StudyActivityItemStatus.GRADED);
+    item.setText(courseAssessment.getVerbalAssessment());
+    item.setEvaluatorName(courseAssessment.getAssessor().getFullName());
+    item.setState(StudyActivityItemState.GRADED);
     item.setSubject(courseAssessment.getSubject().getCode());
     item.setSubjectName(courseAssessment.getSubject().getName());
     return item;
@@ -1108,21 +1222,60 @@ public class MuikkuRESTService {
   private StudyActivityItemRestModel getTransferCreditActivityItem(TransferCredit transferCredit) {
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseName(transferCredit.getCourseName());
+    if (transferCredit.getCurriculum() != null) {
+      item.setCurriculums(Arrays.asList(transferCredit.getCurriculum().getName()));
+    }
     if (transferCredit.getCourseNumber() != null && transferCredit.getCourseNumber() > 0) {
       item.setCourseNumber(transferCredit.getCourseNumber());
     }
     item.setDate(transferCredit.getDate());
     if (transferCredit.getGrade() != null) {
       item.setGrade(transferCredit.getGrade().getName());
-      item.setPassing(transferCredit.getGrade().getPassingGrade());    
+      item.setPassing(transferCredit.getGrade().getPassingGrade());
+      item.setGradeDate(transferCredit.getDate());
+      item.setEvaluatorName(transferCredit.getAssessor().getFullName());
     }
-    item.setTransferCreditLength(transferCredit.getCourseLength().getUnits().intValue());
-    item.setStatus(StudyActivityItemStatus.TRANSFERRED);
+    if (transferCredit.getCourseLength() != null) {
+      item.setLength(transferCredit.getCourseLength().getUnits().intValue());
+      item.setLengthSymbol(transferCredit.getCourseLength().getUnit().getSymbol());
+    }
+    item.setMandatority(transferCredit.getOptionality() == CourseOptionality.MANDATORY ? Mandatority.MANDATORY : Mandatority.UNSPECIFIED_OPTIONAL);
+    item.setState(StudyActivityItemState.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
     item.setSubjectName(transferCredit.getSubject().getName());
-    item.setTransferCreditMandatory(transferCredit.getOptionality() == CourseOptionality.MANDATORY
-        ? true : transferCredit.getOptionality() == CourseOptionality.OPTIONAL ? false : null);
     return item;
+  }
+  
+  private Mandatority getMandatority(CourseBase courseBase) {
+    // Education type = 2 (Lukio)
+    CourseEducationType cet = courseBase.getCourseEducationTypes().stream().filter(c -> c.getEducationType().getId().equals(2L)).findFirst().orElse(null);
+    if (cet != null) {
+      // Education subtype = 1 (Valtakunnallinen pakollinen)
+      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(1L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.MANDATORY;
+      }
+      // Education subtype = 2 (Valtakunnallinen syventävä)
+      cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(2L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.NATIONAL_LEVEL_OPTIONAL;
+      }
+      // Education subtype = 3 (Paikallinen syventävä)
+      cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(2L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.SCHOOL_LEVEL_OPTIONAL;
+      }
+    }
+    // Education type = 1 (Perusopetus)
+    cet = courseBase.getCourseEducationTypes().stream().filter(c -> c.getEducationType().getId().equals(1L)).findFirst().orElse(null);
+    if (cet != null) {
+      // Education subtype = 4 (Pakollinen)
+      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(4L)).findFirst().orElse(null);
+      if (cest != null) {
+        return Mandatority.MANDATORY;
+      }
+    }
+    return Mandatority.UNSPECIFIED_OPTIONAL;
   }
 
 }

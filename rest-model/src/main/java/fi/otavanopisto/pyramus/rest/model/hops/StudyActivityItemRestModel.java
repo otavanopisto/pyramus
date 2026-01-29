@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model.hops;
 
 import java.util.Date;
+import java.util.List;
 
 public class StudyActivityItemRestModel {
 
@@ -36,12 +37,12 @@ public class StudyActivityItemRestModel {
     this.grade = grade;
   }
 
-  public StudyActivityItemStatus getStatus() {
-    return status;
+  public StudyActivityItemState getState() {
+    return state;
   }
 
-  public void setStatus(StudyActivityItemStatus status) {
-    this.status = status;
+  public void setState(StudyActivityItemState state) {
+    this.state = state;
   }
 
   public Date getDate() {
@@ -68,14 +69,6 @@ public class StudyActivityItemRestModel {
     this.subjectName = subjectName;
   }
 
-  public Boolean getTransferCreditMandatory() {
-    return transferCreditMandatory;
-  }
-
-  public void setTransferCreditMandatory(Boolean transferCreditMandatory) {
-    this.transferCreditMandatory = transferCreditMandatory;
-  }
-
   public boolean isPassing() {
     return passing;
   }
@@ -84,12 +77,68 @@ public class StudyActivityItemRestModel {
     this.passing = passing;
   }
 
-  public Integer getTransferCreditLength() {
-    return transferCreditLength;
+  public Date getGradeDate() {
+    return gradeDate;
   }
 
-  public void setTransferCreditLength(Integer transferCreditLength) {
-    this.transferCreditLength = transferCreditLength;
+  public void setGradeDate(Date gradeDate) {
+    this.gradeDate = gradeDate;
+  }
+
+  public Integer getLength() {
+    return length;
+  }
+
+  public void setLength(Integer length) {
+    this.length = length;
+  }
+
+  public String getLengthSymbol() {
+    return lengthSymbol;
+  }
+
+  public void setLengthSymbol(String lengthSymbol) {
+    this.lengthSymbol = lengthSymbol;
+  }
+
+  public Mandatority getMandatority() {
+    return mandatority;
+  }
+
+  public void setMandatority(Mandatority mandatority) {
+    this.mandatority = mandatority;
+  }
+
+  public List<String> getCurriculums() {
+    return curriculums;
+  }
+
+  public void setCurriculums(List<String> curriculums) {
+    this.curriculums = curriculums;
+  }
+
+  public String getText() {
+    return text;
+  }
+
+  public void setText(String text) {
+    this.text = text;
+  }
+
+  public String getEvaluatorName() {
+    return evaluatorName;
+  }
+
+  public void setEvaluatorName(String evaluatorName) {
+    this.evaluatorName = evaluatorName;
+  }
+
+  public String getStudyProgramme() {
+    return studyProgramme;
+  }
+
+  public void setStudyProgramme(String studyProgramme) {
+    this.studyProgramme = studyProgramme;
   }
 
   private String subject;
@@ -99,9 +148,15 @@ public class StudyActivityItemRestModel {
   private String courseName;
   private String grade;
   private boolean passing;
-  private StudyActivityItemStatus status;
+  private Integer length;
+  private String lengthSymbol;
+  private Mandatority mandatority;
+  private StudyActivityItemState state;
   private Date date;
-  private Boolean transferCreditMandatory;
-  private Integer transferCreditLength;
+  private Date gradeDate;
+  private List<String> curriculums;
+  private String text;
+  private String evaluatorName;
+  private String studyProgramme;
 
 }
