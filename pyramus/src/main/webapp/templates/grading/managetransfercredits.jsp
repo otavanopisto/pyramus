@@ -894,7 +894,10 @@
   <body onload="onLoad(event);" ix:enabledrafting="true">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
     
-    <h1 class="genericPageHeader"><fmt:message key="grading.manageTransferCredits.pageTitle"/></h1>
+    <h1 class="genericPageHeader">
+      <fmt:message key="grading.manageTransferCredits.pageTitle"/>
+      <a href="${pageContext.request.contextPath}/students/viewstudent.page?person=${student.person.id}" class="pyramusViewLink pyramusViewLinkEye"><fmt:message key="students.editStudent.basicTabRelatedActionLabel"/></a>
+    </h1>
     
     <div id="manageTransferCreditsFormContainer"> 
       <div class="genericFormContainer"> 
