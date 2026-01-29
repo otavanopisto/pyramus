@@ -206,6 +206,22 @@
           "length": 2,
           "lengthUnitSymbol": "op",
           "mandatory": false
+        },
+        {
+          "name": "Tekstit ja konteksti",
+          "courseNumber": 12,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
+        },
+        {
+          "name": "Nykykulttuuri ja kertomukset",
+          "courseNumber": 13,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -2014,6 +2030,14 @@
           "length": 2,
           "lengthUnitSymbol": "op",
           "mandatory": false
+        },
+        {
+          "name": "Juuri ja logaritmifunktiot",
+          "courseNumber": 18,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -2784,6 +2808,14 @@
           "length": 2,
           "lengthUnitSymbol": "op",
           "mandatory": false
+        },
+        {
+          "name": "Maailmankatsomus ja kriittinen ajattelu",
+          "courseNumber": 7,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
         }
       ]
     },
@@ -3025,7 +3057,40 @@
       "name": "Musiikki",
       "code": "MU",
       "hiddenFromHops": true,
-      "modules": []
+      "modules": [
+        {
+          "name": "Intro - kaikki soimaan",
+          "courseNumber": 1,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
+        },
+        {
+          "name": "Syke - soiva ilmaisu",
+          "courseNumber": 2,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
+        },
+        {
+          "name": "Genre - globaali uteliaisuus",
+          "courseNumber": 3,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
+        },
+        {
+          "name": "Demo - luovasti yhdessä",
+          "courseNumber": 4,
+          "length": 2,
+          "lengthUnitSymbol": "op",
+          "mandatory": false,
+          "hiddenFromHops": true
+        }
+      ]
     },
     {
       "name": "Opintojen ohjaus",

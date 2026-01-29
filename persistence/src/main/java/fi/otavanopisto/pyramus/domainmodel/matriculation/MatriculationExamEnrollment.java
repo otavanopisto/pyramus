@@ -174,6 +174,14 @@ public class MatriculationExamEnrollment {
     this.contactInfoChange = contactInfoChange;
   }
 
+  public String getOpintopolkuUrl() {
+    return opintopolkuUrl;
+  }
+
+  public void setOpintopolkuUrl(String opintopolkuUrl) {
+    this.opintopolkuUrl = opintopolkuUrl;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -235,4 +243,6 @@ public class MatriculationExamEnrollment {
   @Lob
   @Basic (fetch = FetchType.LAZY)
   private String handlerNotes;
+  
+  private String opintopolkuUrl;
 }

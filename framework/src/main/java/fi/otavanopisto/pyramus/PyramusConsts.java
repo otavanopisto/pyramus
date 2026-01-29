@@ -21,6 +21,8 @@ public class PyramusConsts {
   public static final String TIMEUNIT_OP = "op";
   public static final String TIMEUNIT_HOURS = "h";
   
+  public static final String NOREPLY_EMAIL = "no-reply@muikkuverkko.fi";
+  
   /**
    * SettingKeys
    */

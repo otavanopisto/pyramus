@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -59,6 +60,7 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
+import fi.otavanopisto.pyramus.rest.controller.MatriculationController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentMatriculationEligibilityResultOPS2021;
@@ -92,6 +94,9 @@ public class MatriculationRESTService extends AbstractRESTService {
   private RESTSecurity restSecurity;
 
   @Inject
+  private MatriculationController matriculationController;
+  
+  @Inject
   private MatriculationExamDAO matriculationExamDao;
 
   @Inject
@@ -120,6 +125,9 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject
   private ObjectFactory objectFactory;
+  
+  @Inject
+  private HttpServletRequest servletRequest;
 
   @Path("/eligibility")
   @GET
@@ -299,6 +307,9 @@ public class MatriculationRESTService extends AbstractRESTService {
       // Make a log entry for state change with new state
       matriculationExamEnrollmentChangeLogDAO.create(examEnrollment, loggedUser, MatriculationExamEnrollmentChangeLogType.STATE_CHANGED, newState, null);
 
+      // Send a notification on state change
+      matriculationController.sendNotificationOnStateChange(servletRequest, examEnrollment);
+      
       return Response.ok(restModel(examEnrollment)).build();
     }
   }
@@ -389,12 +400,23 @@ public class MatriculationRESTService extends AbstractRESTService {
       }
       
       /*
-       * Validate term and year. For finished and planned attendances they just need to exist,
-       * while for enrolled they either need to match the exam's term and year or need to be null,
-       * in which case they will be set to the exam's values automatically.
+       * Validate term and year. For enrolled attendances they either need to match the 
+       * exam's term and year or need to be null in which case they will be set to the 
+       * exam's values automatically. For planned attendances they need to exist. For
+       * finished attendances they need to exist or they may both be null.
        */
       switch (attendance.getStatus()) {
         case FINISHED:
+          if (attendance.getTerm() != null || attendance.getYear() != null) {
+            if (attendance.getTerm() == null) {
+              return Response.status(Status.BAD_REQUEST).entity("Attendance missing term").build();
+            }
+            if (attendance.getYear() == null) {
+              return Response.status(Status.BAD_REQUEST).entity("Attendance missing year").build();
+            }
+          }
+        break;
+        
         case PLANNED:
           if (attendance.getTerm() == null) {
             return Response.status(Status.BAD_REQUEST).entity("Attendance missing term").build();
@@ -440,7 +462,9 @@ public class MatriculationRESTService extends AbstractRESTService {
           student,
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-          new Date());
+          new Date(),
+          enrollment.getOpintopolkuUrl()
+        );
   
         matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, null, null);
         
@@ -463,6 +487,9 @@ public class MatriculationRESTService extends AbstractRESTService {
             attendance.getFunding(),
             attendance.getGrade());
         }
+        
+        // Send notification about the new enrollment
+        matriculationController.sendNotificationOnStateChange(servletRequest, enrollmentEntity);
       }
       else {
         /*
@@ -483,7 +510,9 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.getMessage(),
           enrollment.isCanPublishName(),
           student,
-          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()));
+          MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
+          enrollment.getOpintopolkuUrl()
+        );
   
         if (enrollmentState != enrollmentEntity.getState()) {
           changeLogNewState = enrollmentState;
@@ -545,6 +574,11 @@ public class MatriculationRESTService extends AbstractRESTService {
         
         for (int i = storedAttendances.size() - 1; i >= 0; i--) {
           matriculationExamAttendanceDao.delete(storedAttendances.get(i));
+        }
+        
+        // Send notification about the modification if the state changed
+        if (changeLogNewState != null) {
+          matriculationController.sendNotificationOnStateChange(servletRequest, enrollmentEntity);
         }
       }
     } catch (IllegalArgumentException ex) {
@@ -671,6 +705,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setState(matriculationEligibilityController.translateState(examEnrollment.getState()));
     result.setEnrollmentDate(enrollmentDate);
     result.setDegreeStructure(examEnrollment.getDegreeStructure() != null ? examEnrollment.getDegreeStructure().name() : null);
+    result.setOpintopolkuUrl(examEnrollment.getOpintopolkuUrl());
     
     List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDao.listByEnrollment(examEnrollment);
     
