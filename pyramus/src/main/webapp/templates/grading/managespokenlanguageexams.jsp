@@ -192,14 +192,14 @@
             false
           ]);
 
-          var userColumnIndex = languageSkillLevelTable.getNamedColumnIndex('table');
-
           IxTableControllers.getController('autoCompleteSelect')
-            .setDisplayValue(
-              languageSkillLevelTable.getCellEditor(newRowIndex, userColumnIndex),
-              credit.examAssessorName
-            );
+          .setDisplayValue(
+            table.getCellEditor(newRowIndex, userColumnIndex),
+            credit.examAssessorName
+          );
         }
+        
+        table.reattachToDom();
         
  		// Language skill level table
         
@@ -299,21 +299,23 @@
             paramName: 'edited'
           }]
         });
-        languageSkillLevelTable.detachFromDom();
         
+        languageSkillLevelTable.detachFromDom();
+
         for (var i = 0; i < languageSkillLevels.length; i++) {
           var languageSkillLevel = languageSkillLevels[i];
           var newRowIndex = languageSkillLevelTable.addRow([
-        	'',
-            languageSkillLevel.languageSkillType,
-            languageSkillLevel.languageSkillLevel,
-            languageSkillLevel.gradingDate,
-            languageSkillLevel.id,
             '',
-            false
-          ]);
+            languageSkillLevel.languageSkillType,
+            languageSkillLevel.skillLevel,
+            languageSkillLevel.gradingDate,
+            languageSkillLevel.languageSkillLevelId,
+            '', // removeButton
+            false // edited
+          ])
         }
-        table.reattachToDom();
+
+        languageSkillLevelTable.reattachToDom();
       }
        
       function addLanguageSkillLevelTableRow() {
@@ -326,7 +328,7 @@
     	});
 		
 		table.setCellValue(newRowIndex, table.getNamedColumnIndex('edited'), true);
-    	}
+      }
     	
     </script>
   </head>

@@ -145,17 +145,16 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
     setJsDataVariable(requestContext, "skillLevels", skillLevelJSONArray.toString());
     
     JSONArray studentLanguageSkillLevelJSONArray = new JSONArray();
-    JSONObject studentLanguageSkillLevelJSON = new JSONObject();
 
-    
     if (languageSkillLevels != null) {
       for (StudentLanguageSkillLevel languageSkillLevel : languageSkillLevels) {
-        studentLanguageSkillLevelJSON.put("id", languageSkillLevel.getId());
-        studentLanguageSkillLevelJSON.put("languageSkillType", languageSkillLevel.getSkillType().getValue());
-        studentLanguageSkillLevelJSON.put("languageSkillLevel", languageSkillLevel.getSkillLevel().name());
-        Long gradingDate = languageSkillLevel.getGradingDate().getTime();
+        JSONObject studentLanguageSkillLevelJSON = new JSONObject();
 
-        studentLanguageSkillLevelJSON.put("gradingDate", gradingDate);
+        studentLanguageSkillLevelJSON.put("languageSkillLevelId", languageSkillLevel.getId());
+        studentLanguageSkillLevelJSON.put("languageSkillType", languageSkillLevel.getSkillType().name());
+        studentLanguageSkillLevelJSON.put("skillLevel", languageSkillLevel.getSkillLevel().name());
+        studentLanguageSkillLevelJSON.put("gradingDate", languageSkillLevel.getGradingDate().getTime());
+
         studentLanguageSkillLevelJSONArray.add(studentLanguageSkillLevelJSON);
       }
     }
