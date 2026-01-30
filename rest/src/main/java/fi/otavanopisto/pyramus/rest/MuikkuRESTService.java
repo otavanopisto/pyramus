@@ -47,7 +47,6 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
@@ -64,7 +63,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
-import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
@@ -444,11 +442,6 @@ public class MuikkuRESTService {
   public Response createUser(@Context HttpServletRequest request, StaffMemberPayload payload) {
     
     // Prerequisites
-    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
-    Defaults defaults = defaultsDAO.getDefaults();
-    if (defaults.getUserDefaultContactType() == null) {
-      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("userDefaultContactType not set in Defaults").build();
-    }
     User loggedUser = sessionController.getUser();    
     if (loggedUser.getOrganization() == null) {
       return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
@@ -494,7 +487,7 @@ public class MuikkuRESTService {
     Person person = personController.createPerson(null,  null,  null,  null,  Boolean.FALSE);
     StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), roles, person);
     personController.updatePersonDefaultUser(person, staffMember);
-    userController.addUserEmail(staffMember, defaults.getUserDefaultContactType(), address, Boolean.TRUE);
+    userController.addUserEmail(staffMember, address, Boolean.TRUE);
     payload.setIdentifier(staffMember.getId().toString());
     
     return Response.ok(payload).build();
@@ -561,7 +554,7 @@ public class MuikkuRESTService {
     Email email = staffMemberEmails.get(0);
     
     String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
-    if (!UserUtils.isAllowedEmail(address, email.getContactType(), staffMember.getPerson().getId())) {
+    if (!UserUtils.isAllowedUniqueEmail(address, staffMember.getPerson())) {
       return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
     }
 
@@ -572,7 +565,7 @@ public class MuikkuRESTService {
     
     // Update email
     try {
-      email = userController.updateStaffMemberEmail(staffMember, email, email.getContactType(), address, email.getDefaultAddress());
+      email = userController.updateStaffMemberEmail(staffMember, email, address, email.getDefaultAddress());
     } catch (UserEmailInUseException e) {
       // Set the transaction as rollback only
       sessionContext.setRollbackOnly();
@@ -816,11 +809,6 @@ public class MuikkuRESTService {
     
     // Prerequisites
     
-    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
-    Defaults defaults = defaultsDAO.getDefaults();
-    if (defaults.getStudentDefaultContactType() == null) {
-      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("studentDefaultContactType not set in Defaults").build();
-    }
     User loggedUser = sessionController.getUser();    
     if (loggedUser.getOrganization() == null) {
       return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
@@ -905,7 +893,7 @@ public class MuikkuRESTService {
         null, // studyEndReason
         null); // studyEndText
     personController.updatePersonDefaultUser(person, student);
-    userController.addUserEmail(student, defaults.getStudentDefaultContactType(), address, Boolean.TRUE);
+    userController.addUserEmail(student, address, Boolean.TRUE);
     payload.setIdentifier(student.getId().toString());
     
     return Response.ok(payload).build();
@@ -918,11 +906,6 @@ public class MuikkuRESTService {
     
     // Prerequisites
     
-    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
-    Defaults defaults = defaultsDAO.getDefaults();
-    if (defaults.getStudentDefaultContactType() == null) {
-      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("studentDefaultContactType not set in Defaults").build();
-    }
     User loggedUser = sessionController.getUser();    
     if (loggedUser.getOrganization() == null) {
       return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
@@ -1039,7 +1022,7 @@ public class MuikkuRESTService {
       if (existingEmail != null) {
         emailDAO.delete(existingEmail);
       }
-      userController.addUserEmail(student, defaults.getStudentDefaultContactType(), address, Boolean.TRUE);
+      userController.addUserEmail(student, address, Boolean.TRUE);
     }
 
     return Response.ok(payload).build();    

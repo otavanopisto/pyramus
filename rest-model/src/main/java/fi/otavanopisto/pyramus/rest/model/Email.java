@@ -6,10 +6,9 @@ public class Email {
     super();
   }
 
-  public Email(Long id, Long contactTypeId, Boolean defaultAddress, String address) {
+  public Email(Long id, Boolean defaultAddress, String address) {
     this();
     this.id = id;
-    this.contactTypeId = contactTypeId;
     this.defaultAddress = defaultAddress;
     this.address = address;
   }
@@ -20,14 +19,6 @@ public class Email {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Long getContactTypeId() {
-    return contactTypeId;
-  }
-
-  public void setContactTypeId(Long contactTypeId) {
-    this.contactTypeId = contactTypeId;
   }
 
   public Boolean getDefaultAddress() {
@@ -47,7 +38,6 @@ public class Email {
   }
 
   private Long id;
-  private Long contactTypeId;
   private Boolean defaultAddress;
   private String address;
 }

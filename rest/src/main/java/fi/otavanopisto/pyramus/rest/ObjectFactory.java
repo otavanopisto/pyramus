@@ -559,9 +559,7 @@ public class ObjectFactory {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             }
             
-            String additionalInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
-            
-            return new fi.otavanopisto.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, additionalInfo, entity.getArchived(), variables);
+            return new fi.otavanopisto.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, entity.getArchived(), variables);
           }
         }, 
         
@@ -790,16 +788,14 @@ public class ObjectFactory {
         new Mapper<Email>() {
           @Override
           public Object map(Email entity) {
-            Long contactTypeId = entity.getContactType() != null ? entity.getContactType().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.Email(entity.getId(), contactTypeId, entity.getDefaultAddress(), entity.getAddress());
+            return new fi.otavanopisto.pyramus.rest.model.Email(entity.getId(), entity.getDefaultAddress(), entity.getAddress());
           }
         },
         
         new Mapper<PhoneNumber>() {
           @Override
           public Object map(PhoneNumber entity) {
-            Long contactTypeId = entity.getContactType() != null ? entity.getContactType().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.PhoneNumber(entity.getId(), contactTypeId, entity.getDefaultNumber(), entity.getNumber());
+            return new fi.otavanopisto.pyramus.rest.model.PhoneNumber(entity.getId(), entity.getDefaultNumber(), entity.getNumber());
           }
         },
         
@@ -814,8 +810,7 @@ public class ObjectFactory {
         new Mapper<Address>() {
           @Override
           public Object map(Address entity) {
-            Long contactTypeId = entity.getContactType() != null ? entity.getContactType().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.Address(entity.getId(), contactTypeId, entity.getDefaultAddress(), entity.getName(), 
+            return new fi.otavanopisto.pyramus.rest.model.Address(entity.getId(), entity.getDefaultAddress(), entity.getName(), 
                 entity.getStreetAddress(), entity.getPostalCode(), entity.getCity(), entity.getCountry());
           }
         }, 
@@ -931,8 +926,7 @@ public class ObjectFactory {
               
               Address address = commonController.findDefaultAddressByContactInfo(student.getContactInfo());
               if (address != null) {
-                Long contactTypeId = address.getContactType() != null ? address.getContactType().getId() : null;
-                defaultAddress = new fi.otavanopisto.pyramus.rest.model.Address(address.getId(), contactTypeId, address.getDefaultAddress(), address.getName(), 
+                defaultAddress = new fi.otavanopisto.pyramus.rest.model.Address(address.getId(), address.getDefaultAddress(), address.getName(), 
                     address.getStreetAddress(), address.getPostalCode(), address.getCity(), address.getCountry());
               }
             }

@@ -23,7 +23,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 
   public void testPermissionsCreateSchool(Role role) throws NoSuchFieldException {
     Map<String, String> variables = new HashMap<>();
     
-    School school = new School(null, "TST", "created", Arrays.asList("tag1", "tag2"), 1l, "additional info", Boolean.FALSE, variables);
+    School school = new School(null, "TST", "created", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, variables);
     
     Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
@@ -60,7 +60,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 
   public void testPermissionsUpdateSchool(Role role) throws NoSuchFieldException {
     Map<String, String> variables = new HashMap<>();
     
-    School school = new School(null, "TST", "notupdated", Arrays.asList("tag1", "tag2"), 1l, "not updated info", Boolean.FALSE, variables);
+    School school = new School(null, "TST", "notupdated", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, variables);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -71,7 +71,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 
     try {
       Map<String, String> updateVariables = new HashMap<>();
 
-      School updateSchool = new School(id, "UPD", "updated", Arrays.asList("tag2", "tag3"), 2l, "updated info", Boolean.FALSE, updateVariables);
+      School updateSchool = new School(id, "UPD", "updated", Arrays.asList("tag2", "tag3"), 2l, Boolean.FALSE, updateVariables);
 
       Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
@@ -87,7 +87,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsDeleteSchool(Role role) throws NoSuchFieldException {
-    School school = new School(null, "TST", "to be deleted", Arrays.asList("tag1", "tag2"), 1l, "additional", Boolean.FALSE, null);
+    School school = new School(null, "TST", "to be deleted", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, null);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")

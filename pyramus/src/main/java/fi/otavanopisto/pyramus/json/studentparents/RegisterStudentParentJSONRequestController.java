@@ -7,13 +7,11 @@ import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentChildDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
@@ -43,7 +41,6 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
       return;
     }
 
-    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
     StudentParentChildDAO studentParentChildDAO = DAOFactory.getInstance().getStudentParentChildDAO();
@@ -102,8 +99,8 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
           }
           
           // Require email to be unique
-          boolean unique = true;
-          if (!UserUtils.isAllowedEmail(studentParentInvitation.getEmail(), unique)) {
+          
+          if (!UserUtils.isAllowedUniqueEmail(studentParentInvitation.getEmail())) {
             throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
           }
   
@@ -114,8 +111,7 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
           Organization organization = studentParentInvitation.getStudent().getOrganization();
           studentParent = studentParentDAO.create(studentParentInvitation.getFirstName(), studentParentInvitation.getLastName(), organization);
     
-          ContactType contactType = contactTypeDAO.findById(1L);
-          emailDAO.create(studentParent.getContactInfo(), contactType, true, studentParentInvitation.getEmail()).getId(); 
+          emailDAO.create(studentParent.getContactInfo(), true, studentParentInvitation.getEmail()).getId(); 
 
           try {
             String externalId = internalAuthenticationProvider.createCredentials(username, password1);

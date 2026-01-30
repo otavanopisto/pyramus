@@ -64,14 +64,16 @@ public class Address {
     return name;
   }
 
+  @Deprecated
   public void setContactType(ContactType contactType) {
     this.contactType = contactType;
   }
 
+  @Deprecated
   public ContactType getContactType() {
     return contactType;
   }
-
+  
   public void setDefaultAddress(Boolean defaultAddress) {
     this.defaultAddress = defaultAddress;
   }
@@ -108,6 +110,7 @@ public class Address {
   @Field
   private Boolean defaultAddress = Boolean.FALSE;
 
+  @Deprecated
   @ManyToOne
   @JoinColumn (name = "contactType")
   private ContactType contactType;

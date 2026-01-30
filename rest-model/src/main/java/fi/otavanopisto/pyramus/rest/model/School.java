@@ -9,14 +9,13 @@ public class School {
     super();
   }
 
-  public School(Long id, String code, String name, List<String> tags, Long fieldId, String additionalContactInfo, Boolean archived, Map<String, String> variables) {
+  public School(Long id, String code, String name, List<String> tags, Long fieldId, Boolean archived, Map<String, String> variables) {
     super();
     this.id = id;
     this.code = code;
     this.name = name;
     this.archived = archived;
     this.tags = tags;
-    this.additionalContactInfo = additionalContactInfo;
     this.fieldId = fieldId;
     this.variables = variables;
   }
@@ -45,14 +44,6 @@ public class School {
     this.name = name;
   }
   
-  public String getAdditionalContactInfo() {
-    return additionalContactInfo;
-  }
-  
-  public void setAdditionalContactInfo(String additionalContactInfo) {
-    this.additionalContactInfo = additionalContactInfo;
-  }
-
   public Boolean getArchived() {
     return archived;
   }
@@ -96,7 +87,6 @@ public class School {
   private Long id;
   private String code;
   private String name;
-  private String additionalContactInfo;
   private Boolean archived;
   private List<String> tags;
   private Long fieldId;

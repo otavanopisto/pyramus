@@ -40,7 +40,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
@@ -351,7 +350,7 @@ public class StudentController {
     return studentDAO.listBy(organizations, email, groups, archived, firstResult, maxResults);
   }
 
-  public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
+  public Email addStudentEmail(Student student, String address, Boolean defaultAddress) throws UserEmailInUseException {
     // Trim the email address
     address = StringUtils.trim(address);
 
@@ -359,13 +358,14 @@ public class StudentController {
       throw new IllegalArgumentException("Email cannot be blank.");
     }
     
-    if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId()))
+    if (!UserUtils.isAllowedUniqueEmail(address, student.getPerson())) {
       throw new UserEmailInUseException();
+    }
     
-    return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
+    return emailDAO.create(student.getContactInfo(), defaultAddress, address);
   }
-  
-  public Email updateStudentEmail(Student student, Email email, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
+
+  public Email updateStudentEmail(Student student, Email email, String address, Boolean defaultAddress) throws UserEmailInUseException {
     // Trim the email address
     address = StringUtils.trim(address);
 
@@ -373,31 +373,31 @@ public class StudentController {
       throw new IllegalArgumentException("Email cannot be blank.");
     }
     
-    if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId())) {
+    if (!UserUtils.isAllowedUniqueEmail(address, student.getPerson())) {
       throw new UserEmailInUseException();
     }
     
-    return emailDAO.update(email, contactType, defaultAddress, address);
+    return emailDAO.update(email, defaultAddress, address);
   }
   
   /* Address */
 
-  public Address addStudentAddress(Student student, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
-    return addressDAO.create(student.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
+  public Address addStudentAddress(Student student, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.create(student.getContactInfo(), name, streetAddress, postalCode, city, country, defaultAddress);
   }
 
-  public Address updateStudentAddress(Address address, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
-    return addressDAO.update(address, defaultAddress, contactType, name, streetAddress, postalCode, city, country);
+  public Address updateStudentAddress(Address address, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.update(address, defaultAddress, name, streetAddress, postalCode, city, country);
   }
 
   /* PhoneNumber */
 
-  public PhoneNumber addStudentPhoneNumber(Student student, ContactType contactType, String number, Boolean defaultNumber) {
-    return phoneNumberDAO.create(student.getContactInfo(), contactType, defaultNumber, number);
+  public PhoneNumber addStudentPhoneNumber(Student student, String number, Boolean defaultNumber) {
+    return phoneNumberDAO.create(student.getContactInfo(), defaultNumber, number);
   }
   
-  public PhoneNumber updateStudentPhoneNumber(PhoneNumber phoneNumber, ContactType contactType, String number, Boolean defaultNumber) {
-    return phoneNumberDAO.update(phoneNumber, contactType, defaultNumber, number);
+  public PhoneNumber updateStudentPhoneNumber(PhoneNumber phoneNumber, String number, Boolean defaultNumber) {
+    return phoneNumberDAO.update(phoneNumber, defaultNumber, number);
   }
   
   /* ContactURL */

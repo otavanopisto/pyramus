@@ -41,14 +41,16 @@ public class Email {
     return defaultAddress;
   }
 
+  @Deprecated
   public void setContactType(ContactType contactType) {
     this.contactType = contactType;
   }
 
+  @Deprecated
   public ContactType getContactType() {
     return contactType;
   }
-
+  
   public void setContactInfo(ContactInfo contactInfo) {
     this.contactInfo = contactInfo;
   }
@@ -72,10 +74,11 @@ public class Email {
   @DocumentId
   private Long id;
   
+  @Deprecated
   @ManyToOne
   @JoinColumn (name = "contactType")
   private ContactType contactType;
-
+  
   @NotNull
   @Column(nullable = false)
   @Field

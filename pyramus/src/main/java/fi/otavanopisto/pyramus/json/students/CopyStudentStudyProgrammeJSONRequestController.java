@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -15,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.base.UserAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
@@ -33,6 +35,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
@@ -55,6 +58,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     ContactInfoDAO contactInfoDAO = DAOFactory.getInstance().getContactInfoDAO();
+    UserAdditionalContactInfoDAO additionalContactInfoDAO = DAOFactory.getInstance().getStudentAdditionalContactInfoDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
@@ -136,7 +140,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     List<Address> addresses = oldStudent.getContactInfo().getAddresses();
     for (int i = 0; i < addresses.size(); i++) {
       Address add = addresses.get(i);
-      addressDAO.create(newStudent.getContactInfo(), add.getContactType(), add.getName(), add.getStreetAddress(), add.getPostalCode(), add.getCity(),
+      addressDAO.create(newStudent.getContactInfo(), add.getName(), add.getStreetAddress(), add.getPostalCode(), add.getCity(),
           add.getCountry(), add.getDefaultAddress());
     }
 
@@ -145,7 +149,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     List<Email> emails = oldStudent.getContactInfo().getEmails();
     for (int i = 0; i < emails.size(); i++) {
       Email email = emails.get(i);
-      emailDAO.create(newStudent.getContactInfo(), email.getContactType(), email.getDefaultAddress(), email.getAddress());
+      emailDAO.create(newStudent.getContactInfo(), email.getDefaultAddress(), email.getAddress());
     }
     
     // Phone numbers
@@ -153,9 +157,44 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     List<PhoneNumber> phoneNumbers = oldStudent.getContactInfo().getPhoneNumbers();
     for (int i = 0; i < phoneNumbers.size(); i++) {
       PhoneNumber phoneNumber = phoneNumbers.get(i);
-      phoneNumberDAO.create(newStudent.getContactInfo(), phoneNumber.getContactType(), phoneNumber.getDefaultNumber(), phoneNumber.getNumber());
+      phoneNumberDAO.create(newStudent.getContactInfo(), phoneNumber.getDefaultNumber(), phoneNumber.getNumber());
     }
 
+    // Additional Contact Infos
+    
+    if (CollectionUtils.isNotEmpty(oldStudent.getAdditionalContactInfos())) {
+      for (UserAdditionalContactInfo additionalContactInfo : oldStudent.getAdditionalContactInfos()) {
+        UserAdditionalContactInfo copiedAdditionalInfo = additionalContactInfoDAO.create(additionalContactInfo.getContactType(), false);
+
+        // Addresses
+        
+        for (Address address : additionalContactInfo.getAddresses()) {
+          addressDAO.create(
+              copiedAdditionalInfo, 
+              address.getName(), 
+              address.getStreetAddress(), 
+              address.getPostalCode(), 
+              address.getCity(),
+              address.getCountry(), 
+              address.getDefaultAddress());
+        }
+        
+        // Email addresses
+        
+        for (Email email : additionalContactInfo.getEmails()) {
+          emailDAO.create(copiedAdditionalInfo, email.getDefaultAddress(), email.getAddress());
+        }
+
+        // Phone Numbers
+        
+        for (PhoneNumber phoneNumber : additionalContactInfo.getPhoneNumbers()) {
+          phoneNumberDAO.create(copiedAdditionalInfo, phoneNumber.getDefaultNumber(), phoneNumber.getNumber());
+        }
+        
+        newStudent.getAdditionalContactInfos().add(copiedAdditionalInfo);
+      }
+    }
+    
     if (linkCredits) {
       List<CourseAssessment> assessments = courseAssessmentDAO.listByStudent(oldStudent);
       for (CourseAssessment assessment : assessments) {

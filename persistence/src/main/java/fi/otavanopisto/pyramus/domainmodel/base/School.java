@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -98,14 +99,14 @@ public class School implements ArchivableEntity {
     return archived;
   }
 
-  public void setContactInfo(ContactInfo contactInfo) {
-    this.contactInfo = contactInfo;
+  public List<TypedContactInfo> getContactInfos() {
+    return contactInfos;
   }
 
-  public ContactInfo getContactInfo() {
-    return contactInfo;
+  public void setContactInfos(List<TypedContactInfo> contactInfos) {
+    this.contactInfos = contactInfos;
   }
-  
+
   public Set<Tag> getTags() {
     return tags;
   }
@@ -195,10 +196,10 @@ public class School implements ArchivableEntity {
   @JoinColumn (name = "studentGroup")
   private StudentGroup studentGroup;
   
-  @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="contactInfo")
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL) // TODO orphan removal?
+  @JoinTable (name = "__SchoolContactInfos", joinColumns = @JoinColumn(name = "school"), inverseJoinColumns = @JoinColumn(name = "typedContactInfo"))
   @IndexedEmbedded
-  private ContactInfo contactInfo;
+  private List<TypedContactInfo> contactInfos = new ArrayList<>();
 
   @NotNull
   @Column (nullable = false)

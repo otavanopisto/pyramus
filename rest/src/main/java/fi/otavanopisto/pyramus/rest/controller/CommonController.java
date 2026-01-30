@@ -39,7 +39,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 @Dependent
@@ -378,23 +377,6 @@ public class CommonController {
     courseBaseVariableKeyDAO.delete(courseBaseVariableKey);
   }
   
-  /* Email */
-
-  // TODO: allowed email check is better handled when email is created through staffmember or student, maybe it should be always context-aware creation
-  public Email createEmail(ContactInfo contactInfo, ContactType contactType, Boolean defaultAddress, String address) {
-    // Trim the email address
-    address = StringUtils.trim(address);
-
-    if (StringUtils.isBlank(address)) {
-      throw new IllegalArgumentException("Address cannot be blank");
-    }
-    
-    if (!UserUtils.isAllowedEmail(address, contactType))
-      throw new RuntimeException("Email address is in use.");
-
-    return emailDAO.create(contactInfo, contactType, defaultAddress, address);
-  }
-  
   public Email findDefaultEmailByContactInfo(ContactInfo contactInfo) {
     return emailDAO.findByContactInfoAndDefaultAddress(contactInfo, Boolean.TRUE);
   }
@@ -410,7 +392,7 @@ public class CommonController {
   public boolean isEmailAvailable(String address) {
     List<Email> emails = emailDAO.listByAddressLowercase(StringUtils.lowerCase(StringUtils.trim(address)));
     for (Email email : emails) {
-      if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
+      if (email.getContactInfo() == null || email.getContactInfo().hasUniqueEmails()) {
         return false;
       }
     }
@@ -449,8 +431,8 @@ public class CommonController {
   
   /* Address */
 
-  public Address createAddress(ContactInfo contactInfo, ContactType contactType, String name, String streetAddress, String postalCode, String city, String country, Boolean defaultAddress) {
-    return addressDAO.create(contactInfo, contactType, name, streetAddress, postalCode, city, country, defaultAddress);
+  public Address createAddress(ContactInfo contactInfo, String name, String streetAddress, String postalCode, String city, String country, Boolean defaultAddress) {
+    return addressDAO.create(contactInfo, name, streetAddress, postalCode, city, country, defaultAddress);
   }
   
   public Address findAddressById(Long id) {
@@ -467,8 +449,8 @@ public class CommonController {
   
   /* PhoneNumber */
   
-  public PhoneNumber createPhoneNumber(ContactInfo contactInfo, ContactType contactType, Boolean defaultNumber, String number) {
-    return phoneNumberDAO.create(contactInfo, contactType, defaultNumber, number);
+  public PhoneNumber createPhoneNumber(ContactInfo contactInfo, Boolean defaultNumber, String number) {
+    return phoneNumberDAO.create(contactInfo, defaultNumber, number);
   }
   
   public PhoneNumber findPhoneNumberById(Long id) {

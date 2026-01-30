@@ -307,6 +307,50 @@ Object.extend(IxCKEditorFieldDraftTask, {
   supports: ['textarea[ix:ckeditor="true"]']
 });
 
+/** The draft task for typed contact info editor components.
+ *  @class TypedContactInfosEditorComponentDraftTask
+ *  @extends IxAbstractDraftTask
+ */
+TypedContactInfosEditorComponentDraftTask = Class.create(IxAbstractDraftTask, {
+  initialize : function($super) {
+    $super();
+  },
+  createDraftData: function (element) {
+    var draftData = new Hash();
+    
+    var editorId = element.id;
+    
+    if (!editorId) {
+      return null;
+    }
+    
+    var contactInfoEditor = getContactInfoEditorById(editorId);
+    draftData.set("data", contactInfoEditor.getData());
+    
+    return new IxElementDraft('typedContactInfosEditor', editorId, draftData.toJSON());
+  },
+  restoreDraftData: function (elementDraft) {
+    console.log("restoring contactinfoeditor");
+    console.log(elementDraft);
+    var name = elementDraft.getName();
+    var contactInfoEditorContainer = document.getElementById(name);
+    if (!contactInfoEditorContainer) {
+      return null;
+    }
+
+    var draftData = Object.isString(elementDraft.getData()) ? elementDraft.getData().evalJSON() : elementDraft.getData();
+
+    var data = draftData.data;
+
+    var contactInfoEditor = getContactInfoEditorById(name);
+    contactInfoEditor.setData(data);
+  }
+});
+
+Object.extend(TypedContactInfosEditorComponentDraftTask, {
+  supports: ['div.typedContactInfosEditor']
+});
+
 /** An object containing the methods for accessing draft tasks.
  * 
  */
@@ -393,6 +437,7 @@ IxDraftTaskVault._registerTaskType(IxSelectFieldDraftTask, 'selectField');
 IxDraftTaskVault._registerTaskType(IxTextAreaFieldDraftTask, 'textareaField');
 IxDraftTaskVault._registerTaskType(IxTableComponentDraftTask, 'tableComponent');
 IxDraftTaskVault._registerTaskType(IxCKEditorFieldDraftTask, 'ckeditorField');
+IxDraftTaskVault._registerTaskType(TypedContactInfosEditorComponentDraftTask, 'typedContactInfosEditor');
 
 /** 
  *  @class An API for manipulating form drafts.

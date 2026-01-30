@@ -11,7 +11,6 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
-import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
@@ -20,7 +19,6 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
@@ -55,7 +53,6 @@ public class EditStudentParentJSONRequestController extends JSONRequestControlle
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
-    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
@@ -121,9 +118,7 @@ public class EditStudentParentJSONRequestController extends JSONRequestControlle
       String colPrefix = "emailTable." + i;
       String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
       if (StringUtils.isNotBlank(email)) {
-        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-  
-        if (!UserUtils.isAllowedEmail(email, contactType, studentParent.getPerson().getId())) {
+        if (!UserUtils.isAllowedUniqueEmail(email, studentParent.getPerson())) {
           throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
         }
       }
@@ -139,7 +134,6 @@ public class EditStudentParentJSONRequestController extends JSONRequestControlle
       String colPrefix = "addressTable." + i;
       Long addressId = requestContext.getLong(colPrefix + ".addressId");
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String name = requestContext.getString(colPrefix + ".name");
       String street = requestContext.getString(colPrefix + ".street");
       String postal = requestContext.getString(colPrefix + ".postal");
@@ -148,14 +142,14 @@ public class EditStudentParentJSONRequestController extends JSONRequestControlle
       
       boolean hasAddress = name != null || street != null || postal != null || city != null || country != null;
       if (addressId == -1 && hasAddress) {
-        Address address = addressDAO.create(studentParent.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
+        Address address = addressDAO.create(studentParent.getContactInfo(), name, street, postal, city, country, defaultAddress);
         existingAddresses.add(address.getId());
       }
       else if (addressId > 0) {
         Address address = addressDAO.findById(addressId);
         if (hasAddress) {
           existingAddresses.add(addressId);
-          addressDAO.update(address, defaultAddress, contactType, name, street, postal, city, country);
+          addressDAO.update(address, defaultAddress, name, street, postal, city, country);
         }
       }
     }
@@ -174,17 +168,16 @@ public class EditStudentParentJSONRequestController extends JSONRequestControlle
     for (int i = 0; i < emailCount; i++) {
       String colPrefix = "emailTable." + i;
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
 
       Long emailId = requestContext.getLong(colPrefix + ".emailId");
       if (emailId == -1 && email != null) {
-        emailId = emailDAO.create(studentParent.getContactInfo(), contactType, defaultAddress, email).getId();
+        emailId = emailDAO.create(studentParent.getContactInfo(), defaultAddress, email).getId();
         existingEmails.add(emailId);
       }
       else if (emailId > 0 && email != null) {
         existingEmails.add(emailId);
-        emailDAO.update(emailDAO.findById(emailId), contactType, defaultAddress, email);
+        emailDAO.update(emailDAO.findById(emailId), defaultAddress, email);
       }
     }
     List<Email> emails = studentParent.getContactInfo().getEmails();
@@ -202,15 +195,14 @@ public class EditStudentParentJSONRequestController extends JSONRequestControlle
     for (int i = 0; i < phoneCount; i++) {
       String colPrefix = "phoneTable." + i;
       Boolean defaultNumber = requestContext.getBoolean(colPrefix + ".defaultNumber");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String number = requestContext.getString(colPrefix + ".phone");
       Long phoneId = requestContext.getLong(colPrefix + ".phoneId");
       if (phoneId == -1 && number != null) {
-        phoneId = phoneNumberDAO.create(studentParent.getContactInfo(), contactType, defaultNumber, number).getId();
+        phoneId = phoneNumberDAO.create(studentParent.getContactInfo(), defaultNumber, number).getId();
         existingPhoneNumbers.add(phoneId);
       }
       else if (phoneId > 0 && number != null) {
-        phoneNumberDAO.update(phoneNumberDAO.findById(phoneId), contactType, defaultNumber, number);
+        phoneNumberDAO.update(phoneNumberDAO.findById(phoneId), defaultNumber, number);
         existingPhoneNumbers.add(phoneId);
       }
     }

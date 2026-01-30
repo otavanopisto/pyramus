@@ -324,11 +324,7 @@ public class Person implements ContextReference {
     Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
-        for (Email email : student.getContactInfo().getEmails()) {
-          if (email.getAddress() != null) {
-            results.add(email.getAddress());
-          }
-        }
+        results.addAll(getAllEmails(student));
       }
     }
     
@@ -549,11 +545,7 @@ public class Person implements ContextReference {
     Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
-        for (Email email : student.getContactInfo().getEmails()) {
-          if (email.getAddress() != null) {
-            results.add(email.getAddress());
-          }
-        }
+        results.addAll(getAllEmails(student));
       }
     }
     
@@ -1041,6 +1033,32 @@ public class Person implements ContextReference {
     this.defaultUser = defaultUser;
   }
 
+  /**
+   * Returns all email addresses from the users' 
+   * contact info and additional contact infos.
+   * 
+   * Used for indexing purposes and reworked in ee10 branch.
+   * 
+   * @param student
+   * @return
+   */
+  @Transient
+  private Set<String> getAllEmails(Student student) {
+    Set<String> result = new HashSet<>();
+    if (student != null) {
+      if (student.getContactInfo() != null) {
+        student.getContactInfo().getEmails().forEach(email -> result.add(email.getAddress()));
+      }
+      
+      if (student.getAdditionalContactInfos() != null) {
+        for (UserAdditionalContactInfo additionalContactInfo : student.getAdditionalContactInfos()) {
+          additionalContactInfo.getEmails().forEach(email -> result.add(email.getAddress()));
+        }
+      }
+    }
+    return result;
+  }
+  
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "Person")
   @TableGenerator(name = "Person", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")

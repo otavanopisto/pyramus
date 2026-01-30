@@ -17,7 +17,7 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testCreateStudentAddress() {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -32,7 +32,6 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is(address.getPostalCode()))
       .body("city", is(address.getCity()))
       .body("country", is(address.getCountry()))
-      .body("contactTypeId", is(address.getContactTypeId().intValue()))
       .body("defaultAddress", is( address.getDefaultAddress()));
     
     int id = response.body().jsonPath().getInt("id");
@@ -71,13 +70,12 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is("17298"))
       .body("city", is("Southshire"))
       .body("country", is("Yemen"))
-      .body("contactTypeId", is(1))
       .body("defaultAddress", is(Boolean.TRUE));
   }  
 
   @Test
   public void testUpdateStudentAddress() {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -92,12 +90,11 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is(address.getPostalCode()))
       .body("city", is(address.getCity()))
       .body("country", is(address.getCountry()))
-      .body("contactTypeId", is(address.getContactTypeId().intValue()))
       .body("defaultAddress", is( address.getDefaultAddress()));
     
     long id = response.body().jsonPath().getLong("id");
     try {
-      Address updatedAddress = new Address(id, 1l, Boolean.FALSE, "Caleb Great", "090-Mudflap", "1919-44", "Salamander", "Papua New-Guinea");
+      Address updatedAddress = new Address(id, Boolean.FALSE, "Caleb Great", "090-Mudflap", "1919-44", "Salamander", "Papua New-Guinea");
     
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -111,7 +108,6 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
         .body("postalCode", is(updatedAddress.getPostalCode()))
         .body("city", is(updatedAddress.getCity()))
         .body("country", is(updatedAddress.getCountry()))
-        .body("contactTypeId", is(updatedAddress.getContactTypeId().intValue()))
         .body("defaultAddress", is(updatedAddress.getDefaultAddress()));
       
     } finally {
@@ -124,7 +120,7 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteStudentAddress() {
-    Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+    Address address = new Address(null, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -139,7 +135,6 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
       .body("postalCode", is(address.getPostalCode()))
       .body("city", is(address.getCity()))
       .body("country", is(address.getCountry()))
-      .body("contactTypeId", is(address.getContactTypeId().intValue()))
       .body("defaultAddress", is( address.getDefaultAddress()));
       
     Long id = response.body().jsonPath().getLong("id");

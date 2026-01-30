@@ -14,7 +14,6 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
-import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
@@ -24,7 +23,6 @@ import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
@@ -59,7 +57,6 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
-    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
@@ -69,14 +66,23 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     // If the user is being created under existing person, skip credentials
     boolean createCredentials = personId == null;
     
+    Person person;
+    if (personId != null) {
+      person = personDAO.findById(personId);
+      if (person == null) {
+        throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, "Person not found.");
+      }
+    }
+    else {
+      person = personDAO.create(null, null, null, null, Boolean.FALSE);
+    }
+    
     int emailCount2 = requestContext.getInteger("emailTable.rowCount");
     for (int i = 0; i < emailCount2; i++) {
       String colPrefix = "emailTable." + i;
       String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
       if (StringUtils.isNotBlank(email)) {
-        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-        
-        if (!UserUtils.isAllowedEmail(email, contactType, personId)) {
+        if (!UserUtils.isAllowedUniqueEmail(email, person)) {
           throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
         }
       }
@@ -123,7 +129,6 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     
     // User
 
-    Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
     StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, roles, person, false);
     staffMember = staffMemberDAO.updateEnabled(staffMember, accountActive);
 
@@ -174,7 +179,6 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     for (int i = 0; i < addressCount; i++) {
       String colPrefix = "addressTable." + i;
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String name = requestContext.getString(colPrefix + ".name");
       String street = requestContext.getString(colPrefix + ".street");
       String postal = requestContext.getString(colPrefix + ".postal");
@@ -182,7 +186,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
       String country = requestContext.getString(colPrefix + ".country");
       boolean hasAddress = name != null || street != null || postal != null || city != null || country != null;
       if (hasAddress) {
-        addressDAO.create(staffMember.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
+        addressDAO.create(staffMember.getContactInfo(), name, street, postal, city, country, defaultAddress);
       }
     }
     
@@ -192,11 +196,10 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     for (int i = 0; i < emailCount; i++) {
       String colPrefix = "emailTable." + i;
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
       
       if (StringUtils.isNotBlank(email)) {
-        emailDAO.create(staffMember.getContactInfo(), contactType, defaultAddress, email);
+        emailDAO.create(staffMember.getContactInfo(), defaultAddress, email);
       }
     }
     
@@ -206,10 +209,9 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     for (int i = 0; i < phoneCount; i++) {
       String colPrefix = "phoneTable." + i;
       Boolean defaultNumber = requestContext.getBoolean(colPrefix + ".defaultNumber");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String number = requestContext.getString(colPrefix + ".phone");
       if (number != null) {
-        phoneNumberDAO.create(staffMember.getContactInfo(), contactType, defaultNumber, number);
+        phoneNumberDAO.create(staffMember.getContactInfo(), defaultNumber, number);
       }
     }
 

@@ -54,6 +54,8 @@ import fi.otavanopisto.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.dao.base.TypedContactInfoDAO;
+import fi.otavanopisto.pyramus.dao.base.UserAdditionalContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.changelog.ChangeLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.changelog.ChangeLogEntryEntityDAO;
 import fi.otavanopisto.pyramus.dao.changelog.ChangeLogEntryEntityPropertyDAO;
@@ -655,6 +657,14 @@ public class DAOFactory {
     return (ContactInfoDAO) findByClass(ContactInfoDAO.class);
   }
 
+  public TypedContactInfoDAO getTypedContactInfoDAO() {
+    return (TypedContactInfoDAO) findByClass(TypedContactInfoDAO.class);
+  }
+  
+  public UserAdditionalContactInfoDAO getStudentAdditionalContactInfoDAO() {
+    return (UserAdditionalContactInfoDAO) findByClass(UserAdditionalContactInfoDAO.class);
+  }
+  
   public ContactTypeDAO getContactTypeDAO() {
     return (ContactTypeDAO) findByClass(ContactTypeDAO.class);
   }
