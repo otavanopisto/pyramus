@@ -22,7 +22,7 @@
     
       function onLoad(event) {
         tabControl = new IxProtoTabs($('tabs'));
-
+        
         var credits = JSDATA["credits"].evalJSON();
         var skillLevels = JSDATA["skillLevels"].evalJSON();
 		
@@ -336,13 +336,21 @@
   <body onload="onLoad(event);" ix:enabledrafting="true">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
     
-    <h1 class="genericPageHeader"><fmt:message key="grading.manageSpokenLanguageExams.pageTitle"/></h1>
+    <h1 class="genericPageHeader">
+      <c:choose>
+        <c:when test="${student.studyProgramme.category.educationType.code == 'lukio'}">
+          <fmt:message key="grading.manageSpokenLanguageExams.pageTitle"/>
+        </c:when>
+        <c:otherwise>
+          <fmt:message key="grading.manageLanguageSkillLevels.pageTitle"/>
+        </c:otherwise>
+      </c:choose>
+    </h1>
     
     <div id="manageSpokenLanguageExamsFormContainer"> 
       <div class="genericFormContainer"> 
         <form action="managespokenexams.page" method="post">
           <input type="hidden" value="${student.id}" name="studentId"/>
-    
           <div class="tabLabelsContainer" id="tabs">
             <a class="tabLabel" href="#exams">
               <fmt:message key="grading.manageSpokenLanguageExams.tabLabel"/>
@@ -385,21 +393,23 @@
               <div> ${student.fullName} </div>
             </div>
 
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="grading.manageLanguageSkillLevels.tabLabel"/>
+              </jsp:include>
+              <div>
+                <fmt:message key="grading.manageLanguageSkillLevels.languageFinnish"/>
+              </div>
+            </div>
+            
+            <div id="languageSkillLevelTable"></div> 
             <c:choose>
-              <c:when test="${!empty student.curriculum}">
-                <div class="genericFormSection">
-                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                    <jsp:param name="titleLocale" value="grading.manageSpokenLanguageExams.studentCurriculumTitle"/>
-                    <jsp:param name="helpLocale" value="grading.manageSpokenLanguageExams.studentCurriculumHelp"/>
-                  </jsp:include>
-                  <div>${student.curriculum.name}</div>
+        	  <c:when test="${student.studyProgramme.category.educationType.code == 'peruskoulu'}">
+          	    <div class="genericTableAddRowContainer">
+                  <span class="genericTableAddRowLinkContainer" onclick="addLanguageSkillLevelTableRow();"><fmt:message key="grading.manageLanguageSkillLevels.tableAddRow"/></span>
                 </div>
               </c:when>
             </c:choose>
-            <div id="languageSkillLevelTable"></div> 
-          	<div class="genericTableAddRowContainer">
-              <span class="genericTableAddRowLinkContainer" onclick="addLanguageSkillLevelTableRow();"><fmt:message key="grading.manageLanguageSkillLevels.tableAddRow"/></span>
-            </div>
           </div>
     
           <div class="genericFormSubmitSectionOffTab">

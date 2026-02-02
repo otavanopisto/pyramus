@@ -52,7 +52,7 @@
 %>
 
 <script type="text/javascript">
-      function setupBasicTab(personId, studentId, studentFullName) {
+      function setupBasicTab(personId, studentId, studentFullName, lukio) {
         var basicTabRelatedActionsHoverMenu = new IxHoverMenu($('basicTabRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsLabel"/>'
         });
@@ -75,12 +75,17 @@
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));
 
-        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
-          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>',
-          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
-        }));
+        var text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
 
+        if (isLukio) {
+          text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>';
+        }
+
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+            iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            text: text,
+            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
+        }));
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentKoskiLabel"/>',
@@ -215,10 +220,17 @@
           text: '<fmt:message key="students.viewStudent.gradesTabRelatedActionsManageTransferCreditsLabel"/>',
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));
-        gradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
-          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>',
-          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
+
+        var text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
+
+        if (isLukio) { 
+          text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>';
+        }
+
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+            iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            text: text,
+            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
         }));
         gradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
@@ -1625,15 +1637,18 @@
 
         Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
         loadLogEntries(${person.id});
-        
         <c:forEach var="student" items="${students}">
-          // Setup basics
-          setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
+          <c:set var="isLukio" value="${student.studyProgramme.category.educationType.code == 'lukio'}"/>
 
+<<<<<<< HEAD
           var additionalContactInfos = studentAdditionalContactInfos['${student.id}'];
           if (additionalContactInfos) {
             initializeContactInfoView($('additionalContactInfos.${student.id}'), additionalContactInfos);
           }
+=======
+          // Setup basics
+          setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}', ${isLukio});
+>>>>>>> 1fa88ed7f (Adjusted visibilities and some other minor changes)
           
           // Setup course tabs
           coursesTable = setupCoursesTab(${student.id});
