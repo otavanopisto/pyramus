@@ -1640,15 +1640,12 @@
         <c:forEach var="student" items="${students}">
           <c:set var="isLukio" value="${student.studyProgramme.category.educationType.code == 'lukio'}"/>
 
-<<<<<<< HEAD
           var additionalContactInfos = studentAdditionalContactInfos['${student.id}'];
           if (additionalContactInfos) {
             initializeContactInfoView($('additionalContactInfos.${student.id}'), additionalContactInfos);
           }
-=======
           // Setup basics
           setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}', ${isLukio});
->>>>>>> 1fa88ed7f (Adjusted visibilities and some other minor changes)
           
           // Setup course tabs
           coursesTable = setupCoursesTab(${student.id});
