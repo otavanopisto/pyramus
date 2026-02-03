@@ -52,7 +52,7 @@
 %>
 
 <script type="text/javascript">
-      function setupBasicTab(personId, studentId, studentFullName, lukio) {
+      function setupBasicTab(personId, studentId, studentFullName, isLukio) {
         var basicTabRelatedActionsHoverMenu = new IxHoverMenu($('basicTabRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsLabel"/>'
         });
