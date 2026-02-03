@@ -1230,30 +1230,42 @@ public class MuikkuRESTService {
   }
   
   private Mandatority getMandatority(CourseBase courseBase) {
-    // Education type = 2 (Lukio)
-    CourseEducationType cet = courseBase.getCourseEducationTypes().stream().filter(c -> c.getEducationType().getId().equals(2L)).findFirst().orElse(null);
+    // Education type = Lukio
+    CourseEducationType cet = courseBase.getCourseEducationTypes().stream().filter(
+      c -> StringUtils.equals(c.getEducationType().getCode(), PyramusConsts.EDUCATION_TYPE_LUKIO)
+    ).findFirst().orElse(null);
     if (cet != null) {
-      // Education subtype = 1 (Valtakunnallinen pakollinen)
-      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(1L)).findFirst().orElse(null);
+      // Education subtype = Valtakunnallinen pakollinen
+      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(
+        c -> StringUtils.equals(c.getEducationSubtype().getCode(), PyramusConsts.EDUCATION_SUBTYPE_MANDATORY)
+      ).findFirst().orElse(null);
       if (cest != null) {
         return Mandatority.MANDATORY;
       }
-      // Education subtype = 2 (Valtakunnallinen syventävä)
-      cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(2L)).findFirst().orElse(null);
+      // Education subtype = Valtakunnallinen syventävä
+      cest = cet.getCourseEducationSubtypes().stream().filter(
+        c -> StringUtils.equals(c.getEducationSubtype().getCode(), PyramusConsts.EDUCATION_SUBTYPE_NATIONAL_OPTIONAL)
+      ).findFirst().orElse(null);
       if (cest != null) {
         return Mandatority.NATIONAL_LEVEL_OPTIONAL;
       }
-      // Education subtype = 3 (Paikallinen syventävä)
-      cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(2L)).findFirst().orElse(null);
+      // Education subtype = Paikallinen syventävä
+      cest = cet.getCourseEducationSubtypes().stream().filter(
+        c -> StringUtils.equals(c.getEducationSubtype().getCode(), PyramusConsts.EDUCATION_SUBTYPE_SCHOOL_OPTIONAL)
+      ).findFirst().orElse(null);
       if (cest != null) {
         return Mandatority.SCHOOL_LEVEL_OPTIONAL;
       }
     }
-    // Education type = 1 (Perusopetus)
-    cet = courseBase.getCourseEducationTypes().stream().filter(c -> c.getEducationType().getId().equals(1L)).findFirst().orElse(null);
+    // Education type = Perusopetus
+    cet = courseBase.getCourseEducationTypes().stream().filter(
+      c -> StringUtils.equals(c.getEducationType().getCode(), PyramusConsts.EDUCATION_TYPE_PK)
+    ).findFirst().orElse(null);
     if (cet != null) {
-      // Education subtype = 4 (Pakollinen)
-      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(c -> c.getEducationSubtype().getId().equals(4L)).findFirst().orElse(null);
+      // Education subtype = Pakollinen
+      CourseEducationSubtype cest = cet.getCourseEducationSubtypes().stream().filter(
+        c -> StringUtils.equals(c.getEducationSubtype().getCode(), PyramusConsts.EDUCATION_SUBTYPE_MANDATORY)
+      ).findFirst().orElse(null);
       if (cest != null) {
         return Mandatority.MANDATORY;
       }
