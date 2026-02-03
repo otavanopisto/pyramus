@@ -82,9 +82,9 @@
         }
 
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
-            iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-            text: text,
-            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: text,
+          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
         }));
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
