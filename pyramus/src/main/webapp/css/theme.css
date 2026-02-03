@@ -191,8 +191,30 @@ a[target="_blank"]::after {
 }
 
 .genericViewInfoWapper--student-edit {
-	width: 100%;
-	min-width: 100%;
+}
+
+.typedContactInfosEditorList fieldset {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.typedContactInfoEditor--remove {
+  align-items: center;
+  border: 1px solid #739de7;
+  border-radius: 4px;
+  display: flex;
+  float: right;
+  font-size: 12px;
+  padding: 2px 6px;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.typedContactInfoEditor--remove:before {
+  content: url(../gfx/edit-delete.png);
+  padding-right: 4px;
+  vertical-align: middle;
 }
 
 .genericViewFormDataText{
