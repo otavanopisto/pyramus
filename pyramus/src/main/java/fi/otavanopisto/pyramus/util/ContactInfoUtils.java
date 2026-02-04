@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -100,7 +101,21 @@ public class ContactInfoUtils {
 
       E contactInfo;
       Long contactInfoId = requestContext.getLong(String.format("%s.%d.id", contactInfoEditorName, contactInfoIndex));
-      if (Long.valueOf(-1L).equals(contactInfoId)) {
+      boolean hasContactInfoId = !Long.valueOf(-1L).equals(contactInfoId);
+      boolean remove = Objects.equals("1", requestContext.getString(String.format("%s.%d.remove", contactInfoEditorName, contactInfoIndex)));
+      
+      if (remove) {
+        // Remove the contact info if it has an id - if it doesn't, it shouldn't be in database anyways.
+        
+        if (hasContactInfoId) {
+          contactInfos.removeIf(ci -> ci.getId().equals(contactInfoId));
+        }
+        
+        // Removal done, move on to the next one
+        continue;
+      }
+      
+      if (!hasContactInfoId) {
         // Create new
         contactInfo = dao.create(contactInfoContactType);
         contactInfos.add(contactInfo);
