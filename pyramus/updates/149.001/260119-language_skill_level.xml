@@ -2,22 +2,22 @@
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
 
   <sql>
-    create table languageSkillLevel (
+    create table StudentLanguageSkillLevel (
        id bigint not null auto_increment,
         gradingDate date,
         skillLevel varchar(255) not null,
         skillType varchar(255) not null,
         student bigint not null,
         primary key (id)
-    );
+    )
   </sql>
   <sql>
-    alter table languageSkillLevel 
-       add constraint UKideag1lnc0huc2oqq9fknujwe unique (student, skillType);
+    alter table StudentLanguageSkillLevel 
+       add constraint UKdr8i1feexvb2nsiugnuokgt47 unique (student, skillType);
   </sql>
   <sql>
-    alter table languageSkillLevel 
-       add constraint FKc4nhm770kms78pfbmef3mm824 
+    alter table StudentLanguageSkillLevel 
+       add constraint FKk8ayvhdjg1l7ib7ugnlhnwsi8 
        foreign key (student) 
        references Student (id);
   </sql>

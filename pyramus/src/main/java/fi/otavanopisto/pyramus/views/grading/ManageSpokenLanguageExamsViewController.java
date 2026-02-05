@@ -162,7 +162,7 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
     JSONArray skillTypeJSONArray = new JSONArray();
     for (LanguageSkillType skillType : LanguageSkillType.values()) {
       JSONObject skillTypeJSON = new JSONObject();
-      skillTypeJSON.put("text", skillType.getValue());
+      skillTypeJSON.put("text", skillType.name());
       skillTypeJSON.put("value", skillType.name());
       skillTypeJSONArray.add(skillTypeJSON);
     }
@@ -246,10 +246,10 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
         if (languageSkillLevelId != null) {
           StudentLanguageSkillLevel studentLanguageSkillLevel = studentLanguageSkillLevelDAO.findById(languageSkillLevelId);
           if (studentLanguageSkillLevel != null) {
-          changed = true;
-          studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, skillType, date, skillLevel);
+            changed = true;
+            studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, skillType, date, skillLevel);
           }
-          } 
+        } 
         else {
           changed = true;
           studentLanguageSkillLevelDAO.create(student, skillType, date, skillLevel);

@@ -205,6 +205,21 @@
         
         var languageSkillLevels = JSDATA["languageSkillLevels"].evalJSON();
         var languageSkillTypes = JSDATA["languageSkillTypes"].evalJSON();
+        
+        var languageSkillTypeLabels = {
+          SPEAKING: "<fmt:message key='grading.manageLanguageSkillLevels.type.SPEAKING'/>",
+          WRITING: "<fmt:message key='grading.manageLanguageSkillLevels.type.WRITING'/>",
+          READING: "<fmt:message key='grading.manageLanguageSkillLevels.type.READING'/>",
+          LISTENING: "<fmt:message key='grading.manageLanguageSkillLevels.type.LISTENING'/>"
+        };
+        
+        var languageSkillTypeOptions = languageSkillTypes.map(function(opt) {
+          return {
+            value: opt.value,
+            text: languageSkillTypeLabels[opt.value]
+          };
+        }); 
+        
         window.languageSkillLevelTable = new IxTable($('languageSkillLevelTable'), {
           id : "languageSkillLevelTable",
           columns : [{
@@ -229,12 +244,12 @@
           }, {
             header : '<fmt:message key="grading.manageLanguageSkillLevels.tableSkillTypeHeader"/>',
             width : 172,
-            right: 8 + 41 + 8 + 110 + 8 + 172 + 8, 
+            right: 8 + 141 + 8 + 110 + 8 + 172 + 8, 
             dataType: 'select',
             editable: false,
             required: true,
             paramName: 'languageSkillType',
-            options: languageSkillTypes, 
+            options: languageSkillTypeOptions,
             contextMenu: [
               {
                 text: '<fmt:message key="generic.action.copyValues"/>',
@@ -306,7 +321,7 @@
           var languageSkillLevel = languageSkillLevels[i];
           var newRowIndex = languageSkillLevelTable.addRow([
             '',
-            languageSkillLevel.languageSkillType,
+            languageSkillTypeLabels[languageSkillLevel.languageSkillType],
             languageSkillLevel.skillLevel,
             languageSkillLevel.gradingDate,
             languageSkillLevel.languageSkillLevelId,
@@ -320,14 +335,12 @@
        
       function addLanguageSkillLevelTableRow() {
     	var table = window.languageSkillLevelTable;
-    	var newRowIndex = table.addRow(['','', '', '', '', '', false]);
+    	var newRowIndex = table.addRow(['','', '', '', '', '', true]);
 
     	['languageSkillType','skillLevel','gradingDate'].forEach(function(param) {
     	  var colIndex = table.getNamedColumnIndex(param);
     	  table.setCellEditable(newRowIndex, colIndex, true);
     	});
-		
-		table.setCellValue(newRowIndex, table.getNamedColumnIndex('edited'), true);
       }
     	
     </script>

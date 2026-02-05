@@ -75,16 +75,16 @@
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));
 
-        var text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
-
-        if (isLukio) {
-          text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>';
-        }
+        var text = isLukio
+        ? '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>'
+        : '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
+        
+        var tab = isLukio ? '#at-exams' : '#at-languageSkillLevels';
 
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: text,
-          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
+          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId + tab 
         }));
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
@@ -221,16 +221,16 @@
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));
 
-        var text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
+        var text = isLukio
+        ? '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>'
+        : '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
 
-        if (isLukio) { 
-          text = '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>';
-        }
-
+        var tab = isLukio ? '#at-exams' : '#at-languageSkillLevels';
+        
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
             iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
             text: text,
-            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
+            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId + tab
         }));
         gradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',

@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 import fi.otavanopisto.pyramus.domainmodel.grading.SpokenLanguageExamSkillLevel;
 
 @Table(
-    name = "languageSkillLevel",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"student", "skillType"})
     }
@@ -74,7 +73,7 @@ public class StudentLanguageSkillLevel {
   private Student student;
   
   @NotNull
-  @Column(name = "skillType", nullable = false)
+  @Column(nullable = false)
   @Enumerated (EnumType.STRING)
   private LanguageSkillType skillType;
   
