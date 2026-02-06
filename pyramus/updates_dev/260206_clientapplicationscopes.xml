@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table ClientApplicationScopes (
+      clientApplication bigint not null,
+      scope varchar(255) not null,
+      primary key (clientApplication, scope)
+    );
+  </sql>
+  
+  <sql>
+    alter table ClientApplicationScopes 
+      add constraint FKtgp0x01g212nncwxw89ll0h3j 
+      foreign key (clientApplication) 
+      references ClientApplication (id);
+  </sql>
+
+  <sql>
+    insert into ClientApplicationScopes (clientApplication, scope)
+    select id, 'legacy'
+    from ClientApplication;
+  </sql>
+
+</update>

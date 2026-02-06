@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.dao.clientapplications;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,13 +16,17 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication_
 @Stateless
 public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
 
-  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt) {
+  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt, Set<String> allowedScopes) {
 
     ClientApplication clientApplication = new ClientApplication();
     clientApplication.setClientId(clientId);
     clientApplication.setClientName(clientName);
     clientApplication.setClientSecret(clientSecret);
     clientApplication.setSkipPrompt(skipPrompt);
+
+    Set<String> scopes = new HashSet<>();
+    scopes.addAll(allowedScopes);
+    clientApplication.setAllowedScopes(scopes);
 
     return persist(clientApplication);
   }
@@ -66,6 +73,11 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
 
   public ClientApplication updateSkipPrompt(ClientApplication clientApplication, boolean skipPrompt) {
     clientApplication.setSkipPrompt(skipPrompt);
+    return persist(clientApplication);
+  }
+
+  public ClientApplication updateAllowedScopes(ClientApplication clientApplication, Set<String> scopes) {
+    clientApplication.setAllowedScopes(scopes);
     return persist(clientApplication);
   }
 

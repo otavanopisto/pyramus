@@ -1,7 +1,11 @@
 package fi.otavanopisto.pyramus.views.system;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+
+import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -43,11 +47,13 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
       String clientName = requestContext.getString(colPrefix + ".appName");
       String clientId = requestContext.getString(colPrefix + ".appId");
       String clientSecret = requestContext.getString(colPrefix + ".appSecret");
+      String[] scopesArr = StringUtils.split(requestContext.getString(colPrefix + ".scopes"), ',');
+      Set<String> scopes = scopesArr != null ? Set.of(scopesArr) : new HashSet<>();
 
       if (id == null && !remove) {
         clientId = UUID.randomUUID().toString();
         clientSecret = new OauthClientSecretGenerator(80).nextString();
-        clientApplicationDAO.create(clientName, clientId, clientSecret, skipPrompt);
+        clientApplicationDAO.create(clientName, clientId, clientSecret, skipPrompt, scopes);
       } else if(id != null) {
         ClientApplication clientApplication = clientApplicationDAO.findById(id);
 
@@ -61,13 +67,14 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
             clientApplicationAuthorizationCodeDAO.delete(clientApplicationAuthorizationCode);
           }
           clientApplicationDAO.delete(clientApplication);
-        }else{
+        } else {
           if (regenerateSecret) {
             clientSecret = new OauthClientSecretGenerator(80).nextString();
             clientApplicationDAO.updateClientSecret(clientApplication, clientSecret);
           }
           clientApplicationDAO.updateName(clientApplication, clientName);
           clientApplicationDAO.updateSkipPrompt(clientApplication, skipPrompt);
+          clientApplicationDAO.updateAllowedScopes(clientApplication, scopes);
         }
       }
     }
