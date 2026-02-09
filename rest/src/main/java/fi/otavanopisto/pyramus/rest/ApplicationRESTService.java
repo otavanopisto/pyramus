@@ -71,6 +71,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.mailer.Mailer;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ApplicationPermissions;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -84,6 +85,7 @@ import net.sf.json.util.JSONUtils;
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class ApplicationRESTService extends AbstractRESTService {
 
   private static final Logger logger = Logger.getLogger(ApplicationRESTService.class.getName());
