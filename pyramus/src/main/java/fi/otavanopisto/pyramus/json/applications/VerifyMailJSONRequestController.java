@@ -46,7 +46,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Puuttuvia tietoja");
       return;
     }
-    birthday = sanitizeBirthdayStr(birthday);
+    birthday = sanitizeBirthdayString(birthday);
     String applicationIdStr = StringUtils.substringBefore(token, "-");
     if (!NumberUtils.isDigits(applicationIdStr)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vahvistusvirhe");
@@ -69,7 +69,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
     
     // Birthday validation
     
-    String applicationBirthday = sanitizeBirthdayStr(ApplicationUtils.extractBirthdayString(application));
+    String applicationBirthday = sanitizeBirthdayString(ApplicationUtils.extractBirthdayString(application));
     if (!StringUtils.equals(birthday, applicationBirthday)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syöttämäsi syntymäaika ei vastaa hakemuksessa olevaa syntymäaikaa");
       return;
@@ -193,7 +193,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
     }
   }
   
-  private String sanitizeBirthdayStr(String s) {
+  private String sanitizeBirthdayString(String s) {
     if (s != null) {
       char[] c = s.toCharArray();
       for (int i = 0; i < c.length; i++) {
