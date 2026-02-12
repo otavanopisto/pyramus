@@ -46,6 +46,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Puuttuvia tietoja");
       return;
     }
+    birthday = sanitizeBirthdayString(birthday);
     String applicationIdStr = StringUtils.substringBefore(token, "-");
     if (!NumberUtils.isDigits(applicationIdStr)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vahvistusvirhe");
@@ -68,7 +69,7 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
     
     // Birthday validation
     
-    String applicationBirthday = ApplicationUtils.extractBirthdayString(application);
+    String applicationBirthday = sanitizeBirthdayString(ApplicationUtils.extractBirthdayString(application));
     if (!StringUtils.equals(birthday, applicationBirthday)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syöttämäsi syntymäaika ei vastaa hakemuksessa olevaa syntymäaikaa");
       return;
@@ -190,6 +191,25 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
         logger.log(Level.SEVERE, "Error sending mails", e);
       }
     }
+  }
+  
+  private String sanitizeBirthdayString(String s) {
+    if (s != null) {
+      char[] c = s.toCharArray();
+      for (int i = 0; i < c.length; i++) {
+        if (!Character.isDigit(c[i]) && c[i] != '.') {
+          c[i] = '.';
+        }
+      }
+      s = String.valueOf(c);
+      if (s.startsWith("0")) {
+        s = StringUtils.stripStart(s, "0");
+      }
+      if (s.contains(".0")) {
+        s = StringUtils.replace(s, ".0",  ".");
+      }
+    }
+    return s;
   }
 
   public UserRole[] getAllowedRoles() {
