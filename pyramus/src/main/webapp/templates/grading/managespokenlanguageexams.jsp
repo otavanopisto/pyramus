@@ -19,13 +19,13 @@
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
 
     <script type="text/javascript">
-
+    
       function onLoad(event) {
         tabControl = new IxProtoTabs($('tabs'));
-
+        
         var credits = JSDATA["credits"].evalJSON();
         var skillLevels = JSDATA["skillLevels"].evalJSON();
-
+		
         var table = new IxTable($('spokenLanguageExamsTable'), {
           id : "spokenLanguageExamsTable",
           columns : [{
@@ -174,7 +174,7 @@
             paramName: 'edited'
           }]
         });
-
+        
         var userColumnIndex = table.getNamedColumnIndex('assessorId');
 
         table.detachFromDom();
@@ -192,28 +192,184 @@
             false
           ]);
 
-          IxTableControllers.getController('autoCompleteSelect').setDisplayValue(table.getCellEditor(newRowIndex, userColumnIndex), credit.examAssessorName);
+          IxTableControllers.getController('autoCompleteSelect')
+          .setDisplayValue(
+            table.getCellEditor(newRowIndex, userColumnIndex),
+            credit.examAssessorName
+          );
         }
         
         table.reattachToDom();
-      }
         
+ 		// Language skill level table
+        
+        var languageSkillLevels = JSDATA["languageSkillLevels"].evalJSON();
+        var languageSkillTypes = JSDATA["languageSkillTypes"].evalJSON();
+        
+        var languageSkillTypeLabels = {
+          SPEAKING: "<fmt:message key='grading.manageLanguageSkillLevels.type.SPEAKING'/>",
+          WRITING: "<fmt:message key='grading.manageLanguageSkillLevels.type.WRITING'/>",
+          READING: "<fmt:message key='grading.manageLanguageSkillLevels.type.READING'/>",
+          LISTENING: "<fmt:message key='grading.manageLanguageSkillLevels.type.LISTENING'/>"
+        };
+        
+        var languageSkillTypeOptions = languageSkillTypes.map(function(opt) {
+          return {
+            value: opt.value,
+            text: languageSkillTypeLabels[opt.value]
+          };
+        }); 
+        
+        window.languageSkillLevelTable = new IxTable($('languageSkillLevelTable'), {
+          id : "languageSkillLevelTable",
+          columns : [{
+            left: 8,
+            width: 22,
+            dataType: 'button',
+            paramName: 'modifyButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            tooltip: '<fmt:message key="grading.manageSpokenLanguageExams.tableEditRowTooltip"/>',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              
+              table.setCellValue(event.row, table.getNamedColumnIndex('edited'), true);
+
+              var gradingDateColumn = table.getNamedColumnIndex('gradingDate');
+
+              table.setCellEditable(event.row, gradingDateColumn, true);
+              table.setCellEditable(event.row, table.getNamedColumnIndex('skillLevel'), true);
+              table.setCellEditable(event.row, table.getNamedColumnIndex('languageSkillType'), true);
+
+            }
+          }, {
+            header : '<fmt:message key="grading.manageLanguageSkillLevels.tableSkillTypeHeader"/>',
+            width : 172,
+            right: 8 + 141 + 8 + 110 + 8 + 172 + 8, 
+            dataType: 'select',
+            editable: false,
+            required: true,
+            paramName: 'languageSkillType',
+            options: languageSkillTypeOptions,
+            contextMenu: [
+              {
+                text: '<fmt:message key="generic.action.copyValues"/>',
+                onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+              }
+            ]
+          }, {
+            header : '<fmt:message key="grading.manageSpokenLanguageExams.tableSkillLevelHeader"/>',
+            width : 72,
+            right: 8 + 141 + 8 + 110 + 8,
+            dataType: 'select',
+            editable: false,
+            required: true,
+            paramName: 'skillLevel',
+            options: skillLevels, 
+            contextMenu: [
+              {
+                text: '<fmt:message key="generic.action.copyValues"/>',
+                onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+              }
+            ]            
+          }, {
+            header : '<fmt:message key="grading.manageSpokenLanguageExams.tableDateHeader"/>',
+            width : 141,
+            right: 40,
+            dataType: 'date',
+            required: true,
+            editable: false,
+            paramName: 'gradingDate',
+            sortAttributes: {
+              sortAscending: {
+                toolTip: '<fmt:message key="generic.sort.ascending"/>',
+                sortAction: IxTable_ROWNUMBERSORT 
+              },
+              sortDescending: {
+                toolTip: '<fmt:message key="generic.sort.descending"/>',
+                sortAction: IxTable_ROWNUMBERSORT
+              }
+            },
+            contextMenu: [
+              {
+                text: '<fmt:message key="generic.action.copyValues"/>',
+                onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+              }
+            ]            
+          }, {
+            dataType: 'hidden',
+            paramName: 'languageSkillLevelId'
+          }, { 
+              width: 30,
+              right: 8,
+              dataType: 'button',
+              paramName: 'removeButton',
+              hidden: false,
+              imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
+              tooltip: '<fmt:message key="grading.manageLanguageSkillLevels.tableRemoveRow"/>',
+              onclick: function (event) {
+                event.tableComponent.deleteRow(event.row);
+              }
+          }, {
+           	dataType: 'hidden',
+            paramName: 'edited'
+          }]
+        });
+        
+        languageSkillLevelTable.detachFromDom();
+
+        for (var i = 0; i < languageSkillLevels.length; i++) {
+          var languageSkillLevel = languageSkillLevels[i];
+          var newRowIndex = languageSkillLevelTable.addRow([
+            '',
+            languageSkillTypeLabels[languageSkillLevel.languageSkillType],
+            languageSkillLevel.skillLevel,
+            languageSkillLevel.gradingDate,
+            languageSkillLevel.languageSkillLevelId,
+            '', // removeButton
+            false // edited
+          ])
+        }
+
+        languageSkillLevelTable.reattachToDom();
+      }
+       
+      function addLanguageSkillLevelTableRow() {
+    	var table = window.languageSkillLevelTable;
+    	var newRowIndex = table.addRow(['','', '', '', '', '', true]);
+
+    	['languageSkillType','skillLevel','gradingDate'].forEach(function(param) {
+    	  var colIndex = table.getNamedColumnIndex(param);
+    	  table.setCellEditable(newRowIndex, colIndex, true);
+    	});
+      }
+    	
     </script>
   </head>
   
   <body onload="onLoad(event);" ix:enabledrafting="true">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
     
-    <h1 class="genericPageHeader"><fmt:message key="grading.manageSpokenLanguageExams.pageTitle"/></h1>
+    <h1 class="genericPageHeader">
+      <c:choose>
+        <c:when test="${student.studyProgramme.category.educationType.code == 'lukio'}">
+          <fmt:message key="grading.manageSpokenLanguageExams.pageTitle"/>
+        </c:when>
+        <c:otherwise>
+          <fmt:message key="grading.manageLanguageSkillLevels.pageTitle"/>
+        </c:otherwise>
+      </c:choose>
+    </h1>
     
     <div id="manageSpokenLanguageExamsFormContainer"> 
       <div class="genericFormContainer"> 
         <form action="managespokenexams.page" method="post">
           <input type="hidden" value="${student.id}" name="studentId"/>
-    
           <div class="tabLabelsContainer" id="tabs">
             <a class="tabLabel" href="#exams">
               <fmt:message key="grading.manageSpokenLanguageExams.tabLabel"/>
+            </a>
+            <a class="tabLabel" href="#languageSkillLevels">
+              <fmt:message key="grading.manageLanguageSkillLevels.tabLabel"/>
             </a>
           </div>
           
@@ -239,6 +395,34 @@
             </c:choose>
 
             <div id="spokenLanguageExamsTable"></div>
+          </div>
+          
+          <div id="languageSkillLevels" class="tabContentixTableFormattedData">
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="grading.manageSpokenLanguageExams.studentTitle"/>
+                <jsp:param name="helpLocale" value="grading.manageSpokenLanguageExams.studentHelp"/>
+              </jsp:include>
+              <div> ${student.fullName} </div>
+            </div>
+
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="grading.manageLanguageSkillLevels.tabLabel"/>
+              </jsp:include>
+              <div>
+                <fmt:message key="grading.manageLanguageSkillLevels.languageFinnish"/>
+              </div>
+            </div>
+            
+            <div id="languageSkillLevelTable"></div> 
+            <c:choose>
+        	  <c:when test="${student.studyProgramme.category.educationType.code == 'peruskoulu'}">
+          	    <div class="genericTableAddRowContainer">
+                  <span class="genericTableAddRowLinkContainer" onclick="addLanguageSkillLevelTableRow();"><fmt:message key="grading.manageLanguageSkillLevels.tableAddRow"/></span>
+                </div>
+              </c:when>
+            </c:choose>
           </div>
     
           <div class="genericFormSubmitSectionOffTab">

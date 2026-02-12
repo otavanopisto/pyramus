@@ -1,7 +1,10 @@
 package fi.otavanopisto.pyramus.views.grading;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,6 +25,7 @@ import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
 import fi.otavanopisto.pyramus.dao.grading.SpokenLanguageExamDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLanguageSkillLevelDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -31,7 +35,9 @@ import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.SpokenLanguageExam;
 import fi.otavanopisto.pyramus.domainmodel.grading.SpokenLanguageExamSkillLevel;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.students.LanguageSkillType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLanguageSkillLevel;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.PyramusFormViewController;
@@ -55,6 +61,7 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     SpokenLanguageExamDAO spokenLanguageExamDAO = DAOFactory.getInstance().getSpokenLanguageExamDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
+    StudentLanguageSkillLevelDAO studentLanguageSkillLevelDAO = DAOFactory.getInstance().getStudentLanguageSkillLevelDAO();
     
     Long studentId = requestContext.getLong("studentId");
     
@@ -62,6 +69,7 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
     List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
+    List<StudentLanguageSkillLevel> languageSkillLevels = studentLanguageSkillLevelDAO.listByStudent(student);
 
     Collections.sort(transferCredits, new StringAttributeComparator("getCourseName", true));
 
@@ -136,10 +144,37 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
     }
     setJsDataVariable(requestContext, "skillLevels", skillLevelJSONArray.toString());
     
+    JSONArray studentLanguageSkillLevelJSONArray = new JSONArray();
+
+    if (languageSkillLevels != null) {
+      for (StudentLanguageSkillLevel languageSkillLevel : languageSkillLevels) {
+        JSONObject studentLanguageSkillLevelJSON = new JSONObject();
+
+        studentLanguageSkillLevelJSON.put("languageSkillLevelId", languageSkillLevel.getId());
+        studentLanguageSkillLevelJSON.put("languageSkillType", languageSkillLevel.getSkillType().name());
+        studentLanguageSkillLevelJSON.put("skillLevel", languageSkillLevel.getSkillLevel().name());
+        studentLanguageSkillLevelJSON.put("gradingDate", languageSkillLevel.getGradingDate().getTime());
+
+        studentLanguageSkillLevelJSONArray.add(studentLanguageSkillLevelJSON);
+      }
+    }
+    
+    JSONArray skillTypeJSONArray = new JSONArray();
+    for (LanguageSkillType skillType : LanguageSkillType.values()) {
+      JSONObject skillTypeJSON = new JSONObject();
+      skillTypeJSON.put("text", skillType.name());
+      skillTypeJSON.put("value", skillType.name());
+      skillTypeJSONArray.add(skillTypeJSON);
+    }
+    setJsDataVariable(requestContext, "skillLevels", skillLevelJSONArray.toString());
+    setJsDataVariable(requestContext, "languageSkillTypes", skillTypeJSONArray.toString());
+
+    setJsDataVariable(requestContext, "languageSkillLevels", studentLanguageSkillLevelJSONArray.toString()); 
+    
     requestContext.getRequest().setAttribute("student", student);
     requestContext.getRequest().setAttribute("transferCredits", transferCredits);
     requestContext.getRequest().setAttribute("gradingScales", gradingScales);
-    
+    requestContext.getRequest().setAttribute("languageSkillLevels", languageSkillLevels);
     requestContext.setIncludeJSP("/templates/grading/managespokenlanguageexams.jsp");
   }
 
@@ -150,6 +185,7 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
     SpokenLanguageExamDAO spokenLanguageExamDAO = DAOFactory.getInstance().getSpokenLanguageExamDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CreditDAO creditDAO = DAOFactory.getInstance().getCreditDAO();
+    StudentLanguageSkillLevelDAO studentLanguageSkillLevelDAO = DAOFactory.getInstance().getStudentLanguageSkillLevelDAO();
 
     boolean changed = false;
     Long studentId = requestContext.getLong("studentId");
@@ -195,6 +231,31 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
       }
     }
     
+    PyramusIxTableFacade languageSkillLevelTable = PyramusIxTableFacade.from(requestContext, "languageSkillLevelTable");
+    
+    for (PyramusIxTableRowFacade skillLevelRow : languageSkillLevelTable.rows()) {
+      if (Boolean.TRUE.equals(skillLevelRow.getBoolean("edited"))) {
+        SpokenLanguageExamSkillLevel skillLevel = skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class);
+        LanguageSkillType skillType = skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class);
+        LocalDateTime gradingDate = skillLevelRow.getLocalDateTime("gradingDate");
+        Long languageSkillLevelId = skillLevelRow.getLong("languageSkillLevelId");
+        
+        ZonedDateTime zdt = gradingDate.atZone(ZoneId.systemDefault());
+        Date date = Date.from(zdt.toInstant());
+        
+        if (languageSkillLevelId != null) {
+          StudentLanguageSkillLevel studentLanguageSkillLevel = studentLanguageSkillLevelDAO.findById(languageSkillLevelId);
+          if (studentLanguageSkillLevel != null) {
+            changed = true;
+            studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, skillType, date, skillLevel);
+          }
+        } 
+        else {
+          changed = true;
+          studentLanguageSkillLevelDAO.create(student, skillType, date, skillLevel);
+        }
+      }
+    }
     if (changed) {
       KoskiController koskiController = CDI.current().select(KoskiController.class).get();
       koskiController.markForUpdate(student);
