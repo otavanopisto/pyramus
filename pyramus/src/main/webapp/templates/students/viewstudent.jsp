@@ -52,7 +52,7 @@
 %>
 
 <script type="text/javascript">
-      function setupBasicTab(personId, studentId, studentFullName) {
+      function setupBasicTab(personId, studentId, studentFullName, isLukio) {
         var basicTabRelatedActionsHoverMenu = new IxHoverMenu($('basicTabRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsLabel"/>'
         });
@@ -75,12 +75,17 @@
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));
 
+        var text = isLukio
+        ? '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>'
+        : '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
+        
+        var tab = isLukio ? '#at-exams' : '#at-languageSkillLevels';
+
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>',
-          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
+          text: text,
+          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId + tab 
         }));
-
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentKoskiLabel"/>',
@@ -215,10 +220,17 @@
           text: '<fmt:message key="students.viewStudent.gradesTabRelatedActionsManageTransferCreditsLabel"/>',
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));
-        gradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
-          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>',
-          link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId  
+
+        var text = isLukio
+        ? '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>'
+        : '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
+
+        var tab = isLukio ? '#at-exams' : '#at-languageSkillLevels';
+        
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+            iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            text: text,
+            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId + tab
         }));
         gradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
@@ -1625,15 +1637,15 @@
 
         Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
         loadLogEntries(${person.id});
-        
         <c:forEach var="student" items="${students}">
-          // Setup basics
-          setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
+          <c:set var="isLukio" value="${student.studyProgramme.category.educationType.code == 'lukio'}"/>
 
           var additionalContactInfos = studentAdditionalContactInfos['${student.id}'];
           if (additionalContactInfos) {
             initializeContactInfoView($('additionalContactInfos.${student.id}'), additionalContactInfos);
           }
+          // Setup basics
+          setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}', ${isLukio});
           
           // Setup course tabs
           coursesTable = setupCoursesTab(${student.id});

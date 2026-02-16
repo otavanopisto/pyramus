@@ -13,9 +13,14 @@ public class PyramusConsts {
   public static final String OPS_2018 = "OPS 2018";
   public static final String OPS_2021 = "OPS 2021";
   
-  // Subject education types
+  // Education type codes
   public static final String EDUCATION_TYPE_PK = "peruskoulu";
   public static final String EDUCATION_TYPE_LUKIO = "lukio";
+  
+  // Education subtype codes
+  public static final String EDUCATION_SUBTYPE_MANDATORY = "pakollinen";
+  public static final String EDUCATION_SUBTYPE_NATIONAL_OPTIONAL = "valtakunnallinensyventava";
+  public static final String EDUCATION_SUBTYPE_SCHOOL_OPTIONAL = "koulukohtainensyventava";
   
   // Education time unit symbols
   public static final String TIMEUNIT_OP = "op";

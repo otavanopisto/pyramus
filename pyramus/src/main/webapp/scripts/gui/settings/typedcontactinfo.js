@@ -81,6 +81,7 @@ IxTypedContactInfoEditor = Class.create({
     container.classList.add("typedContactInfosEditor");
 
     this._addRowClickListener = this._onAddRowClick.bindAsEventListener(this);
+    this._removeContactInfoChangeListener = this._onRemoveContactInfoChange.bindAsEventListener(this);
 
     // The container id is used as a prefix for all the variables    
     var variableNamePrefix = container.id;
@@ -119,7 +120,7 @@ IxTypedContactInfoEditor = Class.create({
     var contactInfoIndex = container.childElementCount;
     var contactInfoID = this._containerId + "." + contactInfoIndex;
     
-    var rowElem = new Element("div", { id: contactInfoID, className: "genericViewInfoWapper genericViewInfoWapper--student-edit" });
+    var rowElem = new Element("div", { id: contactInfoID, className: "genericViewInfoWapper genericViewInfoWapper--student-edit typedContactInfoEditor" });
     container.appendChild(rowElem);
     
     var contactInfoIdElem = new Element("input", { type: "hidden", name: contactInfoID + ".id", value: (data ? data.id : "-1") });
@@ -134,10 +135,21 @@ IxTypedContactInfoEditor = Class.create({
       typeSelector.value = data.typeId;
     }
     
+    var removeContactInfoSelector = new Element("span", { className: "typedContactInfoEditor--remove" });
+    var removeContactInfoCheckbox = new Element("input", { type: "checkbox", name: contactInfoID + ".remove", id: contactInfoID + ".remove", value: "1" });
+    var removeContactInfoLabel = new Element("label", { for: contactInfoID + ".remove" }).update(getLocale().getText("typedcontactinfo.removeContact"));
+    removeContactInfoCheckbox.onchange = this._removeContactInfoChangeListener;
+    removeContactInfoSelector.appendChild(removeContactInfoLabel);
+    removeContactInfoSelector.appendChild(removeContactInfoCheckbox);
+    rowElem.appendChild(removeContactInfoSelector);
+    
+    var contactInfoEditorFieldSet = new Element("fieldset");
+    rowElem.appendChild(contactInfoEditorFieldSet);
+    
     var sectionElemTypes = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
     sectionElemTypes.appendChild(this._initializeContactInfoTitle(getLocale().getText("typedcontactinfo.contactType")));
     sectionElemTypes.appendChild(typeSelector);
-    rowElem.appendChild(sectionElemTypes);
+    contactInfoEditorFieldSet.appendChild(sectionElemTypes);
     
     var addresses = new Element("div", { id: contactInfoID + ".addresses" });
     var emails = new Element("div", { id: contactInfoID + ".emails" });
@@ -146,17 +158,17 @@ IxTypedContactInfoEditor = Class.create({
     var sectionElemAddresses = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
     sectionElemAddresses.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.addresses")));
     sectionElemAddresses.appendChild(addresses);
-    rowElem.appendChild(sectionElemAddresses);
+    contactInfoEditorFieldSet.appendChild(sectionElemAddresses);
     
     var sectionElemEmails = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
     sectionElemEmails.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.emails")));
     sectionElemEmails.appendChild(emails);
-    rowElem.appendChild(sectionElemEmails);
+    contactInfoEditorFieldSet.appendChild(sectionElemEmails);
     
     var sectionElemPhoneNumbers = new Element("div", { className: "genericFormSection genericFormSection--contact-section" });
     sectionElemPhoneNumbers.appendChild(this._initializeContactInfoTitle(getLocale().getText("contactinfo.phoneNumbers")));
     sectionElemPhoneNumbers.appendChild(phonenumbers);
-    rowElem.appendChild(sectionElemPhoneNumbers);
+    contactInfoEditorFieldSet.appendChild(sectionElemPhoneNumbers);
     
     var emailTable = new IxTable($(contactInfoID + ".emails"), {
       id : contactInfoID + ".emailTable",
@@ -485,6 +497,13 @@ IxTypedContactInfoEditor = Class.create({
 
   _onAddRowClick: function (event) {
     this.addRow();
+  },
+  _onRemoveContactInfoChange: function (event) {
+    var checkbox = Event.element(event);
+    var checked = checkbox.checked === true;
+    var contactInfoEditor = checkbox.closest(".typedContactInfoEditor");
+    var fieldset = contactInfoEditor.down('fieldset');
+    fieldset.disabled = checked;
   },
   _updateRowCountHidden: function () {
     this._contactInfoCountElem.value = this._contactInfoListElem.childElementCount;
