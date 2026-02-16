@@ -5,8 +5,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.enterprise.inject.spi.CDI;
 
@@ -233,27 +235,47 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
     
     PyramusIxTableFacade languageSkillLevelTable = PyramusIxTableFacade.from(requestContext, "languageSkillLevelTable");
     
+    List<StudentLanguageSkillLevel> oldLevels = studentLanguageSkillLevelDAO.listByStudent(student);
+    
+    Set<Long> remainingIds = new HashSet<>();
     for (PyramusIxTableRowFacade skillLevelRow : languageSkillLevelTable.rows()) {
+      
+      Long languageSkillLevelId = skillLevelRow.getLong("languageSkillLevelId");
+
+      // Collect all IDs coming from the frontend
+      if (languageSkillLevelId != null) {
+        remainingIds.add(languageSkillLevelId);
+      }
+      
       if (Boolean.TRUE.equals(skillLevelRow.getBoolean("edited"))) {
         SpokenLanguageExamSkillLevel skillLevel = skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class);
         LanguageSkillType skillType = skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class);
         LocalDateTime gradingDate = skillLevelRow.getLocalDateTime("gradingDate");
-        Long languageSkillLevelId = skillLevelRow.getLong("languageSkillLevelId");
         
         ZonedDateTime zdt = gradingDate.atZone(ZoneId.systemDefault());
         Date date = Date.from(zdt.toInstant());
         
-        if (languageSkillLevelId != null) {
+        if (languageSkillLevelId != null) { // Update
           StudentLanguageSkillLevel studentLanguageSkillLevel = studentLanguageSkillLevelDAO.findById(languageSkillLevelId);
           if (studentLanguageSkillLevel != null) {
             changed = true;
             studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, skillType, date, skillLevel);
           }
         } 
-        else {
+        else { // Create
           changed = true;
-          studentLanguageSkillLevelDAO.create(student, skillType, date, skillLevel);
+          StudentLanguageSkillLevel created = studentLanguageSkillLevelDAO.create(student, skillType, date, skillLevel);
+          remainingIds.add(created.getId());
         }
+      }
+    }
+    
+    // Delete rows that are not in the id list coming from the frontend
+    for (StudentLanguageSkillLevel old : oldLevels) {
+      Long id = old.getId();
+      if (id != null && !remainingIds.contains(old.getId())) {
+        studentLanguageSkillLevelDAO.delete(old);
+        changed = true;
       }
     }
     if (changed) {
