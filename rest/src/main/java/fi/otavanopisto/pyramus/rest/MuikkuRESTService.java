@@ -424,8 +424,14 @@ public class MuikkuRESTService {
   private void assessmentRequestStateCheck(StudyActivityItemRestModel item, Student student) {
     if (item.getCourseId() != null) {
       Course c = courseDAO.findById(item.getCourseId());
-      CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
-      if (cs != null) {
+      // TODO There really should be just course + student row
+      List<CourseStudent> courseStudents = courseStudentDAO.listByCourseAndStudent(c, student);
+      if (courseStudents.size() > 1) {
+        for (CourseStudent cs : courseStudents) {
+          logger.severe(String.format("Duplicate courseStudent %d course %d student %d", cs.getId(), c.getId(), student.getId()));
+        }
+      }
+      for (CourseStudent cs : courseStudents) {
         CourseAssessmentRequest car = courseAssessmentRequestDAO.findLatestByCourseStudent(cs);
         if (car != null && !car.getHandled() && car.getCreated().after(item.getDate())) {
           item.setState(StudyActivityItemState.PENDING);
