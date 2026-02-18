@@ -516,7 +516,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.39.1</version>
+            <version>0.48.1</version>
             <configuration>
               <machine>
                 <autoCreate>true</autoCreate>
@@ -970,7 +970,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.39.1</version>
+            <version>0.48.1</version>
             <configuration>
               <machine>
                 <autoCreate>true</autoCreate>
