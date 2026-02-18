@@ -204,145 +204,134 @@
  		// Language skill level table
         
         var languageSkillLevels = JSDATA["languageSkillLevels"].evalJSON();
-        var languageSkillTypes = JSDATA["languageSkillTypes"].evalJSON();
-        
-        var languageSkillTypeLabels = {
-          SPEAKING: "<fmt:message key='grading.manageLanguageSkillLevels.type.SPEAKING'/>",
-          WRITING: "<fmt:message key='grading.manageLanguageSkillLevels.type.WRITING'/>",
-          READING: "<fmt:message key='grading.manageLanguageSkillLevels.type.READING'/>",
-          LISTENING: "<fmt:message key='grading.manageLanguageSkillLevels.type.LISTENING'/>"
-        };
-        
-        var languageSkillTypeOptions = languageSkillTypes.map(function(opt) {
-          return {
-            value: opt.value,
-            text: languageSkillTypeLabels[opt.value]
-          };
-        }); 
-        
-        window.languageSkillLevelTable = new IxTable($('languageSkillLevelTable'), {
-          id : "languageSkillLevelTable",
-          columns : [{
-            left: 8,
-            width: 22,
-            dataType: 'button',
-            paramName: 'modifyButton',
-            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-            tooltip: '<fmt:message key="grading.manageSpokenLanguageExams.tableEditRowTooltip"/>',
-            onclick: function (event) {
-              var table = event.tableComponent;
-              
-              table.setCellValue(event.row, table.getNamedColumnIndex('edited'), true);
-
-              var gradingDateColumn = table.getNamedColumnIndex('gradingDate');
-
-              table.setCellEditable(event.row, gradingDateColumn, true);
-              table.setCellEditable(event.row, table.getNamedColumnIndex('skillLevel'), true);
-              table.setCellEditable(event.row, table.getNamedColumnIndex('languageSkillType'), true);
-
-            }
-          }, {
-            header : '<fmt:message key="grading.manageLanguageSkillLevels.tableSkillTypeHeader"/>',
-            width : 172,
-            right: 8 + 141 + 8 + 110 + 8 + 172 + 8, 
-            dataType: 'select',
-            editable: false,
-            required: true,
-            paramName: 'languageSkillType',
-            options: languageSkillTypeOptions,
-            contextMenu: [
-              {
-                text: '<fmt:message key="generic.action.copyValues"/>',
-                onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
-              }
-            ]
-          }, {
-            header : '<fmt:message key="grading.manageSpokenLanguageExams.tableSkillLevelHeader"/>',
-            width : 72,
-            right: 8 + 141 + 8 + 110 + 8,
-            dataType: 'select',
-            editable: false,
-            required: true,
-            paramName: 'skillLevel',
-            options: skillLevels, 
-            contextMenu: [
-              {
-                text: '<fmt:message key="generic.action.copyValues"/>',
-                onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
-              }
-            ]            
-          }, {
-            header : '<fmt:message key="grading.manageSpokenLanguageExams.tableDateHeader"/>',
-            width : 141,
-            right: 40,
-            dataType: 'date',
-            required: true,
-            editable: false,
-            paramName: 'gradingDate',
-            sortAttributes: {
-              sortAscending: {
-                toolTip: '<fmt:message key="generic.sort.ascending"/>',
-                sortAction: IxTable_ROWNUMBERSORT 
-              },
-              sortDescending: {
-                toolTip: '<fmt:message key="generic.sort.descending"/>',
-                sortAction: IxTable_ROWNUMBERSORT
-              }
-            },
-            contextMenu: [
-              {
-                text: '<fmt:message key="generic.action.copyValues"/>',
-                onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
-              }
-            ]            
-          }, {
-            dataType: 'hidden',
-            paramName: 'languageSkillLevelId'
-          }, { 
-              width: 30,
-              right: 8,
+		window.languageSkillTypes = JSDATA["languageSkillTypes"].evalJSON();
+		
+		window.languageSkillTypeLabels = {
+  		  SPEAKING: "<fmt:message key='grading.manageLanguageSkillLevels.type.SPEAKING'/>",
+  		  WRITING: "<fmt:message key='grading.manageLanguageSkillLevels.type.WRITING'/>",
+  		  READING: "<fmt:message key='grading.manageLanguageSkillLevels.type.READING'/>",
+  		  LISTENING: "<fmt:message key='grading.manageLanguageSkillLevels.type.LISTENING'/>"
+		};
+		
+		if ($('languageSkillLevelTable')) {
+          window.languageSkillLevelTable = new IxTable($('languageSkillLevelTable'), {
+            id : "languageSkillLevelTable",
+            columns : [{
+        	  right: 8,
+              width: 22,
               dataType: 'button',
-              paramName: 'removeButton',
-              hidden: false,
-              imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
-              tooltip: '<fmt:message key="grading.manageLanguageSkillLevels.tableRemoveRow"/>',
+              paramName: 'modifyButton',
+              imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+              tooltip: '<fmt:message key="grading.manageSpokenLanguageExams.tableEditRowTooltip"/>',
               onclick: function (event) {
-                event.tableComponent.deleteRow(event.row);
+                var table = event.tableComponent;
+                var rowIndex = event.row;
+                
+                table.setCellValue(rowIndex, table.getNamedColumnIndex('edited'), true);
+                table.setCellEditable(rowIndex, table.getNamedColumnIndex('gradingDate'), true);
+                table.setCellEditable(rowIndex, table.getNamedColumnIndex('skillLevel'), true);
               }
-          }, {
-           	dataType: 'hidden',
-            paramName: 'edited'
-          }]
-        });
+            }, {
+        	  header: '<fmt:message key="grading.manageLanguageSkillLevels.tableSkillTypeHeader"/>',
+              width: 172,
+              left: 8,
+              right: 8 + 141 + 8 + 110 + 8 + 72 + 8 + 72 + 8,
+              dataType: 'text',
+              editable: false,
+              paramName: 'languageSkillTypeValue'
+            }, {
+              header : '<fmt:message key="grading.manageSpokenLanguageExams.tableSkillLevelHeader"/>',
+              width : 72,
+              right: 8 + 141 + 8 + 110 + 8 + 40,
+              dataType: 'select',
+              editable: false,
+              required: true,
+              paramName: 'skillLevel',
+              options: skillLevels, 
+              contextMenu: [
+                {
+                  text: '<fmt:message key="generic.action.copyValues"/>',
+                  onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+                }
+              ]            
+            }, {
+              header : '<fmt:message key="grading.manageSpokenLanguageExams.tableDateHeader"/>',
+              width : 141,
+              right: 8 + 141,
+              dataType: 'date',
+              required: true,
+              editable: false,
+              paramName: 'gradingDate',
+              sortAttributes: {
+                sortAscending: {
+                  toolTip: '<fmt:message key="generic.sort.ascending"/>',
+                  sortAction: IxTable_ROWNUMBERSORT 
+                },
+                sortDescending: {
+                  toolTip: '<fmt:message key="generic.sort.descending"/>',
+                  sortAction: IxTable_ROWNUMBERSORT
+                }
+              },
+              contextMenu: [
+                {
+                  text: '<fmt:message key="generic.action.copyValues"/>',
+                  onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+                }
+              ]            
+            },{ 
+        	  width: 30,
+        	  right: 8 + 20 + 8,
+        	  dataType: 'button',
+        	  paramName: 'removeButton',
+        	  hidden: false,
+        	  imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
+        	  tooltip: '<fmt:message key="grading.manageLanguageSkillLevels.tableRemoveRow"/>',
+        	  onclick: function (event) {
+        	    var table = event.tableComponent;
+        	    var rowIndex = event.row;
+			    
+        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('skillLevel'), '');
+        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('gradingDate'), '');
+			    
+        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('edited'), true);
+        	  }
+            }, {
+              dataType: 'hidden',
+              paramName: 'languageSkillLevelId'
+            }, {
+           	  dataType: 'hidden',
+              paramName: 'edited'
+            }, {
+        	  dataType: 'hidden',
+        	  paramName: 'languageSkillType'
+            }]
+          });
         
-        languageSkillLevelTable.detachFromDom();
-
-        for (var i = 0; i < languageSkillLevels.length; i++) {
-          var languageSkillLevel = languageSkillLevels[i];
-          var newRowIndex = languageSkillLevelTable.addRow([
-            '',
-            languageSkillTypeLabels[languageSkillLevel.languageSkillType],
-            languageSkillLevel.skillLevel,
-            languageSkillLevel.gradingDate,
-            languageSkillLevel.languageSkillLevelId,
-            '', // removeButton
-            false // edited
-          ])
+          languageSkillLevelTable.detachFromDom();
+		  
+          languageSkillTypes.forEach(function(typeObj) {
+            var typeValue = typeObj.value;
+		    
+            // Get language types
+            var existing = languageSkillLevels.find(function(l) {
+              return l.languageSkillType === typeValue;
+            });
+		    
+            languageSkillLevelTable.addRow([
+              '',											   // modifyButton
+              languageSkillTypeLabels[typeValue],       	   // skill type label
+              existing ? existing.skillLevel : '',       	   // skillLevel
+              existing ? existing.gradingDate : '',      	   // gradingDate
+              '',										  	   // remove
+              existing ? existing.languageSkillLevelId : '', // languageSkillLevelId
+              false,        								   // edited
+              typeValue								  	   // hidden skill type
+            ]);
+          });
+  
+          languageSkillLevelTable.reattachToDom();
         }
-
-        languageSkillLevelTable.reattachToDom();
       }
-       
-      function addLanguageSkillLevelTableRow() {
-    	var table = window.languageSkillLevelTable;
-    	var newRowIndex = table.addRow(['','', '', '', '', '', true]);
-
-    	['languageSkillType','skillLevel','gradingDate'].forEach(function(param) {
-    	  var colIndex = table.getNamedColumnIndex(param);
-    	  table.setCellEditable(newRowIndex, colIndex, true);
-    	});
-      }
-    	
     </script>
   </head>
   
@@ -415,12 +404,9 @@
               </div>
             </div>
             
-            <div id="languageSkillLevelTable"></div> 
             <c:choose>
         	  <c:when test="${student.studyProgramme.category.educationType.code == 'peruskoulu'}">
-          	    <div class="genericTableAddRowContainer">
-                  <span class="genericTableAddRowLinkContainer" onclick="addLanguageSkillLevelTableRow();"><fmt:message key="grading.manageLanguageSkillLevels.tableAddRow"/></span>
-                </div>
+				<div id="languageSkillLevelTable"></div>
               </c:when>
             </c:choose>
           </div>
