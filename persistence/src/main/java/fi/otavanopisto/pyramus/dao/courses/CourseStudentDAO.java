@@ -99,7 +99,7 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     return courseStudent;
   }
   
-  private List<CourseStudent> listByCourseAndStudent(Course course, Student student) {
+  public List<CourseStudent> listByCourseAndStudent(Course course, Student student) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

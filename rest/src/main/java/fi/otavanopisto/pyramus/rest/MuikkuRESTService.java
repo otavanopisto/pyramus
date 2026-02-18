@@ -424,20 +424,20 @@ public class MuikkuRESTService {
   private void assessmentRequestStateCheck(StudyActivityItemRestModel item, Student student) {
     if (item.getCourseId() != null) {
       Course c = courseDAO.findById(item.getCourseId());
-      try {
-        // TODO This call can fail because the database already has faulty data
-        CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
-        if (cs != null) {
-          CourseAssessmentRequest car = courseAssessmentRequestDAO.findLatestByCourseStudent(cs);
-          if (car != null && !car.getHandled() && car.getCreated().after(item.getDate())) {
-            item.setState(StudyActivityItemState.PENDING);
-            item.setDate(car.getCreated());
-            item.setText(car.getRequestText());
-          }
+      // TODO There REALLY should be just course + student row
+      List<CourseStudent> courseStudents = courseStudentDAO.listByCourseAndStudent(c, student);
+      if (courseStudents.size() > 1) {
+        for (CourseStudent cs : courseStudents) {
+          logger.severe(String.format("Duplicate courseStudent %d course %d student %d", cs.getId(), c.getId(), student.getId()));
         }
       }
-      catch (Exception e) {
-        logger.log(Level.SEVERE, String.format("Likely SingleResult crash for student %d and course %d", student.getId(), c.getId()), e);
+      for (CourseStudent cs : courseStudents) {
+        CourseAssessmentRequest car = courseAssessmentRequestDAO.findLatestByCourseStudent(cs);
+        if (car != null && !car.getHandled() && car.getCreated().after(item.getDate())) {
+          item.setState(StudyActivityItemState.PENDING);
+          item.setDate(car.getCreated());
+          item.setText(car.getRequestText());
+        }
       }
     }
   }
