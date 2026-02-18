@@ -251,9 +251,22 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
         Long languageSkillLevelId = skillLevelRow.getLong("languageSkillLevelId");
         
         if (Boolean.TRUE.equals(skillLevelRow.getBoolean("edited"))) {
-          SpokenLanguageExamSkillLevel skillLevel = skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class);
-          LanguageSkillType skillType = skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class);
-          LocalDateTime gradingDate = skillLevelRow.getLocalDateTime("gradingDate");
+          String skillLevelStr = skillLevelRow.getString("skillLevel");
+          String skillTypeStr  = skillLevelRow.getString("languageSkillType");
+          String gradingDateStr = skillLevelRow.getString("gradingDate");
+
+          SpokenLanguageExamSkillLevel skillLevel = (skillLevelStr != null && !skillLevelStr.isEmpty())
+              ? skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class)
+              : null;
+
+          LanguageSkillType skillType = (skillTypeStr != null && !skillTypeStr.isEmpty())
+              ? skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class)
+              : null;
+          
+          LocalDateTime gradingDate = (gradingDateStr != null && !gradingDateStr.isEmpty())
+              ? skillLevelRow.getLocalDateTime("gradingDate")
+              : null;
+          
           Date date = null;
           
           if (gradingDate != null) {

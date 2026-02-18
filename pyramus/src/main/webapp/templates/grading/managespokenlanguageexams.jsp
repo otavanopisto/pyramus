@@ -290,8 +290,8 @@
         	    var table = event.tableComponent;
         	    var rowIndex = event.row;
 			    
-        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('skillLevel'), null);
-        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('gradingDate'), null);
+        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('skillLevel'), '');
+        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('gradingDate'), '');
 			    
         	    table.setCellValue(rowIndex, table.getNamedColumnIndex('edited'), true);
         	  }
