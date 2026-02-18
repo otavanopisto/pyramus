@@ -424,14 +424,20 @@ public class MuikkuRESTService {
   private void assessmentRequestStateCheck(StudyActivityItemRestModel item, Student student) {
     if (item.getCourseId() != null) {
       Course c = courseDAO.findById(item.getCourseId());
-      CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
-      if (cs != null) {
-        CourseAssessmentRequest car = courseAssessmentRequestDAO.findLatestByCourseStudent(cs);
-        if (car != null && !car.getHandled() && car.getCreated().after(item.getDate())) {
-          item.setState(StudyActivityItemState.PENDING);
-          item.setDate(car.getCreated());
-          item.setText(car.getRequestText());
+      try {
+        // TODO This call can fail because the database already has faulty data
+        CourseStudent cs = courseStudentDAO.findByCourseAndStudent(c, student);
+        if (cs != null) {
+          CourseAssessmentRequest car = courseAssessmentRequestDAO.findLatestByCourseStudent(cs);
+          if (car != null && !car.getHandled() && car.getCreated().after(item.getDate())) {
+            item.setState(StudyActivityItemState.PENDING);
+            item.setDate(car.getCreated());
+            item.setText(car.getRequestText());
+          }
         }
+      }
+      catch (Exception e) {
+        logger.log(Level.SEVERE, String.format("Likely SingleResult crash for student %d and course %d", student.getId(), c.getId()), e);
       }
     }
   }
