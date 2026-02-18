@@ -424,7 +424,7 @@ public class MuikkuRESTService {
   private void assessmentRequestStateCheck(StudyActivityItemRestModel item, Student student) {
     if (item.getCourseId() != null) {
       Course c = courseDAO.findById(item.getCourseId());
-      // TODO There REALLY should be just course + student row
+      // TODO There really should be just course + student row
       List<CourseStudent> courseStudents = courseStudentDAO.listByCourseAndStudent(c, student);
       if (courseStudents.size() > 1) {
         for (CourseStudent cs : courseStudents) {
