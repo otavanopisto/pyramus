@@ -204,7 +204,7 @@
  		// Language skill level table
         
         var languageSkillLevels = JSDATA["languageSkillLevels"].evalJSON();
-		window.languageSkillTypes = JSDATA["languageSkillTypes"].evalJSON();
+		var languageSkillTypes = JSDATA["languageSkillTypes"].evalJSON();
 		
 		window.languageSkillTypeLabels = {
   		  SPEAKING: "<fmt:message key='grading.manageLanguageSkillLevels.type.SPEAKING'/>",
@@ -214,10 +214,10 @@
 		};
 		
 		if ($('languageSkillLevelTable')) {
-          window.languageSkillLevelTable = new IxTable($('languageSkillLevelTable'), {
+          var languageSkillLevelTable = new IxTable($('languageSkillLevelTable'), {
             id : "languageSkillLevelTable",
             columns : [{
-        	  right: 8,
+        	  left: 8,
               width: 22,
               dataType: 'button',
               paramName: 'modifyButton',
@@ -234,8 +234,7 @@
             }, {
         	  header: '<fmt:message key="grading.manageLanguageSkillLevels.tableSkillTypeHeader"/>',
               width: 172,
-              left: 8,
-              right: 8 + 141 + 8 + 110 + 8 + 72 + 8 + 72 + 8,
+              left: 8 + 22 + 8,
               dataType: 'text',
               editable: false,
               paramName: 'languageSkillTypeValue'
@@ -280,7 +279,7 @@
               ]            
             },{ 
         	  width: 30,
-        	  right: 8 + 20 + 8,
+        	  right: 8 + 20,
         	  dataType: 'button',
         	  paramName: 'removeButton',
         	  hidden: false,
@@ -290,8 +289,8 @@
         	    var table = event.tableComponent;
         	    var rowIndex = event.row;
 			    
-        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('skillLevel'), '');
-        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('gradingDate'), '');
+        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('skillLevel'), null);
+        	    table.setCellValue(rowIndex, table.getNamedColumnIndex('gradingDate'), null);
 			    
         	    table.setCellValue(rowIndex, table.getNamedColumnIndex('edited'), true);
         	  }

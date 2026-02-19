@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.views.grading;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -251,28 +249,9 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
         Long languageSkillLevelId = skillLevelRow.getLong("languageSkillLevelId");
         
         if (Boolean.TRUE.equals(skillLevelRow.getBoolean("edited"))) {
-          String skillLevelStr = skillLevelRow.getString("skillLevel");
-          String skillTypeStr  = skillLevelRow.getString("languageSkillType");
-          String gradingDateStr = skillLevelRow.getString("gradingDate");
-
-          SpokenLanguageExamSkillLevel skillLevel = (skillLevelStr != null && !skillLevelStr.isEmpty())
-              ? skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class)
-              : null;
-
-          LanguageSkillType skillType = (skillTypeStr != null && !skillTypeStr.isEmpty())
-              ? skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class)
-              : null;
-          
-          LocalDateTime gradingDate = (gradingDateStr != null && !gradingDateStr.isEmpty())
-              ? skillLevelRow.getLocalDateTime("gradingDate")
-              : null;
-          
-          Date date = null;
-          
-          if (gradingDate != null) {
-            ZonedDateTime zdt = gradingDate.atZone(ZoneId.systemDefault());
-            date = Date.from(zdt.toInstant());
-          }
+          SpokenLanguageExamSkillLevel skillLevel = skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class);
+          LanguageSkillType skillType = skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class);
+          Date gradingDate = skillLevelRow.getDate("gradingDate");
           
           if (languageSkillLevelId != null) { // Update
             StudentLanguageSkillLevel studentLanguageSkillLevel = studentLanguageSkillLevelDAO.findById(languageSkillLevelId);
@@ -282,13 +261,13 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
               if (skillLevel == null || gradingDate == null) { // Delete
                 studentLanguageSkillLevelDAO.delete(studentLanguageSkillLevel);
               } else {
-                studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, studentLanguageSkillLevel.getSkillType(), date, skillLevel);
+                studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, studentLanguageSkillLevel.getSkillType(), gradingDate, skillLevel);
               }
             }
           } else { // Create
             if (skillLevel != null && gradingDate != null && skillType != null) {
               changed = true;
-              studentLanguageSkillLevelDAO.create(student, skillType, date, skillLevel);
+              studentLanguageSkillLevelDAO.create(student, skillType, gradingDate, skillLevel);
             }
           }
         }
