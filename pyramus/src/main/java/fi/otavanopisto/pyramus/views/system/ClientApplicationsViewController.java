@@ -74,7 +74,7 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
           }
           clientApplicationDAO.updateName(clientApplication, clientName);
           clientApplicationDAO.updateSkipPrompt(clientApplication, skipPrompt);
-          clientApplicationDAO.updateAllowedScopes(clientApplication, scopes);
+          clientApplicationDAO.updateScopes(clientApplication, scopes);
         }
       }
     }

@@ -54,12 +54,21 @@ public class ClientApplication {
     this.skipPrompt = skipPrompt;
   }
 
-  public Set<String> getAllowedScopes() {
-    return allowedScopes;
+  /**
+   * Returns the scopes available to the users
+   * logging in via this ClientApplication.
+   * 
+   * ClientApplications shall not be allowed to
+   * request scopes that are not in this list.
+   * 
+   * @return
+   */
+  public Set<String> getScopes() {
+    return scopes;
   }
 
-  public void setAllowedScopes(Set<String> allowedScopes) {
-    this.allowedScopes = allowedScopes;
+  public void setScopes(Set<String> allowedScopes) {
+    this.scopes = allowedScopes;
   }
 
   @Id
@@ -89,5 +98,5 @@ public class ClientApplication {
   @ElementCollection
   @CollectionTable(name = "ClientApplicationScopes", joinColumns = @JoinColumn(name = "clientApplication"))
   @Column(name = "scope", nullable = false)
-  private Set<String> allowedScopes = new HashSet<>();
+  private Set<String> scopes = new HashSet<>();
 }

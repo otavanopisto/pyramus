@@ -16,17 +16,16 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication_
 @Stateless
 public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
 
-  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt, Set<String> allowedScopes) {
-
+  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt, Set<String> scopes) {
     ClientApplication clientApplication = new ClientApplication();
     clientApplication.setClientId(clientId);
     clientApplication.setClientName(clientName);
     clientApplication.setClientSecret(clientSecret);
     clientApplication.setSkipPrompt(skipPrompt);
 
-    Set<String> scopes = new HashSet<>();
-    scopes.addAll(allowedScopes);
-    clientApplication.setAllowedScopes(scopes);
+    Set<String> scopesCopy = new HashSet<>();
+    scopesCopy.addAll(scopes);
+    clientApplication.setScopes(scopesCopy);
 
     return persist(clientApplication);
   }
@@ -76,8 +75,8 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
     return persist(clientApplication);
   }
 
-  public ClientApplication updateAllowedScopes(ClientApplication clientApplication, Set<String> scopes) {
-    clientApplication.setAllowedScopes(scopes);
+  public ClientApplication updateScopes(ClientApplication clientApplication, Set<String> scopes) {
+    clientApplication.setScopes(scopes);
     return persist(clientApplication);
   }
 
