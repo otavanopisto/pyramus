@@ -116,13 +116,13 @@ public class ApplicationUtils {
   public static final String SETTINGKEY_STUDENTPARENTREGISTRATIONENABLED = "applications.studentParentRegistrationEnabled";
   public static final String SETTINGKEY_VERIFICATION_THRESHOLD = "applications.verificationThreshold";
   
-  private static final String LINE_AINEOPISKELU = "aineopiskelu";
-  private static final String LINE_AINEOPISKELU_PK = "aineopiskelupk";
-  private static final String LINE_NETTILUKIO = "nettilukio";
-  private static final String LINE_NETTILUKIO_OV = "nettilukioov";
-  private static final String LINE_NETTIPK = "nettipk";
-  private static final String LINE_AIKUISLUKIO = "aikuislukio";
-  private static final String LINE_MK = "mk";
+  public static final String LINE_AINEOPISKELU = "aineopiskelu";
+  public static final String LINE_AINEOPISKELU_PK = "aineopiskelupk";
+  public static final String LINE_NETTILUKIO = "nettilukio";
+  public static final String LINE_NETTILUKIO_OV = "nettilukioov";
+  public static final String LINE_NETTIPK = "nettipk";
+  public static final String LINE_AIKUISLUKIO = "aikuislukio";
+  public static final String LINE_MK = "mk";
   
   public static boolean hasLineAccess(StaffMember staffMember, String line) {
     if (staffMember.hasRole(Role.ADMINISTRATOR)) {
