@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -29,8 +31,8 @@ public class OauthController {
     return clientApplicationAccessTokenDAO.create(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode);
   }
   
-  public ClientApplicationAuthorizationCode createAuthorizationCode(User user, ClientApplication clientApplication, String authorizationCode, String redirectUrl){
-    return clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectUrl);
+  public ClientApplicationAuthorizationCode createAuthorizationCode(User user, ClientApplication clientApplication, String authorizationCode, String redirectUrl, Set<String> selectedScopes) {
+    return clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectUrl, selectedScopes);
   }
 
   public ClientApplicationAccessToken findByAccessToken(String accessToken) {

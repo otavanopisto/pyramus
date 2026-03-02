@@ -1,9 +1,12 @@
 package fi.otavanopisto.pyramus.views.users;
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -68,6 +71,20 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         request.getSession().setAttribute("clientAppId", oauthRequest.getClientId());
         String responseType = oauthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE);
 
+        Set<String> requestedScopes = oauthRequest.getScopes();
+
+        // Validate that 1) some scope(s) are specified 2) that the ClientApplication is allowed access to them
+        if (CollectionUtils.isEmpty(requestedScopes)) {
+          throw new SmvcRuntimeException(HttpServletResponse.SC_FORBIDDEN, "Request didn't specify any scopes");
+        }
+        else {
+          for (String requestedScope : requestedScopes) {
+            if (!clientApplication.getScopes().contains(requestedScope)) {
+              throw new SmvcRuntimeException(HttpServletResponse.SC_FORBIDDEN, "Client doesn't have one of the specified scopes.");
+            }
+          }
+        }
+        
         if (!responseType.equals(ResponseType.CODE.toString())) {
           requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
           throw new SmvcRuntimeException(HttpServletResponse.SC_NOT_IMPLEMENTED, String.format("Response type: %s not supported", responseType));
@@ -79,9 +96,11 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
 
         request.getSession().setAttribute("pendingOauthRedirectUrl", redirectURI);
+        request.getSession().setAttribute("pendingAuthScopes", requestedScopes);
         request.setAttribute("clientAppName", clientApplication.getClientName());
+        request.setAttribute("authScopes", requestedScopes);
         
-        if(clientApplication.getSkipPrompt()){
+        if (clientApplication.getSkipPrompt()) {
           ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
           UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
           HttpSession session = request.getSession();
@@ -93,7 +112,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
               builder.setCode(authorizationCode);
               final OAuthResponse response = builder.location(redirectURI).buildQueryMessage();
               User user = userDAO.findById(userId);
-              clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectURI);
+              clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectURI, requestedScopes);
               requestContext.setRedirectURL(response.getLocationUri());
             } catch (OAuthSystemException e) {
               requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
@@ -142,6 +161,8 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
       String authorizationCode = (String) session.getAttribute("pendingAuthCode");
       String redirectURI = (String) session.getAttribute("pendingOauthRedirectUrl");
       ClientApplication clientApplication = clientApplicationDAO.findByClientId((String) session.getAttribute("clientAppId"));
+      @SuppressWarnings("unchecked")
+      Set<String> scopes = (Set<String>) session.getAttribute("pendingAuthScopes");
 
       if (userId != null && authorizationCode != null && redirectURI != null && clientApplication != null) {
         try {
@@ -149,7 +170,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
           builder.setCode(authorizationCode);
           final OAuthResponse response = builder.location(redirectURI).buildQueryMessage();
           User user = userDAO.findById(userId);
-          clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectURI);
+          clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectURI, scopes);
           requestContext.setRedirectURL(response.getLocationUri());
         } catch (OAuthSystemException e) {
           requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");

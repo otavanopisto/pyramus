@@ -123,7 +123,7 @@
             '${clientApplication.clientName}',
             '${clientApplication.clientId}',
             '${clientApplication.clientSecret}',
-            '${String.join(",", clientApplication.allowedScopes)}',
+            '${String.join(",", clientApplication.scopes)}',
             skipPrompt,
             null,
             null,

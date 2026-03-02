@@ -22,4 +22,24 @@
     from ClientApplication;
   </sql>
 
+  <sql>
+    create table ClientApplicationAuthorizationCodeScopes (
+       authorizationCode bigint not null,
+        scope varchar(255) not null,
+        primary key (authorizationCode, scope)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAuthorizationCodeScopes 
+       add constraint FKtnrx14039u256b8jnkvpt59qi 
+       foreign key (authorizationCode) 
+       references ClientApplicationAuthorizationCode (id);
+  </sql>
+
+  <sql>
+    insert into ClientApplicationAuthorizationCodeScopes (authorizationCode, scope) 
+    select id, 'legacy' from ClientApplicationAuthorizationCode;
+  </sql>
+  
 </update>
