@@ -100,7 +100,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
-      if (StringUtils.equals("nettilukio", applicationLine) || StringUtils.equals("nettipk",  applicationLine)) {
+      if (StringUtils.equalsAny(applicationLine, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_NETTILUKIO_OV, ApplicationUtils.LINE_NETTIPK)) {
         AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
         if (AlternativeLine.PRIVATE == altLine) {
           fields.put("Opintojen tyyppi", "Yksityisopiskelu");
@@ -120,7 +120,7 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
         }
       }
-      if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU_PK)) {
+      else if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU_PK)) {
         InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
         if (InternetixStudyProgramme.OPPILAITOS == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos ilmoittaa)");
