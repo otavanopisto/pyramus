@@ -118,6 +118,69 @@
       <input id="field-previous-studies-nettilukio-other" type="text" name="field-previous-studies-nettilukio-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
     
+    <div class="form-section__field-container field-previous-studies-nettilukioov dependent" data-dependent-field="field-line" data-dependent-values="nettilukioov" style="display:none;">
+      <label for="field-previous-studies-nettilukioov" class="required">Aiemmat opinnot</label>
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukioov-perus" name="field-previous-studies-nettilukioov" value="perus" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-parsley-errors-container="#field-previous-studies-nettilukioov-errors"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukioov-perus">Peruskoulu</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukioov-lukio-nyt" name="field-previous-studies-nettilukioov" value="lukio-nyt" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukioov-lukio-nyt">Lukio-opinnot (suoritan opintoja parhaillaan)</label>
+        </div>
+      </div>
+
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukioov-lukio-kesken" name="field-previous-studies-nettilukioov" value="lukio-kesken" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukioov-lukio-kesken">Lukio-opinnot (kesken jääneet opinnot)</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukioov-ammatillinen-nyt" name="field-previous-studies-nettilukioov" value="ammatillinen-nyt" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukioov-ammatillinen-nyt">Ammatilliset opinnot (suoritan opintoja parhaillaan)</label>
+        </div>
+      </div>
+
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukioov-ammatillinen-kesken" name="field-previous-studies-nettilukioov" value="ammatillinen-kesken" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukioov-ammatillinen-kesken">Ammatilliset opinnot (kesken jääneet opinnot)</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-previous-studies-nettilukioov-muu" name="field-previous-studies-nettilukioov" value="muu" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"  data-dependencies="true"/>
+        </div>
+        <div class="field-row-label">
+          <label for="field-previous-studies-nettilukioov-muu">Muu</label>
+        </div>
+      </div>
+      <div id="field-previous-studies-nettilukioov-errors"></div>
+    </div>
+
+    <div class="form-section__field-container field-previous-studies-nettilukioov-other dependent" data-dependent-field="field-previous-studies-nettilukioov" data-dependent-values="muu" style="display:none;">
+      <label for="field-previous-studies-nettilukioov-other" class="required">Kerro tarkemmin</label>
+      <input id="field-previous-studies-nettilukioov-other" type="text" name="field-previous-studies-nettilukioov-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    </div>
+
     <div class="form-section__field-container field-elementary-done dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
       <label for="field-elementary-done" class="required">Minä vuonna olet valmistunut peruskoulusta?</label>
       <input id="field-elementary-done" type="text" name="field-elementary-done" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
@@ -177,6 +240,15 @@
       </select>
     </div>
 
+    <div class="form-section__field-container field-goals-nettilukioov dependent" data-dependent-field="field-line" data-dependent-values="nettilukioov" style="display:none;">
+      <label for="field-goals-nettilukioov" class="required">Opiskelutavoitteet</label>
+      <select id="field-goals-nettilukioov" name="field-goals-nettilukioov" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <option value="">-- Valitse --</option>
+        <option value="lukio">Lukion päättötodistus</option>
+        <option value="molemmat">Lukion päättötodistus ja YO-tutkinto</option>
+      </select>
+    </div>
+
     <div class="form-section__field-container field-foreign-student dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
       <label for="field-foreign-student" class="required">Oletko ulkomainen vaihto-opiskelija?</label>
       <select id="field-foreign-student" name="field-foreign-student" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
@@ -191,7 +263,7 @@
       <textarea id="field-previous-foreign-studies" name="field-previous-foreign-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>
 
-    <div class="form-section__field-container field-job">
+    <div class="form-section__field-container field-job dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,aineopiskelupk,nettilukio,nettipk,aikuislukio,mk" style="display:none;">
       <label for="field-job" class="required">Olen tällä hetkellä</label>
       <select id="field-job" name="field-job" data-parsley-required="true" data-dependencies="true">
         <option value="">-- Valitse --</option>
@@ -218,6 +290,12 @@
       <label for="field-info-nettilukio">Haluan kertoa Nettilukion omalle ohjaajalle nämä taustatiedot</label>
       <textarea id="field-info-nettilukio" name="field-info-nettilukio" rows="5" cols="40"></textarea>
       <span class="field-help">Voit kertoa esimerkiksi opiskeluvalmiuksistasi, ajankäytöstäsi, motivaatiostasi ja tavoitteistasi. Nämä tiedot välitetään omalle ohjaajallesi, kun aloitat Nettilukion opinnot.</span>
+    </div>
+
+    <div class="form-section__field-container field-info-nettilukioov dependent" data-dependent-field="field-line" data-dependent-values="nettilukioov" style="display:none;">
+      <label for="field-info-nettilukioov">Haluan kertoa Nettilukion ryhmänohjaajalleni nämä taustatiedot</label>
+      <textarea id="field-info-nettilukioov" name="field-info-nettilukioov" rows="5" cols="40"></textarea>
+      <span class="field-help">Voit kertoa esimerkiksi opiskeluvalmiuksistasi, ajankäytöstäsi, motivaatiostasi ja tavoitteistasi. Nämä tiedot välitetään ryhmänohjaajallesi, kun aloitat Nettilukion opinnot.</span>
     </div>
 
     <div class="form-section__field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,mk" style="display:none;">

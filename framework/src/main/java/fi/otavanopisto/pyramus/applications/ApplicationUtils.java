@@ -119,6 +119,7 @@ public class ApplicationUtils {
   private static final String LINE_AINEOPISKELU = "aineopiskelu";
   private static final String LINE_AINEOPISKELU_PK = "aineopiskelupk";
   private static final String LINE_NETTILUKIO = "nettilukio";
+  private static final String LINE_NETTILUKIO_OV = "nettilukioov";
   private static final String LINE_NETTIPK = "nettipk";
   private static final String LINE_AIKUISLUKIO = "aikuislukio";
   private static final String LINE_MK = "mk";
@@ -134,6 +135,9 @@ public class ApplicationUtils {
       return true;
     }
     if (StringUtils.equals(line, LINE_NETTILUKIO) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()))) {
+      return true;
+    }
+    if (StringUtils.equals(line, LINE_NETTILUKIO_OV) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO_OV.getKey()))) {
       return true;
     }
     if (StringUtils.equals(line, LINE_NETTIPK) && "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTIPERUSKOULU.getKey()))) {
@@ -191,6 +195,9 @@ public class ApplicationUtils {
     if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()))) {
       lines.add(LINE_NETTILUKIO);
     }
+    if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO_OV.getKey()))) {
+      lines.add(LINE_NETTILUKIO_OV);
+    }
     if (isAdmin || "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTIPERUSKOULU.getKey()))) {
       lines.add(LINE_NETTIPK);
     }
@@ -242,6 +249,8 @@ public class ApplicationUtils {
         return "Aineopiskelu/perusopetus";
       case LINE_NETTILUKIO:
         return "Nettilukio";
+      case LINE_NETTILUKIO_OV:
+        return "Nettilukio (oppivelvolliset)";
       case LINE_NETTIPK:
         return "Nettiperuskoulu";
       case LINE_AIKUISLUKIO:
@@ -471,6 +480,28 @@ public class ApplicationUtils {
     }
     return null;
   }
+  
+  public static String previousStudiesUiValueOppivelvolliset(String value) {
+    if (value != null) {
+      switch (value) {
+      case "perus":
+        return "Peruskoulu";
+      case "lukio-nyt":
+        return "Lukio-opinnot (suoritan opintoja parhaillaan)";
+      case "lukio-kesken":
+        return "Lukio-opinnot (kesken jääneet opinnot)";
+      case "ammatillinen-nyt":
+        return "Ammatilliset opinnot (suoritan opintoja parhaillaan)";
+      case "ammatillinen-kesken":
+        return "Ammatilliset opinnot (kesken jääneet opinnot)";
+      case "muu":
+        return "Muu";
+      default:
+        return null;
+      }
+    }
+    return null;
+  }
 
   public static String previousStudiesUiValue(String value) {
     if (value != null) {
@@ -644,7 +675,8 @@ public class ApplicationUtils {
         return studyProgrammeDAO.findById(50L); // Aineopiskelu/perusopetus (oppilaitos ilmoittaa)
       }
       return studyProgrammeDAO.findById(12L); // Aineopiskelu/perusopetus
-    case LINE_NETTILUKIO: {
+    case LINE_NETTILUKIO:
+    case LINE_NETTILUKIO_OV:
       AlternativeLine nettilukioAlternative = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
       if (nettilukioAlternative == AlternativeLine.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
@@ -653,7 +685,6 @@ public class ApplicationUtils {
         return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
       }
       return studyProgrammeDAO.findById(6L); // Nettilukio
-    }
     case LINE_NETTIPK:
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
     case LINE_AIKUISLUKIO:
@@ -782,7 +813,7 @@ public class ApplicationUtils {
       String documentPath = null;
       if (isOtaviaLine(line)) {
         if (underageApplicant) {
-          documentPath = StringUtils.equals(line, "nettilukio")
+          documentPath = StringUtils.equals(line, LINE_NETTILUKIO) || StringUtils.equals(line, LINE_NETTILUKIO_OV)
               ? "/templates/applications/document-student-signed-otavia-underage-nettilukio.html"
               : "/templates/applications/document-student-signed-otavia-underage.html";
         }
