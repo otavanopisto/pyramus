@@ -8,8 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -2616,6 +2618,43 @@ public class StudentRESTService extends AbstractRESTService {
     List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByStudent(student);
     
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/educationTypes/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentEducationTypes(@PathParam("STUDENTID") Long studentId) {
+    
+    // Access check
+    
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    // Map creation
+    
+    String educationType;
+    Map<String, Long> educationTypes = new HashMap<>();
+    List<Student> students = studentController.listStudentByPerson(student.getPerson());
+    students.sort(Comparator.comparing(Student::getId).reversed());
+    for (Student s : students) {
+      educationType = s.getStudyProgramme().getCategory().getEducationType().getName();
+      if (!educationTypes.containsKey(educationType)) {
+        educationTypes.put(educationType, s.getId());
+      }
+    }
+    return Response.ok(educationTypes).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/latestAssessmentRequest/")
