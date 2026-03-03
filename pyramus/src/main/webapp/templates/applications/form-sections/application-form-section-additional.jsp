@@ -181,17 +181,17 @@
       <input id="field-previous-studies-nettilukioov-other" type="text" name="field-previous-studies-nettilukioov-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
-    <div class="form-section__field-container field-elementary-done dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+    <div class="form-section__field-container field-elementary-done dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
       <label for="field-elementary-done" class="required">Minä vuonna olet valmistunut peruskoulusta?</label>
       <input id="field-elementary-done" type="text" name="field-elementary-done" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
-    <div class="form-section__field-container field-elementary-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+    <div class="form-section__field-container field-elementary-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
       <label for="field-elementary-school" class="required">Missä oppilaitoksissa olet ollut kirjoilla peruskoulun jälkeen?</label>
       <input id="field-elementary-school" type="text" name="field-elementary-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
-    <div class="form-section__field-container field-latest-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+    <div class="form-section__field-container field-latest-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
       <label for="field-latest-school" class="required">Missä oppilaitoksessa olet viimeksi opiskellut ja milloin?</label>
       <input id="field-latest-school" type="text" name="field-latest-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
@@ -216,7 +216,7 @@
       <input id="field-high-school-length" type="text" name="field-high-school-length">
     </div>
 
-    <div class="form-section__field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio" style="display:none;">
+    <div class="form-section__field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov,nettipk,aikuislukio" style="display:none;">
       <label for="field-other-school" class="required">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
       <select id="field-other-school" name="field-other-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
         <option value="">-- Valitse --</option>

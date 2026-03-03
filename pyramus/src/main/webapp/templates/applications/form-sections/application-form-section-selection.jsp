@@ -12,6 +12,7 @@
     <option value="aineopiskelu" data-underage-support="true" data-attachment-support="false">Aineopiskelu/lukio</option>
     <option value="aineopiskelupk" data-underage-support="true" data-attachment-support="false">Aineopiskelu/perusopetus</option>
     <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
+    <option value="nettilukioov" data-underage-support="true" data-attachment-support="true">Nettilukio (oppivelvolliset)</option>
     <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
     <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
     <option value="mk" data-underage-support="true" data-attachment-support="true">Aikuisten perusopetus</option>
@@ -19,7 +20,7 @@
     
   <c:choose>
     <c:when test="${param.includeHandlerLines eq 'true'}">
-      <div data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+      <div data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
         <div class="field-row-flex">
           <div class="field-row-element">
             <input type="radio" id="field-nettilukio_alternativelines_private" name="field-nettilukio_alternativelines" value="PRIVATE"/>
