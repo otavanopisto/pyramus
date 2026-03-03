@@ -2649,7 +2649,7 @@ public class StudentRESTService extends AbstractRESTService {
     List<Student> students = studentController.listStudentByPerson(student.getPerson());
     students.sort(Comparator.comparing(Student::getId).reversed());
     for (Student s : students) {
-      educationType = s.getStudyProgramme().getCategory().getEducationType().getName();
+      educationType = s.getStudyProgramme().getCategory().getEducationType().getCode();
       if (!educationTypes.containsKey(educationType)) {
         educationTypes.put(educationType, s.getId());
       }
