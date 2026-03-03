@@ -2642,7 +2642,7 @@ public class StudentRESTService extends AbstractRESTService {
       }
     }
     
-    // Map creation
+    // Map creation (student.studyProgramme.category.educationType.code -> student.id)
     
     String educationType;
     Map<String, Long> educationTypes = new HashMap<>();
