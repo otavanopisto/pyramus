@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -235,11 +236,7 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
       student.getStudyProgramme().getCategory().getEducationType().getCode() != null
       ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
     
-    boolean isLukio = true;
-    
-    if (code != null) {
-      isLukio = code.equals("lukio");
-    }
+    boolean isLukio = code != null ? PyramusConsts.EDUCATION_TYPE_LUKIO.equals(code) : true;
     
     if (!isLukio) {
       PyramusIxTableFacade languageSkillLevelTable = PyramusIxTableFacade.from(requestContext, "languageSkillLevelTable");
