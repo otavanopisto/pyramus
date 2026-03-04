@@ -222,7 +222,7 @@ public class MuikkuRESTService {
       }
     }
     
-    String educationTypeName = baseStudent.getStudyProgramme().getCategory().getEducationType().getName();
+    String educationTypeCode = baseStudent.getStudyProgramme().getCategory().getEducationType().getCode();
     StudyActivityRestModel activity = new StudyActivityRestModel();
     List<StudyActivityItemRestModel> items = new ArrayList<>();
     Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
@@ -285,7 +285,7 @@ public class MuikkuRESTService {
 
         StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
         if (courseAssessment.getSubject().getEducationType() == null ||
-            !StringUtils.equals(courseAssessment.getSubject().getEducationType().getName(), educationTypeName)) {
+            !StringUtils.equals(courseAssessment.getSubject().getEducationType().getCode(), educationTypeCode)) {
           existingItem = null;
         }
         if (existingItem != null) {
@@ -350,7 +350,7 @@ public class MuikkuRESTService {
           // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
 
           boolean validSubject = courseModule.getSubject().getEducationType() != null &&
-              StringUtils.equals(courseModule.getSubject().getEducationType().getName(), educationTypeName);
+              StringUtils.equals(courseModule.getSubject().getEducationType().getCode(), educationTypeCode);
           if (validSubject && itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
             continue;
           }
@@ -403,7 +403,7 @@ public class MuikkuRESTService {
       }
     }
     
-    activity.setEducationType(educationTypeName);
+    activity.setEducationTypeCode(educationTypeCode);
     activity.setItems(items);
     activity.setCompletedCourseCredits(completedCourseCredits);
     activity.setMandatoryCourseCredits(mandatoryCourseCredits);

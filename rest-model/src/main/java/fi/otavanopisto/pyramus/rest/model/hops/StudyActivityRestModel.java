@@ -13,11 +13,11 @@ public class StudyActivityRestModel {
   }
 
   public String getEducationType() {
-    return educationType;
+    return educationTypeCode;
   }
 
-  public void setEducationType(String educationType) {
-    this.educationType = educationType;
+  public void setEducationTypeCode(String educationTypeCode) {
+    this.educationTypeCode = educationTypeCode;
   }
 
   public int getCompletedCourseCredits() {
@@ -36,7 +36,7 @@ public class StudyActivityRestModel {
     this.mandatoryCourseCredits = mandatoryCourseCredits;
   }
 
-  private String educationType;
+  private String educationTypeCode;
   private List<StudyActivityItemRestModel> items;
   private int completedCourseCredits;
   private int mandatoryCourseCredits;
