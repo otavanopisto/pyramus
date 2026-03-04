@@ -12,7 +12,7 @@ public class StudyActivityRestModel {
     this.items = items;
   }
 
-  public String getEducationType() {
+  public String getEducationTypeCode() {
     return educationTypeCode;
   }
 

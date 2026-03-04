@@ -146,6 +146,7 @@ import fi.otavanopisto.pyramus.rest.model.SpecEdTeacher;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
+import fi.otavanopisto.pyramus.rest.model.StudentEducationType;
 import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
 import fi.otavanopisto.pyramus.rest.model.StudentParentRelation;
 import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
@@ -2654,7 +2655,14 @@ public class StudentRESTService extends AbstractRESTService {
         educationTypes.put(educationType, s.getId());
       }
     }
-    return Response.ok(educationTypes).build();
+    
+    // Return object as list
+    
+    List<StudentEducationType> educationTypeStudents = new ArrayList<>();
+    for (String s : educationTypes.keySet()) {
+      educationTypeStudents.add(new StudentEducationType(s, educationTypes.get(s)));
+    }
+    return Response.ok(educationTypeStudents).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/latestAssessmentRequest/")
