@@ -2630,13 +2630,9 @@ public class StudentRESTService extends AbstractRESTService {
     
     Student student = studentController.findStudentById(studentId);
     Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
+    if (studentStatus != Status.OK) {
       return Response.status(studentStatus).build();
-
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, student, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
     }
-
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
       if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
         return Response.status(Status.FORBIDDEN).build();

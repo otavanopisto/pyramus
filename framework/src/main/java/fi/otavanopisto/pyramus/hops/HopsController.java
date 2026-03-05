@@ -106,6 +106,7 @@ public class HopsController {
     else {
       matrix.setType(HopsCourseMatrixType.COMPULSORY);
     }
+    matrix.setCurriculum(ops);
     
     // Opiskelijan kaikki mahdolliset suoritukset
     

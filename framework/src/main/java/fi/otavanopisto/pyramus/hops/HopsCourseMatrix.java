@@ -101,7 +101,16 @@ public class HopsCourseMatrix {
     return subjects.stream().filter(s -> s.isHiddenFromHops()).map(s -> s.getCode()).collect(Collectors.toSet());
   }
 
+  public String getCurriculum() {
+    return curriculum;
+  }
+
+  public void setCurriculum(String curriculum) {
+    this.curriculum = curriculum;
+  }
+
   private HopsCourseMatrixType type;
+  private String curriculum;
   private List<HopsCourseMatrixSubject> subjects;
   private Set<HopsCourseMatrixProblem> problems;
 
