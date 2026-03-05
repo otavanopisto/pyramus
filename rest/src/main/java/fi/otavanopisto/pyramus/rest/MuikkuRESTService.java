@@ -1307,6 +1307,7 @@ public class MuikkuRESTService {
       return student;
     }
     List<Student> students = studentController.listStudenstByPerson(student.getPerson());
+    students.sort(Comparator.comparing(Student::getId).reversed());
     return students.stream().filter(s -> StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)).findFirst().orElse(null);
   }
 
