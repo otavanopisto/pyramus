@@ -205,7 +205,7 @@ public class StudentController {
     return studentDAO.haveCommonCourses(staffMember, student);
   }
   
-  public List<Student> listStudentByPerson(Person person) {
+  public List<Student> listStudenstByPerson(Person person) {
     List<Student> students = studentDAO.listByPerson(person);
     return students;
   }

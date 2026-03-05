@@ -222,7 +222,7 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    return Response.ok(objectFactory.createModel(studentController.listStudentByPerson(person))).build();
+    return Response.ok(objectFactory.createModel(studentController.listStudenstByPerson(person))).build();
   }
 
   @Path("/persons/{ID:[0-9]*}/oppija")

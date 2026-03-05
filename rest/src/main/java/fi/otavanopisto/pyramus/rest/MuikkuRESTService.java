@@ -180,7 +180,7 @@ public class MuikkuRESTService {
   @Path("/students/{ID:[0-9]*}/courseMatrix")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response getCourseMatrix(@PathParam("ID") Long id) {
+  public Response getCourseMatrix(@PathParam("ID") Long id, @QueryParam("educationTypeCode") String educationTypeCode) {
     
     // Access check
     
@@ -196,6 +196,14 @@ public class MuikkuRESTService {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
+    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? student.getStudyProgramme().getCategory().getEducationType().getCode() : educationTypeCode;
+    
+    // Adjust student based on requested education type code
+    
+    student = adjustStudent(student, eduTypeCode);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
     
     // Serve the request
     
@@ -205,24 +213,31 @@ public class MuikkuRESTService {
   @Path("/students/{ID:[0-9]*}/studyActivity")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response getStudentStudyActivity(@PathParam("ID") Long id, @QueryParam("courseId") Long courseId) {
+  public Response getStudentStudyActivity(@PathParam("ID") Long id, @QueryParam("courseId") Long courseId, @QueryParam("educationTypeCode") String educationTypeCode) {
     
     // Access check
     
-    Student baseStudent = studentController.findStudentById(id);
-    if (baseStudent == null || baseStudent.getArchived()) {
+    Student initialStudent = studentController.findStudentById(id);
+    if (initialStudent == null || initialStudent.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, baseStudent, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, initialStudent, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      if (!UserUtils.isMemberOf(sessionController.getUser(), baseStudent.getOrganization())) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), initialStudent.getOrganization())) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
+    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? initialStudent.getStudyProgramme().getCategory().getEducationType().getCode() : educationTypeCode;
     
-    String educationTypeCode = baseStudent.getStudyProgramme().getCategory().getEducationType().getCode();
+    // Adjust student based on requested education type code
+    
+    Student baseStudent = adjustStudent(initialStudent, eduTypeCode);
+    if (baseStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
     StudyActivityRestModel activity = new StudyActivityRestModel();
     List<StudyActivityItemRestModel> items = new ArrayList<>();
     Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
@@ -233,8 +248,8 @@ public class MuikkuRESTService {
     
     List<Student> students = new ArrayList<>();
     if (courseId == null) {
-      students = studentController.listStudentByPerson(baseStudent.getPerson());
-      students.removeIf(s -> !s.getStudyProgramme().getCategory().getEducationType().getId().equals(baseStudent.getStudyProgramme().getCategory().getEducationType().getId()));
+      students = studentController.listStudenstByPerson(baseStudent.getPerson());
+      students.removeIf(s -> !StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), eduTypeCode));
       students.sort(Comparator.comparing(Student::getId));
     }
     else {
@@ -285,7 +300,7 @@ public class MuikkuRESTService {
 
         StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
         if (courseAssessment.getSubject().getEducationType() == null ||
-            !StringUtils.equals(courseAssessment.getSubject().getEducationType().getCode(), educationTypeCode)) {
+            !StringUtils.equals(courseAssessment.getSubject().getEducationType().getCode(), eduTypeCode)) {
           existingItem = null;
         }
         if (existingItem != null) {
@@ -350,7 +365,7 @@ public class MuikkuRESTService {
           // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
 
           boolean validSubject = courseModule.getSubject().getEducationType() != null &&
-              StringUtils.equals(courseModule.getSubject().getEducationType().getCode(), educationTypeCode);
+              StringUtils.equals(courseModule.getSubject().getEducationType().getCode(), eduTypeCode);
           if (validSubject && itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
             continue;
           }
@@ -403,7 +418,7 @@ public class MuikkuRESTService {
       }
     }
     
-    activity.setEducationTypeCode(educationTypeCode);
+    activity.setEducationTypeCode(eduTypeCode);
     activity.setItems(items);
     activity.setCompletedCourseCredits(completedCourseCredits);
     activity.setMandatoryCourseCredits(mandatoryCourseCredits);
@@ -1277,6 +1292,22 @@ public class MuikkuRESTService {
       }
     }
     return Mandatority.UNSPECIFIED_OPTIONAL;
+  }
+  
+  /**
+   * For the given student, returns a student that belongs to the same person with the requested education type.
+   * 
+   * @param student Student
+   * @param educationTypeCode Education type code
+   * 
+   * @return A student that belongs to the same person with the requested education type
+   */
+  private Student adjustStudent(Student student, String educationTypeCode) {
+    if (StringUtils.equals(student.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)) {
+      return student;
+    }
+    List<Student> students = studentController.listStudenstByPerson(student.getPerson());
+    return students.stream().filter(s -> StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)).findFirst().orElse(null);
   }
 
 }

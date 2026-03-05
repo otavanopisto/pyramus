@@ -8,10 +8,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -146,7 +144,6 @@ import fi.otavanopisto.pyramus.rest.model.SpecEdTeacher;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryBatch;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryCommentRestModel;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
-import fi.otavanopisto.pyramus.rest.model.StudentEducationType;
 import fi.otavanopisto.pyramus.rest.model.StudentGuidanceRelation;
 import fi.otavanopisto.pyramus.rest.model.StudentParentRelation;
 import fi.otavanopisto.pyramus.rest.model.UserContactInfo;
@@ -158,8 +155,8 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
+import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -2639,26 +2636,13 @@ public class StudentRESTService extends AbstractRESTService {
       }
     }
     
-    // Map creation (student.studyProgramme.category.educationType.code -> student.id)
-    
-    String educationType;
-    Map<String, Long> educationTypes = new HashMap<>();
-    List<Student> students = studentController.listStudentByPerson(student.getPerson());
-    students.sort(Comparator.comparing(Student::getId).reversed());
+    Set<String> educationTypes = new HashSet<>();
+    List<Student> students = studentController.listStudenstByPerson(student.getPerson());
     for (Student s : students) {
-      educationType = s.getStudyProgramme().getCategory().getEducationType().getCode();
-      if (!educationTypes.containsKey(educationType)) {
-        educationTypes.put(educationType, s.getId());
-      }
+      educationTypes.add(s.getStudyProgramme().getCategory().getEducationType().getCode());
     }
-    
-    // Return object as list
-    
-    List<StudentEducationType> educationTypeStudents = new ArrayList<>();
-    for (String s : educationTypes.keySet()) {
-      educationTypeStudents.add(new StudentEducationType(s, educationTypes.get(s)));
-    }
-    return Response.ok(educationTypeStudents).build();
+
+    return Response.ok(educationTypes).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/latestAssessmentRequest/")
