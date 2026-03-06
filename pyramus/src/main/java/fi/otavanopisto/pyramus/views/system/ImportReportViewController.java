@@ -1,8 +1,10 @@
 package fi.otavanopisto.pyramus.views.system;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,9 +15,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.xpath.XPathAPI;
@@ -41,12 +40,14 @@ import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportCategory;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
+import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusFormViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
-@SuppressWarnings("deprecation")
 public class ImportReportViewController extends PyramusFormViewController {
 
   @Override
@@ -115,78 +116,20 @@ public class ImportReportViewController extends PyramusFormViewController {
     Long existingReportId = requestContext.getLong("report");
     String name = requestContext.getString("name");
     Part file = requestContext.getFile("file");
+    String fileName = file.getSubmittedFileName();
     Long categoryId = requestContext.getLong("category");
-
+    
     try {
-      ByteArrayOutputStream dataStream = null;
+      String reportData = null;
+      ReportFileFormat reportFormat = null;
       if (file.getSize() > 0) {
-        DocumentBuilder db = documentBuilderFactory.newDocumentBuilder();
-        Document reportDocument = db.parse(new InputSource(new InputStreamReader(file.getInputStream(), "UTF-8")));
-        NodeList hibernateDataSources = XPathAPI.selectNodeList(reportDocument.getDocumentElement(),
-            "data-sources/oda-data-source[@extensionID='org.jboss.tools.birt.oda']");
-        for (int i = 0, l = hibernateDataSources.getLength(); i < l; i++) {
-          Element dataSourceElement = (Element) hibernateDataSources.item(i);
-          Node configurationProperyNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='configuration']");
-          if (configurationProperyNode != null)
-            dataSourceElement.removeChild(configurationProperyNode);
-  
-          Element jndiNameElement = (Element) XPathAPI.selectSingleNode(dataSourceElement, "property[@name='jndiName']");
-          if (jndiNameElement == null) {
-            jndiNameElement = reportDocument.createElement("property");
-            jndiNameElement.setAttribute("name", "jndiName");
-            dataSourceElement.appendChild(jndiNameElement);
-          }
-  
-          jndiNameElement.setTextContent("pyramusSessionFactory");
+        if (fileName.endsWith(".rptdesign")) {
+          reportData = handleRptdesign(file);
+          reportFormat = ReportFileFormat.RPTDESIGN;
         }
-  
-        reportDocument.getDocumentElement().getAttributeNode("version").setTextContent("3.2.20");
-  
-        NodeList jdbcDataSources = XPathAPI.selectNodeList(reportDocument.getDocumentElement(),
-            "data-sources/oda-data-source[@extensionID='org.eclipse.birt.report.data.oda.jdbc']");
-        for (int i = 0, l = jdbcDataSources.getLength(); i < l; i++) {
-          Element dataSourceElement = (Element) jdbcDataSources.item(i);
-  
-          Node removeNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaUser']");
-          if (removeNode != null)
-            dataSourceElement.removeChild(removeNode);
-          removeNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaURL']");
-          if (removeNode != null)
-            dataSourceElement.removeChild(removeNode);
-          removeNode = XPathAPI.selectSingleNode(dataSourceElement, "encrypted-property[@name='odaPassword']");
-          if (removeNode != null)
-            dataSourceElement.removeChild(removeNode);
-          removeNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaDriverClass']");
-          if (removeNode != null)
-            dataSourceElement.removeChild(removeNode);
-          removeNode = XPathAPI.selectSingleNode(dataSourceElement, "list-property[@name='privateDriverProperties']");
-          if (removeNode != null)
-            dataSourceElement.removeChild(removeNode);
-          
-          Element jndiNameElement = (Element) XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaJndiName']");
-          if (jndiNameElement == null) {
-            jndiNameElement = reportDocument.createElement("property");
-            jndiNameElement.setAttribute("name", "odaJndiName");
-            dataSourceElement.appendChild(jndiNameElement);
-          }
-          
-          jndiNameElement.setTextContent("jdbc/pyramus");
-        }
-  
-        dataStream = new ByteArrayOutputStream();
-        
-        try {
-          DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();    
-          DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("XML 3.0 LS 3.0");
-  
-          LSSerializer serializer = impl.createLSSerializer();
-          LSOutput output = impl.createLSOutput();
-  
-          output.setEncoding("UTF-8");
-          output.setByteStream(dataStream);
-          serializer.write(reportDocument, output);
-        } catch (Exception ex) {
-          ex.printStackTrace();
+        else if (fileName.endsWith(".ftl")) {
+          reportData = new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+          reportFormat = ReportFileFormat.FTL;
         }
       }
       
@@ -195,7 +138,7 @@ public class ImportReportViewController extends PyramusFormViewController {
       
       if (existingReportId != null) {
         Report report = reportDAO.findById(existingReportId);
-        if (name == null && dataStream == null) {
+        if (name == null && reportData == null) {
           reportDAO.delete(report);
           requestContext.setRedirectURL(requestContext.getReferer(true));
         }
@@ -205,8 +148,8 @@ public class ImportReportViewController extends PyramusFormViewController {
           if (!StringUtils.isBlank(name)) {
             reportDAO.updateName(report, name, loggedUser);
           }
-          if (dataStream != null) {
-            reportDAO.updateData(report, dataStream.toString("UTF-8"), loggedUser);
+          if (reportData != null) {
+            reportDAO.updateData(report, reportData, reportFormat, loggedUser);
           }
           handleContexts(requestContext, report);
           requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
@@ -214,7 +157,7 @@ public class ImportReportViewController extends PyramusFormViewController {
         }
       }
       else {
-        Report report = reportDAO.create(name, dataStream.toString("UTF-8"), loggedUser);
+        Report report = reportDAO.create(name, reportData, reportFormat, loggedUser);
         report = reportDAO.updateCategory(report, category, loggedUser);
         handleContexts(requestContext, report);
         requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
@@ -233,8 +176,90 @@ public class ImportReportViewController extends PyramusFormViewController {
     catch (TransformerException e) {
       throw new SmvcRuntimeException(e);
     }
+    catch (ClassNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InstantiationException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (ClassCastException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
+  private String handleRptdesign(Part file) throws ParserConfigurationException, UnsupportedEncodingException, SAXException, IOException, TransformerException, ClassNotFoundException, InstantiationException, IllegalAccessException, ClassCastException {
+    DocumentBuilder db = documentBuilderFactory.newDocumentBuilder();
+    Document reportDocument = db.parse(new InputSource(new InputStreamReader(file.getInputStream(), "UTF-8")));
+    NodeList hibernateDataSources = XPathAPI.selectNodeList(reportDocument.getDocumentElement(),
+        "data-sources/oda-data-source[@extensionID='org.jboss.tools.birt.oda']");
+    for (int i = 0, l = hibernateDataSources.getLength(); i < l; i++) {
+      Element dataSourceElement = (Element) hibernateDataSources.item(i);
+      Node configurationProperyNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='configuration']");
+      if (configurationProperyNode != null)
+        dataSourceElement.removeChild(configurationProperyNode);
+
+      Element jndiNameElement = (Element) XPathAPI.selectSingleNode(dataSourceElement, "property[@name='jndiName']");
+      if (jndiNameElement == null) {
+        jndiNameElement = reportDocument.createElement("property");
+        jndiNameElement.setAttribute("name", "jndiName");
+        dataSourceElement.appendChild(jndiNameElement);
+      }
+
+      jndiNameElement.setTextContent("pyramusSessionFactory");
+    }
+
+    reportDocument.getDocumentElement().getAttributeNode("version").setTextContent("3.2.20");
+
+    NodeList jdbcDataSources = XPathAPI.selectNodeList(reportDocument.getDocumentElement(),
+        "data-sources/oda-data-source[@extensionID='org.eclipse.birt.report.data.oda.jdbc']");
+    for (int i = 0, l = jdbcDataSources.getLength(); i < l; i++) {
+      Element dataSourceElement = (Element) jdbcDataSources.item(i);
+
+      Node removeNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaUser']");
+      if (removeNode != null)
+        dataSourceElement.removeChild(removeNode);
+      removeNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaURL']");
+      if (removeNode != null)
+        dataSourceElement.removeChild(removeNode);
+      removeNode = XPathAPI.selectSingleNode(dataSourceElement, "encrypted-property[@name='odaPassword']");
+      if (removeNode != null)
+        dataSourceElement.removeChild(removeNode);
+      removeNode = XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaDriverClass']");
+      if (removeNode != null)
+        dataSourceElement.removeChild(removeNode);
+      removeNode = XPathAPI.selectSingleNode(dataSourceElement, "list-property[@name='privateDriverProperties']");
+      if (removeNode != null)
+        dataSourceElement.removeChild(removeNode);
+      
+      Element jndiNameElement = (Element) XPathAPI.selectSingleNode(dataSourceElement, "property[@name='odaJndiName']");
+      if (jndiNameElement == null) {
+        jndiNameElement = reportDocument.createElement("property");
+        jndiNameElement.setAttribute("name", "odaJndiName");
+        dataSourceElement.appendChild(jndiNameElement);
+      }
+      
+      jndiNameElement.setTextContent("jdbc/pyramus");
+    }
+
+    StringWriter stringWriter = new StringWriter();
+    
+    DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();    
+    DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("XML 3.0 LS 3.0");
+
+    LSSerializer serializer = impl.createLSSerializer();
+    LSOutput output = impl.createLSOutput();
+
+    output.setEncoding("UTF-8");
+    output.setCharacterStream(stringWriter);
+    serializer.write(reportDocument, output);
+    
+    return stringWriter.toString();
+  }
+  
   private void handleContexts(PageRequestContext requestContext, Report report) {
     ReportContextDAO reportContextDAO = DAOFactory.getInstance().getReportContextDAO();
     for (ReportContextType contextType : ReportContextType.values()) {

@@ -129,6 +129,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Freemarker -->
+
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+
     <!-- PDF (applications) -->
 
     <dependency>

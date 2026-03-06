@@ -309,6 +309,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       JSONObject obj = new JSONObject();
       obj.put("id", report.getId().toString());
       obj.put("name", report.getName());
+      obj.put("format", report.getFormat().name());
       studentReportsJSON.add(obj);
     }
     
