@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.views.grading;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -231,28 +230,43 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
       }
     }
     
-    PyramusIxTableFacade languageSkillLevelTable = PyramusIxTableFacade.from(requestContext, "languageSkillLevelTable");
+    String code = student.getStudyProgramme() != null &&
+      student.getStudyProgramme().getCategory() !=  null &&
+      student.getStudyProgramme().getCategory().getEducationType() != null &&
+      student.getStudyProgramme().getCategory().getEducationType().getCode() != null
+      ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
     
-    for (PyramusIxTableRowFacade skillLevelRow : languageSkillLevelTable.rows()) {
-      if (Boolean.TRUE.equals(skillLevelRow.getBoolean("edited"))) {
-        SpokenLanguageExamSkillLevel skillLevel = skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class);
-        LanguageSkillType skillType = skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class);
-        LocalDateTime gradingDate = skillLevelRow.getLocalDateTime("gradingDate");
+    boolean isLukio = code != null ? PyramusConsts.EDUCATION_TYPE_LUKIO.equals(code) : true;
+    
+    if (!isLukio) {
+      PyramusIxTableFacade languageSkillLevelTable = PyramusIxTableFacade.from(requestContext, "languageSkillLevelTable");
+     
+      for (PyramusIxTableRowFacade skillLevelRow : languageSkillLevelTable.rows()) {
+        
         Long languageSkillLevelId = skillLevelRow.getLong("languageSkillLevelId");
         
-        ZonedDateTime zdt = gradingDate.atZone(ZoneId.systemDefault());
-        Date date = Date.from(zdt.toInstant());
-        
-        if (languageSkillLevelId != null) {
-          StudentLanguageSkillLevel studentLanguageSkillLevel = studentLanguageSkillLevelDAO.findById(languageSkillLevelId);
-          if (studentLanguageSkillLevel != null) {
-            changed = true;
-            studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, skillType, date, skillLevel);
+        if (Boolean.TRUE.equals(skillLevelRow.getBoolean("edited"))) {
+          SpokenLanguageExamSkillLevel skillLevel = skillLevelRow.getEnum("skillLevel", SpokenLanguageExamSkillLevel.class);
+          LanguageSkillType skillType = skillLevelRow.getEnum("languageSkillType", LanguageSkillType.class);
+          Date gradingDate = skillLevelRow.getDate("gradingDate");
+          
+          if (languageSkillLevelId != null) { // Update
+            StudentLanguageSkillLevel studentLanguageSkillLevel = studentLanguageSkillLevelDAO.findById(languageSkillLevelId);
+            if (studentLanguageSkillLevel != null) {
+              changed = true;
+              
+              if (skillLevel == null || gradingDate == null) { // Delete
+                studentLanguageSkillLevelDAO.delete(studentLanguageSkillLevel);
+              } else {
+                studentLanguageSkillLevelDAO.update(studentLanguageSkillLevel, studentLanguageSkillLevel.getSkillType(), gradingDate, skillLevel);
+              }
+            }
+          } else { // Create
+            if (skillLevel != null && gradingDate != null && skillType != null) {
+              changed = true;
+              studentLanguageSkillLevelDAO.create(student, skillType, gradingDate, skillLevel);
+            }
           }
-        } 
-        else {
-          changed = true;
-          studentLanguageSkillLevelDAO.create(student, skillType, date, skillLevel);
         }
       }
     }
@@ -261,7 +275,9 @@ public class ManageSpokenLanguageExamsViewController extends PyramusFormViewCont
       koskiController.markForUpdate(student);
     }
     
-    requestContext.setRedirectURL(String.format("%s/grading/managespokenexams.page?studentId=%d", requestContext.getRequest().getContextPath(), studentId));
+    String fragment = isLukio ? "at-exams" : "at-languageSkillLevels";
+    
+    requestContext.setRedirectURL(String.format("%s/grading/managespokenexams.page?studentId=%d#%s", requestContext.getRequest().getContextPath(), studentId, fragment));
   }
 
   private boolean validate(Student student, Credit credit) {
