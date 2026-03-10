@@ -100,7 +100,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
-      if (StringUtils.equalsAny(applicationLine, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_NETTILUKIO_OV, ApplicationUtils.LINE_NETTIPK)) {
+      if (StringUtils.equalsAny(applicationLine, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_NETTIPK)) {
         AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
         if (AlternativeLine.PRIVATE == altLine) {
           fields.put("Opintojen tyyppi", "Yksityisopiskelu");
