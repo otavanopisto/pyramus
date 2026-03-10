@@ -20,7 +20,7 @@
     
   <c:choose>
     <c:when test="${param.includeHandlerLines eq 'true'}">
-      <div data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
+      <div data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
         <div class="field-row-flex">
           <div class="field-row-element">
             <input type="radio" id="field-nettilukio_alternativelines_private" name="field-nettilukio_alternativelines" value="PRIVATE"/>

@@ -348,6 +348,15 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-high-school-length"))) {
         fields.put("Aiempien lukio-opintojen kesto", getFormValue(formData, "field-high-school-length"));
       }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-matriculation-exams-nettilukioov"))) {
+        fields.put("Oletko suorittanut aiemmin yo-kokeita?", simpleBooleanUiValue(getFormValue(formData, "field-previous-matriculation-exams-nettilukioov")));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-matriculation-exams-nettilukioov-when"))) {
+        fields.put("Milloin olet viimeksi osallistunut yo-kokeisiin?", getFormValue(formData, "field-previous-matriculation-exams-nettilukioov-when"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-high-school-length-ov"))) {
+        fields.put("Aiempien lukio-opintojen kesto", getFormValue(formData, "field-high-school-length-ov"));
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school"))) {
         fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
       }

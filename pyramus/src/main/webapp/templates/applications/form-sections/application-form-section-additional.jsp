@@ -216,6 +216,26 @@
       <input id="field-high-school-length" type="text" name="field-high-school-length">
     </div>
 
+    <div class="form-section__field-container field-previous-matriculation-exams-nettilukioov dependent" data-dependent-field="field-previous-studies-nettilukioov" data-dependent-values="lukio-nyt,lukio-kesken" style="display:none;">
+      <label for="field-previous-matriculation-exams-nettilukioov" class="required">Oletko suorittanut aiemmin yo-kokeita?</label>
+      <select id="field-previous-matriculation-exams-nettilukioov" name="field-previous-matriculation-exams-nettilukioov" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+        <option value="">-- Valitse --</option>
+        <option value="kylla">Kyllä</option>
+        <option value="en">En</option>
+      </select>
+      <span class="field-help">Huomioi, että yo-kokeita koskevat tiedot eivät siirry automaattisesti koululta toiselle. Jos olet ilmoittautunut ylioppilaskokeisiin tai suorittanut jo joitain kokeita, ilmoita tästä jo hakuvaiheessa.</span>
+    </div>
+
+    <div class="form-section__field-container field-previous-matriculation-exams-nettilukioov-when dependent" data-dependent-field="field-previous-matriculation-exams-nettilukioov" data-dependent-values="kylla" style="display:none;">
+      <label for="field-previous-matriculation-exams-nettilukioov-when" class="required">Milloin olet viimeksi osallistunut yo-kokeisiin?</label>
+      <input id="field-previous-matriculation-exams-nettilukioov-when" type="text" name="field-previous-matriculation-exams-nettilukioov-when" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    </div>
+
+    <div class="form-section__field-container field-high-school-length-ov dependent" data-dependent-field="field-previous-studies-nettilukioov" data-dependent-values="lukio-nyt,lukio-kesken" style="display:none;">
+      <label for="field-high-school-length-ov">Aiempien lukio-opintojen kesto</label>
+      <input id="field-high-school-length-ov" type="text" name="field-high-school-length-ov">
+    </div>
+
     <div class="form-section__field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov,nettipk,aikuislukio" style="display:none;">
       <label for="field-other-school" class="required">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
       <select id="field-other-school" name="field-other-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">

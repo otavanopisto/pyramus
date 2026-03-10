@@ -676,7 +676,6 @@ public class ApplicationUtils {
       }
       return studyProgrammeDAO.findById(12L); // Aineopiskelu/perusopetus
     case LINE_NETTILUKIO:
-    case LINE_NETTILUKIO_OV:
       AlternativeLine nettilukioAlternative = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
       if (nettilukioAlternative == AlternativeLine.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
@@ -684,6 +683,8 @@ public class ApplicationUtils {
       else if (nettilukioAlternative == AlternativeLine.YO) {
         return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
       }
+      return studyProgrammeDAO.findById(6L); // Nettilukio
+    case LINE_NETTILUKIO_OV:
       return studyProgrammeDAO.findById(6L); // Nettilukio
     case LINE_NETTIPK:
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
