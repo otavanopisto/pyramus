@@ -285,7 +285,7 @@
 
     <div class="form-section__field-container field-job dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,aineopiskelupk,nettilukio,nettipk,aikuislukio,mk" style="display:none;">
       <label for="field-job" class="required">Olen tällä hetkellä</label>
-      <select id="field-job" name="field-job" data-parsley-required="true" data-dependencies="true">
+      <select id="field-job" name="field-job" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
         <option value="">-- Valitse --</option>
         <option value="tyollinen">Työllinen</option>
         <option value="tyoton">Työtön</option>
