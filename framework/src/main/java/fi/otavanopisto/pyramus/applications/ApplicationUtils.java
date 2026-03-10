@@ -730,8 +730,7 @@ public class ApplicationUtils {
     return referenceCode;
   }
   
-  public static byte[] generateStaffSignatureDocument(HttpServletRequest request, String applicant, String line,
-      StaffMember signer, boolean underageApplicant) throws Exception {
+  public static byte[] generateStaffSignatureDocument(HttpServletRequest request, String applicant, String line, StaffMember signer) throws Exception {
     try {
       StringBuilder baseUrl = new StringBuilder();
       baseUrl.append(request.getScheme());
@@ -757,9 +756,7 @@ public class ApplicationUtils {
       // Replace line specific welcome text
       // #1430: Differente template for underage applicants
 
-      String template = underageApplicant
-          ? "/templates/applications/document-acceptance-%s-underage.html"
-          : "/templates/applications/document-acceptance-%s.html";
+      String template = "/templates/applications/document-acceptance-%s.html";
       String welcomeText = IOUtils.toString(request.getServletContext().getResourceAsStream(String.format(template, line)), "UTF-8");
       document = StringUtils.replace(document, "[DOCUMENT-TEXT]", welcomeText);
 
