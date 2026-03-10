@@ -7,6 +7,8 @@
 
     <div class="application-line"></div>
 
+    <h2 class="form-section__header">Hakemuksen liitteet</h2>
+
     <div class="form-section__field-container field-nettilukioov-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettilukioov" style="display:none;">
       <p>
         Alaikäisen hakijan on hakuperusteen osoittamiseksi esitettävä <b>perusopetuksen päättötodistuksen</b> lisäksi seuraavat asiakirjat:
@@ -19,8 +21,6 @@
       </p>
     </div>
     
-    <h2 class="form-section__header">Hakemuksen liitteet</h2>
-
     <div class="form-section__field-container field-attachments">
       <div class="field-attachments__uploader">
         <div class="field-attachments__selector-container">
