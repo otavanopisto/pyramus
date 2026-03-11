@@ -298,6 +298,7 @@ public class MuikkuRESTService {
         // Huom! Tätä ehtoa ei noudateta, mikäli aineen koulutusaste on eri kuin
         // pohjana käytettävän opiskelijan, koska tällaiset suoritukset näytetään aina
 
+        boolean raisedGrade = false;
         StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
         if (courseAssessment.getSubject().getEducationType() == null ||
             !StringUtils.equals(courseAssessment.getSubject().getEducationType().getCode(), eduTypeCode)) {
@@ -323,6 +324,7 @@ public class MuikkuRESTService {
             if (exGrade < grade || (exGrade == grade && isEarlier(existingItem.getGradeDate(), courseAssessment.getDate()))) {
               itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
               items.remove(existingItem); // aiemmassa suorituksessa on matalampi arvosana (tai sama mutta se on vanhempi); unohda se
+              raisedGrade = exGrade < grade;
             }
             else {
               continue; //  aiemmassa suorituksessa on korkeampi arvosana (tai sama mutta se on uudempi); unohda tämä
@@ -331,6 +333,7 @@ public class MuikkuRESTService {
         }
 
         StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+        item.setRaisedGrade(raisedGrade);
         item.setStudyProgramme(student.getStudyProgramme().getName());
         assessmentRequestStateCheck(item, student);
         items.add(item);
@@ -361,6 +364,9 @@ public class MuikkuRESTService {
 
         for (CourseModule courseModule : course.getCourseModules()) {
 
+          // 10.3.2026 sovitun mukaisesti kaikki meneillään olevat kurssit palautetaan, vaikka olisi jo arvosana alla
+          
+          /*
           // Jos kurssista on jo suoritus niin älä lisää toistamiseen (pl. kurssit, joiden aineen
           // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
 
@@ -375,15 +381,13 @@ public class MuikkuRESTService {
           if (!validSubject && items.stream().filter(s -> course.getId().equals(s.getCourseId())).count() > 0) {
             continue;
           }
+          */
 
           StudyActivityItemRestModel item = new StudyActivityItemRestModel();
           item.setStudyProgramme(student.getStudyProgramme().getName());
           item.setCourseId(course.getId());
-          String courseName = course.getName();
-          if (!StringUtils.isEmpty(course.getNameExtension())) {
-            courseName = String.format("%s (%s)", courseName, course.getNameExtension());
-          }
-          item.setCourseName(courseName);
+          item.setCourseName(course.getName());
+          item.setCourseNameExtension(course.getNameExtension());
           if (courseModule.getCourse().getCurriculums() != null) {
             item.setCurriculums(courseModule.getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
           }
@@ -1193,11 +1197,8 @@ public class MuikkuRESTService {
     Course course = courseAssessment.getCourseStudent().getCourse();
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseId(course.getId());
-    String courseName = course.getName();
-    if (!StringUtils.isEmpty(course.getNameExtension())) {
-      courseName = String.format("%s (%s)", courseName, course.getNameExtension());
-    }
-    item.setCourseName(courseName);
+    item.setCourseName(course.getName());
+    item.setCourseNameExtension(course.getNameExtension());
     if (courseAssessment.getCourseModule().getCourse().getCurriculums() != null) {
       item.setCurriculums(courseAssessment.getCourseModule().getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
     }
