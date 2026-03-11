@@ -395,7 +395,7 @@ public class MuikkuRESTService {
           for (StudyActivityItemRestModel item : items) {
             if (item.getCourseId() != null && item.getCourseId().equals(course.getId())) {
               if (StringUtils.equals(courseModule.getSubject().getCode(), item.getSubject())) {
-                if (courseModule.getCourseNumber().equals(item.getCourseNumber())) {
+                if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber().equals(item.getCourseNumber())) {
                   continue;
                 }
               }
