@@ -347,6 +347,13 @@ public class MuikkuRESTService {
         courseStudents.removeIf(cs -> !cs.getCourse().getId().equals(courseId));
       }
       for (CourseStudent courseStudent : courseStudents) {
+        
+        // Skippaa keskeytyneet kurssit
+        
+        if (courseStudent.getParticipationType() != null && StringUtils.equals(courseStudent.getParticipationType().getName(), PyramusConsts.PARTICIPATION_CANCELLED)) {
+          continue;
+        }
+        
         Course course = courseStudent.getCourse();
 
         // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia 
