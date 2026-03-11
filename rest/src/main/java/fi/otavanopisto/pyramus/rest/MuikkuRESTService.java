@@ -392,14 +392,19 @@ public class MuikkuRESTService {
           
           // Skippaa meneillään olevat kurssimoduulit, joista on jo arvosana
           
+          boolean duplicate = false;
           for (StudyActivityItemRestModel item : items) {
             if (item.getCourseId() != null && item.getCourseId().equals(course.getId())) {
               if (StringUtils.equals(courseModule.getSubject().getCode(), item.getSubject())) {
                 if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber().equals(item.getCourseNumber())) {
-                  continue;
+                  duplicate = true;
+                  break;
                 }
               }
             }
+          }
+          if (duplicate) {
+            continue;
           }
           
           StudyActivityItemRestModel item = new StudyActivityItemRestModel();
