@@ -356,12 +356,6 @@ public class MuikkuRESTService {
         
         Course course = courseStudent.getCourse();
 
-        // Skippaa kurssit, joista on jo arvosana
-        
-        if (items.stream().filter(i -> i.getCourseId() != null && i.getCourseId().equals(course.getId())).findFirst().orElse(null) != null) {
-          continue;
-        }
-
         // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia 
 
         Set<Curriculum> curriculums = courseStudent.getCourse().getCurriculums();
@@ -395,7 +389,19 @@ public class MuikkuRESTService {
             continue;
           }
           */
-
+          
+          // Skippaa meneillään olevat kurssimoduulit, joista on jo arvosana
+          
+          for (StudyActivityItemRestModel item : items) {
+            if (item.getCourseId() != null && item.getCourseId().equals(course.getId())) {
+              if (StringUtils.equals(courseModule.getSubject().getCode(), item.getSubject())) {
+                if (courseModule.getCourseNumber().equals(item.getCourseNumber())) {
+                  continue;
+                }
+              }
+            }
+          }
+          
           StudyActivityItemRestModel item = new StudyActivityItemRestModel();
           item.setStudyProgramme(student.getStudyProgramme().getName());
           item.setCourseId(course.getId());
