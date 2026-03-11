@@ -358,8 +358,7 @@ public class MuikkuRESTService {
 
         // Skippaa kurssit, joista on jo arvosana
         
-        boolean graded = items.stream().filter(i -> i.getCourseId() != null && i.getCourseId().equals(course.getId())).findFirst().orElse(null) != null;
-        if (graded) {
+        if (items.stream().filter(i -> i.getCourseId() != null && i.getCourseId().equals(course.getId())).findFirst().orElse(null) != null) {
           continue;
         }
 
