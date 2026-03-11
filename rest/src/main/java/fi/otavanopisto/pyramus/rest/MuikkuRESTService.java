@@ -396,7 +396,7 @@ public class MuikkuRESTService {
           for (StudyActivityItemRestModel item : items) {
             if (item.getCourseId() != null && item.getCourseId().equals(course.getId())) {
               if (StringUtils.equals(courseModule.getSubject().getCode(), item.getSubject())) {
-                if (courseModule.getCourseNumber() != null && courseModule.getCourseNumber().equals(item.getCourseNumber())) {
+                if (equals(courseModule.getCourseNumber(), item.getCourseNumber())) {
                   duplicate = true;
                   break;
                 }
@@ -1334,6 +1334,10 @@ public class MuikkuRESTService {
     List<Student> students = studentController.listStudenstByPerson(student.getPerson());
     students.sort(Comparator.comparing(Student::getId).reversed());
     return students.stream().filter(s -> StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)).findFirst().orElse(null);
+  }
+  
+  private boolean equals(Integer i1, Integer i2) {
+    return  i1 == null && i2 == null ? true : i1 == null ? false : i1.equals(i2);
   }
 
 }
