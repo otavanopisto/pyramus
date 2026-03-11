@@ -356,6 +356,13 @@ public class MuikkuRESTService {
         
         Course course = courseStudent.getCourse();
 
+        // Skippaa kurssit, joista on jo arvosana
+        
+        boolean graded = items.stream().filter(i -> i.getCourseId() != null && i.getCourseId().equals(course.getId())).findFirst().orElse(null) != null;
+        if (graded) {
+          continue;
+        }
+
         // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia 
 
         Set<Curriculum> curriculums = courseStudent.getCourse().getCurriculums();
