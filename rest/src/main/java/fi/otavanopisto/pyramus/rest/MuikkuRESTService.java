@@ -434,22 +434,27 @@ public class MuikkuRESTService {
     }
     
     // Opintopisteiden laskenta; on saatu läpäisevä arvosana ja kurssin tai hyväksiluvun pituus on tiedossa
+    // Suoritettujen kurssien laskenta; yhdistelmäopintokurssit nyt sit lasketaan useammaksi kuin yhdeksi
     
+    int completedCourses = 0;
+    int mandatoryCourses = 0;
     int completedCourseCredits = 0;
     int mandatoryCourseCredits = 0;
     for (StudyActivityItemRestModel item : items) {
       if (item.getGrade() != null && item.isPassing() && item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
+        completedCourses++;
         completedCourseCredits += item.getLength();
         if (item.getMandatority() == Mandatority.MANDATORY) {
+          mandatoryCourses++;
           mandatoryCourseCredits += item.getLength();
         }
       }
     }
     
-    // TODO Suoritettujen kurssien laskenta
-    
     activity.setEducationTypeCode(eduTypeCode);
     activity.setItems(items);
+    activity.setCompletedCourses(completedCourses);
+    activity.setMandatoryCourses(mandatoryCourses);
     activity.setCompletedCourseCredits(completedCourseCredits);
     activity.setMandatoryCourseCredits(mandatoryCourseCredits);
 
