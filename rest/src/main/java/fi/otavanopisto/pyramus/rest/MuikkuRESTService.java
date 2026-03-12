@@ -446,6 +446,8 @@ public class MuikkuRESTService {
       }
     }
     
+    // TODO Suoritettujen kurssien laskenta
+    
     activity.setEducationTypeCode(eduTypeCode);
     activity.setItems(items);
     activity.setCompletedCourseCredits(completedCourseCredits);
