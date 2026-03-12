@@ -441,12 +441,16 @@ public class MuikkuRESTService {
     int completedCourseCredits = 0;
     int mandatoryCourseCredits = 0;
     for (StudyActivityItemRestModel item : items) {
-      if (item.getGrade() != null && item.isPassing() && item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
+      if (item.getGrade() != null && item.isPassing()) {
         completedCourses++;
-        completedCourseCredits += item.getLength();
+        if (item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
+          completedCourseCredits += item.getLength();
+          if (item.getMandatority() == Mandatority.MANDATORY) {
+            mandatoryCourseCredits += item.getLength();
+          }
+        }
         if (item.getMandatority() == Mandatority.MANDATORY) {
           mandatoryCourses++;
-          mandatoryCourseCredits += item.getLength();
         }
       }
     }
