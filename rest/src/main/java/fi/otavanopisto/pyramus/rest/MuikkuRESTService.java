@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -83,6 +84,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.hops.HopsController;
@@ -434,23 +436,33 @@ public class MuikkuRESTService {
     }
     
     // Opintopisteiden laskenta; on saatu läpäisevä arvosana ja kurssin tai hyväksiluvun pituus on tiedossa
-    // Suoritettujen kurssien laskenta; yhdistelmäopintokurssit nyt sit lasketaan useammaksi kuin yhdeksi
+    // Suoritettujen kurssien laskenta; yhdistelmäopintokurssit lasketaan useammaksi kuin yhdeksi
+    // Opintopisteiden laskennassa skippaa kurssit, jotka eivät ole opiskelijan ainevalintoja
     
     int completedCourses = 0;
     int mandatoryCourses = 0;
     int completedCourseCredits = 0;
     int mandatoryCourseCredits = 0;
+    Set<String> studentChoices = StringUtils.equals(educationTypeCode, PyramusConsts.EDUCATION_TYPE_LUKIO) ? listSubjectChoices(baseStudent) : null;
     for (StudyActivityItemRestModel item : items) {
       if (item.getGrade() != null && item.isPassing()) {
         completedCourses++;
-        if (item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
-          completedCourseCredits += item.getLength();
-          if (item.getMandatority() == Mandatority.MANDATORY) {
-            mandatoryCourseCredits += item.getLength();
-          }
-        }
         if (item.getMandatority() == Mandatority.MANDATORY) {
           mandatoryCourses++;
+        }
+        if (item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
+          boolean countCredit = true;
+          if (studentChoices != null) {
+            // Laske opintopisteisiin jos aine ei ole ainevalinta-aine tai on opiskelijan valitsema ainevalinta-aine 
+            countCredit = !PyramusConsts.CHOICE_SUBJECTS.contains(item.getSubject()) ||
+                (PyramusConsts.CHOICE_SUBJECTS.contains(item.getSubject()) && studentChoices.contains(item.getSubject()));
+          }
+          if (countCredit) {
+            completedCourseCredits += item.getLength();
+            if (item.getMandatority() == Mandatority.MANDATORY) {
+              mandatoryCourseCredits += item.getLength();
+            }
+          }
         }
       }
     }
@@ -463,6 +475,45 @@ public class MuikkuRESTService {
     activity.setMandatoryCourseCredits(mandatoryCourseCredits);
 
     return Response.ok(activity).build();
+  }
+  
+  private Set<String> listSubjectChoices(Student student) {
+    Set<String> variableList = new HashSet<>();
+    List<UserVariable> variables = userController.listUserVariablesByUser(student);
+    for (UserVariable variable : variables) {
+      String variableKey = variable.getKey().getVariableKey();
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI)) {
+        variableList.add(variable.getValue());
+      }
+      else {
+        variableList.add("ÄI"); // default native language subject
+      }
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_A)) {
+        variableList.add(variable.getValue());
+      }
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA)) {
+        variableList.add(variable.getValue());
+      }
+      else {
+        variableList.add("MAB"); // default math subject
+      }
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_USKONTO)) {
+        variableList.add(variable.getValue());
+      }
+      else {
+        variableList.add("UE"); // default religion subject
+      }
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B1)) {
+        variableList.add(variable.getValue());
+      }
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B2)) {
+        variableList.add(variable.getValue());
+      }
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B3)) {
+        variableList.add(variable.getValue());
+      }
+    }
+    return variableList;
   }
   
   private boolean isEarlier(Date d1, Date d2) {

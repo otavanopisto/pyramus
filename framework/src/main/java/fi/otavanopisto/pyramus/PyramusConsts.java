@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus;
 
+import java.util.Set;
+
 public class PyramusConsts {
 
   // Education type code for study programmes categorized under high school studies
@@ -28,6 +30,18 @@ public class PyramusConsts {
   
   // Course participation types
   public static final String PARTICIPATION_CANCELLED = "Keskeyttänyt";
+  
+  // Student's subject choices
+  public static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA = "lukioMatematiikka";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_A = "lukioKieliA";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B1 = "lukioKieliB1";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B2 = "lukioKieliB2";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B3 = "lukioKieliB3";
+  
+  // Subject choices
+  public static final Set<String> CHOICE_SUBJECTS = Set.of("MAA", "MAB", "ÄI", "S2", "UE", "UO", "UI", "UK", "UJ", "UX", "ET");
   
   public static final String NOREPLY_EMAIL = "no-reply@muikkuverkko.fi";
   
