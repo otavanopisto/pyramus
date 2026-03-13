@@ -478,42 +478,48 @@ public class MuikkuRESTService {
   }
   
   private Set<String> listSubjectChoices(Student student) {
-    Set<String> variableList = new HashSet<>();
+    Set<String> variableSet = new HashSet<>();
     List<UserVariable> variables = userController.listUserVariablesByUser(student);
+    boolean hasNativeLanguage = false;
+    boolean hasMath = false;
+    boolean hasReligion = false;
     for (UserVariable variable : variables) {
       String variableKey = variable.getKey().getVariableKey();
       if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI)) {
-        variableList.add(variable.getValue());
+        hasNativeLanguage = true;
+        variableSet.add(variable.getValue());
       }
-      else {
-        variableList.add("ÄI"); // default native language subject
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_A)) {
+        variableSet.add(variable.getValue());
       }
-      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_A)) {
-        variableList.add(variable.getValue());
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA)) {
+        hasMath = true;
+        variableSet.add(variable.getValue());
       }
-      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA)) {
-        variableList.add(variable.getValue());
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_USKONTO)) {
+        hasReligion = true;
+        variableSet.add(variable.getValue());
       }
-      else {
-        variableList.add("MAB"); // default math subject
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B1)) {
+        variableSet.add(variable.getValue());
       }
-      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_USKONTO)) {
-        variableList.add(variable.getValue());
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B2)) {
+        variableSet.add(variable.getValue());
       }
-      else {
-        variableList.add("UE"); // default religion subject
-      }
-      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B1)) {
-        variableList.add(variable.getValue());
-      }
-      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B2)) {
-        variableList.add(variable.getValue());
-      }
-      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B3)) {
-        variableList.add(variable.getValue());
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B3)) {
+        variableSet.add(variable.getValue());
       }
     }
-    return variableList;
+    if (!hasNativeLanguage) {
+      variableSet.add("ÄI"); // default native language subject
+    }
+    if (!hasMath) {
+      variableSet.add("MAB"); // default math subject
+    }
+    if (!hasReligion) {
+      variableSet.add("UE"); // default religion subject
+    }
+    return variableSet;
   }
   
   private boolean isEarlier(Date d1, Date d2) {
