@@ -250,7 +250,7 @@ public class MuikkuRESTService {
     
     List<Student> students = new ArrayList<>();
     if (courseId == null) {
-      students = studentController.listStudenstByPerson(baseStudent.getPerson());
+      students = studentController.listStudentsByPerson(baseStudent.getPerson());
       students.removeIf(s -> !StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), eduTypeCode));
       students.sort(Comparator.comparing(Student::getId));
     }
@@ -270,6 +270,7 @@ public class MuikkuRESTService {
             baseStudent.getCurriculum() != null &&
             !tc.getCurriculum().getId().equals(baseStudent.getCurriculum().getId()));
         for (TransferCredit transferCredit : transferCredits) {
+          // TÄHÄN!!
           StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
           item.setStudyProgramme(student.getStudyProgramme().getName());
           items.add(item);
@@ -1399,7 +1400,7 @@ public class MuikkuRESTService {
     if (StringUtils.equals(student.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)) {
       return student;
     }
-    List<Student> students = studentController.listStudenstByPerson(student.getPerson());
+    List<Student> students = studentController.listStudentsByPerson(student.getPerson());
     students.sort(Comparator.comparing(Student::getId).reversed());
     return students.stream().filter(s -> StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)).findFirst().orElse(null);
   }

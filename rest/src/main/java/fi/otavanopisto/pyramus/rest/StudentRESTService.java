@@ -2637,7 +2637,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     Set<String> educationTypes = new HashSet<>();
-    List<Student> students = studentController.listStudenstByPerson(student.getPerson());
+    List<Student> students = studentController.listStudentsByPerson(student.getPerson());
     for (Student s : students) {
       educationTypes.add(s.getStudyProgramme().getCategory().getEducationType().getCode());
     }
