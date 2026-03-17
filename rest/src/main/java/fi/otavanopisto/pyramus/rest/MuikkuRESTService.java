@@ -267,14 +267,20 @@ public class MuikkuRESTService {
     HopsCourseMatrix courseMatrix = null;
     try {
       ObjectMapper mapper = new ObjectMapper();
-      String jsonSrc = StringUtils.equals(eduTypeCode, PyramusConsts.EDUCATION_TYPE_LUKIO)
-          ? "fi/otavanopisto/pyramus/tor/curriculum_2021.json"
-          : "fi/otavanopisto/pyramus/tor/curriculum_2018.json";
-      InputStream json = HopsController.class.getClassLoader().getResourceAsStream(jsonSrc);
-      courseMatrix = mapper.readValue(json, HopsCourseMatrix.class);
+      if (StringUtils.equals(eduTypeCode, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+        InputStream json = HopsController.class.getClassLoader().getResourceAsStream("fi/otavanopisto/pyramus/tor/curriculum_2021.json");
+        courseMatrix = mapper.readValue(json, HopsCourseMatrix.class);
+      }
+      else if (StringUtils.equals(eduTypeCode, PyramusConsts.EDUCATION_TYPE_PK)) {
+        InputStream json = HopsController.class.getClassLoader().getResourceAsStream("fi/otavanopisto/pyramus/tor/curriculum_2018.json");
+        courseMatrix = mapper.readValue(json, HopsCourseMatrix.class);
+      }
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error parsing OPS", e);
+    }
+    if (courseMatrix == null) {
+      courseMatrix = new HopsCourseMatrix();
     }
     
     // Käydään välilehdet läpi
@@ -1357,9 +1363,6 @@ public class MuikkuRESTService {
     }
     if (transferCredit.getOptionality() == CourseOptionality.MANDATORY) {
       item.setMandatority(Mandatority.MANDATORY);
-    }
-    else if (courseMatrix == null) {
-      item.setMandatority(Mandatority.UNSPECIFIED_OPTIONAL);
     }
     else {
       item.setMandatority(
