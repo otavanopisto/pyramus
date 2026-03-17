@@ -29,14 +29,6 @@ public class HopsCourseMatrixModule {
     this.length = length;
   }
 
-  public boolean isMandatory() {
-    return mandatory;
-  }
-
-  public void setMandatory(boolean mandatory) {
-    this.mandatory = mandatory;
-  }
-
   public boolean isHiddenFromHops() {
     return hiddenFromHops;
   }
@@ -53,10 +45,18 @@ public class HopsCourseMatrixModule {
     this.available = available;
   }
 
+  public Mandatority getMandatority() {
+    return mandatority;
+  }
+
+  public void setMandatority(Mandatority mandatority) {
+    this.mandatority = mandatority;
+  }
+
   private String name;
   private int courseNumber;
   private int length;
-  private boolean mandatory;
+  private Mandatority mandatority;
   private boolean hiddenFromHops;
   private boolean available;
 

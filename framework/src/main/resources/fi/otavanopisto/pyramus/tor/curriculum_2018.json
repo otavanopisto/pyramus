@@ -10,66 +10,66 @@
           "name": "Suomen kielen ja kirjallisuuden perusteet",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Monimuotoiset tekstit",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Tekstien tuottaminen ja tulkitseminen",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kieli ja kulttuuri",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Puhe- ja vuorovaikutustaidot",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Median maailma",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kauno- ja tietokirjallisuuden lukeminen",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tekstien tulkinta",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tekstien tuottaminen",
           "courseNumber": 9,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Nykykulttuurin ilmiöitä ja kirjallisuutta",
           "courseNumber": 10,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -82,87 +82,87 @@
           "name": "Opiskelutaitojen vahvistaminen",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Luonnontieteen tekstit tutummiksi",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Yhteiskunnallisten aineiden tekstit tutummiksi",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Median tekstejä ja kuvia",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Tiedonhankintataitojen syventäminen",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Uutistekstit",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Mielipiteen ilmaiseminen ja perusteleminen",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kaunokirjalliset tekstit tutuiksi",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kulttuurinen moninaisuus - moninainen kulttuuri",
           "courseNumber": 9,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Ajankohtaiset ilmiöt Suomessa ja maailmassa",
           "courseNumber": 10,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Suomea verkossa",
           "courseNumber": 11,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Opitun vahvistaminen ja suullinen kielitaito",
           "courseNumber": 12,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Suomen kielen perusteiden varmentaminen",
           "courseNumber": 14,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -175,61 +175,61 @@
           "name": "Kielitaidon alkeet: Lähtökohtia ruotsin opiskelulle",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kielitaidon alkeet: Perusviestintää arkipäivän sosiaalisissa tilanteissa",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kielitaidon alkeet: Vuorovaikutus asiointitilanteissa",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kielitaidon alkeet: Selviytyminen muodollisemmista tilanteista ",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kielitaidon alkeet: Palvelu- ja viranomaistilanteet",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kielitaidon alkeet: Ajankohtaiset ilmiöt",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Miksi Suomessa puhutaan ruotsia?",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kehittyvä kielitaito: Avaimet elinikäiseen kieltenopiskeluun",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Työkaluja ruotsin opiskeluun",
           "courseNumber": 9,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -242,77 +242,77 @@
           "name": "Kehittyvä kielitaito: Työelämässä toimiminen ja muita muodollisia tilanteita",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Palvelu- ja viranomaistilanteet ja osallistuva kansalainen",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Kertomuksia minusta ja ympäristöstäni",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kehittyvä kielitaito: Ajankohtaiset ilmiöt",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kulttuurikohtaamisia",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Globaalienglanti",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Liikkuvuus ja kansainvälisyys",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Avaimet elinikäiseen kieltenopiskeluun",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Peruskoulun niveltävä kurssi 1",
           "courseNumber": 9,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Peruskoulun niveltävä kurssi 2",
           "courseNumber": 10,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Suullisen kielitaidon kurssi",
           "courseNumber": 11,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -396,63 +396,63 @@
           "name": "Luvut ja laskutoimitukset I",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Luvut ja laskutoimitukset II",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Lausekkeet",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Yhtälöt",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Geometria",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Prosentit",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Funktiot ja tilastot",
           "courseNumber": 7,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Geometria ja trigonometria",
           "courseNumber": 8,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Lausekkeita ja yhtälöitä",
           "courseNumber": 9,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -465,14 +465,14 @@
           "name": "Uskonnot maailmassa",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Valinnainen",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -485,7 +485,7 @@
           "name": "Uskonnot maailmassa",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatority": "MANDATORY"
         }
       ]
     },
@@ -498,7 +498,7 @@
           "name": "Uskonnot maailmassa",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true
+          "mandatority": "MANDATORY"
         }
       ]
     },
@@ -511,7 +511,7 @@
           "name": "Katsomukset ja ihmisoikeudet",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         }
       ]
@@ -524,20 +524,20 @@
           "name": "Suomen historian käännekohdat",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Teollisuusyhteiskunnan synnystä nykyaikaan",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Antiikista uuden ajan murrokseen",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -549,14 +549,14 @@
           "name": "Yhteiskuntajärjestelmä sekä julkiset palvelut",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Työelämän tuntemus ja oma talous",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         }
       ]
@@ -569,20 +569,20 @@
           "name": "Fysiikka omassa elämässä ja elinympäristössä",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Fysiikka maailmankuvan rakentajana",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Fysiikka yhteiskunnassa",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -594,20 +594,20 @@
           "name": "Kemia omassa elämässä ja elinympäristössä",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kemia maailmankuvan rakentajana",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kemia yhteiskunnassa",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -619,21 +619,21 @@
           "name": "Mitä elämä on?",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Kaupunkiekologia ja kestävä tulevaisuus",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Ihminen",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -646,28 +646,28 @@
           "name": "Muuttuva maapallo ja kestävä tulevaisuus",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Elämän perusedellytykset maapallolla",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Ihmiset ja kulttuurit maapallolla",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
           "name": "Kestävä elämäntapa ja luonnonvarojen kestävä käyttö",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -679,7 +679,7 @@
           "name": "Terve elämä",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         }
       ]
@@ -692,39 +692,39 @@
           "name": "Jatko-opinnot ja ammatinvalinta",
           "courseNumber": 1,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Työelämäosaaminen",
           "courseNumber": 2,
           "length": 28,
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
           "name": "Minä oppijana",
           "courseNumber": 3,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Elämäntaitokurssi",
           "courseNumber": 4,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tutorkurssi",
           "courseNumber": 5,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Työelämäosaaminen II",
           "courseNumber": 6,
           "length": 28,
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },

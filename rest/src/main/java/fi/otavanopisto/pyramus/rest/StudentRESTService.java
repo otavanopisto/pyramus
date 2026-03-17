@@ -2638,8 +2638,12 @@ public class StudentRESTService extends AbstractRESTService {
     
     Set<String> educationTypes = new HashSet<>();
     List<Student> students = studentController.listStudentsByPerson(student.getPerson());
+    String educationTypeCode;
     for (Student s : students) {
-      educationTypes.add(s.getStudyProgramme().getCategory().getEducationType().getCode());
+      educationTypeCode = s.getEducationTypeCode();
+      if (educationTypeCode != null) {
+        educationTypes.add(educationTypeCode);
+      }
     }
 
     return Response.ok(educationTypes).build();

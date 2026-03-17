@@ -283,7 +283,7 @@ public class HopsController {
               transferCredit.getCourseNumber(),
               transferCredit.getCourseName(),
               transferCredit.getCourseLength().getUnits().intValue(),
-              transferCredit.getOptionality() == CourseOptionality.MANDATORY);
+              transferCredit.getOptionality() == CourseOptionality.MANDATORY ? Mandatority.MANDATORY : Mandatority.UNSPECIFIED_OPTIONAL);
         }
         for (CourseAssessment assessment : applicableAssessments) {
           matrix.ensureSubjectCourseNumberPairExists(
@@ -291,7 +291,7 @@ public class HopsController {
               assessment.getCourseModule().getCourseNumber(),
               assessment.getCourseModule().getCourse().getName(),
               assessment.getCourseModule().getCourseLength().getUnits().intValue(),
-              false); // Jos kurssi ei alunperin edes ollut opetussuunnitelmassa, ei se pakollinenkaan voi olla
+              Mandatority.UNSPECIFIED_OPTIONAL); // Jos kurssi ei alunperin edes ollut opetussuunnitelmassa, ei se pakollinenkaan voi olla
         }
 
         // Poista aineen modulit, joita ei haluta näyttää ja joista ei ole suorituksia

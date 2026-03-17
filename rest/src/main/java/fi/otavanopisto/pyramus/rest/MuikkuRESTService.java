@@ -88,6 +88,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.hops.HopsController;
+import fi.otavanopisto.pyramus.hops.HopsCourseMatrix;
+import fi.otavanopisto.pyramus.hops.Mandatority;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -102,7 +104,6 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
-import fi.otavanopisto.pyramus.rest.model.hops.Mandatority;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemRestModel;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemState;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityRestModel;
@@ -198,7 +199,7 @@ public class MuikkuRESTService {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
-    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? student.getStudyProgramme().getCategory().getEducationType().getCode() : educationTypeCode;
+    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? student.getEducationTypeCode() : educationTypeCode;
     
     // Adjust student based on requested education type code
     
@@ -231,7 +232,7 @@ public class MuikkuRESTService {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
-    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? initialStudent.getStudyProgramme().getCategory().getEducationType().getCode() : educationTypeCode;
+    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? initialStudent.getEducationTypeCode() : educationTypeCode;
     
     // Adjust student based on requested education type code
     
@@ -251,12 +252,18 @@ public class MuikkuRESTService {
     List<Student> students = new ArrayList<>();
     if (courseId == null) {
       students = studentController.listStudentsByPerson(baseStudent.getPerson());
-      students.removeIf(s -> !StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), eduTypeCode));
+      students.removeIf(s -> !StringUtils.equals(s.getEducationTypeCode(), eduTypeCode));
       students.sort(Comparator.comparing(Student::getId));
     }
     else {
       students = Arrays.asList(baseStudent);
     }
+
+    // TODO Refaktoroi tämä niin, että kaikkien studentien hyväksiluvut ja suoritukset kerätään ensin listoiksi
+    // ja kurssimatriisi luodaan niihin tukeutuen. Nyt sekä tämä metodi että getCourseMatrix keräävät niitä,
+    // joten suorituskyky ottaa osumaa. Lisäksi courseMatrix osaksi tämän paluudataa
+    
+    HopsCourseMatrix courseMatrix = hopsController.getCourseMatrix(baseStudent);
     
     // Käydään välilehdet läpi
     
@@ -270,8 +277,7 @@ public class MuikkuRESTService {
             baseStudent.getCurriculum() != null &&
             !tc.getCurriculum().getId().equals(baseStudent.getCurriculum().getId()));
         for (TransferCredit transferCredit : transferCredits) {
-          // TÄHÄN!!
-          StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
+          StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit, courseMatrix);
           item.setStudyProgramme(student.getStudyProgramme().getName());
           items.add(item);
           itemCache.put(item.getSubject() + item.getCourseNumber(), item);
@@ -1317,7 +1323,7 @@ public class MuikkuRESTService {
     return item;
   }
 
-  private StudyActivityItemRestModel getTransferCreditActivityItem(TransferCredit transferCredit) {
+  private StudyActivityItemRestModel getTransferCreditActivityItem(TransferCredit transferCredit, HopsCourseMatrix courseMatrix) {
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseName(transferCredit.getCourseName());
     if (transferCredit.getCurriculum() != null) {
@@ -1337,7 +1343,15 @@ public class MuikkuRESTService {
       item.setLength(transferCredit.getCourseLength().getUnits().intValue());
       item.setLengthSymbol(transferCredit.getCourseLength().getUnit().getSymbol());
     }
-    item.setMandatority(transferCredit.getOptionality() == CourseOptionality.MANDATORY ? Mandatority.MANDATORY : Mandatority.UNSPECIFIED_OPTIONAL);
+    if (transferCredit.getOptionality() == CourseOptionality.MANDATORY) {
+      item.setMandatority(Mandatority.MANDATORY);
+    }
+    else {
+      item.setMandatority(
+          courseMatrix.getMandatority(transferCredit.getSubject().getCode(),
+          transferCredit.getCourseNumber() == null ? 0 : transferCredit.getCourseNumber())
+      );
+    }
     item.setState(StudyActivityItemState.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
     item.setSubjectName(transferCredit.getSubject().getName());
@@ -1397,12 +1411,12 @@ public class MuikkuRESTService {
    * @return A student that belongs to the same person with the requested education type
    */
   private Student adjustStudent(Student student, String educationTypeCode) {
-    if (StringUtils.equals(student.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)) {
+    if (StringUtils.equals(student.getEducationTypeCode(), educationTypeCode)) {
       return student;
     }
     List<Student> students = studentController.listStudentsByPerson(student.getPerson());
     students.sort(Comparator.comparing(Student::getId).reversed());
-    return students.stream().filter(s -> StringUtils.equals(s.getStudyProgramme().getCategory().getEducationType().getCode(), educationTypeCode)).findFirst().orElse(null);
+    return students.stream().filter(s -> StringUtils.equals(s.getEducationTypeCode(), educationTypeCode)).findFirst().orElse(null);
   }
   
   private boolean equals(Integer i1, Integer i2) {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.otavanopisto.pyramus.hops.Mandatority;
+
 public class StudyActivityItemRestModel {
 
   public String getSubject() {
