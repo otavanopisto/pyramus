@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +46,8 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -259,11 +262,20 @@ public class MuikkuRESTService {
       students = Arrays.asList(baseStudent);
     }
 
-    // TODO Refaktoroi tämä niin, että kaikkien studentien hyväksiluvut ja suoritukset kerätään ensin listoiksi
-    // ja kurssimatriisi luodaan niihin tukeutuen. Nyt sekä tämä metodi että getCourseMatrix keräävät niitä,
-    // joten suorituskyky ottaa osumaa. Lisäksi courseMatrix osaksi tämän paluudataa
+    // Virallinen OPS, josta voidaan päätellä valinnaisten hyväksilukujen tarkempi valinnaisuus
     
-    HopsCourseMatrix courseMatrix = hopsController.getCourseMatrix(baseStudent);
+    HopsCourseMatrix courseMatrix = null;
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String jsonSrc = StringUtils.equals(eduTypeCode, PyramusConsts.EDUCATION_TYPE_LUKIO)
+          ? "fi/otavanopisto/pyramus/tor/curriculum_2021.json"
+          : "fi/otavanopisto/pyramus/tor/curriculum_2018.json";
+      InputStream json = HopsController.class.getClassLoader().getResourceAsStream(jsonSrc);
+      courseMatrix = mapper.readValue(json, HopsCourseMatrix.class);
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Error parsing OPS", e);
+    }
     
     // Käydään välilehdet läpi
     
@@ -1345,6 +1357,9 @@ public class MuikkuRESTService {
     }
     if (transferCredit.getOptionality() == CourseOptionality.MANDATORY) {
       item.setMandatority(Mandatority.MANDATORY);
+    }
+    else if (courseMatrix == null) {
+      item.setMandatority(Mandatority.UNSPECIFIED_OPTIONAL);
     }
     else {
       item.setMandatority(
