@@ -27,6 +27,9 @@ public class StaffMemberProperties {
   public static final EntityProperty APPLICATIONS_NETTILUKIO = new EntityProperty("applicationsNettilukio",
       VariableType.BOOLEAN, "staffMemberProperties.applicationsNettilukio");
 
+  public static final EntityProperty APPLICATIONS_NETTILUKIO_OV = new EntityProperty("applicationsNettilukioOv",
+      VariableType.BOOLEAN, "staffMemberProperties.applicationsNettilukioOv");
+
   public static final EntityProperty APPLICATIONS_NETTIPERUSKOULU = new EntityProperty("applicationsNettiperuskoulu",
       VariableType.BOOLEAN, "staffMemberProperties.applicationsNettiperuskoulu");
 
@@ -41,7 +44,7 @@ public class StaffMemberProperties {
 
   public static List<EntityProperty> listProperties() {
     return Arrays.asList(STUDY_APPROVER, WORKLIST_APPROVER, REPORT_SIGNATORY, APPLICATIONS_AINEOPISKELU, APPLICATIONS_AINEOPISKELU_PK, APPLICATIONS_NETTILUKIO,
-        APPLICATIONS_NETTIPERUSKOULU, APPLICATIONS_AIKUISLUKIO, APPLICATIONS_AIKUISTENPERUSOPETUS, SPEC_ED_TEACHER);
+        APPLICATIONS_NETTILUKIO_OV, APPLICATIONS_NETTIPERUSKOULU, APPLICATIONS_AIKUISLUKIO, APPLICATIONS_AIKUISTENPERUSOPETUS, SPEC_ED_TEACHER);
   }
   
   public static boolean isProperty(String key) {

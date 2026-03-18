@@ -103,7 +103,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"), getFormValue(formData, "field-last-name"));
           String email = getFormValue(formData, "field-email");
           String nickname = getFormValue(formData, "field-nickname");
-          boolean underageApplicant = ApplicationUtils.isUnderage(application);
 
           // Make sure we have application signatures and school approval
           
@@ -185,31 +184,21 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String subject = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
               String.format("/templates/applications/mails/mail-accept-study-place-%s-subject.txt", application.getLine())), "UTF-8");
 
-          String content = null;
-          if (underageApplicant) {
-            content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-                "/templates/applications/mails/mail-accept-study-place-" + line  + "-underage.html"), "UTF-8");
-            content = String.format(content,
-                nickname,
-                staffMember.getFullName());
-          }
-          else {
-            StringBuilder signUpUrl = new StringBuilder();
-            signUpUrl.append(requestContext.getRequest().getScheme());
-            signUpUrl.append("://");
-            signUpUrl.append(requestContext.getRequest().getServerName());
-            signUpUrl.append(":");
-            signUpUrl.append(requestContext.getRequest().getServerPort());
-            signUpUrl.append("/applications/accept.page?application=");
-            signUpUrl.append(application.getApplicationId());
+          StringBuilder signUpUrl = new StringBuilder();
+          signUpUrl.append(requestContext.getRequest().getScheme());
+          signUpUrl.append("://");
+          signUpUrl.append(requestContext.getRequest().getServerName());
+          signUpUrl.append(":");
+          signUpUrl.append(requestContext.getRequest().getServerPort());
+          signUpUrl.append("/applications/accept.page?application=");
+          signUpUrl.append(application.getApplicationId());
 
-            content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-                "/templates/applications/mails/mail-accept-study-place-" + line + ".html"), "UTF-8");
-            content = String.format(content,
-                nickname,
-                signUpUrl.toString(),
-                staffMember.getFullName());
-          }
+          String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+              "/templates/applications/mails/mail-accept-study-place-" + line + ".html"), "UTF-8");
+          content = String.format(content,
+              nickname,
+              signUpUrl.toString(),
+              staffMember.getFullName());
           
           // Send mail to applicant
           
