@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -161,8 +162,8 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -3571,7 +3572,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     double numCreditPoints = 0;
     try {
-      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, StudentTORHandling.NONE);
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, EnumSet.noneOf(StudentTORFlags.class));
       numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op, true);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);

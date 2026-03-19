@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.views.students;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -61,7 +62,7 @@ public class EditStudentSubjectGradesDialogViewController extends PyramusViewCon
     }
 
     try {
-      StudentTOR tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
+      StudentTOR tor = StudentTORController.constructStudentTOR(student, EnumSet.of(StudentTORFlags.CURRICULUM, StudentTORFlags.MOVE_INCLUDED));
       
       ObjectMapper mapper = new ObjectMapper();
       StringWriter writer = new StringWriter();

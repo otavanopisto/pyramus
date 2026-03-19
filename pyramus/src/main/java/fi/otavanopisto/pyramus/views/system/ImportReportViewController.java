@@ -135,7 +135,10 @@ public class ImportReportViewController extends PyramusFormViewController {
       
       User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
       ReportCategory category = categoryId != null ? categoryDAO.findById(categoryId) : null;
-      
+
+      // Default to reloading the import page (this could be more elegant - i.e. keep the form data when the report type is ftl)
+      requestContext.setRedirectURL(requestContext.getReferer(true));
+
       if (existingReportId != null) {
         Report report = reportDAO.findById(existingReportId);
         if (name == null && reportData == null) {
@@ -152,16 +155,20 @@ public class ImportReportViewController extends PyramusFormViewController {
             reportDAO.updateData(report, reportData, reportFormat, loggedUser);
           }
           handleContexts(requestContext, report);
-          requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
-              + "/reports/viewreport.page?&reportId=" + report.getId());
+          if (report.getFormat() == ReportFileFormat.RPTDESIGN) {
+            requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
+                + "/reports/viewreport.page?&reportId=" + report.getId());
+          }
         }
       }
       else {
         Report report = reportDAO.create(name, reportData, reportFormat, loggedUser);
         report = reportDAO.updateCategory(report, category, loggedUser);
         handleContexts(requestContext, report);
-        requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
-            + "/reports/viewreport.page?&reportId=" + report.getId());
+        if (report.getFormat() == ReportFileFormat.RPTDESIGN) {
+          requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
+              + "/reports/viewreport.page?&reportId=" + report.getId());
+        }
       }
     }
     catch (IOException e) {

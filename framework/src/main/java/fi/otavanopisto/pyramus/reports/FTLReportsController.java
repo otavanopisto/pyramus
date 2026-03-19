@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.reports;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
@@ -55,7 +56,7 @@ public class FTLReportsController {
 
     // The information passed to the template
     
-    StudentTOR tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
+    StudentTOR tor = StudentTORController.constructStudentTOR(student, EnumSet.of(StudentTORFlags.CURRICULUM, StudentTORFlags.MOVE_INCLUDED, StudentTORFlags.USE_SUBJECT_SELECTIONS));
   
     Map<String, Object> studentInfo = new HashMap<>();
     studentInfo.put("student", student);
