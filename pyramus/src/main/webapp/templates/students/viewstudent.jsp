@@ -211,8 +211,6 @@
                 }));
               }
               else if (reportFormat == 'FTL') {
-                console.log("FTL ", studentReports[i]);
-                
                 basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
                   iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/report.png',
                   text: reportName,
