@@ -155,8 +155,8 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
+import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -2616,6 +2616,37 @@ public class StudentRESTService extends AbstractRESTService {
     List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByStudent(student);
     
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/educationTypes/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentEducationTypes(@PathParam("STUDENTID") Long studentId) {
+    
+    // Access check
+    
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK) {
+      return Response.status(studentStatus).build();
+    }
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    Set<String> educationTypes = new HashSet<>();
+    List<Student> students = studentController.listStudentsByPerson(student.getPerson());
+    String educationTypeCode;
+    for (Student s : students) {
+      educationTypeCode = s.getEducationTypeCode();
+      if (educationTypeCode != null) {
+        educationTypes.add(educationTypeCode);
+      }
+    }
+
+    return Response.ok(educationTypes).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/latestAssessmentRequest/")

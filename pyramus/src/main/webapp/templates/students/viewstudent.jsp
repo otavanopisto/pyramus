@@ -220,18 +220,6 @@
           text: '<fmt:message key="students.viewStudent.gradesTabRelatedActionsManageTransferCreditsLabel"/>',
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));
-
-        var text = isLukio
-        ? '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>'
-        : '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
-
-        var tab = isLukio ? '#at-exams' : '#at-languageSkillLevels';
-        
-        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
-            iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-            text: text,
-            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId + tab
-        }));
         gradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.gradesTabRelatedActionsImportStudentCreditsLabel"/>',

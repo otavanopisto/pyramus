@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.rest.model.hops;
+package fi.otavanopisto.pyramus.hops;
 
 public enum Mandatority {
   MANDATORY,

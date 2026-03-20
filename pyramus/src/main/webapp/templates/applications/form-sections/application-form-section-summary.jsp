@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="summary-container field-nettilukio-promise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+    <div class="summary-container field-nettilukio-promise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
           <input type="checkbox" id="field-nettilukio-promise" name="field-nettilukio-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div class="summary-container field-nettilukio-contactpromise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+    <div class="summary-container field-nettilukio-contactpromise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
           <input type="checkbox" id="field-nettilukio-contactpromise" name="field-nettilukio-contactpromise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">

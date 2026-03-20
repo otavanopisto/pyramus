@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +46,8 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -83,9 +87,12 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.hops.HopsController;
+import fi.otavanopisto.pyramus.hops.HopsCourseMatrix;
+import fi.otavanopisto.pyramus.hops.Mandatority;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -100,7 +107,6 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
-import fi.otavanopisto.pyramus.rest.model.hops.Mandatority;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemRestModel;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityItemState;
 import fi.otavanopisto.pyramus.rest.model.hops.StudyActivityRestModel;
@@ -180,7 +186,7 @@ public class MuikkuRESTService {
   @Path("/students/{ID:[0-9]*}/courseMatrix")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response getCourseMatrix(@PathParam("ID") Long id) {
+  public Response getCourseMatrix(@PathParam("ID") Long id, @QueryParam("educationTypeCode") String educationTypeCode) {
     
     // Access check
     
@@ -196,6 +202,14 @@ public class MuikkuRESTService {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
+    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? student.getEducationTypeCode() : educationTypeCode;
+    
+    // Adjust student based on requested education type code
+    
+    student = adjustStudent(student, eduTypeCode);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
     
     // Serve the request
     
@@ -205,24 +219,31 @@ public class MuikkuRESTService {
   @Path("/students/{ID:[0-9]*}/studyActivity")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response getStudentStudyActivity(@PathParam("ID") Long id, @QueryParam("courseId") Long courseId) {
+  public Response getStudentStudyActivity(@PathParam("ID") Long id, @QueryParam("courseId") Long courseId, @QueryParam("educationTypeCode") String educationTypeCode) {
     
     // Access check
     
-    Student baseStudent = studentController.findStudentById(id);
-    if (baseStudent == null || baseStudent.getArchived()) {
+    Student initialStudent = studentController.findStudentById(id);
+    if (initialStudent == null || initialStudent.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, baseStudent, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.GET_STUDENT_COURSEACTIVITY, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, initialStudent, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      if (!UserUtils.isMemberOf(sessionController.getUser(), baseStudent.getOrganization())) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), initialStudent.getOrganization())) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
+    String eduTypeCode = StringUtils.isBlank(educationTypeCode) ? initialStudent.getEducationTypeCode() : educationTypeCode;
     
-    String educationTypeName = baseStudent.getStudyProgramme().getCategory().getEducationType().getName();
+    // Adjust student based on requested education type code
+    
+    Student baseStudent = adjustStudent(initialStudent, eduTypeCode);
+    if (baseStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
     StudyActivityRestModel activity = new StudyActivityRestModel();
     List<StudyActivityItemRestModel> items = new ArrayList<>();
     Map<String, StudyActivityItemRestModel> itemCache = new HashMap<>();
@@ -233,12 +254,33 @@ public class MuikkuRESTService {
     
     List<Student> students = new ArrayList<>();
     if (courseId == null) {
-      students = studentController.listStudentByPerson(baseStudent.getPerson());
-      students.removeIf(s -> !s.getStudyProgramme().getCategory().getEducationType().getId().equals(baseStudent.getStudyProgramme().getCategory().getEducationType().getId()));
+      students = studentController.listStudentsByPerson(baseStudent.getPerson());
+      students.removeIf(s -> !StringUtils.equals(s.getEducationTypeCode(), eduTypeCode));
       students.sort(Comparator.comparing(Student::getId));
     }
     else {
       students = Arrays.asList(baseStudent);
+    }
+
+    // Virallinen OPS, josta voidaan päätellä valinnaisten hyväksilukujen tarkempi valinnaisuus
+    
+    HopsCourseMatrix courseMatrix = null;
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      if (StringUtils.equals(eduTypeCode, PyramusConsts.EDUCATION_TYPE_LUKIO)) {
+        InputStream json = HopsController.class.getClassLoader().getResourceAsStream("fi/otavanopisto/pyramus/tor/curriculum_2021.json");
+        courseMatrix = mapper.readValue(json, HopsCourseMatrix.class);
+      }
+      else if (StringUtils.equals(eduTypeCode, PyramusConsts.EDUCATION_TYPE_PK)) {
+        InputStream json = HopsController.class.getClassLoader().getResourceAsStream("fi/otavanopisto/pyramus/tor/curriculum_2018.json");
+        courseMatrix = mapper.readValue(json, HopsCourseMatrix.class);
+      }
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Error parsing OPS", e);
+    }
+    if (courseMatrix == null) {
+      courseMatrix = new HopsCourseMatrix();
     }
     
     // Käydään välilehdet läpi
@@ -253,7 +295,7 @@ public class MuikkuRESTService {
             baseStudent.getCurriculum() != null &&
             !tc.getCurriculum().getId().equals(baseStudent.getCurriculum().getId()));
         for (TransferCredit transferCredit : transferCredits) {
-          StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit);
+          StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit, courseMatrix);
           item.setStudyProgramme(student.getStudyProgramme().getName());
           items.add(item);
           itemCache.put(item.getSubject() + item.getCourseNumber(), item);
@@ -283,9 +325,10 @@ public class MuikkuRESTService {
         // Huom! Tätä ehtoa ei noudateta, mikäli aineen koulutusaste on eri kuin
         // pohjana käytettävän opiskelijan, koska tällaiset suoritukset näytetään aina
 
+        boolean raisedGrade = false;
         StudyActivityItemRestModel existingItem = itemCache.get(courseAssessment.getSubject().getCode() + courseAssessment.getCourseNumber()); 
         if (courseAssessment.getSubject().getEducationType() == null ||
-            !StringUtils.equals(courseAssessment.getSubject().getEducationType().getName(), educationTypeName)) {
+            !StringUtils.equals(courseAssessment.getSubject().getEducationType().getCode(), eduTypeCode)) {
           existingItem = null;
         }
         if (existingItem != null) {
@@ -308,6 +351,7 @@ public class MuikkuRESTService {
             if (exGrade < grade || (exGrade == grade && isEarlier(existingItem.getGradeDate(), courseAssessment.getDate()))) {
               itemCache.remove(existingItem.getSubject() + existingItem.getCourseNumber());
               items.remove(existingItem); // aiemmassa suorituksessa on matalampi arvosana (tai sama mutta se on vanhempi); unohda se
+              raisedGrade = exGrade < grade;
             }
             else {
               continue; //  aiemmassa suorituksessa on korkeampi arvosana (tai sama mutta se on uudempi); unohda tämä
@@ -316,6 +360,7 @@ public class MuikkuRESTService {
         }
 
         StudyActivityItemRestModel item = getCourseAssessmentActivityItem(courseAssessment);
+        item.setRaisedGrade(raisedGrade);
         item.setStudyProgramme(student.getStudyProgramme().getName());
         assessmentRequestStateCheck(item, student);
         items.add(item);
@@ -329,6 +374,13 @@ public class MuikkuRESTService {
         courseStudents.removeIf(cs -> !cs.getCourse().getId().equals(courseId));
       }
       for (CourseStudent courseStudent : courseStudents) {
+        
+        // Skippaa keskeytyneet kurssit
+        
+        if (courseStudent.getParticipationType() != null && StringUtils.equals(courseStudent.getParticipationType().getName(), PyramusConsts.PARTICIPATION_CANCELLED)) {
+          continue;
+        }
+        
         Course course = courseStudent.getCourse();
 
         // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia 
@@ -346,11 +398,14 @@ public class MuikkuRESTService {
 
         for (CourseModule courseModule : course.getCourseModules()) {
 
+          // 10.3.2026 sovitun mukaisesti kaikki meneillään olevat kurssit palautetaan, vaikka olisi jo arvosana alla
+          
+          /*
           // Jos kurssista on jo suoritus niin älä lisää toistamiseen (pl. kurssit, joiden aineen
           // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
 
           boolean validSubject = courseModule.getSubject().getEducationType() != null &&
-              StringUtils.equals(courseModule.getSubject().getEducationType().getName(), educationTypeName);
+              StringUtils.equals(courseModule.getSubject().getEducationType().getCode(), eduTypeCode);
           if (validSubject && itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
             continue;
           }
@@ -360,15 +415,30 @@ public class MuikkuRESTService {
           if (!validSubject && items.stream().filter(s -> course.getId().equals(s.getCourseId())).count() > 0) {
             continue;
           }
-
+          */
+          
+          // Skippaa meneillään olevat kurssimoduulit, joista on jo arvosana
+          
+          boolean duplicate = false;
+          for (StudyActivityItemRestModel item : items) {
+            if (item.getCourseId() != null && item.getCourseId().equals(course.getId())) {
+              if (StringUtils.equals(courseModule.getSubject().getCode(), item.getSubject())) {
+                if (equals(courseModule.getCourseNumber(), item.getCourseNumber())) {
+                  duplicate = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (duplicate) {
+            continue;
+          }
+          
           StudyActivityItemRestModel item = new StudyActivityItemRestModel();
           item.setStudyProgramme(student.getStudyProgramme().getName());
           item.setCourseId(course.getId());
-          String courseName = course.getName();
-          if (!StringUtils.isEmpty(course.getNameExtension())) {
-            courseName = String.format("%s (%s)", courseName, course.getNameExtension());
-          }
-          item.setCourseName(courseName);
+          item.setCourseName(course.getName());
+          item.setCourseNameExtension(course.getNameExtension());
           if (courseModule.getCourse().getCurriculums() != null) {
             item.setCurriculums(courseModule.getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
           }
@@ -391,24 +461,90 @@ public class MuikkuRESTService {
     }
     
     // Opintopisteiden laskenta; on saatu läpäisevä arvosana ja kurssin tai hyväksiluvun pituus on tiedossa
+    // Suoritettujen kurssien laskenta; yhdistelmäopintokurssit lasketaan useammaksi kuin yhdeksi
+    // Opintopisteiden laskennassa skippaa kurssit, jotka eivät ole opiskelijan ainevalintoja
     
+    int completedCourses = 0;
+    int mandatoryCourses = 0;
     int completedCourseCredits = 0;
     int mandatoryCourseCredits = 0;
+    Set<String> studentChoices = StringUtils.equals(educationTypeCode, PyramusConsts.EDUCATION_TYPE_LUKIO) ? listSubjectChoices(baseStudent) : null;
     for (StudyActivityItemRestModel item : items) {
-      if (item.getGrade() != null && item.isPassing() && item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
-        completedCourseCredits += item.getLength();
+      if (item.getGrade() != null && item.isPassing()) {
+        completedCourses++;
         if (item.getMandatority() == Mandatority.MANDATORY) {
-          mandatoryCourseCredits += item.getLength();
+          mandatoryCourses++;
+        }
+        if (item.getLength() > 0 && StringUtils.equals(item.getLengthSymbol(), PyramusConsts.TIMEUNIT_OP)) {
+          boolean countCredit = true;
+          if (studentChoices != null) {
+            // Laske opintopisteisiin jos aine ei ole ainevalinta-aine tai on opiskelijan valitsema ainevalinta-aine 
+            countCredit = !PyramusConsts.CHOICE_SUBJECTS.contains(item.getSubject()) ||
+                (PyramusConsts.CHOICE_SUBJECTS.contains(item.getSubject()) && studentChoices.contains(item.getSubject()));
+          }
+          if (countCredit) {
+            completedCourseCredits += item.getLength();
+            if (item.getMandatority() == Mandatority.MANDATORY) {
+              mandatoryCourseCredits += item.getLength();
+            }
+          }
         }
       }
     }
     
-    activity.setEducationType(educationTypeName);
+    activity.setEducationTypeCode(eduTypeCode);
     activity.setItems(items);
+    activity.setCompletedCourses(completedCourses);
+    activity.setMandatoryCourses(mandatoryCourses);
     activity.setCompletedCourseCredits(completedCourseCredits);
     activity.setMandatoryCourseCredits(mandatoryCourseCredits);
 
     return Response.ok(activity).build();
+  }
+  
+  private Set<String> listSubjectChoices(Student student) {
+    Set<String> variableSet = new HashSet<>();
+    List<UserVariable> variables = userController.listUserVariablesByUser(student);
+    boolean hasNativeLanguage = false;
+    boolean hasMath = false;
+    boolean hasReligion = false;
+    for (UserVariable variable : variables) {
+      String variableKey = variable.getKey().getVariableKey();
+      if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI)) {
+        hasNativeLanguage = true;
+        variableSet.add(variable.getValue());
+      }
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_A)) {
+        variableSet.add(variable.getValue());
+      }
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA)) {
+        hasMath = true;
+        variableSet.add(variable.getValue());
+      }
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_USKONTO)) {
+        hasReligion = true;
+        variableSet.add(variable.getValue());
+      }
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B1)) {
+        variableSet.add(variable.getValue());
+      }
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B2)) {
+        variableSet.add(variable.getValue());
+      }
+      else if (variableKey.equals(PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B3)) {
+        variableSet.add(variable.getValue());
+      }
+    }
+    if (!hasNativeLanguage) {
+      variableSet.add("ÄI"); // default native language subject
+    }
+    if (!hasMath) {
+      variableSet.add("MAB"); // default math subject
+    }
+    if (!hasReligion) {
+      variableSet.add("UE"); // default religion subject
+    }
+    return variableSet;
   }
   
   private boolean isEarlier(Date d1, Date d2) {
@@ -1178,11 +1314,8 @@ public class MuikkuRESTService {
     Course course = courseAssessment.getCourseStudent().getCourse();
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseId(course.getId());
-    String courseName = course.getName();
-    if (!StringUtils.isEmpty(course.getNameExtension())) {
-      courseName = String.format("%s (%s)", courseName, course.getNameExtension());
-    }
-    item.setCourseName(courseName);
+    item.setCourseName(course.getName());
+    item.setCourseNameExtension(course.getNameExtension());
     if (courseAssessment.getCourseModule().getCourse().getCurriculums() != null) {
       item.setCurriculums(courseAssessment.getCourseModule().getCourse().getCurriculums().stream().map(Curriculum::getName).collect(Collectors.toList()));
     }
@@ -1208,7 +1341,7 @@ public class MuikkuRESTService {
     return item;
   }
 
-  private StudyActivityItemRestModel getTransferCreditActivityItem(TransferCredit transferCredit) {
+  private StudyActivityItemRestModel getTransferCreditActivityItem(TransferCredit transferCredit, HopsCourseMatrix courseMatrix) {
     StudyActivityItemRestModel item = new StudyActivityItemRestModel();
     item.setCourseName(transferCredit.getCourseName());
     if (transferCredit.getCurriculum() != null) {
@@ -1228,7 +1361,15 @@ public class MuikkuRESTService {
       item.setLength(transferCredit.getCourseLength().getUnits().intValue());
       item.setLengthSymbol(transferCredit.getCourseLength().getUnit().getSymbol());
     }
-    item.setMandatority(transferCredit.getOptionality() == CourseOptionality.MANDATORY ? Mandatority.MANDATORY : Mandatority.UNSPECIFIED_OPTIONAL);
+    if (transferCredit.getOptionality() == CourseOptionality.MANDATORY) {
+      item.setMandatority(Mandatority.MANDATORY);
+    }
+    else {
+      item.setMandatority(
+          courseMatrix.getMandatority(transferCredit.getSubject().getCode(),
+          transferCredit.getCourseNumber() == null ? 0 : transferCredit.getCourseNumber())
+      );
+    }
     item.setState(StudyActivityItemState.TRANSFERRED);
     item.setSubject(transferCredit.getSubject().getCode());
     item.setSubjectName(transferCredit.getSubject().getName());
@@ -1277,6 +1418,27 @@ public class MuikkuRESTService {
       }
     }
     return Mandatority.UNSPECIFIED_OPTIONAL;
+  }
+  
+  /**
+   * For the given student, returns a student that belongs to the same person with the requested education type.
+   * 
+   * @param student Student
+   * @param educationTypeCode Education type code
+   * 
+   * @return A student that belongs to the same person with the requested education type
+   */
+  private Student adjustStudent(Student student, String educationTypeCode) {
+    if (StringUtils.equals(student.getEducationTypeCode(), educationTypeCode)) {
+      return student;
+    }
+    List<Student> students = studentController.listStudentsByPerson(student.getPerson());
+    students.sort(Comparator.comparing(Student::getId).reversed());
+    return students.stream().filter(s -> StringUtils.equals(s.getEducationTypeCode(), educationTypeCode)).findFirst().orElse(null);
+  }
+  
+  private boolean equals(Integer i1, Integer i2) {
+    return  i1 == null && i2 == null ? true : i1 == null ? false : i1.equals(i2);
   }
 
 }

@@ -51,7 +51,7 @@ public class HopsCourseMatrix {
   }
   
   @JsonIgnore
-  public void ensureSubjectCourseNumberPairExists(String subjectCode, int courseNumber, String courseName, int length, boolean mandatory) {
+  public void ensureSubjectCourseNumberPairExists(String subjectCode, int courseNumber, String courseName, int length, Mandatority mandatority) {
     HopsCourseMatrixSubject matrixSubject = subjects.stream().filter(s -> StringUtils.equals(s.getCode(), subjectCode)).findFirst().orElse(null);
     if (matrixSubject == null) {
       return; // Metodia kutsutaan vain OPSin sisältämillä aineilla. Kädet pystyyn jos ainetta ei edes löytyisi 
@@ -62,9 +62,25 @@ public class HopsCourseMatrix {
       module.setName(courseName);
       module.setCourseNumber(courseNumber);
       module.setLength(length);
-      module.setMandatory(mandatory);
+      module.setMandatority(mandatority);
       matrixSubject.addModule(module);
     }
+  }
+  
+  @JsonIgnore
+  public Mandatority getMandatority(String subjectCode, int courseNumber) {
+    if (courseNumber == 0) {
+      return Mandatority.UNSPECIFIED_OPTIONAL; 
+    }
+    HopsCourseMatrixSubject matrixSubject = subjects.stream().filter(s -> StringUtils.equals(s.getCode(), subjectCode)).findFirst().orElse(null);
+    if (matrixSubject == null) {
+      return Mandatority.UNSPECIFIED_OPTIONAL; 
+    }
+    HopsCourseMatrixModule module = matrixSubject.getModules().stream().filter(m -> m.getCourseNumber() == courseNumber).findFirst().orElse(null);
+    if (module == null) {
+      return Mandatority.UNSPECIFIED_OPTIONAL;
+    }
+    return module.getMandatority();
   }
   
   @JsonIgnore
@@ -101,7 +117,16 @@ public class HopsCourseMatrix {
     return subjects.stream().filter(s -> s.isHiddenFromHops()).map(s -> s.getCode()).collect(Collectors.toSet());
   }
 
+  public String getCurriculum() {
+    return curriculum;
+  }
+
+  public void setCurriculum(String curriculum) {
+    this.curriculum = curriculum;
+  }
+
   private HopsCourseMatrixType type;
+  private String curriculum;
   private List<HopsCourseMatrixSubject> subjects;
   private Set<HopsCourseMatrixProblem> problems;
 
