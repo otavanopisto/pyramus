@@ -533,6 +533,11 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     }
   }
   
+  public void archive(Course course) {
+    super.archive(course);
+    courseArchivedEvent.fire(new CourseArchivedEvent(course.getId()));
+  }
+  
   public void archive(Course course, User user) {
     super.archive(course, user);
     courseArchivedEvent.fire(new CourseArchivedEvent(course.getId()));
