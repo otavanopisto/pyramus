@@ -33,6 +33,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Resolution;
 
+import fi.otavanopisto.pyramus.dao.ModificationTrackedEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
@@ -50,7 +51,7 @@ import fi.otavanopisto.security.ContextReference;
      impl=ArchivedEntityFilterFactory.class
   )
 )
-public class Course extends CourseBase implements ArchivableEntity, ContextReference {
+public class Course extends CourseBase implements ArchivableEntity, ModificationTrackedEntity, ContextReference {
 
   public void setModule(Module module) {
     this.module = module;
