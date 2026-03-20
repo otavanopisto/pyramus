@@ -406,9 +406,6 @@
             <c:choose>
         	  <c:when test="${student.studyProgramme.category.educationType.code == 'peruskoulu' 
                  or student.studyProgramme.category.educationType.code == 'apa'}">
-          	    <div class="genericTableAddRowContainer">
-                  <span class="genericTableAddRowLinkContainer" onclick="addLanguageSkillLevelTableRow();"><fmt:message key="grading.manageLanguageSkillLevels.tableAddRow"/></span>
-                </div>
 				<div id="languageSkillLevelTable"></div>
               </c:when>
             </c:choose>
