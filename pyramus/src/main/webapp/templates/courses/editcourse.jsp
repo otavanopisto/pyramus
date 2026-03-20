@@ -1372,46 +1372,48 @@
           }
         }));          
         
-        basicRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
-          iconURL: GLOBAL_contextPath + '/gfx/edit-delete.png',
-          text: '<fmt:message key="courses.editCourse.archiveCourseRelatedActionLabel"/>',
-          onclick: function (event) {
-            var courseId = ${course.id};
-            var courseName = '${fn:escapeXml(course.name)}';
-            var url = GLOBAL_contextPath + "/simpledialog.page?localeId=courses.editCourse.courseArchiveConfirmDialogContent&localeParams=" + encodeURIComponent(courseName);
+        <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
+          basicRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+            iconURL: GLOBAL_contextPath + '/gfx/edit-delete.png',
+            text: '<fmt:message key="courses.editCourse.archiveCourseRelatedActionLabel"/>',
+            onclick: function (event) {
+              var courseId = ${course.id};
+              var courseName = '${fn:escapeXml(course.name)}';
+              var url = GLOBAL_contextPath + "/simpledialog.page?localeId=courses.editCourse.courseArchiveConfirmDialogContent&localeParams=" + encodeURIComponent(courseName);
                
-            var dialog = new IxDialog({
-              id : 'confirmRemoval',
-              contentURL : url,
-              centered : true,
-              showOk : true,  
-              showCancel : true,
-              autoEvaluateSize: true,
-              title : '<fmt:message key="courses.editCourse.courseArchiveConfirmDialogTitle"/>',
-              okLabel : '<fmt:message key="courses.editCourse.courseArchiveConfirmDialogOkLabel"/>',
-              cancelLabel : '<fmt:message key="courses.editCourse.courseArchiveConfirmDialogCancelLabel"/>'
-            });
+              var dialog = new IxDialog({
+                id : 'confirmRemoval',
+                contentURL : url,
+                centered : true,
+                showOk : true,  
+                showCancel : true,
+                autoEvaluateSize: true,
+                title : '<fmt:message key="courses.editCourse.courseArchiveConfirmDialogTitle"/>',
+                okLabel : '<fmt:message key="courses.editCourse.courseArchiveConfirmDialogOkLabel"/>',
+                cancelLabel : '<fmt:message key="courses.editCourse.courseArchiveConfirmDialogCancelLabel"/>'
+              });
           
-            dialog.addDialogListener( function(event) {
-              var dlg = event.dialog;
+              dialog.addDialogListener( function(event) {
+                var dlg = event.dialog;
           
-              switch (event.name) {
-                case 'okClick':
-                  JSONRequest.request("courses/archivecourse.json", {
-                    parameters: {
-                      courseId: courseId
-                    },
-                    onSuccess: function (jsonResponse) {
-                      window.location = GLOBAL_contextPath + '/index.page?resetbreadcrumb=1';
-                    }
-                  });   
-                break;
-              }
-            });
+                switch (event.name) {
+                  case 'okClick':
+                    JSONRequest.request("courses/archivecourse.json", {
+                      parameters: {
+                        courseId: courseId
+                      },
+                      onSuccess: function (jsonResponse) {
+                        window.location = GLOBAL_contextPath + '/index.page?resetbreadcrumb=1';
+                      }
+                    });   
+                  break;
+                }
+              });
           
-            dialog.open();
-          }
-        }));          
+              dialog.open();
+            }
+          }));
+        </c:if>
 
         /* Extension hook links */
         
