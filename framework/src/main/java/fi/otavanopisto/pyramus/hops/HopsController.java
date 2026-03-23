@@ -106,6 +106,7 @@ public class HopsController {
     else {
       matrix.setType(HopsCourseMatrixType.COMPULSORY);
     }
+    matrix.setCurriculum(ops);
     
     // Opiskelijan kaikki mahdolliset suoritukset
     
@@ -136,7 +137,7 @@ public class HopsController {
     boolean hasPrimaryForeignLangauge = false;
     boolean hasSecondaryForeignLanguage = false;
     Set<String> chosenSubjects = new HashSet<>();
-    String s = userVariableDAO.findByUserAndKey(student, "lukioAidinkieli");
+    String s = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI);
     if (!StringUtils.isBlank(s)) {
       hasNativeLanguage = true;
       String[] sArr = StringUtils.split(s, ",");
@@ -154,7 +155,7 @@ public class HopsController {
         chosenSubjects.add("s2");
       }
     }
-    s = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
+    s = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA);
     if (!StringUtils.isBlank(s)) {
       hasMath = true;
       String[] sArr = StringUtils.split(s, ",");
@@ -166,7 +167,7 @@ public class HopsController {
       chosenSubjects.add("MAA");
       chosenSubjects.add("MAB");
     }
-    s = userVariableDAO.findByUserAndKey(student, "lukioUskonto");
+    s = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_USKONTO);
     if (!StringUtils.isBlank(s)) {
       hasReligion = true;
       String[] sArr = StringUtils.split(s, ",");
@@ -186,7 +187,7 @@ public class HopsController {
         chosenSubjects.add("et");
       }
     }
-    s = userVariableDAO.findByUserAndKey(student, "lukioKieliA");
+    s = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_A);
     if (!StringUtils.isBlank(s)) {
       hasPrimaryForeignLangauge = true;
       String[] sArr = StringUtils.split(s, ",");
@@ -202,7 +203,7 @@ public class HopsController {
         chosenSubjects.add("ena");
       }
     }
-    s = userVariableDAO.findByUserAndKey(student, "lukioKieliB1");
+    s = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B1);
     if (!StringUtils.isBlank(s)) {
       hasSecondaryForeignLanguage = true;
       String[] sArr = StringUtils.split(s, ",");
@@ -218,14 +219,14 @@ public class HopsController {
         chosenSubjects.add("rub");
       }
     }
-    s = userVariableDAO.findByUserAndKey(student, "lukioKieliB2");
+    s = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B2);
     if (!StringUtils.isBlank(s)) {
       String[] sArr = StringUtils.split(s, ",");
       for (int i = 0; i < sArr.length; i++) {
         chosenSubjects.add(sArr[i]);
       }
     }
-    s = userVariableDAO.findByUserAndKey(student, "lukioKieliB3");
+    s = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_KIELI_B3);
     if (!StringUtils.isBlank(s)) {
       String[] sArr = StringUtils.split(s, ",");
       for (int i = 0; i < sArr.length; i++) {
@@ -282,7 +283,7 @@ public class HopsController {
               transferCredit.getCourseNumber(),
               transferCredit.getCourseName(),
               transferCredit.getCourseLength().getUnits().intValue(),
-              transferCredit.getOptionality() == CourseOptionality.MANDATORY);
+              transferCredit.getOptionality() == CourseOptionality.MANDATORY ? Mandatority.MANDATORY : Mandatority.UNSPECIFIED_OPTIONAL);
         }
         for (CourseAssessment assessment : applicableAssessments) {
           matrix.ensureSubjectCourseNumberPairExists(
@@ -290,7 +291,7 @@ public class HopsController {
               assessment.getCourseModule().getCourseNumber(),
               assessment.getCourseModule().getCourse().getName(),
               assessment.getCourseModule().getCourseLength().getUnits().intValue(),
-              false); // Jos kurssi ei alunperin edes ollut opetussuunnitelmassa, ei se pakollinenkaan voi olla
+              Mandatority.UNSPECIFIED_OPTIONAL); // Jos kurssi ei alunperin edes ollut opetussuunnitelmassa, ei se pakollinenkaan voi olla
         }
 
         // Poista aineen modulit, joita ei haluta näyttää ja joista ei ole suorituksia

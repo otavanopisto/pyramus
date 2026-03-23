@@ -11,7 +11,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -19,7 +19,7 @@
           "courseNumber": 2,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -27,7 +27,7 @@
           "courseNumber": 3,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -35,7 +35,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -43,7 +43,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -51,7 +51,7 @@
           "courseNumber": 6,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -59,7 +59,7 @@
           "courseNumber": 7,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -67,21 +67,21 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Vuorovaikutus 3",
           "courseNumber": 9,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kirjoittaminen 2",
           "courseNumber": 10,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -89,7 +89,7 @@
           "courseNumber": 11,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -97,7 +97,7 @@
           "courseNumber": 14,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         },
         {
@@ -105,7 +105,7 @@
           "courseNumber": 15,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         },
         {
@@ -113,7 +113,7 @@
           "courseNumber": 16,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         }
       ]
@@ -128,7 +128,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -136,7 +136,7 @@
           "courseNumber": 2,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -144,7 +144,7 @@
           "courseNumber": 3,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -152,7 +152,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -160,7 +160,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -168,7 +168,7 @@
           "courseNumber": 6,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -176,7 +176,7 @@
           "courseNumber": 7,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -184,35 +184,35 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Vuorovaikutus 3",
           "courseNumber": 9,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kirjoittaminen 2",
           "courseNumber": 10,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tekstien tulkinta 2",
           "courseNumber": 11,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tekstit ja konteksti",
           "courseNumber": 12,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         },
         {
@@ -220,7 +220,7 @@
           "courseNumber": 13,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         }
       ]
@@ -235,77 +235,77 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 9,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 10,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "",
           "courseNumber": 11,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         }
       ]
     },
@@ -319,7 +319,7 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -327,7 +327,7 @@
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -335,7 +335,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -343,7 +343,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -351,7 +351,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -359,7 +359,7 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -367,7 +367,7 @@
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -375,7 +375,7 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -383,7 +383,7 @@
           "courseNumber": 9,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -398,7 +398,7 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -406,7 +406,7 @@
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -414,7 +414,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -422,7 +422,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -430,7 +430,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -438,7 +438,7 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -446,7 +446,7 @@
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -454,14 +454,14 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Johdatus lukion englantiin 1",
           "courseNumber": 9,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -469,7 +469,7 @@
           "courseNumber": 10,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -477,7 +477,7 @@
           "courseNumber": 11,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -485,7 +485,7 @@
           "courseNumber": 12,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         },
         {
@@ -493,7 +493,7 @@
           "courseNumber": 13,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         }
       ]
@@ -508,56 +508,56 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -571,56 +571,56 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -634,56 +634,56 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -697,56 +697,56 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -760,56 +760,56 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli globaalissa maailmassa ja vuorovaikutusosaaminen",
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli ja kulttuuri luovan ilmaisun välineenä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli vaikuttamisen välineenä",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kestävä tulevaisuus ja tiede",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Kieli jatko-opinnoissa ja työelämässä",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Ympäristö ja kestävä elämäntapa",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Viesti ja vaikuta puhuen",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -823,56 +823,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 1",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 2",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 3",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 4",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 5",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason jatko 1",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason jatko 2",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -886,56 +886,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 1",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 2",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 3",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 4",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustaso 5",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason jatko 1",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason jatko 2",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -949,7 +949,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -957,7 +957,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -965,14 +965,14 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kotona maailmalla",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -980,28 +980,28 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kulttuurien matkassa",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Omannäköinen tulevaisuus",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ajankohtaista mediassa",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1015,7 +1015,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1023,7 +1023,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1031,42 +1031,42 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kotona maailmalla",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Hyvinvoiva ihminen",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kulttuurien matkassa",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Omannäköinen tulevaisuus",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ajankohtaista mediassa",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1080,7 +1080,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1088,7 +1088,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1096,7 +1096,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1104,7 +1104,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1112,7 +1112,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1120,7 +1120,7 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1128,14 +1128,14 @@
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ajankohtaista mediassa",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1149,7 +1149,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1157,7 +1157,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1165,7 +1165,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1173,7 +1173,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1181,7 +1181,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1189,21 +1189,21 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Omannäköinen tulevaisuus",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ajankohtaista mediassa",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1218,56 +1218,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1282,56 +1282,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1346,56 +1346,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1410,56 +1410,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1474,56 +1474,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1538,56 +1538,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1602,56 +1602,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1666,56 +1666,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1730,56 +1730,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1794,56 +1794,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1858,56 +1858,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 3",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 4",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 5",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 6",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 7",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Perustason alkeet 8",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1920,7 +1920,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -1928,7 +1928,7 @@
           "courseNumber": 15,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -1936,7 +1936,7 @@
           "courseNumber": 16,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -1951,7 +1951,7 @@
           "courseNumber": 2,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -1959,7 +1959,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -1967,7 +1967,7 @@
           "courseNumber": 4,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -1975,7 +1975,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -1983,7 +1983,7 @@
           "courseNumber": 6,
           "length": 3,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -1991,7 +1991,7 @@
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -1999,7 +1999,7 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2007,7 +2007,7 @@
           "courseNumber": 9,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2015,28 +2015,28 @@
           "courseNumber": 10,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Algoritmit ja lukuteoria",
           "courseNumber": 11,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Analyysi ja jatkuva jakauma",
           "courseNumber": 12,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Juuri ja logaritmifunktiot",
           "courseNumber": 18,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         }
       ]
@@ -2052,7 +2052,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2060,7 +2060,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2068,7 +2068,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2076,7 +2076,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2084,7 +2084,7 @@
           "courseNumber": 6,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2092,7 +2092,7 @@
           "courseNumber": 7,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2100,7 +2100,7 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2108,14 +2108,14 @@
           "courseNumber": 9,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Matematiikkaa abeille",
           "courseNumber": 10,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2128,7 +2128,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2136,7 +2136,7 @@
           "courseNumber": 2,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2144,7 +2144,7 @@
           "courseNumber": 3,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2152,7 +2152,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2160,7 +2160,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2168,7 +2168,7 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -2182,7 +2182,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2190,7 +2190,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2198,7 +2198,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2206,7 +2206,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -2220,7 +2220,7 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2228,7 +2228,7 @@
           "courseNumber": 2,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2236,7 +2236,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2244,7 +2244,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2252,7 +2252,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2260,7 +2260,7 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2268,7 +2268,7 @@
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2276,7 +2276,7 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2289,7 +2289,7 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2297,7 +2297,7 @@
           "courseNumber": 2,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2305,7 +2305,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2313,7 +2313,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2321,7 +2321,7 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2329,7 +2329,7 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2342,7 +2342,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2350,7 +2350,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2358,7 +2358,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2366,7 +2366,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -2380,7 +2380,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2388,7 +2388,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2396,7 +2396,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2404,14 +2404,14 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ruotsin itämaasta Suomeksi",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2419,7 +2419,7 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2432,7 +2432,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2440,7 +2440,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2448,7 +2448,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2456,7 +2456,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -2471,7 +2471,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2479,7 +2479,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2487,7 +2487,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2495,21 +2495,21 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto taiteissa ja populaarikulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2523,7 +2523,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2531,35 +2531,35 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ortodoksisuuden ja taiteen vuorovaikutus",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ortodoksisuus, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2573,42 +2573,42 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Maailmanlaajuinen kristinusko",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto taiteissa ja kulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2622,42 +2622,42 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Maailmanlaajuinen islam",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto taiteissa ja populaarikulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2671,42 +2671,42 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "Maailmanlaajuinen juutalaisuus",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto taiteissa ja populaarikulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2720,42 +2720,42 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true
+          "mandatority": "MANDATORY"
         },
         {
           "name": "UX2",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Maailman uskontoja ja uskonnollisia liikkeitä",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, kulttuuri ja yhteiskunta Suomessa",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto taiteissa ja populaarikulttuurissa",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonto, tiede ja media",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2769,7 +2769,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": true,
+          "mandatority": "MANDATORY",
           "available": true
         },
         {
@@ -2777,7 +2777,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2785,7 +2785,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2793,28 +2793,28 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Uskonnot ja uskonnottomuus",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tulevaisuus",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Maailmankatsomus ja kriittinen ajattelu",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         }
       ]
@@ -2829,7 +2829,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2837,7 +2837,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2845,7 +2845,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2853,7 +2853,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2861,14 +2861,14 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
           "name": "Mediapsykologia",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2882,7 +2882,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2890,7 +2890,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2898,7 +2898,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -2912,7 +2912,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2920,28 +2920,28 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kuva viestii ja vaikuttaa",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Taiteen monet maailmat",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Taide ja luova ilmaisu",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2954,14 +2954,14 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Aktiivinen elämä",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -2969,21 +2969,21 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Yhdessä liikkuen",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Virkistystä liikunnasta",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -2996,7 +2996,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3004,7 +3004,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3012,7 +3012,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3020,7 +3020,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3028,14 +3028,14 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Johdatus tekoälyyn",
           "courseNumber": 6,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -3049,7 +3049,7 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -3063,7 +3063,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         },
         {
@@ -3071,7 +3071,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         },
         {
@@ -3079,7 +3079,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         },
         {
@@ -3087,7 +3087,7 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
         }
       ]
@@ -3101,7 +3101,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3109,7 +3109,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3117,7 +3117,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3125,14 +3125,14 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Opiskelun tueksi",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3140,14 +3140,14 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Työelämätaidot käytäntöön",
           "courseNumber": 7,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -3160,7 +3160,7 @@
           "courseNumber": 1,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3168,7 +3168,7 @@
           "courseNumber": 2,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3176,7 +3176,7 @@
           "courseNumber": 3,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3184,7 +3184,7 @@
           "courseNumber": 4,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3192,7 +3192,7 @@
           "courseNumber": 5,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3200,7 +3200,7 @@
           "courseNumber": 6,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3208,14 +3208,14 @@
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Ylioppilaskokeisiin valmistautuminen",
           "courseNumber": 8,
           "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -3229,7 +3229,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3237,7 +3237,7 @@
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         },
         {
@@ -3245,7 +3245,7 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false,
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "available": true
         }
       ]
@@ -3260,7 +3260,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     },
@@ -3274,56 +3274,56 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Kuvataiteen lukiodiplomi",
           "courseNumber": 2,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Käsityön lukiodiplomi",
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Liikunnan lukiodiplomi",
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Median lukiodiplomi",
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Musiikin lukiodiplomi",
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tanssin lukiodiplomi",
           "courseNumber": 7,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Teatterin lukiodiplomi",
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatory": false
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         }
       ]
     }

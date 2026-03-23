@@ -392,6 +392,8 @@ public abstract class KoskiStudentHandler {
    * @return
    */
   protected StudentSubjectSelections loadStudentSubjectSelections(Student student, StudentSubjectSelections studentSubjects) {
+    // TODO This code has been duplicated into StudentTORController, refactor this to use the same method.
+    //      At the same time, replace the default subject references from the handlers to point to defaults in PyramusConsts
     String math = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
     String lang = userVariableDAO.findByUserAndKey(student, "lukioAidinkieli");
     String aLang = userVariableDAO.findByUserAndKey(student, "lukioKieliA");

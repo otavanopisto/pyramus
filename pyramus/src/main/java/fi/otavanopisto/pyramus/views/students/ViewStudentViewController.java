@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -115,7 +116,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import fi.otavanopisto.pyramus.tor.TORCourse;
 import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
@@ -309,6 +310,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       JSONObject obj = new JSONObject();
       obj.put("id", report.getId().toString());
       obj.put("name", report.getName());
+      obj.put("format", report.getFormat().name());
       studentReportsJSON.add(obj);
     }
     
@@ -940,7 +942,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       studentValidations.addAll(ViewStudentTools.validate(student));
 
       try {
-        StudentTOR tor = StudentTORController.constructStudentTOR(student, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
+        StudentTOR tor = StudentTORController.constructStudentTOR(student, EnumSet.of(StudentTORFlags.CURRICULUM, StudentTORFlags.MOVE_INCLUDED));
         subjectCredits.put(student.getId(), tor);
       } catch (Exception ex) {
         logger.log(Level.SEVERE, String.format("Failed to construct TOR for student %d", student.getId()), ex);
@@ -1068,7 +1070,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
   
       StudentTOR studentTOR;
       try {
-        studentTOR = StudentTORController.constructStudentTOR(latestStudent, torCurriculum, StudentTORHandling.CURRICULUM_MOVE_INCLUDED);
+        studentTOR = StudentTORController.constructStudentTOR(latestStudent, torCurriculum, EnumSet.of(StudentTORFlags.CURRICULUM, StudentTORFlags.MOVE_INCLUDED));
       } catch (Exception e) {
         logger.log(Level.SEVERE, String.format("Couldn't load StudentTOR for student %d", latestStudent.getId()), e);
         return;

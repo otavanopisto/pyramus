@@ -16,16 +16,18 @@ import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext_;
+import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 
 @Stateless
 public class ReportDAO extends PyramusEntityDAO<Report> {
 
-  public Report create(String name, String data, User creatingUser) {
+  public Report create(String name, String data, ReportFileFormat format, User creatingUser) {
     Date now = new Date(System.currentTimeMillis());
     
     Report report = new Report();
     
     report.setData(data);
+    report.setFormat(format);
     report.setName(name);
     report.setCreated(now);
     report.setCreator(creatingUser);
@@ -66,10 +68,11 @@ public class ReportDAO extends PyramusEntityDAO<Report> {
     return persist(report);
   }
   
-  public void updateData(Report report, String data, User modifyingUser) {
+  public void updateData(Report report, String data, ReportFileFormat format, User modifyingUser) {
     Date now = new Date(System.currentTimeMillis());
     
     report.setData(data);
+    report.setFormat(format);
     report.setLastModified(now);
     report.setLastModifier(modifyingUser);
     

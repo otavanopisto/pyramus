@@ -187,6 +187,9 @@
               <ix:applicationAccess line="nettilukio">
                 <option value="nettilukio">Nettilukio</option>
               </ix:applicationAccess>
+              <ix:applicationAccess line="nettilukioov">
+                <option value="nettilukioov">Nettilukio (oppivelvolliset)</option>
+              </ix:applicationAccess>
               <ix:applicationAccess line="nettipk">
                 <option value="nettipk">Nettiperuskoulu</option>
               </ix:applicationAccess>

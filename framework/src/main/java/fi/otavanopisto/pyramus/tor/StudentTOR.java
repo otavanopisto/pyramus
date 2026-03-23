@@ -65,6 +65,16 @@ public class StudentTOR {
     // Do the post processing on the subjects
     subjects.forEach(subject -> subject.postProcess(this, curriculum, problems));
   }
+
+  /**
+   * @return Total number of credit points completed reported in the subjects in this TOR
+   */
+  public Double getTotalCreditPointsCompleted() {
+    return subjects.stream()
+        .filter(torSubject -> torSubject.getTotalCreditPointsCompleted() != null)
+        .mapToDouble(TORSubject::getTotalCreditPointsCompleted)
+        .sum();
+  }
   
   private final TORProblems problems = new TORProblems();
   private List<TORSubject> subjects = new ArrayList<>();

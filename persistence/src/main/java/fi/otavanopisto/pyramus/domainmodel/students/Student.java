@@ -60,6 +60,14 @@ public class Student extends User implements ArchivableEntity {
     return getFirstName() + ' ' + getLastName();
   }
   
+  @Transient 
+  @Field (store = Store.NO)
+  public String getEducationTypeCode() {
+    return studyProgramme != null && studyProgramme.getCategory() != null && studyProgramme.getCategory().getEducationType() != null
+        ? studyProgramme.getCategory().getEducationType().getCode()
+        : null;
+  }
+  
   /**
    * Sets additional info for this student.
    * 

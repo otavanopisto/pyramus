@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.dao.reports.ReportCategoryDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportCategory;
+import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -20,8 +21,8 @@ public class ReportController {
   @Inject
   private ReportCategoryDAO reportCategoryDAO;
 
-  public Report createReport(String name, String data, User user) {
-    Report report = reportDAO.create(name, data, user);
+  public Report createReport(String name, String data, ReportFileFormat format, User user) {
+    Report report = reportDAO.create(name, data, format, user);
     return report;
   }
   
@@ -70,8 +71,8 @@ public class ReportController {
     return report;
   }
   
-  public Report updateReportData(Report report, String data, User user) {
-    reportDAO.updateData(report, data, user);
+  public Report updateReportData(Report report, String data, ReportFileFormat format, User user) {
+    reportDAO.updateData(report, data, format, user);
     return report;
   }
   

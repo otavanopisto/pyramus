@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -117,6 +119,14 @@ public class Report implements ArchivableEntity{
     return archived;
   }
 
+  public ReportFileFormat getFormat() {
+    return format;
+  }
+
+  public void setFormat(ReportFileFormat format) {
+    this.format = format;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Report")  
   @TableGenerator(name="Report", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -152,6 +162,11 @@ public class Report implements ArchivableEntity{
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date lastModified;
 
+  @NotNull
+  @Column (nullable = false)
+  @Enumerated (EnumType.STRING)
+  private ReportFileFormat format;
+  
   @Version
   @Column(nullable = false)
   private Long version;

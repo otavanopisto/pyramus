@@ -84,7 +84,6 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
         getFormValue(formData, "field-last-name"));
     String line = application.getLine();
     String documentName = String.format("Hyväksyntä: %s", applicantName);
-    boolean isUnderage = ApplicationUtils.isUnderage(application); 
 
     OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
     try {
@@ -108,8 +107,7 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
             requestContext.getRequest(),
             applicantName,
             line,
-            staffMember,
-            isUnderage);
+            staffMember);
         onnistuuClient.addPdf(documentId, pdf);
         signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, null, null,
             ApplicationSignatureState.PDF_UPLOADED);

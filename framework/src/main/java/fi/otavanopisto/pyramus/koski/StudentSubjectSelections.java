@@ -1,5 +1,9 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -156,6 +160,126 @@ public class StudentSubjectSelections {
     this.accomplishments = accomplishments;
   }
 
+  /**
+   * Returns list of subject codes for which the subject
+   * selection is required for the subject to be considered
+   * as part of the Student's studies.
+   * 
+   * @return
+   */
+  public Set<String> getSubjectSelectionRequired() {
+    return subjectSelectionRequired;
+  }
+
+  /**
+   * Sets the list of subject codes for which the subject
+   * selection is required for the subject to be considered
+   * as part of the Student's studies.
+   * 
+   * @param subjectSelectionRequired
+   */
+  public void setSubjectSelectionRequired(Set<String> subjectSelectionRequired) {
+    this.subjectSelectionRequired = subjectSelectionRequired;
+  }
+
+  /**
+   * Returns true if the given subject code is any of the
+   * subject selections.
+   * 
+   * Note that this method returning false does not mean
+   * that the subject is not valid for student's studies,
+   * only that there is no subject selection done on the
+   * subject.
+   * 
+   * @param subjectCode
+   * @return
+   */
+  public boolean isSelectedSubject(String subjectCode) {
+    return
+        StringUtils.equals(math, subjectCode) ||
+        StringUtils.equals(primaryLanguage, subjectCode) ||
+        StringUtils.equals(religion, subjectCode) ||
+        isALanguage(subjectCode) ||
+        isA1Language(subjectCode) ||
+        isA2Language(subjectCode) ||
+        isB1Language(subjectCode) ||
+        isB2Language(subjectCode) ||
+        isB3Language(subjectCode);
+  }
+
+  /**
+   * Returns true if the subject is considered included in the studies.
+   * 
+   * Returns true when either
+   *  a. the subject is in the list of subject for which selection is required
+   *     and it is a selected subject (determined by isSelectedSubject)
+   *  b. the subject does not require subject selection or there are no subjects 
+   *     defined that require subject selection
+   *     
+   * 
+   * @param subjectCode
+   * @return
+   */
+  public boolean isIncludedInStudies(String subjectCode) {
+    // If there's no selection requirements, there's nothing to check 
+    // so assume the subject is included in studies
+    if (CollectionUtils.isEmpty(subjectSelectionRequired)) {
+      return true;
+    }
+    
+    if (subjectSelectionRequired.contains(subjectCode)) {
+      // The subject does require selection so check that it is
+      return isSelectedSubject(subjectCode);
+    }
+    else {
+      return true;
+    }
+  }
+  
+  /**
+   * Sets a fields value by the uservariable name.
+   * 
+   * Maps the uservariable to a field in this object and sets that 
+   * field's value to fieldValue.
+   * 
+   * @param userVariableName name of the uservariable
+   * @param fieldValue value for the field
+   */
+  public void setFieldValueByUserVariableName(String userVariableName, String fieldValue) {
+    switch (userVariableName) {
+      case KoskiConsts.SubjectSelections.MATH:
+        setMath(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.NATIVE_LANGUAGE:
+        setPrimaryLanguage(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.LANG_A:
+        setALanguages(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.LANG_A1:
+        setA1Languages(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.LANG_A2:
+        setA2Languages(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.LANG_B1:
+        setB1Languages(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.LANG_B2:
+        setB2Languages(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.LANG_B3:
+        setB3Languages(fieldValue);
+      break;
+      case KoskiConsts.SubjectSelections.RELIGION:
+        setReligion(fieldValue);
+      break;
+      
+      default:
+        throw new RuntimeException(String.format("Unknown or not supported variable name %s", userVariableName));
+    }
+  }
+  
   private String math;
   private String primaryLanguage;
   private String aLanguages;
@@ -166,4 +290,5 @@ public class StudentSubjectSelections {
   private String b3Languages;
   private String religion;
   private String accomplishments;
+  private Set<String> subjectSelectionRequired = new HashSet<>();
 }

@@ -63,20 +63,22 @@ public class MonthlySourceSummary {
       // Lines and sources
       
       Map<String, Map<String, SummaryItem>> lines = new LinkedHashMap<String, Map<String, SummaryItem>>();
-      lines.put("nettilukio", createSourceMap());
-      lines.put("nettipk", createSourceMap());
-      lines.put("aikuislukio", createSourceMap());
-      lines.put("mk", createSourceMap());
-      lines.put("aineopiskelu", createSourceMap());
-      lines.put("aineopiskelupk", createSourceMap());
+      lines.put(ApplicationUtils.LINE_NETTILUKIO, createSourceMap());
+      lines.put(ApplicationUtils.LINE_NETTILUKIO_OV, createSourceMap());
+      lines.put(ApplicationUtils.LINE_NETTIPK, createSourceMap());
+      lines.put(ApplicationUtils.LINE_AIKUISLUKIO, createSourceMap());
+      lines.put(ApplicationUtils.LINE_MK, createSourceMap());
+      lines.put(ApplicationUtils.LINE_AINEOPISKELU, createSourceMap());
+      lines.put(ApplicationUtils.LINE_AINEOPISKELU_PK, createSourceMap());
       
       Map<String, Integer> lineApplicationCounts = new LinkedHashMap<String, Integer>();
-      lineApplicationCounts.put("nettilukio", 0);
-      lineApplicationCounts.put("nettipk", 0);
-      lineApplicationCounts.put("aikuislukio", 0);
-      lineApplicationCounts.put("mk", 0);
-      lineApplicationCounts.put("aineopiskelu", 0);
-      lineApplicationCounts.put("aineopiskelupk", 0);
+      lineApplicationCounts.put(ApplicationUtils.LINE_NETTILUKIO, 0);
+      lineApplicationCounts.put(ApplicationUtils.LINE_NETTILUKIO_OV, 0);
+      lineApplicationCounts.put(ApplicationUtils.LINE_NETTIPK, 0);
+      lineApplicationCounts.put(ApplicationUtils.LINE_AIKUISLUKIO, 0);
+      lineApplicationCounts.put(ApplicationUtils.LINE_MK, 0);
+      lineApplicationCounts.put(ApplicationUtils.LINE_AINEOPISKELU, 0);
+      lineApplicationCounts.put(ApplicationUtils.LINE_AINEOPISKELU_PK, 0);
 
       // Timeframe
 

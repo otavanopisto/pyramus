@@ -198,15 +198,27 @@
           if (studentReports.length > 0) {
             basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuSpacer());
 
-            for (var i = 0, l = studentReports.length; i < l; i++) {
-              var reportId = studentReports[i].id;
-              var reportName = studentReports[i].name;
+            for (let i = 0, l = studentReports.length; i < l; i++) {
+              let reportId = studentReports[i].id;
+              let reportName = studentReports[i].name;
+              let reportFormat = studentReports[i].format;
               
-              basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
-                iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/report.png',
-                text: reportName,
-                link: GLOBAL_contextPath + '/reports/viewreport.page?reportId=' + reportId + "&studentId=" + studentId
-              }));
+              if (reportFormat == 'RPTDESIGN') {
+                basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+                  iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/report.png',
+                  text: reportName,
+                  link: GLOBAL_contextPath + '/reports/viewreport.page?reportId=' + reportId + "&studentId=" + studentId
+                }));
+              }
+              else if (reportFormat == 'FTL') {
+                basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+                  iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/report.png',
+                  text: reportName,
+                  onclick: function (event) {
+                    openViewStudentFTLReport(studentId, reportId);
+                  }
+                }));
+              }
             }            
           }
         }
@@ -219,18 +231,6 @@
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.gradesTabRelatedActionsManageTransferCreditsLabel"/>',
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
-        }));
-
-        var text = isLukio
-        ? '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageSpokenLanguageExamsLabel"/>'
-        : '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageLanguageSkillLevelsLabel"/>';
-
-        var tab = isLukio ? '#at-exams' : '#at-languageSkillLevels';
-        
-        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
-            iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-            text: text,
-            link: GLOBAL_contextPath + '/grading/managespokenexams.page?studentId=' + studentId + tab
         }));
         gradesTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',

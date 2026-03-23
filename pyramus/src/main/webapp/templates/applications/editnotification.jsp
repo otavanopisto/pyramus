@@ -45,6 +45,7 @@
               <option value="aineopiskelu" <c:if test="${notification.line == 'aineopiskelu'}">selected="selected"</c:if>>Aineopiskelu/lukio</option>
               <option value="aineopiskelupk" <c:if test="${notification.line == 'aineopiskelupk'}">selected="selected"</c:if>>Aineopiskelu/perusopetus</option>
               <option value="nettilukio" <c:if test="${notification.line == 'nettilukio'}">selected="selected"</c:if>>Nettilukio</option>
+              <option value="nettilukioov" <c:if test="${notification.line == 'nettilukioov'}">selected="selected"</c:if>>Nettilukio (oppivelvolliset)</option>
               <option value="nettipk" <c:if test="${notification.line == 'nettipk'}">selected="selected"</c:if>>Nettiperuskoulu</option>
               <option value="aikuislukio" <c:if test="${notification.line == 'aikuislukio'}">selected="selected"</c:if>>Aikuislukio</option>
               <option value="mk" <c:if test="${notification.line == 'mk'}">selected="selected"</c:if>>Aikuisten perusopetus</option>

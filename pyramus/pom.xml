@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.258-SNAPSHOT</version>
+    <version>0.7.260-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
@@ -516,7 +516,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.39.1</version>
+            <version>0.48.1</version>
             <configuration>
               <machine>
                 <autoCreate>true</autoCreate>
@@ -970,7 +970,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.39.1</version>
+            <version>0.48.1</version>
             <configuration>
               <machine>
                 <autoCreate>true</autoCreate>

@@ -8,7 +8,7 @@
     <div class="application-handling-option backward-action" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text">Peruuta käsittely</span></div>
     <div class="application-handling-option backward-action" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta käsittelyyn</span></div>
     <div class="application-handling-option forward-action" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota käsittelyyn</span></div>
-    <div class="application-handling-option forward-action" data-line="nettilukio,nettipk,aikuislukio,mk" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirrä hyväksyttäväksi</span></div>
+    <div class="application-handling-option forward-action" data-line="nettilukio,nettilukioov,nettipk,aikuislukio,mk" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirrä hyväksyttäväksi</span></div>
     <div class="application-handling-option accept-action sign-button" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
       <span class="application-handling-text">Allekirjoita hyväksyntä</span>
     </div>

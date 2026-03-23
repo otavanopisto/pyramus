@@ -6,9 +6,21 @@
   <section class="form-section section-attachments" data-skip="true" style="display:none;">
 
     <div class="application-line"></div>
-    
+
     <h2 class="form-section__header">Hakemuksen liitteet</h2>
 
+    <div class="form-section__field-container field-nettilukioov-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettilukioov" style="display:none;">
+      <p>
+        Alaikäisen hakijan on hakuperusteen osoittamiseksi esitettävä <b>perusopetuksen päättötodistuksen</b> lisäksi seuraavat asiakirjat:
+        <ul>
+          <li>painavan perusteen selvittävä asiakirja, jos hakuperusteena terveydelliset tai muut henkilökohtaiset syyt</li>
+          <li>nykyisen / edellisen oppilaitoksen edustajan puolto riittävistä opiskeluvalmiuksista</li>
+          <li>tuorein opintorekisteriote mahdollisista toisen asteen opinnoista</li>
+          <li><a href="https://nettilukio.fi/wp-content/uploads/2026/01/Tiedonsiirtolomake-Nettilukio.pdf" target="_blank">tiedonsiirtolomake</a> ja tarvittaessa pedagogisen tuen asiakirja</li>
+        </ul>
+      </p>
+    </div>
+    
     <div class="form-section__field-container field-attachments">
       <div class="field-attachments__uploader">
         <div class="field-attachments__selector-container">

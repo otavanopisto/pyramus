@@ -6,6 +6,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -33,28 +34,32 @@ public class ApplicationAccessTag extends TagSupport {
     boolean aineopiskelu = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()));
     boolean aineopiskelupk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU_PK.getKey()));
     boolean nettilukio = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()));
+    boolean nettilukioov = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO_OV.getKey()));
     boolean nettipk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTIPERUSKOULU.getKey()));
     boolean aikuislukio = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISLUKIO.getKey()));
     boolean mk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AIKUISTENPERUSOPETUS.getKey()));
     if (StringUtils.isEmpty(line)) {
-      return aineopiskelu || aineopiskelupk || nettilukio || nettipk || aikuislukio || mk ? EVAL_BODY_INCLUDE : SKIP_BODY;
+      return aineopiskelu || aineopiskelupk || nettilukio || nettilukioov || nettipk || aikuislukio || mk ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
-    else if (StringUtils.equals(line, "aineopiskelu")) {
+    else if (StringUtils.equals(line, ApplicationUtils.LINE_AINEOPISKELU)) {
       return aineopiskelu ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
-    else if (StringUtils.equals(line, "aineopiskelupk")) {
+    else if (StringUtils.equals(line, ApplicationUtils.LINE_AINEOPISKELU_PK)) {
       return aineopiskelupk ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
-    else if (StringUtils.equals(line, "nettilukio")) {
+    else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTILUKIO)) {
       return nettilukio ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
-    else if (StringUtils.equals(line, "nettipk")) {
+    else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTILUKIO_OV)) {
+      return nettilukioov ? EVAL_BODY_INCLUDE : SKIP_BODY;
+    }
+    else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTIPK)) {
       return nettipk ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
-    else if (StringUtils.equals(line, "aikuislukio")) {
+    else if (StringUtils.equals(line, ApplicationUtils.LINE_AIKUISLUKIO)) {
       return aikuislukio ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
-    else if (StringUtils.equals(line, "mk")) {
+    else if (StringUtils.equals(line, ApplicationUtils.LINE_MK)) {
       return mk ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     return SKIP_BODY;

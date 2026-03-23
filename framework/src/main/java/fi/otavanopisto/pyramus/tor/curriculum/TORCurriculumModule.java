@@ -1,6 +1,9 @@
 package fi.otavanopisto.pyramus.tor.curriculum;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import fi.otavanopisto.pyramus.hops.Mandatority;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TORCurriculumModule {
@@ -21,14 +24,6 @@ public class TORCurriculumModule {
     this.courseNumber = courseNumber;
   }
 
-  public boolean isMandatory() {
-    return mandatory;
-  }
-
-  public void setMandatory(boolean mandatory) {
-    this.mandatory = mandatory;
-  }
-
   public int getLength() {
     return length;
   }
@@ -45,9 +40,23 @@ public class TORCurriculumModule {
     this.lengthUnitSymbol = lengthUnitSymbol;
   }
 
+  public Mandatority getMandatority() {
+    return mandatority;
+  }
+
+  public void setMandatority(Mandatority mandatority) {
+    this.mandatority = mandatority;
+  }
+  
+  @JsonIgnore
+  public boolean isMandatory() {
+    return mandatority != null && mandatority == Mandatority.MANDATORY;
+  }
+  
+
   private String name;
   private int courseNumber;
   private int length;
   private String lengthUnitSymbol;
-  private boolean mandatory;
+  private Mandatority mandatority;
 }

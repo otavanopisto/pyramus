@@ -43,6 +43,7 @@
               <option value="aineopiskelu">Aineopiskelu/lukio</option>
               <option value="aineopiskelupk">Aineopiskelu/perusopetus</option>
               <option value="nettilukio">Nettilukio</option>
+              <option value="nettilukioov">Nettilukio (oppivelvolliset)</option>
               <option value="nettipk">Nettiperuskoulu</option>
               <option value="aikuislukio">Aikuislukio</option>
               <option value="mk">Aikuisten perusopetus</option>

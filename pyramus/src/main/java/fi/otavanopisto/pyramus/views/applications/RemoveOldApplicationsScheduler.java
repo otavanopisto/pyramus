@@ -26,24 +26,32 @@ public class RemoveOldApplicationsScheduler {
     Date date = c.getTime();
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
     // #4226: aineopiskelu, mk, aikuislukio: year after registration
-    List<Application> applications = applicationDAO.listByOlderAndLine(date, "aineopiskelu");
+    List<Application> applications = applicationDAO.listByOlderAndLine(date, ApplicationUtils.LINE_AINEOPISKELU);
     for (Application application : applications) {
       ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
-    applications = applicationDAO.listByOlderAndLine(date, "mk");
+    applications = applicationDAO.listByOlderAndLine(date, ApplicationUtils.LINE_AINEOPISKELU_PK);
     for (Application application : applications) {
       ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
-    applications = applicationDAO.listByOlderAndLine(date, "aikuislukio");
+    applications = applicationDAO.listByOlderAndLine(date, ApplicationUtils.LINE_MK);
+    for (Application application : applications) {
+      ApplicationUtils.deleteApplication(null, application, "old application cleanup");
+    }
+    applications = applicationDAO.listByOlderAndLine(date, ApplicationUtils.LINE_AIKUISLUKIO);
     for (Application application : applications) {
       ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
     // #4226: nettilukio, nettipk: year after latest modification if not transferred as student
-    applications = applicationDAO.listByOlderAndLineAndNullStudent(date, "nettilukio");
+    applications = applicationDAO.listByOlderAndLineAndNullStudent(date, ApplicationUtils.LINE_NETTILUKIO);
     for (Application application : applications) {
       ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
-    applications = applicationDAO.listByOlderAndLineAndNullStudent(date, "nettipk");
+    applications = applicationDAO.listByOlderAndLineAndNullStudent(date, ApplicationUtils.LINE_NETTILUKIO_OV);
+    for (Application application : applications) {
+      ApplicationUtils.deleteApplication(null, application, "old application cleanup");
+    }
+    applications = applicationDAO.listByOlderAndLineAndNullStudent(date, ApplicationUtils.LINE_NETTIPK);
     for (Application application : applications) {
       ApplicationUtils.deleteApplication(null, application, "old application cleanup");
     }
