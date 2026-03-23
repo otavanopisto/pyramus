@@ -495,6 +495,14 @@
           "lengthUnitSymbol": "op",
           "mandatority": "SCHOOL_LEVEL_OPTIONAL",
           "hiddenFromHops": true
+        },
+        {
+          "name": "Kansainvälistyminen",
+          "courseNumber": 15,
+          "length": 1,
+          "lengthUnitSymbol": "op",
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
+          "hiddenFromHops": true
         }
       ]
     },
@@ -2276,7 +2284,8 @@
           "courseNumber": 8,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
         }
       ]
     },
@@ -2329,7 +2338,8 @@
           "courseNumber": 6,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
         }
       ]
     },
@@ -2793,7 +2803,8 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
         },
         {
           "name": "Uskonnot ja uskonnottomuus",
@@ -2927,7 +2938,8 @@
           "courseNumber": 3,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
+          "available": true
         },
         {
           "name": "Taiteen monet maailmat",
@@ -2996,8 +3008,7 @@
           "courseNumber": 1,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
-          "available": true
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
         },
         {
           "name": "Tekstinkäsittely",
