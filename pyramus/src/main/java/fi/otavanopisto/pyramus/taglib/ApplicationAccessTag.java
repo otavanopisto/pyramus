@@ -24,7 +24,17 @@ public class ApplicationAccessTag extends TagSupport {
       return SKIP_BODY;
     }
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    StaffMember staffMember = staffMemberDAO.findById(userId);
+    StaffMember staffMember;
+
+    // userId may point to a non-StaffMember User in which case JPA 
+    // throws an exception because the type isn't correct.
+    try {
+      staffMember = staffMemberDAO.findById(userId);
+    }
+    catch (Exception e) {
+      staffMember = null;
+    }
+    
     if (staffMember == null) {
       return SKIP_BODY;
     }
