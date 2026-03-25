@@ -2488,6 +2488,12 @@
   </h1>
   
   <div id="koski-status-details" style="display: none;">
+    <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
+      <div>
+        <a href="${pageContext.request.contextPath}/1/persons/persons/${person.id}/oppija" target="_blank">Oppija-JSON</a>
+      </div>
+    </c:if>
+    <div id="koski-status-details-log"></div>
   </div>
   
   <div id="pyramus-validation" class="pyramus-validation-error-list" ${(empty studentValidations) ? 'style="display: none;"' : ''}>
