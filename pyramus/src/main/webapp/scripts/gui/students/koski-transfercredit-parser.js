@@ -1206,7 +1206,7 @@ function opsVastaavuusTaulukkoKaikki() {
                 kaikkioppiainevastaavuudet[moduliKnro] = {};
               }
               
-              const diffGrade = !!konversioModuli.grade ? " (" + vt_vastaavuus.grade + ")" : "";
+              const diffGrade = !!konversioModuli.grade ? " (" + konversioModuli.grade + ")" : "";
               const manualDoubleCheckAlert = !!konversioModuli.manualDoubleCheck ? "!" : "";
               kaikkioppiainevastaavuudet[moduliKnro][vt.diaarinumero] = konversioKohde + diffGrade + manualDoubleCheckAlert;
             }            
