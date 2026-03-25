@@ -146,7 +146,6 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
         }
         
         const diaarinumerotOPS2021 = [
-          "OPH-2263-2019", 
           "OPH-2267-2019"
         ];
         
@@ -597,8 +596,29 @@ function opsVastaavuustaulukko(diaarinumero) {
     "70/011/2015"
   ];
 
-  // OPS 2015 -> OPS 2021
-  if (OPS2015DIAARIT.indexOf(diaarinumero) != -1) {
+  if (diaarinumero == "OPH-2263-2019") {
+    // 2019 (2021) Nuorten OPS -> Aikuisten OPS
+    
+    var ops2019nuoret = {
+      "HI": {
+        1: { type: "OK", to: 1 },
+        2: { type: "KNRO", to: 3 },
+        3: { type: "KNRO", to: 2 },
+        4: { type: "OK", to: 4 },
+        5: { type: "OK", to: 5 },
+        6: { type: "OK", to: 6 }
+      }
+    };
+  
+    return {
+      diaarinumero: "OPH-2263-2019",
+      nimi: "2021 Nuoret",
+      aineet: ops2019nuoret
+    };
+  }
+  else if (OPS2015DIAARIT.indexOf(diaarinumero) != -1) {
+    // OPS 2015 -> OPS 2021
+    
     var ops2015yhteiset = {
       "ÄI": {
         1: { type: "OK" },
@@ -1114,6 +1134,7 @@ function opsVastaavuustaulukko(diaarinumero) {
  */
 function opsVastaavuusTaulukkoKaikki() {
   const vastaavuustaulukot = [
+    opsVastaavuustaulukko("OPH-2263-2019"),
     opsVastaavuustaulukko("60/011/2015"),
     opsVastaavuustaulukko("70/011/2015"),
     opsVastaavuustaulukko("33/011/2003"),
