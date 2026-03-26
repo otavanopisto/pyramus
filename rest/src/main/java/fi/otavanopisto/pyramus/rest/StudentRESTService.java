@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -74,6 +76,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.reports.Report;
+import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentCard;
@@ -100,6 +104,8 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import fi.otavanopisto.pyramus.reports.FTLReportsController;
+import fi.otavanopisto.pyramus.reports.FTLReportsController.ReportFormat;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -111,6 +117,7 @@ import fi.otavanopisto.pyramus.rest.controller.LanguageController;
 import fi.otavanopisto.pyramus.rest.controller.MunicipalityController;
 import fi.otavanopisto.pyramus.rest.controller.NationalityController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
+import fi.otavanopisto.pyramus.rest.controller.ReportController;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
 import fi.otavanopisto.pyramus.rest.controller.StudentActivityTypeController;
 import fi.otavanopisto.pyramus.rest.controller.StudentContactLogEntryCommentController;
@@ -155,8 +162,8 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORHandling;
 import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
+import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -255,6 +262,12 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Inject
   private StudentCardDAO studentCardDAO;
+  
+  @Inject
+  private FTLReportsController certificateReportsController;
+  
+  @Inject
+  private ReportController reportController;
   
   private static final String USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI = "lukioAidinkieli";
   private static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
@@ -3559,7 +3572,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     double numCreditPoints = 0;
     try {
-      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, StudentTORHandling.NONE);
+      StudentTOR studentTOR = StudentTORController.constructStudentTOR(student, EnumSet.noneOf(StudentTORFlags.class));
       numCreditPoints = studentTOR.getTotalCourseLengths(TORCourseLengthUnit.op, true);
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Fetching number of credit points failed", e);
@@ -3875,6 +3888,41 @@ public class StudentRESTService extends AbstractRESTService {
     }
     else {
       return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/reports/{REPORTID:[0-9]*}")
+  @GET
+  @RESTPermit (handling = Handling.INLINE)
+  public Response findPaattotodistus(@PathParam("STUDENTID") Long studentId, @PathParam("REPORTID") Long reportId,
+      @QueryParam("format") @DefaultValue("html") String formatArg) {
+    
+    // TODO correct?
+    if (!sessionController.getUser().hasAnyRole(Role.ADMINISTRATOR, Role.MANAGER, Role.STUDY_PROGRAMME_LEADER)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    Report report = reportController.findReportById(reportId);
+
+    if (report == null || report.getFormat() != ReportFileFormat.FTL) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    formatArg = StringUtils.upperCase(formatArg);
+    ReportFormat format = EnumUtils.getEnum(ReportFormat.class, formatArg);
+    
+    if (format == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    try {
+      return Response.ok(certificateReportsController.renderFTLStudentReport(report, student, format)).type(format.getContentType()).build();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
   }
   

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -22,6 +23,7 @@ import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentSubjectGradeDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -35,17 +37,14 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
+import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 
 public class StudentTORController {
 
-  public enum StudentTORHandling {
-    /**
-     * No extra handling.
-     */
-    NONE,
-    
+  public enum StudentTORFlags {
     /**
      * Use Curriculum and calculate summary fields based on it.
      */
@@ -56,41 +55,52 @@ public class StudentTORController {
      * if there are subjects that are included in other subjects,
      * the credits are moved under the included subjects. If the
      * subjects don't exist though, the subject is still included
-     * as an individual subject.
+     * as an individual subject. Use CURRICULUM with this option.
      */
-    CURRICULUM_MOVE_INCLUDED;
+    MOVE_INCLUDED,
+
+    /**
+     * Loads Student's subject selections and uses them to filter
+     * the resulting TOR from subjects that should be excluded
+     * from it. Every StudyProgramme doesn't necessarily have
+     * subject selections or they are not specified for them so
+     * results may vary.
+     */
+    USE_SUBJECT_SELECTIONS;
     
-    public final static EnumSet<StudentTORHandling> LOAD_CURRICULUM = EnumSet.of(CURRICULUM, CURRICULUM_MOVE_INCLUDED);
+    // States when loading Student's Curriculum is required - although it might not exist
+    public final static EnumSet<StudentTORFlags> LOAD_CURRICULUM = EnumSet.of(CURRICULUM, MOVE_INCLUDED);
   }
   
   /**
    * Constructs table of records for given student. If subject summary fields
    * (subject completed, mandatory course count and completed mandatory course count)
-   * are needed, set useCurriculum to true. If they're not needed, use false for
-   * less processing.
+   * are needed, include a flag that requires Curriculum to be loaded. If they're not 
+   * needed, omitting curriculum loading leads to less processing.
    * 
    * @param student Student
-   * @param useCurriculum set to true if subject summary fields are needed
+   * @param flags to specify how the TOR should be formed
    * @return Student's TOR
    * @throws Exception if something goes wrong
    */
-  public static StudentTOR constructStudentTOR(Student student, StudentTORHandling handling) throws Exception {
-    TORCurriculum curriculum = StudentTORHandling.LOAD_CURRICULUM.contains(handling) ? getCurriculum(student) : null;
-    return constructStudentTOR(student, curriculum, handling);
+  public static StudentTOR constructStudentTOR(Student student, EnumSet<StudentTORFlags> flags) throws Exception {
+    TORCurriculum curriculum = !Collections.disjoint(StudentTORFlags.LOAD_CURRICULUM, flags) ? getCurriculum(student) : null;
+    return constructStudentTOR(student, curriculum, flags);
   }
 
   /**
    * Constructs table of records for given student. If subject summary fields
    * (subject completed, mandatory course count and completed mandatory course count)
-   * are needed, set useCurriculum to true. If they're not needed, use false for
-   * less processing.
+   * are needed, pass the curriculum parameter. If they're not needed, curriculum can
+   * be null for less processing.
    * 
    * @param student Student
    * @param curriculum set if subject summary fields are needed, can be null if not
+   * @param flags to specify how the TOR should be formed
    * @return Student's TOR
    * @throws Exception if something goes wrong
    */
-  public static StudentTOR constructStudentTOR(Student student, TORCurriculum curriculum, StudentTORHandling handling) throws Exception {
+  public static StudentTOR constructStudentTOR(Student student, TORCurriculum curriculum, EnumSet<StudentTORFlags> flags) throws Exception {
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
@@ -103,28 +113,37 @@ public class StudentTORController {
     StudentTOR tor = new StudentTOR();
     TORProblems problems = tor.getProblems();
 
-    Map<String, Set<String>> subjectCodeTranslations = (handling == StudentTORHandling.CURRICULUM_MOVE_INCLUDED && curriculum != null) 
+    Map<String, Set<String>> subjectCodeTranslations = (flags.contains(StudentTORFlags.MOVE_INCLUDED) && curriculum != null) 
         ? getReverseIncludedSubjectsMapping(curriculum) : null;
     
     // Collect Subjects
 
+    StudentSubjectSelections studentSubjectSelections = flags.contains(StudentTORFlags.USE_SUBJECT_SELECTIONS) ? loadStudentSubjectSelections(student) : null;
+    
     for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
       if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
         Subject subject = courseAssessment.getSubject();
-        addTORSubject(tor, student, subject, curriculum, handling);
+        
+        if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+          addTORSubject(tor, student, subject, curriculum);
+        }
       }
     }
     
     for (TransferCredit transferCredit : transferCreditsByStudent) {
       Subject subject = transferCredit.getSubject();
-      addTORSubject(tor, student, subject, curriculum, handling);
+      if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+        addTORSubject(tor, student, subject, curriculum);
+      }
     }
     
     for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
       CourseAssessment courseAssessment = (CourseAssessment) linkedCourseAssessment.getCredit();
       if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
         Subject subject = courseAssessment.getSubject();
-        addTORSubject(tor, student, subject, curriculum, handling);
+        if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+          addTORSubject(tor, student, subject, curriculum);
+        }
       }
     }
     
@@ -132,7 +151,9 @@ public class StudentTORController {
       TransferCredit transferCredit = (TransferCredit) linkedTransferCredit.getCredit();
       if (transferCredit != null) {
         Subject subject = transferCredit.getSubject();
-        addTORSubject(tor, student, subject, curriculum, handling);
+        if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+          addTORSubject(tor, student, subject, curriculum);
+        }
       }
     }
     
@@ -148,7 +169,9 @@ public class StudentTORController {
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         boolean mandatory = isMandatory(courseAssessment);
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+        if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+          addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+        }
       }
     }
     
@@ -162,7 +185,9 @@ public class StudentTORController {
       Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
       TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
       boolean mandatory = transferCredit.getOptionality() == CourseOptionality.MANDATORY;
-      addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+      if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+      }
     }
     
     for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
@@ -176,7 +201,9 @@ public class StudentTORController {
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         boolean mandatory = isMandatory(courseAssessment);
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+        if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+          addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+        }
       }
     }
     
@@ -192,7 +219,9 @@ public class StudentTORController {
         Double courseLength = courseEducationalLength != null ? courseEducationalLength.getUnits() : null;
         TORCourseLengthUnit courseLengthUnit = courseEducationalLength != null ? getCourseLengthUnit(courseEducationalLength.getUnit(), problems) : null;
         boolean mandatory = transferCredit.getOptionality() == CourseOptionality.MANDATORY;
-        addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+        if (studentSubjectSelections == null || studentSubjectSelections.isIncludedInStudies(subject.getCode())) {
+          addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums, mandatory, courseLength, courseLengthUnit, subjectCodeTranslations, problems);
+        }
       }
     }
 
@@ -265,7 +294,7 @@ public class StudentTORController {
     return lengthUnit;
   }
 
-  private static void addTORSubject(StudentTOR tor, Student student, Subject subject, TORCurriculum curriculum, StudentTORHandling handling) {
+  private static void addTORSubject(StudentTOR tor, Student student, Subject subject, TORCurriculum curriculum) {
     TORSubject torSubject = tor.findSubject(subject.getId());
     if (torSubject == null) {
       Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
@@ -411,5 +440,123 @@ public class StudentTORController {
 
     return subjectCodeTranslations;
   }
-  
+
+  /**
+   * Loads given Student's subject selections from user variables and returns an
+   * helper object to deal with them. Attempts to load default values based on the
+   * education type of the student and then overriding the subject choices from the
+   * values in the database.
+   * 
+   * @param student Student for who the subject selections are being loaded for. Must not be null.
+   * @return
+   */
+  public static StudentSubjectSelections loadStudentSubjectSelections(Student student) {
+    if (student == null) {
+      throw new IllegalArgumentException("Student must not be null");
+    }
+    
+    Map<String, String> defaultSubjectSelectionsMap = null;
+    Set<String> subjectChoices = null;
+
+    // Attempt to figure out the values from the Student's education type
+    
+    String educationTypeCode = student.getEducationTypeCode();
+    
+    if (StringUtils.isNotBlank(educationTypeCode)) {
+      switch (educationTypeCode) {
+        case PyramusConsts.Lukio.EDUCATION_TYPE:
+          defaultSubjectSelectionsMap = PyramusConsts.Lukio.DEFAULT_SUBJECT_CHOICES;
+          subjectChoices = PyramusConsts.Lukio.CHOICE_SUBJECTS;
+        break;
+        
+        case PyramusConsts.Perusopetus.EDUCATION_TYPE:
+          defaultSubjectSelectionsMap = PyramusConsts.Perusopetus.DEFAULT_SUBJECT_CHOICES;
+          subjectChoices = PyramusConsts.Perusopetus.CHOICE_SUBJECTS;
+        break;
+        
+        case PyramusConsts.Apa.EDUCATION_TYPE:
+          defaultSubjectSelectionsMap = PyramusConsts.Apa.DEFAULT_SUBJECT_CHOICES;
+        break;
+      }
+    }
+    
+    return loadStudentSubjectSelections(student, subjectChoices, defaultSubjectSelectionsMap);
+  }
+
+  /**
+   * Loads given Student's subject selections from user variables and returns an
+   * helper object to deal with them. Populates the subject selections from given
+   * default values which are then overridden if set in database.
+   * 
+   * @param student Student for who the subject selections are being loaded for. Must not be null.
+   * @param subjectChoices Set of subject codes that require an explicit choice to be made
+   * @param defaultSubjectSelectionsMap Default values to be applied before the choices are loaded from database
+   * @return
+   */
+  public static StudentSubjectSelections loadStudentSubjectSelections(Student student, Set<String> subjectChoices, Map<String, String> defaultSubjectSelectionsMap) {
+    if (student == null) {
+      throw new IllegalArgumentException("Student must not be null");
+    }
+    
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
+
+    StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
+    studentSubjects.setSubjectSelectionRequired(subjectChoices);
+
+    if (defaultSubjectSelectionsMap != null) {
+      for (Entry<String, String> defaultSelection : defaultSubjectSelectionsMap.entrySet()) {
+        studentSubjects.setFieldValueByUserVariableName(defaultSelection.getKey(), defaultSelection.getValue());
+      }
+    }
+    
+    // Get the subject selections from database and set or replace the subject selections
+    
+    String math = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.MATH);
+    String lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.NATIVE_LANGUAGE);
+    String aLang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_A);
+    String a1Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_A1);
+    String a2Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_A2);
+    String b1Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_B1);
+    String b2Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_B2);
+    String b3Lang = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.LANG_B3);
+    String religion = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.RELIGION);
+    String accomplishmentsStr = userVariableDAO.findByUserAndKey(student, KoskiConsts.SubjectSelections.COMPLETION_MARKS);
+
+    if (StringUtils.isNotBlank(math)) {
+      studentSubjects.setMath(math);
+    }
+    if (StringUtils.isNotBlank(lang)) {
+      studentSubjects.setPrimaryLanguage(lang);
+    }
+
+    if (StringUtils.isNotBlank(aLang)) {
+      studentSubjects.setALanguages(aLang);
+    }
+    if (StringUtils.isNotBlank(a1Lang)) {
+      studentSubjects.setA1Languages(a1Lang);
+    }
+    if (StringUtils.isNotBlank(a2Lang)) {
+      studentSubjects.setA2Languages(a2Lang);
+    }
+    
+    if (StringUtils.isNotBlank(b1Lang)) {
+      studentSubjects.setB1Languages(b1Lang);
+    }
+    if (StringUtils.isNotBlank(b2Lang)) {
+      studentSubjects.setB2Languages(b2Lang);
+    }
+    if (StringUtils.isNotBlank(b3Lang)) {
+      studentSubjects.setB3Languages(b3Lang);
+    }
+    if (StringUtils.isNotBlank(religion)) {
+      studentSubjects.setReligion(religion);
+    }
+
+    if (StringUtils.isNotBlank(accomplishmentsStr)) {
+      studentSubjects.setAccomplishments(accomplishmentsStr);
+    }
+    
+    return studentSubjects;
+  }
+
 }

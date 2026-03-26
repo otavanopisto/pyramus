@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus;
 
+import java.util.Map;
 import java.util.Set;
 
 public class PyramusConsts {
@@ -36,9 +37,66 @@ public class PyramusConsts {
   public static final String USERVARIABLE_SUBJECT_CHOICES_USKONTO = "lukioUskonto";
   public static final String USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA = "lukioMatematiikka";
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_A = "lukioKieliA";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_A1 = "lukioKieliA1";
+  public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_A2 = "lukioKieliA2";
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B1 = "lukioKieliB1";
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B2 = "lukioKieliB2";
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B3 = "lukioKieliB3";
+  
+  /**
+   * Lukio
+   */
+  public static class Lukio {
+    public static final String EDUCATION_TYPE = EDUCATION_TYPE_LUKIO;
+
+    // Subject choices
+    public static final Set<String> CHOICE_SUBJECTS = Set.of("MAA", "MAB", "ÄI", "S2", "UE", "UO", "UI", "UK", "UJ", "UX", "ET");
+
+    /**
+     * Default subject selections for lukio. Map where the key is the 
+     * user variable name and value is the default subject code.
+     */
+    public static final Map<String, String> DEFAULT_SUBJECT_CHOICES = Map.of(
+        USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA,     "MAB",
+        USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI,       "ÄI",
+        USERVARIABLE_SUBJECT_CHOICES_USKONTO,          "UE"
+    );
+  }
+  
+  /**
+   * Perusopetus
+   */
+  public static class Perusopetus {
+    public static final String EDUCATION_TYPE = EDUCATION_TYPE_PK;
+    
+    // Subject choices
+    public static final Set<String> CHOICE_SUBJECTS = Set.of("äi", "s2", "ue", "uo", "ui", "et");
+    
+    /**
+     * Default subject selections for perusopetus. Map where the key is the 
+     * user variable name and value is the default subject code.
+     */
+    public static final Map<String, String> DEFAULT_SUBJECT_CHOICES = Map.of(
+        USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI,       "äi",
+        USERVARIABLE_SUBJECT_CHOICES_USKONTO,          "ue"
+    );
+  }
+  
+  /**
+   * Apa
+   */
+  public static class Apa {
+    public static final String EDUCATION_TYPE = "apa";
+    
+    /**
+     * Default subject selections for apa. Map where the key is the 
+     * user variable name and value is the default subject code.
+     */
+    public static final Map<String, String> DEFAULT_SUBJECT_CHOICES = Map.of(
+        // Not sure why this has historically always been A1 instead of just A.. Comment here if you figure it out
+        USERVARIABLE_SUBJECT_CHOICES_KIELI_A1,         "aena"
+    );
+  }
   
   // Subject choices
   public static final Set<String> CHOICE_SUBJECTS = Set.of("MAA", "MAB", "ÄI", "S2", "UE", "UO", "UI", "UK", "UJ", "UX", "ET");

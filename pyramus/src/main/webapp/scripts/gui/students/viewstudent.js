@@ -51,3 +51,19 @@ function openEditSubjectGradesDialog(studentId) {
   dialog.setSize("900px", "500px");
   dialog.open();
 }
+
+function openViewStudentFTLReport(studentId, reportId) {
+  var dialog = new IxDialog({
+    id : 'viewStudentFTLReportDialog',
+    contentURL : GLOBAL_contextPath + '/students/viewstudentftlreportdialog.page?studentId=' + studentId + '&reportId=' + reportId,
+    centered : true,
+    showOk : true,
+    showCancel : false,
+    title : getLocale().getText("students.viewStudent.studentFTLReportDialog.title"),
+    okLabel : getLocale().getText("terms.close"), 
+    cancelLabel : getLocale().getText("terms.close") 
+  });
+  
+  dialog.setSize("900px", "700px");
+  dialog.open();
+}
