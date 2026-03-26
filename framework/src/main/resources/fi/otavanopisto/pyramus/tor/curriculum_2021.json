@@ -2872,7 +2872,8 @@
           "courseNumber": 5,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
         },
         {
           "name": "Mediapsykologia",
