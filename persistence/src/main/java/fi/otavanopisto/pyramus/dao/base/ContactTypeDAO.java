@@ -15,11 +15,10 @@ import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
 @Stateless
 public class ContactTypeDAO extends PyramusEntityDAO<ContactType> {
 
-  public ContactType create(String name, Boolean nonUnique) {
+  public ContactType create(String name) {
     EntityManager entityManager = getEntityManager();
     ContactType contactType = new ContactType();
     contactType.setName(name);
-    contactType.setNonUnique(nonUnique);
     entityManager.persist(contactType);
     return contactType;
   }
@@ -38,10 +37,9 @@ public class ContactTypeDAO extends PyramusEntityDAO<ContactType> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public ContactType update(ContactType contactType, String name, Boolean nonUnique) {
+  public ContactType update(ContactType contactType, String name) {
     EntityManager entityManager = getEntityManager();
     contactType.setName(name);
-    contactType.setNonUnique(nonUnique);
     entityManager.persist(contactType);
     return contactType;
   }
