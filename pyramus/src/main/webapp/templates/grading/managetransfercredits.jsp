@@ -1003,7 +1003,7 @@
               - Modulin tunnisteen perässä +-merkintä: Moduli hyväksiluetaan useammaksi moduliksi<br/>
               - Modulin tunnisteen perässä sulut: Suluissa hyväksiluettavan modulin arvosana<br/>
               - K-merkintä: käsin korjattava<br/>
-              - Automattisia konversioita, joissa useammasta kurssista tulisi yksi hyväksiluettava kurssi, ei tällä hetkellä tueta. Näistä tulee K-merkinnät<br/>
+              - Automaattisia konversioita, joissa useammasta kurssista tulisi yksi hyväksiluettava kurssi, ei tällä hetkellä tueta. Näistä tulee K-merkinnät<br/>
             </p>
             <div id="conversionTableContainer" class="manageTransferCreditsConversionTableContainer"></div>
           </div>
