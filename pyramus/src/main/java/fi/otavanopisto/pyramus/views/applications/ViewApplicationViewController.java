@@ -100,7 +100,10 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
-      if (StringUtils.equalsAny(applicationLine, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_NETTIPK)) {
+      
+      // Opintojen tyyppi: nettilukio
+      
+      if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_NETTILUKIO)) {
         AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
         if (AlternativeLine.PRIVATE == altLine) {
           fields.put("Opintojen tyyppi", "Yksityisopiskelu");
@@ -108,9 +111,12 @@ public class ViewApplicationViewController extends PyramusViewController {
         else if (AlternativeLine.YO == altLine) {
           fields.put("Opintojen tyyppi", "Aineopiskelu/yo-tutkinto");
         }
+      }
 
+      // Maksuton oppivelvollisuus: nettilukio, nettilukio (oppivelvolliset), nettiperuskoulu
+      
+      if (StringUtils.equalsAny(applicationLine, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_NETTILUKIO_OV, ApplicationUtils.LINE_NETTIPK)) {
         String compulsoryStudies = getFormValue(formData, "field-nettilukio_compulsory");
-
         fields.put("Maksuton oppivelvollisuus", StringUtils.equals(compulsoryStudies, "compulsory") ? "Maksuttoman oppivelvollisuuden piirissä" :
           StringUtils.equals(compulsoryStudies, "non_compulsory") ? "Ei maksuttoman oppivelvollisuuden piirissä" : "Ei koske opiskelijaa");
         if (StringUtils.equals(compulsoryStudies, "compulsory")) {
@@ -120,7 +126,10 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
         }
       }
-      else if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU_PK)) {
+      
+      // Aineopiskelu (perusopetus) koulutusohjelma
+      
+      if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU_PK)) {
         InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
         if (InternetixStudyProgramme.OPPILAITOS == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos ilmoittaa)");
@@ -132,6 +141,9 @@ public class ViewApplicationViewController extends PyramusViewController {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus");
         }
       }
+      
+      // Takaisin kaikille yhteisiin perustietoihin
+      
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
         fields.put("Kutsumanimi", getFormValue(formData, "field-nickname"));
