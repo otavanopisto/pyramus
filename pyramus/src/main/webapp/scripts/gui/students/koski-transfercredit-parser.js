@@ -146,7 +146,6 @@ async function parseKoskiTransferCredits(henkilo, curriculumId, studentSSNHash) 
         }
         
         const diaarinumerotOPS2021 = [
-          "OPH-2263-2019", 
           "OPH-2267-2019"
         ];
         
@@ -592,13 +591,87 @@ function parasArviointi(arvioinnit, kurssiKoodi, results) {
  *  - KORJAA_KÄSIN = Käsin korjattava kurssi, ei koneellista vastaavuutta
  */
 function opsVastaavuustaulukko(diaarinumero) {
+  const kieliKoodit = [ "EN", "EA", "LA", "PO", "RA", "KI", "SM", "JP", "SA", "VE", "IA" ];
   const OPS2015DIAARIT = [
     "60/011/2015",   // Nuorten ?
     "70/011/2015"
   ];
 
-  // OPS 2015 -> OPS 2021
-  if (OPS2015DIAARIT.indexOf(diaarinumero) != -1) {
+  /**
+   * Palauttaa objektin, jossa on annetulle kurssinumerovälille 
+   * jokaiselle type=OK -tyylinen konversiokuvaus. Tällä voi
+   * helposti kuvata aineen konversiot, jos kaikki modulit
+   * siirretään suoraan vastaaviin moduleihin.
+   */
+  const ok_konversiot = function (kurssinro_alku, kurssinro_loppu) {
+    let paluu = {};
+    for (let kurssinro = kurssinro_alku; kurssinro <= kurssinro_loppu; kurssinro++) {
+      paluu[kurssinro] = { type: "OK" };
+    }
+    return paluu;
+  }
+  
+  if (diaarinumero == "OPH-2263-2019") {
+    // 2019 (2021) Nuorten OPS -> Aikuisten OPS
+
+    // Ainoa ero on historian 2. ja 3. kurssit vaihtavat paikkaa nuorten vs aikuisten ops 2019 (2021).
+    // Muiden osalta siirrot menevät suoraan valtakunnallisten pakollisten tai valtakunnallisten valinnaisten osalta.
+    
+    var ops2019nuoret = {
+      "ÄI": ok_konversiot(1, 11),
+      "S2": ok_konversiot(1, 11),
+      "BI": ok_konversiot(1, 6),
+      "ENA": ok_konversiot(1, 8),
+      "MAY": {
+        1: { type: "OK" },
+        15: { type: "OK" }
+      },
+      "MAA": ok_konversiot(2, 12),
+      "MAB": ok_konversiot(2, 9),
+      "FY": ok_konversiot(1, 8),
+      "KE": ok_konversiot(1, 6),
+      "RUB1": ok_konversiot(1, 7),
+      "GE": ok_konversiot(1, 4),
+      "YH": ok_konversiot(1, 4),
+      "KU": ok_konversiot(1, 5),
+      "FI": ok_konversiot(1, 4),
+      "UE": ok_konversiot(1, 6),
+      "UO": ok_konversiot(1, 6),
+      "UI": ok_konversiot(1, 6),
+      "UJ": ok_konversiot(1, 6),
+      "ET": ok_konversiot(1, 6),
+      "PS": ok_konversiot(1, 5),
+      "TE": ok_konversiot(1, 3),
+      "LI": ok_konversiot(1, 5),
+      "MU": ok_konversiot(1, 4),
+      "OP": ok_konversiot(1, 4),
+      "AT": ok_konversiot(1, 4),
+      "TO": {
+        1: { type: "OK" }
+      },
+      "HI": {
+        1: { type: "OK" },
+        2: { type: "KNRO", to: 3 },
+        3: { type: "KNRO", to: 2 },
+        4: { type: "OK" },
+        5: { type: "OK" },
+        6: { type: "OK" }
+      }
+    };
+
+    for (const kieliKoodi of kieliKoodit) {
+      ops2019nuoret[kieliKoodi + "B3"] = ok_konversiot(1, 8);
+    }
+
+    return {
+      diaarinumero: "OPH-2263-2019",
+      nimi: "2021 Nuoret",
+      aineet: ops2019nuoret
+    };
+  }
+  else if (OPS2015DIAARIT.indexOf(diaarinumero) != -1) {
+    // OPS 2015 -> OPS 2021
+    
     var ops2015yhteiset = {
       "ÄI": {
         1: { type: "OK" },
@@ -832,7 +905,6 @@ function opsVastaavuustaulukko(diaarinumero) {
       }
     };
     
-    const kieliKoodit = [ "EN", "EA", "LA", "PO", "RA", "KI", "SM", "JP", "SA", "VE", "IA" ];
     for (const kieliKoodi of kieliKoodit) {
       ops2015yhteiset[kieliKoodi + "B3"] = {
         1: { type: "OK", to: 1 },
@@ -1034,7 +1106,6 @@ function opsVastaavuustaulukko(diaarinumero) {
       }
     };
     
-    const kieliKoodit = [ "EN", "EA", "LA", "PO", "RA", "KI", "SM", "JP", "SA", "VE", "IA" ];
     for (const kieliKoodi of kieliKoodit) {
       ops2005yhteiset[kieliKoodi + "B3"] = {
         1: { type: "OK" },
@@ -1114,6 +1185,7 @@ function opsVastaavuustaulukko(diaarinumero) {
  */
 function opsVastaavuusTaulukkoKaikki() {
   const vastaavuustaulukot = [
+    opsVastaavuustaulukko("OPH-2263-2019"),
     opsVastaavuustaulukko("60/011/2015"),
     opsVastaavuustaulukko("70/011/2015"),
     opsVastaavuustaulukko("33/011/2003"),
@@ -1185,7 +1257,7 @@ function opsVastaavuusTaulukkoKaikki() {
                 kaikkioppiainevastaavuudet[moduliKnro] = {};
               }
               
-              const diffGrade = !!konversioModuli.grade ? " (" + vt_vastaavuus.grade + ")" : "";
+              const diffGrade = !!konversioModuli.grade ? " (" + konversioModuli.grade + ")" : "";
               const manualDoubleCheckAlert = !!konversioModuli.manualDoubleCheck ? "!" : "";
               kaikkioppiainevastaavuudet[moduliKnro][vt.diaarinumero] = konversioKohde + diffGrade + manualDoubleCheckAlert;
             }            
