@@ -17,7 +17,7 @@ public class ContactTypePermissionsTestsIT extends AbstractRESTPermissionsTestJU
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsCreateContactType(Role role) throws NoSuchFieldException {
-    ContactType contactType = new ContactType(null, "create", Boolean.FALSE, Boolean.FALSE);
+    ContactType contactType = new ContactType(null, "create", Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders(role))
       .contentType("application/json")
@@ -53,7 +53,7 @@ public class ContactTypePermissionsTestsIT extends AbstractRESTPermissionsTestJU
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsUpdateContactType(Role role) throws NoSuchFieldException {
-    ContactType contactType = new ContactType(null, "Not Updated", Boolean.FALSE, Boolean.FALSE);
+    ContactType contactType = new ContactType(null, "Not Updated", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -62,7 +62,7 @@ public class ContactTypePermissionsTestsIT extends AbstractRESTPermissionsTestJU
 
     Long id = response.body().jsonPath().getLong("id");
     try {
-      ContactType updateContactType = new ContactType(id, "Updated", Boolean.FALSE, Boolean.FALSE);
+      ContactType updateContactType = new ContactType(id, "Updated", Boolean.FALSE);
 
       Response updateResponse = given().headers(getAuthHeaders(role))
         .contentType("application/json")
@@ -79,7 +79,7 @@ public class ContactTypePermissionsTestsIT extends AbstractRESTPermissionsTestJU
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testPermissionsDeleteContactType(Role role) throws NoSuchFieldException {
-    ContactType contactType = new ContactType(null, "create type", Boolean.FALSE, Boolean.FALSE);
+    ContactType contactType = new ContactType(null, "create type", Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")

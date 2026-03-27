@@ -401,16 +401,16 @@ public class CommonController {
   
   /* ContactType */
   
-  public ContactType createContactType(String name, Boolean nonUnique) {
-    return contactTypeDAO.create(name, nonUnique);
+  public ContactType createContactType(String name) {
+    return contactTypeDAO.create(name);
   }
 
   public ContactType findContactTypeById(Long contactTypeId) {
     return contactTypeDAO.findById(contactTypeId);
   }
 
-  public ContactType updateContactType(ContactType contactType, String name, Boolean nonUnique) {
-    return contactTypeDAO.update(contactType, name, nonUnique);
+  public ContactType updateContactType(ContactType contactType, String name) {
+    return contactTypeDAO.update(contactType, name);
   }
 
   public void archiveContactType(ContactType contactType, User user) {
