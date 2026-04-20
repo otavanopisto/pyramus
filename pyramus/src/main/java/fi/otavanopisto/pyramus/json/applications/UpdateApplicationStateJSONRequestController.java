@@ -195,10 +195,12 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
 
           String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
               "/templates/applications/mails/mail-accept-study-place-" + line + ".html"), "UTF-8");
-          content = String.format(content,
-              nickname,
-              signUpUrl.toString(),
-              staffMember.getFullName());
+          if (StringUtils.equalsAny(line, ApplicationUtils.LINE_NETTIPK, ApplicationUtils.LINE_MK)) {
+            content = String.format(content, nickname, staffMember.getFullName());
+          }
+          else {
+            content = String.format(content, nickname, signUpUrl.toString(), staffMember.getFullName());
+          }
           
           // Send mail to applicant
           
