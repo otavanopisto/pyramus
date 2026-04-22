@@ -78,7 +78,7 @@
         </div>
   
         <div class="form-section__field-container" data-dependent-field="field-nettilukio_compulsory" data-dependent-values="compulsory" style="display:none;">
-          <label for="field-nettilukio_compulsory_enddate">Maksuton oppivelvollisuus päättynyt alkaen</label>
+          <label for="field-nettilukio_compulsory_enddate">Maksuton oppivelvollisuus päättyy</label>
           <input type="text" id="field-nettilukio_compulsory_enddate" name="field-nettilukio_compulsory_enddate" data-parsley-date-format="" />
         </div>
       </div>

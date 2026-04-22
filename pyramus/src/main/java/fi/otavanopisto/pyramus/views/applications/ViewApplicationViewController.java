@@ -122,7 +122,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         if (StringUtils.equals(compulsoryStudies, "compulsory")) {
           String compulsoryEndDateStr = getFormValue(formData, "field-nettilukio_compulsory_enddate");
           if (StringUtils.isNotBlank(compulsoryEndDateStr)) {
-            fields.put("Maksuton oppivelvollisuus päättynyt alkaen", compulsoryEndDateStr);
+            fields.put("Maksuton oppivelvollisuus päättyy", compulsoryEndDateStr);
           }
         }
       }
