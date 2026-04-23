@@ -1,11 +1,13 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -68,6 +70,17 @@ public abstract class AbstractKoskiLukioStudentHandler extends KoskiStudentHandl
       if (studyPeriod.getPeriodType() == StudentStudyPeriodType.COMPULSORY_EDUCATION) {
         // Maksuttoman oppivelvollisuuden piirissä
         lisatiedot.addMaksuttomuus(new Maksuttomuus(studyPeriod.getBegin(), true));
+        
+        // Ei maksuttoman oppivelvollisuuden piirissä (jos päättymispäivä asetettu)
+        if (studyPeriod.getEnd() != null) {
+          // Loogisesti jakso alkaa seuraavasta päivästä, joten lisätään yksi päivä
+          Date eiMaksullinenAlkaen = DateUtils.addDays(studyPeriod.getEnd(), 1);
+
+          // Jos opintojen päättymispäivä on asetettu niin jakson päivämäärän pitää olla sitä ennen, muutoin jätetään pois
+          if (student.getStudyEndDate() == null || eiMaksullinenAlkaen.before(student.getStudyEndDate())) {
+            lisatiedot.addMaksuttomuus(new Maksuttomuus(eiMaksullinenAlkaen, false));
+          }
+        }
       }
       
       if (studyPeriod.getPeriodType() == StudentStudyPeriodType.NON_COMPULSORY_EDUCATION) {
