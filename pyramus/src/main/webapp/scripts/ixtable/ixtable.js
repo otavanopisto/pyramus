@@ -1989,6 +1989,57 @@ IxButtonTableEditorButtonController = Class.create(IxTableEditorController, {
 
 IxTableControllers.registerController(new IxButtonTableEditorButtonController());
 
+IxIconTableEditorController = Class.create(IxTableEditorController, {
+  buildViewer: function ($super, name, columnDefinition) {
+    if (columnDefinition.imgsrc) {  
+      var cellViewer = new Element("img", { src: columnDefinition.imgsrc, title: columnDefinition.tooltip ? columnDefinition.tooltip : '', className: "ixTableCellViewer"});
+      
+      if (columnDefinition.viewerClassNames) {
+        var classNames = columnDefinition.viewerClassNames.split(' ');
+        for (var i = 0, l = classNames.length; i < l; i++) {
+          cellViewer.addClassName(classNames[i]);
+        }
+      }
+      
+      cellViewer._editable = false;
+      cellViewer._dataType = this.getDataType();
+      cellViewer._name = name;
+      cellViewer._columnDefinition = columnDefinition;
+      
+      return cellViewer;
+    }
+    else {
+      throw new Error("Unable to build icon without image");
+    }
+  },
+  attachContentHandler: function ($super, table, cell, handlerInstance) {
+    $super(table, cell, handlerInstance);
+  },
+  detachContentHandler: function ($super, handlerInstance) {
+    $super(handlerInstance);
+  }, 
+  disableEditor: function ($super, handlerInstance) {
+    handlerInstance._disabled = true;
+  },
+  enableEditor: function ($super, handlerInstance) {
+    handlerInstance._disabled = false;
+  },
+  destroyEditor: function ($super, handlerInstance) {
+    handlerInstance.remove();
+  },
+  isDisabled: function ($super, handlerInstance) {
+    return handlerInstance._disabled == true;
+  },
+  getDataType: function ($super) {
+    return "icon";
+  },
+  getMode: function ($super) {
+    return IxTableControllers.EDITMODE_NOT_EDITABLE;
+  }
+});
+
+IxTableControllers.registerController(new IxIconTableEditorController());
+
 IxTextTableEditorController = Class.create(IxTableEditorController, {
   buildEditor: function ($super, name, columnDefinition) {
     var editor = this._createEditorElement("input", name, "ixTableCellEditorText", {name: name, type: "text"}, columnDefinition);

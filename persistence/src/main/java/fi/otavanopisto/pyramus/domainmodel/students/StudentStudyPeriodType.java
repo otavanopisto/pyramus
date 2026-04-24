@@ -12,7 +12,6 @@ public enum StudentStudyPeriodType {
 
   public static final EnumSet<StudentStudyPeriodType> BEGINDATE_ONLY = EnumSet.of(
       PROLONGED_STUDYENDDATE,
-      COMPULSORY_EDUCATION,
       NON_COMPULSORY_EDUCATION
   );
   

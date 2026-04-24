@@ -150,6 +150,37 @@
       updateProgress();
     });
     
+    // Compulsory end date
+
+    $('#field-nettilukio_compulsory').on('change', function() {
+      if ($('#field-nettilukio_compulsory').val() == 'compulsory') {
+        var compulsoryEndDate = null;
+        var ssn = $('#field-ssn').val();
+        if (ssn && ssn.length == 11) {
+          var y = parseInt(ssn.substring(4, 6));
+          if ('ABCDEF'.indexOf(ssn.charAt(6).toUpperCase()) >= 0) {
+            y += 2000;
+          }
+          else {
+            y += 1900;
+          }
+          compulsoryEndDate = new Date(y + 20, 11, 31);
+        }
+        else if ($('#field-birthday').val()) {
+          compulsoryEndDate = moment($('#field-birthday').val(), "D.M.YYYY");
+          compulsoryEndDate.setFullYear(compulsoryEndDate.getFullYear() + 20);
+          compulsoryEndDate.setMonth(11);
+          compulsoryEndDate.setDate(31);
+        }
+        if (compulsoryEndDate != null) {
+          $('#field-nettilukio_compulsory_enddate').val(moment(compulsoryEndDate).format('D.M.YYYY'));
+        }
+      }
+      else {
+        $('#field-nettilukio_compulsory_enddate').val('');
+      }
+    });
+    
     // Custom validators
     
     Parsley.addValidator('dateFormat', {
