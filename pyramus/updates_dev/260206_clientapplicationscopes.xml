@@ -41,5 +41,26 @@
     insert into ClientApplicationAuthorizationCodeScopes (authorizationCode, scope) 
     select id, 'legacy' from ClientApplicationAuthorizationCode;
   </sql>
+
+  <sql>
+    create table AtomiReport (
+      id bigint not null auto_increment,
+      type varchar(255) not null,
+      report_id bigint,
+      primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table AtomiReport 
+      add constraint UK_jpjmd34wfnkop2cve8d7cwevv unique (type);
+  </sql>
+
+  <sql>
+    alter table AtomiReport 
+      add constraint FKtmcnau6ammr2wupdst1ewp33g 
+      foreign key (report_id) 
+      references Report (id);
+  </sql>
   
 </update>
