@@ -5,7 +5,7 @@ function loadLogEntries(personId) {
       personId : personId
     },
     onSuccess : function(jsonResponse) {
-      $('koski-status-details').empty();
+      $('koski-status-details-log').empty();
       var logEntries = jsonResponse.logEntries;
       var status = jsonResponse.koskiStatus;
       if (logEntries) {
@@ -21,7 +21,7 @@ function loadLogEntries(personId) {
           var e = new Element("div", {
             className : detailclass
           }).update(text);
-          $('koski-status-details').insert(e);
+          $('koski-status-details-log').insert(e);
         }
       }
       $('koski-status').addClassName('koski-' + status.toLowerCase());

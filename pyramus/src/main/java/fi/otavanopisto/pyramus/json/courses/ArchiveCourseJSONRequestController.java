@@ -5,6 +5,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -24,10 +25,11 @@ public class ArchiveCourseJSONRequestController extends JSONRequestController {
    * @param binaryRequestContext The context of the binary request.
    */
   public void process(JSONRequestContext requestContext) {
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     Long courseId = NumberUtils.createLong(requestContext.getRequest().getParameter("courseId"));
     Course course = courseDAO.findById(courseId);
-    courseDAO.archive(course);
+    courseDAO.archive(course, userDAO.findById(requestContext.getLoggedUserId()));
   }
 
   /** Returns the user roles allowed to access this controller.
@@ -35,7 +37,7 @@ public class ArchiveCourseJSONRequestController extends JSONRequestController {
    * @return The user roles allowed to access this controller.
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
   
 }

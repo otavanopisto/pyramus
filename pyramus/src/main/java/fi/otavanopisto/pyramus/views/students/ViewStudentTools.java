@@ -9,6 +9,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.views.students.ViewStudentValidationWarning.ViewStudentValidationType;
 import fi.otavanopisto.pyramus.views.students.ViewStudentValidationWarning.ViewStudentValidationWarningSeverity;
@@ -41,6 +42,24 @@ public class ViewStudentTools {
           (studyPeriod.getEnd() != null && !DateUtils.isWithin(studyPeriod.getEnd(), student.getStudyStartDate(), student.getStudyEndDate()))) {
         warnings.add(new ViewStudentValidationWarning(student, ViewStudentValidationType.STUDYPERIOD_OUTSIDE_STUDYTIME,
             ViewStudentValidationWarningSeverity.ERROR));
+      }
+      
+      // There should always be an end to compulsory education periods if the student is an active student
+      if (studyPeriod.getPeriodType() == StudentStudyPeriodType.COMPULSORY_EDUCATION && student.getStudyEndDate() == null) {
+        if (studyPeriod.getEnd() == null) {
+          boolean hasNonCompulsoryPeriod = false;
+          for (StudentStudyPeriod studyPeriod2 : studyPeriods) {
+            if (studyPeriod2.getPeriodType() == StudentStudyPeriodType.NON_COMPULSORY_EDUCATION && studyPeriod2.getBegin().after(studyPeriod.getBegin())) {
+              hasNonCompulsoryPeriod = true;
+              break;
+            }
+          }
+          
+          if (!hasNonCompulsoryPeriod) {
+            warnings.add(new ViewStudentValidationWarning(student, ViewStudentValidationType.STUDYPERIOD_COMPULSORY_EDUCATION_NO_END,
+                ViewStudentValidationWarningSeverity.ERROR));
+          }
+        }
       }
     }
     

@@ -6,6 +6,7 @@
 <%@ taglib uri="/ix" prefix="ix"%>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="fi.otavanopisto.pyramus.domainmodel.base.Person" %>
+<%@ page import="fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod" %>
 <%@ page import="fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType" %>
 <%@ page import="fi.otavanopisto.pyramus.domainmodel.users.Role" %>
 
@@ -2500,6 +2501,12 @@
   </h1>
   
   <div id="koski-status-details" style="display: none;">
+    <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
+      <div>
+        <a href="${pageContext.request.contextPath}/1/persons/persons/${person.id}/oppija" target="_blank">Oppija-JSON</a>
+      </div>
+    </c:if>
+    <div id="koski-status-details-log"></div>
   </div>
   
   <div id="pyramus-validation" class="pyramus-validation-error-list" ${(empty studentValidations) ? 'style="display: none;"' : ''}>
@@ -3074,16 +3081,33 @@
                             <div>
                               <fmt:message key="generic.studentStudyPeriods.${period.periodType}"/>
                               <fmt:formatDate value="${period.begin}"/> - <fmt:formatDate value="${period.end}"/>
+                              
                               <c:if test="${period.periodType == StudentStudyPeriodType.COMPULSORY_EDUCATION && not empty compulsoryEducationEndDate}">
-                                <span style="color: gray; font-style: italic;">
-                                  <fmt:message key="students.viewStudent.studyPeriodCompulsoryEducationEndDate">
-                                    <fmt:param>
-                                      <fmt:formatDate value="${compulsoryEducationEndDate}"/>
-                                    </fmt:param>
-                                  </fmt:message>
-                                </span>
+                                <div class="genericFormSectionHelp" style="background-image: url(${pageContext.request.contextPath}/gfx/icons/16x16/apps/help-browser.png);">
+                                  <div class="genericFormSectionHelpText">
+                                    <fmt:message key="students.viewStudent.studyPeriodCompulsoryEducationEndDate">
+                                      <fmt:param>
+                                        <fmt:formatDate value="${compulsoryEducationEndDate}"/>
+                                      </fmt:param>
+                                    </fmt:message>
+                                  </div>
+                                </div>
                               </c:if>
                             </div>
+
+                            <!-- If COMPULSORY_EDUCATION has an end date, it automatically generates a new period NON_COMPULSORY_EDUCATION from the following day -->
+                            <c:if test="${period.periodType == StudentStudyPeriodType.COMPULSORY_EDUCATION && not empty period.end}">
+                              <%
+                                StudentStudyPeriod period = (StudentStudyPeriod) pageContext.getAttribute("period");
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(period.getEnd());
+                                cal.add(Calendar.DAY_OF_MONTH, 1);
+                                pageContext.setAttribute("nextNonCompulsoryPeriodStart", cal.getTime());
+                              %>
+
+                              <fmt:message key="generic.studentStudyPeriods.NON_COMPULSORY_EDUCATION"/>
+                              <fmt:formatDate value="${nextNonCompulsoryPeriodStart}"/> -
+                            </c:if>
                           </c:forEach>
                         </div>
                       </div>

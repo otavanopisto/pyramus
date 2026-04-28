@@ -45,7 +45,8 @@
           "name": "Median maailma",
           "courseNumber": 6,
           "length": 28,
-          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
         },
         {
           "name": "Kauno- ja tietokirjallisuuden lukeminen",

@@ -818,7 +818,7 @@ public class ObjectFactory {
         new Mapper<ContactType>() {
           @Override
           public Object map(ContactType entity) {
-            return new fi.otavanopisto.pyramus.rest.model.ContactType(entity.getId(), entity.getName(), entity.getArchived(), entity.getNonUnique());
+            return new fi.otavanopisto.pyramus.rest.model.ContactType(entity.getId(), entity.getName(), entity.getArchived());
           }
         }, 
         

@@ -14,9 +14,9 @@ values
   (1, 'Common Test Organization', false);
   
 insert into 
-  ContactType (id, name, version, nonUnique, archived)
+  ContactType (id, name, version, archived)
 values 
-  (1, 'Contact person', 1, true, false);
+  (1, 'Contact person', 1, false);
 
 insert into 
   GradingScale (id, archived, name, description, version)

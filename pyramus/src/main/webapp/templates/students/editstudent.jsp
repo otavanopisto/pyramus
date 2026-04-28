@@ -466,7 +466,7 @@
           }, {
             header : '<fmt:message key="students.editStudent.studyPeriodsTable.type"/>',
             left : 8 + 160 + 8,
-            width : 200,
+            width : 300,
             dataType: 'select',
             editable: true,
             required: true,
@@ -474,14 +474,14 @@
             options: studentStudyPeriodTypeOptions
           }, {
             header: '<fmt:message key="students.editStudent.studyPeriodsTable.end"/>',
-            left : 8 + 160 + 8 + 200 + 8,
+            left : 8 + 160 + 8 + 300 + 8,
             width: 160,
             dataType : 'date',
             editable: true,
             paramName: 'end'
           }, {
             width: 30,
-            left: 8 + 160 + 8 + 200 + 8 + 160 + 8,
+            left: 8 + 160 + 8 + 300 + 8 + 160 + 8,
             dataType: 'button',
             paramName: 'removeButton',
             imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
@@ -491,11 +491,13 @@
             }
           }, {
             header: '',
-            left : 8 + 160 + 8 + 200 + 8 + 160 + 8 + 22 + 8,
-            width: 300,
-            dataType : 'text',
+            left : 8 + 160 + 8 + 300 + 8 + 160 + 8 + 22 + 8,
+            width: 22,
+            dataType : 'icon',
             editable: false,
-            paramName: 'message'
+            paramName: 'message',
+            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/apps/help-browser.png',
+            tooltip: '${compulsoryEducationEndDateMessage}',
           }]
         });
 
@@ -515,6 +517,25 @@
             
             if (event.value == 'COMPULSORY_EDUCATION') {
               table.showCell(event.row, table.getNamedColumnIndex('message'));
+              
+              // Prefill compulsory end date with the date at end of year when student turns 20
+              // But only do so when the row is new (i.e. the id doesn't exist)
+              if (table.getCellValue(event.row, table.getNamedColumnIndex('id')) == -1) {
+                var endDateColumnIndex = table.getNamedColumnIndex('end');
+                var endDateValue = table.getCellValue(event.row, endDateColumnIndex);
+                if (!endDateValue) {
+                  var birthdayField = getIxDateField("birthday");
+                  var birthdayTimestamp = birthdayField ? birthdayField.getTimestamp() : null;
+                  if (birthdayTimestamp) {
+                    var compulsoryEndDate = new Date();
+                    compulsoryEndDate.setTime(birthdayTimestamp);
+                    compulsoryEndDate.setFullYear(compulsoryEndDate.getFullYear() + 20);
+                    compulsoryEndDate.setMonth(11);
+                    compulsoryEndDate.setDate(31);
+                    table.setCellValue(event.row, endDateColumnIndex, compulsoryEndDate.getTime());
+                  }
+                }
+              }
             }
             else {
               table.hideCell(event.row, table.getNamedColumnIndex('message'));
@@ -745,7 +766,7 @@
               studyPeriods[i].type,
               studyPeriods[i].end,
               '',
-              '${compulsoryEducationEndDateMessage}'
+              ''
             ]);
           }
           studyPeriodsTable.addRows(studyPeriodRows);
@@ -939,6 +960,12 @@
     </h1>
 
     <div id="koski-status-details" style="display: none;">
+      <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
+        <div>
+          <a href="${pageContext.request.contextPath}/1/persons/persons/${person.id}/oppija" target="_blank">Oppija-JSON</a>
+        </div>
+      </c:if>
+      <div id="koski-status-details-log"></div>
     </div>
 
     <div id="pyramus-validation" class="pyramus-validation-error-list" ${(empty studentValidations) ? 'style="display: none;"' : ''}>
@@ -1022,7 +1049,7 @@
                 <jsp:param name="titleLocale" value="students.editStudent.birthdayTitle"/>
                 <jsp:param name="helpLocale" value="students.editStudent.birthdayHelp"/>
               </jsp:include>            
-              <input type="text" name="birthday" class="ixDateField" value="${person.birthday.time}">
+              <input type="text" name="birthday" ix:datefieldid="birthday" class="ixDateField" value="${person.birthday.time}">
             </div>
       
             <div class="genericFormSection">     

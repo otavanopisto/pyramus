@@ -14,12 +14,8 @@ public class ContactTypeAPI {
   }
   
   public Long create(String name) {
-    return create(name, false);
-  }
-  
-  public Long create(String name, Boolean nonUnique) {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
-    return contactTypeDAO.create(name, nonUnique).getId();
+    return contactTypeDAO.create(name).getId();
   }
   
   public Long[] listIdsByName(String name) {

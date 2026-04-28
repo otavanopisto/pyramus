@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    drop table ContactInfoMigrationUser;
+  </sql>
+
+  <sql>
+    alter table ContactType drop column nonUnique;
+  </sql>
+
+  <sql>
+    alter table Address drop foreign key FK1ED033D4C0329886;
+  </sql>
+
+  <sql>
+    alter table Address drop column contactType;
+  </sql>
+
+  <sql>
+    alter table Email drop foreign key FK3FF5B7CC0329886;
+  </sql>
+
+  <sql>
+    alter table Email drop column contactType;
+  </sql>
+
+  <sql>
+    alter table PhoneNumber drop foreign key FK1C4E6237C0329886;
+  </sql>
+
+  <sql>
+    alter table PhoneNumber drop column contactType;
+  </sql>
+
+</update>

@@ -12,6 +12,8 @@ public class ViewStudentValidationWarning {
     STUDYENDDATE_BEFORE_STARTDATE,
     // Some StudyPeriod for the Student is not within the timeframe of studyStartDate to studyEndDate
     STUDYPERIOD_OUTSIDE_STUDYTIME,
+    // Compulsory Education StudyPeriod doesn't end
+    STUDYPERIOD_COMPULSORY_EDUCATION_NO_END,
     // Default user is not set
     DEFAULT_USER_NOT_SET,
     // Default user is archived

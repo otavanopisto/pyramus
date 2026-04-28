@@ -256,9 +256,9 @@ values
   (2, 'Field #2', false);
 
 insert into 
-  ContactType (id, name, version, nonUnique, archived)
+  ContactType (id, name, version, archived)
 values 
-  (1, 'Home', 1, false, false);
+  (1, 'Home', 1, false);
 
 insert into 
   Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)

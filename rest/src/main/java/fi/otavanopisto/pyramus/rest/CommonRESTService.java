@@ -867,13 +867,12 @@ public class CommonRESTService extends AbstractRESTService {
     }
     
     String name = entity.getName();
-    Boolean nonUnique = entity.getNonUnique() != null ? entity.getNonUnique() : false;
     
     if (StringUtils.isBlank(name)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    return Response.ok().entity(objectFactory.createModel(commonController.createContactType(name, nonUnique))).build();
+    return Response.ok().entity(objectFactory.createModel(commonController.createContactType(name))).build();
   }
   
   @Path("/contactTypes")
@@ -929,13 +928,12 @@ public class CommonRESTService extends AbstractRESTService {
     }
     
     String name = entity.getName();
-    Boolean nonUnique = entity.getNonUnique() != null ? entity.getNonUnique() : false;
     
     if (StringUtils.isBlank(name)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    return Response.ok(objectFactory.createModel(commonController.updateContactType(contactType, name, nonUnique))).build();
+    return Response.ok(objectFactory.createModel(commonController.updateContactType(contactType, name))).build();
   }
 
   @Path("/contactTypes/{ID:[0-9]*}")

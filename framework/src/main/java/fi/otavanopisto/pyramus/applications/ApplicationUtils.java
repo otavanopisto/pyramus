@@ -1195,18 +1195,19 @@ public class ApplicationUtils {
     String compulsoryStudies = getFormValue(formData, "field-nettilukio_compulsory");
     if (StringUtils.isNotBlank(compulsoryStudies)) {
       if (StringUtils.equals(compulsoryStudies, "compulsory")) {
-        studentStudyPeriodDAO.create(student, studyStartDate, null, StudentStudyPeriodType.COMPULSORY_EDUCATION);
-      
+        Date compulsoryEndDate = null;
+
         String compulsoryEndDateStr = getFormValue(formData, "field-nettilukio_compulsory_enddate");
         if (StringUtils.isNotBlank(compulsoryEndDateStr)) {
           try {
-            Date compulsoryEndDate = StringUtils.isBlank(compulsoryEndDateStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(compulsoryEndDateStr);
-            studentStudyPeriodDAO.create(student, compulsoryEndDate, null, StudentStudyPeriodType.NON_COMPULSORY_EDUCATION);
+            compulsoryEndDate = StringUtils.isBlank(compulsoryEndDateStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(compulsoryEndDateStr);
           } catch (ParseException e) {
             logger.severe(String.format("Invalid compulsory end date format in application entity %d", application.getId()));
             return null;
           }
         }
+
+        studentStudyPeriodDAO.create(student, studyStartDate, compulsoryEndDate, StudentStudyPeriodType.COMPULSORY_EDUCATION);
       } 
       else if (StringUtils.equals(compulsoryStudies, "non_compulsory")) {
         studentStudyPeriodDAO.create(student, studyStartDate, null, StudentStudyPeriodType.NON_COMPULSORY_EDUCATION);

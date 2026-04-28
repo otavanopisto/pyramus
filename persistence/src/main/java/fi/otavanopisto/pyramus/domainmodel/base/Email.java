@@ -41,16 +41,6 @@ public class Email {
     return defaultAddress;
   }
 
-  @Deprecated
-  public void setContactType(ContactType contactType) {
-    this.contactType = contactType;
-  }
-
-  @Deprecated
-  public ContactType getContactType() {
-    return contactType;
-  }
-  
   public void setContactInfo(ContactInfo contactInfo) {
     this.contactInfo = contactInfo;
   }
@@ -73,11 +63,6 @@ public class Email {
   @TableGenerator(name="Email", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   @DocumentId
   private Long id;
-  
-  @Deprecated
-  @ManyToOne
-  @JoinColumn (name = "contactType")
-  private ContactType contactType;
   
   @NotNull
   @Column(nullable = false)

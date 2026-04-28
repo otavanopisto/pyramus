@@ -404,7 +404,8 @@
             </div>
             
             <c:choose>
-        	  <c:when test="${student.studyProgramme.category.educationType.code == 'peruskoulu'}">
+        	  <c:when test="${student.studyProgramme.category.educationType.code == 'peruskoulu' 
+                 or student.studyProgramme.category.educationType.code == 'apa'}">
 				<div id="languageSkillLevelTable"></div>
               </c:when>
             </c:choose>
