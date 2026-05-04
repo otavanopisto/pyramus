@@ -63,4 +63,8 @@
       references Report (id);
   </sql>
   
+  <sql>
+    alter table StudentStudyEndReason add column type varchar(255);
+  </sql>
+  
 </update>

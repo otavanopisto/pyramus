@@ -10,6 +10,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReasonType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason_;
 
 
@@ -83,6 +84,11 @@ public class StudentStudyEndReasonDAO extends PyramusEntityDAO<StudentStudyEndRe
     studyEndReason.setName(name);
     entityManager.persist(studyEndReason);
     return studyEndReason;
+  }
+  
+  public StudentStudyEndReason updateType(StudentStudyEndReason studyEndReason, StudentStudyEndReasonType type) {
+    studyEndReason.setType(type);
+    return persist(studyEndReason);
   }
   
   public StudentStudyEndReason update(StudentStudyEndReason studyEndReason) {

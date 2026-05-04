@@ -5,7 +5,7 @@ var deletedRowIndex;
 
 function addStudyEndReasonsTableRow() {
   var table = getIxTableById('studyEndReasonsTable');
-  var rowIndex = table.addRow([ '', '', '', '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ '', '', '', '', '', '', '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -101,11 +101,23 @@ function onLoad(event) {
         {
           header : getLocale().getText("settings.studyEndReasons.parentReasonHeader"),
           left : 8 + 22 + 8 + 300 + 8,
-          right : 8 + 22 + 8 + 22 + 8,
+          width : 300,
           dataType : 'select',
           editable : false,
           paramName : 'parentReasonId',
           dynamicOptions : true
+        }, {
+          header : getLocale().getText("settings.studyEndReasons.typeHeader"),
+          left : 8 + 22 + 8 + 300 + 8 + 300 + 8,
+          right : 8 + 22 + 8 + 22 + 8,
+          dataType : 'select',
+          editable : false,
+          paramName : 'type',
+          options: [
+            { value: "GRADUATED", text: getLocale().getText("studyendreasontypes.GRADUATED") },
+            { value: "RESIGNED", text: getLocale().getText("studyendreasontypes.RESIGNED") },
+            { value: "DISMISSED", text: getLocale().getText("studyendreasontypes.DISMISSED") }
+          ]
         }, {
           width: 30,
           right: 8 + 22 + 8,
@@ -230,7 +242,8 @@ function onLoad(event) {
 
   var rows = [];
   for ( var i = 0, l = studyEndReasons.length; i < l; i++) {
-    rows.push([ '', jsonEscapeHTML(studyEndReasons[i].name), studyEndReasons[i].parentId, '', '', '', studyEndReasons[i].id, 0 ]);
+    var type = studyEndReasons[i].type || '';
+    rows.push([ '', jsonEscapeHTML(studyEndReasons[i].name), studyEndReasons[i].parentId, type, '', '', '', studyEndReasons[i].id, 0 ]);
   }
   studyEndReasonsTable.addRows(rows);
   updateParentDropdownBoxesAndDeleteButtons();

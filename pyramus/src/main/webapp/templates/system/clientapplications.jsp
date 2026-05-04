@@ -135,7 +135,7 @@
       
       function addClientApplication() {
           var table = getIxTableById('clientApplicationsTable');
-          rowIndex = table.addRow(['', 0, 0, '', '', '',null, null, null, null]);
+          rowIndex = table.addRow(['', 0, 0, '', '', '', '', null, null, null, null]);
       }
       
     </script>

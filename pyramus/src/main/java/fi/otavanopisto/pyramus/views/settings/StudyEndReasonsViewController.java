@@ -37,6 +37,9 @@ public class StudyEndReasonsViewController extends PyramusViewController impleme
       
       jsonReason.put("id", reason.getId());
       jsonReason.put("name", reason.getName());
+      if (reason.getType() != null) {
+        jsonReason.put("type", reason.getType().name());
+      }
       if (reason.getParentReason() != null) {
         jsonReason.put("parentId", reason.getParentReason().getId());
       }

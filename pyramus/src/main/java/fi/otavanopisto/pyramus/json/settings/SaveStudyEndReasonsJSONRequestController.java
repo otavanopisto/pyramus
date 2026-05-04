@@ -6,6 +6,7 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReasonType;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
@@ -20,6 +21,7 @@ public class SaveStudyEndReasonsJSONRequestController extends JSONRequestControl
       Long studyEndReasonId = jsonRequestContext.getLong(colPrefix + ".studyEndReasonId");
       String name = jsonRequestContext.getString(colPrefix + ".name");
       Long parentReasonId = jsonRequestContext.getLong(colPrefix + ".parentReasonId");
+      StudentStudyEndReasonType type = (StudentStudyEndReasonType) jsonRequestContext.getEnum(colPrefix + ".type", StudentStudyEndReasonType.class);
       StudentStudyEndReason parentReason = null;
       if (parentReasonId != null)
         parentReason = studentStudyEndReasonDAO.findById(parentReasonId);
@@ -31,6 +33,7 @@ public class SaveStudyEndReasonsJSONRequestController extends JSONRequestControl
       else if (modified) {
         StudentStudyEndReason studyEndReason = studentStudyEndReasonDAO.findById(studyEndReasonId);
         studentStudyEndReasonDAO.updateName(studyEndReason, name);
+        studentStudyEndReasonDAO.updateType(studyEndReason, type);
         studentStudyEndReasonDAO.updateParentReason(studyEndReason, parentReason);
       }
     }
