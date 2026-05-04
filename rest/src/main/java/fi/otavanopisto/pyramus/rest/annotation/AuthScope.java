@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 public @interface AuthScope {
   
   public final static String LEGACY = "legacy";
+  public final static String ATOMI = "atomi";
   
   String[] value();
   

@@ -33,6 +33,25 @@
 					<div class="genericFormSection">
 						<h3>Authorize 3rd party app</h3>
 						<p><b>${clientAppName}</b> wants to act on your behalf.</p>
+            
+            <c:if test="${not empty authScopes}">
+              <p>Allows following access to your data:</p>
+              <p>
+                <ul>
+                  <c:if test="${authScopes.contains('legacy')}">
+                    <li>Full access to your data</li>
+                  </c:if>
+
+                  <c:if test="${authScopes.contains('atomi')}">
+                    <li>Access to your name, email etc</li>
+                    <li>Access to your diploma</li>
+                    <li>Access to your transcript of records</li>
+                    <li>Access to your proof of student status</li>
+                  </c:if>
+                </ul>
+              </p>
+            </c:if>
+            
 						<input type="submit" name="authorize" value="Authorize" /> 
 						<input type="submit" name="deny" value="Deny" />
 					</div>

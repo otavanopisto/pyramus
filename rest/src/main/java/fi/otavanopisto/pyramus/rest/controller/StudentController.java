@@ -795,5 +795,10 @@ public class StudentController {
   public StudentCard updateStudentCardActive(StudentCard studentCard, StudentCardActivity activity, Date cancellationDate) {
     return studentCardDAO.updateActive(studentCard, activity, cancellationDate);
   }
+
+  public List<Student> atomiSearch(Collection<Organization> organizations, String ssn, String lastName, StudyProgramme studyProgramme, Set<Long> studentIds, Date graduationDateStart, Date graduationDateEnd, Integer firstResult, Integer maxResults) {
+    return studentDAO.listBy(organizations, ssn, lastName, studyProgramme, studentIds, graduationDateStart, graduationDateEnd, firstResult, maxResults);
+  }
+  
 }
 
