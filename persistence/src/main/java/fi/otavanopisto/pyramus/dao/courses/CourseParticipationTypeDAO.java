@@ -40,7 +40,10 @@ public class CourseParticipationTypeDAO extends PyramusEntityDAO<CourseParticipa
     
     criteria.select(root);
     criteria.where(
-      criteriaBuilder.equal(root.get(CourseParticipationType_.name), name)
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(CourseParticipationType_.name), name),
+        criteriaBuilder.equal(root.get(CourseParticipationType_.archived), Boolean.FALSE)
+      )
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
