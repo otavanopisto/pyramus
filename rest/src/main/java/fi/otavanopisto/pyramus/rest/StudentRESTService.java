@@ -70,6 +70,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
@@ -2519,6 +2520,38 @@ public class StudentRESTService extends AbstractRESTService {
       assessmentController.archiveCourseAssessment(courseAssessment);
     }
     
+    // #1796: Potentially adjust course student participation type
+    
+    courseAssessment = null;
+    CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
+    if (courseStudent != null) {
+      for (CourseModule module : course.getCourseModules()) {
+        courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(courseStudent, module, Boolean.FALSE);
+        if (courseAssessment != null) {
+          break;
+        }
+      }
+    }
+    CourseParticipationType participationType = courseStudent.getParticipationType();
+    if (participationType != null) {
+      if (courseAssessment == null && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_ENROLLED)) {
+        participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_ENROLLED);
+      }
+      else if (courseAssessment != null && courseAssessment.getGrade() != null) {
+        boolean passing = courseAssessment.getGrade().getPassingGrade();
+        if (passing && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_PASS)) {
+          participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_PASS);
+        }
+        else if (!passing && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_FAIL)) {
+          participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_FAIL);
+        }
+      }
+      if (participationType != null && !participationType.getId().equals(courseStudent.getParticipationType().getId())) {
+        courseStudent.setParticipationType(participationType);
+        courseController.updateCourseStudentParticipationType(courseStudent, participationType);
+      }
+    }
+
     return Response.noContent().build();
   }
   
