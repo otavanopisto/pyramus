@@ -43,6 +43,26 @@
   </sql>
 
   <sql>
+    create table ClientApplicationTokenScopes (
+       token bigint not null,
+       scope varchar(255) not null,
+       primary key (token, scope)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationTokenScopes 
+       add constraint FKahntusprt1ot4g0rkgvhkuphm 
+       foreign key (token) 
+       references ClientApplicationAccessToken (id);
+  </sql>
+
+  <sql>
+    insert into ClientApplicationTokenScopes (token, scope) 
+    select id, 'legacy' from ClientApplicationAccessToken;
+  </sql>
+
+  <sql>
     create table AtomiReport (
       id bigint not null auto_increment,
       type varchar(255) not null,

@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.dao.clientapplications;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,7 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationA
 @Stateless
 public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientApplicationAccessToken> {
 
-  public ClientApplicationAccessToken create(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
+  public ClientApplicationAccessToken create(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode, Set<String> selectedScopes) {
     EntityManager entityManager = getEntityManager();
 
     ClientApplicationAccessToken clientApplicationAccessToken = new ClientApplicationAccessToken();
@@ -26,6 +28,10 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
     clientApplicationAccessToken.setClientApplication(clientApplication);
     clientApplicationAccessToken.setExpires(expires);
     clientApplicationAccessToken.setClientApplicationAuthorizationCode(clientApplicationAuthorizationCode);
+
+    Set<String> scopes = new HashSet<>();
+    scopes.addAll(selectedScopes);
+    clientApplicationAccessToken.setScopes(scopes);
     
     entityManager.persist(clientApplicationAccessToken);
     return clientApplicationAccessToken;

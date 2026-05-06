@@ -1,7 +1,13 @@
 package fi.otavanopisto.pyramus.domainmodel.clientapplications;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,6 +65,14 @@ public class ClientApplicationAccessToken {
     this.refreshToken = refreshToken;
   }
 
+  public Set<String> getScopes() {
+    return scopes;
+  }
+
+  public void setScopes(Set<String> scopes) {
+    this.scopes = scopes;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "ClientApplicationAccessToken")
   @TableGenerator(name = "ClientApplicationAccessToken", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -87,4 +101,9 @@ public class ClientApplicationAccessToken {
   @JoinColumn(name = "clientApplicationAuthorizationCode", unique = true, nullable = false)
   private ClientApplicationAuthorizationCode clientApplicationAuthorizationCode;
 
+  @ElementCollection(fetch = FetchType.EAGER) // Has to be eager, maybe figure out later
+  @CollectionTable(name = "ClientApplicationTokenScopes", joinColumns = @JoinColumn(name = "token"))
+  @Column(name = "scope", nullable = false)
+  private Set<String> scopes = new HashSet<>();
+  
 }

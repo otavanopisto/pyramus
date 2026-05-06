@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
@@ -23,6 +24,7 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationA
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import fi.otavanopisto.pyramus.rest.controller.OauthController;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
@@ -65,7 +67,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
       requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build());
     } else {
       if (!method.isAnnotationPresent(Unsecure.class)) {
-        if (hasApiAccess()) {
+        if (hasApiAccess(method)) {
           if (!restSecurity.hasPermission(method)) {
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
           }
@@ -76,11 +78,21 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
     }
   }
 
-  private boolean hasApiAccess() {
-    return hasOAuthApiAccess() || hasSessionApiAccess();
+  private boolean hasApiAccess(Method method) {
+    AuthScope authScope = method.getAnnotation(AuthScope.class);
+    if (authScope == null) {
+      authScope = method.getDeclaringClass().getAnnotation(AuthScope.class);
+    }
+
+    if (authScope == null) {
+      // AuthScope is mandatory
+      return false;
+    }
+    
+    return hasOAuthApiAccess(authScope.value()) || hasSessionApiAccess();
   }
   
-  private boolean hasOAuthApiAccess() {
+  private boolean hasOAuthApiAccess(String[] authScopes) {
     try {
       OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
       String accessToken = oauthRequest.getAccessToken();
@@ -93,7 +105,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
         if (currentTime > clientApplicationAccessToken.getExpires()) {
           return false;
         } else {
-          return true;
+          return CollectionUtils.containsAny(clientApplicationAccessToken.getScopes(), authScopes);
         }
       }
     } catch (OAuthProblemException e) {

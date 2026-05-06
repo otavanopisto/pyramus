@@ -124,7 +124,9 @@ public class TokenEndpointRESTService extends AbstractRESTService {
             refreshToken,
             expires,
             clientApplication,
-            clientApplicationAuthorizationCode);
+            clientApplicationAuthorizationCode,
+            clientApplicationAuthorizationCode.getSelectedScopes()
+            );
         }
         else {
           oauthController.renewAccessToken(clientApplicationAccessToken, expires, accessToken, refreshToken);
