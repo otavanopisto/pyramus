@@ -139,6 +139,18 @@ public class DateUtils {
   }
   
   /**
+   * Converts LocalDateTime to Date with current timezone.
+   * 
+   * If localDateTime is null, returns null.
+   * 
+   * @param localDateTime
+   * @return Date
+   */
+  public static Date toDate(LocalDateTime localDateTime) {
+    return localDateTime != null ? Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()) : null;
+  }
+  
+  /**
    * Converts Date to LocalDateTime with current timezone.
    * 
    * If date is null, returns null.

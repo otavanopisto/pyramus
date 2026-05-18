@@ -237,6 +237,17 @@ public class KoskiController {
       logger.log(Level.SEVERE, "Couldn't clear person log.", ex);
     }
   }
+
+  /**
+   * Returns true if given Person has a SUCCESS log state.
+   * 
+   * @param person
+   * @return
+   */
+  public boolean isSuccessfullyUpdated(Person person) {
+    List<KoskiPersonLog> log = koskiPersonLogDAO.listByPerson(person);
+    return log.stream().anyMatch(entry -> entry.getState() == KoskiPersonState.SUCCESS);
+  }
   
   private Student resolveLatestStudent(Person person) {
     Student student = person.getLatestStudent();
