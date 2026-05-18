@@ -246,32 +246,31 @@ public class ViewApplicationViewController extends PyramusViewController {
         }
       }
       
-      // Aineopiskelijan koulutusaste ja oppilaitos
+      // Aineopiskelijan lisätiedot
       
       if (ApplicationUtils.isInternetixLine(getFormValue(formData, "field-line"))) {
-        fields = new LinkedHashMap<>();
-        sections.put("Koulutusaste", fields);
-        boolean isContractSchool = false;
         fields = new LinkedHashMap<>();
         sections.put("Aineopiskelijan oppilaitos", fields);
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
         if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
           School school = ApplicationUtils.resolveSchool(formData);
-          isContractSchool = ApplicationUtils.isContractSchool(formData);
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
             fields.put("Opiskelupaikkakunta", getFormValue(formData, "field-internetix-contract-school-municipality"));
             fields.put("Oppilaitoksen yhteyshenkilö", getFormValue(formData, "field-internetix-contract-school-contact"));
-            StudentExaminationType examinationType = ApplicationUtils.resolveStudentExaminationType(
-                getFormValue(formData, "field-internetix-contract-school-degree"));
-            if (examinationType != null) {
-              fields.put("Tutkintotyyppi", examinationType.getName());
-            }
           }
           else {
             fields.put("Oppilaitos", school.getName());
           }
-          fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
+          fields.put("Sopimusoppilaitos", ApplicationUtils.isContractSchool(formData) ? "Kyllä" : "Ei");
+          String paid = getFormValue(formData, "field-internetix-contract-school-paid");
+          if (!StringUtils.isEmpty(paid)) {
+            fields.put("Opintojen maksaja", StringUtils.equals(paid, "self") ? "Itse" : "Oppilaitos");
+          }
+          StudentExaminationType examinationType = ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree"));
+          if (examinationType != null) {
+            fields.put("Tutkintotyyppi", examinationType.getName());
+          }
         }
       }
       

@@ -73,7 +73,7 @@
         </h1>
         <div class="application-description__line-content">
           <p>Aineopiskelijana voit opiskella yksittäisiä lukion opintojaksoja. Opiskelu on maksullista.</p>
-          <p>Jos olet alle 18-vuotias tai sopimusoppilaitoksen opiskelija, tarkistamme tietosi Opetushallituksen Valpas-palvelusta ennen opiskelijaksi hyväksymistä. Oppivelvolliset voivat opiskella Nettilukiossa aineopiskelijana vain, jos asiasta on sovittu oman oppilaitoksen kanssa ja oppilaitos maksaa opiskelun.</p>
+          <p>Jos olet alle 18-vuotias tai sopimusoppilaitoksen opiskelija, tarkistamme tietosi Opetushallituksen Valpas-palvelusta ennen opiskelijaksi hyväksymistä.</p>
         </div>
       </header>
 
