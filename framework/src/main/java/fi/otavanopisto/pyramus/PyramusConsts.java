@@ -71,6 +71,9 @@ public class PyramusConsts {
     
     // Subject choices
     public static final Set<String> CHOICE_SUBJECTS = Set.of("äi", "s2", "ue", "uo", "ui", "et");
+
+    // Grades allowed by the curriculum
+    public static final Set<String> ALLOWED_GRADES = Set.of("4", "5", "6", "7", "8", "9", "10", "S", "H");
     
     /**
      * Default subject selections for perusopetus. Map where the key is the 

@@ -33,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Credit_;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
@@ -81,6 +82,78 @@ public class CreditLinkDAO extends PyramusEntityDAO<CreditLink> {
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(CreditLink_.student), student),
             criteriaBuilder.equal(root.get(CreditLink_.archived), Boolean.FALSE)
+        )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<CreditLink> listByStudentAndSubjectAndCourseNumber(Student student, Subject subject, Integer courseNumber) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CreditLink> criteria = criteriaBuilder.createQuery(CreditLink.class);
+    Root<CreditLink> root = criteria.from(CreditLink.class);
+    
+    // As linked credits belong to the other Students under the same Person,
+    // this subquery fetches all the Students under the Person. This is only
+    // used to limit the number of results from the other subqueries which
+    // should benefit their performance.
+    
+    Subquery<Student> studentSubquery = criteria.subquery(Student.class);
+    Root<Student> studentRoot = studentSubquery.from(Student.class);
+    studentSubquery
+      .select(studentRoot)
+      .where(
+          criteriaBuilder.and(
+              criteriaBuilder.equal(studentRoot.get(Student_.archived), Boolean.FALSE),
+              criteriaBuilder.equal(studentRoot.get(Student_.person), student.getPerson())
+          )
+      );
+
+    // Subquery for linked CourseAssessments
+    Subquery<CourseAssessment> courseAssessmentSubquery = criteria.subquery(CourseAssessment.class);
+    Root<CourseAssessment> courseAssessmentRoot = courseAssessmentSubquery.from(CourseAssessment.class);
+    Join<CourseAssessment, CourseModule> courseModuleJoin = courseAssessmentRoot.join(CourseAssessment_.courseModule);
+    Join<CourseAssessment, CourseStudent> courseStudentJoin = courseAssessmentRoot.join(CourseAssessment_.courseStudent);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
+    courseAssessmentSubquery
+      .select(courseAssessmentRoot)
+      .where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),
+            courseStudentJoin.get(CourseStudent_.student).in(studentSubquery),
+            criteriaBuilder.equal(courseModuleJoin.get(CourseModule_.subject), subject),
+            criteriaBuilder.equal(courseModuleJoin.get(CourseModule_.courseNumber), courseNumber)
+        )
+      );
+    
+    // Subquery for linked TransferCredits
+    Subquery<TransferCredit> transferCreditSubquery = criteria.subquery(TransferCredit.class);
+    Root<TransferCredit> transferCreditRoot = transferCreditSubquery.from(TransferCredit.class);
+    transferCreditSubquery
+      .select(transferCreditRoot)
+      .where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(transferCreditRoot.get(TransferCredit_.archived), Boolean.FALSE),
+            transferCreditRoot.get(TransferCredit_.student).in(studentSubquery),
+            criteriaBuilder.equal(transferCreditRoot.get(TransferCredit_.subject), subject),
+            criteriaBuilder.equal(transferCreditRoot.get(TransferCredit_.courseNumber), courseNumber)
+        )
+      );
+    
+    
+    criteria
+      .select(root)
+      .where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(CreditLink_.student), student),
+            criteriaBuilder.equal(root.get(CreditLink_.archived), Boolean.FALSE),
+            criteriaBuilder.or(
+                root.get(CreditLink_.credit).in(courseAssessmentSubquery),
+                root.get(CreditLink_.credit).in(transferCreditSubquery)
+            )
         )
     );
     

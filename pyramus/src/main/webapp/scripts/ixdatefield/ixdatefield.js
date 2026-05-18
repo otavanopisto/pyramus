@@ -229,6 +229,17 @@ IxDateField = Class.create(
   getTimestampNode: function () {
     return this._timestampInput;
   },
+  getISO8601Date: function () {
+    const timestamp = this.getTimestamp();
+    if (timestamp) {
+      const date = new Date();
+      date.setTime(timestamp);
+      return date.toISOString().split('T')[0];
+    }
+    else {
+      return null;
+    }
+  },
   disable: function () {
     this._inputText.disabled = true;
     this._inputText.setAttribute("disabled", "disabled");
