@@ -180,15 +180,6 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
     Join<CourseAssessment, CourseModule> courseModuleJoin = root.join(CourseAssessment_.courseModule);
     
-//    Subquery<CourseBase> courseModuleSubquery = criteria.subquery(CourseBase.class);
-//    Root<CourseModule> courseModuleRoot = courseModuleSubquery.from(CourseModule.class);
-//    courseModuleSubquery.select(courseModuleRoot.get(CourseModule_.course));
-//    courseModuleSubquery.where(
-//        criteriaBuilder.and(
-//            criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.subject), subject),
-//            criteriaBuilder.equal(courseModuleRoot.get(CourseModule_.courseNumber), courseNumber)
-//        ));
-
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
@@ -198,7 +189,6 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
             criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student),
             criteriaBuilder.equal(courseModuleJoin.get(CourseModule_.subject), subject),
             criteriaBuilder.equal(courseModuleJoin.get(CourseModule_.courseNumber), courseNumber)
-//            courseJoin.in(courseModuleSubquery)
         ));
     
     return entityManager.createQuery(criteria).getResultList();

@@ -40,7 +40,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.koski.KoskiController;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
-import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.ReportPermissions;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCredit;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditReport;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditState;
@@ -70,7 +70,7 @@ public class ReportRESTService extends AbstractRESTService {
   
   @Path("/perusopetus")
   @GET
-  @RESTPermit (CommonPermissions.LIST_EDUCATIONTYPES)
+  @RESTPermit (ReportPermissions.VIEW_PROGRAMMATIC_REPORT)
   public Response listEducationTypes(@QueryParam("linja") String linja, @QueryParam("begin") ISO8601Date begin, @QueryParam("end") ISO8601Date end) {
 
     if (linja == null || begin == null || begin.getLocalDate() == null || end == null || end.getLocalDate() == null) {
