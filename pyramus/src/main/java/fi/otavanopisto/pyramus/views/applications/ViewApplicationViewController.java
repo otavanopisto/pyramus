@@ -253,6 +253,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         sections.put("Aineopiskelijan oppilaitos", fields);
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
         if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
+          fields.put("Sopimusoppilaitos", ApplicationUtils.isContractSchool(formData) ? "Kyllä" : "Ei");
           School school = ApplicationUtils.resolveSchool(formData);
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
@@ -261,11 +262,10 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
           else {
             fields.put("Oppilaitos", school.getName());
-          }
-          fields.put("Sopimusoppilaitos", ApplicationUtils.isContractSchool(formData) ? "Kyllä" : "Ei");
-          String paid = getFormValue(formData, "field-internetix-contract-school-paid");
-          if (!StringUtils.isEmpty(paid)) {
-            fields.put("Opintojen maksaja", StringUtils.equals(paid, "self") ? "Itse" : "Oppilaitos");
+            String paid = getFormValue(formData, "field-internetix-contract-school-paid");
+            if (!StringUtils.isEmpty(paid)) {
+              fields.put("Opintojen maksaja", StringUtils.equals(paid, "self") ? "Itse" : "Oppilaitos");
+            }
           }
           StudentExaminationType examinationType = ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree"));
           if (examinationType != null) {
