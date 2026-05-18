@@ -248,12 +248,13 @@ public class ViewApplicationViewController extends PyramusViewController {
       
       // Aineopiskelijan lisätiedot
       
-      if (ApplicationUtils.isInternetixLine(getFormValue(formData, "field-line"))) {
+      if (ApplicationUtils.isInternetixLine(applicationLine)) {
         fields = new LinkedHashMap<>();
         sections.put("Aineopiskelijan oppilaitos", fields);
         fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
         if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
-          fields.put("Sopimusoppilaitos", ApplicationUtils.isContractSchool(formData) ? "Kyllä" : "Ei");
+          boolean isContractSchool = ApplicationUtils.isContractSchool(formData);
+          fields.put("Sopimusoppilaitos", isContractSchool ? "Kyllä" : "Ei");
           School school = ApplicationUtils.resolveSchool(formData);
           if (school == null) {
             fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
@@ -262,6 +263,8 @@ public class ViewApplicationViewController extends PyramusViewController {
           }
           else {
             fields.put("Oppilaitos", school.getName());
+          }
+          if (isContractSchool && StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU)) {
             String paid = getFormValue(formData, "field-internetix-contract-school-paid");
             if (!StringUtils.isEmpty(paid)) {
               fields.put("Opintojen maksaja", StringUtils.equals(paid, "self") ? "Itse" : "Oppilaitos");
