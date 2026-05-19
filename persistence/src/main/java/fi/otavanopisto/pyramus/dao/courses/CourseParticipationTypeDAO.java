@@ -30,6 +30,24 @@ public class CourseParticipationTypeDAO extends PyramusEntityDAO<CourseParticipa
 
     return courseParticipationType;
   }
+  
+  public CourseParticipationType findByName(String name) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseParticipationType> criteria = criteriaBuilder.createQuery(CourseParticipationType.class);
+    Root<CourseParticipationType> root = criteria.from(CourseParticipationType.class);
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(CourseParticipationType_.name), name),
+        criteriaBuilder.equal(root.get(CourseParticipationType_.archived), Boolean.FALSE)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
 
   public CourseParticipationType update(CourseParticipationType courseParticipationType, String name) {
     EntityManager entityManager = getEntityManager();

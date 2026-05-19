@@ -43,6 +43,11 @@ public class PyramusConsts {
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B2 = "lukioKieliB2";
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B3 = "lukioKieliB3";
   
+  // Participation types
+  public static final String PARTICIPATION_TYPE_PASS = "Suorittanut";
+  public static final String PARTICIPATION_TYPE_FAIL = "Hylätty";
+  public static final String PARTICIPATION_TYPE_ENROLLED = "Ilmoittautunut";
+  
   /**
    * Lukio
    */
