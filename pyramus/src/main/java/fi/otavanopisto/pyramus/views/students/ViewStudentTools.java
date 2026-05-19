@@ -38,8 +38,13 @@ public class ViewStudentTools {
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
     for (StudentStudyPeriod studyPeriod : studyPeriods) {
-      if ((studyPeriod.getBegin() != null && !DateUtils.isWithin(studyPeriod.getBegin(), student.getStudyStartDate(), student.getStudyEndDate())) ||
-          (studyPeriod.getEnd() != null && !DateUtils.isWithin(studyPeriod.getEnd(), student.getStudyStartDate(), student.getStudyEndDate()))) {
+      boolean studyPeriodOutsideStudyTime = studyPeriod.getBegin() != null && !DateUtils.isWithin(studyPeriod.getBegin(), student.getStudyStartDate(), student.getStudyEndDate());
+      
+      if (!studyPeriodOutsideStudyTime && studyPeriod.getEnd() != null && !StudentStudyPeriodType.ALLOW_PERIOD_END_OUTSIDE_STUDYTIME.contains(studyPeriod.getPeriodType())) {
+        studyPeriodOutsideStudyTime = studyPeriod.getEnd() != null && !DateUtils.isWithin(studyPeriod.getEnd(), student.getStudyStartDate(), student.getStudyEndDate());
+      }
+      
+      if (studyPeriodOutsideStudyTime) {
         warnings.add(new ViewStudentValidationWarning(student, ViewStudentValidationType.STUDYPERIOD_OUTSIDE_STUDYTIME,
             ViewStudentValidationWarningSeverity.ERROR));
       }

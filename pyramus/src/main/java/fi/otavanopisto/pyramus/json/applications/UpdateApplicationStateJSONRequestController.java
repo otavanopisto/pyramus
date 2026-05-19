@@ -184,21 +184,25 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String subject = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
               String.format("/templates/applications/mails/mail-accept-study-place-%s-subject.txt", application.getLine())), "UTF-8");
 
-          StringBuilder signUpUrl = new StringBuilder();
-          signUpUrl.append(requestContext.getRequest().getScheme());
-          signUpUrl.append("://");
-          signUpUrl.append(requestContext.getRequest().getServerName());
-          signUpUrl.append(":");
-          signUpUrl.append(requestContext.getRequest().getServerPort());
-          signUpUrl.append("/applications/accept.page?application=");
-          signUpUrl.append(application.getApplicationId());
-
-          String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-              "/templates/applications/mails/mail-accept-study-place-" + line + ".html"), "UTF-8");
-          if (StringUtils.equalsAny(line, ApplicationUtils.LINE_NETTIPK, ApplicationUtils.LINE_MK)) {
+          String content;
+          if (StringUtils.equalsAny(line, ApplicationUtils.LINE_NETTIPK, ApplicationUtils.LINE_MK) && ApplicationUtils.isUnderage(application)) {
+            content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+                "/templates/applications/mails/mail-accept-study-place-" + line + "-underage.html"), "UTF-8");
             content = String.format(content, nickname, staffMember.getFullName());
           }
           else {
+            content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+                "/templates/applications/mails/mail-accept-study-place-" + line + ".html"), "UTF-8");
+
+            StringBuilder signUpUrl = new StringBuilder();
+            signUpUrl.append(requestContext.getRequest().getScheme());
+            signUpUrl.append("://");
+            signUpUrl.append(requestContext.getRequest().getServerName());
+            signUpUrl.append(":");
+            signUpUrl.append(requestContext.getRequest().getServerPort());
+            signUpUrl.append("/applications/accept.page?application=");
+            signUpUrl.append(application.getApplicationId());
+
             content = String.format(content, nickname, signUpUrl.toString(), staffMember.getFullName());
           }
           
