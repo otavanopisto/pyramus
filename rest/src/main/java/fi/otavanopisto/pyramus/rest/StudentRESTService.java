@@ -2503,10 +2503,10 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
-    
     if (courseAssessment == null) {
       return Response.status(Status.NOT_FOUND).build(); 
     }
+    CourseStudent courseStudent = courseAssessment.getCourseStudent();
 
     // #1198: Remove worklist entries based on this course assessment
     
@@ -2523,7 +2523,6 @@ public class StudentRESTService extends AbstractRESTService {
     // #1796: Potentially adjust course student participation type
     
     courseAssessment = null;
-    CourseStudent courseStudent = courseController.findCourseStudentByCourseAndStudent(course, student);
     if (courseStudent != null) {
       for (CourseModule module : course.getCourseModules()) {
         courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndCourseModuleAndArchived(courseStudent, module, Boolean.FALSE);
@@ -2531,24 +2530,23 @@ public class StudentRESTService extends AbstractRESTService {
           break;
         }
       }
-    }
-    CourseParticipationType participationType = courseStudent.getParticipationType();
-    if (participationType != null) {
-      if (courseAssessment == null && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_ENROLLED)) {
-        participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_ENROLLED);
-      }
-      else if (courseAssessment != null && courseAssessment.getGrade() != null) {
-        boolean passing = courseAssessment.getGrade().getPassingGrade();
-        if (passing && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_PASS)) {
-          participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_PASS);
+      CourseParticipationType participationType = courseStudent.getParticipationType();
+      if (participationType != null) {
+        if (courseAssessment == null && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_ENROLLED)) {
+          participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_ENROLLED);
         }
-        else if (!passing && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_FAIL)) {
-          participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_FAIL);
+        else if (courseAssessment != null && courseAssessment.getGrade() != null) {
+          boolean passing = courseAssessment.getGrade().getPassingGrade();
+          if (passing && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_PASS)) {
+            participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_PASS);
+          }
+          else if (!passing && !StringUtils.equals(participationType.getName(), PyramusConsts.PARTICIPATION_TYPE_FAIL)) {
+            participationType = courseController.findCourseParticipationTypeByName(PyramusConsts.PARTICIPATION_TYPE_FAIL);
+          }
         }
-      }
-      if (participationType != null && !participationType.getId().equals(courseStudent.getParticipationType().getId())) {
-        courseStudent.setParticipationType(participationType);
-        courseController.updateCourseStudentParticipationType(courseStudent, participationType);
+        if (participationType != null && !participationType.getId().equals(courseStudent.getParticipationType().getId())) {
+          courseController.updateCourseStudentParticipationType(courseStudent, participationType);
+        }
       }
     }
 
