@@ -53,6 +53,14 @@
       $(this).val('');
     });
     
+    // Nettilukion aineopiskelun maksaja
+    
+    $('#field-internetix-contract-school').change(function() {
+      var val = $(this).val();
+      var line = $('select[name="field-line"]').val();
+      $('div.field-internetix-contract-school-paid').toggle(line == 'aineopiskelu' && val != '' && val != 'muu');
+	});
+    
     // Nickname
     
     $('#field-first-names').on('change', function() {

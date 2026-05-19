@@ -29,6 +29,15 @@
       </select>
     </div>
 
+    <div class="form-section__field-container field-internetix-contract-school-paid" style="display:none;">
+      <label for="field-internetix-contract-school-paid" class="required">Valitse alta, maksaako oppilaitoksesi aineopintosi vai maksatko opinnot itse</label>
+      <select id="field-internetix-contract-school-paid" name="field-internetix-contract-school-paid" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <option value="">-- Valitse --</option>
+        <option value="self">Maksan itse</option>
+        <option value="school">Oppilaitokseni maksaa</option>
+      </select>
+    </div>
+
     <div class="form-section__field-container field-internetix-contract-school-name dependent" data-dependent-field="field-internetix-contract-school" data-dependent-values="muu" style="display:none;">
       <label for="field-internetix-contract-school-name" class="required">Oppilaitos</label>
       <input type="text" id="field-internetix-contract-school-name" name="field-internetix-contract-school-name" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
