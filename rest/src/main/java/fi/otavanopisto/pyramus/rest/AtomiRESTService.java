@@ -101,7 +101,7 @@ public class AtomiRESTService extends AbstractRESTService {
     User loggedUser = sessionController.getUser();
 
     if (loggedUser.getPerson() == null) {
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
 
     String opiskelijatunniste = null;
@@ -135,7 +135,7 @@ public class AtomiRESTService extends AbstractRESTService {
     Person person = personController.findPersonById(personId);
 
     if (person == null || person.getLatestStudent() == null) {
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
 
     if (!hasPermission(person)) {
@@ -153,7 +153,7 @@ public class AtomiRESTService extends AbstractRESTService {
     Person person = personController.findPersonById(personId);
 
     if (person == null || person.getLatestStudent() == null) {
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
 
     if (!hasPermission(person)) {
