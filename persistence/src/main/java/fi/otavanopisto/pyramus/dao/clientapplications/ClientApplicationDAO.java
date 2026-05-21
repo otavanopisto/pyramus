@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.dao.clientapplications;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -22,11 +21,7 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
     clientApplication.setClientName(clientName);
     clientApplication.setClientSecret(clientSecret);
     clientApplication.setSkipPrompt(skipPrompt);
-
-    Set<String> scopesCopy = new HashSet<>();
-    scopesCopy.addAll(scopes);
-    clientApplication.setScopes(scopesCopy);
-
+    clientApplication.setScopes(scopes);
     return persist(clientApplication);
   }
 
