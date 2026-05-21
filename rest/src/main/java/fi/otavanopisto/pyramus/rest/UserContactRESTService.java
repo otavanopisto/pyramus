@@ -141,7 +141,7 @@ public class UserContactRESTService extends AbstractRESTService {
   @Path("/users/{USERID:[0-9]*}/contacts/{CONTACTINFOID}/allowStudyDiscussions")
   @PUT
   @RESTPermit(handling = Handling.INLINE)
-  public Response updateContactInfo(@PathParam("USERID") Long userId, @PathParam("CONTACTINFOID") Long contactInfoId,
+  public Response updateAllowStudydiscussions(@PathParam("USERID") Long userId, @PathParam("CONTACTINFOID") Long contactInfoId,
       Boolean allowStudyDiscussions) {
     if (allowStudyDiscussions == null) {
       return Response.status(Status.BAD_REQUEST).entity("invalid payload").build();
@@ -171,7 +171,7 @@ public class UserContactRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    studentAdditionalContactInfo = studentAdditionalContactInfoDAO.update(studentAdditionalContactInfo, studentAdditionalContactInfo.getContactType(), allowStudyDiscussions);
+    studentAdditionalContactInfo = studentAdditionalContactInfoDAO.updateAllowStudyDiscussions(studentAdditionalContactInfo, allowStudyDiscussions);
     
     return Response.ok(restModel(studentAdditionalContactInfo)).build();
   }

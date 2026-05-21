@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,6 +50,14 @@ public class StudentParentChild {
     this.continuedViewPermission = continuedViewPermission;
   }
 
+  public LocalDateTime getContinuedViewPermissionModified() {
+    return continuedViewPermissionModified;
+  }
+
+  public void setContinuedViewPermissionModified(LocalDateTime continuedViewPermissionModified) {
+    this.continuedViewPermissionModified = continuedViewPermissionModified;
+  }
+
   @Id 
   @GeneratedValue(strategy = GenerationType.IDENTITY)  
   private Long id;
@@ -59,5 +70,9 @@ public class StudentParentChild {
   @JoinColumn(name = "student")
   private Student student;
 
+  @Column
   private boolean continuedViewPermission;
+  
+  @Column
+  private LocalDateTime continuedViewPermissionModified;
 }

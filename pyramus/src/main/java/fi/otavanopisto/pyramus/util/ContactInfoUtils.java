@@ -46,12 +46,12 @@ public class ContactInfoUtils {
     readAndUpdateTypedContactInfos(requestContext, contactInfoEditorName, contactInfos, new ContactInfoConstructor<UserAdditionalContactInfo>() {
       @Override
       public UserAdditionalContactInfo create(ContactType contactType) {
-        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().create(contactType, false);
+        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().create(contactType);
       }
 
       @Override
       public UserAdditionalContactInfo update(UserAdditionalContactInfo contactInfo, ContactType contactType) {
-        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().update(contactInfo, contactType, contactInfo.isAllowStudyDiscussions());
+        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().update(contactInfo, contactType);
       }
     });
   }

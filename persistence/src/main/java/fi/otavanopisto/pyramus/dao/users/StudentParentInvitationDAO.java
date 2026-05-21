@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.users;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -81,6 +82,7 @@ public class StudentParentInvitationDAO extends PyramusEntityDAO<StudentParentIn
 
   public StudentParentInvitation updateContinuedViewPermission(StudentParentInvitation invitation, boolean continuedViewPermission) {
     invitation.setContinuedViewPermission(continuedViewPermission);
+    invitation.setContinuedViewPermissionModified(LocalDateTime.now());
     return persist(invitation);
   }
 

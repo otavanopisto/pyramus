@@ -145,7 +145,7 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
           throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.userAlreadyParent"));
         }
         
-        studentParentChildDAO.create(studentParent, studentParentInvitation.getStudent(), studentParentInvitation.isContinuedViewPermission());
+        studentParentChildDAO.create(studentParent, studentParentInvitation.getStudent(), studentParentInvitation.isContinuedViewPermission(), studentParentInvitation.getContinuedViewPermissionModified());
         
         studentParentInvitationDAO.delete(studentParentInvitation);
         

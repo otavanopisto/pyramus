@@ -164,7 +164,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     
     if (CollectionUtils.isNotEmpty(oldStudent.getAdditionalContactInfos())) {
       for (UserAdditionalContactInfo additionalContactInfo : oldStudent.getAdditionalContactInfos()) {
-        UserAdditionalContactInfo copiedAdditionalInfo = additionalContactInfoDAO.create(additionalContactInfo.getContactType(), false);
+        UserAdditionalContactInfo copiedAdditionalInfo = additionalContactInfoDAO.create(additionalContactInfo.getContactType());
 
         // Addresses
         
