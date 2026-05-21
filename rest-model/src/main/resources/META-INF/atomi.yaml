@@ -225,6 +225,7 @@ components:
       type: object
       properties:
         opiskelijatunniste:
+          description: Opiskelijan tunniste, jos kyseessä opiskelija.
           type: string
         etunimet:
           type: string
