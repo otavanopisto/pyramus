@@ -4,10 +4,23 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 
 public class StudyEndReasonMapping {
 
+  /**
+   * To be replaced by StudentStudyEndReason.type
+   * 
+   * @deprecated
+   * @return
+   */
+  @Deprecated(forRemoval = true)
   public OpiskeluoikeudenTila getOpiskeluoikeudenTila() {
     return opiskeluoikeudenTila;
   }
   
+  /**
+   * To be replaced by StudentStudyEndReason.type
+   * 
+   * @deprecated
+   */
+  @Deprecated(forRemoval = true)
   public void setOpiskeluoikeudenTila(OpiskeluoikeudenTila opiskeluoikeudenTila) {
     this.opiskeluoikeudenTila = opiskeluoikeudenTila;
   }

@@ -25,7 +25,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -39,11 +38,10 @@ import fi.otavanopisto.pyramus.domainmodel.reports.AtomiReport;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReasonType;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.DateUtils;
-import fi.otavanopisto.pyramus.koski.KoskiSettings;
-import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 import fi.otavanopisto.pyramus.reports.FTLReportsController;
 import fi.otavanopisto.pyramus.reports.FTLReportsController.ReportFormat;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
@@ -72,9 +70,6 @@ public class AtomiRESTService extends AbstractRESTService {
   
   @Inject
   private Logger logger;
-  
-  @Inject
-  private KoskiSettings koskiSettings;
   
   @Inject
   private AtomiReportDAO atomiReportDAO;
@@ -340,20 +335,12 @@ public class AtomiRESTService extends AbstractRESTService {
     OpiskeluoikeudenTila tila = OpiskeluoikeudenTila.läsnä;
 
     if (student.getStudyEndDate() != null) {
-      // Jos päättymispäivä on merkitty, veikataan että opiskelija on eronnut ja yritetään selvittää 
-      // StudyEndReasonMapping:n avulla tarkemmin onko kyseessä eroaminen vai valmistuminen
+      // Jos päättymispäivä on merkitty, veikataan että opiskelija on eronnut ja jos 
+      // päättymissyyn tyyppi indikoi opintojen valmistumista niin tilaksi valmistunut
       tila = OpiskeluoikeudenTila.eronnut;
       
-      StudyEndReasonMapping studyEndReasonMapping = student.getStudyEndReason() != null ? 
-          koskiSettings.getStudyEndReasonMapping(student.getStudyEndReason()) : null;
-
-      if (studyEndReasonMapping != null) {
-        if (ArrayUtils.contains(fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila.GRADUATED_STATES, studyEndReasonMapping.getOpiskeluoikeudenTila())) {
-          tila = OpiskeluoikeudenTila.valmistunut;
-        }
-        else if (ArrayUtils.contains(fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila.QUIT_STATES, studyEndReasonMapping.getOpiskeluoikeudenTila())) {
-          tila = OpiskeluoikeudenTila.eronnut;
-        }
+      if (student.getStudyEndReason() != null && student.getStudyEndReason().getType() == StudentStudyEndReasonType.GRADUATED) {
+        tila = OpiskeluoikeudenTila.valmistunut;
       }
     }
 
