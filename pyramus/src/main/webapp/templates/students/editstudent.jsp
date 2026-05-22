@@ -1287,6 +1287,7 @@
                 <select name="funding.${student.id}">
                   <option value=""><fmt:message key="students.studentFunding.defaultFunding"/></option>
                   <option value="GOVERNMENT_FUNDING" ${student.funding == 'GOVERNMENT_FUNDING' ? 'selected="selected"' : ''}><fmt:message key="students.studentFunding.governmentFunding"/></option>
+                  <option value="FOREIGN_STUDENT_TUITION_FEE" ${student.funding == 'FOREIGN_STUDENT_TUITION_FEE' ? 'selected="selected"' : ''}><fmt:message key="students.studentFunding.foreignStudentTuitionFee"/></option>
                   <option value="OTHER_FUNDING" ${student.funding == 'OTHER_FUNDING' ? 'selected="selected"' : ''}><fmt:message key="students.studentFunding.otherFunding"/></option>
                 </select>
               </div>

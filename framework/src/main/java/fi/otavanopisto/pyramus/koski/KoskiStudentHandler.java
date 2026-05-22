@@ -923,6 +923,8 @@ public abstract class KoskiStudentHandler {
         switch (student.getFunding()) {
           case GOVERNMENT_FUNDING:
             return OpintojenRahoitus.K1;
+          case FOREIGN_STUDENT_TUITION_FEE:
+            return OpintojenRahoitus.K16;
           case OTHER_FUNDING:
             return OpintojenRahoitus.K6;
         }
