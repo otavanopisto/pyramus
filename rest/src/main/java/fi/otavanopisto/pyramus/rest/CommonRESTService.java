@@ -33,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
@@ -48,6 +49,7 @@ import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class CommonRESTService extends AbstractRESTService {
 
   @Inject

@@ -1,0 +1,292 @@
+openapi: 3.1.0
+info:
+  title: Pyramus-Atomi-integraatio
+  description:
+  version: 1.0.0
+tags:
+  - name: atomi
+paths:
+  /kirjautunut:
+    get:
+      tags:
+        - atomi
+      summary: Palauttaa kirjautuneen käyttäjän tiedot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KirjautunutKayttaja'
+        '403':
+          description: Käyttäjä ei ole kirjautunut sisään tai hänellä ei ole oikeutta ladata tietoja.
+        '500':
+          description: Palvelimen virhetilanne
+  /opiskelijat/{opiskelijatunniste}:
+    get:
+      tags:
+        - atomi
+      summary: Palauttaa opiskelijan tiedot opiskelijan tunnisteella.
+      parameters:
+        - name: opiskelijatunniste
+          in: path
+          description: Opiskelijan tunniste
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opiskelija'
+        '400':
+          description: Virheellinen tai puuttuva tunniste
+        '404':
+          description: Tunnisteella ei löydy opiskelijaa
+        '403':
+          description: Käyttäjä ei ole kirjautunut sisään tai hänellä ei ole oikeutta ladata tietoja.
+        '500':
+          description: Palvelimen virhetilanne
+  /opiskelijat/{opiskelijatunniste}/opiskeluoikeudet:
+    get:
+      tags:
+        - atomi
+      summary: Palauttaa opiskelijan opiskeluoikeudet.
+      parameters:
+        - name: opiskelijatunniste
+          in: path
+          description: Opiskelijan tunniste, jonka opiskeluoikeudet listataan.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opiskeluoikeus'
+        '400':
+          description: Virheellinen tai puuttuva tunniste
+        '404':
+          description: Tunnisteella ei löydy opiskelijaa
+        '403':
+          description: Käyttäjä ei ole kirjautunut sisään tai hänellä ei ole oikeutta ladata tietoja.
+        '500':
+          description: Palvelimen virhetilanne
+  /opiskeluoikeudet:
+    get:
+      tags:
+        - atomi
+      summary: Opiskeluoikeuksien haku.
+      parameters:
+        - name: hetu
+          in: query
+          description: Hakurajaus henkilötunnuksella
+          required: false
+          schema:
+            type: string
+        - name: sukunimi
+          in: query
+          description: Hakurajaus sukunimellä
+          required: false
+          schema:
+            type: string
+        - name: koulutusohjelma
+          in: query
+          description: Haku koulutusohjelman tunnisteella
+          required: false
+          schema:
+            type: string
+        - name: valmalku
+          in: query
+          description: Hakurajaus opiskelijan valmistumispäivämäärän perusteella. Rajaavan jakson alkupäivämäärä.
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: valmloppu
+          in: query
+          description: Hakurajaus opiskelijan valmistumispäivämäärän perusteella. Rajaavan jakson loppupäivämäärä.
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: opiskeluoikeudet
+          in: query
+          description: Pilkkueroteltu lista opiskeluoikeuksien tunnisteita, jotka halutaan listata.
+          example: 321,654,987 
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Opiskeluoikeus'
+        '400':
+          description: Virheellinen tai puuttuva tunniste
+        '403':
+          description: Käyttäjä ei ole kirjautunut sisään tai hänellä ei ole oikeutta ladata tietoja.
+        '500':
+          description: Palvelimen virhetilanne
+  /opiskeluoikeudet/{opiskeluoikeudentunniste}:
+    get:
+      tags:
+        - atomi
+      summary: Opiskeluoikeuden hakeminen opiskeluoikeuden tunnisteella.
+      parameters:
+        - name: opiskeluoikeudentunniste
+          in: path
+          description: Opiskeluoikeuden tunniste, jonka mukaista opiskeluoikeutta ollaan hakemassa.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opiskeluoikeus'
+        '400':
+          description: Virheellinen tai puuttuva tunniste
+        '404':
+          description: Tunnisteella ei löydy opiskelijaa
+        '403':
+          description: Käyttäjä ei ole kirjautunut sisään tai hänellä ei ole oikeutta ladata tietoja.
+        '500':
+          description: Palvelimen virhetilanne
+  /opiskeluoikeudet/{opiskeluoikeudentunniste}/dokumentit/{dokumentintunniste}:
+    get:
+      tags:
+        - atomi
+      summary: Palauttaa PDF-muotoisen dokumentin halutulle opiskeluoikeudelle.
+      parameters:
+        - name: opiskeluoikeudentunniste
+          in: path
+          description: Opiskeluoikeuden tunniste
+          required: true
+          schema:
+            type: string
+        - name: dokumentintunniste
+          in: path
+          description: Dokumentin tunniste
+          required: true
+          schema:
+            $ref: '#/components/schemas/DokumenttiTyyppi'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Virheellinen tai puuttuva tunniste
+        '404':
+          description: Tunnisteella ei löydy opiskelijaa
+        '403':
+          description: Käyttäjä ei ole kirjautunut sisään tai hänellä ei ole oikeutta ladata tietoja.
+        '500':
+          description: Palvelimen virhetilanne
+
+components:
+  schemas:
+    DokumenttiTyyppi:
+      type: string
+      enum:
+        - opiskelutodistus
+        - opintorekisteriote
+        - paattotodistus
+
+    OpiskeluoikeudenTila:
+      type: string
+      enum:
+        - läsnä
+        - valmistunut
+        - eronnut
+
+    Rooli:
+      type: string
+      enum:
+        - henkilökunta
+        - opiskelija
+
+    KirjautunutKayttaja:
+      type: object
+      properties:
+        opiskelijatunniste:
+          description: Opiskelijan tunniste, jos kyseessä opiskelija.
+          type: string
+        etunimet:
+          type: string
+        sukunimi:
+          type: string
+        rooli:
+          $ref: '#/components/schemas/Rooli'
+
+    Opiskelija:
+      type: object
+      properties:
+        tunniste:
+          type: string
+        käyttäjätunnus:
+          type: string
+        opiskelijanumero:
+          type: string
+        etunimet:
+          type: string
+        sukunimi:
+          type: string
+        email:
+          type: string
+        syntymäaika:
+          type: string
+          format: date
+
+    Opiskeluoikeus:
+      type: object
+      properties:
+        tunniste:
+          type: string
+        aloituspäivämäärä:
+          type: string
+          format: date
+        päättymispäivämäärä:
+          type: string
+          format: date
+        valmistumispäivämäärä:
+          type: string
+          format: date
+        eropäivämäärä:
+          type: string
+          format: date
+        tila:
+          $ref: "#/components/schemas/OpiskeluoikeudenTila"
+        opiskelija:
+          $ref: "#/components/schemas/Opiskelija"
+        koulutusohjelma:
+          description: Viittaus koulutusohjelmaan, johon opiskeluoikeus liittyy
+          $ref: "#/components/schemas/AtomiViittaus"
+        saatavillaOlevatDokumentit:
+          description: Lista dokumenttityypeistä, jotka ovat saatavilla tälle opiskeluoikeudelle.
+          type: array
+          items:
+            $ref: "#/components/schemas/DokumenttiTyyppi"
+
+    AtomiViittaus:
+      type: object
+      properties:
+        tunniste:
+          type: string
+        nimi:
+          type: string

@@ -1,7 +1,13 @@
 package fi.otavanopisto.pyramus.domainmodel.clientapplications;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,6 +58,14 @@ public class ClientApplicationAuthorizationCode {
     this.redirectUrl = redirectUrl;
   }
 
+  public Set<String> getSelectedScopes() {
+    return selectedScopes;
+  }
+
+  public void setSelectedScopes(Set<String> selectedScopes) {
+    this.selectedScopes = selectedScopes;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "ClientApplicationAuthorizationCode")
   @TableGenerator(name = "ClientApplicationAuthorizationCode", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -77,4 +91,8 @@ public class ClientApplicationAuthorizationCode {
   @Column(nullable = false)
   private String redirectUrl;
 
+  @ElementCollection(fetch = FetchType.EAGER) // Has to be eager, maybe figure out later
+  @CollectionTable(name = "ClientApplicationAuthorizationCodeScopes", joinColumns = @JoinColumn(name = "authorizationCode"))
+  @Column(name = "scope", nullable = false)
+  private Set<String> selectedScopes = new HashSet<>();
 }

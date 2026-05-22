@@ -25,6 +25,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
@@ -37,6 +38,7 @@ import fi.otavanopisto.pyramus.security.impl.permissions.CourseSignupGroupPermis
 @Consumes("application/json")
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class CourseSignupRESTService extends AbstractRESTService {
 
   @Inject

@@ -56,6 +56,7 @@ import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -79,6 +80,7 @@ import fi.otavanopisto.security.LoggedIn;
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject

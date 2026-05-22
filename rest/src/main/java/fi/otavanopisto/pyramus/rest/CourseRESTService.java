@@ -66,6 +66,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -98,6 +99,7 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @Consumes("application/json")
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class CourseRESTService extends AbstractRESTService {
   
   @Inject

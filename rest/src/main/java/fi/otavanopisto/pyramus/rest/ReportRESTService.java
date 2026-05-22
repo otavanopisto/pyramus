@@ -39,6 +39,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.koski.KoskiController;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ReportPermissions;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCredit;
@@ -51,6 +52,7 @@ import fi.otavanopisto.pyramus.rest.util.ISO8601Date;
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class ReportRESTService extends AbstractRESTService {
 
   @Inject

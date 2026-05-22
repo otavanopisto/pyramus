@@ -28,6 +28,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.SchoolController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
@@ -39,6 +40,7 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @Consumes("application/json")
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class SchoolRESTService extends AbstractRESTService {
 
   @Inject

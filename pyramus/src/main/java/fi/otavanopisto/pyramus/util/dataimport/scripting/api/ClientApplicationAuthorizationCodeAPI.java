@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 
+import java.util.Collections;
+import java.util.Set;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
@@ -29,8 +32,10 @@ public class ClientApplicationAuthorizationCodeAPI {
       throw new InvalidScriptException("Client application not found");
     }
     
+    // Cannot add scopes via import api
+    Set<String> scopes = Collections.emptySet();
     ClientApplicationAuthorizationCode code =
-        DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO().create(user, clientApplication, authorizationCode, redirectUrl);
+        DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO().create(user, clientApplication, authorizationCode, redirectUrl, scopes);
     return code.getId();
   }
   

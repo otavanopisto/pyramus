@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.dao.clientapplications;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,7 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationA
 @Stateless
 public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<ClientApplicationAuthorizationCode> {
 
-  public ClientApplicationAuthorizationCode create(User user, ClientApplication clientApplication, String authorizationCode, String redirectUrl) {
+  public ClientApplicationAuthorizationCode create(User user, ClientApplication clientApplication, String authorizationCode, String redirectUrl, Set<String> selectedScopes) {
     EntityManager entityManager = getEntityManager();
 
     ClientApplicationAuthorizationCode clientApplicationAuthorizationCode = new ClientApplicationAuthorizationCode();
@@ -26,6 +28,10 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     clientApplicationAuthorizationCode.setAuthorizationCode(authorizationCode);
     clientApplicationAuthorizationCode.setRedirectUrl(redirectUrl);
     
+    Set<String> scopes = new HashSet<>();
+    scopes.addAll(selectedScopes);
+    clientApplicationAuthorizationCode.setSelectedScopes(scopes);
+
     entityManager.persist(clientApplicationAuthorizationCode);
     return clientApplicationAuthorizationCode;
   }

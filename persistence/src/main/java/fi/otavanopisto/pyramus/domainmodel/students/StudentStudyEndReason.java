@@ -9,6 +9,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -102,6 +104,14 @@ public class StudentStudyEndReason implements ArchivableEntity {
     this.archived = archived;
   }
 
+  public StudentStudyEndReasonType getType() {
+    return type;
+  }
+
+  public void setType(StudentStudyEndReasonType type) {
+    this.type = type;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentStudyEndReason")  
   @TableGenerator(name="StudentStudyEndReason", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -124,6 +134,10 @@ public class StudentStudyEndReason implements ArchivableEntity {
   @CollectionTable (name = "StudentStudyEndReasonProperties", joinColumns = @JoinColumn(name = "studentStudyEndReason_id"))
   private Map<String, String> properties = new HashMap<String, String>();
 
+  @Column
+  @Enumerated (EnumType.STRING)
+  private StudentStudyEndReasonType type;
+  
   @Version
   @Column(nullable = false)
   private Long version;

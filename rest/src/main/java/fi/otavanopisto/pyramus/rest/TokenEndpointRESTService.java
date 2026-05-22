@@ -17,8 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -31,6 +31,7 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import fi.otavanopisto.pyramus.rest.controller.OauthController;
 
@@ -39,6 +40,7 @@ import fi.otavanopisto.pyramus.rest.controller.OauthController;
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class TokenEndpointRESTService extends AbstractRESTService {
 
   public static final long TOKEN_LIFETIME = 3600L;
@@ -122,7 +124,9 @@ public class TokenEndpointRESTService extends AbstractRESTService {
             refreshToken,
             expires,
             clientApplication,
-            clientApplicationAuthorizationCode);
+            clientApplicationAuthorizationCode,
+            clientApplicationAuthorizationCode.getSelectedScopes()
+            );
         }
         else {
           oauthController.renewAccessToken(clientApplicationAccessToken, expires, accessToken, refreshToken);

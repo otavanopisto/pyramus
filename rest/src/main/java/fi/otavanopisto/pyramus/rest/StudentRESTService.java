@@ -107,6 +107,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.reports.FTLReportsController;
 import fi.otavanopisto.pyramus.reports.FTLReportsController.ReportFormat;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -163,8 +164,8 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
-import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
+import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -172,6 +173,7 @@ import fi.otavanopisto.security.LoggedIn;
 @Consumes("application/json")
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class StudentRESTService extends AbstractRESTService {
 
   @Inject

@@ -95,6 +95,7 @@ import fi.otavanopisto.pyramus.hops.HopsCourseMatrix;
 import fi.otavanopisto.pyramus.hops.Mandatority;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -124,6 +125,7 @@ import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class MuikkuRESTService {
 
   @Inject

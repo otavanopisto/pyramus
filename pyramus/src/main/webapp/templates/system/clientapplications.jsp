@@ -52,6 +52,13 @@
             editable: false,
             paramName: 'appSecret'
           }, {
+            header : 'scopes',
+            left : 616 + 8 + 600 + 8,
+            width: 300,
+            dataType: 'text',
+            editable: true,
+            paramName: 'scopes'
+          }, {
             header : '<fmt:message key="system.clientapplications.skipHeader"/>',
             right : 60,
             width : 80,
@@ -116,6 +123,7 @@
             '${clientApplication.clientName}',
             '${clientApplication.clientId}',
             '${clientApplication.clientSecret}',
+            '${String.join(",", clientApplication.scopes)}',
             skipPrompt,
             null,
             null,
@@ -127,7 +135,7 @@
       
       function addClientApplication() {
           var table = getIxTableById('clientApplicationsTable');
-          rowIndex = table.addRow(['', 0, 0, '', '', '',null, null, null, null]);
+          rowIndex = table.addRow(['', 0, 0, '', '', '', '', null, null, null, null]);
       }
       
     </script>

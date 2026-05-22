@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table ClientApplicationScopes (
+      clientApplication bigint not null,
+      scope varchar(255) not null,
+      primary key (clientApplication, scope)
+    );
+  </sql>
+  
+  <sql>
+    alter table ClientApplicationScopes 
+      add constraint FKtgp0x01g212nncwxw89ll0h3j 
+      foreign key (clientApplication) 
+      references ClientApplication (id);
+  </sql>
+
+  <sql>
+    insert into ClientApplicationScopes (clientApplication, scope)
+    select id, 'legacy'
+    from ClientApplication;
+  </sql>
+
+  <sql>
+    create table ClientApplicationAuthorizationCodeScopes (
+       authorizationCode bigint not null,
+        scope varchar(255) not null,
+        primary key (authorizationCode, scope)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAuthorizationCodeScopes 
+       add constraint FKtnrx14039u256b8jnkvpt59qi 
+       foreign key (authorizationCode) 
+       references ClientApplicationAuthorizationCode (id);
+  </sql>
+
+  <sql>
+    insert into ClientApplicationAuthorizationCodeScopes (authorizationCode, scope) 
+    select id, 'legacy' from ClientApplicationAuthorizationCode;
+  </sql>
+
+  <sql>
+    create table ClientApplicationTokenScopes (
+       token bigint not null,
+       scope varchar(255) not null,
+       primary key (token, scope)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationTokenScopes 
+       add constraint FKahntusprt1ot4g0rkgvhkuphm 
+       foreign key (token) 
+       references ClientApplicationAccessToken (id);
+  </sql>
+
+  <sql>
+    insert into ClientApplicationTokenScopes (token, scope) 
+    select id, 'legacy' from ClientApplicationAccessToken;
+  </sql>
+
+  <sql>
+    create table AtomiReport (
+      id bigint not null auto_increment,
+      type varchar(255) not null,
+      report_id bigint,
+      primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table AtomiReport 
+      add constraint UK_jpjmd34wfnkop2cve8d7cwevv unique (type);
+  </sql>
+
+  <sql>
+    alter table AtomiReport 
+      add constraint FKtmcnau6ammr2wupdst1ewp33g 
+      foreign key (report_id) 
+      references Report (id);
+  </sql>
+  
+  <sql>
+    alter table StudentStudyEndReason add column type varchar(255);
+  </sql>
+  
+</update>

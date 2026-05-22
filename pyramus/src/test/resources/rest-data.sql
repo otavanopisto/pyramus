@@ -520,7 +520,11 @@ Old. Needed anymore?
     (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1),
 /** STUDENT_PARENT ROLE**/
     (12, 'ff81d5b8500c773e7a1776a796380115', 'https://localhost:8443/oauth2ClientTest/success', 15, 1);    
-        
+
+insert into
+  ClientApplicationAuthorizationCodeScopes (authorizationCode, scope) 
+  select id, 'legacy' from ClientApplicationAuthorizationCode;
+    
 insert into 
   CourseUser (id, course, version)
 values 

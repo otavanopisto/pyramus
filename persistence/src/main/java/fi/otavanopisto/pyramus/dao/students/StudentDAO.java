@@ -38,6 +38,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.Person_;
 import fi.otavanopisto.pyramus.domainmodel.base.PersonalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
@@ -61,6 +62,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReasonType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -476,6 +479,78 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return query.getResultList();
   }
 
+  public List<Student> listBy(Collection<Organization> organizations, String ssn, String lastname, StudyProgramme studyProgramme, Set<Long> studentIds, 
+      Date graduationDateStart, Date graduationDateEnd, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    Join<Student, Person> personJoin = root.join(Student_.person);
+    
+    List<Predicate> predicates = new ArrayList<>();
+
+    predicates.add(criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE));
+    
+    if (CollectionUtils.isNotEmpty(organizations)) {
+      Join<Student, StudyProgramme> jStudyProgramme = root.join(Student_.studyProgramme);
+      Join<StudyProgramme, Organization> jOrganization = jStudyProgramme.join(StudyProgramme_.organization);
+
+      predicates.add(jOrganization.in(organizations));
+    }
+
+    if (StringUtils.isNotBlank(ssn)) {
+      predicates.add(criteriaBuilder.equal(personJoin.get(Person_.socialSecurityNumber), ssn));
+    }
+
+    if (StringUtils.isNotBlank(lastname)) {
+      predicates.add(criteriaBuilder.like(root.get(Student_.lastName), lastname + "%"));
+    }
+
+    if (studyProgramme != null) {
+      predicates.add(criteriaBuilder.equal(root.get(Student_.studyProgramme), studyProgramme));
+    }
+    
+    if (CollectionUtils.isNotEmpty(studentIds)) {
+      predicates.add(root.get(Student_.id).in(studentIds));
+    }
+    
+    if (graduationDateStart != null || graduationDateEnd != null) {
+      Join<Student, StudentStudyEndReason> studyEndReasonJoin = root.join(Student_.studyEndReason);
+      predicates.add(criteriaBuilder.equal(studyEndReasonJoin.get(StudentStudyEndReason_.type), StudentStudyEndReasonType.GRADUATED));
+
+      if (graduationDateStart != null) {
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Student_.studyEndDate), graduationDateStart));
+      }
+      
+      if (graduationDateEnd != null) {
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(Student_.studyEndDate), graduationDateEnd));
+      }
+    }
+    
+    criteria.select(root);
+    
+    if (!predicates.isEmpty()) {
+      criteria.where(
+          criteriaBuilder.and(
+              predicates.toArray(new Predicate[0])
+          )
+      );
+    }
+    
+    TypedQuery<Student> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
+  }
+  
   public boolean hasCommonGroups(User user1, User user2) {
     EntityManager entityManager = getEntityManager(); 
     

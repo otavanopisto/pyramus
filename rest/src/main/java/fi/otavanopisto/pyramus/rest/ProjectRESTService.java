@@ -26,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModuleOptionality;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.ModuleController;
@@ -38,6 +39,7 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @Consumes("application/json")
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class ProjectRESTService extends AbstractRESTService {
 
   @Inject

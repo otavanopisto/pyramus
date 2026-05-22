@@ -6,6 +6,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.security.ContextReference;
@@ -31,8 +32,18 @@ public class RESTSecurity {
    * @return
    */
   public boolean hasPermission(Method method) {
-    RESTPermit permit = method.getAnnotation(RESTPermit.class);
+    AuthScope authScope = method.getAnnotation(AuthScope.class);
+    if (authScope == null) {
+      authScope = method.getDeclaringClass().getAnnotation(AuthScope.class);
+    }
 
+    if (authScope == null) {
+      // AuthScope is mandatory
+      return false;
+    }
+    
+    RESTPermit permit = method.getAnnotation(RESTPermit.class);
+    
     if (permit != null) {
       // Inline checks are handled in the rest endpoint code so they are skipped here. 
       if (permit.handling() == Handling.INLINE)
@@ -43,8 +54,11 @@ public class RESTSecurity {
       ContextReference permitContext = null;
       
       return hasPermission(permissions, permitContext, style);
-    } else
+    } 
+    else {
+      // RestPermit is mandatory
       return false;
+    }
   }
 
   public boolean hasPermission(String[] permissions) {

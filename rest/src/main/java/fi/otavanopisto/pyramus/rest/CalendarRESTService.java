@@ -29,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.persistence.search.SearchTimeFilterMode;
+import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CalendarController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CalendarPermissions;
@@ -39,6 +40,7 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
 @RequestScoped
+@AuthScope(AuthScope.LEGACY)
 public class CalendarRESTService extends AbstractRESTService {
   
   @Inject
