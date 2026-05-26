@@ -328,7 +328,7 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
               }
               courseLength = opsmoduli.length;
               courseLengthUnit = opsmoduli.lengthUnitSymbol;
-              mandatory = opsmoduli.mandatory;
+              mandatory = opsmoduli.mandatority === "MANDATORY";
             }
             
             if (manualDoubleCheck) {
@@ -367,7 +367,7 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
               }
               courseLength = opsmoduli.length;
               courseLengthUnit = opsmoduli.lengthUnitSymbol;
-              mandatory = opsmoduli.mandatory;
+              mandatory = opsmoduli.mandatority === "MANDATORY";
             }
 
             // Konversiossa voi olla erikseen määritetty uusi arvosana, yleensä S
@@ -424,7 +424,7 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
                   }
                   courseLength = opsmoduli.length;
                   courseLengthUnit = opsmoduli.lengthUnitSymbol;
-                  mandatory = opsmoduli.mandatory;
+                  mandatory = opsmoduli.mandatority === "MANDATORY";
                 }
     
                 // Konversiossa voi olla erikseen määritetty uusi arvosana, yleensä S
@@ -482,7 +482,7 @@ function parseKoskiCourseCode(courseCode, vastaavuustaulukko, opetussuunnitelma,
             if (opsmodule.name) {
               courseName = subject + courseNumber + " " + opsmodule.name;
             }
-            mandatory = opsmodule.mandatory;
+            mandatory = opsmodule.mandatority === "MANDATORY";
             courseLength = opsmodule.length;
             courseLengthUnit = opsmodule.lengthUnitSymbol;
             convertedOk = true;
