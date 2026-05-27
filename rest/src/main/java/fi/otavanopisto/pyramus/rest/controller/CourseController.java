@@ -315,18 +315,19 @@ public class CourseController {
   }
   
   public List<CourseParticipationType> findCourseParticiPationTypes() {
-    List<CourseParticipationType> courseParticipationTypes = courseParticipationTypeDAO.listAll();
-    return courseParticipationTypes;
+    return courseParticipationTypeDAO.listAll();
   }
   
   public List<CourseParticipationType> findUnarchivedCourseParticiPationTypes() {
-    List<CourseParticipationType> courseParticipationTypes = courseParticipationTypeDAO.listUnarchived();
-    return courseParticipationTypes;
+    return courseParticipationTypeDAO.listUnarchived();
   }
   
   public CourseParticipationType findCourseParticipationTypeById(Long id) {
-    CourseParticipationType courseParticipationType = courseParticipationTypeDAO.findById(id);
-    return courseParticipationType;
+    return courseParticipationTypeDAO.findById(id);
+  }
+  
+  public CourseParticipationType findCourseParticipationTypeByName(String name) {
+    return courseParticipationTypeDAO.findByName(name);
   }
   
   public Course updateCourse(Course course, Organization organization, String name, String nameExtension, CourseState courseState, CourseType type, Date beginDate,
@@ -340,23 +341,19 @@ public class CourseController {
   }
   
   public CourseComponent updateCourseComponent(CourseComponent component, Double length, EducationalTimeUnit lengthTimeUnit, String name, String description) {
-    CourseComponent updated = courseComponentDAO.update(component, length, lengthTimeUnit, name, description);
-    return updated;
+    return courseComponentDAO.update(component, length, lengthTimeUnit, name, description);
   }
   
   public CourseEnrolmentType updateCourseEnrolmentType(CourseEnrolmentType courseEnrolmentType, String name) {
-    CourseEnrolmentType updated = courseEnrolmentTypeDAO.updateName(courseEnrolmentType, name);
-    return updated;
+    return courseEnrolmentTypeDAO.updateName(courseEnrolmentType, name);
   }
   
   public CourseDescriptionCategory updateCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, String name) {
-    CourseDescriptionCategory updated = courseDescriptionCategoryDAO.update(courseDescriptionCategory, name);
-    return updated;
+    return courseDescriptionCategoryDAO.update(courseDescriptionCategory, name);
   }
   
   public CourseParticipationType updateCourseParticipationType(CourseParticipationType courseParticipationType, String name) {
-    CourseParticipationType updated = courseParticipationTypeDAO.update(courseParticipationType, name);
-    return updated;
+    return courseParticipationTypeDAO.update(courseParticipationType, name);
   }
   
   public Course archiveCourse(Course course, User user) {
@@ -510,6 +507,10 @@ public class CourseController {
     courseStudentDAO.updateOptionality(courseStudent, optionality);
     courseStudentDAO.updateParticipationType(courseStudent, participationType);
     return courseStudent;
+  }
+  
+  public CourseStudent updateCourseStudentParticipationType(CourseStudent courseStudent, CourseParticipationType participationType) {
+    return courseStudentDAO.updateParticipationType(courseStudent, participationType);
   }
 
   public CourseStudent archiveCourseStudent(CourseStudent courseStudent, User loggedUser) {

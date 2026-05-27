@@ -2965,6 +2965,9 @@
                           <c:when test="${student.funding eq 'GOVERNMENT_FUNDING'}">
                             <fmt:message key="students.studentFunding.governmentFunding" />
                           </c:when>
+                          <c:when test="${student.funding eq 'FOREIGN_STUDENT_TUITION_FEE'}">
+                            <fmt:message key="students.studentFunding.foreignStudentTuitionFee" />
+                          </c:when>
                           <c:when test="${student.funding eq 'OTHER_FUNDING'}">
                             <fmt:message key="students.studentFunding.otherFunding" />
                           </c:when>
