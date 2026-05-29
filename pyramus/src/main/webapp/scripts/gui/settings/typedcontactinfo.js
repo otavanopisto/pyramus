@@ -43,8 +43,7 @@ function initializeContactInfoView(container, contactInfos) {
           ciasdTitle = getLocale().getText("typedcontactinfo.studyDiscussionsPermissionLastModified", dateTimeFormatter.format(allowStudyDiscussionsModifiedDate));
         }
         
-        const ciasdElement = new Element("div", { className: ciasdClassName, title: ciasdTitle }).update(ciasdText);
-        dataContainer.appendChild(ciasdElement);
+        dataContainer.appendChild(new Element("div", { className: ciasdClassName, title: ciasdTitle }).update(ciasdText));
       }
 
       if (contactInfo.addresses) {

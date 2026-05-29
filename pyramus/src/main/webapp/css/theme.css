@@ -415,14 +415,6 @@ table.tableWithRowHighlighting tr:hover {
   padding: 4px;
 }
 
-.contactInfoStudyDiscussionsInfo {
-  background-image: url('../gfx/info.png');
-  background-repeat: no-repeat;
-  background-position: left;
-  min-width: 16px;
-  min-height: 16px;
-}
-
 .viewStudentProject {
   margin:0px 0px 0px 0px;
 }
