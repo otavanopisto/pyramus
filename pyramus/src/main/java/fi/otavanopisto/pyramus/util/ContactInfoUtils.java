@@ -278,7 +278,10 @@ public class ContactInfoUtils {
         contactInfoJSON.put("typeName", contactInfo.getContactType() != null ? contactInfo.getContactType().getName() : null);
         
         if (contactInfo instanceof UserAdditionalContactInfo) {
-          contactInfoJSON.put("allowStudyDiscussions", ((UserAdditionalContactInfo) contactInfo).isAllowStudyDiscussions());
+          UserAdditionalContactInfo additionalContactInfo = (UserAdditionalContactInfo) contactInfo;
+          contactInfoJSON.put("allowStudyDiscussions", additionalContactInfo.isAllowStudyDiscussions());
+          contactInfoJSON.put("allowStudyDiscussionsModifiedDate", additionalContactInfo.getAllowStudyDiscussionsModified() != null
+              ? additionalContactInfo.getAllowStudyDiscussionsModified().getTime() : null);
         }
         
         JSONArray addressesJSON = new JSONArray();

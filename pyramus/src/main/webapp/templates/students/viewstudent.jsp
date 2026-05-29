@@ -1353,6 +1353,37 @@
         return studentProjectModulesTable;
       }
 
+      function openDetachStudentParentDialog(studentId, studentParentId, studentParentChildId) {
+        var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentRemoveDialogConfirmText"
+
+        var dialog = new IxDialog({
+          id : 'confirmRemoval',
+          contentURL : url,
+          centered : true,
+          showOk : true,  
+          showCancel : true,
+          autoEvaluateSize: true,
+          title : getLocale().getText("generic.dialog.titles.areYouSure"),
+          okLabel : getLocale().getText("students.viewStudent.parentsTable.detachDialog.detach"),
+          cancelLabel : getLocale().getText("generic.dialog.cancel")
+        });
+      
+        dialog.addDialogListener(function(event) {
+          switch (event.name) {
+            case 'okClick':
+              const studentParentChildRow = document.querySelector('[data-studentParentChildId="' + studentParentChildId + '"]');
+              if (studentParentChildRow) {
+                axios.delete("/studentparents/studentparents/{0}/students/{1}".format(studentParentId, studentId)).then(function (response) {
+                  studentParentChildRow.remove();
+                });
+              }
+            break;
+          }
+        });
+      
+        dialog.open();
+      }
+      
       function setupStudentParentsTable(studentId) {
         var studentParentDataAll = JSDATA["studentParents"].evalJSON();
         
@@ -1369,98 +1400,115 @@
           return;
         }
         
-        var studentParentsTable = new IxTable($('studentParentsTableContainer.' + studentId), {
-          id : "studentParentsTable." + studentId,
-          rowHoverEffect: true,
-          columns : [{
-            left : 0,
-            width: 160,
-            dataType : 'text',
-            editable: false,
-            paramName: 'name'
-          }, {
-            left : 0 + 160 + 8,
-            width: 200,
-            dataType: 'text',
-            editable: false,
-            paramName: 'email'
-          }, {
-            dataType: 'hidden',
-            paramName: 'studentParentId'
-          }, {
-            right: 8 + 22 + 8 + 22 + 8,
-            width: 40,
-            dataType: 'text',
-            editable: false,
-            paramName: 'continuedViewPermission'
-          }, {
-            right: 8 + 22 + 8,
-            width: 22,
-            dataType: 'button',
-            paramName: 'studentParentEditButton',
-            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-            tooltip: getLocale().getText("students.viewStudent.parentsTable.editTooltip"),
-            onclick: function (event) {
-              var table = event.tableComponent;
-              var studentParentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentParentId'));
-              redirectTo(GLOBAL_contextPath + '/studentparents/editstudentparent.page?userId=' + studentParentId);
-            }
-          }, {
-            right: 8,
-            width: 22,
-            dataType: 'button',
-            paramName: 'studentParentRemoveButton',
-            imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
-            tooltip: getLocale().getText("students.viewStudent.parentsTable.removeTooltip"),
-            onclick: function (event) {
-              var table = event.tableComponent;
-              var studentParentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentParentId'));
-              var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentRemoveDialogConfirmText"
+        const studentParentInvitationsTableElement = $('studentParentsTable.' + studentId);
 
-              archivedRowIndex = event.row; 
-                 
-              var dialog = new IxDialog({
-                id : 'confirmRemoval',
-                contentURL : url,
-                centered : true,
-                showOk : true,  
-                showCancel : true,
-                autoEvaluateSize: true,
-                title : getLocale().getText("generic.dialog.titles.areYouSure"),
-                okLabel : getLocale().getText("students.viewStudent.parentsTable.detachDialog.detach"),
-                cancelLabel : getLocale().getText("generic.dialog.cancel")
-              });
-            
-              dialog.addDialogListener(function(event) {
-                switch (event.name) {
-                  case 'okClick':
-                    axios.delete("/studentparents/studentparents/{0}/students/{1}".format(studentParentId, studentId)).then(function (response) {
-                      getIxTableById('studentParentsTable.' + studentId).deleteRow(archivedRowIndex);
-                    });
-                  break;
-                }
-              });
-            
-              dialog.open();
-            }
-          }]
+        const dateTimeFormatter = getNativeDateTimeFormat({
+          dateStyle: "short",
+          timeStyle: "short",
         });
-
-        for (var i = 0, l = studentParentData.length; i < l; i++) {
-          var name = studentParentData[i].firstName + " " + studentParentData[i].lastName;
-          var rowIndex = studentParentsTable.addRow([
-            name,
-            studentParentData[i].email,
-            studentParentData[i].userId,
-            studentParentData[i].continuedViewPermission ? getLocale().getText("students.viewStudent.parentTables.continuedViewPermissionAbbr") : "",
-            '',
-            ''
-          ]);
-        }
         
-        return studentParentsTable;
+        // Use {{ variable }} syntax
+        var syntax = /(^|.|\r|\n)(\{{\s*([A-Za-z0-9_öåäÖÅÄ]+)\s*}})/;
+        var studentParentRowTemplate = new Template(
+            '<td width="160px">{{firstName}} {{lastName}}</td>' +
+            '<td>{{email}}</td>' +
+            '<td width="100px">{{statusText}}</td>' +
+            '<td width="230px"title="{{continuedViewPermissionModifiedText}}">{{continuedViewPermissionText}}</td>' +
+            '<td width="22px" style="padding:0px 4px;"><img class="ixTableCellEditorButton" title="{{editTooltip}}" src="/gfx/accessories-text-editor.png" onclick="redirectTo(\'{{contextPath}}/studentparents/editstudentparent.page?userId={{userId}}\');"/></td>' +
+            '<td width="22px" style="padding:0px 4px;"><img class="ixTableCellEditorButton" title="{{deleteTooltip}}" src="/gfx/list-remove.png" onclick="openDetachStudentParentDialog({{studentId}}, {{userId}}, {{childId}});" /></td>'
+            , syntax);
+
+        const staticProps = {
+            contextPath: GLOBAL_contextPath,
+            studentId: studentId,
+            editTooltip: getLocale().getText("students.viewStudent.parentsTable.editTooltip"),
+            detachTooltip: getLocale().getText("students.viewStudent.parentsTable.removeTooltip")
+        };
+        
+        if (studentParentData) {
+          for (const studentParent of studentParentData) {
+            studentParent["statusText"] = getLocale().getText(studentParent.active === true ? "students.viewStudent.parentsTable.status.active" : "students.viewStudent.parentsTable.status.inactive");
+
+            if (studentParent.continuedViewPermissionModified) {
+              const modifyStatus = getLocale().getText(studentParent.continuedViewPermission === true ? "students.viewStudent.parentTables.continuedViewPermissionGranted" : "students.viewStudent.parentTables.continuedViewPermissionProhibited");
+              studentParent["continuedViewPermissionText"] = modifyStatus;
+              
+              const modifyDate = new Date(studentParent.continuedViewPermissionModified);
+              studentParent["continuedViewPermissionModifiedText"] = getLocale().getText("students.viewStudent.parentTables.permissionLastModified", dateTimeFormatter.format(modifyDate));
+            }
+            
+            Object.assign(studentParent, staticProps);
+            
+            const cells = studentParentRowTemplate.evaluate(studentParent);
+            const tr = new Element("tr", { className: "perusopetus_preport_tr", height: "26px", "data-studentParentChildId": studentParent.childId });
+            tr.update(cells);
+            studentParentInvitationsTableElement.appendChild(tr);
+          }
+        }
       }
 
+      function openRefreshStudentParentInvitationDialog(studentId, invitationId) {
+        var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentInviteRefreshDialogConfirmText"
+
+        var dialog = new IxDialog({
+          id : 'confirmRemoval',
+          contentURL : url,
+          centered : true,
+          showOk : true,  
+          showCancel : true,
+          autoEvaluateSize: true,
+          title : getLocale().getText("generic.dialog.titles.areYouSure"),
+          okLabel : getLocale().getText("generic.dialog.ok"),
+          cancelLabel : getLocale().getText("generic.dialog.cancel")
+        });
+      
+        dialog.addDialogListener(function(event) {
+          switch (event.name) {
+            case 'okClick':
+              axios.post("/studentparents/students/{0}/invitations/{1}/refresh".format(studentId, invitationId)).then(function (response) {
+                window.location.reload(true);
+              });
+            break;
+          }
+        });
+      
+        dialog.open();
+      }
+      
+      function openRemoveStudentParentInvitationDialog(studentId, invitationId) {
+        var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentInviteDeleteDialogConfirmText"
+
+        var dialog = new IxDialog({
+          id : 'confirmRemoval',
+          contentURL : url,
+          centered : true,
+          showOk : true,  
+          showCancel : true,
+          autoEvaluateSize: true,
+          title : getLocale().getText("generic.dialog.titles.areYouSure"),
+          okLabel : getLocale().getText("generic.dialog.delete"),
+          cancelLabel : getLocale().getText("generic.dialog.cancel")
+        });
+      
+        dialog.addDialogListener(function(event) {
+          switch (event.name) {
+            case 'okClick':
+              const invitationRow = document.querySelector('[data-studentParentInvitationId="' + invitationId + '"]');
+              if (invitationRow) {
+                axios.delete("/studentparents/students/{0}/invitations/{1}".format(studentId, invitationId)).then(function (response) {
+                  invitationRow.remove();
+                });
+              }
+              else {
+                console.error("Invitation row was not found");
+              }
+            break;
+          }
+        });
+      
+        dialog.open();
+      }
+      
       function setupStudentParentInvitationsTable(studentId) {
         var studentParentDataAll = JSDATA["studentParentInvitations"].evalJSON();
         
@@ -1477,148 +1525,53 @@
           return;
         }
         
-        var studentParentInvitationsTable = new IxTable($('studentParentInvitationsTableContainer.' + studentId), {
-          id : "studentParentInvitationsTable." + studentId,
-          rowHoverEffect: true,
-          columns : [{
-            left : 0,
-            width: 160,
-            dataType : 'text',
-            editable: false,
-            paramName: 'name'
-          }, {
-            left : 0 + 160 + 8,
-            right: 8 + 22 + 8 + 22 + 8 + 22 + 8 + 40 + 8 + 100 + 8,
-            dataType: 'text',
-            editable: false,
-            paramName: 'email'
-          }, {
-            right: 8 + 22 + 8 + 22 + 8 + 22 + 8 + 40 + 8,
-            width: 100,
-            dataType: 'select',
-            editable: false,
-            paramName: 'status',
-            options: [
-              {text: getLocale().getText("students.viewStudent.parentInvitationsTable.status.invited"), value: 'INVITED'},
-              {text: getLocale().getText("students.viewStudent.parentInvitationsTable.status.expired"), value: 'EXPIRED'}
-            ]
-          }, {
-            dataType: 'hidden',
-            paramName: 'invitationId'
-          }, {
-            right: 8 + 22 + 8 + 22 + 8 + 22 + 8,
-            width: 40,
-            dataType: 'text',
-            editable: false,
-            paramName: 'continuedViewPermission'
-          }, {
-            right: 8 + 22 + 8 + 22 + 8,
-            width: 22,
-            dataType: 'button',
-            paramName: 'studentParentInvitationRefreshInviteButton',
-            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/refresh.png',
-            tooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.refreshTooltip"),
-            onclick: function (event) {
-              var table = event.tableComponent;
-              var invitationId = table.getCellValue(event.row, table.getNamedColumnIndex('invitationId'));
-              
-              var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentInviteRefreshDialogConfirmText"
+        const studentParentInvitationsTableElement = $('studentParentInvitationsTable.' + studentId);
 
-              archivedRowIndex = event.row; 
-                 
-              var dialog = new IxDialog({
-                id : 'confirmRemoval',
-                contentURL : url,
-                centered : true,
-                showOk : true,  
-                showCancel : true,
-                autoEvaluateSize: true,
-                title : getLocale().getText("generic.dialog.titles.areYouSure"),
-                okLabel : getLocale().getText("generic.dialog.ok"),
-                cancelLabel : getLocale().getText("generic.dialog.cancel")
-              });
-            
-              dialog.addDialogListener(function(event) {
-                switch (event.name) {
-                  case 'okClick':
-                    axios.post("/studentparents/students/{0}/invitations/{1}/refresh".format(studentId, invitationId)).then(function (response) {
-                      window.location.reload(true);
-                    });
-                  break;
-                }
-              });
-            
-              dialog.open();
-            }
-          }, {
-            right: 8 + 22 + 8,
-            width: 22,
-            dataType: 'button',
-            paramName: 'studentParentInvitationEditButton',
-            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-            tooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.editTooltip"),
-            onclick: function (event) {
-              var table = event.tableComponent;
-              var invitationId = table.getCellValue(event.row, table.getNamedColumnIndex('invitationId'));
-              openEditStudentParentInvitationDialog(studentId, invitationId);
-            }
-          }, {
-            right: 8,
-            width: 22,
-            dataType: 'button',
-            paramName: 'studentParentInvitationRemoveButton',
-            imgsrc: GLOBAL_contextPath + '/gfx/edit-delete.png',
-            tooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.deleteTooltip"),
-            onclick: function (event) {
-              var table = event.tableComponent;
-              var invitationId = table.getCellValue(event.row, table.getNamedColumnIndex('invitationId'));
-              var url = GLOBAL_contextPath + "/simpledialog.page?localeId=students.viewStudent.studentParentInviteDeleteDialogConfirmText"
-
-              archivedRowIndex = event.row; 
-                 
-              var dialog = new IxDialog({
-                id : 'confirmRemoval',
-                contentURL : url,
-                centered : true,
-                showOk : true,  
-                showCancel : true,
-                autoEvaluateSize: true,
-                title : getLocale().getText("generic.dialog.titles.areYouSure"),
-                okLabel : getLocale().getText("generic.dialog.delete"),
-                cancelLabel : getLocale().getText("generic.dialog.cancel")
-              });
-            
-              dialog.addDialogListener(function(event) {
-                switch (event.name) {
-                  case 'okClick':
-                    axios.delete("/studentparents/students/{0}/invitations/{1}".format(studentId, invitationId)).then(function (response) {
-                      getIxTableById('studentParentInvitationsTable.' + studentId).deleteRow(archivedRowIndex);
-                    });
-                  break;
-                }
-              });
-            
-              dialog.open();
-            }
-          }]
+        const dateTimeFormatter = getNativeDateTimeFormat({
+          dateStyle: "short",
+          timeStyle: "short",
         });
-
-        for (var i = 0, l = studentParentData.length; i < l; i++) {
-          var name = studentParentData[i].firstName + " " + studentParentData[i].lastName;
-          var status = studentParentData[i].expired ? "EXPIRED" : "INVITED";
-          var rowIndex = studentParentInvitationsTable.addRow([
-            name,
-            studentParentData[i].email,
-            status,
-            studentParentData[i].invitationId,
-            studentParentData[i].continuedViewPermission ? getLocale().getText("students.viewStudent.parentTables.continuedViewPermissionAbbr") : "",
-            '',
-            '',
-            ''
-          ]);
-        }
         
-        return studentParentInvitationsTable;
+        // Use {{ variable }} syntax
+        var syntax = /(^|.|\r|\n)(\{{\s*([A-Za-z0-9_öåäÖÅÄ]+)\s*}})/;
+        var studentParentInvitationRowTemplate = new Template(
+            '<td width="160px">{{firstName}} {{lastName}}</td>' +
+            '<td>{{email}}</td>' +
+            '<td width="100px">{{statusText}}</td>' +
+            '<td width="200px" title="{{continuedViewPermissionModifiedText}}">{{continuedViewPermissionText}}</td>' +
+            '<td width="22px" style="padding:0px 4px;"><img class="ixTableCellEditorButton" title="{{refreshTooltip}}" src="/gfx/icons/16x16/actions/refresh.png" onclick="openRefreshStudentParentInvitationDialog({{studentId}}, {{invitationId}});"/></td>' +
+            '<td width="22px" style="padding:0px 4px;"><img class="ixTableCellEditorButton" title="{{editTooltip}}" src="/gfx/accessories-text-editor.png" onclick="openEditStudentParentInvitationDialog({{studentId}}, {{invitationId}});"/></td>' +
+            '<td width="22px" style="padding:0px 4px;"><img class="ixTableCellEditorButton" title="{{deleteTooltip}}" src="/gfx/edit-delete.png" onclick="openRemoveStudentParentInvitationDialog({{studentId}}, {{invitationId}});" /></td>'
+            , syntax);
+
+        const staticProps = {
+            studentId: studentId,
+            refreshTooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.refreshTooltip"),
+            editTooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.editTooltip"),
+            deleteTooltip: getLocale().getText("students.viewStudent.parentInvitationsTable.deleteTooltip")
+        };
+        
+        if (studentParentData) {
+          for (const studentParent of studentParentData) {
+            studentParent["statusText"] = getLocale().getText(studentParent.expired ? "students.viewStudent.parentInvitationsTable.status.expired" : "students.viewStudent.parentInvitationsTable.status.invited");
+            studentParent["continuedViewPermissionText"] = studentParent.continuedViewPermission ? getLocale().getText("students.viewStudent.parentTables.continuedViewPermissionAbbr") : "";
+
+            if (studentParent.continuedViewPermissionModified) {
+              const modifyStatus = getLocale().getText(studentParent.continuedViewPermission === true ? "students.viewStudent.parentTables.continuedViewPermissionGranted" : "students.viewStudent.parentTables.continuedViewPermissionProhibited");
+              studentParent["continuedViewPermissionText"] = modifyStatus;
+
+              const modifyDate = new Date(studentParent.continuedViewPermissionModified);
+              studentParent["continuedViewPermissionModifiedText"] = getLocale().getText("students.viewStudent.parentTables.permissionLastModified", dateTimeFormatter.format(modifyDate));
+            }
+            
+            Object.assign(studentParent, staticProps);
+            
+            const cells = studentParentInvitationRowTemplate.evaluate(studentParent);
+            const tr = new Element("tr", { className: "perusopetus_preport_tr", height: "26px", "data-studentParentInvitationId": studentParent.invitationId });
+            tr.update(cells);
+            studentParentInvitationsTableElement.appendChild(tr);
+          }
+        }
       }
 
       function onLoad(event) {
@@ -2848,7 +2801,8 @@
                           <jsp:param name="helpLocale" value="students.viewStudent.studentParentsHelp" />
                         </jsp:include>
                         <div class="genericViewFormDataText">
-                          <div id="studentParentsTableContainer.${student.id}"></div>
+                          <table id="studentParentsTable.${student.id}" class="tableWithRowHighlighting" width="100%">
+                          </table>
                         </div>
                       </div>
                     </c:when>
@@ -2862,7 +2816,8 @@
                           <jsp:param name="helpLocale" value="students.viewStudent.studentParentInvitationsHelp" />
                         </jsp:include>
                         <div class="genericViewFormDataText">
-                          <div id="studentParentInvitationsTableContainer.${student.id}"></div>
+                          <table id="studentParentInvitationsTable.${student.id}" class="tableWithRowHighlighting" width="100%">
+                          </table>
                         </div>
                       </div>
                     </c:when>

@@ -18,6 +18,15 @@
         
         return __LOCALE;
       }
+      
+      function getNativeDateTimeFormat(options) {
+        if (options) {
+          return new Intl.DateTimeFormat("${pageContext.request.locale.toLanguageTag()}", options);
+        }
+        else {
+          return new Intl.DateTimeFormat("${pageContext.request.locale.toLanguageTag()}");
+        }
+      }
     </script>
     
     <c:set scope="request" var="localeSupportIncluded" value="true"/>

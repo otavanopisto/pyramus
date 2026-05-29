@@ -14,6 +14,11 @@ function getContactInfoEditors() {
 
 function initializeContactInfoView(container, contactInfos) {
   if (contactInfos) {
+    const dateTimeFormatter = getNativeDateTimeFormat({
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+
     contactInfos.forEach((contactInfo) => {
       var contactInfoContainer = new Element("div", { className: "genericViewInfoWapper genericViewInfoWapper--student-view" });
       container.appendChild(contactInfoContainer);
@@ -28,8 +33,18 @@ function initializeContactInfoView(container, contactInfos) {
       var dataContainer = new Element("div", { className: "genericViewFormDataText" });
       sectionContainer.appendChild(dataContainer);
       
-      if (contactInfo.allowStudyDiscussions) {
-        dataContainer.appendChild(new Element("div", { className: "contactInfoAllowStudyDiscussions" }).update(getLocale().getText("typedcontactinfo.allowedStudyDiscussions")));
+      if (contactInfo.allowStudyDiscussionsModifiedDate || contactInfo.allowStudyDiscussions) {
+        const ciasdClassName = contactInfo.allowStudyDiscussions ? "contactInfoStudyDiscussionsPermitted" : "contactInfoStudyDiscussionsProhibited";
+        const ciasdText = getLocale().getText(contactInfo.allowStudyDiscussions ? "typedcontactinfo.studyDiscussionsPermitted" : "typedcontactinfo.studyDiscussionsProhibited");
+        var ciasdTitle = "";
+        
+        const allowStudyDiscussionsModifiedDate = new Date(contactInfo.allowStudyDiscussionsModifiedDate);
+        if (!isNaN(allowStudyDiscussionsModifiedDate)) {
+          ciasdTitle = getLocale().getText("typedcontactinfo.studyDiscussionsPermissionLastModified", dateTimeFormatter.format(allowStudyDiscussionsModifiedDate));
+        }
+        
+        const ciasdElement = new Element("div", { className: ciasdClassName, title: ciasdTitle }).update(ciasdText);
+        dataContainer.appendChild(ciasdElement);
       }
 
       if (contactInfo.addresses) {

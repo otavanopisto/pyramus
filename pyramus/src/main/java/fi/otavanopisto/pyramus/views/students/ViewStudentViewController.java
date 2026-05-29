@@ -913,6 +913,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
         studentParentJSON.put("lastName", studentParentInvitation.getLastName());
         studentParentJSON.put("email", studentParentInvitation.getEmail());
         studentParentJSON.put("continuedViewPermission", studentParentInvitation.isContinuedViewPermission());
+        studentParentJSON.put("continuedViewPermissionModified", studentParentInvitation.getContinuedViewPermissionModified() != null
+            ? studentParentInvitation.getContinuedViewPermissionModified().getTime() : null);
         arr.add(studentParentJSON);
       }
       studentHasParentInvitations.put(student.getId(), !studentParentInvitations.isEmpty());
@@ -923,17 +925,21 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       for (StudentParentChild studentParentChild : studentParentChilds) {
         StudentParent studentParent = studentParentChild.getStudentParent();
         JSONObject studentParentJSON = new JSONObject();
+        studentParentJSON.put("childId", studentParentChild.getId());
         studentParentJSON.put("personId", studentParent.getPersonId());
         studentParentJSON.put("userId", studentParent.getId());
         studentParentJSON.put("firstName", studentParent.getFirstName());
         studentParentJSON.put("lastName", studentParent.getLastName());
-        
+        studentParentJSON.put("active", studentParent.isActiveParentOf(student));
+
         String emails =
             studentParent.getContactInfo() != null && studentParent.getContactInfo().getEmails() != null 
             ? studentParent.getContactInfo().getEmails().stream().map(Email::getAddress).collect(Collectors.joining(", "))
             : null;
         studentParentJSON.put("email", emails);
         studentParentJSON.put("continuedViewPermission", studentParentChild.isContinuedViewPermission());
+        studentParentJSON.put("continuedViewPermissionModified", studentParentChild.getContinuedViewPermissionModified() != null
+            ? studentParentChild.getContinuedViewPermissionModified().getTime() : null);
         arr.add(studentParentJSON);
       }
       studentHasParents.put(student.getId(), !studentParentChilds.isEmpty());

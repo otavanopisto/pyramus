@@ -290,6 +290,14 @@ a[target="_blank"]::after {
   display: block;
 }
 
+table.tableWithRowHighlighting {
+	border-collapse: collapse;
+}
+
+table.tableWithRowHighlighting tr:hover {
+  background-color: #D7E3F9;
+}
+
 #componentHoursTotalContainer{
   margin-left:18px;
   width:300px;
@@ -392,11 +400,27 @@ a[target="_blank"]::after {
 
 }
 
-.contactInfoAllowStudyDiscussions {
+.contactInfoStudyDiscussionsPermitted {
   background: #E2EEFF;
-  padding: 4px;
   border-radius: 3px;
   font-weight: bold;
+  padding: 4px;
+}
+
+.contactInfoStudyDiscussionsProhibited {
+  background: #EEEEEE;
+  border-radius: 3px;
+  color: #808080;
+  font-weight: bold;
+  padding: 4px;
+}
+
+.contactInfoStudyDiscussionsInfo {
+  background-image: url('../gfx/info.png');
+  background-repeat: no-repeat;
+  background-position: left;
+  min-width: 16px;
+  min-height: 16px;
 }
 
 .viewStudentProject {
@@ -911,7 +935,7 @@ a[target="_blank"]::after {
 }
 
 
-#studentSearchResultsTableContainer .ixActiveTableRow, #projectSearchResultsTableContainer .ixActiveTableRow, #moduleSearchResultsTableContainer .ixActiveTableRow, {
+#studentSearchResultsTableContainer .ixActiveTableRow, #projectSearchResultsTableContainer .ixActiveTableRow, #moduleSearchResultsTableContainer .ixActiveTableRow {
   background:#739de7;
   -moz-border-radius:3px;
   -webkit-border-radius:3px;
