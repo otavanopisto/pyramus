@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,11 +50,11 @@ public class StudentParentChild {
     this.continuedViewPermission = continuedViewPermission;
   }
 
-  public LocalDateTime getContinuedViewPermissionModified() {
+  public Date getContinuedViewPermissionModified() {
     return continuedViewPermissionModified;
   }
 
-  public void setContinuedViewPermissionModified(LocalDateTime continuedViewPermissionModified) {
+  public void setContinuedViewPermissionModified(Date continuedViewPermissionModified) {
     this.continuedViewPermissionModified = continuedViewPermissionModified;
   }
 
@@ -74,5 +74,5 @@ public class StudentParentChild {
   private boolean continuedViewPermission;
   
   @Column
-  private LocalDateTime continuedViewPermissionModified;
+  private Date continuedViewPermissionModified;
 }

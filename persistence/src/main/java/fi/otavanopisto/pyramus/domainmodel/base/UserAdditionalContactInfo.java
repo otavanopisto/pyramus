@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.base;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,11 +19,11 @@ public class UserAdditionalContactInfo extends TypedContactInfo {
     this.allowStudyDiscussions = allowStudyDiscussions;
   }
 
-  public LocalDateTime getAllowStudyDiscussionsModified() {
+  public Date getAllowStudyDiscussionsModified() {
     return allowStudyDiscussionsModified;
   }
 
-  public void setAllowStudyDiscussionsModified(LocalDateTime allowStudyDiscussionsModified) {
+  public void setAllowStudyDiscussionsModified(Date allowStudyDiscussionsModified) {
     this.allowStudyDiscussionsModified = allowStudyDiscussionsModified;
   }
 
@@ -31,5 +31,5 @@ public class UserAdditionalContactInfo extends TypedContactInfo {
   private boolean allowStudyDiscussions;
 
   @Column
-  private LocalDateTime allowStudyDiscussionsModified;
+  private Date allowStudyDiscussionsModified;
 }

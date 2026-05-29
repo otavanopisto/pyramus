@@ -106,11 +106,11 @@ public class StudentParentInvitation {
     this.continuedViewPermission = continuedViewPermission;
   }
 
-  public LocalDateTime getContinuedViewPermissionModified() {
+  public Date getContinuedViewPermissionModified() {
     return continuedViewPermissionModified;
   }
 
-  public void setContinuedViewPermissionModified(LocalDateTime continuedViewPermissionModified) {
+  public void setContinuedViewPermissionModified(Date continuedViewPermissionModified) {
     this.continuedViewPermissionModified = continuedViewPermissionModified;
   }
 
@@ -152,5 +152,5 @@ public class StudentParentInvitation {
   private boolean continuedViewPermission;
 
   @Column
-  private LocalDateTime continuedViewPermissionModified;
+  private Date continuedViewPermissionModified;
 }

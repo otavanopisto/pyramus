@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.dao.base;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.ejb.Stateless;
 
@@ -36,7 +36,7 @@ public class UserAdditionalContactInfoDAO extends PyramusEntityDAO<UserAdditiona
 
   public UserAdditionalContactInfo updateAllowStudyDiscussions(UserAdditionalContactInfo contactInfo, boolean allowStudyDiscussions) {
     contactInfo.setAllowStudyDiscussions(allowStudyDiscussions);
-    contactInfo.setAllowStudyDiscussionsModified(LocalDateTime.now());
+    contactInfo.setAllowStudyDiscussionsModified(new Date());
     return persist(contactInfo);
   }
 
