@@ -160,6 +160,7 @@ import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistCoursePrice;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
+import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.tor.StudentTOR;
@@ -3865,14 +3866,17 @@ public class StudentRESTService extends AbstractRESTService {
       StudentParent studentParent = studentParentChild.getStudentParent();
       boolean activeParent = studentParent.isActiveParentOf(student);
       String email = studentParent.getPrimaryEmail() != null ? studentParent.getPrimaryEmail().getAddress() : null;
-
+      OffsetDateTime continuedViewPermissionModified = studentParentChild.getContinuedViewPermissionModified() != null 
+          ? PyramusRestUtils.toOffsetDateTime(studentParentChild.getContinuedViewPermissionModified()) : null;
+      
       result.add(new StudentParentRelation(
         studentParentChild.getId(),
         studentParent.getFirstName(),
         studentParent.getLastName(),
         email,
         activeParent,
-        studentParentChild.isContinuedViewPermission()
+        studentParentChild.isContinuedViewPermission(),
+        continuedViewPermissionModified
       ));
     }
     
@@ -3908,6 +3912,8 @@ public class StudentRESTService extends AbstractRESTService {
       StudentParent studentParent = studentParentChild.getStudentParent();
       boolean activeParent = studentParent.isActiveParentOf(student);
       String email = studentParent.getPrimaryEmail() != null ? studentParent.getPrimaryEmail().getAddress() : null;
+      OffsetDateTime continuedViewPermissionModified = studentParentChild.getContinuedViewPermissionModified() != null 
+          ? PyramusRestUtils.toOffsetDateTime(studentParentChild.getContinuedViewPermissionModified()) : null;
       
       StudentParentRelation studentParentRelation = new StudentParentRelation(
         studentParentChild.getId(),
@@ -3915,7 +3921,8 @@ public class StudentRESTService extends AbstractRESTService {
         studentParent.getLastName(),
         email,
         activeParent,
-        studentParentChild.isContinuedViewPermission()
+        studentParentChild.isContinuedViewPermission(),
+        continuedViewPermissionModified
       );
       return Response.ok().entity(studentParentRelation).build();
     }

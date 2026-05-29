@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.UserContact;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 
 @Path("/contacts")
 @Produces("application/json")
@@ -181,6 +183,10 @@ public class UserContactRESTService extends AbstractRESTService {
     userContact.setId(additionalContactInfo.getId());
     userContact.setContactType(additionalContactInfo.getContactType() != null ? additionalContactInfo.getContactType().getName() : null);
     userContact.setAllowStudyDiscussions(additionalContactInfo.isAllowStudyDiscussions());
+    
+    OffsetDateTime allowStudyDiscussionsModified = additionalContactInfo.getAllowStudyDiscussionsModified() != null 
+        ? PyramusRestUtils.toOffsetDateTime(additionalContactInfo.getAllowStudyDiscussionsModified()) : null;
+    userContact.setAllowStudyDiscussionsModified(allowStudyDiscussionsModified);
     
     Address defaultAddress = additionalContactInfo.getDefaultAddress();
     Email defaultEmail = additionalContactInfo.getDefaultEmail();

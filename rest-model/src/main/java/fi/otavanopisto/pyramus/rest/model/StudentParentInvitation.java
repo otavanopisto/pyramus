@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.OffsetDateTime;
+
 import fi.otavanopisto.security.ContextReference;
 
 public class StudentParentInvitation implements ContextReference {
@@ -8,13 +10,14 @@ public class StudentParentInvitation implements ContextReference {
     super();
   }
 
-  public StudentParentInvitation(Long id, String firstName, String lastName, String email, boolean continuedViewPermission) {
+  public StudentParentInvitation(Long id, String firstName, String lastName, String email, boolean continuedViewPermission, OffsetDateTime continuedViewPermissionModified) {
     super();
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.continuedViewPermission = continuedViewPermission;
+    this.continuedViewPermissionModified = continuedViewPermissionModified;
   }
 
   public Long getId() {
@@ -57,9 +60,18 @@ public class StudentParentInvitation implements ContextReference {
     this.email = email;
   }
 
+  public OffsetDateTime getContinuedViewPermissionModified() {
+    return continuedViewPermissionModified;
+  }
+
+  public void setContinuedViewPermissionModified(OffsetDateTime continuedViewPermissionModified) {
+    this.continuedViewPermissionModified = continuedViewPermissionModified;
+  }
+
   private Long id;
   private String firstName;
   private String lastName;
   private String email;
   private boolean continuedViewPermission;
+  private OffsetDateTime continuedViewPermissionModified;
 }

@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.OffsetDateTime;
+
 /**
  * Rest-model for Student - StudentParent (aka StudentParentChild with extra steps) relation.
  */
@@ -8,13 +10,14 @@ public class StudentParentRelation {
   public StudentParentRelation() {
   }
 
-  public StudentParentRelation(Long id, String firstName, String lastName, String email, boolean activeParent, boolean continuedViewPermission) {
+  public StudentParentRelation(Long id, String firstName, String lastName, String email, boolean activeParent, boolean continuedViewPermission, OffsetDateTime continuedViewPermissionModified) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.activeParent = activeParent;
     this.continuedViewPermission = continuedViewPermission;
+    this.continuedViewPermissionModified = continuedViewPermissionModified;
   }
   
   public Long getId() {
@@ -65,10 +68,19 @@ public class StudentParentRelation {
     this.activeParent = activeParent;
   }
 
+  public OffsetDateTime getContinuedViewPermissionModified() {
+    return continuedViewPermissionModified;
+  }
+
+  public void setContinuedViewPermissionModified(OffsetDateTime continuedViewPermissionModified) {
+    this.continuedViewPermissionModified = continuedViewPermissionModified;
+  }
+
   private Long id;
   private String firstName;
   private String lastName;
   private String email;
   private boolean activeParent;
   private boolean continuedViewPermission;
+  private OffsetDateTime continuedViewPermissionModified;
 }
