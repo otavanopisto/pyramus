@@ -257,6 +257,13 @@ public class HopsController {
     Set<String> subjects = matrix.listSubjectCodes();
     for (String subject : subjects) {
       
+      // Matematiikan tapauksessa karsi ainevalinnan perusteella vaikka ei-valitusta olisi suorituksia
+      
+      if (hasMath && StringUtils.equalsAny(subject, "MAA", "MAB") && !chosenSubjects.contains(subject)) {
+        matrix.removeSubject(subject);
+        continue;
+      }
+      
       boolean hasCredit = false;
 
       // Onko opiskelijalla suorituksia tästä aineesta:

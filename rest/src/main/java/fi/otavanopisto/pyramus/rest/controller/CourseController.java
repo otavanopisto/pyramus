@@ -8,10 +8,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableKeyDAO;
@@ -657,4 +660,18 @@ public class CourseController {
     courseModuleDAO.delete(courseModule);
   }
 
+  /**
+   * Returns true if the StaffMember is staff on 
+   * any of the same courses the Student is on.
+   * 
+   * @param teacher
+   * @param student
+   * @return
+   */
+  public boolean isCourseTeacherOf(StaffMember teacher, Student student) {
+    Set<Long> studentCourseIds = listByStudent(student).stream().map(cs -> cs.getCourse().getId()).collect(Collectors.toSet());
+    Set<Long> staffMemberCourseIds = listCoursesByStaffMember(teacher).stream().map(Course::getId).collect(Collectors.toSet());
+    return CollectionUtils.containsAny(studentCourseIds, staffMemberCourseIds);
+  }
+  
 }

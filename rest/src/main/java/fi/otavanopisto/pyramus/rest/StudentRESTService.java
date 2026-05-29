@@ -3799,7 +3799,9 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPARENTSBYSTUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
+      if (!(sessionController.getUser() instanceof StaffMember && courseController.isCourseTeacherOf((StaffMember) sessionController.getUser(), student))) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
 
     List<StudentParentInvitation> studentParentInvitations = studentParentController.listStudentParentInvitations(student);
@@ -3856,7 +3858,9 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPARENTSBYSTUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
+      if (!(sessionController.getUser() instanceof StaffMember && courseController.isCourseTeacherOf((StaffMember) sessionController.getUser(), student))) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
 
     List<StudentParentChild> studentParentChilds = studentParentController.listStudentParentChilds(student);

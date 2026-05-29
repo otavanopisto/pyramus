@@ -61,6 +61,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
@@ -184,6 +185,9 @@ public class MuikkuRESTService {
 
   @Inject
   private CourseStudentDAO courseStudentDAO;
+
+  @Inject
+  private UserVariableDAO userVariableDAO;
   
   @Path("/students/{ID:[0-9]*}/courseMatrix")
   @GET
@@ -289,6 +293,13 @@ public class MuikkuRESTService {
     
     for (Student student : students) {
 
+      // Matematiikan ainevalinta :|
+      
+      String chosenMath = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA);
+      if ("".equals(chosenMath)) {
+        chosenMath = null;
+      }
+      
       // Hyväksiluvut (vain pohjana käytettävän opiskelijan OPSia vastaavat)
 
       if (courseId == null) {
@@ -297,6 +308,13 @@ public class MuikkuRESTService {
             baseStudent.getCurriculum() != null &&
             !tc.getCurriculum().getId().equals(baseStudent.getCurriculum().getId()));
         for (TransferCredit transferCredit : transferCredits) {
+
+          // Unohda, jos koskee matematiikkaa, joka ei ole opiskelijan ainevalinta
+          
+          if (chosenMath != null && StringUtils.equalsAny(transferCredit.getSubject().getCode(), "MAA", "MAB") && !StringUtils.equals(transferCredit.getSubject().getCode(), chosenMath)) {
+            continue;
+          }
+          
           StudyActivityItemRestModel item = getTransferCreditActivityItem(transferCredit, courseMatrix);
           item.setStudyProgramme(student.getStudyProgramme().getName());
           items.add(item);
@@ -311,6 +329,12 @@ public class MuikkuRESTService {
         courseAssessments.removeIf(ca -> !ca.getCourseStudent().getCourse().getId().equals(courseId));
       }
       for (CourseAssessment courseAssessment : courseAssessments) {
+        
+        // Unohda, jos koskee matematiikkaa, joka ei ole opiskelijan ainevalinta
+        
+        if (chosenMath != null && StringUtils.equalsAny(courseAssessment.getSubject().getCode(), "MAA", "MAB") && !StringUtils.equals(courseAssessment.getSubject().getCode(), chosenMath)) {
+          continue;
+        }
 
         // #1640: Kurssilla ei saa olla OPSia tai sen pitää vastata pohjana käytettävän opiskelijan OPSia
 
@@ -400,25 +424,12 @@ public class MuikkuRESTService {
 
         for (CourseModule courseModule : course.getCourseModules()) {
 
-          // 10.3.2026 sovitun mukaisesti kaikki meneillään olevat kurssit palautetaan, vaikka olisi jo arvosana alla
+          // Unohda, jos koskee matematiikkaa, joka ei ole opiskelijan ainevalinta
           
-          /*
-          // Jos kurssista on jo suoritus niin älä lisää toistamiseen (pl. kurssit, joiden aineen
-          // koulutusaste on eri kuin pohjana käytettävän opiskelijan)
+          if (chosenMath != null && StringUtils.equalsAny(courseModule.getSubject().getCode(), "MAA", "MAB") && !StringUtils.equals(courseModule.getSubject().getCode(), chosenMath)) {
+            continue;
+          }
 
-          boolean validSubject = courseModule.getSubject().getEducationType() != null &&
-              StringUtils.equals(courseModule.getSubject().getEducationType().getCode(), eduTypeCode);
-          if (validSubject && itemCache.containsKey(courseModule.getSubject().getCode() + courseModule.getCourseNumber())) {
-            continue;
-          }
-          
-          // Varmista ns. epävirallisen oppiaineen tapauksessa vielä se, ettei kurssia ole jo lisätty listaan
-          
-          if (!validSubject && items.stream().filter(s -> course.getId().equals(s.getCourseId())).count() > 0) {
-            continue;
-          }
-          */
-          
           // Skippaa meneillään olevat kurssimoduulit, joista on jo arvosana
           
           boolean duplicate = false;

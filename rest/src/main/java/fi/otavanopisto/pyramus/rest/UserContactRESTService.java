@@ -23,17 +23,20 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.UserAdditionalContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
+import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.UserContact;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/contacts")
 @Produces("application/json")
@@ -43,6 +46,12 @@ import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 @AuthScope(AuthScope.LEGACY)
 public class UserContactRESTService extends AbstractRESTService {
 
+  @Inject
+  private CourseController courseController;
+  
+  @Inject
+  private SessionController sessionController;
+  
   @Inject
   private UserController userController;
 
@@ -65,7 +74,9 @@ public class UserContactRESTService extends AbstractRESTService {
 
     if (user instanceof Student) {
       if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_CONTACTS, UserPermissions.USER_OWNER, UserPermissions.STUDENT_PARENT }, user, Style.OR)) {
-        return Response.status(Status.FORBIDDEN).build();
+        if (!(sessionController.getUser() instanceof StaffMember && courseController.isCourseTeacherOf((StaffMember) sessionController.getUser(), (Student) user))) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
       }
     }
     else {
