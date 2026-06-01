@@ -863,12 +863,14 @@ public class ObjectFactory {
         new Mapper<StudentParentInvitation>() {
           
           public Object map(StudentParentInvitation entity) {
+            OffsetDateTime continuedViewPermissionModified = entity.getContinuedViewPermissionModified() != null ? toOffsetDateTime(entity.getContinuedViewPermissionModified()) : null;
             return new fi.otavanopisto.pyramus.rest.model.StudentParentInvitation(
                 entity.getId(), 
                 entity.getFirstName(),
                 entity.getLastName(),
                 entity.getEmail(),
-                entity.isContinuedViewPermission()
+                entity.isContinuedViewPermission(),
+                continuedViewPermissionModified
             );
           }
         },

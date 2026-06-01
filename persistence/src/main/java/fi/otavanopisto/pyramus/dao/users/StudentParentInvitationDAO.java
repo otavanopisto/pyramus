@@ -81,6 +81,7 @@ public class StudentParentInvitationDAO extends PyramusEntityDAO<StudentParentIn
 
   public StudentParentInvitation updateContinuedViewPermission(StudentParentInvitation invitation, boolean continuedViewPermission) {
     invitation.setContinuedViewPermission(continuedViewPermission);
+    invitation.setContinuedViewPermissionModified(new Date());
     return persist(invitation);
   }
 

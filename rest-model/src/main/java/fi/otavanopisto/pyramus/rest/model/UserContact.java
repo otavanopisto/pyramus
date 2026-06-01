@@ -1,11 +1,13 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.OffsetDateTime;
+
 public class UserContact {
 
   public UserContact() {
   }
 
-  public UserContact(Long id, String name, String phoneNumber, String email, String streetAddress, String postalCode, String city, String country, String contactType, boolean defaultContact, Boolean allowStudyDiscussions) {
+  public UserContact(Long id, String name, String phoneNumber, String email, String streetAddress, String postalCode, String city, String country, String contactType, boolean defaultContact, Boolean allowStudyDiscussions, OffsetDateTime allowStudyDiscussionsModified) {
     this.id = id;
     this.name = name;
     this.phoneNumber = phoneNumber;
@@ -17,6 +19,7 @@ public class UserContact {
     this.contactType = contactType;
     this.defaultContact = defaultContact;
     this.allowStudyDiscussions = allowStudyDiscussions;
+    this.allowStudyDiscussionsModified = allowStudyDiscussionsModified;
   }
 
   public Long getId() {
@@ -107,6 +110,14 @@ public class UserContact {
     this.allowStudyDiscussions = allowStudyDiscussions;
   }
 
+  public OffsetDateTime getAllowStudyDiscussionsModified() {
+    return allowStudyDiscussionsModified;
+  }
+
+  public void setAllowStudyDiscussionsModified(OffsetDateTime allowStudyDiscussionsModified) {
+    this.allowStudyDiscussionsModified = allowStudyDiscussionsModified;
+  }
+
   private Long id;
   private String name;
   private String phoneNumber;
@@ -118,4 +129,5 @@ public class UserContact {
   private String contactType;
   private boolean defaultContact;
   private Boolean allowStudyDiscussions;
+  private OffsetDateTime allowStudyDiscussionsModified;
 }

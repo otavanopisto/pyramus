@@ -1271,21 +1271,21 @@ public class ApplicationUtils {
 
       if (!StringUtils.isBlank(email)) {
         if (underageContactInfo1 == null) {
-          underageContactInfo1 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
         }
         emailDAO.create(underageContactInfo1, Boolean.TRUE, email);
       }
       email = getFormValue(formData, "field-underage-email-2");
       if (!StringUtils.isBlank(email)) {
         if (underageContactInfo2 == null) {
-          underageContactInfo2 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
         }
         emailDAO.create(underageContactInfo2, Boolean.TRUE, email);
       }
       email = getFormValue(formData, "field-underage-email-3");
       if (!StringUtils.isBlank(email)) {
         if (underageContactInfo3 == null) {
-          underageContactInfo3 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
         }
         emailDAO.create(underageContactInfo3, Boolean.TRUE, email);
       }
@@ -1294,7 +1294,7 @@ public class ApplicationUtils {
       
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name"))) {
         if (underageContactInfo1 == null) {
-          underageContactInfo1 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
         }
         addressDAO.create(
             underageContactInfo1,
@@ -1307,7 +1307,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-2"))) {
         if (underageContactInfo2 == null) {
-          underageContactInfo2 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
         }
         addressDAO.create(
             underageContactInfo2,
@@ -1320,7 +1320,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-first-name-3"))) {
         if (underageContactInfo3 == null) {
-          underageContactInfo3 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
         }
         addressDAO.create(
             underageContactInfo3,
@@ -1336,7 +1336,7 @@ public class ApplicationUtils {
       
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone"))) {
         if (underageContactInfo1 == null) {
-          underageContactInfo1 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo1 = additionalContactInfoDAO.create(contactType);
         }
         phoneNumberDAO.create(
             underageContactInfo1,
@@ -1345,7 +1345,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-2"))) {
         if (underageContactInfo2 == null) {
-          underageContactInfo2 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo2 = additionalContactInfoDAO.create(contactType);
         }
         phoneNumberDAO.create(
             underageContactInfo2,
@@ -1354,7 +1354,7 @@ public class ApplicationUtils {
       }
       if (!StringUtils.isBlank(getFormValue(formData, "field-underage-phone-3"))) {
         if (underageContactInfo3 == null) {
-          underageContactInfo3 = additionalContactInfoDAO.create(contactType, false);
+          underageContactInfo3 = additionalContactInfoDAO.create(contactType);
         }
         phoneNumberDAO.create(
             underageContactInfo3,

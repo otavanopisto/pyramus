@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.UserContact;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/contacts")
@@ -152,7 +154,7 @@ public class UserContactRESTService extends AbstractRESTService {
   @Path("/users/{USERID:[0-9]*}/contacts/{CONTACTINFOID}/allowStudyDiscussions")
   @PUT
   @RESTPermit(handling = Handling.INLINE)
-  public Response updateContactInfo(@PathParam("USERID") Long userId, @PathParam("CONTACTINFOID") Long contactInfoId,
+  public Response updateAllowStudydiscussions(@PathParam("USERID") Long userId, @PathParam("CONTACTINFOID") Long contactInfoId,
       Boolean allowStudyDiscussions) {
     if (allowStudyDiscussions == null) {
       return Response.status(Status.BAD_REQUEST).entity("invalid payload").build();
@@ -182,7 +184,7 @@ public class UserContactRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    studentAdditionalContactInfo = studentAdditionalContactInfoDAO.update(studentAdditionalContactInfo, studentAdditionalContactInfo.getContactType(), allowStudyDiscussions);
+    studentAdditionalContactInfo = studentAdditionalContactInfoDAO.updateAllowStudyDiscussions(studentAdditionalContactInfo, allowStudyDiscussions);
     
     return Response.ok(restModel(studentAdditionalContactInfo)).build();
   }
@@ -192,6 +194,10 @@ public class UserContactRESTService extends AbstractRESTService {
     userContact.setId(additionalContactInfo.getId());
     userContact.setContactType(additionalContactInfo.getContactType() != null ? additionalContactInfo.getContactType().getName() : null);
     userContact.setAllowStudyDiscussions(additionalContactInfo.isAllowStudyDiscussions());
+    
+    OffsetDateTime allowStudyDiscussionsModified = additionalContactInfo.getAllowStudyDiscussionsModified() != null 
+        ? PyramusRestUtils.toOffsetDateTime(additionalContactInfo.getAllowStudyDiscussionsModified()) : null;
+    userContact.setAllowStudyDiscussionsModified(allowStudyDiscussionsModified);
     
     Address defaultAddress = additionalContactInfo.getDefaultAddress();
     Email defaultEmail = additionalContactInfo.getDefaultEmail();

@@ -46,12 +46,12 @@ public class ContactInfoUtils {
     readAndUpdateTypedContactInfos(requestContext, contactInfoEditorName, contactInfos, new ContactInfoConstructor<UserAdditionalContactInfo>() {
       @Override
       public UserAdditionalContactInfo create(ContactType contactType) {
-        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().create(contactType, false);
+        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().create(contactType);
       }
 
       @Override
       public UserAdditionalContactInfo update(UserAdditionalContactInfo contactInfo, ContactType contactType) {
-        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().update(contactInfo, contactType, contactInfo.isAllowStudyDiscussions());
+        return DAOFactory.getInstance().getStudentAdditionalContactInfoDAO().update(contactInfo, contactType);
       }
     });
   }
@@ -278,7 +278,10 @@ public class ContactInfoUtils {
         contactInfoJSON.put("typeName", contactInfo.getContactType() != null ? contactInfo.getContactType().getName() : null);
         
         if (contactInfo instanceof UserAdditionalContactInfo) {
-          contactInfoJSON.put("allowStudyDiscussions", ((UserAdditionalContactInfo) contactInfo).isAllowStudyDiscussions());
+          UserAdditionalContactInfo additionalContactInfo = (UserAdditionalContactInfo) contactInfo;
+          contactInfoJSON.put("allowStudyDiscussions", additionalContactInfo.isAllowStudyDiscussions());
+          contactInfoJSON.put("allowStudyDiscussionsModifiedDate", additionalContactInfo.getAllowStudyDiscussionsModified() != null
+              ? additionalContactInfo.getAllowStudyDiscussionsModified().getTime() : null);
         }
         
         JSONArray addressesJSON = new JSONArray();

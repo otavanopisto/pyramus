@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.users;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -17,12 +18,13 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild_;
 @Stateless
 public class StudentParentChildDAO extends PyramusEntityDAO<StudentParentChild> {
   
-  public StudentParentChild create(StudentParent parent, Student child, boolean continuedViewPermission) {
+  public StudentParentChild create(StudentParent parent, Student child, boolean continuedViewPermission, Date continuedViewPermissionModified) {
     StudentParentChild studentParentChild = new StudentParentChild();
 
     studentParentChild.setStudentParent(parent);
     studentParentChild.setStudent(child);
     studentParentChild.setContinuedViewPermission(continuedViewPermission);
+    studentParentChild.setContinuedViewPermissionModified(continuedViewPermissionModified);
     
     return persist(studentParentChild);
   }
@@ -61,6 +63,7 @@ public class StudentParentChildDAO extends PyramusEntityDAO<StudentParentChild> 
   public StudentParentChild updateContinuedViewPermission(StudentParentChild studentParentChild,
       boolean continuedViewPermission) {
     studentParentChild.setContinuedViewPermission(continuedViewPermission);
+    studentParentChild.setContinuedViewPermissionModified(new Date());
     return persist(studentParentChild);
   }
 
