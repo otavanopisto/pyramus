@@ -6,8 +6,12 @@ public enum PerusopetusCreditState {
   ACCEPTED,
   // Re-evaluation of a course/module
   RAISED,
+  // Re-evaluation of a course/module within the same calendar year
+  RAISED_SAMEYEAR,
   // Re-evaluation of a course/module, where there has been passing evaluations before the current credit
   RAISED_PASSING,
+  // Re-evaluation of a course/module, where there has been passing evaluations before the current credit (within same year)
+  RAISED_SAMEYEAR_PASSING,
   
   // Rejected due to education type mismatch
   REJECTED_EDUCATIONTYPE,

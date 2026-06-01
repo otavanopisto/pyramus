@@ -44,9 +44,8 @@
 
         var summaryRowTemplate = new Template(
             '<th align="left">{{rowName}}</th>' +
-            '<td align="right">{{count}}</td>' +
-            '<td align="right">{{countHours}}</td>' + 
-            '<td align="right">{{countPoints}}</td>', syntax);
+            '<td align="right">{{accepted}}</td>' +
+            '<td align="right">{{rejected}}</td>', syntax);
         
         const targetgroup = document.querySelector('input[name="targetgroup"]:checked').value;
         const beginDate = getIxDateField('beginDate').getISO8601Date();
@@ -89,16 +88,59 @@
             if (data.summary) {
               const summaryRows = [
                 {
-                  rowName: "Hyväksytyt suoritukset",
-                  count: data.summary.acceptedCreditCount || 0,
-                  countHours: data.summary.acceptedByLengthUnit["h"] || 0,
-                  countPoints: data.summary.acceptedByLengthUnit["op"] || 0
+                  rowName: "Lukumäärä",
+                  accepted: data.summary.acceptedCreditCount || 0,
+                  rejected: data.summary.rejectedCreditCount || 0
                 },
                 {
-                  rowName: "Poistetut suoritukset",
-                  count: data.summary.rejecetdCreditCount || 0,
-                  countHours: data.summary.rejectedByLengthUnit["h"] || 0,
-                  countPoints: data.summary.rejectedByLengthUnit["op"] || 0
+                  rowName: "Kurssin pituus tunneissa",
+                  accepted: data.summary.acceptedByLengthUnit["h"] || 0,
+                  rejected: data.summary.rejectedByLengthUnit["h"] || 0
+                },
+                {
+                  rowName: "Kurssin pituus opintopisteissä",
+                  accepted: data.summary.acceptedByLengthUnit["op"] || 0,
+                  rejected: data.summary.rejectedByLengthUnit["op"] || 0
+                },
+                {
+                  rowName: "Tila: Hyväksytty",
+                  accepted: data.summary.acceptedByState["ACCEPTED"] || 0,
+                  rejected: data.summary.rejectedByState["ACCEPTED"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu",
+                  accepted: data.summary.acceptedByState["RAISED"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu samana kalenterivuonna",
+                  accepted: data.summary.acceptedByState["RAISED_SAMEYEAR"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED_SAMEYEAR"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu hyväksyttyä arvosanaa",
+                  accepted: data.summary.acceptedByState["RAISED_PASSING"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED_PASSING"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu hyväksyttyä arvosanaa samana vuonna",
+                  accepted: data.summary.acceptedByState["RAISED_SAMEYEAR_PASSING"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED_SAMEYEAR_PASSING"] || 0
+                },
+                {
+                  rowName: "Tila: Poistettu, arvosana",
+                  accepted: data.summary.acceptedByState["REJECTED_GRADE"] || 0,
+                  rejected: data.summary.rejectedByState["REJECTED_GRADE"] || 0
+                },
+                {
+                  rowName: "Tila: Poistettu, koulutusaste",
+                  accepted: data.summary.acceptedByState["REJECTED_EDUCATIONTYPE"] || 0,
+                  rejected: data.summary.rejectedByState["REJECTED_EDUCATIONTYPE"] || 0
+                },
+                {
+                  rowName: "Tila: Poistettu, kurssin laajuus",
+                  accepted: data.summary.acceptedByState["REJECTED_COURSELENGTH"] || 0,
+                  rejected: data.summary.rejectedByState["REJECTED_COURSELENGTH"] || 0
                 }
               ];
 
@@ -230,9 +272,8 @@
             <table id="summary" class="tableWithRowHighlighting">
               <tr style="text-align: left;">
                 <th></th>
-                <th>Lukumäärä</th>
-                <th>Kurssin pituus tunneissa</th>
-                <th>Kurssin pituus opintopisteissä</th>
+                <th>Hyväksytyt suoritukset</th>
+                <th>Poistetut suoritukset</th>
               </tr>
             </table>
             

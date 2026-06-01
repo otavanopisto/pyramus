@@ -73,10 +73,40 @@ public class PerusopetusCreditReport {
       }
     }
 
+    public Map<PerusopetusCreditState, Integer> getAcceptedByState() {
+      return acceptedByState;
+    }
+
+    public void incrementAcceptedByState(PerusopetusCreditState state) {
+      if (this.acceptedByState.containsKey(state)) {
+        Integer value = this.acceptedByState.get(state);
+        this.acceptedByState.put(state, value++);
+      } 
+      else {
+        this.acceptedByState.put(state, 1);
+      }
+    }
+
+    public Map<PerusopetusCreditState, Integer> getRejectedByState() {
+      return rejectedByState;
+    }
+
+    public void incrementRejectedByState(PerusopetusCreditState state) {
+      if (this.rejectedByState.containsKey(state)) {
+        Integer value = this.rejectedByState.get(state);
+        this.rejectedByState.put(state, value++);
+      } 
+      else {
+        this.rejectedByState.put(state, 1);
+      }
+    }
+
     private int acceptedCreditCount;
     private int rejectedCreditCount;
     private Map<String, Integer> acceptedByLengthUnit = new HashMap<>();
     private Map<String, Integer> rejectedByLengthUnit = new HashMap<>();
+    private Map<PerusopetusCreditState, Integer> acceptedByState = new HashMap<>();
+    private Map<PerusopetusCreditState, Integer> rejectedByState = new HashMap<>();
   }
   
   private final PerusopetusCreditReportSummary summary = new PerusopetusCreditReportSummary();
