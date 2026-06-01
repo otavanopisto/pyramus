@@ -22,14 +22,6 @@ public class PerusopetusCredit {
     this.courseCode = courseCode;
   }
 
-  public String getCourseLength() {
-    return courseLength;
-  }
-
-  public void setCourseLength(String courseLength) {
-    this.courseLength = courseLength;
-  }
-
   public String getGradeName() {
     return gradeName;
   }
@@ -170,9 +162,26 @@ public class PerusopetusCredit {
     this.previousEvaluations = previousEvaluations;
   }
 
+  public Double getCourseLength() {
+    return courseLength;
+  }
+
+  public void setCourseLength(Double courseLength) {
+    this.courseLength = courseLength;
+  }
+
+  public String getCourseLengthSymbol() {
+    return courseLengthSymbol;
+  }
+
+  public void setCourseLengthSymbol(String courseLengthSymbol) {
+    this.courseLengthSymbol = courseLengthSymbol;
+  }
+
   private String courseName;
   private String courseCode;
-  private String courseLength;
+  private Double courseLength;
+  private String courseLengthSymbol;
   private String gradeName;
   private Date gradeDate;
   private String gradingScaleName;

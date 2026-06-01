@@ -18,12 +18,15 @@
     
     <script type="text/javascript">
       function submitForm() {
+        var glassPane = new IxGlassPane(document.body, { });
+        glassPane.show();
+        
         // Use {{ variable }} syntax
         var syntax = /(^|.|\r|\n)(\{{\s*([A-Za-z0-9_öåäÖÅÄ]+)\s*}})/;
         var creditRowTemplate = new Template(
             '<td>{{courseName}}</td>' +
             '<td>{{courseCode}}</td>' +
-            '<td>{{courseLength}}</td>' +
+            '<td>{{courseLengthUI}}</td>' +
             '<td>{{creditDateUI}}</td>' +
             '<td>{{gradeName}}</td>' +
             '<td>{{gradingScaleName}}</td>' +
@@ -39,6 +42,12 @@
             '<td>{{evaluatedOutsideStudiesUI}}</td>' +
             '<td>{{koskiFailureUI}}</td>', syntax);
 
+        var summaryRowTemplate = new Template(
+            '<th align="left">{{rowName}}</th>' +
+            '<td align="right">{{count}}</td>' +
+            '<td align="right">{{countHours}}</td>' + 
+            '<td align="right">{{countPoints}}</td>', syntax);
+        
         const targetgroup = document.querySelector('input[name="targetgroup"]:checked').value;
         const beginDate = getIxDateField('beginDate').getISO8601Date();
         const endDate = getIxDateField('endDate').getISO8601Date();
@@ -53,6 +62,7 @@
           .then(function (response) {
             const acceptedCreditsElement = $('acceptedCredits');
             const rejectedCreditsElement = $('rejectedCredits');
+            const summaryElement = $('summary');
 
             document.querySelectorAll('.perusopetus_preport_tr').forEach(element => element.remove());
             
@@ -75,9 +85,38 @@
                 rejectedCreditsElement.appendChild(tr);
               }
             }
+
+            if (data.summary) {
+              const summaryRows = [
+                {
+                  rowName: "Hyväksytyt suoritukset",
+                  count: data.summary.acceptedCreditCount || 0,
+                  countHours: data.summary.acceptedByLengthUnit["h"] || 0,
+                  countPoints: data.summary.acceptedByLengthUnit["op"] || 0
+                },
+                {
+                  rowName: "Poistetut suoritukset",
+                  count: data.summary.rejecetdCreditCount || 0,
+                  countHours: data.summary.rejectedByLengthUnit["h"] || 0,
+                  countPoints: data.summary.rejectedByLengthUnit["op"] || 0
+                }
+              ];
+
+              for (const summaryRow of summaryRows) {
+                const cells = summaryRowTemplate.evaluate(summaryRow);
+                const tr = new Element("tr", { className: "perusopetus_preport_tr" });
+                tr.update(cells);
+                summaryElement.appendChild(tr);
+              }
+            }
+            
+            glassPane.hide();
+            delete glassPane;
           })
           .catch(function (error) {
             console.error(error);
+            glassPane.hide();
+            delete glassPane;
           });
       }
       
@@ -95,13 +134,26 @@
           for (const previousEvaluation of creditRow.previousEvaluations) {
             const creditDate = new Date(previousEvaluation.gradeDate);
             const creditDateStr = (creditDate instanceof Date && !isNaN(creditDate)) ? getLocale().getDate(creditDate, false) : "??";
+
+            if (previousEvaluationsTooltipUI != "") {
+              previousEvaluationsTooltipUI += "\n";
+            }
             
             previousEvaluationsTooltipUI += creditDateStr + " - " + previousEvaluation.gradeName;
           }
         }
         
+        var courseLengthUI = "";
+        if (creditRow.courseLength) {
+          courseLengthUI = creditRow.courseLength.toString();
+          if (creditRow.courseLengthSymbol) {
+            courseLengthUI += " " + creditRow.courseLengthSymbol;
+          }
+        }
+        
         return Object.assign(creditRow, {
           creditDateUI: dateStr,
+          courseLengthUI: courseLengthUI,
           groupCourseUI: creditRow.groupCourse ? "RK" : "",
           previousEvaluationsTooltipUI: previousEvaluationsTooltipUI,
           previousEvaluationsUI: (creditRow.previousEvaluations && creditRow.previousEvaluations.length) ? "Korotus" : "",
@@ -174,8 +226,18 @@
           
           <div id="reportContent">
           
+            <h1>Yhteenveto</h1>
+            <table id="summary" class="tableWithRowHighlighting">
+              <tr style="text-align: left;">
+                <th></th>
+                <th>Lukumäärä</th>
+                <th>Kurssin pituus tunneissa</th>
+                <th>Kurssin pituus opintopisteissä</th>
+              </tr>
+            </table>
+            
             <h1>Suoritukset</h1>
-            <table id="acceptedCredits">
+            <table id="acceptedCredits" class="tableWithRowHighlighting">
               <tr style="text-align: left;">
                 <th>Kurssi</th>
                 <th>Koodi</th>
@@ -199,7 +261,7 @@
             </table>
 
             <h1>Poistetut suoritukset</h1>
-            <table id="rejectedCredits">
+            <table id="rejectedCredits" class="tableWithRowHighlighting">
               <tr style="text-align: left;">
                 <th>Kurssi</th>
                 <th>Koodi</th>
