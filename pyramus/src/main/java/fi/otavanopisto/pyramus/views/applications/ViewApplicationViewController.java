@@ -397,6 +397,13 @@ public class ViewApplicationViewController extends PyramusViewController {
           fields.put("Asema", jobUiValue(getFormValue(formData, "field-job")));
         }
       }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-yo"))) {
+        fields.put("Aiempia yo-kokeita", simpleBooleanUiValue(getFormValue(formData, "field-previous-yo")));
+        if (StringUtils.equals("kylla", getFormValue(formData, "field-previous-yo"))) {
+          String link = getFormValue(formData, "field-previous-yo-yes");
+          fields.put("Suoritustietolinkki", String.format("<a href=\"%s\" target=\"_blank\">%s</a>", link, link));
+        }
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-foreign-line"))) {
         fields.put("Opintojen tyyppi", foreignLineUiValue(getFormValue(formData, "field-foreign-line")));
       }
