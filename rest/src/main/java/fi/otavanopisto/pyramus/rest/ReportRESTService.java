@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -79,6 +81,7 @@ public class ReportRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
+    String educationTypeCode;
     Date beginDate = DateUtils.toDate(begin.getLocalDate().atStartOfDay());
     Date endDate = DateUtils.toDate(end.getLocalDate().atTime(23, 59, 59));
 
@@ -94,6 +97,7 @@ public class ReportRESTService extends AbstractRESTService {
         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
       }
       studyProgrammes = Arrays.asList(sp1, sp2);
+      educationTypeCode = PyramusConsts.Apa.EDUCATION_TYPE;
     }
     else if ("paanp".equals(linja)) {
       StudyProgramme sp1 = studyProgrammeDAO.findById(7L);
@@ -102,6 +106,7 @@ public class ReportRESTService extends AbstractRESTService {
         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
       }
       studyProgrammes = Arrays.asList(sp1, sp2);
+      educationTypeCode = PyramusConsts.Perusopetus.EDUCATION_TYPE;
     }
     else {
       return Response.status(Status.BAD_REQUEST).build();
@@ -130,8 +135,8 @@ public class ReportRESTService extends AbstractRESTService {
         continue;
       }
       
-      if (subject.getEducationType() != null && StringUtils.equals(subject.getEducationType().getCode(), PyramusConsts.EDUCATION_TYPE_PK)) {
-        // Kyseessä perusopetuksen suoritus, etsitään edeltävät suoritukset
+      if (subject.getEducationType() != null && StringUtils.equals(subject.getEducationType().getCode(), educationTypeCode)) {
+        // Kyseessä soveltuvan koulutusasteen suoritus, etsitään edeltävät suoritukset
         
         PerusopetusCreditState state = PerusopetusCreditState.ACCEPTED;
         List<PerusopetusCredit> previousEvaluations = new ArrayList<>();
@@ -141,16 +146,17 @@ public class ReportRESTService extends AbstractRESTService {
         
         // Kurssisuoritukset Studentin perusteella
         List<CourseAssessment> matchingCourseAssessments = courseAssessmentDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
-        state = handleCreditList(matchingCourseAssessments, assessment, state, previousEvaluations);
+        state = handleCreditList(matchingCourseAssessments, true, assessment, state, previousEvaluations);
 
         // Hyväksiluetut Studentin perusteella
         List<TransferCredit> matchingTransferCredits = transferCreditDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
-        state = handleCreditList(matchingTransferCredits, assessment, state, previousEvaluations);
+        state = handleCreditList(matchingTransferCredits, false, assessment, state, previousEvaluations);
         
         // Siirretyt suoritukset Studentin perusteella
+        // Siirtosuoritukset käsitellään kuin ne olisivat hyväksilukuja, vaikka siirretty olisikin kurssisuoritus
         List<CreditLink> matchingCreditLinks = creditLinkDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
         List<Credit> matchingCreditLinkCredits = matchingCreditLinks.stream().map(CreditLink::getCredit).toList();
-        state = handleCreditList(matchingCreditLinkCredits, assessment, state, previousEvaluations);
+        state = handleCreditList(matchingCreditLinkCredits, false, assessment, state, previousEvaluations);
         
         report.addAcceptedCredit(restCredit(assessment, state, previousEvaluations));
       }
@@ -160,30 +166,66 @@ public class ReportRESTService extends AbstractRESTService {
       }
     }
     
+    // Summary
+    
+    for (PerusopetusCredit credit : report.getAcceptedCredits()) {
+      report.getSummary().incrementAcceptedCreditCount();
+      
+      if (credit.getState() != null) {
+        report.getSummary().incrementAcceptedByState(credit.getState());
+      }
+      
+      if (StringUtils.isNotBlank(credit.getCourseLengthSymbol())) {
+        report.getSummary().incrementAcceptedByLengthUnit(credit.getCourseLengthSymbol());
+      }
+    }
+
+    for (PerusopetusCredit credit : report.getRejectedCredits()) {
+      report.getSummary().incrementRejectedCreditCount();
+      
+      if (credit.getState() != null) {
+        report.getSummary().incrementRejectedByState(credit.getState());
+      }
+      
+      if (StringUtils.isNotBlank(credit.getCourseLengthSymbol())) {
+        report.getSummary().incrementRejectedByLengthUnit(credit.getCourseLengthSymbol());
+      }
+    }
+    
     return Response.ok(report).build();
   }
   
-  private PerusopetusCreditState handleCreditList(List<? extends Credit> creditList, CourseAssessment assessment, PerusopetusCreditState state, List<PerusopetusCredit> previousEvaluations) {
+  private PerusopetusCreditState handleCreditList(List<? extends Credit> creditList, boolean creditsAreCourseAssessments, CourseAssessment assessment, PerusopetusCreditState state, List<PerusopetusCredit> previousEvaluations) {
     for (Credit matchingAssessment : creditList) {
       // Skippaa jos credit.id on sama (ts sama Credit löytyy listasta)
       if (!matchingAssessment.getId().equals(assessment.getId())) {
-        if (matchingAssessment.getDate().before(assessment.getDate())) {
-          // matchingAssessment on aiempi arvosana samasta kurssista/modulista kuin assessment
+        continue;
+      }
+      
+      // Skippaa matchingAssessment, jos sillä ei ole arvosanaa tai arvosana ei ole perusopetuksen sallittu arvosana (lähinnä K:t pois)
+      String gradeName = matchingAssessment.getGrade() != null ? matchingAssessment.getGrade().getName() : null;
+      if (gradeName == null || !PyramusConsts.Perusopetus.ALLOWED_GRADES.contains(gradeName)) {
+        continue;
+      }
 
-          // Pelkät perustiedot aiemmista suorituksista
-          PerusopetusCredit previousEvaluation = new PerusopetusCredit();
-          previousEvaluation.setGradeDate(matchingAssessment.getDate());
-          previousEvaluation.setGradeName(matchingAssessment.getGrade() != null ? matchingAssessment.getGrade().getName() : null);
-          previousEvaluations.add(previousEvaluation);
-          
-          if (state == PerusopetusCreditState.ACCEPTED) {
-            state = PerusopetusCreditState.RAISED;
-          }
-          
-          if (Boolean.TRUE.equals(matchingAssessment.getGrade().getPassingGrade())) {
-            // Aiempi suoritus on ollut läpäisevä
-            state = PerusopetusCreditState.RAISED_PASSING;
-          }
+      // Jos matchingAssessment on annettu ennen arviointia, on kyseessä jonkunsortin korotus
+      if (matchingAssessment.getDate().before(assessment.getDate())) {
+        // Pelkät perustiedot aiemmista suorituksista
+        PerusopetusCredit previousEvaluation = new PerusopetusCredit();
+        previousEvaluation.setGradeDate(matchingAssessment.getDate());
+        previousEvaluation.setGradeName(gradeName);
+        previousEvaluations.add(previousEvaluation);
+        
+        // Samasta kurssista saa rahoitusta vain kerran kalenterivuodessa
+        boolean sameYear = creditsAreCourseAssessments && assessment.getDate().getYear() == matchingAssessment.getDate().getYear();
+        
+        if (state == PerusopetusCreditState.ACCEPTED) {
+          state = sameYear ? PerusopetusCreditState.RAISED_SAMEYEAR : PerusopetusCreditState.RAISED;
+        }
+        
+        if (Boolean.TRUE.equals(matchingAssessment.getGrade().getPassingGrade())) {
+          // Aiempi suoritus on ollut läpäisevä
+          state = sameYear ? PerusopetusCreditState.RAISED_SAMEYEAR_PASSING : PerusopetusCreditState.RAISED_PASSING;
         }
       }
     }
@@ -221,14 +263,11 @@ public class ReportRESTService extends AbstractRESTService {
       groupCourse = false;
     }
 
-    String courseLength = null;
+    Double courseLength = null;
+    String courseLengthSymbol = null;
     if (courseModule.getCourseLength() != null && courseModule.getCourseLength().getUnits() != null && courseModule.getCourseLength().getUnit() != null && StringUtils.isNotBlank(courseModule.getCourseLength().getUnit().getSymbol())) {
-      Double units = courseModule.getCourseLength().getUnits();
-      
-      // Prettify the number
-      String len = units == Math.floor(units) ? String.format("%.0f", units) : Double.toString(units);
-      
-      courseLength = String.format("%s %s", len, courseModule.getCourseLength().getUnit().getSymbol());
+      courseLength = courseModule.getCourseLength().getUnits();
+      courseLengthSymbol = courseModule.getCourseLength().getUnit().getSymbol();
     }
 
     boolean mismatchingCurriculum;
@@ -258,6 +297,7 @@ public class ReportRESTService extends AbstractRESTService {
     credit.setAssessorName(courseAssessment.getAssessor() != null ? courseAssessment.getAssessor().getFullName() : null);
     credit.setCourseCode(courseCode);
     credit.setCourseLength(courseLength);
+    credit.setCourseLengthSymbol(courseLengthSymbol);
     credit.setCourseName(courseBase != null ? courseBase.getName() : null);
     credit.setGradeName(courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
     credit.setGradeDate(courseAssessment.getDate());

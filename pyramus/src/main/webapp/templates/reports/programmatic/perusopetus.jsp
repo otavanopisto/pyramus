@@ -18,12 +18,15 @@
     
     <script type="text/javascript">
       function submitForm() {
+        var glassPane = new IxGlassPane(document.body, { });
+        glassPane.show();
+        
         // Use {{ variable }} syntax
         var syntax = /(^|.|\r|\n)(\{{\s*([A-Za-z0-9_öåäÖÅÄ]+)\s*}})/;
         var creditRowTemplate = new Template(
             '<td>{{courseName}}</td>' +
             '<td>{{courseCode}}</td>' +
-            '<td>{{courseLength}}</td>' +
+            '<td>{{courseLengthUI}}</td>' +
             '<td>{{creditDateUI}}</td>' +
             '<td>{{gradeName}}</td>' +
             '<td>{{gradingScaleName}}</td>' +
@@ -39,6 +42,11 @@
             '<td>{{evaluatedOutsideStudiesUI}}</td>' +
             '<td>{{koskiFailureUI}}</td>', syntax);
 
+        var summaryRowTemplate = new Template(
+            '<th align="left">{{rowName}}</th>' +
+            '<td align="right">{{accepted}}</td>' +
+            '<td align="right">{{rejected}}</td>', syntax);
+        
         const targetgroup = document.querySelector('input[name="targetgroup"]:checked').value;
         const beginDate = getIxDateField('beginDate').getISO8601Date();
         const endDate = getIxDateField('endDate').getISO8601Date();
@@ -53,6 +61,7 @@
           .then(function (response) {
             const acceptedCreditsElement = $('acceptedCredits');
             const rejectedCreditsElement = $('rejectedCredits');
+            const summaryElement = $('summary');
 
             document.querySelectorAll('.perusopetus_preport_tr').forEach(element => element.remove());
             
@@ -75,9 +84,81 @@
                 rejectedCreditsElement.appendChild(tr);
               }
             }
+
+            if (data.summary) {
+              const summaryRows = [
+                {
+                  rowName: "Lukumäärä",
+                  accepted: data.summary.acceptedCreditCount || 0,
+                  rejected: data.summary.rejectedCreditCount || 0
+                },
+                {
+                  rowName: "Kurssin pituus tunneissa",
+                  accepted: data.summary.acceptedByLengthUnit["h"] || 0,
+                  rejected: data.summary.rejectedByLengthUnit["h"] || 0
+                },
+                {
+                  rowName: "Kurssin pituus opintopisteissä",
+                  accepted: data.summary.acceptedByLengthUnit["op"] || 0,
+                  rejected: data.summary.rejectedByLengthUnit["op"] || 0
+                },
+                {
+                  rowName: "Tila: Hyväksytty",
+                  accepted: data.summary.acceptedByState["ACCEPTED"] || 0,
+                  rejected: data.summary.rejectedByState["ACCEPTED"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu",
+                  accepted: data.summary.acceptedByState["RAISED"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu samana kalenterivuonna",
+                  accepted: data.summary.acceptedByState["RAISED_SAMEYEAR"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED_SAMEYEAR"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu hyväksyttyä arvosanaa",
+                  accepted: data.summary.acceptedByState["RAISED_PASSING"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED_PASSING"] || 0
+                },
+                {
+                  rowName: "Tila: Korotettu hyväksyttyä arvosanaa samana vuonna",
+                  accepted: data.summary.acceptedByState["RAISED_SAMEYEAR_PASSING"] || 0,
+                  rejected: data.summary.rejectedByState["RAISED_SAMEYEAR_PASSING"] || 0
+                },
+                {
+                  rowName: "Tila: Poistettu, arvosana",
+                  accepted: data.summary.acceptedByState["REJECTED_GRADE"] || 0,
+                  rejected: data.summary.rejectedByState["REJECTED_GRADE"] || 0
+                },
+                {
+                  rowName: "Tila: Poistettu, koulutusaste",
+                  accepted: data.summary.acceptedByState["REJECTED_EDUCATIONTYPE"] || 0,
+                  rejected: data.summary.rejectedByState["REJECTED_EDUCATIONTYPE"] || 0
+                },
+                {
+                  rowName: "Tila: Poistettu, kurssin laajuus",
+                  accepted: data.summary.acceptedByState["REJECTED_COURSELENGTH"] || 0,
+                  rejected: data.summary.rejectedByState["REJECTED_COURSELENGTH"] || 0
+                }
+              ];
+
+              for (const summaryRow of summaryRows) {
+                const cells = summaryRowTemplate.evaluate(summaryRow);
+                const tr = new Element("tr", { className: "perusopetus_preport_tr" });
+                tr.update(cells);
+                summaryElement.appendChild(tr);
+              }
+            }
+            
+            glassPane.hide();
+            delete glassPane;
           })
           .catch(function (error) {
             console.error(error);
+            glassPane.hide();
+            delete glassPane;
           });
       }
       
@@ -95,13 +176,26 @@
           for (const previousEvaluation of creditRow.previousEvaluations) {
             const creditDate = new Date(previousEvaluation.gradeDate);
             const creditDateStr = (creditDate instanceof Date && !isNaN(creditDate)) ? getLocale().getDate(creditDate, false) : "??";
+
+            if (previousEvaluationsTooltipUI != "") {
+              previousEvaluationsTooltipUI += "\n";
+            }
             
             previousEvaluationsTooltipUI += creditDateStr + " - " + previousEvaluation.gradeName;
           }
         }
         
+        var courseLengthUI = "";
+        if (creditRow.courseLength) {
+          courseLengthUI = creditRow.courseLength.toString();
+          if (creditRow.courseLengthSymbol) {
+            courseLengthUI += " " + creditRow.courseLengthSymbol;
+          }
+        }
+        
         return Object.assign(creditRow, {
           creditDateUI: dateStr,
+          courseLengthUI: courseLengthUI,
           groupCourseUI: creditRow.groupCourse ? "RK" : "",
           previousEvaluationsTooltipUI: previousEvaluationsTooltipUI,
           previousEvaluationsUI: (creditRow.previousEvaluations && creditRow.previousEvaluations.length) ? "Korotus" : "",
@@ -174,8 +268,17 @@
           
           <div id="reportContent">
           
+            <h1>Yhteenveto</h1>
+            <table id="summary" class="tableWithRowHighlighting">
+              <tr style="text-align: left;">
+                <th></th>
+                <th>Hyväksytyt suoritukset</th>
+                <th>Poistetut suoritukset</th>
+              </tr>
+            </table>
+            
             <h1>Suoritukset</h1>
-            <table id="acceptedCredits">
+            <table id="acceptedCredits" class="tableWithRowHighlighting">
               <tr style="text-align: left;">
                 <th>Kurssi</th>
                 <th>Koodi</th>
@@ -199,7 +302,7 @@
             </table>
 
             <h1>Poistetut suoritukset</h1>
-            <table id="rejectedCredits">
+            <table id="rejectedCredits" class="tableWithRowHighlighting">
               <tr style="text-align: left;">
                 <th>Kurssi</th>
                 <th>Koodi</th>
