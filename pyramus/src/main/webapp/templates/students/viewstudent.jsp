@@ -1429,12 +1429,14 @@
           for (const studentParent of studentParentData) {
             studentParent["statusText"] = getLocale().getText(studentParent.active === true ? "students.viewStudent.parentsTable.status.active" : "students.viewStudent.parentsTable.status.inactive");
 
-            if (studentParent.continuedViewPermissionModified) {
+            if (studentParent.continuedViewPermissionModified || studentParent.continuedViewPermission) {
               const modifyStatus = getLocale().getText(studentParent.continuedViewPermission === true ? "students.viewStudent.parentTables.continuedViewPermissionGranted" : "students.viewStudent.parentTables.continuedViewPermissionProhibited");
               studentParent["continuedViewPermissionText"] = modifyStatus;
-              
-              const modifyDate = new Date(studentParent.continuedViewPermissionModified);
-              studentParent["continuedViewPermissionModifiedText"] = getLocale().getText("students.viewStudent.parentTables.permissionLastModified", dateTimeFormatter.format(modifyDate));
+
+              if (studentParent.continuedViewPermissionModified) {
+                const modifyDate = new Date(studentParent.continuedViewPermissionModified);
+                studentParent["continuedViewPermissionModifiedText"] = getLocale().getText("students.viewStudent.parentTables.permissionLastModified", dateTimeFormatter.format(modifyDate));
+              }
             }
             
             Object.assign(studentParent, staticProps);
@@ -1556,12 +1558,14 @@
             studentParent["statusText"] = getLocale().getText(studentParent.expired ? "students.viewStudent.parentInvitationsTable.status.expired" : "students.viewStudent.parentInvitationsTable.status.invited");
             studentParent["continuedViewPermissionText"] = studentParent.continuedViewPermission ? getLocale().getText("students.viewStudent.parentTables.continuedViewPermissionAbbr") : "";
 
-            if (studentParent.continuedViewPermissionModified) {
+            if (studentParent.continuedViewPermissionModified || studentParent.continuedViewPermission) {
               const modifyStatus = getLocale().getText(studentParent.continuedViewPermission === true ? "students.viewStudent.parentTables.continuedViewPermissionGranted" : "students.viewStudent.parentTables.continuedViewPermissionProhibited");
               studentParent["continuedViewPermissionText"] = modifyStatus;
 
-              const modifyDate = new Date(studentParent.continuedViewPermissionModified);
-              studentParent["continuedViewPermissionModifiedText"] = getLocale().getText("students.viewStudent.parentTables.permissionLastModified", dateTimeFormatter.format(modifyDate));
+              if (studentParent.continuedViewPermissionModified) {
+                const modifyDate = new Date(studentParent.continuedViewPermissionModified);
+                studentParent["continuedViewPermissionModifiedText"] = getLocale().getText("students.viewStudent.parentTables.permissionLastModified", dateTimeFormatter.format(modifyDate));
+              }
             }
             
             Object.assign(studentParent, staticProps);
