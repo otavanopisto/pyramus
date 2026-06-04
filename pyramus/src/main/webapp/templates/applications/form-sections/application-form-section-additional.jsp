@@ -236,6 +236,11 @@
       <input id="field-high-school-length-ov" type="text" name="field-high-school-length-ov">
     </div>
 
+    <div class="form-section__field-container field-previous-matriculation-exams-nettilukio-link dependent" data-dependent-field="field-previous-matriculation-exams-nettilukio" data-dependent-values="kylla" style="display:none;">
+      <label for="field-previous-matriculation-exams-nettilukio-link" class="required">Lisää alle ylioppilastutkintoa koskeva suoritustietolinkki. Löydät linkin <a href="https://opintopolku.fi/oma-opintopolku/" target="_blank">Oma Opintopolku -verkkopalvelusta</a> kohdasta: Omat opintosuoritukseni -> Jaa suoritustietoja -> Valitse ylioppilastutkinto -> Jaa valitsemasi opinnot ja kopioi linkki.</label>
+      <input id="field-previous-matriculation-exams-nettilukio-link" type="text" name="field-previous-matriculation-exams-nettilukio-link" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    </div>
+
     <div class="form-section__field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov,nettipk,aikuislukio" style="display:none;">
       <label for="field-other-school" class="required">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
       <select id="field-other-school" name="field-other-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
@@ -300,20 +305,6 @@
       <input id="field-job-other" type="text" name="field-job-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
     
-    <div class="form-section__field-container field-previous-yo dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
-      <label for="field-previous-yo" class="required">Oletko suorittanut aiemmin yo-kokeita?</label>
-      <select id="field-previous-yo" name="field-previous-yo" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
-        <option value="">-- Valitse --</option>
-        <option value="kylla">Kyllä</option>
-        <option value="en">En</option>
-      </select>
-    </div>
-
-    <div class="form-section__field-container field-previous-yo-yes dependent" data-dependent-field="field-previous-yo" data-dependent-values="kylla" style="display:none;">
-      <label for="field-previous-yo-yes" class="required">Lisää alle ylioppilastutkintoa koskeva suoritustietolinkki. Löydät linkin <a href="https://opintopolku.fi/oma-opintopolku/" target="_blank">Oma Opintopolku -verkkopalvelusta</a> kohdasta: Omat opintosuoritukseni -> Jaa suoritustietoja -> Valitse ylioppilastutkinto -> Jaa valitsemasi opinnot ja kopioi linkki.</label>
-      <input id="field-previous-yo-yes" type="text" name="field-previous-yo-yes" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
-    </div>
-
     <div class="form-section__field-container field-info dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aineopiskelu,aineopiskelupk,aikuislukio,mk" style="display:none;">
       <label for="field-info">Haluan kertoa itsestäni ja opiskelutavoitteistani seuraavaa</label>
       <textarea id="field-info" name="field-info" rows="5" cols="40"></textarea>
