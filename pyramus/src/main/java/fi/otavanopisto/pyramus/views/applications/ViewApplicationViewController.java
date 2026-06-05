@@ -328,16 +328,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         }
         fields.put("Aiemmat opinnot", sb.toString());
       }
-      
-      // #1349: Nämä kaksi poistuneet lomakkeelta
-      
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-school"))) {
-        fields.put("Aiempi oppilaitos", getFormValue(formData, "field-previous-studies-nettilukio-school"));
-      }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-duration"))) {
-        fields.put("Aiempien opintojen kesto", getFormValue(formData, "field-previous-studies-nettilukio-duration"));
-      }
-      
+
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-other"))) {
         fields.put("Kerro tarkemmin", getFormValue(formData, "field-previous-studies-nettilukio-other"));
       }
@@ -358,6 +349,11 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-matriculation-exams-nettilukio-when"))) {
         fields.put("Milloin olet viimeksi osallistunut yo-kokeisiin?", getFormValue(formData, "field-previous-matriculation-exams-nettilukio-when"));
+      }
+      // Stupid field name but needed for backwards compatibility :|
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-yo-yes"))) {
+        String link = getFormValue(formData, "field-previous-yo-yes");
+        fields.put("Suoritustietolinkki", String.format("<a href=\"%s\" target=\"_blank\">%s</a>", link, link));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-high-school-length"))) {
         fields.put("Aiempien lukio-opintojen kesto", getFormValue(formData, "field-high-school-length"));
@@ -395,13 +391,6 @@ public class ViewApplicationViewController extends PyramusViewController {
         }
         else {
           fields.put("Asema", jobUiValue(getFormValue(formData, "field-job")));
-        }
-      }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-yo"))) {
-        fields.put("Aiempia yo-kokeita", simpleBooleanUiValue(getFormValue(formData, "field-previous-yo")));
-        if (StringUtils.equals("kylla", getFormValue(formData, "field-previous-yo"))) {
-          String link = getFormValue(formData, "field-previous-yo-yes");
-          fields.put("Suoritustietolinkki", String.format("<a href=\"%s\" target=\"_blank\">%s</a>", link, link));
         }
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-foreign-line"))) {

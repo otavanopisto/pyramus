@@ -116,10 +116,13 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
 
           OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
           
-          // 1430: For underage applicants, only create the acceptance PDF
+          boolean underageApplicant = ApplicationUtils.isUnderage(application);
           
           byte[] applicantDocument = null;
-          if (ApplicationUtils.isUnderage(application)) {
+          
+          // Alaikäiset aikuisten perusopetus tai nettiperuskoulu: luo hyväksymisasiakirja mutta älä lisää Onnistuu-palveluun, koska paikka otetaan aina vastaan käsin
+          
+          if (underageApplicant && StringUtils.equalsAny(line, ApplicationUtils.LINE_NETTIPK, ApplicationUtils.LINE_MK)) {
             applicantDocument = ApplicationUtils.generateApplicantSignatureDocument(
                 requestContext.getRequest(),
                 application.getId(),
@@ -146,7 +149,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             // Create and attach acceptance PDF to Onnistuu document (if not done before)
 
             if (applicationSignatures.getApplicantDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
-              applicantDocument = ApplicationUtils.generateApplicantSignatureDocument(requestContext.getRequest(), application.getId(), line, applicantName, email, false);
+              applicantDocument = ApplicationUtils.generateApplicantSignatureDocument(requestContext.getRequest(), application.getId(), line, applicantName, email, underageApplicant);
               onnistuuClient.addPdf(documentId, applicantDocument);
               applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, null, null,
                   ApplicationSignatureState.PDF_UPLOADED);
@@ -185,7 +188,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
               String.format("/templates/applications/mails/mail-accept-study-place-%s-subject.txt", application.getLine())), "UTF-8");
 
           String content;
-          if (StringUtils.equalsAny(line, ApplicationUtils.LINE_NETTIPK, ApplicationUtils.LINE_MK) && ApplicationUtils.isUnderage(application)) {
+          if (underageApplicant && StringUtils.equalsAny(line, ApplicationUtils.LINE_NETTIPK, ApplicationUtils.LINE_MK)) {
             content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
                 "/templates/applications/mails/mail-accept-study-place-" + line + "-underage.html"), "UTF-8");
             content = String.format(content, nickname, staffMember.getFullName());
