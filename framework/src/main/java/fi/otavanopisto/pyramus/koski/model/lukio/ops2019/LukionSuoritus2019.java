@@ -35,6 +35,15 @@ public class LukionSuoritus2019 extends LukionSuoritus {
     return suullisenKielitaidonKokeet;
   }
 
+  public void addOsasuoritus(LukionOsasuoritus2019 osasuoritus) {
+    osasuoritukset.add(osasuoritus);
+  }
+  
+  public List<LukionOsasuoritus2019> getOsasuoritukset() {
+    return osasuoritukset;
+  }
+  
   private final KoodistoViite<LukionOppimaara> oppimaara = new KoodistoViite<>();
   private final List<SuullisenKielitaidonKoe2019> suullisenKielitaidonKokeet = new ArrayList<>();
+  private final List<LukionOsasuoritus2019> osasuoritukset = new ArrayList<>();
 }

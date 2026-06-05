@@ -77,16 +77,8 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
     }
     opiskeluoikeus.addSuoritus(suoritus);
     
-    for (LukionOsasuoritus2019 oppiaine : oppiaineet) {
-      // Aineopinnot sallivat vain oppiaineen suorituksia
-      if (oppiaine instanceof LukionOppiaineenSuoritus2019) {
-        suoritus.addOsasuoritus((LukionOppiaineenSuoritus2019) oppiaine);
-      } else {
-        String tyyppi = String.valueOf(oppiaine.getTyyppi().getValue());
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.GENERIC_WARNING, new Date(), tyyppi);
-      }
-    }
-    
+    oppiaineet.forEach(oppiaine -> suoritus.addOsasuoritus(oppiaine));
+
     // Suullisen kielitaidon kokeet
     suullisenKielitaidonKokeet(student, suoritus);
     
