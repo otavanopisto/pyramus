@@ -350,6 +350,11 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-matriculation-exams-nettilukio-when"))) {
         fields.put("Milloin olet viimeksi osallistunut yo-kokeisiin?", getFormValue(formData, "field-previous-matriculation-exams-nettilukio-when"));
       }
+      // Stupid field name but needed for backwards compatibility :|
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-yo-yes"))) {
+        String link = getFormValue(formData, "field-previous-yo-yes");
+        fields.put("Suoritustietolinkki", String.format("<a href=\"%s\" target=\"_blank\">%s</a>", link, link));
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-high-school-length"))) {
         fields.put("Aiempien lukio-opintojen kesto", getFormValue(formData, "field-high-school-length"));
       }
@@ -361,11 +366,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-high-school-length-ov"))) {
         fields.put("Aiempien lukio-opintojen kesto", getFormValue(formData, "field-high-school-length-ov"));
-      }
-      // Stupid field name but needed for backwards compatibility :|
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-yo-yes"))) {
-        String link = getFormValue(formData, "field-previous-yo-yes");
-        fields.put("Suoritustietolinkki", String.format("<a href=\"%s\" target=\"_blank\">%s</a>", link, link));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school"))) {
         fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
