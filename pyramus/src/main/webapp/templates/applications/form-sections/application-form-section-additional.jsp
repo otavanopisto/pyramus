@@ -211,6 +211,11 @@
       <input id="field-previous-matriculation-exams-nettilukio-when" type="text" name="field-previous-matriculation-exams-nettilukio-when" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
+    <div class="form-section__field-container field-previous-yo-yes dependent" data-dependent-field="field-previous-matriculation-exams-nettilukio" data-dependent-values="kylla" style="display:none;">
+      <label for="field-previous-yo-yes" class="required">Lisää alle ylioppilastutkintoa koskeva suoritustietolinkki. Löydät linkin <a href="https://opintopolku.fi/oma-opintopolku/" target="_blank">Oma Opintopolku -verkkopalvelusta</a> kohdasta: Omat opintosuoritukseni -> Jaa suoritustietoja -> Valitse ylioppilastutkinto -> Jaa valitsemasi opinnot ja kopioi linkki.</label>
+      <input id="field-previous-yo-yes" type="text" name="field-previous-yo-yes" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    </div>
+
     <div class="form-section__field-container field-high-school-length dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="lukio" style="display:none;">
       <label for="field-high-school-length">Aiempien lukio-opintojen kesto</label>
       <input id="field-high-school-length" type="text" name="field-high-school-length">
@@ -234,11 +239,6 @@
     <div class="form-section__field-container field-high-school-length-ov dependent" data-dependent-field="field-previous-studies-nettilukioov" data-dependent-values="lukio-nyt,lukio-kesken" style="display:none;">
       <label for="field-high-school-length-ov">Aiempien lukio-opintojen kesto</label>
       <input id="field-high-school-length-ov" type="text" name="field-high-school-length-ov">
-    </div>
-
-    <div class="form-section__field-container field-previous-yo-yes dependent" data-dependent-field="field-previous-matriculation-exams-nettilukio" data-dependent-values="kylla" style="display:none;">
-      <label for="field-previous-yo-yes" class="required">Lisää alle ylioppilastutkintoa koskeva suoritustietolinkki. Löydät linkin <a href="https://opintopolku.fi/oma-opintopolku/" target="_blank">Oma Opintopolku -verkkopalvelusta</a> kohdasta: Omat opintosuoritukseni -> Jaa suoritustietoja -> Valitse ylioppilastutkinto -> Jaa valitsemasi opinnot ja kopioi linkki.</label>
-      <input id="field-previous-yo-yes" type="text" name="field-previous-yo-yes" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
     <div class="form-section__field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov,nettipk,aikuislukio" style="display:none;">
