@@ -120,7 +120,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           byte[] applicantDocument = null;
           
-          // Alaikäiset aikuislukio tai nettiperuskoulu: luo hyväksymisasiakirja mutta älä lisää Onnistuu-palveluun, koska paikka otetaan aina vastaan käsin
+          // Alaikäiset aikuisten perusopetus tai nettiperuskoulu: luo hyväksymisasiakirja mutta älä lisää Onnistuu-palveluun, koska paikka otetaan aina vastaan käsin
           
           if (underageApplicant && StringUtils.equalsAny(line, ApplicationUtils.LINE_NETTIPK, ApplicationUtils.LINE_MK)) {
             applicantDocument = ApplicationUtils.generateApplicantSignatureDocument(
