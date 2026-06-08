@@ -52,7 +52,7 @@ public class PerusopetusCreditReport {
     public void incrementAcceptedByLengthUnit(String acceptedLengthUnit) {
       if (this.acceptedByLengthUnit.containsKey(acceptedLengthUnit)) {
         Integer value = this.acceptedByLengthUnit.get(acceptedLengthUnit);
-        this.acceptedByLengthUnit.put(acceptedLengthUnit, value++);
+        this.acceptedByLengthUnit.put(acceptedLengthUnit, value + 1);
       } 
       else {
         this.acceptedByLengthUnit.put(acceptedLengthUnit, 1);
@@ -66,7 +66,7 @@ public class PerusopetusCreditReport {
     public void incrementRejectedByLengthUnit(String rejectedLengthUnit) {
       if (this.rejectedByLengthUnit.containsKey(rejectedLengthUnit)) {
         Integer value = this.rejectedByLengthUnit.get(rejectedLengthUnit);
-        this.rejectedByLengthUnit.put(rejectedLengthUnit, value++);
+        this.rejectedByLengthUnit.put(rejectedLengthUnit, value + 1);
       } 
       else {
         this.rejectedByLengthUnit.put(rejectedLengthUnit, 1);
@@ -80,7 +80,7 @@ public class PerusopetusCreditReport {
     public void incrementAcceptedByState(PerusopetusCreditState state) {
       if (this.acceptedByState.containsKey(state)) {
         Integer value = this.acceptedByState.get(state);
-        this.acceptedByState.put(state, value++);
+        this.acceptedByState.put(state, value + 1);
       } 
       else {
         this.acceptedByState.put(state, 1);
@@ -94,7 +94,7 @@ public class PerusopetusCreditReport {
     public void incrementRejectedByState(PerusopetusCreditState state) {
       if (this.rejectedByState.containsKey(state)) {
         Integer value = this.rejectedByState.get(state);
-        this.rejectedByState.put(state, value++);
+        this.rejectedByState.put(state, value + 1);
       } 
       else {
         this.rejectedByState.put(state, 1);
