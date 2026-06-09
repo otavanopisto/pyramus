@@ -154,9 +154,8 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
     HttpServletRequest request = requestContext.getRequest();
     HttpSession session = request.getSession();
-    Boolean authorized = "Authorize".equals(request.getParameter("authorize"));
 
-    if (authorized) {
+    if (StringUtils.isNotBlank(request.getParameter("authorize"))) {
       Long userId = (Long) session.getAttribute("loggedUserId");
       String authorizationCode = (String) session.getAttribute("pendingAuthCode");
       String redirectURI = (String) session.getAttribute("pendingOauthRedirectUrl");
@@ -180,7 +179,6 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
         throw new SmvcRuntimeException(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameters");
       }
-
     }
   }
 
