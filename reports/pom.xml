@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.267</version>
+    <version>0.7.268-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
