@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -118,51 +116,13 @@ public class ReportRESTService extends AbstractRESTService {
     List<CourseAssessment> assessments = courseAssessmentDAO.listByStudyProgrammesAndDates(studyProgrammes, beginDate, endDate);
     
     for (CourseAssessment assessment : assessments) {
-      Student student = assessment.getStudent();
-      Subject subject = assessment.getSubject();
-      Integer courseNumber = assessment.getCourseNumber();
+      PerusopetusCredit restCredit = restCredit(assessment, educationTypeCode);
       
-      // 0h-suoritukset poistetaan
-      if (assessment.getCourseLength() == null || assessment.getCourseLength().getUnits() == null || assessment.getCourseLength().getUnits() == 0) {
-        report.addRejectedCredit(restCredit(assessment, PerusopetusCreditState.REJECTED_COURSELENGTH, null));
-        continue;
-      }
-      
-      // K-arvosanat (= kaikki ei-sallitut arvosanat) pois
-      String gradeName = assessment.getGrade() != null ? assessment.getGrade().getName() : null;
-      if (gradeName == null || !PyramusConsts.Perusopetus.ALLOWED_GRADES.contains(gradeName)) {
-        report.addRejectedCredit(restCredit(assessment, PerusopetusCreditState.REJECTED_GRADE, null));
-        continue;
-      }
-      
-      if (subject.getEducationType() != null && StringUtils.equals(subject.getEducationType().getCode(), educationTypeCode)) {
-        // Kyseessä soveltuvan koulutusasteen suoritus, etsitään edeltävät suoritukset
-        
-        PerusopetusCreditState state = PerusopetusCreditState.ACCEPTED;
-        List<PerusopetusCredit> previousEvaluations = new ArrayList<>();
-        
-        // Huom. Saman kurssin/modulin suoritukset etsitään tällä hetkellä saman Studentin tiedoista.
-        // On mahdollista, että näitä pitäisi etsiä saman henkilön muidenkin opiskeluoikeuksien alta.
-        
-        // Kurssisuoritukset Studentin perusteella
-        List<CourseAssessment> matchingCourseAssessments = courseAssessmentDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
-        state = handleCreditList(matchingCourseAssessments, true, assessment, state, previousEvaluations);
-
-        // Hyväksiluetut Studentin perusteella
-        List<TransferCredit> matchingTransferCredits = transferCreditDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
-        state = handleCreditList(matchingTransferCredits, false, assessment, state, previousEvaluations);
-        
-        // Siirretyt suoritukset Studentin perusteella
-        // Siirtosuoritukset käsitellään kuin ne olisivat hyväksilukuja, vaikka siirretty olisikin kurssisuoritus
-        List<CreditLink> matchingCreditLinks = creditLinkDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
-        List<Credit> matchingCreditLinkCredits = matchingCreditLinks.stream().map(CreditLink::getCredit).toList();
-        state = handleCreditList(matchingCreditLinkCredits, false, assessment, state, previousEvaluations);
-        
-        report.addAcceptedCredit(restCredit(assessment, state, previousEvaluations));
+      if (restCredit.getState() != null && restCredit.getState().isAcceptedState()) {
+        report.addAcceptedCredit(restCredit);
       }
       else {
-        // Kyseessä joku muu suoritus, esim lukio
-        report.addRejectedCredit(restCredit(assessment, PerusopetusCreditState.REJECTED_EDUCATIONTYPE, null));
+        report.addRejectedCredit(restCredit);
       }
     }
     
@@ -234,13 +194,16 @@ public class ReportRESTService extends AbstractRESTService {
   }
   
   
-  private PerusopetusCredit restCredit(CourseAssessment courseAssessment, PerusopetusCreditState state, List<PerusopetusCredit> previousEvaluations) {
+  private PerusopetusCredit restCredit(CourseAssessment courseAssessment, String educationTypeCode) {
     Student student = courseAssessment.getStudent();
+    Subject subject = courseAssessment.getSubject();
+    Integer courseNumber = courseAssessment.getCourseNumber();
     String studentName = String.format("%s, %s", student.getLastName(), student.getFirstName());
     
     CourseModule courseModule = courseAssessment.getCourseModule();
     CourseBase courseBase = courseModule.getCourse();
-    
+
+    PerusopetusCreditState state = PerusopetusCreditState.ACCEPTED;
     boolean otherFunding = student.getFunding() == StudentFunding.OTHER_FUNDING;
     
     String courseCode;
@@ -292,6 +255,43 @@ public class ReportRESTService extends AbstractRESTService {
     }
     
     boolean koskiFailure = !koskiController.isSuccessfullyUpdated(student.getPerson());
+
+    // 0h-suoritukset poistetaan
+    if (courseAssessment.getCourseLength() == null || courseAssessment.getCourseLength().getUnits() == null || courseAssessment.getCourseLength().getUnits() == 0) {
+      state = PerusopetusCreditState.REJECTED_COURSELENGTH;
+    }
+    
+    // K-arvosanat (= kaikki ei-sallitut arvosanat) pois
+    String gradeName = courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null;
+    if (gradeName == null || !PyramusConsts.Perusopetus.ALLOWED_GRADES.contains(gradeName)) {
+      state = PerusopetusCreditState.REJECTED_GRADE;
+    }
+    
+    List<PerusopetusCredit> previousEvaluations = new ArrayList<>();
+    
+    if (subject.getEducationType() != null && StringUtils.equals(subject.getEducationType().getCode(), educationTypeCode)) {
+      // Kyseessä soveltuvan koulutusasteen suoritus, etsitään edeltävät suoritukset
+
+      // Huom. Saman kurssin/modulin suoritukset etsitään tällä hetkellä saman Studentin tiedoista.
+      // On mahdollista, että näitä pitäisi etsiä saman henkilön muidenkin opiskeluoikeuksien alta.
+      
+      // Kurssisuoritukset Studentin perusteella
+      List<CourseAssessment> matchingCourseAssessments = courseAssessmentDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
+      state = handleCreditList(matchingCourseAssessments, true, courseAssessment, state, previousEvaluations);
+
+      // Hyväksiluetut Studentin perusteella
+      List<TransferCredit> matchingTransferCredits = transferCreditDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
+      state = handleCreditList(matchingTransferCredits, false, courseAssessment, state, previousEvaluations);
+      
+      // Siirretyt suoritukset Studentin perusteella
+      // Siirtosuoritukset käsitellään kuin ne olisivat hyväksilukuja, vaikka siirretty olisikin kurssisuoritus
+      List<CreditLink> matchingCreditLinks = creditLinkDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
+      List<Credit> matchingCreditLinkCredits = matchingCreditLinks.stream().map(CreditLink::getCredit).toList();
+      state = handleCreditList(matchingCreditLinkCredits, false, courseAssessment, state, previousEvaluations);
+    }
+    else {
+      state = PerusopetusCreditState.REJECTED_EDUCATIONTYPE;
+    }
     
     PerusopetusCredit credit = new PerusopetusCredit();
     credit.setAssessorName(courseAssessment.getAssessor() != null ? courseAssessment.getAssessor().getFullName() : null);

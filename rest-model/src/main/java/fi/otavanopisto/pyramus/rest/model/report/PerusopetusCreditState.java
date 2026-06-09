@@ -18,5 +18,15 @@ public enum PerusopetusCreditState {
   // Rejected due to mismatch or absence of course length
   REJECTED_COURSELENGTH,
   // Rejected due to invalid grade
-  REJECTED_GRADE
+  REJECTED_GRADE;
+  
+  
+  public boolean isAcceptedState() {
+    return this == ACCEPTED || this == RAISED || this == RAISED_SAMEYEAR;
+  }
+  
+  public boolean isRejectedState() {
+    return !this.isAcceptedState();
+  }
+  
 }
