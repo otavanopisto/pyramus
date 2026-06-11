@@ -18,7 +18,11 @@ public enum PerusopetusCreditState {
   // Rejected due to mismatch or absence of course length
   REJECTED_COURSELENGTH,
   // Rejected due to invalid grade
-  REJECTED_GRADE;
+  REJECTED_GRADE,
+  // Rejected, student's curriculum doesn't match credit's curriculum
+  REJECTED_MISMATCHING_CURRICULUM,
+  // Rejected, student has no curriculum
+  REJECTED_MISSING_STUDENT_CURRICULUM;
   
   
   public boolean isAcceptedState() {
