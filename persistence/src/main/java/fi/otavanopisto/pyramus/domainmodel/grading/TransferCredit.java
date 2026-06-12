@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.grading;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -21,11 +24,17 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
-public class TransferCredit extends Credit {
+public class TransferCredit extends CourseCredit {
 
   public TransferCredit() {
     super();
     setCreditType(CreditType.TransferCredit);
+  }
+
+  @Override
+  @Transient
+  public Set<Curriculum> getCurriculums() {
+    return this.curriculum != null ? Set.of(this.curriculum) : Set.of();
   }
 
   public String getCourseName() {
@@ -145,4 +154,5 @@ public class TransferCredit extends Credit {
   @NotNull
   @Column(nullable = false)
   private Boolean offCurriculum;
+
 }

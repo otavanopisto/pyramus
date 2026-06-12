@@ -17,6 +17,45 @@
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
     
     <script type="text/javascript">
+      const CREDITROW_STATES = {
+        "ACCEPTED": {
+          "title": "Hyväksytty"
+        },
+        "RAISED": {
+          "title": "Korotettu"
+        },
+        "RAISED_SAMEYEAR": {
+          "title": "Korotettu samana kalenterivuonna"
+        },
+        "RAISED_PASSING": {
+          "title": "Korotettu hyväksyttyä arvosanaa"
+        },
+        "RAISED_SAMEYEAR_PASSING": {
+          "title": "Korotettu hyväksyttyä arvosanaa samana vuonna"
+        },
+        "REJECTED_GRADE": {
+          "title": "Ei-sallittu arvosana"
+        },
+        "REJECTED_EDUCATIONTYPE": {
+          "title": "Kurssin ja opiskelijan koulutusasteet ei vastaa"
+        },
+        "REJECTED_COURSELENGTH": {
+          "title": "Kurssin laajuus virheelinen"
+        },
+        "REJECTED_MISMATCHING_CURRICULUM": {
+          "title": "Kurssin ja opiskelijan ops:t ei vastaa"
+        },
+        "REJECTED_MISSING_STUDENT_CURRICULUM": {
+          "title": "Opiskelijalta puuttuu ops"
+        }
+      };
+      const CREDITTYPE_TRANSLATIONS = {
+        "CA": "Kurssiarviointi",
+        "L-CA": "Siirretty kurssiarviointi",
+        "TC": "Hyväksiluku",
+        "L-TC": "Siirretty hyväksiluku"
+      };
+    
       function submitForm() {
         var glassPane = new IxGlassPane(document.body, { });
         glassPane.show();
@@ -24,14 +63,14 @@
         // Use {{ variable }} syntax
         var syntax = /(^|.|\r|\n)(\{{\s*([A-Za-z0-9_öåäÖÅÄ]+)\s*}})/;
         var creditRowTemplate = new Template(
-            '<td>{{courseName}}</td>' +
+            '<td><a href="/courses/viewcourse.page?course={{courseId}}" target="_blank">{{courseName}}</a></td>' +
             '<td>{{courseCode}}</td>' +
             '<td>{{courseLengthUI}}</td>' +
             '<td>{{creditDateUI}}</td>' +
             '<td>{{gradeName}}</td>' +
             '<td>{{gradingScaleName}}</td>' +
             '<td>{{groupCourseUI}}</td>' +
-            '<td>{{studentName}}</td>' +
+            '<td><a href="/students/viewstudent.page?person={{personId}}" target="_blank">{{studentName}}</a></td>' +
             '<td>{{studyProgrammeName}}</td>' +
             '<td>{{assessorName}}</td>' +
             '<td>{{schoolName}}</td>' +
@@ -40,7 +79,8 @@
             '<td>{{mismatchingCurriculumUI}}</td>' +
             '<td>{{otherFundingUI}}</td>' +
             '<td>{{evaluatedOutsideStudiesUI}}</td>' +
-            '<td>{{koskiFailureUI}}</td>', syntax);
+            '<td>{{koskiFailureUI}}</td>' +
+            '<td>{{stateUI}}</td>', syntax);
 
         var summaryRowTemplate = new Template(
             '<th align="left">{{rowName}}</th>' +
@@ -61,6 +101,7 @@
           .then(function (response) {
             const acceptedCreditsElement = $('acceptedCredits');
             const rejectedCreditsElement = $('rejectedCredits');
+            const fundedTransferCreditsElement = $('fundedTransferCreditsElement');
             const summaryElement = $('summary');
 
             document.querySelectorAll('.perusopetus_preport_tr').forEach(element => element.remove());
@@ -85,10 +126,29 @@
               }
             }
 
+            if (data.fundedTransferCredits) {
+              for (const credit of data.fundedTransferCredits) {
+                const cells = creditRowTemplate.evaluate(prepareCreditRow(credit));
+                const tr = new Element("tr", { className: "perusopetus_preport_tr" });
+                tr.update(cells);
+                fundedTransferCreditsElement.appendChild(tr);
+              }
+            }
+            
             if (data.summary) {
               const summaryRows = [
                 {
-                  rowName: "Lukumäärä",
+                  rowName: "Yhteensä (kurssiarvioinnit + vos-hyv.luk)",
+                  accepted: (data.summary.acceptedCreditCount || 0) + (data.summary.acceptedTransferCreditCount || 0),
+                  rejected: (data.summary.rejectedCreditCount || 0) + (data.summary.rejectedTransferCreditCount || 0)
+                },
+                {
+                  rowName: "VOS-hyväksilukujen lukumäärä",
+                  accepted: data.summary.acceptedTransferCreditCount || 0,
+                  rejected: data.summary.rejectedTransferCreditCount || 0
+                },
+                {
+                  rowName: "Kursiarviointien lukumäärä",
                   accepted: data.summary.acceptedCreditCount || 0,
                   rejected: data.summary.rejectedCreditCount || 0
                 },
@@ -101,49 +161,19 @@
                   rowName: "Kurssin pituus opintopisteissä",
                   accepted: data.summary.acceptedByLengthUnit["op"] || 0,
                   rejected: data.summary.rejectedByLengthUnit["op"] || 0
-                },
-                {
-                  rowName: "Tila: Hyväksytty",
-                  accepted: data.summary.acceptedByState["ACCEPTED"] || 0,
-                  rejected: data.summary.rejectedByState["ACCEPTED"] || 0
-                },
-                {
-                  rowName: "Tila: Korotettu",
-                  accepted: data.summary.acceptedByState["RAISED"] || 0,
-                  rejected: data.summary.rejectedByState["RAISED"] || 0
-                },
-                {
-                  rowName: "Tila: Korotettu samana kalenterivuonna",
-                  accepted: data.summary.acceptedByState["RAISED_SAMEYEAR"] || 0,
-                  rejected: data.summary.rejectedByState["RAISED_SAMEYEAR"] || 0
-                },
-                {
-                  rowName: "Tila: Korotettu hyväksyttyä arvosanaa",
-                  accepted: data.summary.acceptedByState["RAISED_PASSING"] || 0,
-                  rejected: data.summary.rejectedByState["RAISED_PASSING"] || 0
-                },
-                {
-                  rowName: "Tila: Korotettu hyväksyttyä arvosanaa samana vuonna",
-                  accepted: data.summary.acceptedByState["RAISED_SAMEYEAR_PASSING"] || 0,
-                  rejected: data.summary.rejectedByState["RAISED_SAMEYEAR_PASSING"] || 0
-                },
-                {
-                  rowName: "Tila: Poistettu, arvosana",
-                  accepted: data.summary.acceptedByState["REJECTED_GRADE"] || 0,
-                  rejected: data.summary.rejectedByState["REJECTED_GRADE"] || 0
-                },
-                {
-                  rowName: "Tila: Poistettu, koulutusaste",
-                  accepted: data.summary.acceptedByState["REJECTED_EDUCATIONTYPE"] || 0,
-                  rejected: data.summary.rejectedByState["REJECTED_EDUCATIONTYPE"] || 0
-                },
-                {
-                  rowName: "Tila: Poistettu, kurssin laajuus",
-                  accepted: data.summary.acceptedByState["REJECTED_COURSELENGTH"] || 0,
-                  rejected: data.summary.rejectedByState["REJECTED_COURSELENGTH"] || 0
                 }
               ];
-
+              
+              const stateKeys = Object.keys(CREDITROW_STATES);
+              for (const stateKey of stateKeys) {
+                const state = CREDITROW_STATES[stateKey];
+                summaryRows.push({
+                  rowName: "Tila: " + state.title,
+                  accepted: data.summary.acceptedByState[stateKey] || 0,
+                  rejected: data.summary.rejectedByState[stateKey] || 0
+                });
+              }
+              
               for (const summaryRow of summaryRows) {
                 const cells = summaryRowTemplate.evaluate(summaryRow);
                 const tr = new Element("tr", { className: "perusopetus_preport_tr" });
@@ -181,6 +211,9 @@
               previousEvaluationsTooltipUI += "\n";
             }
             
+            if (previousEvaluation.type && CREDITTYPE_TRANSLATIONS[previousEvaluation.type]) {
+              previousEvaluationsTooltipUI += CREDITTYPE_TRANSLATIONS[previousEvaluation.type] + ": ";
+            }
             previousEvaluationsTooltipUI += creditDateStr + " - " + previousEvaluation.gradeName;
           }
         }
@@ -193,6 +226,14 @@
           }
         }
         
+        var stateUI = "";
+        if (creditRow.state) {
+          const state = CREDITROW_STATES[creditRow.state];
+          if (state) {
+            stateUI = state.title;
+          }
+        }
+        
         return Object.assign(creditRow, {
           creditDateUI: dateStr,
           courseLengthUI: courseLengthUI,
@@ -202,7 +243,8 @@
           mismatchingCurriculumUI: creditRow.mismatchingCurriculum ? "3" : "",
           otherFundingUI: creditRow.otherFunding ? "4" : "",
           evaluatedOutsideStudiesUI: creditRow.evaluatedOutsideStudies ? "5" : "",
-          koskiFailureUI: creditRow.koskiFailure ? "Koski!" : ""
+          koskiFailureUI: creditRow.koskiFailure ? "Koski!" : "",
+          stateUI: stateUI
         });
       }
       
@@ -298,6 +340,7 @@
                 <th>Muu rah.(4)</th>
                 <th>Arviointi pvm (5)</th>
                 <th>Koski(6)</th>
+                <th>Tila</th>
               </tr>
             </table>
 
@@ -322,6 +365,32 @@
                 <th>Muu rah.(4)</th>
                 <th>Arviointi pvm (5)</th>
                 <th>Koski(6)</th>
+                <th>Tila</th>
+              </tr>
+            </table>
+            
+            <h1>VOS-rahoitukseen merkityt hyväksiluvut</h1>
+            <table id="fundedTransferCreditsElement" class="tableWithRowHighlighting">
+              <tr style="text-align: left;">
+                <th>Kurssi</th>
+                <th>Koodi</th>
+                <th>Pituus</th>
+                <th>Arviointipvm</th>
+                <th>Arvosana</th>
+                <th>Arvosana-asteikko</th>
+                <th>Ryhmäkurssi</th>
+                <th>Opiskelija</th>
+                <th>Koulutusohjelma</th>
+                <th>Opettaja</th>
+                <th>Oppilaitos</th>
+                <th>Oppilaitos k.ala</th>
+<!--                 <th>S.K-hyvluk(1)</th> -->
+                <th>Korotus (2)</th>
+                <th>Eri OPS(3)</th>
+                <th>Muu rah.(4)</th>
+                <th>Arviointi pvm (5)</th>
+                <th>Koski(6)</th>
+                <th>Tila</th>
               </tr>
             </table>
           </div>

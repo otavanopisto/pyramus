@@ -351,7 +351,8 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
 
   /**
    * Lists CourseAssessments that have a date between the given dates and 
-   * belong to students that are in the specified study programmes.
+   * belong to students that are in the specified study programmes. The
+   * assessment and the student must not be archived.
    * 
    * Used for reporting, handle with care.
    */
@@ -369,6 +370,7 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
         criteriaBuilder.and(
             studentJoin.get(Student_.studyProgramme).in(studyProgrammes),
             criteriaBuilder.between(root.get(CourseAssessment_.date), begin, end),
+            criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE)
         )
     );

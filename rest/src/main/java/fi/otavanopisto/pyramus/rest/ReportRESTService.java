@@ -32,9 +32,12 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseCredit;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
 import fi.otavanopisto.pyramus.framework.DateUtils;
@@ -116,7 +119,7 @@ public class ReportRESTService extends AbstractRESTService {
     List<CourseAssessment> assessments = courseAssessmentDAO.listByStudyProgrammesAndDates(studyProgrammes, beginDate, endDate);
     
     for (CourseAssessment assessment : assessments) {
-      PerusopetusCredit restCredit = restCredit(assessment, educationTypeCode);
+      PerusopetusCredit restCredit = restCreditForCourseAssessment(assessment, educationTypeCode);
       
       if (restCredit.getState() != null && restCredit.getState().isAcceptedState()) {
         report.addAcceptedCredit(restCredit);
@@ -124,6 +127,22 @@ public class ReportRESTService extends AbstractRESTService {
       else {
         report.addRejectedCredit(restCredit);
       }
+    }
+    
+    // VOS-hyväksiluvut
+    
+    List<TransferCredit> vosTCs = transferCreditDAO.listByStudyProgrammesAndDatesAndFunding(studyProgrammes, beginDate, endDate, TransferCreditFunding.GOVERNMENT_FUNDING);
+    for (TransferCredit transferCredit : vosTCs) {
+      PerusopetusCredit restCredit = restCredit(transferCredit, educationTypeCode);
+      
+      if (restCredit.getState() != null && restCredit.getState().isAcceptedState()) {
+        report.getSummary().incrementAcceptedTransferCreditCount();
+      }
+      else {
+        report.getSummary().incrementRejectedTransferCreditCount();
+      }
+      
+      report.addFundedTransferCredit(restCredit);
     }
     
     // Summary
@@ -155,10 +174,10 @@ public class ReportRESTService extends AbstractRESTService {
     return Response.ok(report).build();
   }
   
-  private PerusopetusCreditState handleCreditList(List<? extends Credit> creditList, boolean creditsAreCourseAssessments, CourseAssessment assessment, PerusopetusCreditState state, List<PerusopetusCredit> previousEvaluations) {
+  private PerusopetusCreditState handleCreditList(List<? extends Credit> creditList, boolean creditsAreCourseAssessments, boolean creditsAreLinks, CourseCredit assessment, PerusopetusCreditState state, List<PerusopetusCredit> previousEvaluations) {
     for (Credit matchingAssessment : creditList) {
       // Skippaa jos credit.id on sama (ts sama Credit löytyy listasta)
-      if (!matchingAssessment.getId().equals(assessment.getId())) {
+      if (matchingAssessment.getId().equals(assessment.getId())) {
         continue;
       }
       
@@ -171,9 +190,13 @@ public class ReportRESTService extends AbstractRESTService {
       // Jos matchingAssessment on annettu ennen arviointia, on kyseessä jonkunsortin korotus
       if (matchingAssessment.getDate().before(assessment.getDate())) {
         // Pelkät perustiedot aiemmista suorituksista
+        String creditType = matchingAssessment.getCreditType() == CreditType.CourseAssessment ? (creditsAreLinks ? "L-CA" : "CA")
+            : matchingAssessment.getCreditType() == CreditType.TransferCredit ? (creditsAreLinks ? "L-TC" : "TC") : null;
+
         PerusopetusCredit previousEvaluation = new PerusopetusCredit();
         previousEvaluation.setGradeDate(matchingAssessment.getDate());
         previousEvaluation.setGradeName(gradeName);
+        previousEvaluation.setType(creditType);
         previousEvaluations.add(previousEvaluation);
         
         // Samasta kurssista saa rahoitusta vain kerran kalenterivuodessa
@@ -193,55 +216,49 @@ public class ReportRESTService extends AbstractRESTService {
     return state;
   }
   
-  
-  private PerusopetusCredit restCredit(CourseAssessment courseAssessment, String educationTypeCode) {
-    Student student = courseAssessment.getStudent();
-    Subject subject = courseAssessment.getSubject();
-    Integer courseNumber = courseAssessment.getCourseNumber();
-    String studentName = String.format("%s, %s", student.getLastName(), student.getFirstName());
-    
-    CourseModule courseModule = courseAssessment.getCourseModule();
-    CourseBase courseBase = courseModule.getCourse();
 
+  private PerusopetusCredit restCredit(CourseCredit courseCredit, String educationTypeCode) {
+    Student student = courseCredit.getStudent();
+    Subject subject = courseCredit.getSubject();
+    Integer courseNumber = courseCredit.getCourseNumber();
+    String studentName = String.format("%s, %s", student.getLastName(), student.getFirstName());
+    String creditType = courseCredit.getCreditType() == CreditType.CourseAssessment ? "CA"
+        : courseCredit.getCreditType() == CreditType.TransferCredit ? "TC" : null;
+    
     PerusopetusCreditState state = PerusopetusCreditState.ACCEPTED;
     boolean otherFunding = student.getFunding() == StudentFunding.OTHER_FUNDING;
     
     String courseCode;
-    if (courseAssessment.getSubject() != null && StringUtils.isNotBlank(courseAssessment.getSubject().getCode())) {
-      courseCode = courseAssessment.getSubject().getCode();
-      if (courseAssessment.getCourseNumber() != null) {
-        courseCode += courseAssessment.getCourseNumber();
+    if (courseCredit.getSubject() != null && StringUtils.isNotBlank(courseCredit.getSubject().getCode())) {
+      courseCode = courseCredit.getSubject().getCode();
+      if (courseCredit.getCourseNumber() != null) {
+        courseCode += courseCredit.getCourseNumber();
       }
     }
     else {
       courseCode = null;
     }
     
-    boolean groupCourse;
-    if (courseBase instanceof Course && ((Course) courseBase).getTags() != null) {
-      Course course = (Course) courseBase;
-      groupCourse = course.getTags().stream().anyMatch(tag -> StringUtils.equals(tag.getText(), "ryhmäkurssi"));
-    }
-    else {
-      groupCourse = false;
-    }
-
     Double courseLength = null;
     String courseLengthSymbol = null;
-    if (courseModule.getCourseLength() != null && courseModule.getCourseLength().getUnits() != null && courseModule.getCourseLength().getUnit() != null && StringUtils.isNotBlank(courseModule.getCourseLength().getUnit().getSymbol())) {
-      courseLength = courseModule.getCourseLength().getUnits();
-      courseLengthSymbol = courseModule.getCourseLength().getUnit().getSymbol();
+    if (courseCredit.getCourseLength() != null && courseCredit.getCourseLength().getUnits() != null && courseCredit.getCourseLength().getUnit() != null && StringUtils.isNotBlank(courseCredit.getCourseLength().getUnit().getSymbol())) {
+      courseLength = courseCredit.getCourseLength().getUnits();
+      courseLengthSymbol = courseCredit.getCourseLength().getUnit().getSymbol();
     }
 
     boolean mismatchingCurriculum;
-    if (CollectionUtils.isNotEmpty(courseBase.getCurriculums())) {
+    if (CollectionUtils.isNotEmpty(courseCredit.getCurriculums())) {
       if (student.getCurriculum() != null) {
-        mismatchingCurriculum = !courseBase.getCurriculums().stream().anyMatch(courseCurriculum -> courseCurriculum.getId().equals(student.getCurriculum().getId()));
+        mismatchingCurriculum = !courseCredit.getCurriculums().stream().anyMatch(courseCurriculum -> courseCurriculum.getId().equals(student.getCurriculum().getId()));
+        if (mismatchingCurriculum) {
+          state = PerusopetusCreditState.REJECTED_MISMATCHING_CURRICULUM;
+        }
       }
       else {
         // This could be communicated in a different manner, but student 
         // having no curriculum is a problem in this context.
         mismatchingCurriculum = true;
+        state = PerusopetusCreditState.REJECTED_MISSING_STUDENT_CURRICULUM;
       }
     }
     else {
@@ -249,60 +266,59 @@ public class ReportRESTService extends AbstractRESTService {
       mismatchingCurriculum = false;
     }
 
-    boolean evaluatedOutsideStudies = student.getStudyStartDate() == null || courseAssessment.getDate() == null || courseAssessment.getDate().before(student.getStudyStartDate());
+    boolean evaluatedOutsideStudies = student.getStudyStartDate() == null || courseCredit.getDate() == null || courseCredit.getDate().before(student.getStudyStartDate());
     if (!evaluatedOutsideStudies && student.getStudyEndDate() != null) {
-      evaluatedOutsideStudies = courseAssessment.getDate().after(DateUtils.endOfDay(student.getStudyEndDate()));
+      evaluatedOutsideStudies = courseCredit.getDate().after(DateUtils.endOfDay(student.getStudyEndDate()));
     }
     
     boolean koskiFailure = !koskiController.isSuccessfullyUpdated(student.getPerson());
 
     // 0h-suoritukset poistetaan
-    if (courseAssessment.getCourseLength() == null || courseAssessment.getCourseLength().getUnits() == null || courseAssessment.getCourseLength().getUnits() == 0) {
+    if (courseCredit.getCourseLength() == null || courseCredit.getCourseLength().getUnits() == null || courseCredit.getCourseLength().getUnits() == 0) {
       state = PerusopetusCreditState.REJECTED_COURSELENGTH;
     }
     
     // K-arvosanat (= kaikki ei-sallitut arvosanat) pois
-    String gradeName = courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null;
+    String gradeName = courseCredit.getGrade() != null ? courseCredit.getGrade().getName() : null;
     if (gradeName == null || !PyramusConsts.Perusopetus.ALLOWED_GRADES.contains(gradeName)) {
       state = PerusopetusCreditState.REJECTED_GRADE;
     }
     
     List<PerusopetusCredit> previousEvaluations = new ArrayList<>();
     
-    if (subject.getEducationType() != null && StringUtils.equals(subject.getEducationType().getCode(), educationTypeCode)) {
-      // Kyseessä soveltuvan koulutusasteen suoritus, etsitään edeltävät suoritukset
+    if ("MUU".equals(subject.getCode()) || (subject.getEducationType() != null && StringUtils.equals(subject.getEducationType().getCode(), educationTypeCode))) {
+      // Kyseessä soveltuvan koulutusasteen tai MUU-aineen suoritus, etsitään edeltävät suoritukset
 
       // Huom. Saman kurssin/modulin suoritukset etsitään tällä hetkellä saman Studentin tiedoista.
       // On mahdollista, että näitä pitäisi etsiä saman henkilön muidenkin opiskeluoikeuksien alta.
       
       // Kurssisuoritukset Studentin perusteella
       List<CourseAssessment> matchingCourseAssessments = courseAssessmentDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
-      state = handleCreditList(matchingCourseAssessments, true, courseAssessment, state, previousEvaluations);
+      state = handleCreditList(matchingCourseAssessments, true, false, courseCredit, state, previousEvaluations);
 
       // Hyväksiluetut Studentin perusteella
       List<TransferCredit> matchingTransferCredits = transferCreditDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
-      state = handleCreditList(matchingTransferCredits, false, courseAssessment, state, previousEvaluations);
+      state = handleCreditList(matchingTransferCredits, false, false, courseCredit, state, previousEvaluations);
       
       // Siirretyt suoritukset Studentin perusteella
       // Siirtosuoritukset käsitellään kuin ne olisivat hyväksilukuja, vaikka siirretty olisikin kurssisuoritus
       List<CreditLink> matchingCreditLinks = creditLinkDAO.listByStudentAndSubjectAndCourseNumber(student, subject, courseNumber);
       List<Credit> matchingCreditLinkCredits = matchingCreditLinks.stream().map(CreditLink::getCredit).toList();
-      state = handleCreditList(matchingCreditLinkCredits, false, courseAssessment, state, previousEvaluations);
+      state = handleCreditList(matchingCreditLinkCredits, false, true, courseCredit, state, previousEvaluations);
     }
     else {
       state = PerusopetusCreditState.REJECTED_EDUCATIONTYPE;
     }
     
     PerusopetusCredit credit = new PerusopetusCredit();
-    credit.setAssessorName(courseAssessment.getAssessor() != null ? courseAssessment.getAssessor().getFullName() : null);
+    credit.setAssessorName(courseCredit.getAssessor() != null ? courseCredit.getAssessor().getFullName() : null);
     credit.setCourseCode(courseCode);
     credit.setCourseLength(courseLength);
     credit.setCourseLengthSymbol(courseLengthSymbol);
-    credit.setCourseName(courseBase != null ? courseBase.getName() : null);
-    credit.setGradeName(courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
-    credit.setGradeDate(courseAssessment.getDate());
-    credit.setGradingScaleName((courseAssessment.getGrade() != null && courseAssessment.getGrade().getGradingScale() != null) ? courseAssessment.getGrade().getGradingScale().getName() : null);
-    credit.setGroupCourse(groupCourse);
+    credit.setCourseName(courseCredit.getCourseName());
+    credit.setGradeName(courseCredit.getGrade() != null ? courseCredit.getGrade().getName() : null);
+    credit.setGradeDate(courseCredit.getDate());
+    credit.setGradingScaleName((courseCredit.getGrade() != null && courseCredit.getGrade().getGradingScale() != null) ? courseCredit.getGrade().getGradingScale().getName() : null);
     credit.setPersonId(student.getPersonId());
     credit.setSchoolField((student.getSchool() != null && student.getSchool().getField() != null) ? student.getSchool().getField().getName() : null);
     credit.setSchoolName(student.getSchool() != null ? student.getSchool().getName() : null);
@@ -314,6 +330,7 @@ public class ReportRESTService extends AbstractRESTService {
     credit.setEvaluatedOutsideStudies(evaluatedOutsideStudies);
     credit.setKoskiFailure(koskiFailure);
     credit.setState(state);
+    credit.setType(creditType);
     
     if (previousEvaluations != null) {
       credit.setPreviousEvaluations(previousEvaluations);
@@ -321,4 +338,24 @@ public class ReportRESTService extends AbstractRESTService {
     
     return credit;
   }
+
+  private PerusopetusCredit restCreditForCourseAssessment(CourseAssessment courseAssessment, String educationTypeCode) {
+    CourseModule courseModule = courseAssessment.getCourseModule();
+    CourseBase courseBase = courseModule.getCourse();
+
+    boolean groupCourse;
+    if (courseBase instanceof Course && ((Course) courseBase).getTags() != null) {
+      Course course = (Course) courseBase;
+      groupCourse = course.getTags().stream().anyMatch(tag -> StringUtils.equals(tag.getText(), "ryhmäkurssi"));
+    }
+    else {
+      groupCourse = false;
+    }
+
+    PerusopetusCredit restCredit = restCredit(courseAssessment, educationTypeCode);
+    restCredit.setCourseId(courseBase.getId());
+    restCredit.setGroupCourse(groupCourse);
+    return restCredit;
+  }
+
 }

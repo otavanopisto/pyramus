@@ -27,6 +27,14 @@ public class PerusopetusCreditReport {
     return summary;
   }
 
+  public void addFundedTransferCredit(PerusopetusCredit credit) {
+    fundedTransferCredits.add(credit);
+  }
+  
+  public List<PerusopetusCredit> getFundedTransferCredits() {
+    return fundedTransferCredits;
+  }
+
   public class PerusopetusCreditReportSummary {
     
     public int getAcceptedCreditCount() {
@@ -43,6 +51,30 @@ public class PerusopetusCreditReport {
     
     public void incrementRejectedCreditCount() {
       this.rejectedCreditCount++;
+    }
+
+    public int getAcceptedTransferCreditCount() {
+      return acceptedTransferCreditCount;
+    }
+
+    public void incrementAcceptedTransferCreditCount() {
+      this.acceptedTransferCreditCount++;
+    }
+    
+    public void setAcceptedTransferCreditCount(int acceptedTransferCreditCount) {
+      this.acceptedTransferCreditCount = acceptedTransferCreditCount;
+    }
+
+    public int getRejectedTransferCreditCount() {
+      return rejectedTransferCreditCount;
+    }
+
+    public void incrementRejectedTransferCreditCount() {
+      this.rejectedTransferCreditCount++;
+    }
+
+    public void setRejectedTransferCreditCount(int rejectedTransferCreditCount) {
+      this.rejectedTransferCreditCount = rejectedTransferCreditCount;
     }
 
     public Map<String, Integer> getAcceptedByLengthUnit() {
@@ -103,6 +135,8 @@ public class PerusopetusCreditReport {
 
     private int acceptedCreditCount;
     private int rejectedCreditCount;
+    private int acceptedTransferCreditCount;
+    private int rejectedTransferCreditCount;
     private Map<String, Integer> acceptedByLengthUnit = new HashMap<>();
     private Map<String, Integer> rejectedByLengthUnit = new HashMap<>();
     private Map<PerusopetusCreditState, Integer> acceptedByState = new HashMap<>();
@@ -112,4 +146,5 @@ public class PerusopetusCreditReport {
   private final PerusopetusCreditReportSummary summary = new PerusopetusCreditReportSummary();
   private final List<PerusopetusCredit> acceptedCredits = new ArrayList<>();
   private final List<PerusopetusCredit> rejectedCredits = new ArrayList<>();
+  private final List<PerusopetusCredit> fundedTransferCredits = new ArrayList<>();
 }

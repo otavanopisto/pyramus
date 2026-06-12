@@ -178,6 +178,23 @@ public class PerusopetusCredit {
     this.courseLengthSymbol = courseLengthSymbol;
   }
 
+  public Long getCourseId() {
+    return courseId;
+  }
+
+  public void setCourseId(Long courseId) {
+    this.courseId = courseId;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  private Long courseId;
   private String courseName;
   private String courseCode;
   private Double courseLength;
@@ -193,6 +210,7 @@ public class PerusopetusCredit {
   private String assessorName;
   private String schoolName;
   private String schoolField;
+  private String type;
   
   private PerusopetusCreditState state;
   private boolean mismatchingCurriculum;
