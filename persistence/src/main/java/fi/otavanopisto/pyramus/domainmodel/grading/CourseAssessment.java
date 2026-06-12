@@ -9,10 +9,13 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.domainmodel.base.CourseModule;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
@@ -48,7 +51,14 @@ public class CourseAssessment extends CourseCredit {
   @Override
   @Transient
   public String getCourseName() {
-    return getCourseModule() != null && getCourseModule().getCourse() != null ? getCourseModule().getCourse().getName() : null;
+    if (getCourseStudent() != null && getCourseStudent().getCourse() != null) {
+      Course course = getCourseStudent().getCourse();
+      
+      if (StringUtils.isNotBlank(course.getName())) {
+        return StringUtils.isBlank(course.getNameExtension()) ? course.getName() : String.format("%s (%s)", course.getName(), course.getNameExtension());
+      }
+    }
+    return null;
   }
 
   @Override
