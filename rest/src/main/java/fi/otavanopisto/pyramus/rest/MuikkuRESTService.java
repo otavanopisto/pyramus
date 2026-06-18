@@ -469,6 +469,7 @@ public class MuikkuRESTService {
           item.setSubjectName(courseModule.getSubject().getName());
           assessmentRequestStateCheck(item, student);
           items.add(item);
+          itemCache.put(item.getSubject() + item.getCourseNumber(), item);
         }
       }
     }
