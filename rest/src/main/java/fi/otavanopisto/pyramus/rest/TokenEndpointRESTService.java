@@ -64,10 +64,10 @@ public class TokenEndpointRESTService extends AbstractRESTService {
     try {
       oauthRequest = new OAuthTokenRequest(req);
 
-      ClientApplication clientApplication = oauthController.findByClientIdAndClientSecret(oauthRequest.getClientId(),
+      ClientApplication clientApplication = oauthController.findActiveByClientIdAndClientSecret(oauthRequest.getClientId(),
           oauthRequest.getClientSecret());
 
-      if (clientApplication == null) {
+      if (clientApplication == null || !clientApplication.isActive()) {
         logger.severe("Invalid client application");
         OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FORBIDDEN)
             .setError(OAuthError.TokenResponse.INVALID_CLIENT).setErrorDescription("Invalid client").buildJSONMessage();

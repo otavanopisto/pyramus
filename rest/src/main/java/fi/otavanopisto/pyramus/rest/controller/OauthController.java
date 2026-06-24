@@ -43,8 +43,8 @@ public class OauthController {
     return clientApplicationAccessTokenDAO.findByRefreshToken(refreshToken);
   }
   
-  public ClientApplication findByClientIdAndClientSecret(String clientId, String clientSecret) {
-    return clientApplicationDAO.findByClientIdAndClientSecret(clientId, clientSecret);
+  public ClientApplication findActiveByClientIdAndClientSecret(String clientId, String clientSecret) {
+    return clientApplicationDAO.findActiveByClientIdAndClientSecret(clientId, clientSecret);
   }
 
   public ClientApplicationAuthorizationCode findByClientApplicationAndAuthorizationCode(ClientApplication clientApplication, String authorizationCode) {

@@ -36,48 +36,48 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
     ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
     ClientApplicationAccessTokenDAO clientApplicationAccessTokenDAO = DAOFactory.getInstance().getClientApplicationAccessTokenDAO();
 
-    Long clientApplicationsRowCount = requestContext.getLong("clientApplicationsTable.rowCount");
-    for (int i = 0; i < clientApplicationsRowCount; i++) {
-      String colPrefix = "clientApplicationsTable." + i;
-
-      Long id = requestContext.getLong(colPrefix + ".id");
-      Boolean remove = "1".equals(requestContext.getString(colPrefix + ".remove"));
-      Boolean regenerateSecret = "1".equals(requestContext.getString(colPrefix + ".regenerateSecret"));
-      Boolean skipPrompt = "1".equals(requestContext.getString(colPrefix + ".skipPrompt"));
-      String clientName = requestContext.getString(colPrefix + ".appName");
-      String clientId = requestContext.getString(colPrefix + ".appId");
-      String clientSecret = requestContext.getString(colPrefix + ".appSecret");
-      String[] scopesArr = StringUtils.split(requestContext.getString(colPrefix + ".scopes"), ',');
-      Set<String> scopes = scopesArr != null ? Set.of(scopesArr) : new HashSet<>();
-
-      if (id == null && !remove) {
-        clientId = UUID.randomUUID().toString();
-        clientSecret = new OauthClientSecretGenerator(80).nextString();
-        clientApplicationDAO.create(clientName, clientId, clientSecret, skipPrompt, scopes);
-      } else if(id != null) {
-        ClientApplication clientApplication = clientApplicationDAO.findById(id);
-
-        if (remove) {
-          List<ClientApplicationAuthorizationCode> authCodes = clientApplicationAuthorizationCodeDAO.listByClientApplication(clientApplication);
-          for(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode : authCodes){
-            ClientApplicationAccessToken clientApplicationAccessToken = clientApplicationAccessTokenDAO.findByAuthCode(clientApplicationAuthorizationCode);
-            if(clientApplicationAccessToken != null){
-              clientApplicationAccessTokenDAO.delete(clientApplicationAccessToken);
-            }
-            clientApplicationAuthorizationCodeDAO.delete(clientApplicationAuthorizationCode);
-          }
-          clientApplicationDAO.delete(clientApplication);
-        } else {
-          if (regenerateSecret) {
-            clientSecret = new OauthClientSecretGenerator(80).nextString();
-            clientApplicationDAO.updateClientSecret(clientApplication, clientSecret);
-          }
-          clientApplicationDAO.updateName(clientApplication, clientName);
-          clientApplicationDAO.updateSkipPrompt(clientApplication, skipPrompt);
-          clientApplicationDAO.updateScopes(clientApplication, scopes);
-        }
-      }
-    }
+//    Long clientApplicationsRowCount = requestContext.getLong("clientApplicationsTable.rowCount");
+//    for (int i = 0; i < clientApplicationsRowCount; i++) {
+//      String colPrefix = "clientApplicationsTable." + i;
+//
+//      Long id = requestContext.getLong(colPrefix + ".id");
+//      Boolean remove = "1".equals(requestContext.getString(colPrefix + ".remove"));
+//      Boolean regenerateSecret = "1".equals(requestContext.getString(colPrefix + ".regenerateSecret"));
+//      Boolean skipPrompt = "1".equals(requestContext.getString(colPrefix + ".skipPrompt"));
+//      String clientName = requestContext.getString(colPrefix + ".appName");
+//      String clientId = requestContext.getString(colPrefix + ".appId");
+//      String clientSecret = requestContext.getString(colPrefix + ".appSecret");
+//      String[] scopesArr = StringUtils.split(requestContext.getString(colPrefix + ".scopes"), ',');
+//      Set<String> scopes = scopesArr != null ? Set.of(scopesArr) : new HashSet<>();
+//
+//      if (id == null && !remove) {
+//        clientId = UUID.randomUUID().toString();
+//        clientSecret = new OauthClientSecretGenerator(80).nextString();
+//        clientApplicationDAO.create(clientName, clientId, clientSecret, skipPrompt, scopes);
+//      } else if(id != null) {
+//        ClientApplication clientApplication = clientApplicationDAO.findById(id);
+//
+//        if (remove) {
+//          List<ClientApplicationAuthorizationCode> authCodes = clientApplicationAuthorizationCodeDAO.listByClientApplication(clientApplication);
+//          for(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode : authCodes){
+//            ClientApplicationAccessToken clientApplicationAccessToken = clientApplicationAccessTokenDAO.findByAuthCode(clientApplicationAuthorizationCode);
+//            if(clientApplicationAccessToken != null){
+//              clientApplicationAccessTokenDAO.delete(clientApplicationAccessToken);
+//            }
+//            clientApplicationAuthorizationCodeDAO.delete(clientApplicationAuthorizationCode);
+//          }
+//          clientApplicationDAO.delete(clientApplication);
+//        } else {
+//          if (regenerateSecret) {
+//            clientSecret = new OauthClientSecretGenerator(80).nextString();
+//            clientApplicationDAO.updateClientSecret(clientApplication, clientSecret);
+//          }
+//          clientApplicationDAO.updateName(clientApplication, clientName);
+//          clientApplicationDAO.updateSkipPrompt(clientApplication, skipPrompt);
+//          clientApplicationDAO.updateScopes(clientApplication, scopes);
+//        }
+//      }
+//    }
     processForm(requestContext);
   }
 
