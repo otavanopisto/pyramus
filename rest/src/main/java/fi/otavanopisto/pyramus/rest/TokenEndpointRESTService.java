@@ -85,7 +85,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
         if (clientAuthentication instanceof PlainClientSecret) {
           PlainClientSecret clientCredentials = (PlainClientSecret) clientAuthentication;
           
-          ClientApplication clientApplication = oauthController.findByClientIdAndClientSecret(clientCredentials.getClientID().getValue(),
+          ClientApplication clientApplication = oauthController.findActiveByClientIdAndClientSecret(clientCredentials.getClientID().getValue(),
               clientCredentials.getClientSecret().getValue());
           if (clientApplication == null) {
             return oauthTokenError(OAuth2Error.INVALID_CLIENT);

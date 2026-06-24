@@ -49,9 +49,6 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
       httpRequest = ServletUtils.createHTTPRequest(requestContext.getRequest());
       authorizationRequest = AuthorizationRequest.parse(httpRequest);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      
       pageErrorResponse(requestContext);
       return;
     }
@@ -63,15 +60,14 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
     // Find the client application
     ClientApplication clientApplication = clientID != null ? clientApplicationDAO.findByClientId(clientID.getValue()) : null;
-    if (clientApplication == null) {
+    if (clientApplication == null || !clientApplication.isActive()) {
       pageErrorResponse(requestContext);
       return;
     }
 
     // Check that the redirect uri is valid
     
-    // TODO !!!!!!!!!!!!!!!!!!!
-    if (false) {
+    if (!clientApplication.isAllowAllRedirectURIs() && !clientApplication.isAllowedRedirectURI(redirectionURI)) {
       pageErrorResponse(requestContext);
       return;
     }

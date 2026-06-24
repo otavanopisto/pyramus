@@ -15,13 +15,16 @@ import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication_
 @Stateless
 public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
 
-  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt, Set<String> scopes) {
+  public ClientApplication create(String clientName, boolean active, String clientId, String clientSecret, Boolean skipPrompt, Set<String> scopes, boolean allowAllRedirectURIs, Set<String> redirectURIs) {
     ClientApplication clientApplication = new ClientApplication();
+    clientApplication.setActive(active);
     clientApplication.setClientId(clientId);
     clientApplication.setClientName(clientName);
     clientApplication.setClientSecret(clientSecret);
     clientApplication.setSkipPrompt(skipPrompt);
     clientApplication.setScopes(scopes);
+    clientApplication.setAllowAllRedirectURIs(allowAllRedirectURIs);
+    clientApplication.setRedirectURIs(redirectURIs);
     return persist(clientApplication);
   }
 
@@ -37,17 +40,27 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public ClientApplication findByClientIdAndClientSecret(String clientId, String clientSecret) {
+  public ClientApplication findActiveByClientIdAndClientSecret(String clientId, String clientSecret) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<ClientApplication> criteria = criteriaBuilder.createQuery(ClientApplication.class);
     Root<ClientApplication> root = criteria.from(ClientApplication.class);
     criteria.select(root);
-    criteria.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(ClientApplication_.clientId), clientId),
-        criteriaBuilder.equal(root.get(ClientApplication_.clientSecret), clientSecret)));
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(ClientApplication_.active), Boolean.TRUE),
+            criteriaBuilder.equal(root.get(ClientApplication_.clientId), clientId),
+            criteriaBuilder.equal(root.get(ClientApplication_.clientSecret), clientSecret)
+        )
+    );
 
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public ClientApplication updateActive(ClientApplication clientApplication, boolean active) {
+    clientApplication.setActive(active);
+    return persist(clientApplication);
   }
 
   public ClientApplication updateName(ClientApplication clientApplication, String clientName) {
@@ -72,6 +85,12 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
 
   public ClientApplication updateScopes(ClientApplication clientApplication, Set<String> scopes) {
     clientApplication.setScopes(scopes);
+    return persist(clientApplication);
+  }
+
+  public ClientApplication updateRedirectURIs(ClientApplication clientApplication, boolean allowAllRedirectURIs, Set<String> redirectURIs) {
+    clientApplication.setAllowAllRedirectURIs(allowAllRedirectURIs);
+    clientApplication.setRedirectURIs(redirectURIs);
     return persist(clientApplication);
   }
 

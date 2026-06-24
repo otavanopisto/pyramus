@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table ClientApplicationAllowedRedirectURIs (
+       clientApplication bigint not null,
+        redirectURI varchar(255) not null,
+        primary key (clientApplication, redirectURI)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAllowedRedirectURIs 
+       add constraint FK9n8j4raeae1ll9fxlsr4qu56q 
+       foreign key (clientApplication) 
+       references ClientApplication (id);
+  </sql>
+
+  <sql>
+    alter table ClientApplication add column active bit not null;
+  </sql>
+  
+  <sql>
+    alter table ClientApplication add column allowAllRedirectURIs bit not null;
+  </sql>
+  
+  <sql>
+    update ClientApplication set active = true, allowAllRedirectURIs = true;
+  </sql>
+  
+</update>
