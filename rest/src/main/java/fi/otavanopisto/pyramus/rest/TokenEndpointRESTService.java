@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,24 +14,30 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
-import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.error.OAuthError;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
+import com.nimbusds.oauth2.sdk.AccessTokenResponse;
+import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
+import com.nimbusds.oauth2.sdk.AuthorizationGrant;
+import com.nimbusds.oauth2.sdk.ErrorObject;
+import com.nimbusds.oauth2.sdk.OAuth2Error;
+import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.Scope.Value;
+import com.nimbusds.oauth2.sdk.TokenErrorResponse;
+import com.nimbusds.oauth2.sdk.TokenRequest;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthentication;
+import com.nimbusds.oauth2.sdk.auth.PlainClientSecret;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
+import com.nimbusds.oauth2.sdk.http.ServletUtils;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import com.nimbusds.oauth2.sdk.token.RefreshToken;
+import com.nimbusds.oauth2.sdk.token.Tokens;
 
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
-import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
@@ -54,100 +62,127 @@ public class TokenEndpointRESTService extends AbstractRESTService {
   @Unsecure
   @Path("/token")
   @POST
-  public Response authorize(@Context HttpServletResponse res, @Context HttpServletRequest req)
-      throws OAuthSystemException {
+  public Response authorize(@Context HttpServletResponse res, @Context HttpServletRequest req) {
 
-    OAuthTokenRequest oauthRequest;
-    boolean refreshing = false;
-
-    OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
     try {
-      oauthRequest = new OAuthTokenRequest(req);
+      HTTPRequest httpRequest = ServletUtils.createHTTPRequest(req);
+      TokenRequest tokenRequest = TokenRequest.parse(httpRequest);
 
-      ClientApplication clientApplication = oauthController.findByClientIdAndClientSecret(oauthRequest.getClientId(),
-          oauthRequest.getClientSecret());
+      AuthorizationGrant authorizationGrant = tokenRequest.getAuthorizationGrant();
 
-      if (clientApplication == null) {
-        logger.severe("Invalid client application");
-        OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FORBIDDEN)
-            .setError(OAuthError.TokenResponse.INVALID_CLIENT).setErrorDescription("Invalid client").buildJSONMessage();
-        return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-      }
+      // TODO Refresh token ?
+//    clientApplicationAccessToken = oauthController.findByRefreshToken(refreshToken);
+//    if (clientApplicationAccessToken != null) {
+//      oauthController.refresh(clientApplicationAccessToken, expires, accessToken);
+//    }
+      
+      if (authorizationGrant instanceof AuthorizationCodeGrant) {
+        AuthorizationCodeGrant authorizationCodeGrant = (AuthorizationCodeGrant) authorizationGrant;
+        String authorizationCode = authorizationCodeGrant.getAuthorizationCode().getValue();
 
-      ClientApplicationAuthorizationCode clientApplicationAuthorizationCode = null;
-      if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.AUTHORIZATION_CODE.toString())) {
-        clientApplicationAuthorizationCode = oauthController
-            .findByClientApplicationAndAuthorizationCode(clientApplication, oauthRequest.getParam(OAuth.OAUTH_CODE));
-        if (clientApplicationAuthorizationCode == null) {
-          logger.severe(String.format("Client application authorization code not found for token %s",
-              oauthRequest.getParam(OAuth.OAUTH_CODE)));
-          OAuthResponse response = OAuthASResponse
-              .errorResponse(HttpServletResponse.SC_FORBIDDEN)
-              .setError(OAuthError.TokenResponse.INVALID_GRANT)
-              .setErrorDescription("invalid authorization code")
-              .buildJSONMessage();
-          return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-        }
-      }
-      else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.REFRESH_TOKEN.toString())) {
-        refreshing = true;
-      }
-      else {
-        return Response.status(HttpServletResponse.SC_NOT_IMPLEMENTED).build();
-      }
+        ClientAuthentication clientAuthentication = tokenRequest.getClientAuthentication();
+        
+        if (clientAuthentication instanceof PlainClientSecret) {
+          PlainClientSecret clientCredentials = (PlainClientSecret) clientAuthentication;
+          
+          ClientApplication clientApplication = oauthController.findByClientIdAndClientSecret(clientCredentials.getClientID().getValue(),
+              clientCredentials.getClientSecret().getValue());
+          if (clientApplication == null) {
+            return oauthTokenError(OAuth2Error.INVALID_CLIENT);
+          }
+          
+          ClientApplicationAuthorizationCode clientApplicationAuthorizationCode = oauthController
+              .findByClientApplicationAndAuthorizationCode(clientApplication, authorizationCode);
+          if (clientApplicationAuthorizationCode == null) {
+            return oauthTokenError(OAuth2Error.INVALID_GRANT);
+          }
+          
+          // Check requested scopes
+          
+          Scope requestedScopes = tokenRequest.getScope();
+          Set<String> grantedScopes = new HashSet<>();
+          
+          if (requestedScopes == null || requestedScopes.isEmpty()) {
+            // Grant the scopes from the authorization code by default if the request doesn't 
+            // specify any scopes because the platform requires at least one scope to be present
+            grantedScopes.addAll(clientApplicationAuthorizationCode.getSelectedScopes());
+          }
+          else {
+            for (Value requestedScope : requestedScopes) {
+              String requestedScopeStr = requestedScope.getValue();
+              if (clientApplicationAuthorizationCode.getSelectedScopes().contains(requestedScopeStr)) {
+                grantedScopes.add(requestedScopeStr);
+              }
+              else {
+                return oauthTokenError(OAuth2Error.INVALID_SCOPE);
+              }
+            }
+          }
 
-      String accessToken = oauthIssuerImpl.accessToken();
-      String refreshToken = oauthIssuerImpl.refreshToken();
-      ClientApplicationAccessToken clientApplicationAccessToken;
-      Long expires = (System.currentTimeMillis() / 1000L) + TOKEN_LIFETIME;
+          // Make sure the scopes are also allowed for the client application
+          for (String grantedScope : grantedScopes) {
+            if (!clientApplication.getScopes().contains(grantedScope)) {
+              return oauthTokenError(OAuth2Error.INVALID_SCOPE);
+            }
+          }
+          
+          // Create token
 
-      if (refreshing) {
-        // New access token and expiration time but refresh token remains unchanged
-        refreshToken = oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN);
-        clientApplicationAccessToken = oauthController.findByRefreshToken(refreshToken);
-        if (clientApplicationAccessToken != null) {
-          oauthController.refresh(clientApplicationAccessToken, expires, accessToken);
-        }
-        else {
-          logger.severe(String.format("Invalid refresh token %s", refreshToken));
-          OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FORBIDDEN)
-              .setError("Invalid refresh token").buildJSONMessage();
-          return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-        }
-      }
-      else {
-        clientApplicationAccessToken = oauthController
-            .findByClientApplicationAuthorizationCode(clientApplicationAuthorizationCode);
-        if (clientApplicationAccessToken == null) {
+          Scope scope = new Scope(grantedScopes.toArray(new String[0]));
+          AccessToken accessToken = new BearerAccessToken(TOKEN_LIFETIME, scope);
+          RefreshToken refreshToken = new RefreshToken();
+          Long expires = (System.currentTimeMillis() / 1000L) + TOKEN_LIFETIME;
+          
           oauthController.createAccessToken(
-            accessToken,
-            refreshToken,
-            expires,
-            clientApplication,
-            clientApplicationAuthorizationCode,
-            clientApplicationAuthorizationCode.getSelectedScopes()
-            );
+              accessToken.getValue(),
+              refreshToken.getValue(),
+              expires,
+              clientApplication,
+              clientApplicationAuthorizationCode,
+              grantedScopes
+              );
+          
+          // Delete AuthorizationCode // TODO
+          
+          // Send response
+          
+          AccessTokenResponse accessTokenResponse = new AccessTokenResponse(new Tokens(accessToken, refreshToken));
+  
+          String body = accessTokenResponse.toJSONObject().toString();
+
+          CacheControl cacheControl = new CacheControl();
+          cacheControl.setNoCache(true);
+
+          return Response.ok().entity(body).cacheControl(cacheControl).build();
         }
         else {
-          oauthController.renewAccessToken(clientApplicationAccessToken, expires, accessToken, refreshToken);
+          // Not a plain secret request
+          return oauthTokenError(OAuth2Error.INVALID_CLIENT);
         }
       }
-
-      OAuthResponse response = OAuthASResponse
-          .tokenResponse(HttpServletResponse.SC_OK)
-          .setAccessToken(accessToken)
-          .setRefreshToken(refreshToken)
-          .setExpiresIn(String.valueOf(TOKEN_LIFETIME))
-          .buildJSONMessage();
-      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-
+      else {
+        // Not an authorization code grant
+        return oauthTokenError(OAuth2Error.UNSUPPORTED_GRANT_TYPE);
+      }
+      
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Couldn't handle token request", e);
+      return oauthTokenError(OAuth2Error.SERVER_ERROR);
     }
-    catch (OAuthProblemException e) {
-      logger.log(Level.SEVERE, "Oauth problem", e);
-      OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e)
-          .buildJSONMessage();
-      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-    }
+  }
+
+  private Response oauthTokenError(ErrorObject error) {
+    TokenErrorResponse tokenErrorResponse = new TokenErrorResponse(error);
+    String body = tokenErrorResponse.toJSONObject().toString();
+    
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setNoCache(true);
+    
+    return Response
+        .status(error.getHTTPStatusCode())
+        .entity(body)
+        .cacheControl(cacheControl)
+        .build();
   }
 
 }

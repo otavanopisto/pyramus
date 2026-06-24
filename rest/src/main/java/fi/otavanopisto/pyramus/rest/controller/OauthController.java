@@ -5,6 +5,12 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 
 import fi.otavanopisto.pyramus.dao.clientapplications.ClientApplicationAccessTokenDAO;
 import fi.otavanopisto.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;
@@ -27,6 +33,27 @@ public class OauthController {
   @Inject
   private ClientApplicationAccessTokenDAO clientApplicationAccessTokenDAO;
 
+  /**
+   * Attempts to parse the Bearer Authorization header from the request and
+   * return the ClientApplicationAccessToken that matches the access token.
+   * 
+   * Returns null if the parsing fails or if there is no access token that
+   * matches the header.
+   * 
+   * @param httpRequest
+   * @return
+   */
+  public ClientApplicationAccessToken getAccessTokenFromRequest(HttpServletRequest httpRequest) {
+    try {
+      BearerAccessToken bearerAccessToken = BearerAccessToken.parse(httpRequest.getHeader(HttpHeaders.AUTHORIZATION));
+      String accessToken = bearerAccessToken != null ? bearerAccessToken.getValue() : null;
+      return StringUtils.isNotBlank(accessToken) ? findByAccessToken(accessToken) : null;
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+  
   public ClientApplicationAccessToken createAccessToken(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode, Set<String> scopes) {
     return clientApplicationAccessTokenDAO.create(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode, scopes);
   }

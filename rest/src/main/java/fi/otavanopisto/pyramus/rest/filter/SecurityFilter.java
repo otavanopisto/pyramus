@@ -13,10 +13,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
-import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
@@ -93,25 +89,17 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   }
   
   private boolean hasOAuthApiAccess(String[] authScopes) {
-    try {
-      OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-      String accessToken = oauthRequest.getAccessToken();
-
-      ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
-      if (clientApplicationAccessToken == null) {
+    ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getAccessTokenFromRequest(request);
+    if (clientApplicationAccessToken == null) {
+      return false;
+    }
+    else {
+      Long currentTime = System.currentTimeMillis() / 1000L;
+      if (currentTime > clientApplicationAccessToken.getExpires()) {
         return false;
       } else {
-        Long currentTime = System.currentTimeMillis() / 1000L;
-        if (currentTime > clientApplicationAccessToken.getExpires()) {
-          return false;
-        } else {
-          return CollectionUtils.containsAny(clientApplicationAccessToken.getScopes(), authScopes);
-        }
+        return CollectionUtils.containsAny(clientApplicationAccessToken.getScopes(), authScopes);
       }
-    } catch (OAuthProblemException e) {
-      return false;
-    } catch (OAuthSystemException e) {
-      return false;
     }
   }
   
