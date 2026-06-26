@@ -1,9 +1,15 @@
 package fi.otavanopisto.pyramus;
 
+import static io.restassured.RestAssured.certificate;
+import static io.restassured.RestAssured.given;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,6 +22,8 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -25,10 +33,50 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nimbusds.oauth2.sdk.AuthorizationCode;
+import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
+import com.nimbusds.oauth2.sdk.AuthorizationGrant;
+import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.TokenRequest;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthentication;
+import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
+import com.nimbusds.oauth2.sdk.auth.Secret;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
+import com.nimbusds.oauth2.sdk.id.ClientID;
+
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.path.json.mapper.factory.Jackson2ObjectMapperFactory;
+import io.restassured.response.Response;
+
 public abstract class AbstractIntegrationTest {
 
   @Rule
   public TestName testName = new TestName();
+
+  private static Map<Role, String> ROLE_TOKENS = new HashMap<>();
+
+  static {
+    RestAssured.baseURI = getAppUrl(true) + "/1";
+    RestAssured.port = getPortHttps();
+    RestAssured.useRelaxedHTTPSValidation();
+    RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
+
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
+          @Override
+          public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
+            com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            return objectMapper;
+          }
+        }));
+  }
 
   @Before
   public void baseSetupSql() throws Exception {
@@ -181,6 +229,56 @@ public abstract class AbstractIntegrationTest {
       return browser;
     }
     return "";
+  }
+
+  protected String getOAuthAccessToken(Role role) {
+    if (ROLE_TOKENS.containsKey(role)) {
+      return ROLE_TOKENS.get(role);
+    }
+    else {
+      URI callback;
+      URI tokenEndpoint;
+  
+      try {
+        callback = new URI(fi.otavanopisto.pyramus.Common.REDIRECT_URL);
+        tokenEndpoint = new URI(fi.otavanopisto.pyramus.Common.TOKEN_URI);
+      } 
+      catch (URISyntaxException e) {
+        throw new RuntimeException("Invalid test login URIs.");
+      }
+    
+      AuthorizationCode code = new AuthorizationCode(fi.otavanopisto.pyramus.Common.getRoleAuth(role));
+      AuthorizationGrant codeGrant = new AuthorizationCodeGrant(code, callback);
+  
+      // The credentials to authenticate the client at the token endpoint
+      ClientID clientID = new ClientID(fi.otavanopisto.pyramus.Common.CLIENT_ID);
+      Secret clientSecret = new Secret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET);
+      ClientAuthentication clientAuth = new ClientSecretBasic(clientID, clientSecret);
+  
+      // The token endpoint
+  
+      Scope scope = new Scope("legacy");
+      
+      // Make the token request
+      TokenRequest request = new TokenRequest(tokenEndpoint, clientAuth, codeGrant, scope);
+      HTTPRequest nimbusHttpRequest = request.toHTTPRequest();
+      
+      String authHeader = nimbusHttpRequest.getAuthorization();
+      String tokenRequestBody = nimbusHttpRequest.getBody();
+
+      // We're making the call with RestAssured because it's already set up to work 
+      // with the self-signed certificates, which seems to be pain in the behind to 
+      // get working with the Nimbus framework - we can look into it later
+      
+      Response response = given().contentType("application/x-www-form-urlencoded").header("Authorization", authHeader).body(tokenRequestBody)
+          .post("/oauth/token");
+      
+      response.then().statusCode(200);
+      
+      String accessToken = response.body().jsonPath().getString("access_token");
+      ROLE_TOKENS.put(role, accessToken);
+      return accessToken;
+    }
   }
   
   protected OffsetDateTime getDateToOffsetDateTime(int year, int monthOfYear, int dayOfMonth) {
