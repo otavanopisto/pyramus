@@ -28,6 +28,15 @@ public class Maksuttomuus {
     this.maksuton = maksuton;
   }
 
+  public Date getLoppu() {
+    return loppu;
+  }
+
+  public void setLoppu(Date loppu) {
+    this.loppu = loppu;
+  }
+
   private Date alku;
+  private Date loppu;
   private boolean maksuton;
 }
