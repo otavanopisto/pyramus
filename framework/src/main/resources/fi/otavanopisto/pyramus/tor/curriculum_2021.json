@@ -2116,7 +2116,8 @@
           "courseNumber": 9,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
         },
         {
           "name": "Matematiikkaa abeille",
@@ -3005,11 +3006,12 @@
       "code": "AT",
       "modules": [
         {
-          "name": "Sähköinen ylioppilaskoe",
+          "name": "Ylioppilaskokeet",
           "courseNumber": 1,
-          "length": 2,
+          "length": 1,
           "lengthUnitSymbol": "op",
-          "mandatority": "SCHOOL_LEVEL_OPTIONAL"
+          "mandatority": "SCHOOL_LEVEL_OPTIONAL",
+          "available": true
         },
         {
           "name": "Tekstinkäsittely",
