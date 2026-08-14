@@ -496,34 +496,34 @@ insert into
   select id, 'legacy' from ClientApplication;
 
 insert into
-   ClientApplicationAuthorizationCode (id, authorizationCode, redirectUrl, user_id, app_id)
+   ClientApplicationAuthorizationCode (id, authorizationCode, redirectUrl, user_id, app_id, issuedAt)
 values
 /**   
 Old. Needed anymore?
 **/
-    (1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1),
+    (1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1, date_add(now(), interval 1 day)),
 /** GUEST ROLE**/
-    (2, 'ff81d5b8500c773e7a1776a7963801e4', 'https://localhost:8443/oauth2ClientTest/success', 2, 1),
+    (2, 'ff81d5b8500c773e7a1776a7963801e4', 'https://localhost:8443/oauth2ClientTest/success', 2, 1, date_add(now(), interval 1 day)),
 /** USER ROLE**/    
-    (3, 'ff81d5b8500c773e7a1776a7963801e5', 'https://localhost:8443/oauth2ClientTest/success', 5, 1),
+    (3, 'ff81d5b8500c773e7a1776a7963801e5', 'https://localhost:8443/oauth2ClientTest/success', 5, 1, date_add(now(), interval 1 day)),
 /** MANAGER ROLE**/
-    (4, 'ff81d5b8500c773e7a1776a7963801e6', 'https://localhost:8443/oauth2ClientTest/success', 6, 1),
+    (4, 'ff81d5b8500c773e7a1776a7963801e6', 'https://localhost:8443/oauth2ClientTest/success', 6, 1, date_add(now(), interval 1 day)),
 /** ADMINISTRATOER ROLE**/
-    (5, 'ff81d5b8500c773e7a1776a7963801e7', 'https://localhost:8443/oauth2ClientTest/success', 7, 1),
+    (5, 'ff81d5b8500c773e7a1776a7963801e7', 'https://localhost:8443/oauth2ClientTest/success', 7, 1, date_add(now(), interval 1 day)),
 /** STUDENT ROLE**/
-    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1),
+    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1, date_add(now(), interval 1 day)),
 /** TRUSTED_SYSTEM ROLE**/
-    (7, 'ff81d5b8500c773e7a1776a7963801e9', 'https://localhost:8443/oauth2ClientTest/success', 9, 1),
+    (7, 'ff81d5b8500c773e7a1776a7963801e9', 'https://localhost:8443/oauth2ClientTest/success', 9, 1, date_add(now(), interval 1 day)),
 /** STUDY_GUIDER ROLE**/
-    (8, 'ff81d5b8500c773e7a1776a7963801e0', 'https://localhost:8443/oauth2ClientTest/success', 10, 1),
+    (8, 'ff81d5b8500c773e7a1776a7963801e0', 'https://localhost:8443/oauth2ClientTest/success', 10, 1, date_add(now(), interval 1 day)),
 /** TEACHER ROLE**/
-    (9, 'ff81d5b8500c773e7a1776a7963801e1', 'https://localhost:8443/oauth2ClientTest/success', 11, 1),
+    (9, 'ff81d5b8500c773e7a1776a7963801e1', 'https://localhost:8443/oauth2ClientTest/success', 11, 1, date_add(now(), interval 1 day)),
 /** STUDY_PROGRAMME_LEADER ROLE**/
-    (10, 'ff81d5b8500c773e7a1776a7963801e2', 'https://localhost:8443/oauth2ClientTest/success', 12, 1),
+    (10, 'ff81d5b8500c773e7a1776a7963801e2', 'https://localhost:8443/oauth2ClientTest/success', 12, 1, date_add(now(), interval 1 day)),
 /** CLOSED ROLE**/
-    (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1),
+    (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1, date_add(now(), interval 1 day)),
 /** STUDENT_PARENT ROLE**/
-    (12, 'ff81d5b8500c773e7a1776a796380115', 'https://localhost:8443/oauth2ClientTest/success', 15, 1);    
+    (12, 'ff81d5b8500c773e7a1776a796380115', 'https://localhost:8443/oauth2ClientTest/success', 15, 1, date_add(now(), interval 1 day));
 
 insert into
   ClientApplicationAuthorizationCodeScopes (authorizationCode, scope) 
