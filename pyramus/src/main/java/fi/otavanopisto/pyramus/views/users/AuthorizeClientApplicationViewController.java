@@ -167,8 +167,6 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
     ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
 
-    // TODO doublecheck the scopes and redirecturi ?
-    
     HttpSession session = requestContext.getRequest().getSession();
     Long userId = (Long) session.getAttribute("loggedUserId");
     User user = userDAO.findById(userId);
