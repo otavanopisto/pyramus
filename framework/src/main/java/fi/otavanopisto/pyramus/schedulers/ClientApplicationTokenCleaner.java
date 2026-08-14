@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.schedulers;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.Instant;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,32 +30,35 @@ public class ClientApplicationTokenCleaner {
   @Inject
   private ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO;
   
-  @Schedule(dayOfWeek = "*", hour="6", persistent = false)
+  @Schedule(dayOfWeek = "*", hour = "*", minute = "*/5", persistent = false)
   private void removeExpiredTokens() {
-    int removed = 0;
-    Calendar calendar = new GregorianCalendar();
-    calendar.setTime(new Date());
-    calendar.add(Calendar.DATE, -1);
-    long threshold = calendar.getTimeInMillis() / 1000;
+    int removedTokens = 0;
+    int removedCodes = 0;
     
-    List<ClientApplicationAccessToken> tokens = clientApplicationAccessTokenDAO.listByExpired(threshold, BATCH_SIZE);
+    Instant tokenExpiryThreshold = Instant.now().minus(ClientApplicationAccessToken.REFRESHTOKEN_LIFETIME);
+    
+    List<ClientApplicationAccessToken> tokens = clientApplicationAccessTokenDAO.listByExpired(tokenExpiryThreshold, BATCH_SIZE);
     if (tokens.size() == BATCH_SIZE) {
       logger.warning("Client application access tokens possibly piling up");
     }
+    
     for (ClientApplicationAccessToken token : tokens) {
-      ClientApplicationAuthorizationCode authCode = token.getClientApplicationAuthorizationCode();
-      if (authCode.getUser().hasRole(Role.TRUSTED_SYSTEM)) {
-        continue;
-      }
       clientApplicationAccessTokenDAO.delete(token);
-      clientApplicationAuthorizationCodeDAO.delete(authCode);
-      removed++;
+      removedTokens++;
     }
 
-    if (removed > 0) {
-      logger.info(String.format("Removed %d expired client application access tokens", removed));
+    Instant authCodeExpiryThreshold = Instant.now().minus(ClientApplicationAuthorizationCode.AUTHCODE_LIFETIME);
+    List<ClientApplicationAuthorizationCode> expiredCodes = clientApplicationAuthorizationCodeDAO.listExpired(authCodeExpiryThreshold);
+    for (ClientApplicationAuthorizationCode authCode : expiredCodes) {
+      if (!authCode.getUser().hasRole(Role.TRUSTED_SYSTEM)) {
+        clientApplicationAuthorizationCodeDAO.delete(authCode);
+        removedCodes++;
+      }
     }
-    
+
+    if (removedCodes > 0 || removedTokens > 0) {
+      logger.info(String.format("Removed %d expired client application access tokens and %d expired codes", removedTokens, removedCodes));
+    }
   }
 
 }

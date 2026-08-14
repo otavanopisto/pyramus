@@ -80,14 +80,7 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
 
   private User getOAuthUser() {
     ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getAccessTokenFromRequest(request);
-    if (clientApplicationAccessToken != null) {
-      Long currentTime = System.currentTimeMillis() / 1000L;
-      if (currentTime <= clientApplicationAccessToken.getExpires()) {
-        return clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser();
-      }
-    }
-
-    return null;
+    return clientApplicationAccessToken != null && clientApplicationAccessToken.isValidAccessToken() ? clientApplicationAccessToken.getUser() : null;
   }
   
   @Override

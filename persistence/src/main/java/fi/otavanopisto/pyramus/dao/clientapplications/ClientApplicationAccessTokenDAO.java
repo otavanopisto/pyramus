@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.clientapplications;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,21 +14,22 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
-import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken_;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientApplicationAccessToken> {
 
-  public ClientApplicationAccessToken create(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode, Set<String> selectedScopes) {
+  public ClientApplicationAccessToken create(String accessToken, String refreshToken, ClientApplication clientApplication, User user, Set<String> selectedScopes) {
     EntityManager entityManager = getEntityManager();
 
     ClientApplicationAccessToken clientApplicationAccessToken = new ClientApplicationAccessToken();
     clientApplicationAccessToken.setAccessToken(accessToken);
     clientApplicationAccessToken.setRefreshToken(refreshToken);
     clientApplicationAccessToken.setClientApplication(clientApplication);
-    clientApplicationAccessToken.setExpires(expires);
-    clientApplicationAccessToken.setClientApplicationAuthorizationCode(clientApplicationAuthorizationCode);
+    clientApplicationAccessToken.setUser(user);
+    clientApplicationAccessToken.setAccessTokenIssuedAt(Instant.now());
+    clientApplicationAccessToken.setRefreshTokenIssuedAt(Instant.now());
 
     Set<String> scopes = new HashSet<>();
     scopes.addAll(selectedScopes);
@@ -65,7 +67,7 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public List<ClientApplicationAccessToken> listByExpired(long threshold, int maxResults) {
+  public List<ClientApplicationAccessToken> listByExpired(Instant threshold, int maxResults) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -73,45 +75,21 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
     Root<ClientApplicationAccessToken> root = criteria.from(ClientApplicationAccessToken.class);
     criteria.select(root);
     criteria.where(
-      criteriaBuilder.lessThan(root.get(ClientApplicationAccessToken_.expires), threshold)
+      criteriaBuilder.lessThan(root.get(ClientApplicationAccessToken_.refreshTokenIssuedAt), threshold)
     );
     
     return entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
   }
   
-  public ClientApplicationAccessToken findByAuthCode(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode){
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<ClientApplicationAccessToken> criteria = criteriaBuilder.createQuery(ClientApplicationAccessToken.class);
-    Root<ClientApplicationAccessToken> root = criteria.from(ClientApplicationAccessToken.class);
-    criteria.select(root);
-    criteria.where(
-            criteriaBuilder.equal(root.get(ClientApplicationAccessToken_.clientApplicationAuthorizationCode), clientApplicationAuthorizationCode)
-        );
-    
-    return getSingleResult(entityManager.createQuery(criteria));
-  }
-  
-  public ClientApplicationAccessToken updateExpires(ClientApplicationAccessToken clientApplicationAccessToken, long expires){
+  public ClientApplicationAccessToken refreshAccessToken(ClientApplicationAccessToken clientApplicationAccessToken, String newAccessToken, String newRefreshToken) {
     EntityManager entityManager = getEntityManager();
-    clientApplicationAccessToken.setExpires(expires);
-    entityManager.persist(clientApplicationAccessToken);
-    return clientApplicationAccessToken;
-  }
-  
-  public ClientApplicationAccessToken updateAccessToken(ClientApplicationAccessToken clientApplicationAccessToken, String accessToken){
-    EntityManager entityManager = getEntityManager();
-    clientApplicationAccessToken.setAccessToken(accessToken);
+    clientApplicationAccessToken.setAccessTokenIssuedAt(Instant.now());
+    clientApplicationAccessToken.setAccessToken(newAccessToken);
+    clientApplicationAccessToken.setRefreshToken(newRefreshToken);
     entityManager.persist(clientApplicationAccessToken);
     return clientApplicationAccessToken;
   }
 
-  public ClientApplicationAccessToken updateRefreshToken(ClientApplicationAccessToken clientApplicationAccessToken, String refreshToken) {
-    clientApplicationAccessToken.setRefreshToken(refreshToken);
-    return persist(clientApplicationAccessToken);
-  }
-  
   public void delete(ClientApplicationAccessToken clientApplicationAccessToken){
     super.delete(clientApplicationAccessToken);
   }

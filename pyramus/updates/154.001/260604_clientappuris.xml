@@ -27,5 +27,119 @@
   <sql>
     update ClientApplication set active = true, allowAllRedirectURIs = true;
   </sql>
+
+  <sql>
+    drop table ClientApplicationTokenScopes;
+  </sql>
+  
+  <sql>
+    drop table ClientApplicationAccessToken;
+  </sql>
+  
+  <sql>
+    drop table ClientApplicationAuthorizationCodeScopes;
+  </sql>
+
+  <sql>
+    drop table ClientApplicationAuthorizationCode;
+  </sql>
+
+  <sql>
+    create table ClientApplicationAuthorizationCode (
+       id bigint not null auto_increment,
+        authorizationCode varchar(255) not null,
+        issuedAt datetime not null,
+        redirectUrl varchar(255) not null,
+        app_id bigint not null,
+        user_id bigint not null,
+        primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAuthorizationCode 
+       add constraint UK_sqtjmi5rphumxrscux0rt412b unique (authorizationCode);
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAuthorizationCode 
+       add constraint FK8ong6metbfvnm8ptdhbx1t58h 
+       foreign key (app_id) 
+       references ClientApplication (id);
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAuthorizationCode 
+       add constraint FKa2ukjw2djbnf0xfi65sd6dxc9 
+       foreign key (user_id) 
+       references User (id);
+  </sql>
+
+  <sql>
+    create table ClientApplicationAuthorizationCodeScopes (
+       authorizationCode bigint not null,
+        scope varchar(255) not null,
+        primary key (authorizationCode, scope)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAuthorizationCodeScopes 
+       add constraint FKafkw64q5bt3gh26l9o3w0f05e 
+       foreign key (authorizationCode) 
+       references ClientApplicationAuthorizationCode (id);
+  </sql>
+
+  <sql>
+    create table ClientApplicationAccessToken (
+      id bigint not null auto_increment,
+      accessToken varchar(255) not null,
+      accessTokenIssuedAt datetime not null,
+      refreshToken varchar(255) not null,
+      refreshTokenIssuedAt datetime not null,
+      app_id bigint not null,
+      user_id bigint not null,
+      primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAccessToken 
+       add constraint UK_2eepl5h88wfb22nxhcd2rsxgh unique (accessToken);
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAccessToken 
+       add constraint UK_63hmxscpeerw5e4bu05lxikh2 unique (refreshToken);
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAccessToken 
+       add constraint FKj25sd446aqsnnr0vf0rghvjv4 
+       foreign key (app_id) 
+       references ClientApplication (id);
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAccessToken 
+       add constraint FKh45a2bd5ysfi8hcuo3k2vt6j0 
+       foreign key (user_id) 
+       references User (id);
+  </sql>
+
+  <sql>
+    create table ClientApplicationAccessTokenScopes (
+       token bigint not null,
+        scope varchar(255) not null,
+        primary key (token, scope)
+    );
+  </sql>
+
+  <sql>
+    alter table ClientApplicationAccessTokenScopes 
+       add constraint FK9pfheiqjrgdqwcl0s8tv49hvv 
+       foreign key (token) 
+       references ClientApplicationAccessToken (id);
+  </sql>
   
 </update>

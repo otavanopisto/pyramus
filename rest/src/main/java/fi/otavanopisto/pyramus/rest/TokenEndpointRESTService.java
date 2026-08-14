@@ -24,6 +24,7 @@ import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
 import com.nimbusds.oauth2.sdk.AuthorizationGrant;
 import com.nimbusds.oauth2.sdk.ErrorObject;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
+import com.nimbusds.oauth2.sdk.RefreshTokenGrant;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.Scope.Value;
 import com.nimbusds.oauth2.sdk.TokenErrorResponse;
@@ -38,6 +39,7 @@ import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Tokens;
 
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
+import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
@@ -51,8 +53,6 @@ import fi.otavanopisto.pyramus.rest.controller.OauthController;
 @AuthScope(AuthScope.LEGACY)
 public class TokenEndpointRESTService extends AbstractRESTService {
 
-  public static final long TOKEN_LIFETIME = 3600L;
-
   @Inject
   private Logger logger;
 
@@ -63,19 +63,12 @@ public class TokenEndpointRESTService extends AbstractRESTService {
   @Path("/token")
   @POST
   public Response authorize(@Context HttpServletResponse res, @Context HttpServletRequest req) {
-
     try {
       HTTPRequest httpRequest = ServletUtils.createHTTPRequest(req);
       TokenRequest tokenRequest = TokenRequest.parse(httpRequest);
 
       AuthorizationGrant authorizationGrant = tokenRequest.getAuthorizationGrant();
 
-      // TODO Refresh token ?
-//    clientApplicationAccessToken = oauthController.findByRefreshToken(refreshToken);
-//    if (clientApplicationAccessToken != null) {
-//      oauthController.refresh(clientApplicationAccessToken, expires, accessToken);
-//    }
-      
       if (authorizationGrant instanceof AuthorizationCodeGrant) {
         AuthorizationCodeGrant authorizationCodeGrant = (AuthorizationCodeGrant) authorizationGrant;
         String authorizationCode = authorizationCodeGrant.getAuthorizationCode().getValue();
@@ -93,7 +86,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
           
           ClientApplicationAuthorizationCode clientApplicationAuthorizationCode = oauthController
               .findByClientApplicationAndAuthorizationCode(clientApplication, authorizationCode);
-          if (clientApplicationAuthorizationCode == null) {
+          if (clientApplicationAuthorizationCode == null || !clientApplicationAuthorizationCode.isValidAuthorizationCode()) {
             return oauthTokenError(OAuth2Error.INVALID_GRANT);
           }
           
@@ -129,20 +122,14 @@ public class TokenEndpointRESTService extends AbstractRESTService {
           // Create token
 
           Scope scope = new Scope(grantedScopes.toArray(new String[0]));
-          AccessToken accessToken = new BearerAccessToken(TOKEN_LIFETIME, scope);
+          AccessToken accessToken = new BearerAccessToken(ClientApplicationAccessToken.ACCESSTOKEN_LIFETIME.getSeconds(), scope);
           RefreshToken refreshToken = new RefreshToken();
-          Long expires = (System.currentTimeMillis() / 1000L) + TOKEN_LIFETIME;
           
-          oauthController.createAccessToken(
+          oauthController.tradeAuthorizationCodeForAccessToken(
+              clientApplicationAuthorizationCode,
               accessToken.getValue(),
               refreshToken.getValue(),
-              expires,
-              clientApplication,
-              clientApplicationAuthorizationCode,
-              grantedScopes
-              );
-          
-          // Delete AuthorizationCode // TODO
+              grantedScopes);
           
           // Send response
           
@@ -160,8 +147,38 @@ public class TokenEndpointRESTService extends AbstractRESTService {
           return oauthTokenError(OAuth2Error.INVALID_CLIENT);
         }
       }
+      else if (authorizationGrant instanceof RefreshTokenGrant) {
+        RefreshTokenGrant refreshTokenGrant = (RefreshTokenGrant) authorizationGrant;
+        
+        String refreshToken = refreshTokenGrant.getRefreshToken().getValue();
+        ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByRefreshToken(refreshToken);
+        if (clientApplicationAccessToken != null && clientApplicationAccessToken.isValidRefreshToken()) {
+          // This uses the original scopes of the token although the spec implies
+          // they could change upon request. Consider this later if needed.
+          Scope scope = new Scope(clientApplicationAccessToken.getScopes().toArray(new String[0]));
+          AccessToken newAccessToken = new BearerAccessToken(ClientApplicationAccessToken.ACCESSTOKEN_LIFETIME.getSeconds(), scope);
+          RefreshToken newRefreshToken = new RefreshToken();
+          
+          oauthController.refreshToken(clientApplicationAccessToken, newAccessToken.getValue(), newRefreshToken.getValue());
+          
+          // Send response
+          
+          AccessTokenResponse accessTokenResponse = new AccessTokenResponse(new Tokens(newAccessToken, newRefreshToken));
+  
+          String body = accessTokenResponse.toJSONObject().toString();
+
+          CacheControl cacheControl = new CacheControl();
+          cacheControl.setNoCache(true);
+
+          return Response.ok().entity(body).cacheControl(cacheControl).build();
+        }
+        else {
+          // Couldn't find a valid refresh token
+          return oauthTokenError(OAuth2Error.INVALID_GRANT);
+        }
+      }
       else {
-        // Not an authorization code grant
+        // Not an authorization code grant nor refresh token grant
         return oauthTokenError(OAuth2Error.UNSUPPORTED_GRANT_TYPE);
       }
       

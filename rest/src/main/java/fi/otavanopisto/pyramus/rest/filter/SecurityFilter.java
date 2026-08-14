@@ -90,17 +90,9 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   
   private boolean hasOAuthApiAccess(String[] authScopes) {
     ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getAccessTokenFromRequest(request);
-    if (clientApplicationAccessToken == null) {
-      return false;
-    }
-    else {
-      Long currentTime = System.currentTimeMillis() / 1000L;
-      if (currentTime > clientApplicationAccessToken.getExpires()) {
-        return false;
-      } else {
-        return CollectionUtils.containsAny(clientApplicationAccessToken.getScopes(), authScopes);
-      }
-    }
+    return clientApplicationAccessToken != null 
+        && clientApplicationAccessToken.isValidAccessToken() 
+        && CollectionUtils.containsAny(clientApplicationAccessToken.getScopes(), authScopes);
   }
   
   private boolean hasSessionApiAccess() {
