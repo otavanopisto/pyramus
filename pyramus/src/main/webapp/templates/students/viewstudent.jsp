@@ -1442,7 +1442,7 @@
             Object.assign(studentParent, staticProps);
             
             const cells = studentParentRowTemplate.evaluate(studentParent);
-            const tr = new Element("tr", { className: "perusopetus_preport_tr", height: "26px", "data-studentParentChildId": studentParent.childId });
+            const tr = new Element("tr", { height: "26px", "data-studentParentChildId": studentParent.childId });
             tr.update(cells);
             studentParentInvitationsTableElement.appendChild(tr);
           }
@@ -1571,7 +1571,7 @@
             Object.assign(studentParent, staticProps);
             
             const cells = studentParentInvitationRowTemplate.evaluate(studentParent);
-            const tr = new Element("tr", { className: "perusopetus_preport_tr", height: "26px", "data-studentParentInvitationId": studentParent.invitationId });
+            const tr = new Element("tr", { height: "26px", "data-studentParentInvitationId": studentParent.invitationId });
             tr.update(cells);
             studentParentInvitationsTableElement.appendChild(tr);
           }

@@ -624,7 +624,7 @@
           "available": true
         },
         {
-          "name": "Kaupunkiekologia ja kestävä tulevaisuus",
+          "name": "Ekosysteemin perusrakenne ja toiminta",
           "courseNumber": 2,
           "length": 28,
           "mandatority": "NATIONAL_LEVEL_OPTIONAL",
@@ -633,6 +633,13 @@
         {
           "name": "Ihminen",
           "courseNumber": 3,
+          "length": 28,
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
+        },
+        {
+          "name": "Kohti kestävää tulevaisuutta",
+          "courseNumber": 4,
           "length": 28,
           "mandatority": "NATIONAL_LEVEL_OPTIONAL",
           "available": true
@@ -710,7 +717,7 @@
           "mandatority": "NATIONAL_LEVEL_OPTIONAL"
         },
         {
-          "name": "Elämäntaitokurssi",
+          "name": "Yhteisöllisyys opiskelun tukena",
           "courseNumber": 4,
           "length": 28,
           "mandatority": "NATIONAL_LEVEL_OPTIONAL"

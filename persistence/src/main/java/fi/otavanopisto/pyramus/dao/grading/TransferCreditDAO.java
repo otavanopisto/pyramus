@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.dao.grading;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -19,12 +21,14 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.events.TransferCreditEvent;
 import fi.otavanopisto.pyramus.events.types.Created;
@@ -268,6 +272,40 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.student), student));
 
     criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  /**
+   * Used for reporting, handle with care
+   * 
+   * @param studyProgrammes
+   * @param begin
+   * @param end
+   * @param funding
+   * @return
+   */
+  public List<TransferCredit> listByStudyProgrammesAndDatesAndFunding(Collection<StudyProgramme> studyProgrammes, Date begin,
+      Date end, TransferCreditFunding funding) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<TransferCredit> criteria = criteriaBuilder.createQuery(TransferCredit.class);
+    Root<TransferCredit> root = criteria.from(TransferCredit.class);
+    Join<TransferCredit, Student> studentJoin = root.join(TransferCredit_.student);
+    criteria.select(root);
+
+    criteria.where(
+        criteriaBuilder.and(
+            studentJoin.get(Student_.studyProgramme).in(studyProgrammes),
+            criteriaBuilder.between(root.get(TransferCredit_.date), begin, end),
+            criteriaBuilder.equal(root.get(TransferCredit_.funding), funding),
+            criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(TransferCredit_.archived), Boolean.FALSE)
+        )
+    );
+    
+    criteria.orderBy(criteriaBuilder.asc(root.get(TransferCredit_.date)));
     
     return entityManager.createQuery(criteria).getResultList();
   }
