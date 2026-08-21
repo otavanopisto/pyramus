@@ -23,121 +23,38 @@
           columns : [{
             dataType: 'hidden',
             paramName: "id"
-          },{
-            dataType: 'hidden',
-            paramName: "remove"
-          },{
-            dataType: 'hidden',
-            paramName: "regenerateSecret"
-          },{
+          }, {
             header : '<fmt:message key="system.clientapplications.nameHeader"/>',
             left : 8,
             width: 300,
-            required: true,
             dataType: 'text',
-            editable: true,
+            editable: false,
             paramName: 'appName'
           }, {
-            header : 'client_id',
-            left : 316,
-            width: 300,
-            dataType: 'text',
-            editable: false,
-            paramName: 'appId'
-          }, {
-            header : 'client_secret',
-            left : 616,
-            width: 600,
-            dataType: 'text',
-            editable: false,
-            paramName: 'appSecret'
-          }, {
-            header : 'scopes',
-            left : 616 + 8 + 600 + 8,
-            width: 300,
-            dataType: 'text',
-            editable: true,
-            paramName: 'scopes'
-          }, {
-            header : '<fmt:message key="system.clientapplications.skipHeader"/>',
-            right : 60,
-            width : 80,
-            dataType : 'checkbox',
-            editable : true,
-            paramName : 'skipPrompt'
-          }, {
-            right: 34,
-            width: 22,
-            dataType: 'button',
-            paramName: 'regenerateSecretBtn',
-            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/refresh.png',
-            tooltip: '<fmt:message key="system.clientapplications.regenTooltip"/>',
-            onclick: function (event) {
-               var table = event.tableComponent;
-               table.setCellValue(event.row, table.getNamedColumnIndex('regenerateSecret'), 1);
-               table.hideCell(event.row, table.getNamedColumnIndex('regenerateSecretBtn'));
-            }
-          }, {
             right: 8,
             width: 22,
             dataType: 'button',
-            paramName: 'deleteButton',
-            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-junk.png',
-            tooltip: '<fmt:message key="system.clientapplications.removeTooltip"/>',
-            onclick: function (event) {
-                var table = event.tableComponent;
-                table.setCellValue(event.row, table.getNamedColumnIndex('remove'), 1);
-                table.disableRow(event.row);
-                table.hideCell(event.row, table.getNamedColumnIndex('deleteButton'));
-                table.showCell(event.row, table.getNamedColumnIndex('undeleteButton'));
-                table.enableCellEditor(event.row, table.getNamedColumnIndex('undeleteButton'));
-            }
-          }, {
-            right: 8,
-            width: 22,
-            dataType: 'button',
-            paramName: 'undeleteButton',
-            hidden: true,
-            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-not-junk.png',
-            tooltip: '<fmt:message key="system.clientapplications.restoreTooltip"/>',
+            paramName: 'editBtn',
+            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            tooltip: getLocale().getText("generic.action.edit"),
             onclick: function (event) {
               var table = event.tableComponent;
-              table.setCellValue(event.row, table.getNamedColumnIndex('remove'), 0);
-              table.enableRow(event.row);
-              table.showCell(event.row, table.getNamedColumnIndex('deleteButton'));
-              table.enableCellEditor(event.row, table.getNamedColumnIndex('deleteButton'));
-              table.hideCell(event.row, table.getNamedColumnIndex('undeleteButton'));
+              var clientApplicationId = table.getCellValue(event.row, table.getNamedColumnIndex('id'));
+              redirectTo(GLOBAL_contextPath + '/system/clientapplication.page?clientApplicationId=' + clientApplicationId);
             }
           }]
         });
 
         var rows = new Array();
         <c:forEach var="clientApplication" items="${clientApplications}">
-         
-          var skipPrompt = '${clientApplication.skipPrompt}' === 'true' ? 1 : 0;
-      
           rows.push([
             '${clientApplication.id}',
-            0,
-            0,
             '${clientApplication.clientName}',
-            '${clientApplication.clientId}',
-            '${clientApplication.clientSecret}',
-            '${String.join(",", clientApplication.scopes)}',
-            skipPrompt,
-            null,
-            null,
-            null,
+            null
           ]);
         </c:forEach>
         settingsTable.addRows(rows);
       }
-      
-      function addClientApplication() {
-          var table = getIxTableById('clientApplicationsTable');
-          rowIndex = table.addRow(['', 0, 0, '', '', '', '', null, null, null, null]);
-      }
-      
     </script>
   </head>
   
@@ -147,26 +64,18 @@
     <h1 class="genericPageHeader"><fmt:message key="system.clientapplications.pageTitle"/></h1>
     
     <div class="genericFormContainer"> 
-      <form action="clientapplications.page" method="post">
-  
-        <div class="tabLabelsContainer" id="tabs">
-          <a class="tabLabel" href="#clientApplications">
-            <fmt:message key="system.clientapplications.tabLabel"/>
-          </a>
+      <div class="tabLabelsContainer" id="tabs">
+        <a class="tabLabel" href="#clientApplications">
+          <fmt:message key="system.clientapplications.tabLabel"/>
+        </a>
+      </div>
+      
+      <div id="clientApplications" class="tabContent">
+        <div class="genericTableAddRowContainer">
+          <a class="genericTableAddRowLinkContainer" href="${pageContext.request.contextPath}/system/clientapplication.page?clientApplicationId=NEW"><fmt:message key="system.clientapplications.addBtn"/></a>
         </div>
-        
-        <div id="clientApplications" class="tabContent">
-          <div class="genericTableAddRowContainer">
-            <span class="genericTableAddRowLinkContainer" onclick="addClientApplication();"><fmt:message key="system.clientapplications.addBtn"/></span>
-          </div>
-          <div id="clientApplicationsTableContainer"></div>
-        </div>
-  
-        <div class="genericFormSubmitSectionOffTab">
-          <input type="submit" class="formvalid" value="<fmt:message key="system.clientapplications.saveBtn"/>">
-        </div>
-
-      </form>
+        <div id="clientApplicationsTableContainer"></div>
+      </div>
     </div>
     
     <jsp:include page="/templates/generic/footer.jsp"></jsp:include>

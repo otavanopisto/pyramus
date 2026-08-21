@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.clientapplications;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +14,8 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode_;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<ClientApplicationAuthorizationCode> {
@@ -27,6 +28,7 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     clientApplicationAuthorizationCode.setClientApplication(clientApplication);
     clientApplicationAuthorizationCode.setAuthorizationCode(authorizationCode);
     clientApplicationAuthorizationCode.setRedirectUrl(redirectUrl);
+    clientApplicationAuthorizationCode.setIssuedAt(Instant.now());
     
     Set<String> scopes = new HashSet<>();
     scopes.addAll(selectedScopes);
@@ -64,6 +66,20 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     return entityManager.createQuery(criteria).getResultList();
   }
   
+  public List<ClientApplicationAuthorizationCode> listExpired(Instant threshold) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ClientApplicationAuthorizationCode> criteria = criteriaBuilder.createQuery(ClientApplicationAuthorizationCode.class);
+    Root<ClientApplicationAuthorizationCode> root = criteria.from(ClientApplicationAuthorizationCode.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.lessThan(root.get(ClientApplicationAuthorizationCode_.issuedAt), threshold)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
   public ClientApplicationAuthorizationCode findByClientApplicationAndAuthorizationCode(String authorizationCode, ClientApplication clientApplication){
     EntityManager entityManager = getEntityManager(); 
     
@@ -81,7 +97,7 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public void delete(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode){
+  public void delete(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
     super.delete(clientApplicationAuthorizationCode);
   }
 
