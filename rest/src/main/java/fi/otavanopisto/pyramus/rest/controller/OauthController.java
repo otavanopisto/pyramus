@@ -87,8 +87,8 @@ public class OauthController {
     return clientApplicationAccessTokenDAO.findByAccessToken(accessToken);
   }
   
-  public ClientApplicationAccessToken findByRefreshToken(String refreshToken) {
-    return clientApplicationAccessTokenDAO.findByRefreshToken(refreshToken);
+  public ClientApplicationAccessToken findByClientApplicationAndRefreshToken(ClientApplication clientApplication, String refreshToken) {
+    return clientApplicationAccessTokenDAO.findByClientApplicationAndRefreshToken(clientApplication, refreshToken);
   }
   
   public ClientApplication findActiveByClientIdAndClientSecret(String clientId, String clientSecret) {

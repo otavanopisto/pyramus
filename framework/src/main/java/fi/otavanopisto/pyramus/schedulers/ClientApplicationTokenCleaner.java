@@ -30,7 +30,7 @@ public class ClientApplicationTokenCleaner {
   @Inject
   private ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO;
   
-  @Schedule(dayOfWeek = "*", hour = "*", minute = "*/5", persistent = false)
+  @Schedule(dayOfWeek = "*", hour = "*", minute = "*/15", persistent = false)
   private void removeExpiredTokens() {
     int removedTokens = 0;
     int removedCodes = 0;

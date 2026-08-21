@@ -53,7 +53,7 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public ClientApplicationAccessToken findByRefreshToken(String refreshToken){
+  public ClientApplicationAccessToken findByClientApplicationAndRefreshToken(ClientApplication clientApplication, String refreshToken) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -61,8 +61,11 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
     Root<ClientApplicationAccessToken> root = criteria.from(ClientApplicationAccessToken.class);
     criteria.select(root);
     criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(ClientApplicationAccessToken_.clientApplication), clientApplication),
             criteriaBuilder.equal(root.get(ClientApplicationAccessToken_.refreshToken), refreshToken)
-        );
+        )
+    );
     
     return getSingleResult(entityManager.createQuery(criteria));
   }
