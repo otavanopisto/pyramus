@@ -76,6 +76,11 @@ public class TokenEndpointRESTService extends AbstractRESTService {
         logger.log(Level.FINE, "Token request rejected due to invalid client.");
         return oauthTokenError(OAuth2Error.INVALID_CLIENT);
       }
+      
+      if (!clientApplication.isActive()) {
+        logger.log(Level.FINE, "Token request rejected due to inactive client.");
+        return oauthTokenError(OAuth2Error.INVALID_CLIENT);
+      }
 
       if (authorizationGrant instanceof AuthorizationCodeGrant) {
         AuthorizationCodeGrant authorizationCodeGrant = (AuthorizationCodeGrant) authorizationGrant;
@@ -101,6 +106,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
         else {
           for (Value requestedScope : requestedScopes) {
             String requestedScopeStr = requestedScope.getValue();
+            // Check that the user has authorized the scope while logging in
             if (clientApplicationAuthorizationCode.getSelectedScopes().contains(requestedScopeStr)) {
               grantedScopes.add(requestedScopeStr);
             }

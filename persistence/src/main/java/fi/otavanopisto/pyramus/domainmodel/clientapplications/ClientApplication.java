@@ -80,7 +80,7 @@ public class ClientApplication {
   
   @Transient
   public boolean isAllowedRedirectURI(URI redirectURI) {
-    return isAllowedRedirectURI(redirectURI.toString());
+    return redirectURI != null && isAllowedRedirectURI(redirectURI.toString());
   }
   
   public Set<String> getRedirectURIs() {
