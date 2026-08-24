@@ -40,85 +40,86 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public void processForm(PageRequestContext requestContext) {
+    if (!requestContext.isLoggedIn()) {
+      // Login context needs to be specified as is, but the id needs just some value on it - it's not used anywhere
+      throw new LoginRequiredException(getLoginReturnUrl(requestContext), "OAUTHCLIENT", "N/A");
+    }
+    
     ClientApplicationDAO clientApplicationDAO = DAOFactory.getInstance().getClientApplicationDAO();
 
-    HTTPRequest httpRequest;
     AuthorizationRequest authorizationRequest;
-    
     try {
-      httpRequest = ServletUtils.createHTTPRequest(requestContext.getRequest());
+      HTTPRequest httpRequest = ServletUtils.createHTTPRequest(requestContext.getRequest());
       authorizationRequest = AuthorizationRequest.parse(httpRequest);
-    } catch (Exception e) {
-      pageErrorResponse(requestContext);
-      return;
-    }
 
-    ClientID clientID = authorizationRequest.getClientID();
-    URI redirectionURI = authorizationRequest.getRedirectionURI();
-    State state = authorizationRequest.getState();
-    Scope requestedScopes = authorizationRequest.getScope();
-
-    // Find the client application
-    ClientApplication clientApplication = clientID != null ? clientApplicationDAO.findByClientId(clientID.getValue()) : null;
-    if (clientApplication == null || !clientApplication.isActive()) {
-      pageErrorResponse(requestContext);
-      return;
-    }
-
-    // Check that the redirect uri is valid
-    
-    if (!clientApplication.isAllowAllRedirectURIs() && !clientApplication.isAllowedRedirectURI(redirectionURI)) {
-      pageErrorResponse(requestContext);
-      return;
-    }
-    
-    // Check that the request is for authorization code, no other types supported at the moment
-    if (!authorizationRequest.getResponseType().equals(com.nimbusds.oauth2.sdk.ResponseType.CODE)) {
-      oauthErrorResponse(requestContext, OAuth2Error.UNSUPPORTED_RESPONSE_TYPE, redirectionURI, state);
-      return;
-    }
-
-    // Check that there are requested scopes
-    if (requestedScopes == null || requestedScopes.isEmpty()) {
-      oauthErrorResponse(requestContext, OAuth2Error.INVALID_SCOPE, redirectionURI, state);
-      return;
-    }
-
-    // Check that the requested scopes are valid
-    Set<String> requestedScopesStrs = new HashSet<>();
-    for (Value value : requestedScopes) {
-      if (value == null || StringUtils.isBlank(value.getValue()) || !clientApplication.getScopes().contains(value.getValue())) {
+      ClientID clientID = authorizationRequest.getClientID();
+      URI redirectionURI = authorizationRequest.getRedirectionURI();
+      State state = authorizationRequest.getState();
+      Scope requestedScopes = authorizationRequest.getScope();
+  
+      // Find the client application
+      ClientApplication clientApplication = clientID != null ? clientApplicationDAO.findByClientId(clientID.getValue()) : null;
+      if (clientApplication == null || !clientApplication.isActive()) {
+        pageErrorResponse(requestContext);
+        return;
+      }
+  
+      // Check that the redirect uri is valid
+      
+      if (!clientApplication.isAllowAllRedirectURIs() && !clientApplication.isAllowedRedirectURI(redirectionURI)) {
+        pageErrorResponse(requestContext);
+        return;
+      }
+      
+      // Check that the request is for authorization code, no other types supported at the moment
+      if (!authorizationRequest.getResponseType().equals(com.nimbusds.oauth2.sdk.ResponseType.CODE)) {
+        oauthErrorResponse(requestContext, OAuth2Error.UNSUPPORTED_RESPONSE_TYPE, redirectionURI, state);
+        return;
+      }
+  
+      // Check that there are requested scopes
+      if (requestedScopes == null || requestedScopes.isEmpty()) {
         oauthErrorResponse(requestContext, OAuth2Error.INVALID_SCOPE, redirectionURI, state);
         return;
       }
-      else {
-        requestedScopesStrs.add(value.getValue());
+  
+      // Check that the requested scopes are valid
+      Set<String> requestedScopesStrs = new HashSet<>();
+      for (Value value : requestedScopes) {
+        if (value == null || StringUtils.isBlank(value.getValue()) || !clientApplication.getScopes().contains(value.getValue())) {
+          oauthErrorResponse(requestContext, OAuth2Error.INVALID_SCOPE, redirectionURI, state);
+          return;
+        }
+        else {
+          requestedScopesStrs.add(value.getValue());
+        }
       }
-    }
-
-    if (!requestContext.isLoggedIn()) {
-      throw new LoginRequiredException(getLoginReturnUrl(requestContext), "OAUTHCLIENT", clientApplication.getClientId());
-    }
-    else if (clientApplication.getSkipPrompt()) {
-      oauthSuccessResponse(
-          requestContext, 
-          clientApplication, 
-          redirectionURI, 
-          state != null ? state.getValue() : null, 
-          requestedScopesStrs
-      );
-    }
-    else {
-      HttpServletRequest request = requestContext.getRequest();
-      
-      OAuthContext authContext = new OAuthContext(clientApplication.getClientId(), redirectionURI, requestedScopesStrs, state != null ? state.getValue() : null);
-      request.getSession().setAttribute("pendingOAuthLoginContext", authContext);
-      
-      // Parameters for the consent view
-      request.setAttribute("clientAppName", clientApplication.getClientName());
-      request.setAttribute("authScopes", requestedScopesStrs);
-      
-      requestContext.setIncludeJSP("/templates/users/authorizeclientapp.jsp");
+  
+      // Under certain conditions the authorization view may be skipped. Otherwise it is show to the user.
+      if (clientApplication.getSkipPrompt()) {
+        oauthSuccessResponse(
+            requestContext, 
+            clientApplication, 
+            redirectionURI, 
+            state != null ? state.getValue() : null, 
+            requestedScopesStrs
+        );
+      }
+      else {
+        HttpServletRequest request = requestContext.getRequest();
+        
+        OAuthContext authContext = new OAuthContext(clientApplication.getClientId(), redirectionURI, requestedScopesStrs, state != null ? state.getValue() : null);
+        request.getSession().setAttribute("pendingOAuthLoginContext", authContext);
+        
+        // Parameters for the consent view
+        request.setAttribute("clientAppName", clientApplication.getClientName());
+        request.setAttribute("authScopes", requestedScopesStrs);
+        
+        requestContext.setIncludeJSP("/templates/users/authorizeclientapp.jsp");
+      }
+    } catch (Exception e) {
+      pageErrorResponse(requestContext);
+      return;
     }
   }
 
