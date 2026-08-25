@@ -1,58 +1,29 @@
 package fi.otavanopisto.pyramus.rest;
 
-import static io.restassured.RestAssured.certificate;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
-
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 import fi.otavanopisto.pyramus.Common;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
-import io.restassured.RestAssured;
-import io.restassured.config.ObjectMapperConfig;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.path.json.mapper.factory.Jackson2ObjectMapperFactory;
 import io.restassured.response.Response;
 
 public abstract class AbstractRESTPermissionsTestJUnit5 extends AbstractIntegrationTest implements AbstractRestServicePermissionsTestI {
 
   public AbstractRESTPermissionsTestJUnit5() {
     this.tools = new AbstractRESTServiceTestTools(this);
-  }
-  
-  static {
-    RestAssured.baseURI = getAppUrl(true) + "/1";
-    RestAssured.port = getPortHttps();
-    RestAssured.useRelaxedHTTPSValidation();
-    RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
-
-    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-        ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
-          @Override
-          public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
-            com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            return objectMapper;
-          }
-        }));
   }
   
   @BeforeAll
@@ -72,14 +43,12 @@ public abstract class AbstractRESTPermissionsTestJUnit5 extends AbstractIntegrat
   }
 
   public Map<String, String> getAuthHeaders(Role role) {
-    OAuthClientRequest bearerClientRequest = null;
-    try {
-      bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi").setAccessToken(this.getOauthToken(role))
-          .buildHeaderMessage();
-    } catch (OAuthSystemException e) {
+    Map<String, String> headers = new HashMap<>();
+    String accessToken = this.getOauthToken(role);
+    if (StringUtils.isNotBlank(accessToken)) {
+      headers.put("Authorization", "Bearer " + accessToken);
     }
-
-    return bearerClientRequest.getHeaders();
+    return headers;
   }
 
   public Long getUserIdForRole(Role role) {
@@ -133,25 +102,7 @@ public abstract class AbstractRESTPermissionsTestJUnit5 extends AbstractIntegrat
   }
   
   protected String getOauthToken(Role role) {
-    if (!Role.EVERYONE.equals(role)) {
-      OAuthClientRequest tokenRequest = null;
-      try {
-        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
-            .setGrantType(GrantType.AUTHORIZATION_CODE)
-            .setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
-            .setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
-            .setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
-            .setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(role)).buildBodyMessage();
-      } catch (OAuthSystemException e) {
-        e.printStackTrace();
-      }
-
-      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
-          .post("/oauth/token");
-      return response.body().jsonPath().getString("access_token");
-    }
-    
-    return "";
+    return !Role.EVERYONE.equals(role) ? getOAuthAccessToken(role) : "";
   }
   
   protected AbstractRESTServiceTestTools tools() {

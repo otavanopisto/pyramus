@@ -94,9 +94,9 @@
 
     <freemarker.version>2.3.20</freemarker.version>
 
-    <!-- Apache Oltu -->
+    <!-- Nimbusds OAuth SDK-->
 
-    <apache-oltu.version>1.0.0</apache-oltu.version>
+    <nimbusds.oauth.sdk.version>11.37.2</nimbusds.oauth.sdk.version>
 
     <!-- Pyramus -->
 
@@ -221,30 +221,13 @@
         <classifier>jdk15</classifier>
       </dependency>
 
-      <!-- Apache Oltu -->
-
+      <!-- Nimbusds OAuth -->
+  
       <dependency>
-        <groupId>org.apache.oltu.oauth2</groupId>
-        <artifactId>org.apache.oltu.oauth2.common</artifactId>
-        <version>${apache-oltu.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.oltu.oauth2</groupId>
-        <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
-        <version>${apache-oltu.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.oltu.oauth2</groupId>
-        <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
-        <version>${apache-oltu.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.oltu.oauth2</groupId>
-        <artifactId>org.apache.oltu.oauth2.client</artifactId>
-        <version>${apache-oltu.version}</version>
+        <groupId>com.nimbusds</groupId>
+        <artifactId>oauth2-oidc-sdk</artifactId>
+        <version>${nimbusds.oauth.sdk.version}</version>
+        <classifier>jdk8</classifier>
       </dependency>
 
       <!-- Rest Assured -->

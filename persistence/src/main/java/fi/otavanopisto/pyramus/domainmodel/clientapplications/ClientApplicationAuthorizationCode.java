@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.clientapplications;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +24,17 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 @Entity
 public class ClientApplicationAuthorizationCode {
 
+  public static final Duration AUTHCODE_LIFETIME = Duration.ofSeconds(60);
+
+  /**
+   * Returns true if this authorization code is not expired.
+   * @return
+   */
+  @Transient
+  public boolean isValidAuthorizationCode() {
+    return Instant.now().minus(AUTHCODE_LIFETIME).isBefore(issuedAt);
+  }
+  
   public Long getId() {
     return id;
   }
@@ -66,9 +79,16 @@ public class ClientApplicationAuthorizationCode {
     this.selectedScopes = selectedScopes;
   }
 
+  public Instant getIssuedAt() {
+    return issuedAt;
+  }
+
+  public void setIssuedAt(Instant issuedAt) {
+    this.issuedAt = issuedAt;
+  }
+
   @Id
-  @GeneratedValue(strategy = GenerationType.TABLE, generator = "ClientApplicationAuthorizationCode")
-  @TableGenerator(name = "ClientApplicationAuthorizationCode", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotNull
@@ -82,8 +102,12 @@ public class ClientApplicationAuthorizationCode {
   private ClientApplication clientApplication;
 
   @NotNull
+  @Column(nullable = false, updatable = false)
+  private Instant issuedAt;
+
+  @NotNull
   @NotEmpty
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String authorizationCode;
   
   @NotNull

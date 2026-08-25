@@ -1205,7 +1205,7 @@ public class MuikkuRESTService {
     // ConfirmSecret is the hash of secret + clientapplications secret
     ClientApplication clientApplication = clientApplicationController.getClientApplication();
     
-    if (clientApplication != null) {
+    if (clientApplication != null && clientApplication.isActive()) {
       String confirmSecret = DigestUtils.md5Hex(secret + clientApplication.getClientSecret());
       
       passwordResetRequestDAO.create(person, confirmSecret, date);

@@ -390,10 +390,14 @@ values
   (2, 'StudentStudyEndReason #2', 1, false, 1);
   
 insert into ClientApplication 
-  (id, clientName, clientId, clientSecret, skipPrompt)
+  (id, active, allowAllRedirectURIs, clientName, clientId, clientSecret, skipPrompt)
 values 
-  (1, 'dev.muikku.fi', '854885cf-2284-4b17-b63c-a8b189535f8d' ,'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhFW29S', 0),
-  (2, 'dev.suikku.fi', '567765cf-1114-4b17-b63c-awbe89535f8d' ,'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhasAS5', 1);
+  (1, true, true, 'dev.muikku.fi', '854885cf-2284-4b17-b63c-a8b189535f8d' ,'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhFW29S', 0),
+  (2, true, true, 'dev.suikku.fi', '567765cf-1114-4b17-b63c-awbe89535f8d' ,'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhasAS5', 1);
+
+insert into
+  ClientApplicationScopes (clientApplication, scope) 
+  select id, 'legacy' from ClientApplication;
 
 insert into 
   Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 

@@ -8,11 +8,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
-import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
-
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -84,27 +79,8 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   }
 
   private User getOAuthUser() {
-    try {
-      OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-      String accessToken = oauthRequest.getAccessToken();
-
-      ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
-      if (clientApplicationAccessToken != null) {
-        Long currentTime = System.currentTimeMillis() / 1000L;
-        if (currentTime <= clientApplicationAccessToken.getExpires()) {
-//          System.out.println("RESTSession.getUser: " +
-//              " UserId=" + clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser().getId().toString() +
-//              " role=" + clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser().getRole().toString() +
-//              " accessToken=" + accessToken);
-
-          return clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser();
-        }
-      }
-    } catch (OAuthProblemException | OAuthSystemException e) {
-      return null;
-    }
-
-    return null;
+    ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getAccessTokenFromRequest(request);
+    return clientApplicationAccessToken != null && clientApplicationAccessToken.isValidAccessToken() ? clientApplicationAccessToken.getUser() : null;
   }
   
   @Override

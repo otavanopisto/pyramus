@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.clientapplications;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,14 +15,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Entity
 public class ClientApplicationAccessToken {
 
+  public static final Duration ACCESSTOKEN_LIFETIME = Duration.ofSeconds(3600);
+  public static final Duration REFRESHTOKEN_LIFETIME = Duration.ofDays(7);
+
+  @Transient
+  public boolean isValidAccessToken() {
+    return Instant.now().minus(ACCESSTOKEN_LIFETIME).isBefore(accessTokenIssuedAt);
+  }
+  
+  @Transient
+  public boolean isValidRefreshToken() {
+    return Instant.now().minus(REFRESHTOKEN_LIFETIME).isBefore(refreshTokenIssuedAt);
+  }
+  
   public Long getId() {
     return id;
   }
@@ -33,14 +49,6 @@ public class ClientApplicationAccessToken {
     this.accessToken = accessToken;
   }
 
-  public Long getExpires() {
-    return expires;
-  }
-
-  public void setExpires(Long expires) {
-    this.expires = expires;
-  }
-
   public ClientApplication getClientApplication() {
     return clientApplication;
   }
@@ -49,14 +57,6 @@ public class ClientApplicationAccessToken {
     this.clientApplication = clientApplication;
   }
   
-  public ClientApplicationAuthorizationCode getClientApplicationAuthorizationCode() {
-    return clientApplicationAuthorizationCode;
-  }
-
-  public void setClientApplicationAuthorizationCode(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
-    this.clientApplicationAuthorizationCode = clientApplicationAuthorizationCode;
-  }
-
   public String getRefreshToken() {
     return refreshToken;
   }
@@ -73,36 +73,63 @@ public class ClientApplicationAccessToken {
     this.scopes = scopes;
   }
 
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public Instant getAccessTokenIssuedAt() {
+    return accessTokenIssuedAt;
+  }
+
+  public void setAccessTokenIssuedAt(Instant accessTokenIssuedAt) {
+    this.accessTokenIssuedAt = accessTokenIssuedAt;
+  }
+
+  public Instant getRefreshTokenIssuedAt() {
+    return refreshTokenIssuedAt;
+  }
+
+  public void setRefreshTokenIssuedAt(Instant refreshTokenIssuedAt) {
+    this.refreshTokenIssuedAt = refreshTokenIssuedAt;
+  }
+
   @Id
-  @GeneratedValue(strategy = GenerationType.TABLE, generator = "ClientApplicationAccessToken")
-  @TableGenerator(name = "ClientApplicationAccessToken", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotNull
   @NotEmpty
-  @Column(nullable = false, unique=true)
+  @Column(nullable = false, unique = true)
   private String accessToken;
 
   @NotEmpty
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String refreshToken;
   
   @NotNull
   @Column(nullable = false)
-  private Long expires;
+  private Instant accessTokenIssuedAt;
+
+  @NotNull
+  @Column(nullable = false, updatable = false)
+  private Instant refreshTokenIssuedAt;
 
   @NotNull
   @ManyToOne
   @JoinColumn(name = "app_id", nullable = false)
   private ClientApplication clientApplication;
-  
-  @NotNull
-  @OneToOne
-  @JoinColumn(name = "clientApplicationAuthorizationCode", unique = true, nullable = false)
-  private ClientApplicationAuthorizationCode clientApplicationAuthorizationCode;
 
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
+  
   @ElementCollection(fetch = FetchType.EAGER) // Has to be eager, maybe figure out later
-  @CollectionTable(name = "ClientApplicationTokenScopes", joinColumns = @JoinColumn(name = "token"))
+  @CollectionTable(name = "ClientApplicationAccessTokenScopes", joinColumns = @JoinColumn(name = "token"))
   @Column(name = "scope", nullable = false)
   private Set<String> scopes = new HashSet<>();
   

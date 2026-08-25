@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.clientapplications;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -46,11 +48,11 @@ public class ClientApplication {
     this.clientSecret = clientSecret;
   }
   
-  public Boolean getSkipPrompt() {
+  public boolean getSkipPrompt() {
     return skipPrompt;
   }
 
-  public void setSkipPrompt(Boolean skipPrompt) {
+  public void setSkipPrompt(boolean skipPrompt) {
     this.skipPrompt = skipPrompt;
   }
 
@@ -69,6 +71,40 @@ public class ClientApplication {
 
   public void setScopes(Set<String> allowedScopes) {
     this.scopes = allowedScopes;
+  }
+
+  @Transient
+  public boolean isAllowedRedirectURI(String redirectURI) {
+    return redirectURIs != null ? redirectURIs.contains(redirectURI) : false;
+  }
+  
+  @Transient
+  public boolean isAllowedRedirectURI(URI redirectURI) {
+    return redirectURI != null && isAllowedRedirectURI(redirectURI.toString());
+  }
+  
+  public Set<String> getRedirectURIs() {
+    return redirectURIs;
+  }
+
+  public void setRedirectURIs(Set<String> redirectURIs) {
+    this.redirectURIs = redirectURIs;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
+  public boolean isAllowAllRedirectURIs() {
+    return allowAllRedirectURIs;
+  }
+
+  public void setAllowAllRedirectURIs(boolean allowAllRedirectURIs) {
+    this.allowAllRedirectURIs = allowAllRedirectURIs;
   }
 
   @Id
@@ -93,10 +129,23 @@ public class ClientApplication {
   
   @NotNull
   @Column (nullable = false)
-  private Boolean skipPrompt;
+  private boolean active;
+  
+  @NotNull
+  @Column (nullable = false)
+  private boolean skipPrompt;
   
   @ElementCollection
   @CollectionTable(name = "ClientApplicationScopes", joinColumns = @JoinColumn(name = "clientApplication"))
   @Column(name = "scope", nullable = false)
   private Set<String> scopes = new HashSet<>();
+
+  @NotNull
+  @Column (nullable = false)
+  private boolean allowAllRedirectURIs;
+  
+  @ElementCollection
+  @CollectionTable(name = "ClientApplicationAllowedRedirectURIs", joinColumns = @JoinColumn(name = "clientApplication"))
+  @Column(name = "redirectURI", nullable = false)
+  private Set<String> redirectURIs = new HashSet<>();
 }
