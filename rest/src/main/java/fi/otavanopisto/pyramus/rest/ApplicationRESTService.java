@@ -556,47 +556,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             !ApplicationUtils.isInternetixLine(line), // applicantEditable (#769: Internetix applicants may not edit submitted data)
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
-        
-        // Automatic registration of new Internetix students
-        
-        boolean autoRegistrationSupported = ApplicationUtils.isInternetixLine(line);
-        boolean autoRegistrationPossible = autoRegistrationSupported && ApplicationUtils.isInternetixAutoRegistrationPossible(application, false);
-        
-        // #1487: Jos aineopiskelijaksi hakeva on jo olemassa, käsitellään manuaalisesti
-        
-        if (autoRegistrationSupported && autoRegistrationPossible) {
-          try {
-            Person person = ApplicationUtils.resolvePerson(application);
-            autoRegistrationPossible = person == null;
-          }
-          catch (DuplicatePersonException dpe) {
-            autoRegistrationPossible = false;
-          }
-        }
-
-        if (autoRegistrationSupported && autoRegistrationPossible) {
-          Student student = ApplicationUtils.createPyramusStudent(application, null, null);
-          if (student != null) {
-            PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-            personDAO.updateDefaultUser(student.getPerson(), student);
-            String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
-            application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
-            application = applicationDAO.updateApplicationStateAsApplicant(application, ApplicationState.REGISTERED_AS_STUDENT);
-            application = applicationDAO.updateApplicantEditable(application, Boolean.FALSE);
-            ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
-            ApplicationUtils.mailCredentialsInfo(httpRequest, student, application);
-            response.put("autoRegistered", "true");
-          }
-          else if (autoRegistrationPossible) {
-            logger.log(Level.SEVERE, String.format("Auto-registration of application %d failed. Falling back to manual processing", application.getId()));
-            newApplicationPostProcessing(application);
-          }
-        }
-        else {
-          // If the application doesn't lead to auto-registration, send out the
-          // usual confirmation and notification e-mails about a new application
-          newApplicationPostProcessing(application);
-        }
+        newApplicationPostProcessing(application);
       }
       else {
         

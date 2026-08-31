@@ -653,6 +653,12 @@ public class ApplicationUtils {
     }
   }
   
+  public static boolean isOutsideEUandETA(String country) {
+    return !StringUtils.equalsAny(country, "Alankomaat", "Belgia", "Bulgaria", "Espanja", "Irlanti", "Italia", "Itävalta", "Kreikka",
+        "Kroatia", "Kypros", "Latvia", "Liettua", "Luxemburg", "Malta", "Portugali", "Puola", "Ranska", "Romania", "Ruotsi", "Saksa",
+        "Slovakia", "Slovenia", "Tanska", "Tšekki", "Unkari", "Viro", "Suomi", "Liechtenstein", "Islanti", "Norja");
+  }
+  
   public static StudyProgramme resolveStudyProgramme(Application application) {
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = getFormValue(formData, "field-line");

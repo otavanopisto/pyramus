@@ -24,14 +24,14 @@
       </div>
     </div> 
     
-    <div class="-form-section__field-container-field-has-ssn">
-      <label for="field-has-ssn" class="required">Minulla on suomalainen henkilötunnus</label>
-      <select id="field-has-ssn" name="field-has-ssn" data-parsley-required="true" data-dependencies="true">
-        <option value="">-- Valitse --</option>
-        <option value="kylla">Kyllä</option>
-        <option value="ei">Ei</option>
-      </select>
-    </div>
+    <div class="form-section__field-container-field-has-ssn">
+      <label for="field-has-ssn" class="required">Minulla on suomalainen henkilötunnus</label> <select
+      id="field-has-ssn" name="field-has-ssn" data-parsley-required="true" data-dependencies="true">
+      <option value="">-- Valitse --</option>
+      <option value="kylla">Kyllä</option>
+      <option value="ei">Ei</option>
+    </select>
+  </div>
 
     <div class="form-section__field-container field-birthday dependent" data-dependent-field="field-has-ssn" data-dependent-values="ei" style="display:none;">
       <label for="field-birthday" class="required">Syntymäaika</label>
@@ -112,9 +112,25 @@
 
     <div class="form-section__field-container field-language">
       <label for="field-language" class="required">Äidinkieli</label>
-      <select id="field-language" name="field-language" data-parsley-required="true" data-source="/1/applications/languages" data-preselect="suomi">
+      <select id="field-language" name="field-language" data-parsley-required="true" data-source="/1/applications/languages" data-preselect="suomi" data-dependencies="true">
         <option value="">-- Valitse --</option>
       </select>
+    </div>
+
+    <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,nettilukio,aikuislukio" style="display:none;">
+      <!--  151 = suomi -->
+      <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151" style="display:none;">
+        <label for="field-language-skill" class="required">Mikä on suomen kielen taitotasosi Eurooppalaisen viitekehyksen mukaisesti</label>
+        <select id="field-language-skill" name="field-language-skill" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+          <option value="">-- Valitse --</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="B1">B1</option>
+          <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
+        </select>
+      </div>
     </div>
 
     <div class="form-section__field-container field-phone">

@@ -174,6 +174,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       fields.put("Kotikunta", ApplicationUtils.municipalityUiValue(getFormValue(formData, "field-municipality")));
       fields.put("Kansallisuus", ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality")));
       fields.put("Äidinkieli", ApplicationUtils.languageUiValue(getFormValue(formData, "field-language")));
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-language-skill"))) {
+        fields.put("Suomen kielen taitotaso", getFormValue(formData, "field-language-skill"));
+      }
       fields.put("Puhelinnumero", getFormValue(formData, "field-phone"));
       String applicantMail = getFormValue(formData, "field-email");
       if (mailVerificationEnabled) {
@@ -378,9 +381,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-goals-nettilukioov"))) {
         fields.put("Opiskelutavoitteet", goalsUiValue(getFormValue(formData, "field-goals-nettilukioov")));
-      }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-foreign-student"))) {
-        fields.put("Ulkomainen vaihto-opiskelija", simpleBooleanUiValue(getFormValue(formData, "field-foreign-student")));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-foreign-studies"))) {
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-foreign-studies"));
@@ -596,6 +596,16 @@ public class ViewApplicationViewController extends PyramusViewController {
     List<ApplicationEmailVerification> verifications = verificationDAO.listUnverifiedByApplication(application);
     if (!verifications.isEmpty()) {
       conflicts.add("Hakemuksessa on vahvistamattomia sähköpostiosoitteita");
+    }
+    
+    // Outside EU/ETA
+    
+    String line = application.getLine();
+    if (StringUtils.equalsAny(line, ApplicationUtils.LINE_AINEOPISKELU, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_AIKUISLUKIO)) {
+      String nationality = ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality"));
+      if (ApplicationUtils.isOutsideEUandETA(nationality)) {
+        conflicts.add("Hakija on EU- ja ETA-alueen ulkopuolisesta maasta");
+      }
     }
     
     return conflicts;

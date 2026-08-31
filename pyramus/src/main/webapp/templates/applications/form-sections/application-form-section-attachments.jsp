@@ -21,6 +21,15 @@
       </p>
     </div>
     
+    <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,nettilukio,aikuislukio" style="display:none;">
+      <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151" style="display:none;">
+        <p>Lisää liitteisiin suomen kielen taitotason osoittava todistus.</p>  
+      </div>
+      <div class="form-section__field-container dependent" data-dependent-field="field-has-ssn" data-dependent-values="ei" style="display:none;">
+        <p>Lisää liitteisiin valokuva passistasi.</p>  
+      </div>
+    </div>
+
     <div class="form-section__field-container field-attachments">
       <div class="field-attachments__uploader">
         <div class="field-attachments__selector-container">

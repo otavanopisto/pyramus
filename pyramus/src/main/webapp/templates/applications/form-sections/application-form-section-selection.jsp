@@ -5,11 +5,11 @@
 
 <section class="form-section section-line" style="display:none;">
 
-  <h2 class="application-form-section-header">Valitse hakukohteesi</h2>
+  <h2 class="application-form-section-header">Hakukohde</h2>
 
   <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true" data-preselect="${preselectLine}">
     <option value="">-- Valitse --</option>
-    <option value="aineopiskelu" data-underage-support="true" data-attachment-support="false">Aineopiskelu/lukio</option>
+    <option value="aineopiskelu" data-underage-support="true" data-attachment-support="true">Aineopiskelu/lukio</option>
     <option value="aineopiskelupk" data-underage-support="true" data-attachment-support="false">Aineopiskelu/perusopetus</option>
     <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
     <option value="nettilukioov" data-underage-support="true" data-attachment-support="true">Nettilukio (oppivelvolliset)</option>
