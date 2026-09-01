@@ -69,7 +69,7 @@
 
       <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
         <h1 class="application-description__line-header">
-          Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">Nettilukion aineopiskelijaksi</span>
+          Olet hakemassa <span class="application-description__line-label--aineopiskelu">Nettilukion aineopiskelijaksi</span>
         </h1>
         <div class="application-description__line-content">
           <p>Aineopiskelijana voit opiskella yksittäisiä lukion opintojaksoja. Opiskelu on maksullista.</p>
@@ -79,7 +79,7 @@
 
       <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelupk" style="display:none;">
         <h1 class="application-description__line-header">
-          Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">Nettiperuskoulun aineopiskelijaksi</span>
+          Olet hakemassa <span class="application-description__line-label--aineopiskelu">Nettiperuskoulun aineopiskelijaksi</span>
         </h1>
         <div class="application-description__line-content">
           <p>Aineopiskelijana voit opiskella yksittäisiä perusopetuksen opintojaksoja. Opiskelu on maksullista.</p>
