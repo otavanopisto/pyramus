@@ -19,9 +19,11 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
-import fi.otavanopisto.pyramus.applications.AlternativeLine;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeNettilukio;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
-import fi.otavanopisto.pyramus.applications.InternetixStudyProgramme;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeAikuislukio;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeAineopiskelu;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeAineopiskelupk;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
@@ -101,15 +103,21 @@ public class ViewApplicationViewController extends PyramusViewController {
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
       
-      // Opintojen tyyppi: nettilukio
+      // Nettilukio koulutusohjelma
       
       if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_NETTILUKIO)) {
-        AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
-        if (AlternativeLine.PRIVATE == altLine) {
-          fields.put("Opintojen tyyppi", "Yksityisopiskelu");
+        StudyProgrammeNettilukio altLine = EnumUtils.getEnum(StudyProgrammeNettilukio.class, getFormValue(formData, "field-nettilukio_alternativelines"));
+        if (StudyProgrammeNettilukio.PRIVATE == altLine) {
+          fields.put("Koulutusohjelma", "Nettilukio/yksityisopiskelu (aineopiskelu)");
         }
-        else if (AlternativeLine.YO == altLine) {
-          fields.put("Opintojen tyyppi", "Aineopiskelu/yo-tutkinto");
+        else if (StudyProgrammeNettilukio.YO == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/yo-tutkinto");
+        }
+        else if (StudyProgrammeNettilukio.EU_ETA == altLine) {
+          fields.put("Koulutusohjelma", "Nettilukio/yksityisopiskelu (EU- ja ETA-maiden ulkopuoliset opiskelijat)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Nettilukio");
         }
       }
 
@@ -127,18 +135,48 @@ public class ViewApplicationViewController extends PyramusViewController {
         }
       }
       
-      // Aineopiskelu (perusopetus) koulutusohjelma
+      // Aineopiskelu/lukio koulutusohjelma
+      
+      if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU)) {
+        StudyProgrammeAineopiskelu altLine = EnumUtils.getEnum(StudyProgrammeAineopiskelu.class, getFormValue(formData, "field-aineopiskelu-studyprogramme"));
+        if (StudyProgrammeAineopiskelu.AINEOPISKELU_OPPIVELVOLLISET == altLine) { 
+          fields.put("Koulutusohjelma", "Aineopiskelu/lukio (oppivelvolliset)");
+        }
+        else if (StudyProgrammeAineopiskelu.KAHDEN_TUTKINNON_OPINNOT == altLine) {
+          fields.put("Koulutusohjelma", "Kahden tutkinnon opinnot");
+        }
+        else if (StudyProgrammeAineopiskelu.EU_ETA == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/lukio (EU- ja ETA-maiden ulkopuoliset opiskelijat)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Aineopiskelu/lukio");
+        }
+      }
+      
+      // Aineopiskelu/perusopetus koulutusohjelma
       
       if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU_PK)) {
-        InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
-        if (InternetixStudyProgramme.OPPILAITOS == altLine) {
+        StudyProgrammeAineopiskelupk altLine = EnumUtils.getEnum(StudyProgrammeAineopiskelupk.class, getFormValue(formData, "field-internetix_alternativelines"));
+        if (StudyProgrammeAineopiskelupk.OPPILAITOS == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos ilmoittaa)");
         }
-        else if (InternetixStudyProgramme.OPPIVELVOLLINEN == altLine) {
+        else if (StudyProgrammeAineopiskelupk.OPPIVELVOLLINEN == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppivelvolliset)");
         }
         else {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus");
+        }
+      }
+      
+      // Aikuislukio koulutusohjelma
+
+      if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AIKUISLUKIO)) {
+        StudyProgrammeAikuislukio altLine = EnumUtils.getEnum(StudyProgrammeAikuislukio.class, getFormValue(formData, "field-aikuislukio-studyprogramme"));
+        if (StudyProgrammeAikuislukio.EU_ETA == altLine) { 
+          fields.put("Koulutusohjelma", "Otavan Opiston aikuislukio (EU- ja ETA-maiden ulkopuoliset opiskelijat)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Aikuislukio");
         }
       }
       
@@ -606,6 +644,10 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (ApplicationUtils.isOutsideEUandETA(nationality)) {
         conflicts.add("Hakija on EU- ja ETA-alueen ulkopuolisesta maasta");
       }
+    }
+
+    if (StringUtils.equalsAny(line, ApplicationUtils.LINE_AINEOPISKELU, ApplicationUtils.LINE_AINEOPISKELU_PK, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_AIKUISLUKIO)) {
+      conflicts.add("Varmista, että hakijalle valittu koulutusohjelma on oikein. Muuta sitä tarvittaessa hakemusta muokkaamalla.");
     }
     
     return conflicts;

@@ -668,26 +668,36 @@ public class ApplicationUtils {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case LINE_AINEOPISKELU:
-      if (!isInternetixAutoRegistrationPossible(application, true)) {
+      StudyProgrammeAineopiskelu spAineopiskelu = EnumUtils.getEnum(StudyProgrammeAineopiskelu.class, getFormValue(formData, "field-aineopiskelu-studyprogramme"));
+      if (spAineopiskelu == StudyProgrammeAineopiskelu.AINEOPISKELU_OPPIVELVOLLISET) {
         return studyProgrammeDAO.findById(49L); // Aineopiskelu/lukio (oppivelvolliset)
+      }
+      else if (spAineopiskelu == StudyProgrammeAineopiskelu.KAHDEN_TUTKINNON_OPINNOT) {
+        return studyProgrammeDAO.findById(23L); // Kahden tutkinnon opinnot
+      }
+      else if (spAineopiskelu == StudyProgrammeAineopiskelu.EU_ETA) {
+        return studyProgrammeDAO.findById(59L); // Aineopiskelu/lukio (EU- ja ETA-maiden ulkopuoliset opiskelijat) 
       }
       return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
     case LINE_AINEOPISKELU_PK:
-      InternetixStudyProgramme internetixLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
-      if (internetixLine == InternetixStudyProgramme.OPPIVELVOLLINEN) {
+      StudyProgrammeAineopiskelupk internetixLine = EnumUtils.getEnum(StudyProgrammeAineopiskelupk.class, getFormValue(formData, "field-internetix_alternativelines"));
+      if (internetixLine == StudyProgrammeAineopiskelupk.OPPIVELVOLLINEN) {
         return studyProgrammeDAO.findById(41L); // Aineopiskelu/perusopetus (oppivelvolliset)
       }
-      else if (internetixLine == InternetixStudyProgramme.OPPILAITOS) {
+      else if (internetixLine == StudyProgrammeAineopiskelupk.OPPILAITOS) {
         return studyProgrammeDAO.findById(50L); // Aineopiskelu/perusopetus (oppilaitos ilmoittaa)
       }
       return studyProgrammeDAO.findById(12L); // Aineopiskelu/perusopetus
     case LINE_NETTILUKIO:
-      AlternativeLine nettilukioAlternative = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
-      if (nettilukioAlternative == AlternativeLine.PRIVATE) {
+      StudyProgrammeNettilukio nettilukioAlternative = EnumUtils.getEnum(StudyProgrammeNettilukio.class, getFormValue(formData, "field-nettilukio_alternativelines"));
+      if (nettilukioAlternative == StudyProgrammeNettilukio.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
       }
-      else if (nettilukioAlternative == AlternativeLine.YO) {
+      else if (nettilukioAlternative == StudyProgrammeNettilukio.YO) {
         return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
+      }
+      else if (nettilukioAlternative == StudyProgrammeNettilukio.EU_ETA) {
+        return studyProgrammeDAO.findById(57L); // Nettilukio/yksityisopiskelu (EU- ja ETA-maiden ulkopuoliset opiskelijat)
       }
       return studyProgrammeDAO.findById(6L); // Nettilukio
     case LINE_NETTILUKIO_OV:
@@ -695,6 +705,10 @@ public class ApplicationUtils {
     case LINE_NETTIPK:
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
     case LINE_AIKUISLUKIO:
+      StudyProgrammeAikuislukio spAikuislukio = EnumUtils.getEnum(StudyProgrammeAikuislukio.class, getFormValue(formData, "field-aikuislukio-studyprogramme"));
+      if (spAikuislukio == StudyProgrammeAikuislukio.EU_ETA) {
+        return studyProgrammeDAO.findById(58L); // Otavan Opiston aikuislukio (EU- ja ETA-maiden ulkopuoliset opiskelijat)
+      }
       return studyProgrammeDAO.findById(1L); // Aikuislukio
     case LINE_MK:
       String foreignLine = getFormValue(formData, "field-foreign-line");
