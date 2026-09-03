@@ -19,11 +19,11 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
-import fi.otavanopisto.pyramus.applications.StudyProgrammeNettilukio;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.applications.StudyProgrammeAikuislukio;
 import fi.otavanopisto.pyramus.applications.StudyProgrammeAineopiskelu;
 import fi.otavanopisto.pyramus.applications.StudyProgrammeAineopiskelupk;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeNettilukio;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
@@ -41,6 +42,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -548,20 +550,19 @@ public class ViewApplicationViewController extends PyramusViewController {
         String name = person.getDefaultUser() == null ? "???" : person.getDefaultUser().getFullName();
         String conflict = String.format("Hakija löytyy jo Pyramuksesta henkilötunnuksen perusteella: <a href=\"%s\" target=\"_blank\">%s</a>", url, name);
         
-        // Check if existing person is actually a staff member
+        // Check if existing person is actually a staff member or a guardian
         
         if (person.getDefaultUser() != null) {
           StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
           StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
           if (staffMember != null) {
-            conflict += "<br/><b>Huom!</b> Hakija on henkilökunnan jäsen";
+            conflict += " ja on henkilökunnan jäsen (sisäänheitto ei onnistu)";
           }
-        }
-        
-        // Check if SSNs match
-        
-        if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
-          conflict += "<br/><b>Huom!</b> Hakemuksen ja olemassa olevan henkilön henkilötunnus eivät täsmää";
+          StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
+          StudentParent studentParent = studentParentDAO.findById(person.getDefaultUser().getId());
+          if (studentParent != null) {
+            conflict += " ja on jonkin toisen opiskelijan huoltaja (sisäänheitto ei onnistu)";
+          }
         }
 
         conflicts.add(conflict);
@@ -584,20 +585,28 @@ public class ViewApplicationViewController extends PyramusViewController {
               String name = person.getDefaultUser() == null ? "???" : person.getDefaultUser().getFullName();
               String conflict = String.format("Hakija löytyy jo Pyramuksesta sähköpostiosoitteen perusteella: <a href=\"%s\" target=\"_blank\">%s</a>", url, name);
 
-              // Check if existing person is actually a staff member
+              // Check if existing person is actually a staff member or a guardian
               
+              boolean coreReasonFound = false;
               if (person.getDefaultUser() != null) {
                 StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
                 StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
                 if (staffMember != null) {
-                  conflict += "<br/><b>Huom!</b> Hakija on henkilökunnan jäsen";
+                  conflict += " ja on henkilökunnan jäsen (sisäänheitto samalla sähköpostiosoitteella ei onnistu)";
+                  coreReasonFound = true;
+                }
+                StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
+                StudentParent studentParent = studentParentDAO.findById(person.getDefaultUser().getId());
+                if (studentParent != null) {
+                  conflict += " ja on jonkin toisen opiskelijan huoltaja (sisäänheitto samalla sähköpostiosoitteella ei onnistu)";
+                  coreReasonFound = true;
                 }
               }
               
               // Check if SSNs match
               
-              if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
-                conflict += "<br/><b>Huom!</b> Hakemuksen ja olemassa olevan käyttäjän henkilötunnus eivät täsmää";
+              if (!coreReasonFound && !StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
+                conflict += " mutta henkilötunnukset eivät täsmää (sisäänheitto ei onnistu)";
               }
               
               conflicts.add(conflict);

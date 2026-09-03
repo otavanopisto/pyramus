@@ -65,6 +65,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -97,6 +98,7 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
@@ -1659,6 +1661,11 @@ public class ApplicationUtils {
         StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
         if (staffMember != null) {
           throw new DuplicatePersonException("Käyttäjätiedot viittaavat henkilökunnan jäseneen");
+        }
+        StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
+        StudentParent studentParent = studentParentDAO.findById(person.getDefaultUser().getId());
+        if (studentParent != null) {
+          throw new DuplicatePersonException("Käyttäjä on jo jonkin opiskelijan huoltaja");
         }
       }
       if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
