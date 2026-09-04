@@ -403,8 +403,8 @@ public class ApplicationUtils {
     }
   }
 
-  public static boolean isUnderage(Application application) {
-    String dateString = extractBirthdayString(application);
+  public static boolean isUnderage(JSONObject formData) {
+    String dateString = extractBirthdayString(formData);
     if (StringUtils.isBlank(dateString)) {
       return false;
     }
@@ -937,11 +937,10 @@ public class ApplicationUtils {
     }
   }
   
-  public static String extractBirthdayString(Application application) {
-    if (application == null) {
+  public static String extractBirthdayString(JSONObject formData) {
+    if (formData == null) {
       return null;
     }
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
     String ssn = StringUtils.upperCase(getFormValue(formData, "field-ssn"));
     if (!StringUtils.isEmpty(ssn)) {
       if (ssn.length() != 11) {
@@ -1104,7 +1103,7 @@ public class ApplicationUtils {
     
     if (person == null) {
       // #1529: Determine birthday from birthday field or SSN field
-      String birthdayStr = extractBirthdayString(application);
+      String birthdayStr = extractBirthdayString(formData);
       try {
         Date birthday = StringUtils.isBlank(birthdayStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(birthdayStr);
         Sex sex = resolveGender(getFormValue(formData, "field-sex"));
@@ -1261,7 +1260,7 @@ public class ApplicationUtils {
     
     // Guardian info for underage applicants
     
-    if (isUnderage(application)) {
+    if (isUnderage(formData)) {
       
       // Attach email
       

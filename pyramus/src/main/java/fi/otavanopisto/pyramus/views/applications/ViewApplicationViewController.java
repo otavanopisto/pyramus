@@ -190,7 +190,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(ssn)) {
         fields.put("Henkilötunnus", ssn);
       }
-      String birthday = ApplicationUtils.extractBirthdayString(application);
+      String birthday = ApplicationUtils.extractBirthdayString(formData);
       if (StringUtils.isNotEmpty(birthday)) {
         fields.put("Syntymäaika", birthday);
       }
@@ -227,7 +227,7 @@ public class ViewApplicationViewController extends PyramusViewController {
 
       // Alaikäisen hakemustiedot
       
-      if (ApplicationUtils.isUnderage(application)) {
+      if (ApplicationUtils.isUnderage(formData)) {
         fields = new LinkedHashMap<>();
         sections.put("Alaikäisen hakemustiedot", fields);
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-grounds"))) { 
@@ -624,7 +624,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isEmpty(ssn)) {
         conflicts.add("Hakijalla ei ole suomalaista henkilötunnusta");
       }
-      if (ApplicationUtils.isUnderage(application)) {
+      if (ApplicationUtils.isUnderage(formData)) {
         conflicts.add("Hakija on alaikäinen");
       }
     }

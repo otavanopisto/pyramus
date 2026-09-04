@@ -137,7 +137,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     // Document generation
 
     try {
-      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, ApplicationUtils.isUnderage(application));
+      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, ApplicationUtils.isUnderage(formData));
       return Response.ok(data)
           .type("application/pdf")
           .header("Content-Length", data.length)
@@ -540,6 +540,32 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
       
       if (application == null) {
+        
+        // Vaihtoehtoisten koulutusohjelmien arpominen osalle linjoista
+        
+        String nationality = ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality"));
+        boolean isOutsideEUandETA = ApplicationUtils.isOutsideEUandETA(nationality);
+        if (StringUtils.equals(line, ApplicationUtils.LINE_AINEOPISKELU)) {
+          if (isOutsideEUandETA) {
+            formData.put("field-aineopiskelu-studyprogramme", "EU_ETA");
+          }
+          else if (ApplicationUtils.isUnderage(formData) || ApplicationUtils.isContractSchool(formData) || ApplicationUtils.extractSSN(application) == null) {
+            formData.put("field-aineopiskelu-studyprogramme", "AINEOPISKELU_OPPIVELVOLLISET");
+          }
+        }
+        else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTILUKIO)) {
+          if (isOutsideEUandETA) {
+            formData.put("field-nettilukio_alternativelines", "EU_ETA");
+          }
+        }
+        else if (StringUtils.equals(line, ApplicationUtils.LINE_AIKUISLUKIO)) {
+          if (isOutsideEUandETA) {
+            formData.put("field-aikuislukio-studyprogramme", "EU_ETA");
+          }
+        }
+        
+        // Hakemuksen luonti
+        
         application = applicationDAO.create(
             applicationId,
             line,

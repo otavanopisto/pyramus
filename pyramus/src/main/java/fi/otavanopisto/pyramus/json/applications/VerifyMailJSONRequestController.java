@@ -66,10 +66,11 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
       requestContext.sendError(HttpServletResponse.SC_NOT_FOUND, "Vahvistuspyyntöä ei löytynyt");
       return;
     }
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     
     // Birthday validation
     
-    String applicationBirthday = sanitizeBirthdayString(ApplicationUtils.extractBirthdayString(application));
+    String applicationBirthday = sanitizeBirthdayString(ApplicationUtils.extractBirthdayString(formData));
     if (!StringUtils.equals(birthday, applicationBirthday)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syöttämäsi syntymäaika ei vastaa hakemuksessa olevaa syntymäaikaa");
       return;
@@ -139,7 +140,6 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
       
       // Confirmation mail to applicant
       
-      JSONObject formData = JSONObject.fromObject(application.getFormData());
       String line = formData.getString("field-line");
       String surname = application.getLastName();
       String referenceCode = application.getReferenceCode();

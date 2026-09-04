@@ -116,7 +116,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
 
           OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
           
-          boolean underageApplicant = ApplicationUtils.isUnderage(application);
+          boolean underageApplicant = ApplicationUtils.isUnderage(formData);
           
           byte[] applicantDocument = null;
           
