@@ -99,9 +99,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, String> fields = new LinkedHashMap<>();
       sections.put("Perustiedot", fields);
       
-      if (application.getApplicantEditable()) {
-        fields.put("Muokkaustunnus", application.getReferenceCode());
-      }
+      fields.put("Muokkaustunnus", application.getReferenceCode());
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
       
@@ -619,18 +617,12 @@ public class ViewApplicationViewController extends PyramusViewController {
     // Internetix checks
     
     if (ApplicationUtils.isInternetixLine(application.getLine())) {
-
       // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
       if (ApplicationUtils.isContractSchool(formData)) {
         conflicts.add("Hakija opiskelee sopimusoppilaitoksessa");
       }
-      // #1487: Jos hetun loppuosa puuttuu tai on XXX, käsitellään manuaalisesti
-      String ssnSuffix = ApplicationUtils.getSsnSuffix(formData); 
-      if (StringUtils.isEmpty(ssnSuffix)) {
-        conflicts.add("Hakijan henkilötunnuksen loppuosa puuttuu");
-      }
-      if (StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
-        conflicts.add("Hakijan henkilötunnuksen loppuosa on XXXX");
+      if (StringUtils.isEmpty(ssn)) {
+        conflicts.add("Hakijalla ei ole suomalaista henkilötunnusta");
       }
       if (ApplicationUtils.isUnderage(application)) {
         conflicts.add("Hakija on alaikäinen");

@@ -38,7 +38,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -46,7 +45,6 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import fi.otavanopisto.pyramus.applications.ApplicationMailErrorHandler;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
-import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -54,7 +52,6 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
-import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
@@ -65,9 +62,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
-import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.mailer.Mailer;
@@ -553,7 +548,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             email,
             referenceCode,
             formData.toString(),
-            !ApplicationUtils.isInternetixLine(line), // applicantEditable (#769: Internetix applicants may not edit submitted data)
+            true,
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
         newApplicationPostProcessing(application);

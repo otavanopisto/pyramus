@@ -154,23 +154,6 @@ public class ApplicationUtils {
     return false;
   }
   
-  public static boolean isInternetixAutoRegistrationPossible(Application application, boolean allowEmptySsn) {
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
-    // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
-    if (ApplicationUtils.isContractSchool(formData)) {
-      return false;
-    }
-    // #1487: Jos hetun loppuosa puuttuu tai on XXXX, käsitellään manuaalisesti
-    String ssnSuffix = getSsnSuffix(formData);
-    if (StringUtils.isEmpty(ssnSuffix) || StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
-      if (!allowEmptySsn) {
-        return false;
-      }
-    }
-    // #1487: Jos alle 18, käsitellään manuaalisesti
-    return !isUnderage(application);
-  }
-  
   public static String getSsnSuffix(JSONObject formData) {
     String ssn = getFormValue(formData, "field-ssn");
     if (!StringUtils.isEmpty(ssn)) {

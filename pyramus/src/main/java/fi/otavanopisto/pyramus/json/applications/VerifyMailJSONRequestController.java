@@ -154,21 +154,17 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
           return;
         }
 
-        if (!ApplicationUtils.isInternetixLine(application.getLine())) {
+        // Replace the dynamic parts of the mail content (edit link, surname and reference code)
 
-          // Replace the dynamic parts of the mail content (edit link, surname and reference code)
-          // #1487: Internetix confirmation mails do not have any dynamic content
+        StringBuilder viewUrl = new StringBuilder();
+        viewUrl.append(requestContext.getRequest().getScheme());
+        viewUrl.append("://");
+        viewUrl.append(requestContext.getRequest().getServerName());
+        viewUrl.append(":");
+        viewUrl.append(requestContext.getRequest().getServerPort());
+        viewUrl.append("/applications/edit.page");
 
-          StringBuilder viewUrl = new StringBuilder();
-          viewUrl.append(requestContext.getRequest().getScheme());
-          viewUrl.append("://");
-          viewUrl.append(requestContext.getRequest().getServerName());
-          viewUrl.append(":");
-          viewUrl.append(requestContext.getRequest().getServerPort());
-          viewUrl.append("/applications/edit.page");
-
-          content = String.format(content, viewUrl, surname, referenceCode);
-        }
+        content = String.format(content, viewUrl, surname, referenceCode);
 
         Mailer.sendMail(
             Mailer.JNDI_APPLICATION,
