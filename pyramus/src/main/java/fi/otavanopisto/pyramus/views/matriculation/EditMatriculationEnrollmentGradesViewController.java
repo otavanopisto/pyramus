@@ -22,13 +22,13 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttend
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
+import fi.otavanopisto.pyramus.util.DateUtils;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableFacade;
 import fi.otavanopisto.pyramus.util.ixtable.PyramusIxTableRowFacade;
 import net.sf.json.JSONArray;

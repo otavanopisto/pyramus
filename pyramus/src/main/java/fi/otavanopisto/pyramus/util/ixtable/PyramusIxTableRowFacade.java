@@ -7,7 +7,7 @@ import java.util.Date;
 import org.apache.commons.lang3.EnumUtils;
 
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.otavanopisto.pyramus.framework.DateUtils;
+import fi.otavanopisto.pyramus.util.DateUtils;
 
 public class PyramusIxTableRowFacade {
   
