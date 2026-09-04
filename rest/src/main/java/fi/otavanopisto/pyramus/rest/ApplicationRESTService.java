@@ -549,7 +549,7 @@ public class ApplicationRESTService extends AbstractRESTService {
           if (isOutsideEUandETA) {
             formData.put("field-aineopiskelu-studyprogramme", "EU_ETA");
           }
-          else if (ApplicationUtils.isUnderage(formData) || ApplicationUtils.isContractSchool(formData) || ApplicationUtils.extractSSN(application) == null) {
+          else if (ApplicationUtils.isContractSchool(formData)) {
             formData.put("field-aineopiskelu-studyprogramme", "AINEOPISKELU_OPPIVELVOLLISET");
           }
         }
