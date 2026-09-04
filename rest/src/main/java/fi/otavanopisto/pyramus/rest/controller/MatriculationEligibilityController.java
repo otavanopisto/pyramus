@@ -27,7 +27,6 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnroll
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
@@ -38,6 +37,7 @@ import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import fi.otavanopisto.pyramus.tor.TORSubject;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculum;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
+import fi.otavanopisto.pyramus.util.DateUtils;
 
 /**
  * Controller for determining 

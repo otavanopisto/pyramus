@@ -10,7 +10,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
-import fi.otavanopisto.pyramus.framework.DateUtils;
+import fi.otavanopisto.pyramus.util.DateUtils;
 import fi.otavanopisto.pyramus.views.students.ViewStudentValidationWarning.ViewStudentValidationType;
 import fi.otavanopisto.pyramus.views.students.ViewStudentValidationWarning.ViewStudentValidationWarningSeverity;
 

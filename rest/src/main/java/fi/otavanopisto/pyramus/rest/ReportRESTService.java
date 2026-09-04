@@ -40,7 +40,6 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.koski.KoskiController;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -49,6 +48,7 @@ import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCredit;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditReport;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditState;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Date;
+import fi.otavanopisto.pyramus.util.DateUtils;
 
 @Path("/report")
 @Produces(MediaType.APPLICATION_JSON)
