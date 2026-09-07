@@ -461,7 +461,7 @@
             if ($('#application-form').attr('data-done-page') == 'true') {
               if (existingApplication) {
                 navigateTo('.section-done.modified');
-			        }
+              }
               else {
                 $('#edit-info-email').text($('#field-email').val());
                 navigateTo('.section-done.submitted');
