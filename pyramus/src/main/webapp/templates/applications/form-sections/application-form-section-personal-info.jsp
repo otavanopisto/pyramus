@@ -118,7 +118,7 @@
     </div>
 
     <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,nettilukio,aikuislukio" style="display:none;">
-      <!--  151 = suomi -->
+      <!-- 151 = suomi -->
       <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151" style="display:none;">
         <label for="field-language-skill" class="required">Mikä on suomen kielen taitotasosi Eurooppalaisen viitekehyksen mukaisesti</label>
         <select id="field-language-skill" name="field-language-skill" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">

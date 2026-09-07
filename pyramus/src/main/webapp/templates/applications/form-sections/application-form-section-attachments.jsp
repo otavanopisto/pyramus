@@ -22,6 +22,7 @@
     </div>
     
     <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,nettilukio,aikuislukio" style="display:none;">
+      <!-- 151 = suomi -->
       <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151" style="display:none;">
         <p>Lisää liitteisiin suomen kielen taitotason osoittava todistus.</p>  
       </div>
