@@ -1,8 +1,10 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -465,7 +467,8 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
           new Date(),
-          enrollment.getOpintopolkuUrl()
+          enrollment.getOpintopolkuUrl(),
+          new HashSet<>()
         );
   
         matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, null, null);
@@ -513,7 +516,8 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.isCanPublishName(),
           student,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-          enrollment.getOpintopolkuUrl()
+          enrollment.getOpintopolkuUrl(),
+          existingEnrollment.getFlags()
         );
   
         if (enrollmentState != enrollmentEntity.getState()) {
@@ -708,6 +712,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setEnrollmentDate(enrollmentDate);
     result.setDegreeStructure(examEnrollment.getDegreeStructure() != null ? examEnrollment.getDegreeStructure().name() : null);
     result.setOpintopolkuUrl(examEnrollment.getOpintopolkuUrl());
+    result.setFlags(Collections.unmodifiableSet(examEnrollment.getFlags()));
     
     List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDao.listByEnrollment(examEnrollment);
     

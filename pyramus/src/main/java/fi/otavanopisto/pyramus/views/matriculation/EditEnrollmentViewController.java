@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentFlag;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
@@ -90,6 +92,13 @@ public class EditEnrollmentViewController extends PyramusViewController {
       candidateNumber = null;
     }
     
+    Set<MatriculationExamEnrollmentFlag> flags = new HashSet<>();
+    for (MatriculationExamEnrollmentFlag flag : MatriculationExamEnrollmentFlag.values()) {
+      if ("1".equals(pageRequestContext.getString(String.format("flag.%s", flag.name())))) {
+        flags.add(flag);
+      }
+    }
+    
     Long enrollmentId = pageRequestContext.getLong("enrollment");
     MatriculationExamEnrollment enrollment = enrollmentId != null ? enrollmentDAO.findById(enrollmentId) : null;
     if (enrollment != null) {
@@ -114,7 +123,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
           pageRequestContext.getBoolean("canPublishName"),
           enrollment.getStudent(),
           MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
-          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), "")
+          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), ""),
+          flags
       );
       
       if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
@@ -152,7 +162,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
           new Date(),
-          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), "")
+          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), ""),
+          flags
       );
 
       if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
