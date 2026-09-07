@@ -2416,7 +2416,8 @@
           "courseNumber": 4,
           "length": 2,
           "lengthUnitSymbol": "op",
-          "mandatority": "NATIONAL_LEVEL_OPTIONAL"
+          "mandatority": "NATIONAL_LEVEL_OPTIONAL",
+          "available": true
         },
         {
           "name": "Ruotsin itämaasta Suomeksi",
