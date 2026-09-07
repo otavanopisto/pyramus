@@ -553,15 +553,11 @@ public class ApplicationRESTService extends AbstractRESTService {
             formData.put("field-aineopiskelu-studyprogramme", "AINEOPISKELU_OPPIVELVOLLISET");
           }
         }
-        else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTILUKIO)) {
-          if (isOutsideEUandETA) {
-            formData.put("field-nettilukio_alternativelines", "EU_ETA");
-          }
+        else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTILUKIO) && isOutsideEUandETA) {
+          formData.put("field-nettilukio_alternativelines", "EU_ETA");
         }
-        else if (StringUtils.equals(line, ApplicationUtils.LINE_AIKUISLUKIO)) {
-          if (isOutsideEUandETA) {
-            formData.put("field-aikuislukio-studyprogramme", "EU_ETA");
-          }
+        else if (StringUtils.equals(line, ApplicationUtils.LINE_AIKUISLUKIO) && isOutsideEUandETA) {
+          formData.put("field-aikuislukio-studyprogramme", "EU_ETA");
         }
         
         // Hakemuksen luonti
