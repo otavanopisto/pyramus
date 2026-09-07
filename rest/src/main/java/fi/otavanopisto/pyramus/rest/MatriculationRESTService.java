@@ -49,7 +49,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
@@ -73,6 +72,7 @@ import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibilityOPS2021
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.util.DateUtils;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/matriculation")

@@ -12,7 +12,7 @@ public class StudentParentChild implements ContextReference {
   
   public StudentParentChild(Long studentId, Long personId, String firstName, String lastName, String nickname,
       String studyProgrammeName, String defaultEmail, String defaultPhoneNumber, Address defaultAddress,
-      LocalDate studyStartDate, LocalDate studyTimeEnd, LocalDate studyEndDate) {
+      LocalDate studyStartDate, LocalDate studyTimeEnd, LocalDate studyEndDate, LocalDate relationExpiry) {
     super();
     this.studentId = studentId;
     this.personId = personId;
@@ -26,6 +26,7 @@ public class StudentParentChild implements ContextReference {
     this.studyStartDate = studyStartDate;
     this.studyTimeEnd = studyTimeEnd;
     this.studyEndDate = studyEndDate;
+    this.relationExpiry = relationExpiry;
   }
 
   public Long getStudentId() {
@@ -124,6 +125,14 @@ public class StudentParentChild implements ContextReference {
     this.studyEndDate = studyEndDate;
   }
 
+  public LocalDate getRelationExpiry() {
+    return relationExpiry;
+  }
+
+  public void setRelationExpiry(LocalDate relationExpiry) {
+    this.relationExpiry = relationExpiry;
+  }
+
   private Long studentId;
   private Long personId;
   private String firstName;
@@ -136,4 +145,5 @@ public class StudentParentChild implements ContextReference {
   private LocalDate studyStartDate;
   private LocalDate studyTimeEnd;
   private LocalDate studyEndDate;
+  private LocalDate relationExpiry;
 }
