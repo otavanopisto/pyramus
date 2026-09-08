@@ -660,6 +660,9 @@ public class ApplicationUtils {
       else if (spAineopiskelu == StudyProgrammeAineopiskelu.KAHDEN_TUTKINNON_OPINNOT) {
         return studyProgrammeDAO.findById(23L); // Kahden tutkinnon opinnot
       }
+      else if (spAineopiskelu == StudyProgrammeAineopiskelu.AINEOPISKELU_VALMISTUNEET) {
+        return studyProgrammeDAO.findById(42L); // Aineopiskelu/valmistuneet
+      }
       else if (spAineopiskelu == StudyProgrammeAineopiskelu.EU_ETA) {
         return studyProgrammeDAO.findById(59L); // Aineopiskelu/lukio (EU- ja ETA-maiden ulkopuoliset opiskelijat) 
       }

@@ -88,6 +88,14 @@
           </div>
           <div class="field-row-flex">
             <div class="field-row-element">
+              <input type="radio" id="field-aineopiskelu-studyprogramme-aineopiskelu-valmistuneet" name="field-aineopiskelu-studyprogramme" value="AINEOPISKELU_VALMISTUNEET" />
+            </div>
+            <div class="field-row-label">
+              <label for="field-aineopiskelu-studyprogramme-aineopiskelu-valmistuneet">Aineopiskelu/valmistuneet</label>
+            </div>
+          </div>
+          <div class="field-row-flex">
+            <div class="field-row-element">
               <input type="radio" id="field-aineopiskelu-studyprogramme-eu-eta" name="field-aineopiskelu-studyprogramme" value="EU_ETA" />
             </div>
             <div class="field-row-label">
