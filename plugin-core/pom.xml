@@ -28,6 +28,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Commons -->
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
     <!-- Pyramus -->
 
     <dependency>

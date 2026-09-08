@@ -27,7 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationContactPersonDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationContractPeriodDAO;

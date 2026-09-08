@@ -38,9 +38,8 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
@@ -167,6 +166,7 @@ import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
 import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
