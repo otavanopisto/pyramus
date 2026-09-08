@@ -3,9 +3,8 @@ package fi.otavanopisto.pyramus.util;
 import org.apache.commons.lang3.Strings;
 
 /**
- * StringUtils inherited from Apache's StringUtils to bring back
- * some of the deprecated and much more readable methods that were
- * deprecated from it.
+ * StringUtils inherited from Apache's StringUtils to bring back some 
+ * of the much more readable methods that were deprecated from it.
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
