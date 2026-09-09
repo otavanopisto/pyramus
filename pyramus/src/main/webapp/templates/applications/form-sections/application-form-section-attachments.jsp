@@ -11,12 +11,12 @@
 
     <div class="form-section__field-container field-nettilukioov-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettilukioov" style="display:none;">
       <p>
-        Alaikäisen hakijan on hakuperusteen osoittamiseksi esitettävä <b>perusopetuksen päättötodistuksen</b> lisäksi seuraavat asiakirjat:
+        Alaikäisen hakijan on toimitettava <b>perusopetuksen päättötodistus</b>. Lisäksi hakemukseen tarvitaan seuraavat asiakirjat:
         <ul>
-          <li>painavan perusteen selvittävä asiakirja, jos hakuperusteena terveydelliset tai muut henkilökohtaiset syyt</li>
-          <li>nykyisen / edellisen oppilaitoksen edustajan puolto riittävistä opiskeluvalmiuksista</li>
-          <li>tuorein opintorekisteriote mahdollisista toisen asteen opinnoista</li>
-          <li><a href="https://nettilukio.fi/wp-content/uploads/2026/01/Tiedonsiirtolomake-Nettilukio.pdf" target="_blank">tiedonsiirtolomake</a> ja tarvittaessa pedagogisen tuen asiakirja</li>
+          <li>selvitys hakuperusteesta, jos hakija vetoaa terveydellisiin tai muihin henkilökohtaisiin syihin</li>
+          <li>nykyisen tai aiemman oppilaitoksen lausunto (puolto) riittävistä opiskeluvalmiuksista</li>
+          <li>uusin opintorekisteriote, jos hakijalla on aiempia toisen asteen opintoja</li>
+          <li>tiedonsiirtolomake ja tarvittaessa pedagogisen tuen asiakirjat.</li>
         </ul>
       </p>
     </div>
