@@ -145,6 +145,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
   @Override
   protected boolean checkAccess(RequestContext requestContext) {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     Long loggedUserId = requestContext.getLoggedUserId();
@@ -155,6 +156,13 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     }
     else {
       Long personId = requestContext.getLong("person");
+      if (personId == null) {
+        Long studentId = requestContext.getLong("student");
+        Student student = studentDAO.findById(studentId);
+        if (student != null) {
+          personId = student.getPersonId();
+        }
+      }
       Person person = personDAO.findById(personId);
 
       // #1416: Staff members may only access students of their specified study programmes
@@ -225,6 +233,13 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     
     Long personId = pageRequestContext.getLong("person");
+    if (personId == null) {
+      Long studentId = pageRequestContext.getLong("student");
+      Student student = studentDAO.findById(studentId);
+      if (student != null) {
+        personId = student.getPersonId();
+      }
+    }
     
     Person person = personDAO.findById(personId);
     
