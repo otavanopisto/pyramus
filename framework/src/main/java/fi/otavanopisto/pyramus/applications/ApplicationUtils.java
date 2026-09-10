@@ -154,16 +154,6 @@ public class ApplicationUtils {
     return false;
   }
   
-  public static String getSsnSuffix(JSONObject formData) {
-    String ssn = getFormValue(formData, "field-ssn");
-    if (!StringUtils.isEmpty(ssn)) {
-      return StringUtils.upperCase(StringUtils.substring(ssn, 7, 11));
-    }
-    else {
-      return StringUtils.upperCase(getFormValue(formData, "field-ssn-end"));
-    }
-  }
-  
   public static boolean isInternetixLine(String line) {
     return StringUtils.equals(line, LINE_AINEOPISKELU) || StringUtils.equals(line, LINE_AINEOPISKELU_PK);
   }
