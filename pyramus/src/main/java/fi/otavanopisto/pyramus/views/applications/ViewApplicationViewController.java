@@ -145,6 +145,9 @@ public class ViewApplicationViewController extends PyramusViewController {
         else if (StudyProgrammeAineopiskelu.KAHDEN_TUTKINNON_OPINNOT == altLine) {
           fields.put("Koulutusohjelma", "Kahden tutkinnon opinnot");
         }
+        else if (StudyProgrammeAineopiskelu.AINEOPISKELU_VALMISTUNEET == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/valmistuneet");
+        }
         else if (StudyProgrammeAineopiskelu.EU_ETA == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/lukio (EU- ja ETA-maiden ulkopuoliset opiskelijat)");
         }
