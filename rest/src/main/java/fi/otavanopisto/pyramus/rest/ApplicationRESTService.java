@@ -550,7 +550,21 @@ public class ApplicationRESTService extends AbstractRESTService {
             formData.put("field-aineopiskelu-studyprogramme", "EU_ETA");
           }
           else if (ApplicationUtils.isContractSchool(formData)) {
-            formData.put("field-aineopiskelu-studyprogramme", "AINEOPISKELU_OPPIVELVOLLISET");
+            long school = 0;
+            try {
+              school = Long.parseLong(getFormValue(formData, "field-internetix-contract-school"));
+            }
+            catch (Exception e) {
+              // Just in case, shouldn't happen
+            }
+            if (school == 7362 || school == 7363) {
+              // 7362 = Etelä-Savon ammattiopisto (Tuva lukio)
+              // 7363 = Etelä-Savon ammattiopisto (Kaksoistutkinto)
+              formData.put("field-aineopiskelu-studyprogramme", "KAHDEN_TUTKINNON_OPINNOT");
+            }
+            else {
+              formData.put("field-aineopiskelu-studyprogramme", "AINEOPISKELU_OPPIVELVOLLISET");
+            }
           }
         }
         else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTILUKIO) && isOutsideEUandETA) {
