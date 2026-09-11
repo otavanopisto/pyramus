@@ -10,7 +10,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
@@ -153,7 +154,7 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   
   private String escapeSearchCriteria(String value) {
     // QueryParser also escapes wildcard *, which we want as-is when it's a trailing character 
-    if (StringUtils.endsWith(value, "*")) {
+    if (Strings.CI.endsWith(value, "*")) {
       return String.format("%s*", QueryParser.escape(value.substring(0, value.length() - 1)));
     }
     else {
