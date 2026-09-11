@@ -73,7 +73,7 @@
         </h1>
         <div class="application-description__line-content">
           <p>Aineopiskelijana voit opiskella yksittäisiä lukion opintojaksoja. Opiskelu on maksullista.</p>
-          <p>Jos olet alle 18-vuotias tai sopimusoppilaitoksen opiskelija, tarkistamme tietosi Opetushallituksen Valpas-palvelusta ennen opiskelijaksi hyväksymistä.</p>
+          <p>Jos olet alle 20-vuotias sopimusoppilaitoksen opiskelija, tarkistamme tietosi Opetushallituksen Valpas-palvelusta ennen opiskelijaksi hyväksymistä.</p>
         </div>
       </header>
 
@@ -112,19 +112,19 @@
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettilukioov" style="display:none;">
           <p class="application-content__information-page-specific-summary">Saat sähköpostiisi automaattiviestin onnistuneesti lähetetystä hakemuksesta. Hakemus otetaan käsittelyyn viikon sisällä. Jos et viikon sisällä ole saanut vastausta hakemukseesi, tarkistathan sähköpostisi roskapostikansion ja ole tarvittaessa yhteydessä <a href="mailto:nettilukio@otavia.fi">nettilukio@otavia.fi</a>.</p>
-          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettilukio@otavia.fi">nettilukio@otavia.fi</a>.</p>
+          <p>Mikäli sinulla on kysyttävää hakemuksesta, ota yhteyttä <a href="mailto:nettilukio@otavia.fi">nettilukio@otavia.fi</a>.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aineopiskelupk" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettiperuskoulu@otavia.fi">nettiperuskoulu@otavia.fi</a>.</p>
+          <p>Mikäli sinulla on kysyttävää hakemuksesta, ota yhteyttä <a href="mailto:nettiperuskoulu@otavia.fi">nettiperuskoulu@otavia.fi</a>.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aineopiskelu@otavia.fi">aineopiskelu@otavia.fi</a>.</p>
+          <p>Mikäli sinulla on kysyttävää hakemuksesta, ota yhteyttä <a href="mailto:aineopiskelu@otavia.fi">aineopiskelu@otavia.fi</a>.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aikuistenperusopetus@otavanopisto.fi">aikuistenperusopetus@otavanopisto.fi</a>.</p>
+          <p>Mikäli sinulla on kysyttävää hakemuksesta, ota yhteyttä <a href="mailto:aikuistenperusopetus@otavanopisto.fi">aikuistenperusopetus@otavanopisto.fi</a>.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a>.</p>
+          <p>Mikäli sinulla on kysyttävää hakemuksesta, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a>.</p>
         </div>
       </section>
       <section class="application-content__form">

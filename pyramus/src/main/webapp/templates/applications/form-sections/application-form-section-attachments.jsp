@@ -21,13 +21,21 @@
       </p>
     </div>
     
+    <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,aikuislukio" style="display:none;">
+      <p>Liitä tähän todistukset ja mahdolliset erotodistukset aiemmista opinnoistasi.</p>  
+    </div>
+
+    <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
+      <p>Jos haluat suorittaa lukion oppiaineen oppimäärän, liitä tähän kopio aiemmasta lukiotodistuksesta (ei päättötodistuksesta).</p>  
+    </div>
+
     <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,nettilukio,aikuislukio" style="display:none;">
       <!-- 151 = suomi -->
       <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151" style="display:none;">
-        <p>Lisää liitteisiin suomen kielen taitotason osoittava todistus.</p>  
+        <p>Koska äidinkielesi ei ole suomi, liitä tähän kopio suomen kielen taitotasosi osoittavasta todistuksesta.</p>  
       </div>
       <div class="form-section__field-container dependent" data-dependent-field="field-has-ssn" data-dependent-values="ei" style="display:none;">
-        <p>Lisää liitteisiin valokuva passistasi.</p>  
+        <p>Koska sinulla ei ole suomalaista henkilötunnusta, liitä tähän valokuva passistasi.</p>  
       </div>
     </div>
 
