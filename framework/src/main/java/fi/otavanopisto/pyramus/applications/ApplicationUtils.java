@@ -32,7 +32,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -108,6 +107,7 @@ import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import net.sf.json.JSONObject;
 
 public class ApplicationUtils {
@@ -1702,7 +1702,7 @@ public class ApplicationUtils {
     if (StringUtils.isBlank(filename)) {
       return filename;
     }
-    return StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), "."));
+    return StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern((CharSequence) filename, "[\\\\/:*?\"<>|]"), "."));
   }
 
   public static String getFormValue(JSONObject object, String key) {
