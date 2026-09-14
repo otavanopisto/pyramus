@@ -55,6 +55,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.CollectionBridge;
 import fi.otavanopisto.pyramus.persistence.search.filters.StudentIdFilterFactory;
+import fi.otavanopisto.pyramus.util.DateUtils;
 import fi.otavanopisto.security.ContextReference;
 
 @Entity
@@ -241,6 +242,15 @@ public class Person implements ContextReference {
     }
     
     return null;
+  }
+  
+  /**
+   * @return the date when the Person is considered full age. Returns null if the birthday field is null.
+   */
+  @Transient
+  public LocalDate getFullageDate() {
+    LocalDate bday = DateUtils.toLocalDate(getBirthday());
+    return bday != null ? bday.plusYears(18) : null;
   }
   
   @Transient

@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 /**
@@ -10,14 +11,17 @@ public class StudentParentRelation {
   public StudentParentRelation() {
   }
 
-  public StudentParentRelation(Long id, String firstName, String lastName, String email, boolean activeParent, boolean continuedViewPermission, OffsetDateTime continuedViewPermissionModified) {
+  public StudentParentRelation(Long id, Long studentParentId, String firstName, String lastName, String email, boolean activeParent, 
+      boolean continuedViewPermission, OffsetDateTime continuedViewPermissionModified, LocalDate expires) {
     this.id = id;
+    this.studentParentId = studentParentId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.activeParent = activeParent;
     this.continuedViewPermission = continuedViewPermission;
     this.continuedViewPermissionModified = continuedViewPermissionModified;
+    exipres = expires;
   }
   
   public Long getId() {
@@ -76,11 +80,29 @@ public class StudentParentRelation {
     this.continuedViewPermissionModified = continuedViewPermissionModified;
   }
 
+  public Long getStudentParentId() {
+    return studentParentId;
+  }
+
+  public void setStudentParentId(Long studentParentId) {
+    this.studentParentId = studentParentId;
+  }
+
+  public LocalDate getExipres() {
+    return exipres;
+  }
+
+  public void setExipres(LocalDate exipres) {
+    this.exipres = exipres;
+  }
+
   private Long id;
+  private Long studentParentId;
   private String firstName;
   private String lastName;
   private String email;
   private boolean activeParent;
   private boolean continuedViewPermission;
   private OffsetDateTime continuedViewPermissionModified;
+  private LocalDate exipres;
 }
