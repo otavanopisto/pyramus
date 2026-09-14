@@ -18,8 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
@@ -49,6 +48,7 @@ import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCredit;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditReport;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditState;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Date;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 @Path("/report")
 @Produces(MediaType.APPLICATION_JSON)
