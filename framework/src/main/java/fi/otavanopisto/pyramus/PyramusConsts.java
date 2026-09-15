@@ -80,6 +80,9 @@ public class PyramusConsts {
     // Grades allowed by the curriculum
     public static final Set<String> ALLOWED_GRADES = Set.of("4", "5", "6", "7", "8", "9", "10", "S", "H");
     
+    // Grades allowed by the curriculum
+    public static final Set<String> PASSING_GRADES = Set.of("5", "6", "7", "8", "9", "10", "S");
+    
     /**
      * Default subject selections for perusopetus. Map where the key is the 
      * user variable name and value is the default subject code.
