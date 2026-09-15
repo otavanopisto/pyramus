@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
@@ -27,6 +28,7 @@ import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -93,6 +95,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     Boolean linkCredits = requestContext.getBoolean("linkCredits");
     Boolean setAsDefaultUser = requestContext.getBoolean("setAsDefaultUser");
     Boolean moveFiles = requestContext.getBoolean("moveFiles");
+    Boolean copySubjectChoices = requestContext.getBoolean("copySubjectChoices");
     
     Person person = oldStudent.getPerson();
     String firstName = oldStudent.getFirstName();
@@ -220,6 +223,21 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
         } catch (IOException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
+        }
+      }
+    }
+    
+    if (copySubjectChoices) {
+      EducationType sourceEducationType = oldStudent.getStudyProgramme() != null ? oldStudent.getStudyProgramme().getEducationType() : null;
+      EducationType destinationEducationType = newStudyProgramme.getEducationType();
+      
+      // Only copy subject choices when the education types match
+      if (sourceEducationType != null && destinationEducationType != null && sourceEducationType.getId().equals(destinationEducationType.getId())) {
+        for (String subjectChoiceVariable : PyramusConsts.USERVARIABLE_SUBJECT_CHOICE_VARIABLES) {
+          String subjectChoice = userVariableDAO.findByUserAndKey(oldStudent, subjectChoiceVariable);
+          if (StringUtils.isNotBlank(subjectChoice)) {
+            userVariableDAO.setUserVariable(newStudent, subjectChoiceVariable, subjectChoice);
+          }
         }
       }
     }
