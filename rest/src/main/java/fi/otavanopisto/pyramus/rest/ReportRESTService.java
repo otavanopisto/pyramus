@@ -1,24 +1,42 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
@@ -41,9 +59,11 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.koski.KoskiController;
+import fi.otavanopisto.pyramus.rest.KoskiCSVCreditRow.KoskiBoolean;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ReportPermissions;
+import fi.otavanopisto.pyramus.rest.model.report.KoskiCreditError;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCredit;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditReport;
 import fi.otavanopisto.pyramus.rest.model.report.PerusopetusCreditState;
@@ -58,6 +78,14 @@ import fi.otavanopisto.pyramus.util.StringUtils;
 @AuthScope(AuthScope.LEGACY)
 public class ReportRESTService extends AbstractRESTService {
 
+  // Alku- ja lukutaitovaihe
+  private final static String LINJA_1 = "apalu";
+  // Päättövaihe
+  private final static String LINJA_2 = "paanp";
+  
+  @Inject
+  private Logger logger;
+  
   @Inject
   private CourseAssessmentDAO courseAssessmentDAO; 
   
@@ -74,106 +102,159 @@ public class ReportRESTService extends AbstractRESTService {
   private TransferCreditDAO transferCreditDAO;
   
   @Path("/perusopetus")
-  @GET
+  @POST
   @RESTPermit (ReportPermissions.VIEW_PROGRAMMATIC_REPORT)
-  public Response listEducationTypes(@QueryParam("linja") String linja, @QueryParam("begin") ISO8601Date begin, @QueryParam("end") ISO8601Date end) {
-
-    if (linja == null || begin == null || begin.getLocalDate() == null || end == null || end.getLocalDate() == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    String educationTypeCode;
-    Date beginDate = DateUtils.toDate(begin.getLocalDate().atStartOfDay());
-    Date endDate = DateUtils.toDate(end.getLocalDate().atTime(23, 59, 59));
-
-    if (beginDate.after(endDate)) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-
-    Collection<StudyProgramme> studyProgrammes;
-    if ("apalu".equals(linja)) {
-      StudyProgramme sp1 = studyProgrammeDAO.findById(29L);
-      StudyProgramme sp2 = studyProgrammeDAO.findById(33L);
-      if (sp1 == null || sp2 == null) {
-        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-      }
-      studyProgrammes = Arrays.asList(sp1, sp2);
-      educationTypeCode = PyramusConsts.Apa.EDUCATION_TYPE;
-    }
-    else if ("paanp".equals(linja)) {
-      StudyProgramme sp1 = studyProgrammeDAO.findById(7L);
-      StudyProgramme sp2 = studyProgrammeDAO.findById(11L);
-      if (sp1 == null || sp2 == null) {
-        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-      }
-      studyProgrammes = Arrays.asList(sp1, sp2);
-      educationTypeCode = PyramusConsts.Perusopetus.EDUCATION_TYPE;
-    }
-    else {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    PerusopetusCreditReport report = new PerusopetusCreditReport();
-    
-    // Listaa arvosanat aikavälillä
-    List<CourseAssessment> assessments = courseAssessmentDAO.listByStudyProgrammesAndDates(studyProgrammes, beginDate, endDate);
-    
-    for (CourseAssessment assessment : assessments) {
-      PerusopetusCredit restCredit = restCreditForCourseAssessment(assessment, educationTypeCode);
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  public Response producePerusopetusCreditReport(MultipartFormDataInput formData) {
+    try {
+      String linja = formData.getFormDataPart("linja", String.class, null);
+      ISO8601Date begin = formData.getFormDataPart("begin", ISO8601Date.class, null);
+      ISO8601Date end = formData.getFormDataPart("end", ISO8601Date.class, null);
       
-      if (restCredit.getState() != null && restCredit.getState().isAcceptedState()) {
-        report.addAcceptedCredit(restCredit);
+      if (linja == null || begin == null || begin.getLocalDate() == null || end == null || end.getLocalDate() == null) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+  
+      List<KoskiCSVCreditRow> koskiData = readKoskiCreditFile(formData, linja);
+      
+      logger.log(Level.FINE, String.format("Linja %s, datassa rivejä %d", linja, koskiData != null ? koskiData.size() : -1));
+      
+      String educationTypeCode;
+      Date beginDate = DateUtils.toDate(begin.getLocalDate().atStartOfDay());
+      Date endDate = DateUtils.toDate(end.getLocalDate().atTime(23, 59, 59));
+  
+      if (beginDate.after(endDate)) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+  
+      Collection<StudyProgramme> studyProgrammes;
+      if (LINJA_1.equals(linja)) {
+        StudyProgramme sp1 = studyProgrammeDAO.findById(29L);
+        StudyProgramme sp2 = studyProgrammeDAO.findById(33L);
+        if (sp1 == null || sp2 == null) {
+          return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+        studyProgrammes = Arrays.asList(sp1, sp2);
+        educationTypeCode = PyramusConsts.Apa.EDUCATION_TYPE;
+      }
+      else if (LINJA_2.equals(linja)) {
+        StudyProgramme sp1 = studyProgrammeDAO.findById(7L);
+        StudyProgramme sp2 = studyProgrammeDAO.findById(11L);
+        if (sp1 == null || sp2 == null) {
+          return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+        studyProgrammes = Arrays.asList(sp1, sp2);
+        educationTypeCode = PyramusConsts.Perusopetus.EDUCATION_TYPE;
       }
       else {
-        report.addRejectedCredit(restCredit);
+        return Response.status(Status.BAD_REQUEST).build();
       }
+      
+      PerusopetusCreditReport report = new PerusopetusCreditReport();
+      studyProgrammes.forEach(sp -> report.addStudyProrgrammeName(sp.getName()));
+      
+      // Listaa arvosanat aikavälillä
+      List<CourseAssessment> assessments = courseAssessmentDAO.listByStudyProgrammesAndDates(studyProgrammes, beginDate, endDate);
+      
+      for (CourseAssessment assessment : assessments) {
+        PerusopetusCredit restCredit = restCreditForCourseAssessment(assessment, educationTypeCode, koskiData);
+        
+        if (restCredit.getState() != null && restCredit.getState().isAcceptedState()) {
+          report.addAcceptedCredit(restCredit);
+        }
+        else {
+          report.addRejectedCredit(restCredit);
+        }
+      }
+      
+      // VOS-hyväksiluvut
+      
+      List<TransferCredit> vosTCs = transferCreditDAO.listByStudyProgrammesAndDatesAndFunding(studyProgrammes, beginDate, endDate, TransferCreditFunding.GOVERNMENT_FUNDING);
+      for (TransferCredit transferCredit : vosTCs) {
+        PerusopetusCredit restCredit = restCredit(transferCredit, educationTypeCode, koskiData);
+        
+        if (restCredit.getState() != null && restCredit.getState().isAcceptedState()) {
+          report.getSummary().incrementAcceptedTransferCreditCount();
+        }
+        else {
+          report.getSummary().incrementRejectedTransferCreditCount();
+        }
+        
+        report.addFundedTransferCredit(restCredit);
+      }
+      
+      // Summary
+      
+      for (PerusopetusCredit credit : report.getAcceptedCredits()) {
+        report.getSummary().incrementAcceptedCreditCount();
+        
+        if (credit.getState() != null) {
+          report.getSummary().incrementAcceptedByState(credit.getState());
+        }
+        
+        if (StringUtils.isNotBlank(credit.getCourseLengthSymbol())) {
+          report.getSummary().incrementAcceptedByLengthUnit(credit.getCourseLengthSymbol());
+        }
+      }
+  
+      for (PerusopetusCredit credit : report.getRejectedCredits()) {
+        report.getSummary().incrementRejectedCreditCount();
+        
+        if (credit.getState() != null) {
+          report.getSummary().incrementRejectedByState(credit.getState());
+        }
+        
+        if (StringUtils.isNotBlank(credit.getCourseLengthSymbol())) {
+          report.getSummary().incrementRejectedByLengthUnit(credit.getCourseLengthSymbol());
+        }
+      }
+      
+      return Response.ok(report).build();
+    } catch (IOException e) {
+      logger.log(Level.SEVERE, "Failed to produce report", e);
+      return Response.status(Status.BAD_REQUEST).build();
     }
-    
-    // VOS-hyväksiluvut
-    
-    List<TransferCredit> vosTCs = transferCreditDAO.listByStudyProgrammesAndDatesAndFunding(studyProgrammes, beginDate, endDate, TransferCreditFunding.GOVERNMENT_FUNDING);
-    for (TransferCredit transferCredit : vosTCs) {
-      PerusopetusCredit restCredit = restCredit(transferCredit, educationTypeCode);
-      
-      if (restCredit.getState() != null && restCredit.getState().isAcceptedState()) {
-        report.getSummary().incrementAcceptedTransferCreditCount();
-      }
-      else {
-        report.getSummary().incrementRejectedTransferCreditCount();
-      }
-      
-      report.addFundedTransferCredit(restCredit);
-    }
-    
-    // Summary
-    
-    for (PerusopetusCredit credit : report.getAcceptedCredits()) {
-      report.getSummary().incrementAcceptedCreditCount();
-      
-      if (credit.getState() != null) {
-        report.getSummary().incrementAcceptedByState(credit.getState());
-      }
-      
-      if (StringUtils.isNotBlank(credit.getCourseLengthSymbol())) {
-        report.getSummary().incrementAcceptedByLengthUnit(credit.getCourseLengthSymbol());
-      }
-    }
-
-    for (PerusopetusCredit credit : report.getRejectedCredits()) {
-      report.getSummary().incrementRejectedCreditCount();
-      
-      if (credit.getState() != null) {
-        report.getSummary().incrementRejectedByState(credit.getState());
-      }
-      
-      if (StringUtils.isNotBlank(credit.getCourseLengthSymbol())) {
-        report.getSummary().incrementRejectedByLengthUnit(credit.getCourseLengthSymbol());
-      }
-    }
-    
-    return Response.ok(report).build();
   }
   
+  private List<KoskiCSVCreditRow> readKoskiCreditFile(MultipartFormDataInput formData, String linja) {
+    if (!StringUtils.equalsAny(linja, LINJA_1, LINJA_2)) {
+      return null;
+    }
+    
+    try {
+      Map<String, List<InputPart>> formDataMap = formData.getFormDataMap();
+      List<InputPart> koskiCSVPart = formDataMap.get("koskiCSV");
+      if (CollectionUtils.isNotEmpty(koskiCSVPart)) {
+        InputStream koskiCSVInputStream = formData.getFormDataPart("koskiCSV", InputStream.class, null);
+        
+        if (koskiCSVInputStream != null) {
+          CsvMapper csvMapper = CsvMapper.builder().addModule(new JavaTimeModule()).build();
+          // KoskiBoolean as null when the source has empty string
+          csvMapper.coercionConfigFor(KoskiBoolean.class).setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
+          CsvSchema csvSchema = CsvSchema.emptySchema().withColumnSeparator(',').withHeader();
+          ObjectReader objectReader = csvMapper.readerFor(KoskiCSVCreditRow.class).with(csvSchema);
+          MappingIterator<KoskiCSVCreditRow> values = objectReader.readValues(koskiCSVInputStream);
+          List<KoskiCSVCreditRow> all = values.readAll();
+          
+          if (LINJA_1.equals(linja)) {
+            all.removeIf(koskiCredit -> !StringUtils.equals(koskiCredit.getSuorituksenTyyppi(), "aikuistenperusopetuksenoppimaaranalkuvaihe"));
+          }
+
+          if (LINJA_2.equals(linja)) {
+            all.removeIf(koskiCredit -> !StringUtils.equals(koskiCredit.getSuorituksenTyyppi(), "aikuistenperusopetuksenoppimaara"));
+          }
+          
+          // If the list is empty, return null to disable the comparisons
+          return CollectionUtils.isNotEmpty(all) ? all : null;
+        }
+      }
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Failed to read Koski CSV", e);
+    }
+    
+    return null;
+  }
+
   private PerusopetusCreditState handleCreditList(List<? extends Credit> creditList, boolean creditsAreCourseAssessments, boolean creditsAreLinks, CourseCredit assessment, PerusopetusCreditState state, List<PerusopetusCredit> previousEvaluations) {
     for (Credit matchingAssessment : creditList) {
       // Skippaa jos credit.id on sama (ts sama Credit löytyy listasta)
@@ -217,7 +298,7 @@ public class ReportRESTService extends AbstractRESTService {
   }
   
 
-  private PerusopetusCredit restCredit(CourseCredit courseCredit, String educationTypeCode) {
+  private PerusopetusCredit restCredit(CourseCredit courseCredit, String educationTypeCode, List<KoskiCSVCreditRow> koskiData) {
     Student student = courseCredit.getStudent();
     Subject subject = courseCredit.getSubject();
     Integer courseNumber = courseCredit.getCourseNumber();
@@ -226,7 +307,7 @@ public class ReportRESTService extends AbstractRESTService {
         : courseCredit.getCreditType() == CreditType.TransferCredit ? "TC" : null;
     
     PerusopetusCreditState state = PerusopetusCreditState.ACCEPTED;
-    boolean otherFunding = student.getFunding() == StudentFunding.OTHER_FUNDING;
+    boolean otherFunding = student.getFunding() == StudentFunding.OTHER_FUNDING || student.getFunding() == StudentFunding.FOREIGN_STUDENT_TUITION_FEE;
     
     String courseCode;
     if (courseCredit.getSubject() != null && StringUtils.isNotBlank(courseCredit.getSubject().getCode())) {
@@ -309,6 +390,91 @@ public class ReportRESTService extends AbstractRESTService {
     else {
       state = PerusopetusCreditState.REJECTED_EDUCATIONTYPE;
     }
+
+    EnumSet<KoskiCreditError> koskiErrors = EnumSet.noneOf(KoskiCreditError.class);
+    
+    // What does the Kosk say
+    if (koskiData != null) {
+      Set<String> studentOIDs = koskiController.listStudentOIDs(student);
+      String studentOid = CollectionUtils.isNotEmpty(studentOIDs) && studentOIDs.size() == 1 ? studentOIDs.iterator().next() : null;
+      String courseCodeUpper = StringUtils.upperCase(courseCode);
+      
+      LocalDate creditLocalDate = DateUtils.toLocalDate(courseCredit.getDate());
+      
+      // 1. find the matching credit
+      List<KoskiCSVCreditRow> matchingKoskiCredits = koskiData.stream()
+        .filter(kd -> StringUtils.equals(studentOid, kd.getOpiskeluoikeudenOid()))
+        .filter(kd -> StringUtils.equals(courseCodeUpper, kd.getKurssinKoodi()))
+        .filter(kd -> Objects.equals(creditLocalDate, kd.getArviointipaiva()))
+        .toList();
+
+      if (matchingKoskiCredits.size() == 1) {
+        KoskiCSVCreditRow matchingKoskiCredit = matchingKoskiCredits.get(0);
+
+        // Ensimmäinen arviointi
+        
+        if (matchingKoskiCredit.getEnsimmainenArviointi() != null && !matchingKoskiCredit.getEnsimmainenArviointi().boolValue()) {
+          if (!previousEvaluations.isEmpty()) {
+            // Hylätyn korotus
+            boolean koskiHylatynKorotus = matchingKoskiCredit.getHylatynKorotus() != null && matchingKoskiCredit.getHylatynKorotus().boolValue();
+            boolean pyramusHylatynKorotus = previousEvaluations.stream().anyMatch(pev -> !PyramusConsts.Perusopetus.PASSING_GRADES.contains(pev.getGradeName()));
+            if (koskiHylatynKorotus != pyramusHylatynKorotus) {
+              koskiErrors.add(KoskiCreditError.REPEATASSESSMENT_WRONG_RAISED_FROM_NONPASSING);
+            }
+            
+            // Hyväksytyn korotus
+            boolean koskiHyvaksytynKorotus = matchingKoskiCredit.getHyvaksytynKorotus() != null && matchingKoskiCredit.getHyvaksytynKorotus().boolValue();
+            boolean pyramusHyvaksytynKorotus = previousEvaluations.stream().anyMatch(pev -> PyramusConsts.Perusopetus.PASSING_GRADES.contains(pev.getGradeName()));
+            if (koskiHyvaksytynKorotus != pyramusHyvaksytynKorotus) {
+              koskiErrors.add(KoskiCreditError.REPEATASSESSMENT_WRONG_RAISED_FROM_PASSING);
+            }
+          }
+          else {
+            koskiErrors.add(KoskiCreditError.REPEATASSESSMENT_NOPREVIOUSASSESSMENTS);
+          }
+        }
+        else {
+          // Ensimmäinen arviointi (oletettavasti) true
+          if (!previousEvaluations.isEmpty()) {
+            koskiErrors.add(KoskiCreditError.FIRSTASSESSMENT_HASPREVIOUSASSESSMENTS);
+          }
+        }
+        
+        // Tunnustettu
+        
+        if (matchingKoskiCredit.getTunnustettu() != null) {
+          if (courseCredit.getCreditType() == CreditType.CourseAssessment) {
+            if (matchingKoskiCredit.getTunnustettu().boolValue()) {
+              koskiErrors.add(KoskiCreditError.COURSEASSESSMENT_MARKEDAS_TRANSFERCREDIT);
+            }
+          }
+          else if (courseCredit.getCreditType() == CreditType.TransferCredit) {
+            if (!matchingKoskiCredit.getTunnustettu().boolValue()) {
+              koskiErrors.add(KoskiCreditError.TRANSFERCREDIT_MARKEDAS_COURSEASSESSMENT);
+            }
+            
+            TransferCredit tc = (TransferCredit) courseCredit;
+
+            boolean fundingKoski = matchingKoskiCredit.getTunnustettuRahoituksenPiirissa() != null && matchingKoskiCredit.getTunnustettuRahoituksenPiirissa().boolValue();
+            boolean fundingPyramus = tc.getFunding() == TransferCreditFunding.GOVERNMENT_FUNDING;
+            
+            if (fundingKoski != fundingPyramus) {
+              koskiErrors.add(KoskiCreditError.TRANSFERCREDIT_WRONG_FUNDING);
+            }
+          }
+        }
+        else {
+          koskiErrors.add(KoskiCreditError.NULL_TUNNUSTETTU);
+        }
+      }
+      else if (matchingKoskiCredits.size() == 0) {
+        koskiErrors.add(KoskiCreditError.NOT_FOUND);
+      }
+      else {
+        koskiErrors.add(KoskiCreditError.FOUND_MULTIPLE_MATCHING_CREDITS);
+      }
+    }
+    
     
     PerusopetusCredit credit = new PerusopetusCredit();
     credit.setAssessorName(courseCredit.getAssessor() != null ? courseCredit.getAssessor().getFullName() : null);
@@ -330,6 +496,7 @@ public class ReportRESTService extends AbstractRESTService {
     credit.setEvaluatedOutsideStudies(evaluatedOutsideStudies);
     credit.setKoskiFailure(koskiFailure);
     credit.setState(state);
+    credit.setKoskiErrors(koskiErrors);
     credit.setType(creditType);
     
     if (previousEvaluations != null) {
@@ -339,7 +506,7 @@ public class ReportRESTService extends AbstractRESTService {
     return credit;
   }
 
-  private PerusopetusCredit restCreditForCourseAssessment(CourseAssessment courseAssessment, String educationTypeCode) {
+  private PerusopetusCredit restCreditForCourseAssessment(CourseAssessment courseAssessment, String educationTypeCode, List<KoskiCSVCreditRow> koskiData) {
     CourseModule courseModule = courseAssessment.getCourseModule();
     CourseBase courseBase = courseModule.getCourse();
 
@@ -352,10 +519,9 @@ public class ReportRESTService extends AbstractRESTService {
       groupCourse = false;
     }
 
-    PerusopetusCredit restCredit = restCredit(courseAssessment, educationTypeCode);
+    PerusopetusCredit restCredit = restCredit(courseAssessment, educationTypeCode, koskiData);
     restCredit.setCourseId(courseBase.getId());
     restCredit.setGroupCourse(groupCourse);
     return restCredit;
   }
-
 }
