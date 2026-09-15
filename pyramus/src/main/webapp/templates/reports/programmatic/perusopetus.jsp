@@ -342,7 +342,7 @@
               
               <fieldset>
                 <legend>Koski CSV-tiedosto:</legend>
-                <p>CSV-tiedosto Kosken raportista selitä tähän mistä raportista</p>
+                <p>CSV-tiedosto Kosken raportista: Tunnusluvut: kurssikertymät, välilehdestä Arvioinnit</p>
                 <div>
                   <input type="file" id="koskiCSVInput"/>
                 </div>
