@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.otavanopisto.pyramus</groupId>
   <artifactId>bom</artifactId>
-  <version>0.7.270-SNAPSHOT</version>
+  <version>0.7.271-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -62,9 +62,8 @@
 
     <!-- Commons -->
 
-    <commons-lang.version>2.6</commons-lang.version>
     <commons-fileupload.version>[1.3.3,)</commons-fileupload.version>
-    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
     <commons-collections4.version>4.4</commons-collections4.version>
     <commons-beanutils.version>1.11.0</commons-beanutils.version>
 
@@ -100,7 +99,7 @@
 
     <!-- Pyramus -->
 
-    <pyramus.version>0.7.270-SNAPSHOT</pyramus.version>
+    <pyramus.version>0.7.271-SNAPSHOT</pyramus.version>
 
     <!-- Webapp-permission -->
 
@@ -129,12 +128,6 @@
       </dependency>
 
       <!-- Commons -->
-
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
 
       <dependency>
         <groupId>commons-fileupload</groupId>

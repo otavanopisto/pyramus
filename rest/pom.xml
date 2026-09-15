@@ -10,7 +10,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.270-SNAPSHOT</version>
+    <version>0.7.271-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
@@ -74,8 +74,8 @@
     </dependency>
     
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
     </dependency>
 
     <dependency>

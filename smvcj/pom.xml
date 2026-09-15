@@ -6,7 +6,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.270-SNAPSHOT</version>
+    <version>0.7.271-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
@@ -47,13 +47,6 @@
       <groupId>org.jboss.spec.javax.transaction</groupId>
       <artifactId>jboss-transaction-api_1.3_spec</artifactId>
       <scope>provided</scope>
-    </dependency>
-    
-    <!-- Commons -->
-
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
     </dependency>
     
     <!-- JSON -->
