@@ -64,7 +64,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.StudentParentInvitationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -1632,14 +1631,11 @@ public class ApplicationUtils {
     else {
       Person person = existingPersons.values().iterator().next();
       if (person.getDefaultUser() != null) {
-        StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-        StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
-        if (staffMember != null) {
+        User user = userDAO.findById(person.getDefaultUser().getId());
+        if (user instanceof StaffMember) {
           throw new DuplicatePersonException("Käyttäjätiedot viittaavat henkilökunnan jäseneen");
         }
-        StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
-        StudentParent studentParent = studentParentDAO.findById(person.getDefaultUser().getId());
-        if (studentParent != null) {
+        else if (user instanceof StudentParent) {
           throw new DuplicatePersonException("Käyttäjä on jo jonkin opiskelijan huoltaja");
         }
       }
