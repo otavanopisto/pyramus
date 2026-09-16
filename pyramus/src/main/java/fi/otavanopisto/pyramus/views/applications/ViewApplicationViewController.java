@@ -557,7 +557,7 @@ public class ViewApplicationViewController extends PyramusViewController {
           if (user instanceof StaffMember) {
             conflict += " ja on henkilökunnan jäsen (sisäänheitto ei onnistu)";
           }
-          else if (user != null && user instanceof StudentParent) {
+          else if (user instanceof StudentParent) {
             conflict += " ja on jonkin toisen opiskelijan huoltaja (sisäänheitto ei onnistu)";
           }
         }
