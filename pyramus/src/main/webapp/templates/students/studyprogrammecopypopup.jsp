@@ -40,7 +40,10 @@
           <div><fmt:message key="students.copyStudyProgrammePopup.dialogMessage">
             <fmt:param>${courseAssessmentCount + transferCreditCount + creditLinkCount}</fmt:param>
           </fmt:message></div>
-          <div><input type="checkbox" id="linkStudentCreditsCheckbox" name="linkStudentCreditsCheckbox" checked="checked" value="1"/> <fmt:message key="students.copyStudyProgrammePopup.checkboxCaption"/></div>
+          <div>
+            <input type="checkbox" id="linkStudentCreditsCheckbox" name="linkStudentCreditsCheckbox" checked="checked" value="1"/>
+            <label for="linkStudentCreditsCheckbox"><fmt:message key="students.copyStudyProgrammePopup.checkboxCaption"/></label>
+          </div>
         </c:when>
         <c:otherwise>
           <input type="hidden" id="linkStudentCreditsCheckbox" name="linkStudentCreditsCheckbox" value="0"/>
@@ -50,10 +53,23 @@
       <div><fmt:message key="students.copyStudyProgrammePopup.dialogDefaultUserMessage">
         <fmt:param>${courseAssessmentCount + transferCreditCount + creditLinkCount}</fmt:param>
       </fmt:message></div>
-      <div><input type="checkbox" id="defaultUserCheckBox" name="defaultUserCheckBox" checked="checked" value="1"/> <fmt:message key="students.copyStudyProgrammePopup.defaultUserCheckboxCaption"/></div>
+      <div>
+        <input type="checkbox" id="defaultUserCheckBox" name="defaultUserCheckBox" checked="checked" value="1"/>
+        <label for="defaultUserCheckBox"><fmt:message key="students.copyStudyProgrammePopup.defaultUserCheckboxCaption"/></label>
+      </div>
 
       <div><fmt:message key="students.copyStudyProgrammePopup.dialogMoveFiles"/></div>
-      <div><input type="checkbox" id="moveFilesCheckBox" name="moveFilesCheckBox" checked="checked" value="1"/> <label for="moveFilesCheckBox"><fmt:message key="students.copyStudyProgrammePopup.moveFilesCheckboxCaption"/></label></div>
+      <div>
+        <input type="checkbox" id="moveFilesCheckBox" name="moveFilesCheckBox" checked="checked" value="1"/>
+        <label for="moveFilesCheckBox"><fmt:message key="students.copyStudyProgrammePopup.moveFilesCheckboxCaption"/></label>
+      </div>
+      
+      <div><fmt:message key="students.copyStudyProgrammePopup.dialogCopySubjectChoices"/></div>
+      <div>
+        <input type="checkbox" id="copySubjectChoicesCheckbox" name="copySubjectChoicesCheckbox" checked="checked" value="1"/> 
+        <label for="copySubjectChoicesCheckbox"><fmt:message key="students.copyStudyProgrammePopup.copySubjectChoicesCheckboxCaption"/></label>
+      </div>
+      
     </div>
   </body>
 </html>
