@@ -30,7 +30,6 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.StudentParentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationEmailVerification;
@@ -554,14 +553,11 @@ public class ViewApplicationViewController extends PyramusViewController {
         // Check if existing person is actually a staff member or a guardian
         
         if (person.getDefaultUser() != null) {
-          StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-          StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
-          if (staffMember != null) {
+          User user = userDAO.findById(person.getDefaultUser().getId());
+          if (user instanceof StaffMember) {
             conflict += " ja on henkilökunnan jäsen (sisäänheitto ei onnistu)";
           }
-          StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
-          StudentParent studentParent = studentParentDAO.findById(person.getDefaultUser().getId());
-          if (studentParent != null) {
+          else if (user != null && user instanceof StudentParent) {
             conflict += " ja on jonkin toisen opiskelijan huoltaja (sisäänheitto ei onnistu)";
           }
         }
@@ -590,15 +586,12 @@ public class ViewApplicationViewController extends PyramusViewController {
               
               boolean coreReasonFound = false;
               if (person.getDefaultUser() != null) {
-                StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-                StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
-                if (staffMember != null) {
+                user = userDAO.findById(person.getDefaultUser().getId());
+                if (user instanceof StaffMember) {
                   conflict += " ja on henkilökunnan jäsen (sisäänheitto samalla sähköpostiosoitteella ei onnistu)";
                   coreReasonFound = true;
                 }
-                StudentParentDAO studentParentDAO = DAOFactory.getInstance().getStudentParentDAO();
-                StudentParent studentParent = studentParentDAO.findById(person.getDefaultUser().getId());
-                if (studentParent != null) {
+                else if (user instanceof StudentParent) {
                   conflict += " ja on jonkin toisen opiskelijan huoltaja (sisäänheitto samalla sähköpostiosoitteella ei onnistu)";
                   coreReasonFound = true;
                 }
