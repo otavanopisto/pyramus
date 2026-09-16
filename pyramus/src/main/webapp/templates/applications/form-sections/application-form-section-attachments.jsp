@@ -30,9 +30,9 @@
     </div>
 
     <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,nettilukio,aikuislukio" style="display:none;">
-      <!-- 151 = suomi, 131 = ruotsi -->
-      <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151,131" style="display:none;">
-        <p>Koska äidinkielesi ei ole suomi tai ruotsi, liitä tähän kopio suomen kielen taitotasosi osoittavasta todistuksesta.</p>  
+      <!-- 151 = suomi -->
+      <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151" style="display:none;">
+        <p>Koska äidinkielesi ei ole suomi, liitä tähän kopio suomen kielen taitotasosi osoittavasta todistuksesta (poikkeuksena kaksikielisyys, äidinkielenä ruotsi).</p>  
       </div>
       <div class="form-section__field-container dependent" data-dependent-field="field-has-ssn" data-dependent-values="ei" style="display:none;">
         <p>Koska sinulla ei ole suomalaista henkilötunnusta, liitä tähän valokuva passistasi.</p>  
