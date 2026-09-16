@@ -330,18 +330,24 @@
       $('[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         if (srcVisible) {
-          var values = $(this).attr('data-dependent-values').split(',');
+          // if data-dependent-values begins with !, consider the rule as any other value than the ones specified
+          var negate = $(this).attr('data-dependent-values').startsWith('!');
+          if (negate) {
+            show = true; 
+          }
+          var values = negate
+            ? $(this).attr('data-dependent-values').substring(1).split(',')
+            : $(this).attr('data-dependent-values').split(',');
           for (var i = 0; i < values.length; i++) {
-            // if value begins with !, consider the rule as any other value than the one specified
-            if (values[i].indexOf('!') == 0) {
-              show = $.inArray(values[i].substring(1), value) == -1;
-              if (show) {
+            if ($.inArray(values[i], value) > -1) {
+              // the dependent value is a match so we now know whether this field needs
+              // to be hidden or shown depending whether the rule is a negation or not
+              if (!negate) {
+                show = true;
                 break;
               }
-            }
-            else {
-              show = $.inArray(values[i], value) > -1;
-              if (show) {
+              else {
+                show = false;
                 break;
               }
             }
