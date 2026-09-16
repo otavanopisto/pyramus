@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.inject.spi.CDI;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -124,6 +123,7 @@ import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumModule;
 import fi.otavanopisto.pyramus.tor.curriculum.TORCurriculumSubject;
 import fi.otavanopisto.pyramus.util.ContactInfoUtils;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.ytl.YTLAineKoodi;
 import net.sf.json.JSONArray;
@@ -1066,14 +1066,8 @@ public class ViewStudentViewController extends PyramusViewController2 implements
   private void constructMatriculationTabContent(Person person, PageRequestContext pageRequestContext) {
     try {
       Student latestStudent = person.getLatestStudent();
-      String code = 
-          latestStudent != null &&
-          latestStudent.getStudyProgramme() != null &&
-          latestStudent.getStudyProgramme().getCategory() !=  null &&
-          latestStudent.getStudyProgramme().getCategory().getEducationType() != null &&
-          latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() != null
-          ? latestStudent.getStudyProgramme().getCategory().getEducationType().getCode() : null;
-      boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+      String educationTypeCode = latestStudent != null ? latestStudent.getEducationTypeCode() : null;
+      boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, educationTypeCode);
       
       if (!isHighSchoolStudent ||
           latestStudent == null ||
@@ -1183,6 +1177,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
   
       Collection<MatriculationEnrollmentBean> enrollmentBeans = termBeans.values();
       
+      pageRequestContext.getRequest().setAttribute("isMatriculationStudent", true);
       pageRequestContext.getRequest().setAttribute("termOptions", termOptions);   
       pageRequestContext.getRequest().setAttribute("matriculationCurriculumOk", torCurriculum != null);   
       pageRequestContext.getRequest().setAttribute("matriculationExamTerms", enrollmentBeans);
