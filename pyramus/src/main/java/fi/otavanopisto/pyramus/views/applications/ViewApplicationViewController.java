@@ -16,12 +16,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
-import fi.otavanopisto.pyramus.applications.AlternativeLine;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
-import fi.otavanopisto.pyramus.applications.InternetixStudyProgramme;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeAikuislukio;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeAineopiskelu;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeAineopiskelupk;
+import fi.otavanopisto.pyramus.applications.StudyProgrammeNettilukio;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationEmailVerificationDAO;
@@ -39,9 +40,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -95,21 +98,25 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, String> fields = new LinkedHashMap<>();
       sections.put("Perustiedot", fields);
       
-      if (application.getApplicantEditable()) {
-        fields.put("Muokkaustunnus", application.getReferenceCode());
-      }
+      fields.put("Muokkaustunnus", application.getReferenceCode());
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
       
-      // Opintojen tyyppi: nettilukio
+      // Nettilukio koulutusohjelma
       
       if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_NETTILUKIO)) {
-        AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
-        if (AlternativeLine.PRIVATE == altLine) {
-          fields.put("Opintojen tyyppi", "Yksityisopiskelu");
+        StudyProgrammeNettilukio altLine = EnumUtils.getEnum(StudyProgrammeNettilukio.class, getFormValue(formData, "field-nettilukio_alternativelines"));
+        if (StudyProgrammeNettilukio.PRIVATE == altLine) {
+          fields.put("Koulutusohjelma", "Nettilukio/yksityisopiskelu (aineopiskelu)");
         }
-        else if (AlternativeLine.YO == altLine) {
-          fields.put("Opintojen tyyppi", "Aineopiskelu/yo-tutkinto");
+        else if (StudyProgrammeNettilukio.YO == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/yo-tutkinto");
+        }
+        else if (StudyProgrammeNettilukio.EU_ETA == altLine) {
+          fields.put("Koulutusohjelma", "Nettilukio/yksityisopiskelu (EU- ja ETA-maiden ulkopuoliset opiskelijat)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Nettilukio");
         }
       }
 
@@ -127,18 +134,51 @@ public class ViewApplicationViewController extends PyramusViewController {
         }
       }
       
-      // Aineopiskelu (perusopetus) koulutusohjelma
+      // Aineopiskelu/lukio koulutusohjelma
+      
+      if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU)) {
+        StudyProgrammeAineopiskelu altLine = EnumUtils.getEnum(StudyProgrammeAineopiskelu.class, getFormValue(formData, "field-aineopiskelu-studyprogramme"));
+        if (StudyProgrammeAineopiskelu.AINEOPISKELU_OPPIVELVOLLISET == altLine) { 
+          fields.put("Koulutusohjelma", "Aineopiskelu/lukio (oppivelvolliset)");
+        }
+        else if (StudyProgrammeAineopiskelu.KAHDEN_TUTKINNON_OPINNOT == altLine) {
+          fields.put("Koulutusohjelma", "Kahden tutkinnon opinnot");
+        }
+        else if (StudyProgrammeAineopiskelu.AINEOPISKELU_VALMISTUNEET == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/valmistuneet");
+        }
+        else if (StudyProgrammeAineopiskelu.EU_ETA == altLine) {
+          fields.put("Koulutusohjelma", "Aineopiskelu/lukio (EU- ja ETA-maiden ulkopuoliset opiskelijat)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Aineopiskelu/lukio");
+        }
+      }
+      
+      // Aineopiskelu/perusopetus koulutusohjelma
       
       if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AINEOPISKELU_PK)) {
-        InternetixStudyProgramme altLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
-        if (InternetixStudyProgramme.OPPILAITOS == altLine) {
+        StudyProgrammeAineopiskelupk altLine = EnumUtils.getEnum(StudyProgrammeAineopiskelupk.class, getFormValue(formData, "field-internetix_alternativelines"));
+        if (StudyProgrammeAineopiskelupk.OPPILAITOS == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppilaitos ilmoittaa)");
         }
-        else if (InternetixStudyProgramme.OPPIVELVOLLINEN == altLine) {
+        else if (StudyProgrammeAineopiskelupk.OPPIVELVOLLINEN == altLine) {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus (oppivelvolliset)");
         }
         else {
           fields.put("Koulutusohjelma", "Aineopiskelu/perusopetus");
+        }
+      }
+      
+      // Aikuislukio koulutusohjelma
+
+      if (StringUtils.equals(applicationLine, ApplicationUtils.LINE_AIKUISLUKIO)) {
+        StudyProgrammeAikuislukio altLine = EnumUtils.getEnum(StudyProgrammeAikuislukio.class, getFormValue(formData, "field-aikuislukio-studyprogramme"));
+        if (StudyProgrammeAikuislukio.EU_ETA == altLine) { 
+          fields.put("Koulutusohjelma", "Otavan Opiston aikuislukio (EU- ja ETA-maiden ulkopuoliset opiskelijat)");
+        }
+        else {
+          fields.put("Koulutusohjelma", "Aikuislukio");
         }
       }
       
@@ -152,7 +192,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(ssn)) {
         fields.put("Henkilötunnus", ssn);
       }
-      String birthday = ApplicationUtils.extractBirthdayString(application);
+      String birthday = ApplicationUtils.extractBirthdayString(formData);
       if (StringUtils.isNotEmpty(birthday)) {
         fields.put("Syntymäaika", birthday);
       }
@@ -174,6 +214,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       fields.put("Kotikunta", ApplicationUtils.municipalityUiValue(getFormValue(formData, "field-municipality")));
       fields.put("Kansallisuus", ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality")));
       fields.put("Äidinkieli", ApplicationUtils.languageUiValue(getFormValue(formData, "field-language")));
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-language-skill"))) {
+        fields.put("Suomen kielen taitotaso", getFormValue(formData, "field-language-skill"));
+      }
       fields.put("Puhelinnumero", getFormValue(formData, "field-phone"));
       String applicantMail = getFormValue(formData, "field-email");
       if (mailVerificationEnabled) {
@@ -186,7 +229,7 @@ public class ViewApplicationViewController extends PyramusViewController {
 
       // Alaikäisen hakemustiedot
       
-      if (ApplicationUtils.isUnderage(application)) {
+      if (ApplicationUtils.isUnderage(formData)) {
         fields = new LinkedHashMap<>();
         sections.put("Alaikäisen hakemustiedot", fields);
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-grounds"))) { 
@@ -379,9 +422,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-goals-nettilukioov"))) {
         fields.put("Opiskelutavoitteet", goalsUiValue(getFormValue(formData, "field-goals-nettilukioov")));
       }
-      if (StringUtils.isNotBlank(getFormValue(formData, "field-foreign-student"))) {
-        fields.put("Ulkomainen vaihto-opiskelija", simpleBooleanUiValue(getFormValue(formData, "field-foreign-student")));
-      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-foreign-studies"))) {
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-foreign-studies"));
       }
@@ -510,20 +550,16 @@ public class ViewApplicationViewController extends PyramusViewController {
         String name = person.getDefaultUser() == null ? "???" : person.getDefaultUser().getFullName();
         String conflict = String.format("Hakija löytyy jo Pyramuksesta henkilötunnuksen perusteella: <a href=\"%s\" target=\"_blank\">%s</a>", url, name);
         
-        // Check if existing person is actually a staff member
+        // Check if existing person is actually a staff member or a guardian
         
         if (person.getDefaultUser() != null) {
-          StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-          StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
-          if (staffMember != null) {
-            conflict += "<br/><b>Huom!</b> Hakija on henkilökunnan jäsen";
+          User user = userDAO.findById(person.getDefaultUser().getId());
+          if (user instanceof StaffMember) {
+            conflict += " ja on henkilökunnan jäsen (sisäänheitto ei onnistu)";
           }
-        }
-        
-        // Check if SSNs match
-        
-        if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
-          conflict += "<br/><b>Huom!</b> Hakemuksen ja olemassa olevan henkilön henkilötunnus eivät täsmää";
+          else if (user instanceof StudentParent) {
+            conflict += " ja on jonkin toisen opiskelijan huoltaja (sisäänheitto ei onnistu)";
+          }
         }
 
         conflicts.add(conflict);
@@ -546,20 +582,25 @@ public class ViewApplicationViewController extends PyramusViewController {
               String name = person.getDefaultUser() == null ? "???" : person.getDefaultUser().getFullName();
               String conflict = String.format("Hakija löytyy jo Pyramuksesta sähköpostiosoitteen perusteella: <a href=\"%s\" target=\"_blank\">%s</a>", url, name);
 
-              // Check if existing person is actually a staff member
+              // Check if existing person is actually a staff member or a guardian
               
+              boolean coreReasonFound = false;
               if (person.getDefaultUser() != null) {
-                StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-                StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
-                if (staffMember != null) {
-                  conflict += "<br/><b>Huom!</b> Hakija on henkilökunnan jäsen";
+                user = userDAO.findById(person.getDefaultUser().getId());
+                if (user instanceof StaffMember) {
+                  conflict += " ja on henkilökunnan jäsen (sisäänheitto samalla sähköpostiosoitteella ei onnistu)";
+                  coreReasonFound = true;
+                }
+                else if (user instanceof StudentParent) {
+                  conflict += " ja on jonkin toisen opiskelijan huoltaja (sisäänheitto samalla sähköpostiosoitteella ei onnistu)";
+                  coreReasonFound = true;
                 }
               }
               
               // Check if SSNs match
               
-              if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
-                conflict += "<br/><b>Huom!</b> Hakemuksen ja olemassa olevan käyttäjän henkilötunnus eivät täsmää";
+              if (!coreReasonFound && !StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
+                conflict += " mutta henkilötunnukset eivät täsmää (sisäänheitto ei onnistu)";
               }
               
               conflicts.add(conflict);
@@ -572,20 +613,14 @@ public class ViewApplicationViewController extends PyramusViewController {
     // Internetix checks
     
     if (ApplicationUtils.isInternetixLine(application.getLine())) {
-
       // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
       if (ApplicationUtils.isContractSchool(formData)) {
         conflicts.add("Hakija opiskelee sopimusoppilaitoksessa");
       }
-      // #1487: Jos hetun loppuosa puuttuu tai on XXX, käsitellään manuaalisesti
-      String ssnSuffix = ApplicationUtils.getSsnSuffix(formData); 
-      if (StringUtils.isEmpty(ssnSuffix)) {
-        conflicts.add("Hakijan henkilötunnuksen loppuosa puuttuu");
+      if (StringUtils.isEmpty(ssn)) {
+        conflicts.add("Hakijalla ei ole suomalaista henkilötunnusta");
       }
-      if (StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
-        conflicts.add("Hakijan henkilötunnuksen loppuosa on XXXX");
-      }
-      if (ApplicationUtils.isUnderage(application)) {
+      if (ApplicationUtils.isUnderage(formData)) {
         conflicts.add("Hakija on alaikäinen");
       }
     }
@@ -596,6 +631,20 @@ public class ViewApplicationViewController extends PyramusViewController {
     List<ApplicationEmailVerification> verifications = verificationDAO.listUnverifiedByApplication(application);
     if (!verifications.isEmpty()) {
       conflicts.add("Hakemuksessa on vahvistamattomia sähköpostiosoitteita");
+    }
+    
+    // Outside EU/ETA
+    
+    String line = application.getLine();
+    if (StringUtils.equalsAny(line, ApplicationUtils.LINE_AINEOPISKELU, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_AIKUISLUKIO)) {
+      String nationality = ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality"));
+      if (ApplicationUtils.isOutsideEUandETA(nationality)) {
+        conflicts.add("Hakija on EU- ja ETA-alueen ulkopuolisesta maasta");
+      }
+    }
+
+    if (StringUtils.equalsAny(line, ApplicationUtils.LINE_AINEOPISKELU, ApplicationUtils.LINE_AINEOPISKELU_PK, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_AIKUISLUKIO)) {
+      conflicts.add("Varmista, että hakijalle valittu koulutusohjelma on oikein. Muuta sitä tarvittaessa hakemusta muokkaamalla.");
     }
     
     return conflicts;

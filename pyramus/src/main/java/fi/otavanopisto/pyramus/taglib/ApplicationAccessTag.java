@@ -4,14 +4,14 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.apache.commons.lang3.StringUtils;
-
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 public class ApplicationAccessTag extends TagSupport {
 
@@ -23,24 +23,15 @@ public class ApplicationAccessTag extends TagSupport {
     if (userId == null) {
       return SKIP_BODY;
     }
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    StaffMember staffMember;
-
-    // userId may point to a non-StaffMember User in which case JPA 
-    // throws an exception because the type isn't correct.
-    try {
-      staffMember = staffMemberDAO.findById(userId);
-    }
-    catch (Exception e) {
-      staffMember = null;
-    }
-    
-    if (staffMember == null) {
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    User user = userDAO.findById(userId);
+    if (!(user instanceof StaffMember)) {
       return SKIP_BODY;
     }
-    if (staffMember.hasRole(Role.ADMINISTRATOR)) {
+    else if (user.hasRole(Role.ADMINISTRATOR)) {
       return EVAL_BODY_INCLUDE;
     }
+    StaffMember staffMember = (StaffMember) user;
     boolean aineopiskelu = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU.getKey()));
     boolean aineopiskelupk = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_AINEOPISKELU_PK.getKey()));
     boolean nettilukio = "1".equals(staffMember.getProperties().get(StaffMemberProperties.APPLICATIONS_NETTILUKIO.getKey()));

@@ -32,7 +32,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -97,6 +96,7 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
@@ -106,6 +106,7 @@ import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import net.sf.json.JSONObject;
 
 public class ApplicationUtils {
@@ -150,33 +151,6 @@ public class ApplicationUtils {
       return true;
     }
     return false;
-  }
-  
-  public static boolean isInternetixAutoRegistrationPossible(Application application, boolean allowEmptySsn) {
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
-    // #1487: Jos aineopiskelijaksi hakeva opiskelee sopimusoppilaitoksessa, käsitellään manuaalisesti
-    if (ApplicationUtils.isContractSchool(formData)) {
-      return false;
-    }
-    // #1487: Jos hetun loppuosa puuttuu tai on XXXX, käsitellään manuaalisesti
-    String ssnSuffix = getSsnSuffix(formData);
-    if (StringUtils.isEmpty(ssnSuffix) || StringUtils.equalsIgnoreCase("XXXX", ssnSuffix)) {
-      if (!allowEmptySsn) {
-        return false;
-      }
-    }
-    // #1487: Jos alle 18, käsitellään manuaalisesti
-    return !isUnderage(application);
-  }
-  
-  public static String getSsnSuffix(JSONObject formData) {
-    String ssn = getFormValue(formData, "field-ssn");
-    if (!StringUtils.isEmpty(ssn)) {
-      return StringUtils.upperCase(StringUtils.substring(ssn, 7, 11));
-    }
-    else {
-      return StringUtils.upperCase(getFormValue(formData, "field-ssn-end"));
-    }
   }
   
   public static boolean isInternetixLine(String line) {
@@ -418,8 +392,8 @@ public class ApplicationUtils {
     }
   }
 
-  public static boolean isUnderage(Application application) {
-    String dateString = extractBirthdayString(application);
+  public static boolean isUnderage(JSONObject formData) {
+    String dateString = extractBirthdayString(formData);
     if (StringUtils.isBlank(dateString)) {
       return false;
     }
@@ -653,6 +627,12 @@ public class ApplicationUtils {
     }
   }
   
+  public static boolean isOutsideEUandETA(String country) {
+    return !StringUtils.equalsAny(country, "Alankomaat", "Belgia", "Bulgaria", "Espanja", "Irlanti", "Italia", "Itävalta", "Kreikka",
+        "Kroatia", "Kypros", "Latvia", "Liettua", "Luxemburg", "Malta", "Portugali", "Puola", "Ranska", "Romania", "Ruotsi", "Saksa",
+        "Slovakia", "Slovenia", "Tanska", "Tšekki", "Unkari", "Viro", "Suomi", "Liechtenstein", "Islanti", "Norja");
+  }
+  
   public static StudyProgramme resolveStudyProgramme(Application application) {
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = getFormValue(formData, "field-line");
@@ -662,26 +642,39 @@ public class ApplicationUtils {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case LINE_AINEOPISKELU:
-      if (!isInternetixAutoRegistrationPossible(application, true)) {
+      StudyProgrammeAineopiskelu spAineopiskelu = EnumUtils.getEnum(StudyProgrammeAineopiskelu.class, getFormValue(formData, "field-aineopiskelu-studyprogramme"));
+      if (spAineopiskelu == StudyProgrammeAineopiskelu.AINEOPISKELU_OPPIVELVOLLISET) {
         return studyProgrammeDAO.findById(49L); // Aineopiskelu/lukio (oppivelvolliset)
+      }
+      else if (spAineopiskelu == StudyProgrammeAineopiskelu.KAHDEN_TUTKINNON_OPINNOT) {
+        return studyProgrammeDAO.findById(23L); // Kahden tutkinnon opinnot
+      }
+      else if (spAineopiskelu == StudyProgrammeAineopiskelu.AINEOPISKELU_VALMISTUNEET) {
+        return studyProgrammeDAO.findById(42L); // Aineopiskelu/valmistuneet
+      }
+      else if (spAineopiskelu == StudyProgrammeAineopiskelu.EU_ETA) {
+        return studyProgrammeDAO.findById(59L); // Aineopiskelu/lukio (EU- ja ETA-maiden ulkopuoliset opiskelijat) 
       }
       return studyProgrammeDAO.findById(13L); // Aineopiskelu/lukio
     case LINE_AINEOPISKELU_PK:
-      InternetixStudyProgramme internetixLine = EnumUtils.getEnum(InternetixStudyProgramme.class, getFormValue(formData, "field-internetix_alternativelines"));
-      if (internetixLine == InternetixStudyProgramme.OPPIVELVOLLINEN) {
+      StudyProgrammeAineopiskelupk internetixLine = EnumUtils.getEnum(StudyProgrammeAineopiskelupk.class, getFormValue(formData, "field-internetix_alternativelines"));
+      if (internetixLine == StudyProgrammeAineopiskelupk.OPPIVELVOLLINEN) {
         return studyProgrammeDAO.findById(41L); // Aineopiskelu/perusopetus (oppivelvolliset)
       }
-      else if (internetixLine == InternetixStudyProgramme.OPPILAITOS) {
+      else if (internetixLine == StudyProgrammeAineopiskelupk.OPPILAITOS) {
         return studyProgrammeDAO.findById(50L); // Aineopiskelu/perusopetus (oppilaitos ilmoittaa)
       }
       return studyProgrammeDAO.findById(12L); // Aineopiskelu/perusopetus
     case LINE_NETTILUKIO:
-      AlternativeLine nettilukioAlternative = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
-      if (nettilukioAlternative == AlternativeLine.PRIVATE) {
+      StudyProgrammeNettilukio nettilukioAlternative = EnumUtils.getEnum(StudyProgrammeNettilukio.class, getFormValue(formData, "field-nettilukio_alternativelines"));
+      if (nettilukioAlternative == StudyProgrammeNettilukio.PRIVATE) {
         return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
       }
-      else if (nettilukioAlternative == AlternativeLine.YO) {
+      else if (nettilukioAlternative == StudyProgrammeNettilukio.YO) {
         return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
+      }
+      else if (nettilukioAlternative == StudyProgrammeNettilukio.EU_ETA) {
+        return studyProgrammeDAO.findById(57L); // Nettilukio/yksityisopiskelu (EU- ja ETA-maiden ulkopuoliset opiskelijat)
       }
       return studyProgrammeDAO.findById(6L); // Nettilukio
     case LINE_NETTILUKIO_OV:
@@ -689,6 +682,10 @@ public class ApplicationUtils {
     case LINE_NETTIPK:
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
     case LINE_AIKUISLUKIO:
+      StudyProgrammeAikuislukio spAikuislukio = EnumUtils.getEnum(StudyProgrammeAikuislukio.class, getFormValue(formData, "field-aikuislukio-studyprogramme"));
+      if (spAikuislukio == StudyProgrammeAikuislukio.EU_ETA) {
+        return studyProgrammeDAO.findById(58L); // Otavan Opiston aikuislukio (EU- ja ETA-maiden ulkopuoliset opiskelijat)
+      }
       return studyProgrammeDAO.findById(1L); // Aikuislukio
     case LINE_MK:
       String foreignLine = getFormValue(formData, "field-foreign-line");
@@ -932,11 +929,10 @@ public class ApplicationUtils {
     }
   }
   
-  public static String extractBirthdayString(Application application) {
-    if (application == null) {
+  public static String extractBirthdayString(JSONObject formData) {
+    if (formData == null) {
       return null;
     }
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
     String ssn = StringUtils.upperCase(getFormValue(formData, "field-ssn"));
     if (!StringUtils.isEmpty(ssn)) {
       if (ssn.length() != 11) {
@@ -1099,7 +1095,7 @@ public class ApplicationUtils {
     
     if (person == null) {
       // #1529: Determine birthday from birthday field or SSN field
-      String birthdayStr = extractBirthdayString(application);
+      String birthdayStr = extractBirthdayString(formData);
       try {
         Date birthday = StringUtils.isBlank(birthdayStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(birthdayStr);
         Sex sex = resolveGender(getFormValue(formData, "field-sex"));
@@ -1256,7 +1252,7 @@ public class ApplicationUtils {
     
     // Guardian info for underage applicants
     
-    if (isUnderage(application)) {
+    if (isUnderage(formData)) {
       
       // Attach email
       
@@ -1635,10 +1631,12 @@ public class ApplicationUtils {
     else {
       Person person = existingPersons.values().iterator().next();
       if (person.getDefaultUser() != null) {
-        StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-        StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
-        if (staffMember != null) {
+        User user = userDAO.findById(person.getDefaultUser().getId());
+        if (user instanceof StaffMember) {
           throw new DuplicatePersonException("Käyttäjätiedot viittaavat henkilökunnan jäseneen");
+        }
+        else if (user instanceof StudentParent) {
+          throw new DuplicatePersonException("Käyttäjä on jo jonkin opiskelijan huoltaja");
         }
       }
       if (!StringUtils.equals(person.getSocialSecurityNumber(), ssn)) {
@@ -1700,7 +1698,7 @@ public class ApplicationUtils {
     if (StringUtils.isBlank(filename)) {
       return filename;
     }
-    return StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), "."));
+    return StringUtils.lowerCase(StringUtils.strip(RegExUtils.removePattern((CharSequence) filename, "[\\\\/:*?\"<>|]"), "."));
   }
 
   public static String getFormValue(JSONObject object, String key) {

@@ -330,20 +330,53 @@
       $('[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         if (srcVisible) {
-          var values = $(this).attr('data-dependent-values').split(',');
+          // if data-dependent-values begins with !, consider the rule as any other value than the ones specified
+          var negate = $(this).attr('data-dependent-values').startsWith('!');
+          if (negate) {
+            show = true; 
+          }
+          var values = negate
+            ? $(this).attr('data-dependent-values').substring(1).split(',')
+            : $(this).attr('data-dependent-values').split(',');
           for (var i = 0; i < values.length; i++) {
-            show = $.inArray(values[i], value) > -1;
-            if (show) {
-              break;
+            if ($.inArray(values[i], value) > -1) {
+              // the dependent value is a match so we now know whether this field needs
+              // to be hidden or shown depending whether the rule is a negation or not
+              if (!negate) {
+                show = true;
+                break;
+              }
+              else {
+                show = false;
+                break;
+              }
             }
           }
         }
-        $(this).toggle(show);
         // #1425: If the field is supposed to be visible, its ancestors should be visible as well
         // #1436: ...but only up to section level
+        // #1825: ...unless any parent is a dependant field that is hidden. This allows nesting:
+        //
+        // <div class="dependent" data-dependent-field="field-one" data-dependent-values="a">
+        //   <div class="dependent" data-dependent-field="field-two" data-dependent-values="b">
+        //     <input name="field-three"/>
+        //   </div>
+        // </div>
+        //
+        // So field-three only shows if both field-one and field-two have values a and b respectively  
         if (show) {
-          $(this).parentsUntil('section').toggle(show);
+          var parents = $(this).parentsUntil('section');
+          var len = parents.filter(function() {
+            return $(this).hasClass('dependent') && $(this).css('display') === 'none';
+          }).length;
+          if (!len) {
+            parents.toggle(show);
+          }
+          else {
+            show = false;
+          } 
         }
+        $(this).toggle(show);
         // #1359: Disable hidden form fields to prevent their serialization when submitting
         $(this).find("input,select,textarea").prop('disabled', !show);
         $(this).find('[data-dependencies]').trigger('change');
@@ -432,15 +465,8 @@
             $('.button-save-application').html('Lähetä');
             $('.button-save-application').prop('disabled', false);
             if ($('#application-form').attr('data-done-page') == 'true') {
-              if (response.autoRegistered == 'true') {
-                navigateTo('.section-done.registered');
-              }
-              else if (existingApplication) {
+              if (existingApplication) {
                 navigateTo('.section-done.modified');
-			  }
-              else if ($('#field-line').val() == 'aineopiskelu' || $('#field-line').val() == 'aineopiskelupk') {
-                $('#edit-info-email-internetix').text($('#field-email').val());
-                navigateTo('.section-done.internetix-submitted');
               }
               else {
                 $('#edit-info-email').text($('#field-email').val());
