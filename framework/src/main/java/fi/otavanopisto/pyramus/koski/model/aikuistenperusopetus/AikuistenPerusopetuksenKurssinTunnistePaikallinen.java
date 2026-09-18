@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
@@ -11,8 +12,9 @@ public class AikuistenPerusopetuksenKurssinTunnistePaikallinen extends Aikuisten
   public AikuistenPerusopetuksenKurssinTunnistePaikallinen() {
   }
   
-  public AikuistenPerusopetuksenKurssinTunnistePaikallinen(PaikallinenKoodi tunniste) {
+  public AikuistenPerusopetuksenKurssinTunnistePaikallinen(PaikallinenKoodi tunniste, Laajuus lajuus) {
     this.tunniste = tunniste;
+    this.setLaajuus(lajuus);
   }
   
   public PaikallinenKoodi getTunniste() {
