@@ -149,14 +149,21 @@
             editable: true,
             paramName: 'studyAdvisor'
           }, {
-            header : '<fmt:message key="students.editStudentGroup.usersTableMessageRecipientHeader"/>',
+            header : '<fmt:message key="students.editStudentGroup.usersTableSpecialEducationTeacherHeader"/>',
             left : 8 + 250 + 8 + 100 + 8 + 100 + 8,
+            width: 100,
+            dataType : 'checkbox',
+            editable: true,
+            paramName: 'specialEducationTeacher'
+          }, {
+            header : '<fmt:message key="students.editStudentGroup.usersTableMessageRecipientHeader"/>',
+            left : 8 + 250 + 8 + 100 + 8 + 100 + 8 + 100 + 8,
             width: 100,
             dataType : 'checkbox',
             editable: true,
             paramName: 'messageRecipient'
           }, {
-            left: 8 + 250 + 8 + 100 + 8 + 100 + 8 + 100 + 8,
+            left: 8 + 250 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8,
             width: 30,
             dataType: 'button',
             imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
@@ -176,6 +183,7 @@
             '${fn:escapeXml(user.staffMember.fullName)}',
             '${user.groupAdvisor == true ? 1 : 0}',
             '${user.studyAdvisor == true ? 1 : 0}',
+            '${user.specialEducationTeacher == true ? 1 : 0}',
             '${user.messageRecipient == true ? 1 : 0}',
             '',
             ${user.id}
