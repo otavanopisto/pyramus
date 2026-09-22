@@ -2276,12 +2276,8 @@ public class StudentRESTService extends AbstractRESTService {
           // Determine billing number from student's study programme
           // (high school if applicable, elementary as fallback)
 
-          String code = student.getStudyProgramme() != null &&
-              student.getStudyProgramme().getCategory() !=  null &&
-              student.getStudyProgramme().getCategory().getEducationType() != null &&
-              student.getStudyProgramme().getCategory().getEducationType().getCode() != null
-              ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
-          boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+          String code = student.getEducationTypeCode();
+          boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.Lukio.EDUCATION_TYPE, code);
           String billingNumber = isHighSchoolStudent
               ? courseBillingRestModel.getHighSchoolBillingNumber()
                   : courseBillingRestModel.getElementaryBillingNumber();

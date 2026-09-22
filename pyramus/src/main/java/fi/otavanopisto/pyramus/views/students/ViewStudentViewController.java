@@ -1067,7 +1067,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     try {
       Student latestStudent = person.getLatestStudent();
       String educationTypeCode = latestStudent != null ? latestStudent.getEducationTypeCode() : null;
-      boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, educationTypeCode);
+      boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.Lukio.EDUCATION_TYPE, educationTypeCode);
       
       if (!isHighSchoolStudent ||
           latestStudent == null ||
