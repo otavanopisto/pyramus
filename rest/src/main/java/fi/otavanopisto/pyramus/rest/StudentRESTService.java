@@ -1215,7 +1215,8 @@ public class StudentRESTService extends AbstractRESTService {
     boolean groupAdvisor = false;
     boolean studyAdvisor = false;
     boolean messageRecipient = false;
-    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, groupAdvisor, studyAdvisor, messageRecipient, sessionController.getUser());
+    boolean specialEducationTeacher = false;
+    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, groupAdvisor, studyAdvisor, specialEducationTeacher, messageRecipient, sessionController.getUser());
 
     return Response.ok(objectFactory.createModel(studentGroupUser)).build();
   }

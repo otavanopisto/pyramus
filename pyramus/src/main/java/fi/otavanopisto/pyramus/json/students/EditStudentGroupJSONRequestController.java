@@ -139,6 +139,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
       boolean groupAdvisor = "1".equals(requestContext.getString(colPrefix + ".groupAdvisor"));
       boolean studyAdvisor = "1".equals(requestContext.getString(colPrefix + ".studyAdvisor"));
       boolean messageRecipient = "1".equals(requestContext.getString(colPrefix + ".messageRecipient"));
+      boolean specialEducationTeacher = "1".equals(requestContext.getString(colPrefix + ".specialEducationTeacher"));
       StaffMember staffMember = staffMemberDAO.findById(userId);
 
       if (!UserUtils.canAccessOrganization(loggedUser, staffMember.getOrganization())) {
@@ -147,13 +148,13 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
       
       if (studentGroupUserId == null) {
         // New User
-        studentGroupUserDAO.create(studentGroup, staffMember, groupAdvisor, studyAdvisor, messageRecipient, loggedUser);
+        studentGroupUserDAO.create(studentGroup, staffMember, groupAdvisor, studyAdvisor, specialEducationTeacher, messageRecipient, loggedUser);
       } else {
         // Old User, still in list
         removables.remove(studentGroupUserId);
         // Update recipient status
         StudentGroupUser studentGroupUser = studentGroupUserDAO.findById(studentGroupUserId);
-        studentGroupUserDAO.update(studentGroupUser, groupAdvisor, studyAdvisor, messageRecipient);
+        studentGroupUserDAO.update(studentGroupUser, groupAdvisor, studyAdvisor, specialEducationTeacher, messageRecipient);
       }
     }
 
