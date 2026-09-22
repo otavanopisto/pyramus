@@ -248,7 +248,7 @@ public class Person implements ContextReference {
    * @return the date when the Person is considered full age. Returns null if the birthday field is null.
    */
   @Transient
-  public LocalDate getFullageDate() {
+  public LocalDate getFullAgeDate() {
     LocalDate bday = DateUtils.toLocalDate(getBirthday());
     return bday != null ? bday.plusYears(18) : null;
   }

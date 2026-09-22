@@ -40,7 +40,7 @@ public class StudentParentChild {
   @Transient
   public LocalDate getExpiryDate() {
     // The default expiry date
-    LocalDate fullageDate = getStudent().getPerson().getFullageDate();
+    LocalDate fullageDate = getStudent().getPerson().getFullAgeDate();
     if (fullageDate == null) {
       return LocalDate.now();
     }
