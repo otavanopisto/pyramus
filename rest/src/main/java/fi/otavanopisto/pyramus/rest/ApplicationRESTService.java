@@ -38,15 +38,12 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import fi.otavanopisto.pyramus.applications.ApplicationMailErrorHandler;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
-import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -54,7 +51,6 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
-import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
@@ -65,9 +61,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
-import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.mailer.Mailer;
@@ -75,6 +69,7 @@ import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ApplicationPermissions;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -142,7 +137,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     // Document generation
 
     try {
-      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, ApplicationUtils.isUnderage(application));
+      byte[] data = ApplicationUtils.generateApplicantSignatureDocument(httpRequest, id, line, applicantName, email, ApplicationUtils.isUnderage(formData));
       return Response.ok(data)
           .type("application/pdf")
           .header("Content-Length", data.length)
@@ -545,6 +540,42 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
       
       if (application == null) {
+        
+        // Vaihtoehtoisten koulutusohjelmien arpominen osalle linjoista
+        
+        String nationality = ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality"));
+        boolean isOutsideEUandETA = ApplicationUtils.isOutsideEUandETA(nationality);
+        if (StringUtils.equals(line, ApplicationUtils.LINE_AINEOPISKELU)) {
+          if (isOutsideEUandETA) {
+            formData.put("field-aineopiskelu-studyprogramme", "EU_ETA");
+          }
+          else if (ApplicationUtils.isContractSchool(formData)) {
+            long school = 0;
+            try {
+              school = Long.parseLong(getFormValue(formData, "field-internetix-contract-school"));
+            }
+            catch (Exception e) {
+              // Just in case, shouldn't happen
+            }
+            if (school == 7362 || school == 7363) {
+              // 7362 = Etelä-Savon ammattiopisto (Tuva lukio)
+              // 7363 = Etelä-Savon ammattiopisto (Kaksoistutkinto)
+              formData.put("field-aineopiskelu-studyprogramme", "KAHDEN_TUTKINNON_OPINNOT");
+            }
+            else {
+              formData.put("field-aineopiskelu-studyprogramme", "AINEOPISKELU_OPPIVELVOLLISET");
+            }
+          }
+        }
+        else if (StringUtils.equals(line, ApplicationUtils.LINE_NETTILUKIO) && isOutsideEUandETA) {
+          formData.put("field-nettilukio_alternativelines", "EU_ETA");
+        }
+        else if (StringUtils.equals(line, ApplicationUtils.LINE_AIKUISLUKIO) && isOutsideEUandETA) {
+          formData.put("field-aikuislukio-studyprogramme", "EU_ETA");
+        }
+        
+        // Hakemuksen luonti
+        
         application = applicationDAO.create(
             applicationId,
             line,
@@ -553,50 +584,10 @@ public class ApplicationRESTService extends AbstractRESTService {
             email,
             referenceCode,
             formData.toString(),
-            !ApplicationUtils.isInternetixLine(line), // applicantEditable (#769: Internetix applicants may not edit submitted data)
+            true,
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
-        
-        // Automatic registration of new Internetix students
-        
-        boolean autoRegistrationSupported = ApplicationUtils.isInternetixLine(line);
-        boolean autoRegistrationPossible = autoRegistrationSupported && ApplicationUtils.isInternetixAutoRegistrationPossible(application, false);
-        
-        // #1487: Jos aineopiskelijaksi hakeva on jo olemassa, käsitellään manuaalisesti
-        
-        if (autoRegistrationSupported && autoRegistrationPossible) {
-          try {
-            Person person = ApplicationUtils.resolvePerson(application);
-            autoRegistrationPossible = person == null;
-          }
-          catch (DuplicatePersonException dpe) {
-            autoRegistrationPossible = false;
-          }
-        }
-
-        if (autoRegistrationSupported && autoRegistrationPossible) {
-          Student student = ApplicationUtils.createPyramusStudent(application, null, null);
-          if (student != null) {
-            PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-            personDAO.updateDefaultUser(student.getPerson(), student);
-            String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
-            application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
-            application = applicationDAO.updateApplicationStateAsApplicant(application, ApplicationState.REGISTERED_AS_STUDENT);
-            application = applicationDAO.updateApplicantEditable(application, Boolean.FALSE);
-            ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
-            ApplicationUtils.mailCredentialsInfo(httpRequest, student, application);
-            response.put("autoRegistered", "true");
-          }
-          else if (autoRegistrationPossible) {
-            logger.log(Level.SEVERE, String.format("Auto-registration of application %d failed. Falling back to manual processing", application.getId()));
-            newApplicationPostProcessing(application);
-          }
-        }
-        else {
-          // If the application doesn't lead to auto-registration, send out the
-          // usual confirmation and notification e-mails about a new application
-          newApplicationPostProcessing(application);
-        }
+        newApplicationPostProcessing(application);
       }
       else {
         

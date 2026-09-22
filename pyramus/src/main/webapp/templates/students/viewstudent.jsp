@@ -2504,7 +2504,7 @@
           </a>
         </c:forEach>
         
-        <c:if test="${!empty matriculationExamTerms}">
+        <c:if test="${isMatriculationStudent eq true}">
           <a class="tabLabel" href="#matriculation"><fmt:message key="students.viewStudent.matriculationTab" /></a>
         </c:if>
 
@@ -3825,7 +3825,7 @@
         </div>
       </c:forEach>
 
-      <c:if test="${!empty matriculationExamTerms}">
+      <c:if test="${isMatriculationStudent eq true}">
         <div id="matriculation" class="tabContent tabContentNestedTabs">
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">

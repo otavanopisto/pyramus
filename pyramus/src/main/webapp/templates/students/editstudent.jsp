@@ -840,7 +840,7 @@
               cancelLabel : '<fmt:message key="students.copyStudyProgrammePopup.cancelLabel"/>'
             });
 
-            var dHeight = 240;
+            var dHeight = 320;
             if (studentHasCredits) {
               dHeight += 80;
             }
@@ -848,7 +848,7 @@
               dHeight += 40;
             }
             
-            dialog.setSize("420px", dHeight + "px");
+            dialog.setSize("460px", dHeight + "px");
             dialog.addDialogListener( function(event) {
               var dlg = event.dialog;
           
@@ -864,6 +864,9 @@
                   var mfbox = pelem.down("input[name='moveFilesCheckBox']");
                   var moveFiles = mfbox.checked == true ? true : false;
 
+                  var cscbox = pelem.down("input[name='copySubjectChoicesCheckbox']");
+                  var copySubjectChoices = cscbox.checked == true ? true : false;
+                  
                   var newStudyProgrammeIdSelect = pelem.down("select[name='newStudyProgrammeId']");
                   var newStudyProgrammeId = newStudyProgrammeIdSelect.value;
                   
@@ -873,7 +876,8 @@
                       newStudyProgrammeId: newStudyProgrammeId,
                       linkCredits: linkCredits,
                       setAsDefaultUser: setAsDefaultUser,
-                      moveFiles: moveFiles
+                      moveFiles: moveFiles,
+                      copySubjectChoices: copySubjectChoices
                     },
                     onSuccess: function (jsonResponse) {
                       window.location.reload();

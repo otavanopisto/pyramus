@@ -11,16 +11,34 @@
 
     <div class="form-section__field-container field-nettilukioov-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettilukioov" style="display:none;">
       <p>
-        Alaikäisen hakijan on hakuperusteen osoittamiseksi esitettävä <b>perusopetuksen päättötodistuksen</b> lisäksi seuraavat asiakirjat:
+        Alaikäisen hakijan on toimitettava <b>perusopetuksen päättötodistus</b>. Lisäksi hakemukseen tarvitaan seuraavat asiakirjat:
         <ul>
-          <li>painavan perusteen selvittävä asiakirja, jos hakuperusteena terveydelliset tai muut henkilökohtaiset syyt</li>
-          <li>nykyisen / edellisen oppilaitoksen edustajan puolto riittävistä opiskeluvalmiuksista</li>
-          <li>tuorein opintorekisteriote mahdollisista toisen asteen opinnoista</li>
-          <li><a href="https://nettilukio.fi/wp-content/uploads/2026/01/Tiedonsiirtolomake-Nettilukio.pdf" target="_blank">tiedonsiirtolomake</a> ja tarvittaessa pedagogisen tuen asiakirja</li>
+          <li>selvitys hakuperusteesta, jos hakija vetoaa terveydellisiin tai muihin henkilökohtaisiin syihin</li>
+          <li>nykyisen tai aiemman oppilaitoksen lausunto (puolto) riittävistä opiskeluvalmiuksista</li>
+          <li>uusin opintorekisteriote, jos hakijalla on aiempia toisen asteen opintoja</li>
+          <li>tiedonsiirtolomake ja tarvittaessa pedagogisen tuen asiakirjat.</li>
         </ul>
       </p>
     </div>
     
+    <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,aikuislukio" style="display:none;">
+      <p>Liitä tähän todistukset ja mahdolliset erotodistukset aiemmista opinnoistasi.</p>  
+    </div>
+
+    <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
+      <p>Jos haluat suorittaa lukion oppiaineen oppimäärän, liitä tähän kopio aiemmasta lukiotodistuksesta (ei päättötodistuksesta).</p>  
+    </div>
+
+    <div class="form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu,nettilukio,aikuislukio" style="display:none;">
+      <!-- 151 = suomi -->
+      <div class="form-section__field-container dependent" data-dependent-field="field-language" data-dependent-values="!151" style="display:none;">
+        <p>Koska äidinkielesi ei ole suomi, liitä tähän kopio suomen kielen taitotasosi osoittavasta todistuksesta (poikkeuksena kaksikielisyys, äidinkielenä ruotsi).</p>  
+      </div>
+      <div class="form-section__field-container dependent" data-dependent-field="field-has-ssn" data-dependent-values="ei" style="display:none;">
+        <p>Koska sinulla ei ole suomalaista henkilötunnusta, liitä tähän valokuva passistasi.</p>  
+      </div>
+    </div>
+
     <div class="form-section__field-container field-attachments">
       <div class="field-attachments__uploader">
         <div class="field-attachments__selector-container">
