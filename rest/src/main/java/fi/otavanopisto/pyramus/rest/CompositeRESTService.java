@@ -29,7 +29,6 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
@@ -44,6 +43,7 @@ import fi.otavanopisto.pyramus.rest.model.composite.CompositeAssessmentRequest;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeGrade;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeGradingScale;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.util.DateUtils;
 
 @Path("/composite")
 @Produces(MediaType.APPLICATION_JSON)

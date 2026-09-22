@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.framework;
+package fi.otavanopisto.pyramus.util;
 
 import java.time.Instant;
 import java.time.LocalDate;

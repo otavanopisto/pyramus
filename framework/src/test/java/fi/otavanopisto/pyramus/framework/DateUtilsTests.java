@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import fi.otavanopisto.pyramus.util.DateUtils;
+
 public class DateUtilsTests {
 
   @Test
