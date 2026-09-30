@@ -13,6 +13,16 @@
     <script defer="defer" type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
     <script defer="defer" type="text/javascript" src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/users/studentparent-credentials.js"></script>
+    
+    <script lang="text/javascript">
+      function setLocale(locale) {
+        var date = new Date();
+        date.setTime(date.getTime() + (3650*24*60*60*1000));
+        var expires = "; expires=" + date.toGMTString();
+        document.cookie = "pyramusLocale=" + locale + expires + "; path=/";
+        window.location.reload();
+      }
+    </script>
   </head>
   <body>
     <header class="application-header">
@@ -21,6 +31,10 @@
         </div>
       </div>
     </header>
+    
+    <div id="GUI_headerLocaleSelectionContainer">
+      <a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('fi_FI');">FI</a><a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('en_US');">EN</a>
+    </div>
     
     <c:choose>
       <c:when test="${credentialsCreated eq true}">
@@ -37,7 +51,6 @@
             <p><fmt:message key="studentparents.parentRegistration.credentialsCreatedLoginHere"/> <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
           </section>
         </main>
-        
       </c:when>
       <c:when test="${invalidInvitation}">
         <section class="application-description application-description--credentials">
@@ -49,7 +62,9 @@
         </section>
         
         <main class="application-content application-content--credentials">
-          <p><fmt:message key="studentparents.parentRegistration.invalidInvitationMessage"/></p>
+          <section class="application-content__form application-content__form--credentials">
+            <p><fmt:message key="studentparents.parentRegistration.invalidInvitationMessage"/></p>
+          </section>
         </main>
       </c:when>
       <c:when test="${invalidLogin}">
@@ -62,7 +77,9 @@
         </section>
         
         <main class="application-content application-content--credentials">
-          <p><fmt:message key="studentparents.parentRegistration.invalidLoginMessage"/></p>
+          <section class="application-content__form application-content__form--credentials">
+            <p><fmt:message key="studentparents.parentRegistration.invalidLoginMessage"/></p>
+          </section>
         </main>
       </c:when>
       <c:otherwise>
@@ -76,33 +93,71 @@
         
         <main class="application-content application-content--credentials">
           <section class="application-content__form application-content__form--credentials">
-            <form class="application-form">
-              <input type="hidden" id="hash" name="hash" value="${hash}"/>
-              <section class="form-section section-create-credentials current">
-                <div class="form-section__field-container">
-                  <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
-                  <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25" style="text-transform: uppercase">
-                </div>
           
-                <c:choose>
-                  <c:when test="${loggedUserId != null}">
-                    <div class="form-section__field-container">
-                      <input type="hidden" name="type" id="parentRegisterCredentialType" value="LOGGEDIN"/>
+            <div class="form-section__field-container">
+              <div class="error-container" style="display:none;"></div>
+            </div>
                     
+            <c:choose>
+              <c:when test="${loggedUserId != null}">
+                <form class="application-form">
+                  <input type="hidden" name="type" id="parentRegisterCredentialType" value="LOGGEDIN"/>
+                  <input type="hidden" id="hash" name="hash" value="${hash}"/>
+                  
+                  <section class="form-section section-create-credentials current">
+                    <div class="form-section__field-container">
+                      <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
+                      <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25" style="text-transform: uppercase">
+                    </div>
+                    
+                    <div class="form-section__field-container">
                       <fmt:message key="studentparents.parentRegistration.loggedInMessagePre"/>
                       <span style="font-size: 1.2rem; font-weight: 400;">${loggedUserName}</span>.
                       <fmt:message key="studentparents.parentRegistration.loggedInMessagePost"/>
                     </div>
-                  </c:when>
+                    
+                    <nav class="form-navigation">
+                      <button type="button" name="login" id="button-create-credentials" class="button-create-credentials" onclick="createCredentials(event);">
+                        <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
+                      </button>
+                    </nav>
+                  </section>
+                </form>
+              </c:when>
                   
-                  <c:otherwise>
-                    <input type="hidden" name="type" id="parentRegisterCredentialType" value="CREATE"/>
-                    <div id="createGuardianCredentialsContainer">
+              <c:otherwise>
+                <input type="hidden" name="type" id="parentRegisterCredentialType" value="NONE"/>
+                
+                <div class="guardianCredentialsPhase" data-phase-name="NONE">
+                  <p>
+                    <a href="#" onclick="selectCredentialsPhase('LOGIN')"><fmt:message key="studentparents.parentRegistration.mainHasUserLink"/></a>
+                    <div>
+                      <fmt:message key="studentparents.parentRegistration.mainHasUserDesc"/>
+                    </div>
+                  </p>
+                  
+                  <p>
+                    <a href="#" onclick="selectCredentialsPhase('CREATE')"><fmt:message key="studentparents.parentRegistration.mainNewUserLink"/></a>
+                    <div>
+                      <fmt:message key="studentparents.parentRegistration.mainNewUserDesc"/>
+                    </div>
+                  </p>
+                </div>
+                    
+                <div class="guardianCredentialsPhase" data-phase-name="CREATE" style="display: none;">
+                  <form class="application-form">
+                    <input type="hidden" id="hash" name="hash" value="${hash}"/>
+                    
+                    <section class="form-section section-create-credentials current">
+                      <nav>
+                        <a href="#" onclick="selectCredentialsPhase('NONE')"><fmt:message key="terms.goBack"/></a>
+                      </nav>
+
                       <div class="form-section__field-container">
-                        <fmt:message key="studentparents.parentRegistration.alreadyRegistered"/>
-                        <a href="#" onclick="toggleLogin();"><fmt:message key="studentparents.parentRegistration.alreadyRegisteredLoginLinkLabel"/></a>.
+                        <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
+                        <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25" style="text-transform: uppercase">
                       </div>
-              
+                      
                       <div class="form-section__field-container">
                         <label class="required" for="u"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label> 
                         <input id="u" type="text" name="new-username" required="required" autocomplete="new-username" size="30">
@@ -117,35 +172,53 @@
                          <label class="required" for="p2"><fmt:message key="studentparents.parentRegistration.password2Title"/></label> 
                          <input type="password" id="p2" name="new-password2" required="required" autocomplete="new-password" class="equals equals-new-password1" size="25">
                        </div>
-		                </div>
+          
+                      <nav class="form-navigation">
+                        <button type="button" name="login" id="button-create-credentials" class="button-create-credentials" onclick="createCredentials(event);">
+                          <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
+                        </button>
+                      </nav>
+                    </section>
+                  </form>
+                </div>
 		    
-		                <div id="loginGuardianCredentialsContainer" style="display: none;">
+                <div class="guardianCredentialsPhase" data-phase-name="LOGIN" style="display: none;">
+                  <form class="application-form">
+                    <input type="hidden" id="hash" name="hash" value="${hash}"/>
+                    
+                    <section class="form-section section-create-credentials current">
+                      <nav>
+                        <a href="#" onclick="selectCredentialsPhase('NONE')"><fmt:message key="terms.goBack"/></a>
+                      </nav>
+                      
+                      <div class="form-section__field-container">
+                        <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
+                        <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25" style="text-transform: uppercase">
+                      </div>
+                      
 		                  <div class="form-section__header form-section__header--credentials"><fmt:message key="studentparents.parentRegistration.loginLabel"/></div>
 		                
 		                  <div class="form-section__field-container">
-		                    <label for="lu"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label>
+		                    <label class="required" for="lu"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label>
 		                    <input id="lu" type="text" name="username" required="required" size="30">
 		                  </div>
 		
 		                  <div class="form-section__field-container">
-		                    <label for="lp1"><fmt:message key="studentparents.parentRegistration.password1Title"/></label>
+		                    <label class="required" for="lp1"><fmt:message key="studentparents.parentRegistration.password1Title"/></label>
 		                    <input id="lp1" type="password" name="password" required="required" size="25">
 		                  </div>                  
-		                </div>
-		              </c:otherwise>
-		            </c:choose>
+          
+                      <nav class="form-navigation">
+                        <button type="button" name="login" id="button-create-credentials" class="button-create-credentials" onclick="createCredentials(event);">
+                          <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
+                        </button>
+                      </nav>
+                    </section>
+                  </form>
+                </div>
+              </c:otherwise>
+            </c:choose>
 		            
-		            <div class="form-section__field-container">
-		              <div class="error-container" style="display:none;"></div>
-		            </div>
-			    
-			          <nav class="form-navigation">
-			            <button name="login" id="button-create-credentials" class="button-create-credentials">
-			              <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
-			            </button>
-			          </nav>
-		          </section>
-		        </form>
 		      </section>
         </main>
       </c:otherwise>
