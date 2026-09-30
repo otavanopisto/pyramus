@@ -642,10 +642,6 @@ public class ViewApplicationViewController extends PyramusViewController {
         conflicts.add("Hakija on EU- ja ETA-alueen ulkopuolisesta maasta");
       }
     }
-
-    if (StringUtils.equalsAny(line, ApplicationUtils.LINE_AINEOPISKELU, ApplicationUtils.LINE_AINEOPISKELU_PK, ApplicationUtils.LINE_NETTILUKIO, ApplicationUtils.LINE_AIKUISLUKIO)) {
-      conflicts.add("Varmista, että hakijalle valittu koulutusohjelma on oikein. Muuta sitä tarvittaessa hakemusta muokkaamalla.");
-    }
     
     return conflicts;
   }
