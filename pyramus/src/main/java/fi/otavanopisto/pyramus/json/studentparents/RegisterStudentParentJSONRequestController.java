@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.json.studentparents;
 
-import org.apache.commons.lang3.StringUtils;
-
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -22,6 +20,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationException;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 /**
  * The controller responsible of logging in the user with the credentials he has provided. 
@@ -101,7 +100,7 @@ public class RegisterStudentParentJSONRequestController extends JSONRequestContr
           // Require email to be unique
           
           if (!UserUtils.isAllowedUniqueEmail(studentParentInvitation.getEmail())) {
-            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+            throw new StudentParentRegistrationException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "studentparents.parentRegistration.emailInUseError"));
           }
   
           if (!internalAuthenticationProvider.isAvailableUsername(username)) {

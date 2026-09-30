@@ -158,6 +158,8 @@
                         <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25" style="text-transform: uppercase">
                       </div>
                       
+                      <div class="form-section__header form-section__header--credentials"><fmt:message key="studentparents.parentRegistration.newCredentialsLabel"/></div>
+                      
                       <div class="form-section__field-container">
                         <label class="required" for="u"><fmt:message key="studentparents.parentRegistration.userNameTitle"/></label> 
                         <input id="u" type="text" name="new-username" required="required" autocomplete="new-username" size="30">
