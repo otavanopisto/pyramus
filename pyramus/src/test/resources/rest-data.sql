@@ -469,9 +469,9 @@ values
   (3, 3, 13, 1);
 
 insert into StudentGroupUser
-  (id, studentGroup, staffMember_id, groupAdvisor, studyAdvisor, messageRecipient, version)
+  (id, studentGroup, staffMember_id, groupAdvisor, studyAdvisor, specialEducationTeacher, messageRecipient, version)
 values 
-  (1, 3, 10, false, false, false, 1);
+  (1, 3, 10, false, false, false, false, 1);
   
 insert into StudentStudyEndReason 
   (id, name, parentReason, archived, version)

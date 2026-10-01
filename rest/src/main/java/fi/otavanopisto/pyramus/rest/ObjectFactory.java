@@ -104,6 +104,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
@@ -781,7 +782,7 @@ public class ObjectFactory {
           @Override
           public Object map(StudentGroupUser entity) {
             Long staffMemberId = entity.getStaffMember() != null ? entity.getStaffMember().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(entity.getId(), staffMemberId, entity.isGroupAdvisor(), entity.isStudyAdvisor(), entity.getMessageRecipient());
+            return new fi.otavanopisto.pyramus.rest.model.StudentGroupUser(entity.getId(), staffMemberId, entity.isGroupAdvisor(), entity.isStudyAdvisor(), entity.isSpecialEducationTeacher(), entity.getMessageRecipient());
           }
         },
         
@@ -981,10 +982,11 @@ public class ObjectFactory {
           String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
           Long personId = entity.getPerson() != null ? entity.getPerson().getId() : null;
           Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
+          boolean specialEducationTeacher = "1".equals(entity.getProperties().get(StaffMemberProperties.SPEC_ED_TEACHER.getKey()));
           
           return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, organizationId, additionalContactInfo, 
               entity.getFirstName(), entity.getLastName(), entity.getTitle(), userRoles, tags, variables,
-              entity.getStudyProgrammes().stream().map(StudyProgramme::getId).collect(Collectors.toSet()));
+              entity.getStudyProgrammes().stream().map(StudyProgramme::getId).collect(Collectors.toSet()), specialEducationTeacher);
         }
       },
       

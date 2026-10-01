@@ -140,8 +140,8 @@ public class StudentGroupController {
 
   /* StudentGroupUser */
   
-  public StudentGroupUser createStudentGroupStaffMember(StudentGroup studentGroup, StaffMember staffMember, boolean groupAdvisor, boolean studyAdvisor, boolean messageRecipient, User updatingUser) {
-    return studentGroupUserDAO.create(studentGroup, staffMember, groupAdvisor, studyAdvisor, messageRecipient, updatingUser);
+  public StudentGroupUser createStudentGroupStaffMember(StudentGroup studentGroup, StaffMember staffMember, boolean groupAdvisor, boolean studyAdvisor, boolean specialEducationTeacher, boolean messageRecipient, User updatingUser) {
+    return studentGroupUserDAO.create(studentGroup, staffMember, groupAdvisor, studyAdvisor, specialEducationTeacher, messageRecipient, updatingUser);
   }
 
   public StudentGroupUser findStudentGroupUserById(Long id) {
