@@ -26,6 +26,7 @@ body {
 
 /* HEADER */
 .application-header {
+	align-items: center;
   background-color: #0080bb;
   display: flex;
   flex-basis: auto;
@@ -44,14 +45,27 @@ body {
 }
 
 .application-header__logo {
+	align-items: center;
   background-image: url("/gfx/gui/otavia-logo-white.png");
   background-position: center left;
   background-repeat: no-repeat;
   background-size: contain;
+  display: flex;
+  justify-content: flex-end;
   height: 30px;
   margin: 10px 0;
 }
 
+.application-header__logo #GUI_headerLocaleSelectionContainer {
+	color: #fff;
+}
+
+.application-header__logo .GUI_headerLocaleSelectionLink {
+	color: #fff;
+	font-weight: bold;
+	padding: 5px;
+	text-decoration: none;
+}
 /* SELECTION LAYOUT */
 .application-selection {
   align-content: flex-start;

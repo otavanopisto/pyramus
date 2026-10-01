@@ -28,13 +28,14 @@
     <header class="application-header">
       <div class="application-header__content">
         <div class="application-header__logo">
+          <div id="GUI_headerLocaleSelectionContainer">
+            <a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('fi_FI');">FI</a> | <a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('en_US');">EN</a>
+          </div>
         </div>
       </div>
     </header>
     
-    <div id="GUI_headerLocaleSelectionContainer">
-      <a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('fi_FI');">FI</a><a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('en_US');">EN</a>
-    </div>
+    
     
     <c:choose>
       <c:when test="${credentialsCreated eq true}">
