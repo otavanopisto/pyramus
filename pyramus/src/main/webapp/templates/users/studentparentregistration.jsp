@@ -28,8 +28,8 @@
     <header class="application-header">
       <div class="application-header__content">
         <div class="application-header__logo">
-          <div id="GUI_headerLocaleSelectionContainer">
-            <a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('fi_FI');">FI</a> | <a href="#" class="GUI_headerLocaleSelectionLink" onclick="setLocale('en_US');">EN</a>
+          <div class="application-header__locale-link-container">
+            <a href="#" class="application-header__locale-link" onclick="setLocale('fi_FI');">FI</a> | <a href="#" class="application-header__locale-link" onclick="setLocale('en_US');">EN</a>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@
                     
                     <nav class="form-navigation">
                       <button type="button" name="login" id="button-create-credentials" class="button-create-credentials" onclick="createCredentials(event);">
-                        <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
+                        <fmt:message key="studentparents.parentRegistration.submitButtonLabelLoggedIn"/>
                       </button>
                     </nav>
                   </section>
@@ -129,23 +129,27 @@
               <c:otherwise>
                 <input type="hidden" name="type" id="parentRegisterCredentialType" value="NONE"/>
                 
-                <div class="guardianCredentialsPhase" data-phase-name="NONE">
-                  <p>
-                    <a href="#" onclick="selectCredentialsPhase('LOGIN')"><fmt:message key="studentparents.parentRegistration.mainHasUserLink"/></a>
-                    <div>
+                <div class="application-content__credentials-phase-wrapper" data-phase-name="NONE">
+                  <div class="application-content__credentials-container">
+                    <div class="application-content__credentials-container-row">
+                      <a href="#" onclick="selectCredentialsPhase('LOGIN')" class="application-content__button-link"><fmt:message key="studentparents.parentRegistration.mainHasUserLink"/></a>
+                    </div>
+                    <div class="application-content__credentials-container-row">
                       <fmt:message key="studentparents.parentRegistration.mainHasUserDesc"/>
                     </div>
-                  </p>
+                  </div>
                   
-                  <p>
-                    <a href="#" onclick="selectCredentialsPhase('CREATE')"><fmt:message key="studentparents.parentRegistration.mainNewUserLink"/></a>
-                    <div>
+                  <div class="application-content__credentials-container">
+                    <div class="application-content__credentials-container-row">
+                      <a href="#" onclick="selectCredentialsPhase('CREATE')" class="application-content__button-link"><fmt:message key="studentparents.parentRegistration.mainNewUserLink"/></a>
+                    </div>
+                    <div class="application-content__credentials-container-row">
                       <fmt:message key="studentparents.parentRegistration.mainNewUserDesc"/>
                     </div>
-                  </p>
+                  </div>
                 </div>
                     
-                <div class="guardianCredentialsPhase" data-phase-name="CREATE" style="display: none;">
+                <div class="application-content__credentials-phase-wrapper" data-phase-name="CREATE" style="display: none;">
                   <form class="application-form">
                     <input type="hidden" id="hash" name="hash" value="${hash}"/>
                     
@@ -154,6 +158,9 @@
                         <a href="#" onclick="selectCredentialsPhase('NONE')"><fmt:message key="terms.goBack"/></a>
                       </nav>
 
+                      <div class="form-section__header form-section__header--credentials"><fmt:message key="studentparents.parentRegistration.studentInfoLabel"/></div>
+                      <div class="application-description__credentials"><fmt:message key="studentparents.parentRegistration.studentInfoDesc"/></div>
+                      
                       <div class="form-section__field-container">
                         <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
                         <input type="text" id="ssn" name="ssn-confirm" autocomplete="new-ssn-confirm" required="required" size="25" style="text-transform: uppercase">
@@ -178,14 +185,14 @@
           
                       <nav class="form-navigation">
                         <button type="button" name="login" id="button-create-credentials" class="button-create-credentials" onclick="createCredentials(event);">
-                          <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
+                          <fmt:message key="studentparents.parentRegistration.submitButtonLabelCreateCredentials"/>
                         </button>
                       </nav>
                     </section>
                   </form>
                 </div>
 		    
-                <div class="guardianCredentialsPhase" data-phase-name="LOGIN" style="display: none;">
+                <div class="application-content__credentials-phase-wrapper" data-phase-name="LOGIN" style="display: none;">
                   <form class="application-form">
                     <input type="hidden" id="hash" name="hash" value="${hash}"/>
                     
@@ -193,6 +200,9 @@
                       <nav>
                         <a href="#" onclick="selectCredentialsPhase('NONE')"><fmt:message key="terms.goBack"/></a>
                       </nav>
+                      
+                      <div class="form-section__header form-section__header--credentials"><fmt:message key="studentparents.parentRegistration.studentInfoLabel"/></div>
+                      <div class="application-description__credentials"><fmt:message key="studentparents.parentRegistration.studentInfoDesc"/></div>
                       
                       <div class="form-section__field-container">
                         <label class="required" for="ssn"><fmt:message key="studentparents.parentRegistration.ssecConfirmationTitle"/></label> 
@@ -213,7 +223,7 @@
           
                       <nav class="form-navigation">
                         <button type="button" name="login" id="button-create-credentials" class="button-create-credentials" onclick="createCredentials(event);">
-                          <fmt:message key="studentparents.parentRegistration.submitButtonLabel"/>
+                          <fmt:message key="studentparents.parentRegistration.submitButtonLabelLogIn"/>
                         </button>
                       </nav>
                     </section>

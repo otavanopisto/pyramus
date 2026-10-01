@@ -56,11 +56,11 @@ body {
   margin: 10px 0;
 }
 
-.application-header__logo #GUI_headerLocaleSelectionContainer {
+.application-header__logo .application-header__locale-link-container {
 	color: #fff;
 }
 
-.application-header__logo .GUI_headerLocaleSelectionLink {
+.application-header__locale-link {
 	color: #fff;
 	font-weight: bold;
 	padding: 5px;
@@ -307,6 +307,32 @@ body {
   max-width: 100%;
   padding: 15px;
   position: relative;
+}
+
+.application-content__credentials-phase-wrapper {
+	display: flex;
+	flex-flow: column nowrap;
+	gap: 3rem;
+}
+
+.application-content__credentials-container {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.5rem;
+}
+
+.application-content__credentials-container-row {
+	
+}
+
+.application-content__button-link {
+	background: #0080bb;
+	border-radius: 5px;
+	color: #fff;
+	display: inline-flex;
+	line-height: 1;
+	padding: 10px 15px;
+	text-decoration: none;
 }
 
 .application-content--credentials {

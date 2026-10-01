@@ -1,7 +1,7 @@
 function selectCredentialsPhase(phaseName) {
   $('.error-container').hide();
-  $(".guardianCredentialsPhase").hide();
-  document.querySelector(`.guardianCredentialsPhase[data-phase-name="${phaseName}"]`).style.display = 'block';
+  $(".application-content__credentials-phase-wrapper").hide();
+  document.querySelector(`.application-content__credentials-phase-wrapper[data-phase-name="${phaseName}"]`).style.display = 'flex';
   document.getElementById("parentRegisterCredentialType").value = phaseName;
 }
 
