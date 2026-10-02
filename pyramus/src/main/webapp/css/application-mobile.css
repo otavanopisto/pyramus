@@ -312,13 +312,22 @@ body {
 .application-content__credentials-phase-wrapper {
 	display: flex;
 	flex-flow: column nowrap;
-	gap: 3rem;
+	gap: 2rem;
 }
 
-.application-content__credentials-container {
+.application-content__credentials-description {
   display: flex;
   flex-flow: column nowrap;
   gap: 0.5rem;
+}
+
+.application-content__credentials-container {
+	background: #dcf4f86b;
+	border-radius: 5px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.5rem;
+  padding: 15px;
 }
 
 .application-content__credentials-container-row {

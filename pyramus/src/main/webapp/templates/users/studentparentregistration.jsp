@@ -130,21 +130,25 @@
                 <input type="hidden" name="type" id="parentRegisterCredentialType" value="NONE"/>
                 
                 <div class="application-content__credentials-phase-wrapper" data-phase-name="NONE">
+                   <div class="application-content__credentials-description">
+                    <fmt:message key="studentparents.parentRegistration.pageInstructions"/>
+                  </div>
+                  
                   <div class="application-content__credentials-container">
-                    <div class="application-content__credentials-container-row">
-                      <a href="#" onclick="selectCredentialsPhase('LOGIN')" class="application-content__button-link"><fmt:message key="studentparents.parentRegistration.mainHasUserLink"/></a>
+                    <div class="application-content__credentials-descriptioon-row">
+                      <fmt:message key="studentparents.parentRegistration.mainHasUserDesc"/>
                     </div>
                     <div class="application-content__credentials-container-row">
-                      <fmt:message key="studentparents.parentRegistration.mainHasUserDesc"/>
+                      <a href="#" onclick="selectCredentialsPhase('LOGIN')" class="application-content__button-link"><fmt:message key="studentparents.parentRegistration.mainHasUserLink"/></a>
                     </div>
                   </div>
                   
                   <div class="application-content__credentials-container">
                     <div class="application-content__credentials-container-row">
-                      <a href="#" onclick="selectCredentialsPhase('CREATE')" class="application-content__button-link"><fmt:message key="studentparents.parentRegistration.mainNewUserLink"/></a>
+                      <fmt:message key="studentparents.parentRegistration.mainNewUserDesc"/>
                     </div>
                     <div class="application-content__credentials-container-row">
-                      <fmt:message key="studentparents.parentRegistration.mainNewUserDesc"/>
+                      <a href="#" onclick="selectCredentialsPhase('CREATE')" class="application-content__button-link"><fmt:message key="studentparents.parentRegistration.mainNewUserLink"/></a>
                     </div>
                   </div>
                 </div>
