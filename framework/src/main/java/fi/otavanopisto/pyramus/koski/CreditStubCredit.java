@@ -11,11 +11,12 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 
 public class CreditStubCredit {
 
-  public CreditStubCredit(Credit credit, Type type, int courseLength, OpintojenLaajuusYksikko lengthUnit) {
+  public CreditStubCredit(Credit credit, Type type, int courseLength, OpintojenLaajuusYksikko lengthUnit, Date creditDate) {
     this.type = type;
     this.credit = credit;
     this.courseLength = courseLength;
     this.courseLenghtUnit = lengthUnit;
+    this.creditDate = creditDate;
   }
   
   public enum Type {
@@ -28,7 +29,7 @@ public class CreditStubCredit {
   }
 
   public Date getDate() {
-    return credit.getDate();
+    return creditDate;
   }
 
   public Grade getGrade() {
@@ -82,4 +83,5 @@ public class CreditStubCredit {
   private final Type type;
   private final int courseLength;
   private final OpintojenLaajuusYksikko courseLenghtUnit;
+  private Date creditDate;
 }
