@@ -41,7 +41,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReasonType;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.reports.FTLReportsController;
 import fi.otavanopisto.pyramus.reports.FTLReportsController.ReportFormat;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
@@ -57,6 +56,7 @@ import fi.otavanopisto.pyramus.rest.model.atomi.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.rest.model.atomi.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.rest.model.atomi.Rooli;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.util.DateUtils;
 
 @Path("/atomi")
 @Produces("application/json")
