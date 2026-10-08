@@ -36,11 +36,13 @@ import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenAlkuvaiheen
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
@@ -246,12 +248,16 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
     String kurssiKoodi = StringUtils.upperCase(courseCredit.getCourseCode());
     APAKurssinTunniste tunniste;
     
+    // Aikuisten perusopetuksessa kurssin laajuuden vaihtoehdot Kosken tietomallin mukaan ovat kurssia tai vuosiviikkotuntia. 
+    // Vuosiviikkotunti on ilmeisesti kuitenkin nuorisopuolen yksikkö, joten käytetään kurssia.
+    Laajuus kurssinLaajuus = new Laajuus(1, OpintojenLaajuusYksikko.kurssia);
+    
     if (ops == OpiskelijanOPS.ops2018 && EnumUtils.isValidEnum(AikuistenPerusopetuksenAlkuvaiheenKurssit2017.class, kurssiKoodi)) {
       AikuistenPerusopetuksenAlkuvaiheenKurssit2017 kurssi = AikuistenPerusopetuksenAlkuvaiheenKurssit2017.valueOf(kurssiKoodi);
-      tunniste = new APAKurssinTunnisteOPS2017(kurssi);
+      tunniste = new APAKurssinTunnisteOPS2017(kurssi, kurssinLaajuus);
     } else {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
-      tunniste = new APAKurssinTunnistePaikallinen(paikallinenKoodi);
+      tunniste = new APAKurssinTunnistePaikallinen(paikallinenKoodi, kurssinLaajuus);
     }
       
     APAKurssinSuoritus suoritus = new APAKurssinSuoritus(tunniste);

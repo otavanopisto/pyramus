@@ -5,9 +5,6 @@ import java.util.Set;
 
 public class PyramusConsts {
 
-  // Education type code for study programmes categorized under high school studies
-  public static final String STUDYPROGRAMME_LUKIO = "lukio";
-  
   // Study programme of paid course assessments
   public static final String STUDYPROGRAMME_PAID_ASSESSMENTS = "Aineopiskelu/lukio";
   

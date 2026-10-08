@@ -36,11 +36,13 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
@@ -270,15 +272,19 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
     String kurssiKoodi = StringUtils.upperCase(courseCredit.getCourseCode());
     AikuistenPerusopetuksenKurssinTunniste tunniste;
     
+    // Aikuisten perusopetuksessa kurssin laajuuden vaihtoehdot Kosken tietomallin mukaan ovat kurssia tai vuosiviikkotuntia. 
+    // Vuosiviikkotunti on ilmeisesti kuitenkin nuorisopuolen yksikkö, joten käytetään kurssia.
+    Laajuus kurssinLaajuus = new Laajuus(1, OpintojenLaajuusYksikko.kurssia);
+    
     if (ops == OpiskelijanOPS.ops2016 && EnumUtils.isValidEnum(AikuistenPerusopetuksenKurssit2015.class, kurssiKoodi)) {
       AikuistenPerusopetuksenKurssit2015 kurssi = AikuistenPerusopetuksenKurssit2015.valueOf(kurssiKoodi);
-      tunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(kurssi);
+      tunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(kurssi, kurssinLaajuus);
     } else if (ops == OpiskelijanOPS.ops2018 && EnumUtils.isValidEnum(AikuistenPerusopetuksenPaattovaiheenKurssit2017.class, kurssiKoodi)) {
       AikuistenPerusopetuksenPaattovaiheenKurssit2017 kurssi = AikuistenPerusopetuksenPaattovaiheenKurssit2017.valueOf(kurssiKoodi);
-      tunniste = new AikuistenPerusopetuksenKurssinTunnistePV2017(kurssi);
+      tunniste = new AikuistenPerusopetuksenKurssinTunnistePV2017(kurssi, kurssinLaajuus);
     } else {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getCourseName()));
-      tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
+      tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi, kurssinLaajuus);
     }
       
     AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste);

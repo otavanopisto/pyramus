@@ -66,10 +66,11 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
       requestContext.sendError(HttpServletResponse.SC_NOT_FOUND, "Vahvistuspyyntöä ei löytynyt");
       return;
     }
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
     
     // Birthday validation
     
-    String applicationBirthday = sanitizeBirthdayString(ApplicationUtils.extractBirthdayString(application));
+    String applicationBirthday = sanitizeBirthdayString(ApplicationUtils.extractBirthdayString(formData));
     if (!StringUtils.equals(birthday, applicationBirthday)) {
       requestContext.sendError(HttpServletResponse.SC_BAD_REQUEST, "Syöttämäsi syntymäaika ei vastaa hakemuksessa olevaa syntymäaikaa");
       return;
@@ -139,7 +140,6 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
       
       // Confirmation mail to applicant
       
-      JSONObject formData = JSONObject.fromObject(application.getFormData());
       String line = formData.getString("field-line");
       String surname = application.getLastName();
       String referenceCode = application.getReferenceCode();
@@ -154,21 +154,17 @@ public class VerifyMailJSONRequestController extends JSONRequestController {
           return;
         }
 
-        if (!ApplicationUtils.isInternetixLine(application.getLine())) {
+        // Replace the dynamic parts of the mail content (edit link, surname and reference code)
 
-          // Replace the dynamic parts of the mail content (edit link, surname and reference code)
-          // #1487: Internetix confirmation mails do not have any dynamic content
+        StringBuilder viewUrl = new StringBuilder();
+        viewUrl.append(requestContext.getRequest().getScheme());
+        viewUrl.append("://");
+        viewUrl.append(requestContext.getRequest().getServerName());
+        viewUrl.append(":");
+        viewUrl.append(requestContext.getRequest().getServerPort());
+        viewUrl.append("/applications/edit.page");
 
-          StringBuilder viewUrl = new StringBuilder();
-          viewUrl.append(requestContext.getRequest().getScheme());
-          viewUrl.append("://");
-          viewUrl.append(requestContext.getRequest().getServerName());
-          viewUrl.append(":");
-          viewUrl.append(requestContext.getRequest().getServerPort());
-          viewUrl.append("/applications/edit.page");
-
-          content = String.format(content, viewUrl, surname, referenceCode);
-        }
+        content = String.format(content, viewUrl, surname, referenceCode);
 
         Mailer.sendMail(
             Mailer.JNDI_APPLICATION,

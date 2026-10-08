@@ -487,7 +487,8 @@ public abstract class KoskiStudentHandler {
         
         stub.addCredit(new CreditStubCredit(ca, Type.CREDIT, 
             laajuus != null ? laajuus.getArvo() : 0,
-            laajuus != null ? laajuus.getYksikko().getValue() : null));
+            laajuus != null ? laajuus.getYksikko().getValue() : null,
+            ca.getDate()));
       } else {
         logger.log(Level.WARNING, String.format("Couldn't resolve OPS for CourseAssessment %d", ca.getId()));
         koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date(), course.getName());
@@ -518,7 +519,8 @@ public abstract class KoskiStudentHandler {
           
           stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED,
               laajuus != null ? laajuus.getArvo() : 0,
-              laajuus != null ? laajuus.getYksikko().getValue() : null));
+              laajuus != null ? laajuus.getYksikko().getValue() : null,
+              tc.getDate()));
         } else {
           logger.log(Level.WARNING, String.format("Couldn't resolve OPS for TransferCredit %d", tc.getId()));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date(), tc.getCourseName());
@@ -535,6 +537,9 @@ public abstract class KoskiStudentHandler {
         String courseName = null;
         OpiskelijanOPS creditOPS = null;
         Laajuus laajuus = null;
+        // As these are CreditLinks, the creditDate is assumed at start of the studies with fallback 
+        // to the original credit's date, which is likely outside the studies and causes complaints.
+        Date creditDate = student.getStudyStartDate() != null ? student.getStudyStartDate() : credit.getDate();
         
         switch (credit.getCreditType()) {
           case CourseAssessment:
@@ -579,7 +584,8 @@ public abstract class KoskiStudentHandler {
           
           stub.addCredit(new CreditStubCredit(credit, Type.RECOGNIZED,
               laajuus != null ? laajuus.getArvo() : 0,
-              laajuus != null ? laajuus.getYksikko().getValue() : null));
+              laajuus != null ? laajuus.getYksikko().getValue() : null,
+              creditDate));
         }
       });
     }

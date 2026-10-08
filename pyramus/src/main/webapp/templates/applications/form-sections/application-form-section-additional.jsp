@@ -274,15 +274,6 @@
       </select>
     </div>
 
-    <div class="form-section__field-container field-foreign-student dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
-      <label for="field-foreign-student" class="required">Oletko ulkomainen vaihto-opiskelija?</label>
-      <select id="field-foreign-student" name="field-foreign-student" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
-        <option value="">-- Valitse --</option>
-        <option value="kylla">Kyllä</option>
-        <option value="en">En</option>
-      </select>
-    </div>
-
     <div class="form-section__field-container field-previous-foreign-studies dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
       <label for="field-previous-foreign-studies" class="required">Aikaisemmat opinnot</label>
       <textarea id="field-previous-foreign-studies" name="field-previous-foreign-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>

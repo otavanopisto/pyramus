@@ -103,7 +103,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParentChild;
 import fi.otavanopisto.pyramus.domainmodel.users.StudentParentInvitation;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
-import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
@@ -127,6 +126,7 @@ import fi.otavanopisto.pyramus.rest.model.UserRole;
 import fi.otavanopisto.pyramus.rest.model.VariableType;
 import fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
+import fi.otavanopisto.pyramus.util.DateUtils;
 
 @ApplicationScoped
 public class ObjectFactory {
@@ -950,7 +950,8 @@ public class ObjectFactory {
                 defaultAddress,
                 studyStartDate,
                 studyTimeEnd,
-                studyEndDate
+                studyEndDate,
+                entity.getExpiryDate()
             );
           }
         },
