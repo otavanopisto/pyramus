@@ -884,7 +884,8 @@ public class MuikkuRESTService {
           boolean groupAdvisor = false;
           boolean studyAdvisor = false;
           boolean messageRecipient = false;
-          studentGroupController.createStudentGroupStaffMember(studentGroup, (StaffMember) user, groupAdvisor, studyAdvisor, messageRecipient, loggedUser);
+          boolean specialEducationTeacher = false;
+          studentGroupController.createStudentGroupStaffMember(studentGroup, (StaffMember) user, groupAdvisor, studyAdvisor, specialEducationTeacher, messageRecipient, loggedUser);
         }
       }
     }

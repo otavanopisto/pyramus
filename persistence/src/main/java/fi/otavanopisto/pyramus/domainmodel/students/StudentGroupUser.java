@@ -77,6 +77,14 @@ public class StudentGroupUser {
     this.studyAdvisor = studyAdvisor;
   }
 
+  public boolean isSpecialEducationTeacher() {
+    return specialEducationTeacher;
+  }
+
+  public void setSpecialEducationTeacher(boolean specialEducationTeacher) {
+    this.specialEducationTeacher = specialEducationTeacher;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentGroupUser")  
   @TableGenerator(name="StudentGroupUser", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -96,6 +104,9 @@ public class StudentGroupUser {
 
   @Column (nullable = false)
   private boolean studyAdvisor;
+  
+  @Column (nullable = false)
+  private boolean specialEducationTeacher;
   
   @Column (nullable = false)
   private boolean messageRecipient;

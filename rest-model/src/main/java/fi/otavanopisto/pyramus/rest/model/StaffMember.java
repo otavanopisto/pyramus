@@ -14,7 +14,7 @@ public class StaffMember implements ContextReference {
   }
 
   public StaffMember(Long id, Long personId, Long organizationId, String additionalContactInfo, String firstName, String lastName, String title, EnumSet<UserRole> roles,
-      List<String> tags, Map<String, String> variables, Set<Long> studyProgrammeIds) {
+      List<String> tags, Map<String, String> variables, Set<Long> studyProgrammeIds, boolean specialEducationTeacher) {
     super();
     this.id = id;
     this.personId = personId;
@@ -27,6 +27,7 @@ public class StaffMember implements ContextReference {
     this.tags = tags;
     this.variables = variables;
     this.studyProgrammeIds = studyProgrammeIds;
+    this.specialEducationTeacher = specialEducationTeacher;
   }
 
   public Long getId() {
@@ -117,6 +118,14 @@ public class StaffMember implements ContextReference {
     this.studyProgrammeIds = studyProgrammeIds;
   }
 
+  public boolean isSpecialEducationTeacher() {
+    return specialEducationTeacher;
+  }
+
+  public void setSpecialEducationTeacher(boolean specialEducationTeacher) {
+    this.specialEducationTeacher = specialEducationTeacher;
+  }
+
   private Long id;
   private Long personId;
   private Long organizationId;
@@ -128,4 +137,5 @@ public class StaffMember implements ContextReference {
   private Map<String, String> variables;
   private List<String> tags;
   private Set<Long> studyProgrammeIds;
+  private boolean specialEducationTeacher;
 }
