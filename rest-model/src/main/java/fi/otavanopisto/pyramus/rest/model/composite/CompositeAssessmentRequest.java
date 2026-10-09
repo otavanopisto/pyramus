@@ -116,6 +116,14 @@ public class CompositeAssessmentRequest {
     this.locked = locked;
   }
 
+  public Date getDeadline() {
+    return deadline;
+  }
+
+  public void setDeadline(Date deadline) {
+    this.deadline = deadline;
+  }
+
   private Long id;
   private Long courseStudentId;
   private Long userId;
@@ -128,6 +136,7 @@ public class CompositeAssessmentRequest {
   private Date courseEnrollmentDate;
   private Date assessmentRequestDate;
   private Date evaluationDate;
+  private Date deadline;
   private boolean passing;
   private boolean locked;
 

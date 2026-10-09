@@ -42,6 +42,14 @@ public class CourseAssessmentRequest {
     this.created = created;
   }
 
+  public OffsetDateTime getDeadline() {
+    return deadline;
+  }
+
+  public void setDeadline(OffsetDateTime deadline) {
+    this.deadline = deadline;
+  }
+
   public String getRequestText() {
     return requestText;
   }
@@ -69,6 +77,7 @@ public class CourseAssessmentRequest {
   private Long id;
   private Long courseStudentId;
   private OffsetDateTime created;
+  private OffsetDateTime deadline;
   private String requestText;
   private boolean archived;
   private boolean handled;

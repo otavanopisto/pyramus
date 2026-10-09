@@ -78,6 +78,14 @@ public class CourseAssessmentRequest implements ArchivableEntity {
     this.created = created;
   }
 
+  public Date getDeadline() {
+    return deadline;
+  }
+
+  public void setDeadline(Date deadline) {
+    this.deadline = deadline;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseAssessmentRequest")  
   @TableGenerator(name="CourseAssessmentRequest", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -90,6 +98,9 @@ public class CourseAssessmentRequest implements ArchivableEntity {
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date created;
+  
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date deadline;
   
   @Lob
   @Basic (fetch = FetchType.LAZY)
