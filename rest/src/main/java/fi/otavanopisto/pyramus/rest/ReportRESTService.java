@@ -115,7 +115,9 @@ public class ReportRESTService extends AbstractRESTService {
         return Response.status(Status.BAD_REQUEST).build();
       }
   
-      List<KoskiCSVCreditRow> koskiData = readKoskiCreditFile(formData, linja);
+      PerusopetusCreditReport report = new PerusopetusCreditReport();
+
+      List<KoskiCSVCreditRow> koskiData = readKoskiCreditFile(formData, linja, report);
       
       logger.log(Level.FINE, String.format("Linja %s, datassa rivejä %d", linja, koskiData != null ? koskiData.size() : -1));
       
@@ -150,7 +152,6 @@ public class ReportRESTService extends AbstractRESTService {
         return Response.status(Status.BAD_REQUEST).build();
       }
       
-      PerusopetusCreditReport report = new PerusopetusCreditReport();
       studyProgrammes.forEach(sp -> report.addStudyProrgrammeName(sp.getName()));
       
       // Listaa arvosanat aikavälillä
@@ -216,7 +217,7 @@ public class ReportRESTService extends AbstractRESTService {
     }
   }
   
-  private List<KoskiCSVCreditRow> readKoskiCreditFile(MultipartFormDataInput formData, String linja) {
+  private List<KoskiCSVCreditRow> readKoskiCreditFile(MultipartFormDataInput formData, String linja, PerusopetusCreditReport report) {
     if (!StringUtils.equalsAny(linja, LINJA_1, LINJA_2)) {
       return null;
     }
@@ -227,29 +228,36 @@ public class ReportRESTService extends AbstractRESTService {
       if (CollectionUtils.isNotEmpty(koskiCSVPart)) {
         InputStream koskiCSVInputStream = formData.getFormDataPart("koskiCSV", InputStream.class, null);
         
-        if (koskiCSVInputStream != null) {
+        if (koskiCSVInputStream != null && koskiCSVInputStream.available() > 0) {
           CsvMapper csvMapper = CsvMapper.builder().addModule(new JavaTimeModule()).build();
           // KoskiBoolean as null when the source has empty string
           csvMapper.coercionConfigFor(KoskiBoolean.class).setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
-          CsvSchema csvSchema = CsvSchema.emptySchema().withColumnSeparator(',').withHeader();
+          CsvSchema csvSchema = CsvSchema.emptySchema().withColumnSeparator(';').withHeader();
           ObjectReader objectReader = csvMapper.readerFor(KoskiCSVCreditRow.class).with(csvSchema);
           MappingIterator<KoskiCSVCreditRow> values = objectReader.readValues(koskiCSVInputStream);
           List<KoskiCSVCreditRow> all = values.readAll();
           
-          if (LINJA_1.equals(linja)) {
-            all.removeIf(koskiCredit -> !StringUtils.equals(koskiCredit.getSuorituksenTyyppi(), "aikuistenperusopetuksenoppimaaranalkuvaihe"));
+          final String linjaFilter = switch (linja) {
+            case LINJA_1 -> "aikuistenperusopetuksenoppimaaranalkuvaihe";
+            case LINJA_2 -> "aikuistenperusopetuksenoppimaara";
+            default -> null;
+          };
+          
+          if (linjaFilter != null) {
+            all.removeIf(koskiCredit -> !StringUtils.equals(koskiCredit.getSuorituksenTyyppi(), linjaFilter));
           }
 
-          if (LINJA_2.equals(linja)) {
-            all.removeIf(koskiCredit -> !StringUtils.equals(koskiCredit.getSuorituksenTyyppi(), "aikuistenperusopetuksenoppimaara"));
-          }
+          report.getKoskiCSVStatus().add(String.format("Koski CSV-tiedosto luettu, tyypin %s rivejä %d kpl.", linjaFilter, all != null ? all.size() : 0));
           
           // If the list is empty, return null to disable the comparisons
           return CollectionUtils.isNotEmpty(all) ? all : null;
         }
       }
+
+      report.getKoskiCSVStatus().add("Koski CSV-tiedostoa ei määritetty, vertailua Koski-dataan ei tehdä.");
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to read Koski CSV", e);
+      report.getKoskiCSVStatus().add("Koski CSV-tiedoston lukemisessa tapahtui virhe. Tarkista tiedosto tai ota yhteyttä helpdeskiin.");
     }
     
     return null;
@@ -327,6 +335,16 @@ public class ReportRESTService extends AbstractRESTService {
       courseLengthSymbol = courseCredit.getCourseLength().getUnit().getSymbol();
     }
 
+    // Onko CourseStudent arkistoitu? Jos on, arvosana ei näy opiskelijan tiedoissa eikä sitä välitetä Koskeen
+    boolean courseStudentMissing = false;
+    if (courseCredit instanceof CourseAssessment) {
+      CourseAssessment ca = (CourseAssessment) courseCredit;
+      if (ca.getCourseStudent() == null || Boolean.TRUE.equals(ca.getCourseStudent().getArchived())) {
+        courseStudentMissing = true;
+        state = PerusopetusCreditState.REJECTED_COURSESTUDENT_ARCHIVED;
+      }
+    }
+    
     boolean mismatchingCurriculum;
     if (CollectionUtils.isNotEmpty(courseCredit.getCurriculums())) {
       if (student.getCurriculum() != null) {
@@ -494,6 +512,7 @@ public class ReportRESTService extends AbstractRESTService {
     credit.setMismatchingCurriculum(mismatchingCurriculum);
     credit.setOtherFunding(otherFunding);
     credit.setEvaluatedOutsideStudies(evaluatedOutsideStudies);
+    credit.setCourseStudentMissing(courseStudentMissing);
     credit.setKoskiFailure(koskiFailure);
     credit.setState(state);
     credit.setKoskiErrors(koskiErrors);

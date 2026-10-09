@@ -43,6 +43,10 @@ public class PerusopetusCreditReport {
     return studyProgrammeNames;
   }
 
+  public List<String> getKoskiCSVStatus() {
+    return koskiCSVStatus;
+  }
+
   public class PerusopetusCreditReportSummary {
     
     public int getAcceptedCreditCount() {
@@ -156,4 +160,5 @@ public class PerusopetusCreditReport {
   private final List<PerusopetusCredit> acceptedCredits = new ArrayList<>();
   private final List<PerusopetusCredit> rejectedCredits = new ArrayList<>();
   private final List<PerusopetusCredit> fundedTransferCredits = new ArrayList<>();
+  private final List<String> koskiCSVStatus = new ArrayList<>();
 }
