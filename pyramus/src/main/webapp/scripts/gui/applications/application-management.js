@@ -114,9 +114,11 @@
         success: function(response) {
           if (applicantEditable) {
             $(_this).removeClass('icon-locked').addClass('icon-unlocked');
+            $('#action-application-toggle-lock span').text('Hakemus auki');
           }
           else {
             $(_this).removeClass('icon-unlocked').addClass('icon-locked');
+            $('#action-application-toggle-lock span').text('Hakemus lukittu');
           }
         }
       });

@@ -5,9 +5,6 @@ import java.util.Set;
 
 public class PyramusConsts {
 
-  // Education type code for study programmes categorized under high school studies
-  public static final String STUDYPROGRAMME_LUKIO = "lukio";
-  
   // Study programme of paid course assessments
   public static final String STUDYPROGRAMME_PAID_ASSESSMENTS = "Aineopiskelu/lukio";
   
@@ -42,6 +39,19 @@ public class PyramusConsts {
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B1 = "lukioKieliB1";
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B2 = "lukioKieliB2";
   public static final String USERVARIABLE_SUBJECT_CHOICES_KIELI_B3 = "lukioKieliB3";
+  
+  // Collection of all the subject choice variables
+  public static final Set<String> USERVARIABLE_SUBJECT_CHOICE_VARIABLES = Set.of(
+    USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI,
+    USERVARIABLE_SUBJECT_CHOICES_USKONTO,
+    USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA,
+    USERVARIABLE_SUBJECT_CHOICES_KIELI_A,
+    USERVARIABLE_SUBJECT_CHOICES_KIELI_A1,
+    USERVARIABLE_SUBJECT_CHOICES_KIELI_A2,
+    USERVARIABLE_SUBJECT_CHOICES_KIELI_B1,
+    USERVARIABLE_SUBJECT_CHOICES_KIELI_B2,
+    USERVARIABLE_SUBJECT_CHOICES_KIELI_B3
+  );
   
   // Participation types
   public static final String PARTICIPATION_TYPE_PASS = "Suorittanut";
@@ -79,6 +89,9 @@ public class PyramusConsts {
 
     // Grades allowed by the curriculum
     public static final Set<String> ALLOWED_GRADES = Set.of("4", "5", "6", "7", "8", "9", "10", "S", "H");
+    
+    // Grades allowed by the curriculum
+    public static final Set<String> PASSING_GRADES = Set.of("5", "6", "7", "8", "9", "10", "S");
     
     /**
      * Default subject selections for perusopetus. Map where the key is the 

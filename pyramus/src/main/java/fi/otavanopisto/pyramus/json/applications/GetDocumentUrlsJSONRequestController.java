@@ -13,6 +13,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import net.sf.json.JSONObject;
 
 public class GetDocumentUrlsJSONRequestController extends JSONRequestController {
 
@@ -33,6 +34,7 @@ public class GetDocumentUrlsJSONRequestController extends JSONRequestController 
                         applicationSignatures.getApplication().getLastName())));
             requestContext.addResponseParameter("staffDocumentUrl", staffDocumentUrl);
           }
+          JSONObject formData = JSONObject.fromObject(application.getFormData());
           if (StringUtils.isNotBlank(applicationSignatures.getApplicantInvitationId())) {
             String applicantDocumentUrl = String.format("/applications/getdocument.binary?documentId=%s&filename=%s",
                 applicationSignatures.getApplicantDocumentId(),
@@ -43,7 +45,7 @@ public class GetDocumentUrlsJSONRequestController extends JSONRequestController 
           }
           else if ((application.getState() == ApplicationState.APPROVED_BY_SCHOOL
               || application.getState() == ApplicationState.TRANSFERRED_AS_STUDENT)
-              && ApplicationUtils.isUnderage(application)) {
+              && ApplicationUtils.isUnderage(formData)) {
             requestContext.addResponseParameter("applicantDocumentUrl",
                 String.format("/1/applications/generateapplicantdocument?id=%d", application.getId()));
           }

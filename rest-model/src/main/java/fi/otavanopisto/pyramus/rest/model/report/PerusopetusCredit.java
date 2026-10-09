@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.rest.model.report;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 
 public class PerusopetusCredit {
@@ -194,6 +195,14 @@ public class PerusopetusCredit {
     this.type = type;
   }
 
+  public EnumSet<KoskiCreditError> getKoskiErrors() {
+    return koskiErrors;
+  }
+
+  public void setKoskiErrors(EnumSet<KoskiCreditError> koskiErrors) {
+    this.koskiErrors = koskiErrors;
+  }
+
   private Long courseId;
   private String courseName;
   private String courseCode;
@@ -217,6 +226,7 @@ public class PerusopetusCredit {
   private boolean otherFunding;
   private boolean evaluatedOutsideStudies;
   private boolean koskiFailure;
+  private EnumSet<KoskiCreditError> koskiErrors;
   
   private List<PerusopetusCredit> previousEvaluations = new ArrayList<>();
 }

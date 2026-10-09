@@ -2,6 +2,9 @@ package fi.otavanopisto.pyramus.rest.model;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
+
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentFlag;
 
 public class MatriculationExamEnrollment {
   
@@ -133,6 +136,14 @@ public class MatriculationExamEnrollment {
     this.opintopolkuUrl = opintopolkuUrl;
   }
 
+  public Set<MatriculationExamEnrollmentFlag> getFlags() {
+    return flags;
+  }
+
+  public void setFlags(Set<MatriculationExamEnrollmentFlag> flags) {
+    this.flags = flags;
+  }
+
   private Long id;
   private String enrollAs;
   private String degreeType;
@@ -149,4 +160,5 @@ public class MatriculationExamEnrollment {
   private Long examId;
   private String degreeStructure;
   private String opintopolkuUrl;
+  private Set<MatriculationExamEnrollmentFlag> flags;
 }

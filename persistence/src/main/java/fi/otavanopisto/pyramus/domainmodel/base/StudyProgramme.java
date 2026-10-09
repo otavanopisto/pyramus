@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -29,6 +30,17 @@ import org.hibernate.search.annotations.Indexed;
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class StudyProgramme implements ArchivableEntity {
 
+  /**
+   * Returns the education type associated with this StudyProgramme via the category
+   * of this StudyProgramme. Returns null if either the category doesn't exist or
+   * the category is missing an education type.
+   * @return
+   */
+  @Transient
+  public EducationType getEducationType() {
+    return getCategory() != null ? getCategory().getEducationType() : null;
+  }
+  
   /**
    * Returns the unique identifier of this object.
    * 

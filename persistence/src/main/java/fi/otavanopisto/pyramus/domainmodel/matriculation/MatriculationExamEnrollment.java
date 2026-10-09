@@ -1,9 +1,12 @@
 package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -23,6 +27,7 @@ import org.hibernate.search.annotations.DocumentId;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentFlag;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 
 @Entity
@@ -182,6 +187,14 @@ public class MatriculationExamEnrollment {
     this.opintopolkuUrl = opintopolkuUrl;
   }
 
+  public Set<MatriculationExamEnrollmentFlag> getFlags() {
+    return flags;
+  }
+
+  public void setFlags(Set<MatriculationExamEnrollmentFlag> flags) {
+    this.flags = flags;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -245,4 +258,11 @@ public class MatriculationExamEnrollment {
   private String handlerNotes;
   
   private String opintopolkuUrl;
+  
+  // TODO fix the environment to not need EAGER here
+  @ElementCollection(fetch = FetchType.EAGER)
+  @Enumerated (EnumType.STRING)
+  @Column (name = "flag")
+  @CollectionTable (name = "MatriculationExamEnrollmentFlags", joinColumns = @JoinColumn(name = "enrollment"))
+  private Set<MatriculationExamEnrollmentFlag> flags;
 }

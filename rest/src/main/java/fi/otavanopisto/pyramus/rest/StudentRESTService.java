@@ -39,9 +39,8 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
@@ -168,6 +167,7 @@ import fi.otavanopisto.pyramus.tor.StudentTOR;
 import fi.otavanopisto.pyramus.tor.StudentTORController;
 import fi.otavanopisto.pyramus.tor.StudentTORController.StudentTORFlags;
 import fi.otavanopisto.pyramus.tor.TORCourseLengthUnit;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
@@ -1216,7 +1216,8 @@ public class StudentRESTService extends AbstractRESTService {
     boolean groupAdvisor = false;
     boolean studyAdvisor = false;
     boolean messageRecipient = false;
-    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, groupAdvisor, studyAdvisor, messageRecipient, sessionController.getUser());
+    boolean specialEducationTeacher = false;
+    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, groupAdvisor, studyAdvisor, specialEducationTeacher, messageRecipient, sessionController.getUser());
 
     return Response.ok(objectFactory.createModel(studentGroupUser)).build();
   }
@@ -2277,12 +2278,8 @@ public class StudentRESTService extends AbstractRESTService {
           // Determine billing number from student's study programme
           // (high school if applicable, elementary as fallback)
 
-          String code = student.getStudyProgramme() != null &&
-              student.getStudyProgramme().getCategory() !=  null &&
-              student.getStudyProgramme().getCategory().getEducationType() != null &&
-              student.getStudyProgramme().getCategory().getEducationType().getCode() != null
-              ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
-          boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+          String code = student.getEducationTypeCode();
+          boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.Lukio.EDUCATION_TYPE, code);
           String billingNumber = isHighSchoolStudent
               ? courseBillingRestModel.getHighSchoolBillingNumber()
                   : courseBillingRestModel.getElementaryBillingNumber();
@@ -3917,21 +3914,7 @@ public class StudentRESTService extends AbstractRESTService {
     
     List<StudentParentRelation> result = new ArrayList<>(studentParentChilds.size());
     for (StudentParentChild studentParentChild : studentParentChilds) {
-      StudentParent studentParent = studentParentChild.getStudentParent();
-      boolean activeParent = studentParent.isActiveParentOf(student);
-      String email = studentParent.getPrimaryEmail() != null ? studentParent.getPrimaryEmail().getAddress() : null;
-      OffsetDateTime continuedViewPermissionModified = studentParentChild.getContinuedViewPermissionModified() != null 
-          ? PyramusRestUtils.toOffsetDateTime(studentParentChild.getContinuedViewPermissionModified()) : null;
-      
-      result.add(new StudentParentRelation(
-        studentParentChild.getId(),
-        studentParent.getFirstName(),
-        studentParent.getLastName(),
-        email,
-        activeParent,
-        studentParentChild.isContinuedViewPermission(),
-        continuedViewPermissionModified
-      ));
+      result.add(studentParentRelationRestModel(studentParentChild));
     }
     
     return Response.ok().entity(result).build();
@@ -3962,23 +3945,7 @@ public class StudentRESTService extends AbstractRESTService {
     StudentParentChild studentParentChild = studentParentController.findStudentParentChildById(studentParentChildId);
     if (studentParentChild != null && studentParentChild.getStudent().getId().equals(student.getId())) {
       studentParentChild = studentParentController.updateContinuedViewPermission(studentParentChild, continuedViewPermission);
-      
-      StudentParent studentParent = studentParentChild.getStudentParent();
-      boolean activeParent = studentParent.isActiveParentOf(student);
-      String email = studentParent.getPrimaryEmail() != null ? studentParent.getPrimaryEmail().getAddress() : null;
-      OffsetDateTime continuedViewPermissionModified = studentParentChild.getContinuedViewPermissionModified() != null 
-          ? PyramusRestUtils.toOffsetDateTime(studentParentChild.getContinuedViewPermissionModified()) : null;
-      
-      StudentParentRelation studentParentRelation = new StudentParentRelation(
-        studentParentChild.getId(),
-        studentParent.getFirstName(),
-        studentParent.getLastName(),
-        email,
-        activeParent,
-        studentParentChild.isContinuedViewPermission(),
-        continuedViewPermissionModified
-      );
-      return Response.ok().entity(studentParentRelation).build();
+      return Response.ok().entity(studentParentRelationRestModel(studentParentChild)).build();
     }
     else {
       return Response.status(Status.NOT_FOUND).build();
@@ -4020,4 +3987,24 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  private StudentParentRelation studentParentRelationRestModel(StudentParentChild studentParentChild) {
+    StudentParent studentParent = studentParentChild.getStudentParent();
+    boolean activeParent = studentParent.isActiveParentOf(studentParentChild.getStudent());
+    String email = studentParent.getPrimaryEmail() != null ? studentParent.getPrimaryEmail().getAddress() : null;
+    OffsetDateTime continuedViewPermissionModified = studentParentChild.getContinuedViewPermissionModified() != null 
+        ? PyramusRestUtils.toOffsetDateTime(studentParentChild.getContinuedViewPermissionModified()) : null;
+    
+    return new StudentParentRelation(
+      studentParentChild.getId(),
+      studentParent.getId(),
+      studentParent.getFirstName(),
+      studentParent.getLastName(),
+      email,
+      activeParent,
+      studentParentChild.isContinuedViewPermission(),
+      continuedViewPermissionModified,
+      studentParentChild.getExpiryDate()
+    );
+  }
+
 }

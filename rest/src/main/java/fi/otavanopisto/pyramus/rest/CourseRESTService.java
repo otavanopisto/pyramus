@@ -35,8 +35,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -93,6 +92,7 @@ import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.PyramusRestUtils;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 @Path("/courses")
 @Produces("application/json")

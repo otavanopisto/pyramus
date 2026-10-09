@@ -35,6 +35,14 @@ public class PerusopetusCreditReport {
     return fundedTransferCredits;
   }
 
+  public void addStudyProrgrammeName(String studyProgrammeName) {
+    this.studyProgrammeNames.add(studyProgrammeName);
+  }
+  
+  public List<String> getStudyProgrammeNames() {
+    return studyProgrammeNames;
+  }
+
   public class PerusopetusCreditReportSummary {
     
     public int getAcceptedCreditCount() {
@@ -143,6 +151,7 @@ public class PerusopetusCreditReport {
     private Map<PerusopetusCreditState, Integer> rejectedByState = new HashMap<>();
   }
   
+  private final List<String> studyProgrammeNames = new ArrayList<>();
   private final PerusopetusCreditReportSummary summary = new PerusopetusCreditReportSummary();
   private final List<PerusopetusCredit> acceptedCredits = new ArrayList<>();
   private final List<PerusopetusCredit> rejectedCredits = new ArrayList<>();

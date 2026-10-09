@@ -80,7 +80,8 @@
             '<td>{{otherFundingUI}}</td>' +
             '<td>{{evaluatedOutsideStudiesUI}}</td>' +
             '<td>{{koskiFailureUI}}</td>' +
-            '<td>{{stateUI}}</td>', syntax);
+            '<td>{{stateUI}}</td>' +
+            '<td>{{koskiErrorUI}}</td>', syntax);
 
         var summaryRowTemplate = new Template(
             '<th align="left">{{rowName}}</th>' +
@@ -90,14 +91,21 @@
         const targetgroup = document.querySelector('input[name="targetgroup"]:checked').value;
         const beginDate = getIxDateField('beginDate').getISO8601Date();
         const endDate = getIxDateField('endDate').getISO8601Date();
+        const file = document.getElementById('koskiCSVInput').files[0];
         
-        axios.get("/report/perusopetus", {
-            params: {
-              linja: targetgroup,
-              begin: beginDate,
-              end: endDate
+        const formData = new FormData();
+        formData.append("linja", targetgroup);
+        formData.append("begin", beginDate);
+        formData.append("end", endDate);
+        formData.append("koskiCSV", file);
+        
+        axios.post("/report/perusopetus", formData,
+            { 
+              headers: { 
+                'Content-Type': 'multipart/form-data'
+              }
             }
-          })
+          )
           .then(function (response) {
             const acceptedCreditsElement = $('acceptedCredits');
             const rejectedCreditsElement = $('rejectedCredits');
@@ -233,6 +241,33 @@
             stateUI = state.title;
           }
         }
+
+        var koskiErrors = "";
+        if (creditRow.koskiErrors) {
+          const KOSKIERRORTEXTS = {
+            "NOT_FOUND": "Vastaavaa arviointia ei löytynyt",
+            "FOUND_MULTIPLE_MATCHING_CREDITS": "Löytyi useita vastaavia arviointeja",
+            "NULL_TUNNUSTETTU": "Tunnustettu-tieto puuttuu taulukosta",
+            "COURSEASSESSMENT_MARKEDAS_TRANSFERCREDIT": "Pyramuksen kurssiarviointi on taulukossa tunnustettu",
+            "TRANSFERCREDIT_MARKEDAS_COURSEASSESSMENT": "Pyramuksen hyväksiluku on taulukossa kurssiarviointi",
+            "TRANSFERCREDIT_WRONG_FUNDING": "Hyväksiluvun rahoitusmerkintä on väärin",
+            "FIRSTASSESSMENT_HASPREVIOUSASSESSMENTS": "Koski: ensimmäinen arviointi, Pyramus: löytyy edeltäviä arviointeja",
+            "REPEATASSESSMENT_NOPREVIOUSASSESSMENTS": "Koski: ei ensimmäinen arviointi, Pyramus: ei edeltäviä arviointeja",
+            "REPEATASSESSMENT_WRONG_RAISED_FROM_NONPASSING": "Hylätyn korotus eri arvo kuin Pyramuksesta tulkittu",
+            "REPEATASSESSMENT_WRONG_RAISED_FROM_PASSING": "Hyväksytyn korotus eri arvo kuin Pyramuksesta tulkittu"
+          };
+          
+          const koskiErrorDisplayTexts = [];
+          for (var i = 0; i < creditRow.koskiErrors.length; i++) {
+            if (Object.hasOwn(KOSKIERRORTEXTS, creditRow.koskiErrors[i])) {
+              koskiErrorDisplayTexts.push(KOSKIERRORTEXTS[creditRow.koskiErrors[i]]);
+            }
+            else {
+              koskiErrorDisplayTexts.push(creditRow.koskiErrors[i]);
+            }
+          }
+          koskiErrors = koskiErrorDisplayTexts.join(", ");
+        }
         
         return Object.assign(creditRow, {
           creditDateUI: dateStr,
@@ -244,6 +279,7 @@
           otherFundingUI: creditRow.otherFunding ? "4" : "",
           evaluatedOutsideStudiesUI: creditRow.evaluatedOutsideStudies ? "5" : "",
           koskiFailureUI: creditRow.koskiFailure ? "Koski!" : "",
+          koskiErrorUI: koskiErrors,
           stateUI: stateUI
         });
       }
@@ -304,6 +340,14 @@
                 </div>
               </fieldset>
               
+              <fieldset>
+                <legend>Koski CSV-tiedosto:</legend>
+                <p>CSV-tiedosto Kosken raportista: Tunnusluvut: kurssikertymät, välilehdestä Arvioinnit</p>
+                <div>
+                  <input type="file" id="koskiCSVInput"/>
+                </div>
+              </fieldset>
+              
               <input type="submit" class="formvalid" value="Lataa raportti" />
             </form>
           </div>
@@ -341,6 +385,7 @@
                 <th>Arviointi pvm (5)</th>
                 <th>Koski(6)</th>
                 <th>Tila</th>
+                <th>Koski CSV</th>
               </tr>
             </table>
 
@@ -366,6 +411,7 @@
                 <th>Arviointi pvm (5)</th>
                 <th>Koski(6)</th>
                 <th>Tila</th>
+                <th>Koski CSV</th>
               </tr>
             </table>
             
@@ -391,6 +437,7 @@
                 <th>Arviointi pvm (5)</th>
                 <th>Koski(6)</th>
                 <th>Tila</th>
+                <th>Koski CSV</th>
               </tr>
             </table>
           </div>

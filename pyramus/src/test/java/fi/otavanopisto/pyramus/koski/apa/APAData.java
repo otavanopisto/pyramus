@@ -7,6 +7,7 @@ import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenAlkuvaiheenKurssit2017;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
@@ -14,6 +15,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
@@ -72,12 +74,14 @@ public class APAData extends AbstractKoskiData {
     APAOppiaineenSuoritus oppiaine = new APAOppiaineenSuoritus(koulutusmoduuli);
     suoritus.addOsasuoritus(oppiaine);
     
-    APAKurssinTunniste tunniste = new APAKurssinTunnisteOPS2017(AikuistenPerusopetuksenAlkuvaiheenKurssit2017.AÄI1);
+    Laajuus laajuus = new Laajuus(1, OpintojenLaajuusYksikko.kurssia);
+    
+    APAKurssinTunniste tunniste = new APAKurssinTunnisteOPS2017(AikuistenPerusopetuksenAlkuvaiheenKurssit2017.AÄI1, laajuus);
     APAKurssinSuoritus kurssi = new APAKurssinSuoritus(tunniste);
     kurssi.addArviointi(new KurssinArviointiNumeerinen(ArviointiasteikkoYleissivistava.GRADE_9, paattymispaiva));
     oppiaine.addOsasuoritus(kurssi);
     
-    tunniste = new APAKurssinTunnistePaikallinen(new PaikallinenKoodi("AÄI123", kuvaus("ABC")));
+    tunniste = new APAKurssinTunnistePaikallinen(new PaikallinenKoodi("AÄI123", kuvaus("ABC")), laajuus);
     kurssi = new APAKurssinSuoritus(tunniste);
     kurssi.addArviointi(new KurssinArviointiSanallinen(ArviointiasteikkoYleissivistava.GRADE_S, paattymispaiva, kuvaus("S")));
     oppiaine.addOsasuoritus(kurssi);

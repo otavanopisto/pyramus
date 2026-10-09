@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+<%@ page import="fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentFlag" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
@@ -601,6 +603,21 @@
                 <span class="genericTableAddRowLinkContainer" id="addPlannedTableRow"><fmt:message key="matriculation.editEnrollment.planned.addRow"/></span>
               </div>
               <div id="plannedAttendancesTableContainer"></div>
+            </div>
+            
+            <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.specialArrangements"/>
+                </jsp:include>
+                
+                <c:forEach var="flagEnum" items="<%= MatriculationExamEnrollmentFlag.values() %>">
+                  <div>
+                    <input type="checkbox" name="flag.${flagEnum}" id="flag.${flagEnum}" value="1" ${enrollment.flags.contains(flagEnum) ? 'checked="checked"' : ''}/>
+                    <label for="flag.${flagEnum}"><fmt:message key="generic.matriculation.enrollmentFlags.${flagEnum}"/></label>
+                  </div>
+                </c:forEach>
+              </div>
             </div>
             
             <div class="genericViewInfoWapper">
