@@ -47,6 +47,9 @@
         },
         "REJECTED_MISSING_STUDENT_CURRICULUM": {
           "title": "Opiskelijalta puuttuu ops"
+        },
+        "REJECTED_COURSESTUDENT_ARCHIVED": {
+          "title": "Opiskelija poistettu kurssilta"
         }
       };
       const CREDITTYPE_TRANSLATIONS = {
@@ -80,6 +83,7 @@
             '<td>{{otherFundingUI}}</td>' +
             '<td>{{evaluatedOutsideStudiesUI}}</td>' +
             '<td>{{koskiFailureUI}}</td>' +
+            '<td>{{courseStudentErrorUI}}</td>' +
             '<td>{{stateUI}}</td>' +
             '<td>{{koskiErrorUI}}</td>', syntax);
 
@@ -91,13 +95,17 @@
         const targetgroup = document.querySelector('input[name="targetgroup"]:checked').value;
         const beginDate = getIxDateField('beginDate').getISO8601Date();
         const endDate = getIxDateField('endDate').getISO8601Date();
+        const hasFile = document.getElementById('koskiCSVInput').value != "";
         const file = document.getElementById('koskiCSVInput').files[0];
         
         const formData = new FormData();
         formData.append("linja", targetgroup);
         formData.append("begin", beginDate);
         formData.append("end", endDate);
-        formData.append("koskiCSV", file);
+
+        if (hasFile) {
+          formData.append("koskiCSV", file);
+        }
         
         axios.post("/report/perusopetus", formData,
             { 
@@ -151,14 +159,20 @@
                   rejected: (data.summary.rejectedCreditCount || 0) + (data.summary.rejectedTransferCreditCount || 0)
                 },
                 {
-                  rowName: "VOS-hyväksilukujen lukumäärä",
-                  accepted: data.summary.acceptedTransferCreditCount || 0,
-                  rejected: data.summary.rejectedTransferCreditCount || 0
+                  spacer: true
                 },
                 {
                   rowName: "Kursiarviointien lukumäärä",
                   accepted: data.summary.acceptedCreditCount || 0,
                   rejected: data.summary.rejectedCreditCount || 0
+                },
+                {
+                  rowName: "VOS-hyväksilukujen lukumäärä",
+                  accepted: data.summary.acceptedTransferCreditCount || 0,
+                  rejected: data.summary.rejectedTransferCreditCount || 0
+                },
+                {
+                  spacer: true
                 },
                 {
                   rowName: "Kurssin pituus tunneissa",
@@ -169,6 +183,9 @@
                   rowName: "Kurssin pituus opintopisteissä",
                   accepted: data.summary.acceptedByLengthUnit["op"] || 0,
                   rejected: data.summary.rejectedByLengthUnit["op"] || 0
+                },
+                {
+                  spacer: true
                 }
               ];
               
@@ -183,11 +200,36 @@
               }
               
               for (const summaryRow of summaryRows) {
-                const cells = summaryRowTemplate.evaluate(summaryRow);
-                const tr = new Element("tr", { className: "perusopetus_preport_tr" });
-                tr.update(cells);
-                summaryElement.appendChild(tr);
+                if (summaryRow.spacer) {
+                  const tr = new Element("tr", { className: "perusopetus_preport_tr" });
+                  const td = new Element("td", { colspan: "3" });
+                  const hr = new Element("hr").setStyle({ "margin": "2px 0px" });
+                  td.appendChild(hr);
+                  tr.appendChild(td);
+                  summaryElement.appendChild(tr);
+                }
+                else {
+                  const cells = summaryRowTemplate.evaluate(summaryRow);
+                  const tr = new Element("tr", { className: "perusopetus_preport_tr" });
+                  tr.update(cells);
+                  summaryElement.appendChild(tr);
+                }
               }
+            }
+            
+            const dataStatusContainer = document.getElementById("dataStatus");
+            dataStatusContainer.innerHTML = "";
+            
+            if (data.studyProgrammeNames && data.studyProgrammeNames.length) {
+              dataStatusContainer.appendChild(document.createTextNode("Koulutusohjelmat: " + data.studyProgrammeNames.join(", ")));
+              dataStatusContainer.appendChild(document.createElement("br"));
+            }
+            
+            if (data.koskiCSVStatus && data.koskiCSVStatus.length) {
+              data.koskiCSVStatus.forEach((msg) => {
+                dataStatusContainer.appendChild(document.createTextNode(msg));
+                dataStatusContainer.appendChild(document.createElement("br"));
+              });
             }
             
             glassPane.hide();
@@ -279,6 +321,7 @@
           otherFundingUI: creditRow.otherFunding ? "4" : "",
           evaluatedOutsideStudiesUI: creditRow.evaluatedOutsideStudies ? "5" : "",
           koskiFailureUI: creditRow.koskiFailure ? "Koski!" : "",
+          courseStudentErrorUI: creditRow.courseStudentMissing ? "7" : "",
           koskiErrorUI: koskiErrors,
           stateUI: stateUI
         });
@@ -342,7 +385,10 @@
               
               <fieldset>
                 <legend>Koski CSV-tiedosto:</legend>
-                <p>CSV-tiedosto Kosken raportista: Tunnusluvut: kurssikertymät, välilehdestä Arvioinnit</p>
+                <p>
+                  CSV-tiedosto Kosken raportista: Tunnusluvut: kurssikertymät, välilehdestä Arvioinnit<br/>
+                  Luetteloerotin puolipiste (;), otsikkorivi on oltava mukana.
+                </p>
                 <div>
                   <input type="file" id="koskiCSVInput"/>
                 </div>
@@ -355,91 +401,104 @@
           <div id="reportContent">
           
             <h1>Yhteenveto</h1>
-            <table id="summary" class="tableWithRowHighlighting">
-              <tr style="text-align: left;">
-                <th></th>
-                <th>Hyväksytyt suoritukset</th>
-                <th>Poistetut suoritukset</th>
-              </tr>
-            </table>
+            <p>
+              <table id="summary" class="tableWithRowHighlighting">
+                <tr style="text-align: left;">
+                  <th></th>
+                  <th>Hyväksytyt suoritukset</th>
+                  <th>Poistetut suoritukset</th>
+                </tr>
+              </table>
+            </p>
+            
+            <p id="dataStatus"></p>
             
             <h1>Suoritukset</h1>
-            <table id="acceptedCredits" class="tableWithRowHighlighting">
-              <tr style="text-align: left;">
-                <th>Kurssi</th>
-                <th>Koodi</th>
-                <th>Pituus</th>
-                <th>Arviointipvm</th>
-                <th>Arvosana</th>
-                <th>Arvosana-asteikko</th>
-                <th>Ryhmäkurssi</th>
-                <th>Opiskelija</th>
-                <th>Koulutusohjelma</th>
-                <th>Opettaja</th>
-                <th>Oppilaitos</th>
-                <th>Oppilaitos k.ala</th>
-<!--                 <th>S.K-hyvluk(1)</th> -->
-                <th>Mahd. Kor(2)</th>
-                <th>Eri OPS(3)</th>
-                <th>Muu rah.(4)</th>
-                <th>Arviointi pvm (5)</th>
-                <th>Koski(6)</th>
-                <th>Tila</th>
-                <th>Koski CSV</th>
-              </tr>
-            </table>
+            <p>
+              <table id="acceptedCredits" class="tableWithRowHighlighting">
+                <tr style="text-align: left;">
+                  <th>Kurssi</th>
+                  <th>Koodi</th>
+                  <th>Pituus</th>
+                  <th>Arviointipvm</th>
+                  <th>Arvosana</th>
+                  <th>Arvosana-asteikko</th>
+                  <th>Ryhmäkurssi</th>
+                  <th>Opiskelija</th>
+                  <th>Koulutusohjelma</th>
+                  <th>Opettaja</th>
+                  <th>Oppilaitos</th>
+                  <th>Oppilaitos k.ala</th>
+  <!--                 <th>S.K-hyvluk(1)</th> -->
+                  <th>Mahd. Kor(2)</th>
+                  <th>Eri OPS(3)</th>
+                  <th>Muu rah.(4)</th>
+                  <th>Arviointi pvm (5)</th>
+                  <th>Koski(6)</th>
+                  <th>Poistettu kurssilta(7)</th>
+                  <th>Tila</th>
+                  <th>Koski CSV</th>
+                </tr>
+              </table>
+            </p>
 
             <h1>Poistetut suoritukset</h1>
-            <table id="rejectedCredits" class="tableWithRowHighlighting">
-              <tr style="text-align: left;">
-                <th>Kurssi</th>
-                <th>Koodi</th>
-                <th>Pituus</th>
-                <th>Arviointipvm</th>
-                <th>Arvosana</th>
-                <th>Arvosana-asteikko</th>
-                <th>Ryhmäkurssi</th>
-                <th>Opiskelija</th>
-                <th>Koulutusohjelma</th>
-                <th>Opettaja</th>
-                <th>Oppilaitos</th>
-                <th>Oppilaitos k.ala</th>
-<!--                 <th>S.K-hyvluk(1)</th> -->
-                <th>Korotus (2)</th>
-                <th>Eri OPS(3)</th>
-                <th>Muu rah.(4)</th>
-                <th>Arviointi pvm (5)</th>
-                <th>Koski(6)</th>
-                <th>Tila</th>
-                <th>Koski CSV</th>
-              </tr>
-            </table>
+            <p>
+              <table id="rejectedCredits" class="tableWithRowHighlighting">
+                <tr style="text-align: left;">
+                  <th>Kurssi</th>
+                  <th>Koodi</th>
+                  <th>Pituus</th>
+                  <th>Arviointipvm</th>
+                  <th>Arvosana</th>
+                  <th>Arvosana-asteikko</th>
+                  <th>Ryhmäkurssi</th>
+                  <th>Opiskelija</th>
+                  <th>Koulutusohjelma</th>
+                  <th>Opettaja</th>
+                  <th>Oppilaitos</th>
+                  <th>Oppilaitos k.ala</th>
+  <!--                 <th>S.K-hyvluk(1)</th> -->
+                  <th>Korotus (2)</th>
+                  <th>Eri OPS(3)</th>
+                  <th>Muu rah.(4)</th>
+                  <th>Arviointi pvm (5)</th>
+                  <th>Koski(6)</th>
+                  <th>Poistettu kurssilta(7)</th>
+                  <th>Tila</th>
+                  <th>Koski CSV</th>
+                </tr>
+              </table>
+            </p>
             
             <h1>VOS-rahoitukseen merkityt hyväksiluvut</h1>
-            <table id="fundedTransferCreditsElement" class="tableWithRowHighlighting">
-              <tr style="text-align: left;">
-                <th>Kurssi</th>
-                <th>Koodi</th>
-                <th>Pituus</th>
-                <th>Arviointipvm</th>
-                <th>Arvosana</th>
-                <th>Arvosana-asteikko</th>
-                <th>Ryhmäkurssi</th>
-                <th>Opiskelija</th>
-                <th>Koulutusohjelma</th>
-                <th>Opettaja</th>
-                <th>Oppilaitos</th>
-                <th>Oppilaitos k.ala</th>
-<!--                 <th>S.K-hyvluk(1)</th> -->
-                <th>Korotus (2)</th>
-                <th>Eri OPS(3)</th>
-                <th>Muu rah.(4)</th>
-                <th>Arviointi pvm (5)</th>
-                <th>Koski(6)</th>
-                <th>Tila</th>
-                <th>Koski CSV</th>
-              </tr>
-            </table>
+            <p>
+              <table id="fundedTransferCreditsElement" class="tableWithRowHighlighting">
+                <tr style="text-align: left;">
+                  <th>Kurssi</th>
+                  <th>Koodi</th>
+                  <th>Pituus</th>
+                  <th>Arviointipvm</th>
+                  <th>Arvosana</th>
+                  <th>Arvosana-asteikko</th>
+                  <th>Ryhmäkurssi</th>
+                  <th>Opiskelija</th>
+                  <th>Koulutusohjelma</th>
+                  <th>Opettaja</th>
+                  <th>Oppilaitos</th>
+                  <th>Oppilaitos k.ala</th>
+  <!--                 <th>S.K-hyvluk(1)</th> -->
+                  <th>Korotus (2)</th>
+                  <th>Eri OPS(3)</th>
+                  <th>Muu rah.(4)</th>
+                  <th>Arviointi pvm (5)</th>
+                  <th>Koski(6)</th>
+                  <th>Poistettu kurssilta(7)</th>
+                  <th>Tila</th>
+                  <th>Koski CSV</th>
+                </tr>
+              </table>
+            </p>
           </div>
           
           <p>
@@ -449,6 +508,7 @@
             (4) Sarakkeessa 4 jos opiskelijan tiedoissa rahoitustieto on merkitty "Rahoitettu muuta kautta"<br/>
             (5) Sarakkeessa 5, jos kurssi arvioitu opiskeluajan ulkopuolella<br/>
             (6) Sarakkeessa Koski! jos opiskelijan (henkilö) logitiedoissa ei ole tietoa onnistuneesta viennistä Koskeen. Tämä indikoi sitä, että opiskelija on joko Koski-päivitysjonossa tai tietojen viennissä on ollut virhe.<br/>
+            (7) Sarakkeessa 7, jos opiskelija on poistettu kurssilta, vaikka hänellä on arvosana. Tarkistettava, onko poistettu syystä vai vahingossa.<br/>
           </p>
         </div>
       </div>
