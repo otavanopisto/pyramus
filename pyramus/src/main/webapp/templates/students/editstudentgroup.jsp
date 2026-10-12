@@ -215,7 +215,7 @@
                 var userName = event.results.users[i].name;
                 var index = getUserRowIndex(userId);
                 if (index == -1) {
-                  usersTable.addRow([userId, userName, '', '', '', '', '']);
+                  usersTable.addRow([userId, userName, '', '', '', '', '', '']);
                 } 
               }
               usersTable.reattachToDom();
