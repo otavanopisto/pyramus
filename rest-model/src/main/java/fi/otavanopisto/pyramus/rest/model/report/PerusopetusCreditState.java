@@ -22,7 +22,9 @@ public enum PerusopetusCreditState {
   // Rejected, student's curriculum doesn't match credit's curriculum
   REJECTED_MISMATCHING_CURRICULUM,
   // Rejected, student has no curriculum
-  REJECTED_MISSING_STUDENT_CURRICULUM;
+  REJECTED_MISSING_STUDENT_CURRICULUM,
+  // Rejected, CourseStudent has been archived
+  REJECTED_COURSESTUDENT_ARCHIVED;
   
   
   public boolean isAcceptedState() {

@@ -203,6 +203,14 @@ public class PerusopetusCredit {
     this.koskiErrors = koskiErrors;
   }
 
+  public boolean isCourseStudentMissing() {
+    return courseStudentMissing;
+  }
+
+  public void setCourseStudentMissing(boolean courseStudentMissing) {
+    this.courseStudentMissing = courseStudentMissing;
+  }
+
   private Long courseId;
   private String courseName;
   private String courseCode;
@@ -226,6 +234,7 @@ public class PerusopetusCredit {
   private boolean otherFunding;
   private boolean evaluatedOutsideStudies;
   private boolean koskiFailure;
+  private boolean courseStudentMissing;
   private EnumSet<KoskiCreditError> koskiErrors;
   
   private List<PerusopetusCredit> previousEvaluations = new ArrayList<>();

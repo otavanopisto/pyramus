@@ -131,14 +131,21 @@
             editable: true,
             paramName: 'studyAdvisor'
           }, {
-            header : '<fmt:message key="students.createStudentGroup.usersTableMessageRecipientHeader"/>',
+            header : '<fmt:message key="students.editStudentGroup.usersTableSpecialEducationTeacherHeader"/>',
             left : 8 + 250 + 8 + 100 + 8 + 100 + 8,
+            width: 100,
+            dataType : 'checkbox',
+            editable: true,
+            paramName: 'specialEducationTeacher'
+          }, {
+            header : '<fmt:message key="students.createStudentGroup.usersTableMessageRecipientHeader"/>',
+            left : 8 + 250 + 8 + 100 + 8 + 100 + 8 + 100 + 8,
             width: 100,
             dataType : 'checkbox',
             editable: true,
             paramName: 'messageRecipient'
           }, {
-            left: 8 + 250 + 8 + 100 + 8 + 100 + 8 + 100 + 8,
+            left: 8 + 250 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 100 + 8,
             width: 30,
             dataType: 'button',
             imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
@@ -174,7 +181,7 @@
                 var userName = event.results.users[i].name;
                 var index = getUserRowIndex(userId);
                 if (index == -1) {
-                  usersTable.addRow([userId, userName, '', '', '', '']);
+                  usersTable.addRow([userId, userName, '', '', '', '', '']);
                 } 
               }
               usersTable.reattachToDom();
