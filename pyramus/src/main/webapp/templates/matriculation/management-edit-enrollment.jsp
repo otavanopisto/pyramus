@@ -613,7 +613,7 @@
                 
                 <c:forEach var="flagEnum" items="<%= MatriculationExamEnrollmentFlag.values() %>">
                   <div>
-                    <input type="checkbox" name="flag.${flagEnum}" id="flag.${flagEnum}" value="1" ${enrollment.flags.contains(flagEnum) ? 'checked="checked"' : ''}/>
+                    <input type="checkbox" name="flag.${flagEnum}" id="flag.${flagEnum}" value="1" ${matriculationPersonFlags.contains(flagEnum) ? 'checked="checked"' : ''}/>
                     <label for="flag.${flagEnum}"><fmt:message key="generic.matriculation.enrollmentFlags.${flagEnum}"/></label>
                   </div>
                 </c:forEach>

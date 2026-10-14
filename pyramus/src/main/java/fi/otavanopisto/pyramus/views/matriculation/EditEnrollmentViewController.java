@@ -28,6 +28,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChangeLogDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationPersonFlagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -37,12 +38,14 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttend
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationPersonFlag;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.framework.MatriculationUtils;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceFunding;
@@ -123,9 +126,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
           pageRequestContext.getBoolean("canPublishName"),
           enrollment.getStudent(),
           MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
-          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), ""),
-          flags
+          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), "")
       );
+      
+      MatriculationUtils.syncronizePersonFlags(enrollment.getStudent().getPerson(), flags);
       
       if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
         enrollment = enrollmentDAO.updateCandidateNumber(enrollment, candidateNumber);
@@ -162,15 +166,15 @@ public class EditEnrollmentViewController extends PyramusViewController {
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
           new Date(),
-          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), ""),
-          flags
+          ObjectUtils.firstNonNull(pageRequestContext.getString("opintopolkuUrl"), "")
       );
 
+      MatriculationUtils.syncronizePersonFlags(student.getPerson(), flags);
+      
       if (enrollmentState == MatriculationExamEnrollmentState.FILLED_ON_BEHALF) {
         enrollment = enrollmentDAO.updateCandidateNumber(enrollment, candidateNumber);
       }
     }
-    
 
     MatriculationExamEnrollmentChangeLogType changeLogChangeType = MatriculationExamEnrollmentChangeLogType.ENROLLMENT_UPDATED;
     MatriculationExamEnrollmentState changeLogNewState = null;
@@ -304,6 +308,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamEnrollmentChangeLogDAO enrollmentChangeLogDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentChangeLogDAO();
+    MatriculationPersonFlagDAO matriculationPersonFlagDAO = DAOFactory.getInstance().getMatriculationPersonFlagDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
@@ -349,6 +354,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
         exams.add(new MatriculationExamWithParticipationInfo(matriculationExam, examEnrollment));
       }
     }
+
+    List<MatriculationPersonFlag> matriculationPersonFlagEntities = matriculationPersonFlagDAO.listByPerson(student.getPerson());
+    Set<MatriculationExamEnrollmentFlag> matriculationPersonFlags = matriculationPersonFlagEntities.stream().map(MatriculationPersonFlag::getFlag).collect(Collectors.toSet());
+    pageRequestContext.getRequest().setAttribute("matriculationPersonFlags", matriculationPersonFlags);
 
     EnumSet<Role> activeStaffMemberRoles = EnumSet.of(Role.ADMINISTRATOR, Role.STUDY_PROGRAMME_LEADER, Role.MANAGER, Role.STUDY_GUIDER, Role.TEACHER);
 

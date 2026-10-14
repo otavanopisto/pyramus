@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationPersonFlagDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentCardDAO;
@@ -83,6 +84,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationPersonFlag;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectSubjectCourse;
@@ -108,6 +110,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiController;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentFlag;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamSubject;
@@ -1074,7 +1077,12 @@ public class ViewStudentViewController extends PyramusViewController2 implements
           latestStudent.getCurriculum() == null) {
         return;
       }
-  
+
+      MatriculationPersonFlagDAO matriculationPersonFlagDAO = DAOFactory.getInstance().getMatriculationPersonFlagDAO();
+      List<MatriculationPersonFlag> matriculationPersonFlagEntities = matriculationPersonFlagDAO.listByPerson(person);
+      Set<MatriculationExamEnrollmentFlag> matriculationPersonFlags = matriculationPersonFlagEntities.stream().map(MatriculationPersonFlag::getFlag).collect(Collectors.toSet());
+      pageRequestContext.getRequest().setAttribute("matriculationPersonFlags", matriculationPersonFlags);
+
       TORCurriculum torCurriculum;
       try {
         torCurriculum = StudentTORController.getCurriculum(latestStudent);
