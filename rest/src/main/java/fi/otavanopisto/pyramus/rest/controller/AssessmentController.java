@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -129,11 +130,14 @@ public class AssessmentController {
   }
   
   public CourseAssessmentRequest createCourseAssessmentRequest(CourseStudent courseStudent, Date created, String requestText) {
-    return courseAssessmentRequestDAO.create(courseStudent, created, requestText);
+    Calendar calendar = Calendar.getInstance();
+    calendar.add(Calendar.DAY_OF_MONTH, +14);
+    Date deadline = calendar.getTime();
+    return courseAssessmentRequestDAO.create(courseStudent, created, deadline, requestText);
   }
   
-  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean archived, Boolean handled) {
-    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText, archived, handled);
+  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, Date deadline, String requestText, Boolean archived, Boolean handled) {
+    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, deadline, requestText, archived, handled);
   }
   
   public CourseAssessmentRequest findCourseAssessmentRequestById(Long id){

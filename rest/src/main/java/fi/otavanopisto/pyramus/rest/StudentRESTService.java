@@ -2944,9 +2944,18 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
+    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
+    Date deadline = courseAssessmentRequest.getDeadline();
+    
+    // If we reach this point in the checks, I think it is sufficient to verify that the deadline is being updated by a staff member
+    if (staffMember != null) {
+      deadline = entity.getDeadline() != null ? Date.from(entity.getDeadline().toInstant()) : null;
+    }
+    
     CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(
       courseAssessmentRequest,
       Date.from(entity.getCreated().toInstant()),
+      deadline,
       entity.getRequestText(),
       entity.getArchived(),
       entity.getHandled());
