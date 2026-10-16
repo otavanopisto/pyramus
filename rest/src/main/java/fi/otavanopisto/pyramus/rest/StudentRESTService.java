@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.rest;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -2945,61 +2944,21 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
+    StaffMember staffMember = userController.findStaffMemberById(sessionController.getUser().getId());
+    Date deadline = courseAssessmentRequest.getDeadline();
+    
+    // If we reach this point in the checks, I think it is sufficient to verify that the deadline is being updated by a staff member
+    if (staffMember != null) {
+      deadline = entity.getDeadline() != null ? Date.from(entity.getDeadline().toInstant()) : null;
+    }
+    
     CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(
       courseAssessmentRequest,
       Date.from(entity.getCreated().toInstant()),
+      deadline,
       entity.getRequestText(),
       entity.getArchived(),
       entity.getHandled());
-        
-    return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
-  }
-  
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/{ID:[0-9]*}/deadline")
-  @PUT
-  @RESTPermit(handling = Handling.INLINE)
-  @LoggedIn
-  public Response updateCourseAssessmentRequestDeadline(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long assessmentRequestId, 
-      @QueryParam("deadline") String deadlineString) {
-    Student student = studentController.findStudentById(studentId);
-    Course course = courseController.findCourseById(courseId);
-    CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(assessmentRequestId);
-
-    if (courseAssessmentRequest == null){
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    if (course == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (course.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    if (!course.getId().equals(courseAssessmentRequest.getCourseStudent().getCourse().getId())) {
-      return Response.status(Status.BAD_REQUEST).entity("Course ids mismatch.").build();
-    }
-    
-    if (!student.getId().equals(courseAssessmentRequest.getCourseStudent().getStudent().getId())) {
-      return Response.status(Status.BAD_REQUEST).entity("Student ids mismatch.").build();
-    }
-    
-    if (!sessionController.hasPermission(CourseAssessmentPermissions.UPDATE_COURSEASSESSMENTREQUEST, course)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-    
-    Date deadline = null;
-
-    if (deadlineString != null && !deadlineString.isEmpty()) {
-      deadline = Date.from(Instant.parse(deadlineString));
-    }
-    
-    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequestDeadline(courseAssessmentRequest, deadline);
         
     return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
   }

@@ -136,12 +136,8 @@ public class AssessmentController {
     return courseAssessmentRequestDAO.create(courseStudent, created, deadline, requestText);
   }
   
-  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean archived, Boolean handled) {
-    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText, archived, handled);
-  }
-  
-  public CourseAssessmentRequest updateCourseAssessmentRequestDeadline(CourseAssessmentRequest courseAssessmentRequest, Date deadline) {
-    return courseAssessmentRequestDAO.updateDeadline(courseAssessmentRequest, deadline);
+  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, Date deadline, String requestText, Boolean archived, Boolean handled) {
+    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, deadline, requestText, archived, handled);
   }
   
   public CourseAssessmentRequest findCourseAssessmentRequestById(Long id){

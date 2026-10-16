@@ -8,11 +8,12 @@ public class CourseAssessmentRequest {
     super();
   }
 
-  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, String requestText, boolean archived, boolean handled) {
+  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, OffsetDateTime deadline, String requestText, boolean archived, boolean handled) {
     super();
     this.id = id;
     this.courseStudentId = courseStudentId;
     this.created = created;
+    this.deadline = deadline;
     this.requestText = requestText;
     this.archived = archived;
     this.handled = handled;
