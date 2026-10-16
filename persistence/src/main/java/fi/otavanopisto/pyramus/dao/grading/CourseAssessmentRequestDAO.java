@@ -175,16 +175,6 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     
     return courseAssessmentRequest;
   }
-  
-  public CourseAssessmentRequest updateDeadline(CourseAssessmentRequest courseAssessmentRequest, Date deadline) {
-    EntityManager entityManager = getEntityManager();
-
-    courseAssessmentRequest.setDeadline(deadline);;
-    
-    entityManager.persist(courseAssessmentRequest);
-    
-    return courseAssessmentRequest;
-  }
 
   public List<CourseAssessmentRequest> listByCourse(Course course) {
     EntityManager entityManager = getEntityManager(); 
