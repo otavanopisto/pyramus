@@ -8,11 +8,12 @@ public class CourseAssessmentRequest {
     super();
   }
 
-  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, String requestText, boolean archived, boolean handled) {
+  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, OffsetDateTime deadline, String requestText, boolean archived, boolean handled) {
     super();
     this.id = id;
     this.courseStudentId = courseStudentId;
     this.created = created;
+    this.deadline = deadline;
     this.requestText = requestText;
     this.archived = archived;
     this.handled = handled;
@@ -42,6 +43,14 @@ public class CourseAssessmentRequest {
     this.created = created;
   }
 
+  public OffsetDateTime getDeadline() {
+    return deadline;
+  }
+
+  public void setDeadline(OffsetDateTime deadline) {
+    this.deadline = deadline;
+  }
+
   public String getRequestText() {
     return requestText;
   }
@@ -69,6 +78,7 @@ public class CourseAssessmentRequest {
   private Long id;
   private Long courseStudentId;
   private OffsetDateTime created;
+  private OffsetDateTime deadline;
   private String requestText;
   private boolean archived;
   private boolean handled;
