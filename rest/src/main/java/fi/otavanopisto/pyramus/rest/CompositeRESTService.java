@@ -167,6 +167,7 @@ public class CompositeRESTService {
         assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
         assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
         assessmentRequest.setUserId(courseStudent.getStudent().getId());
+        assessmentRequest.setDeadline(courseAssessmentRequest.getDeadline());
         assessmentRequests.add(assessmentRequest);
       }
     }
@@ -240,6 +241,7 @@ public class CompositeRESTService {
         assessmentRequest.setLastName(courseAssessmentRequest.getCourseStudent().getStudent().getLastName());
         assessmentRequest.setStudyProgramme(courseAssessmentRequest.getCourseStudent().getStudent().getStudyProgramme().getName());
         assessmentRequest.setUserId(courseAssessmentRequest.getCourseStudent().getStudent().getId());
+        assessmentRequest.setDeadline(courseAssessmentRequest.getDeadline());
         assessmentRequests.add(assessmentRequest);
       }
     }
