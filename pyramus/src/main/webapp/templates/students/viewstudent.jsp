@@ -3847,6 +3847,15 @@
             <div style="color: red; margin: 4px 0px;"><fmt:message key="students.viewStudent.matriculationUndescribedCurriculumError"/></div>
           </c:if>
           
+          <c:if test="${!empty matriculationPersonFlags}">
+            <h3><fmt:message key="matriculation.editEnrollment.specialArrangements"/></h3>
+            <ul style="padding-left: 25px">
+              <c:forEach var="matriculationPersonFlag" items="${matriculationPersonFlags}">
+                <li><fmt:message key="generic.matriculation.enrollmentFlags.${matriculationPersonFlag}"/></li>
+              </c:forEach>
+            </ul>
+          </c:if>
+          
           <c:forEach var="examTerm" items="${matriculationExamTerms}">
             <c:choose>
               <c:when test="${examTerm.term == 'SPRING'}">

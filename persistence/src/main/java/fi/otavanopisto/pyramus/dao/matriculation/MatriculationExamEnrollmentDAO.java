@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -41,7 +40,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
-import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentFlag;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamTerm;
 
@@ -62,8 +60,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       MatriculationExamEnrollmentState state,
       MatriculationExamEnrollmentDegreeStructure degreeStructure,
       Date enrollmentDate,
-      String opintopolkuUrl, 
-      Set<MatriculationExamEnrollmentFlag> flags
+      String opintopolkuUrl
   ) {
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
 
@@ -81,7 +78,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setDegreeStructure(degreeStructure);
     result.setEnrollmentDate(enrollmentDate);
     result.setOpintopolkuUrl(opintopolkuUrl);
-    result.setFlags(flags);
     
     return persist(result);
   }
@@ -98,8 +94,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     boolean canPublishName,
     Student student,
     MatriculationExamEnrollmentDegreeStructure degreeStructure,
-    String opintopolkuUrl, 
-    Set<MatriculationExamEnrollmentFlag> flags
+    String opintopolkuUrl
   ) {
     enrollment.setEnrollAs(enrollAs);
     enrollment.setDegreeType(degreeType);
@@ -112,7 +107,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setStudent(student);
     enrollment.setDegreeStructure(degreeStructure);
     enrollment.setOpintopolkuUrl(opintopolkuUrl);
-    enrollment.setFlags(flags);
     
     return persist(enrollment);
   }

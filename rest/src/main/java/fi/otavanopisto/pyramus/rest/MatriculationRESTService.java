@@ -4,9 +4,9 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -36,6 +36,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentChan
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationGradeDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationPersonFlagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
@@ -44,6 +45,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnroll
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentChangeLog;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationGrade;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationPersonFlag;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
@@ -53,6 +55,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StudentParent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentChangeLogType;
+import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentFlag;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.matriculation.MatriculationExamListFilter;
@@ -115,6 +118,9 @@ public class MatriculationRESTService extends AbstractRESTService {
   @Inject
   private MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO;
   
+  @Inject
+  private MatriculationPersonFlagDAO matriculationPersonFlagDAO;
+
   @Inject
   private StudentDAO studentDao;
 
@@ -467,8 +473,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollmentState,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
           new Date(),
-          enrollment.getOpintopolkuUrl(),
-          new HashSet<>()
+          enrollment.getOpintopolkuUrl()
         );
   
         matriculationExamEnrollmentChangeLogDAO.create(enrollmentEntity, student, MatriculationExamEnrollmentChangeLogType.ENROLLMENT_CREATED, null, null);
@@ -516,8 +521,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           enrollment.isCanPublishName(),
           student,
           MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
-          enrollment.getOpintopolkuUrl(),
-          existingEnrollment.getFlags()
+          enrollment.getOpintopolkuUrl()
         );
   
         if (enrollmentState != enrollmentEntity.getState()) {
@@ -691,6 +695,9 @@ public class MatriculationRESTService extends AbstractRESTService {
   }
 
   private fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment restModel(MatriculationExamEnrollment examEnrollment) {
+    List<MatriculationPersonFlag> personFlags = matriculationPersonFlagDAO.listByPerson(examEnrollment.getStudent().getPerson());
+    Set<MatriculationExamEnrollmentFlag> flags = personFlags != null ? personFlags.stream().map(MatriculationPersonFlag::getFlag).collect(Collectors.toSet()) : Collections.emptySet();
+
     fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment result = new fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment();
     OffsetDateTime enrollmentDate = null;
     
@@ -712,7 +719,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setEnrollmentDate(enrollmentDate);
     result.setDegreeStructure(examEnrollment.getDegreeStructure() != null ? examEnrollment.getDegreeStructure().name() : null);
     result.setOpintopolkuUrl(examEnrollment.getOpintopolkuUrl());
-    result.setFlags(Collections.unmodifiableSet(examEnrollment.getFlags()));
+    result.setFlags(flags);
     
     List<MatriculationExamAttendance> attendances = matriculationExamAttendanceDao.listByEnrollment(examEnrollment);
     
