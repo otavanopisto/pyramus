@@ -167,7 +167,7 @@ public class CompositeRESTService {
         assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
         assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
         assessmentRequest.setUserId(courseStudent.getStudent().getId());
-        assessmentRequest.setDeadline(courseAssessmentRequest.getDeadline());
+        assessmentRequest.setDeadline(courseAssessmentRequest == null ? null : courseAssessmentRequest.getDeadline());
         assessmentRequests.add(assessmentRequest);
       }
     }
