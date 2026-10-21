@@ -74,7 +74,13 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
       state = ApplicationState.valueOf(stateStr);
     }
     
-    SearchResult<Application> searchResult = applicationDAO.searchApplications(resultsPerPage, page, applicantName, lines, state, Boolean.TRUE);
+    String contractSchool = requestContext.getString("contractSchool");
+    if (!StringUtils.isEmpty(contractSchool)) {
+      // i.e. "field-internetix-contract-school":"123"
+      contractSchool = String.format("\"field-internetix-contract-school\":\"%s\"", contractSchool);
+    }
+    
+    SearchResult<Application> searchResult = applicationDAO.searchApplications(resultsPerPage, page, applicantName, lines, state, contractSchool, Boolean.TRUE);
 
     List<Map<String, Object>> results = new ArrayList<>();
     List<Application> applications = searchResult.getResults();

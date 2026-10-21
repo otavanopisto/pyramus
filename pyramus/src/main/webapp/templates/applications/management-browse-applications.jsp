@@ -26,6 +26,7 @@
             applicantName: searchForm.applicantName.value,
             line: searchForm.applicationLine.value,
             state: searchForm.applicationState.value,
+            contractSchool: searchForm.contractSchool.value,
             page: page
           },
           onSuccess: function(jsonResponse) {
@@ -199,6 +200,19 @@
               <ix:applicationAccess line="mk">
                 <option value="mk">Aikuisten perusopetus</option>
               </ix:applicationAccess>
+            </select>
+          </div>
+  
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleText" value="Sopimusoppilaitos"/>
+            </jsp:include>
+            <select id="contractSchool" name="contractSchool">
+              <option value=""></option>
+              <option value="muu">Muu oppilaitos</option>
+              <c:forEach items="${contractSchools}" var="contractSchool">
+                <option value="${contractSchool.id}">${contractSchool.name}</option>
+              </c:forEach>
             </select>
           </div>
   
