@@ -710,20 +710,7 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Unsecure
   public Response listContractSchools() {
     List<School> contractSchools = schoolDAO.listByVariable("contractSchool", "1");
-    contractSchools.sort(new Comparator<School>() {
-      public int compare(School o1, School o2) {
-        return o1.getName().compareTo(o2.getName());
-      }
-    });
-
-    // TODO schoolDAO.listByVariable should be the one to strip archived schools
-    
-    for (int i = contractSchools.size() - 1; i >= 0; i--) {
-      if (Boolean.TRUE.equals(contractSchools.get(i).getArchived())) {
-        contractSchools.remove(i);
-      }
-    }
-
+    contractSchools.sort(Comparator.comparing(School::getName));
     List<HashMap<String, String>> schoolList = new ArrayList<HashMap<String, String>>();
     for (School school : contractSchools) {
       HashMap<String, String> schoolData = new HashMap<String, String>();
@@ -731,7 +718,6 @@ public class ApplicationRESTService extends AbstractRESTService {
       schoolData.put("value", school.getId().toString());
       schoolList.add(schoolData);
     }
-
     return Response.ok(schoolList).build();
   }
 

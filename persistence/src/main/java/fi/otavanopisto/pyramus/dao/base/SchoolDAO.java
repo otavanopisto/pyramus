@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
@@ -96,11 +97,13 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<School> criteria = criteriaBuilder.createQuery(School.class);
     Root<SchoolVariable> root = criteria.from(SchoolVariable.class);
+    Join<SchoolVariable, School> school = root.join(SchoolVariable_.school);
     criteria.select(root.get(SchoolVariable_.school));
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(SchoolVariable_.key), schoolVariableKey),
-            criteriaBuilder.equal(root.get(SchoolVariable_.value), value)
+            criteriaBuilder.equal(root.get(SchoolVariable_.value), value),
+            criteriaBuilder.equal(school.get(School_.archived), Boolean.FALSE)
         ));
     
     return entityManager.createQuery(criteria).getResultList();

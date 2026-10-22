@@ -69,7 +69,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
   }
   
   @SuppressWarnings("unchecked")
-  public SearchResult<Application> searchApplications(int resultsPerPage, int page, String applicantName, Set<String> lines, ApplicationState state, boolean filterArchived) {
+  public SearchResult<Application> searchApplications(int resultsPerPage, int page, String applicantName, Set<String> lines, ApplicationState state, String contractSchool, boolean filterArchived) {
     
     if (lines.isEmpty()) {
       return new SearchResult<>(0, 0, 0, 0, 0, Collections.emptyList());
@@ -94,11 +94,18 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
       queryBuilder.append(")");
     }
     
+    if (!StringUtils.isBlank(contractSchool)) {
+      queryBuilder.append("+(");
+      queryBuilder.append(String.format("formData:*%s*", QueryParser.escape(contractSchool)));
+      queryBuilder.append(")");
+    }
+    
     EntityManager entityManager = getEntityManager();
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
     try {
       QueryParser parser = new QueryParser("", new StandardAnalyzer());
+      parser.setAllowLeadingWildcard(true); // because potentially doing a substring search on formData :|
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 

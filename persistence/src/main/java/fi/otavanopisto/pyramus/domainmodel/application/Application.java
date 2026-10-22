@@ -20,9 +20,11 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
@@ -244,7 +246,8 @@ public class Application implements ArchivableEntity {
   @Lob
   @NotNull
   @Basic(optional = false)
-  @Field
+  // Not analyzed or tokenized because we need to run exact substring searches against this value :|
+  @Field(index = Index.YES, analyze = Analyze.NO)
   private String formData;
   
   @Column
