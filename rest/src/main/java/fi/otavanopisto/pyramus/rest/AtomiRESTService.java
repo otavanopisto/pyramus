@@ -100,6 +100,7 @@ public class AtomiRESTService extends AbstractRESTService {
     }
 
     String opiskelijatunniste = null;
+    String käyttäjätunnus = null;
     Rooli rooli;
     
     if (loggedUser.hasAnyRole(Role.ADMINISTRATOR, Role.MANAGER, Role.STUDY_PROGRAMME_LEADER)) {
@@ -107,6 +108,7 @@ public class AtomiRESTService extends AbstractRESTService {
     }
     else if (loggedUser.hasRole(Role.STUDENT)) {
       rooli = Rooli.opiskelija;
+      käyttäjätunnus = loggedUser.getPersonId().toString();
       opiskelijatunniste = loggedUser.getPersonId().toString();
     }
     else {
@@ -117,6 +119,7 @@ public class AtomiRESTService extends AbstractRESTService {
     kirjautunutKayttaja.setEtunimet(loggedUser.getFirstName());
     kirjautunutKayttaja.setSukunimi(loggedUser.getLastName());
     kirjautunutKayttaja.setRooli(rooli);
+    kirjautunutKayttaja.setKäyttäjätunnus(käyttäjätunnus);
     kirjautunutKayttaja.setOpiskelijatunniste(opiskelijatunniste);
     
     return Response.ok().entity(kirjautunutKayttaja).build();

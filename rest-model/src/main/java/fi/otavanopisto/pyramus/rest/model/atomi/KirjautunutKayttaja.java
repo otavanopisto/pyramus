@@ -34,6 +34,15 @@ public class KirjautunutKayttaja {
     this.opiskelijatunniste = opiskelijatunniste;
   }
 
+  public String getKäyttäjätunnus() {
+    return käyttäjätunnus;
+  }
+
+  public void setKäyttäjätunnus(String käyttäjätunnus) {
+    this.käyttäjätunnus = käyttäjätunnus;
+  }
+
+  private String käyttäjätunnus;
   private String opiskelijatunniste;
   private String etunimet;
   private String sukunimi;
