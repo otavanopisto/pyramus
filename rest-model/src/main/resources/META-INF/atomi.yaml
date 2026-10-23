@@ -227,6 +227,9 @@ components:
         opiskelijatunniste:
           description: Opiskelijan tunniste, jos kyseessä opiskelija.
           type: string
+        käyttäjätunnus:
+          description: Käyttäjän käyttäjätunniste.
+          type: string
         etunimet:
           type: string
         sukunimi:
@@ -238,8 +241,10 @@ components:
       type: object
       properties:
         tunniste:
+          description: Opiskelijan tunniste.
           type: string
         käyttäjätunnus:
+          description: Käyttäjän käyttäjätunniste.
           type: string
         opiskelijanumero:
           type: string
@@ -257,6 +262,7 @@ components:
       type: object
       properties:
         tunniste:
+          description: Opiskeluoikeuden tunniste.
           type: string
         aloituspäivämäärä:
           type: string
