@@ -91,7 +91,9 @@ public abstract class AbstractRESTPermissionsTestJUnit5 extends AbstractIntegrat
 
   public void assertOk(Role role, Response response, PyramusPermissionCollection permissionCollection, String permission,
       int successStatusCode) throws NoSuchFieldException {
-    int expectedStatusCode = roleIsAllowed(role, permissionCollection, permission) ? successStatusCode : 403;
+    // Everyone is not logged, the response should be 401 to indicate the user needs to log in
+    int expectedFailCode = Role.EVERYONE == role ? 401 : 403;
+    int expectedStatusCode = roleIsAllowed(role, permissionCollection, permission) ? successStatusCode : expectedFailCode;
 
     assertPermission(role, permission, expectedStatusCode, response.statusCode());
   }
