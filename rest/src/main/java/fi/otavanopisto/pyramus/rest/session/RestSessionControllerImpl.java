@@ -79,7 +79,7 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   }
 
   private User getOAuthUser() {
-    ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getAccessTokenFromRequest(request);
+    ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getClientApplicationAccessTokenFromRequest(request);
     return clientApplicationAccessToken != null && clientApplicationAccessToken.isValidAccessToken() ? clientApplicationAccessToken.getUser() : null;
   }
   

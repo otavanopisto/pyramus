@@ -17,7 +17,7 @@ public class ClientApplicationController {
   private OauthController oauthController;
   
   public ClientApplication getClientApplication() {
-    ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getAccessTokenFromRequest(httpRequest);
+    ClientApplicationAccessToken clientApplicationAccessToken = oauthController.getClientApplicationAccessTokenFromRequest(httpRequest);
     return clientApplicationAccessToken != null ? clientApplicationAccessToken.getClientApplication() : null;
   }
 

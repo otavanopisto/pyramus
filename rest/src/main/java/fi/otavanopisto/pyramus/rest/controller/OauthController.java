@@ -35,6 +35,23 @@ public class OauthController {
   private ClientApplicationAccessTokenDAO clientApplicationAccessTokenDAO;
 
   /**
+   * Returns true if there is a bearer token in the request's Authorization header.
+   * 
+   * @param httpRequest
+   * @return
+   */
+  public boolean hasBearerAccessToken(HttpServletRequest httpRequest) {
+    try {
+      BearerAccessToken bearerAccessToken = BearerAccessToken.parse(httpRequest.getHeader(HttpHeaders.AUTHORIZATION));
+      String accessToken = bearerAccessToken != null ? bearerAccessToken.getValue() : null;
+      return StringUtils.isNotBlank(accessToken);
+    }
+    catch (Exception e) {
+      return false;
+    }
+  }
+
+  /**
    * Attempts to parse the Bearer Authorization header from the request and
    * return the ClientApplicationAccessToken that matches the access token.
    * 
@@ -44,7 +61,7 @@ public class OauthController {
    * @param httpRequest
    * @return
    */
-  public ClientApplicationAccessToken getAccessTokenFromRequest(HttpServletRequest httpRequest) {
+  public ClientApplicationAccessToken getClientApplicationAccessTokenFromRequest(HttpServletRequest httpRequest) {
     try {
       BearerAccessToken bearerAccessToken = BearerAccessToken.parse(httpRequest.getHeader(HttpHeaders.AUTHORIZATION));
       String accessToken = bearerAccessToken != null ? bearerAccessToken.getValue() : null;
