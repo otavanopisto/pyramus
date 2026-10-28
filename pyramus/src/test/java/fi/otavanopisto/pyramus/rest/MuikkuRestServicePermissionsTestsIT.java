@@ -94,13 +94,13 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
     // For each creatable role, test that allowed role can create them and non-allowed get 403
     creatableRoles.forEach(creatableRole -> {
       allowedRoles.forEach(allowedRole -> testRoles.add(Arguments.of(allowedRole, creatableRole, 200)));
-      notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, creatableRole, 403)));
+      notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, creatableRole, notAllowedRole == Role.EVERYONE ? 401 : 403)));
     });
     
     // For each non-creatable role, test that allowed role gets 400 and non-allowed get 403
     nonCreatableRoles.forEach(nonCreatableRole -> {
       allowedRoles.forEach(allowedRole -> testRoles.add(Arguments.of(allowedRole, nonCreatableRole, 400)));
-      notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, nonCreatableRole, 403)));
+      notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, nonCreatableRole, notAllowedRole == Role.EVERYONE ? 401 : 403)));
     });
     
     return testRoles.stream();
@@ -122,13 +122,13 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
       // Roles that can be created updated to same or another creatable role
       creatableRoles.forEach(creatableUpdatedRole -> {
         allowedRoles.forEach(allowedRole -> testRoles.add(Arguments.of(allowedRole, creatableRole, creatableUpdatedRole, 200)));
-        notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, creatableRole, creatableUpdatedRole, 403)));
+        notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, creatableRole, creatableUpdatedRole, notAllowedRole == Role.EVERYONE ? 401 : 403)));
       });
       
       // Roles that can be created updated to non creatable role
       nonCreatableRoles.forEach(creatableUpdatedRole -> {
         allowedRoles.forEach(allowedRole -> testRoles.add(Arguments.of(allowedRole, creatableRole, creatableUpdatedRole, 400)));
-        notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, creatableRole, creatableUpdatedRole, 403)));
+        notAllowedRoles.forEach(notAllowedRole -> testRoles.add(Arguments.of(notAllowedRole, creatableRole, creatableUpdatedRole, notAllowedRole == Role.EVERYONE ? 401 : 403)));
       });
     });
     

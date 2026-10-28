@@ -66,7 +66,7 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
     Response response = given().headers(getAuthHeaders(role))
       .get("/persons/persons/{ID}/oppija", 3);
 
-    int expectedStatusCode = role == Role.ADMINISTRATOR ? 200 : role == Role.EVERYONE ? 403 : 404;
+    int expectedStatusCode = role == Role.ADMINISTRATOR ? 200 : role == Role.EVERYONE ? 401 : 404;
     int statusCode = response.statusCode();
     
     assertEquals(String.format("Status code <%d> didn't match expected code <%d> when Role = %s", statusCode, expectedStatusCode, role),
