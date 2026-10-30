@@ -147,7 +147,7 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
       }
     } else {
       given().headers(getAuthHeaders(role))
-        .get("/students/students").then().statusCode(403);
+        .get("/students/students").then().statusCode(role == Role.EVERYONE ? 401 : 403);
     }
   }
   

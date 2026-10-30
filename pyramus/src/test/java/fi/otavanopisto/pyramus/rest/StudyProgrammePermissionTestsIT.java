@@ -71,7 +71,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
           Response response = given().headers(getAuthHeaders(role))
             .get("/students/studyProgrammes/{ID}", studyProgramme.getId());
 
-          assertEquals(String.format("Role %s can access studyprogramme it shouldn't be able to.", role), 403, response.statusCode());
+          assertEquals(String.format("Role %s can access studyprogramme it shouldn't be able to.", role), role == Role.EVERYONE ? 401 : 403, response.statusCode());
         } finally {
           tools().deleteStudyProgramme(studyProgramme);
         }
