@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:choose>
   <c:when test="${ckeditorSupportIncluded != true}">
-    <script type="text/javascript" src="//cdn.muikkuverkko.fi/libs/ckeditor/4.22.1/ckeditor.js"></script>
+    <script type="text/javascript" src="https://cdn.muikkuverkko.fi/libs/ckeditor/4.22.1/ckeditor.js" integrity="sha384-9kZFxdSZJ1KoJ6+CwPyP3yYY1Y6wptfLNIS0Wdr5O9ouRaDf+ZVa3gznEb9zbBSe" crossorigin="anonymous"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/config/ckeditor.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/ixckeditorsupport.js"></script>
     <c:set scope="request" var="ckeditorSupportIncluded" value="true"/>
