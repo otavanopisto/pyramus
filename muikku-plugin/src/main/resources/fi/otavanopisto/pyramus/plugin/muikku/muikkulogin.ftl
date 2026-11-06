@@ -7,7 +7,7 @@
     <div class="muikku-login-card-wrapper">
       <section class="muikku-login-card">
         <header class="muikku-logo-container">
-          <img class="muikku-logo" src="//cdn.muikkuverkko.fi/assets/muikku/oo-branded-site-logo.png" role="presentation"/>
+          <img class="muikku-logo" src="https://cdn.muikkuverkko.fi/assets/muikku/oo-branded-site-logo.png" role="presentation"/>
           <span class="muikku-logo-text">Muikku</span>
         </header>
         <main class="muikku-login-container">
