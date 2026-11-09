@@ -43,7 +43,7 @@ public class FreemarkerServlet extends freemarker.ext.servlet.FreemarkerServlet 
   }  
   
   @Override
-  protected Locale deduceLocale(String templatePath, HttpServletRequest request, HttpServletResponse response) {
+  protected Locale deduceLocale(String templatePath, HttpServletRequest request, HttpServletResponse response) throws ServletException {
     Locale locale = request.getLocale();
     if (locale != null) {
       return locale;  

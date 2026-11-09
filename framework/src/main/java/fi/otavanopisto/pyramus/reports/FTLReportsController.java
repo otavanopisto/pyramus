@@ -12,6 +12,7 @@ import javax.enterprise.context.Dependent;
 
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -46,7 +47,7 @@ public class FTLReportsController {
       throw new IllegalArgumentException();
     }
     
-    Configuration freemarkerConfig = new Configuration();
+    Configuration freemarkerConfig = new Configuration(PyramusConsts.FREEMARKER_COMPATIBILITY_VERSION);
     freemarkerConfig.setDefaultEncoding("UTF-8");
     freemarkerConfig.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
     

@@ -12,7 +12,8 @@
   </parent>
   
   <properties>
-    <mariadb-java-client.version>3.5.0</mariadb-java-client.version>
+    <mariadb-java-client.version>3.5.11</mariadb-java-client.version>
+    <plexus-utils.version>4.0.3</plexus-utils.version>
   </properties>
   
   <dependencies>
@@ -384,7 +385,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>33.1.0-jre</version>
+      <version>33.7.2-jre</version>
       <scope>test</scope>
     </dependency>
     
@@ -481,7 +482,7 @@
         <dependency>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-utils</artifactId>
-          <version>3.4.2</version>
+          <version>${plexus-utils.version}</version>
         </dependency>
       </dependencies>
       <build>
@@ -680,7 +681,7 @@
               <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>3.4.2</version>
+                <version>${plexus-utils.version}</version>
               </dependency>
             </dependencies>
             <executions>

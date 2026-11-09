@@ -1,18 +1,21 @@
 package fi.otavanopisto.pyramus.plugin.googleoauth;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.lang3.StringUtils;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.model.OAuthRequest;
-import org.scribe.model.Response;
-import org.scribe.model.Token;
-import org.scribe.model.Verb;
-import org.scribe.model.Verifier;
-import org.scribe.oauth.OAuthService;
+import org.apache.commons.lang3.RandomStringUtils;
+
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuth20Service;
 
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -27,11 +30,13 @@ import fi.otavanopisto.pyramus.plugin.auth.AuthenticationException;
 import fi.otavanopisto.pyramus.plugin.auth.ExternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.plugin.auth.LocalUserMissingException;
 import fi.otavanopisto.pyramus.plugin.googleoauth.scribe.GoogleApi20;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationProvider {
   
   private static final String GOOGLE_LOGOUT_URL = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=%s";
   private static final String GOOGLE_LOGGED_IN_ATTRIBUTE = "googleLoggedIn";
+  private static final String STATE_ATTRIBUTE = "googleOauthState";
   
   public GoogleOauthAuthorizationStrategy() {
   }
@@ -70,48 +75,56 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
   }
 
   public void performDiscovery(RequestContext requestContext) {
+    String state = RandomStringUtils.secure().nextAlphanumeric(8);
     
-    OAuthService service = new ServiceBuilder()
-        .provider(GoogleApi20.class)
-        .apiKey(this.getClientId())
-        .apiSecret(this.getClientSecret())
-        .callback(this.getRedirectUrl())
-        .scope(this.getScope())
+    requestContext.getRequest().getSession().setAttribute(STATE_ATTRIBUTE, state);
+    String authorizationUrl = getService().createAuthorizationUrlBuilder()
+        .state(state)
         .build();
-
-    requestContext.setRedirectURL(service.getAuthorizationUrl(null));
+    
+    requestContext.setRedirectURL(authorizationUrl);
   }
 
   public User processResponse(RequestContext requestContext) throws AuthenticationException {
     HttpServletRequest req = requestContext.getRequest();
-    HttpSession session = req.getSession();
+    HttpSession session = req.getSession(false);
+
+    if (session == null) {
+      throw new AuthenticationException(AuthenticationException.EXTERNAL_LOGIN_SERVER_ERROR);
+    }
     
     String authCode = req.getParameter("code");
-    Verifier verifier = new Verifier(authCode);
+    String state = req.getParameter("state");
+    
+    Object expectedState = session.getAttribute(STATE_ATTRIBUTE);
+    session.removeAttribute(STATE_ATTRIBUTE);
+    
+    if (expectedState == null || !(expectedState instanceof String) || StringUtils.isBlank(state) || !StringUtils.equals(state, (String) expectedState)) {
+      throw new AuthenticationException(AuthenticationException.EXTERNAL_LOGIN_SERVER_ERROR);
+    }
 
-    OAuthService service = new ServiceBuilder()
-        .provider(GoogleApi20.class)
-        .apiKey(this.getClientId())
-        .apiSecret(this.getClientSecret())
-        .callback(this.getRedirectUrl())
-        .scope(this.getScope())
-        .build();
+    OAuth20Service service = getService();
 
-    Token accessToken = service.getAccessToken(null, verifier);
-
-    OAuthRequest request = new OAuthRequest(Verb.GET, "https://www.googleapis.com/oauth2/v1/userinfo?alt=json");
-    service.signRequest(accessToken, request);
-    Response response = request.send();
-
-    JSONObject userInfo = JSONObject.fromObject(response.getBody());
-
-    if (userInfo != null) {
-      try {
-        return processLogin(userInfo.getString("id"), userInfo.getString("email"));
-      } finally {
-        setGoogleLoggedIn(session, true);
+    try {
+      OAuth2AccessToken accessToken = service.getAccessToken(authCode);
+  
+      OAuthRequest request = new OAuthRequest(Verb.GET, "https://www.googleapis.com/oauth2/v1/userinfo?alt=json");
+      service.signRequest(accessToken, request);
+      Response response = service.execute(request);
+  
+      JSONObject userInfo = JSONObject.fromObject(response.getBody());
+      
+      if (userInfo != null) {
+        try {
+          return processLogin(userInfo.getString("id"), userInfo.getString("email"));
+        } finally {
+          setGoogleLoggedIn(session, true);
+        }
+      } else {
+        throw new AuthenticationException(AuthenticationException.EXTERNAL_LOGIN_SERVER_ERROR);
       }
-    } else {
+    }
+    catch (ExecutionException | IOException | InterruptedException e) {
       throw new AuthenticationException(AuthenticationException.EXTERNAL_LOGIN_SERVER_ERROR);
     }
   }
@@ -139,6 +152,14 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     }
     
     return emailPerson.getDefaultUser();
+  }
+  
+  private OAuth20Service getService() {
+    return new ServiceBuilder(this.getClientId())
+        .apiSecret(this.getClientSecret())
+        .callback(this.getRedirectUrl())
+        .defaultScope(this.getScope())
+        .build(new GoogleApi20());
   }
   
   private String getClientId() {
