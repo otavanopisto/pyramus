@@ -89,9 +89,9 @@
 
     <json-lib.version>2.4</json-lib.version>
 
-    <!-- Freemarker -->
+    <!-- Freemarker version, check PyramusConsts if the version needs to be bumped there too -->
 
-    <freemarker.version>2.3.20</freemarker.version>
+    <freemarker.version>2.3.35</freemarker.version>
 
     <!-- Nimbusds OAuth SDK-->
 

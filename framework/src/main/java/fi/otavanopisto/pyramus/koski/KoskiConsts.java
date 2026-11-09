@@ -45,25 +45,6 @@ public class KoskiConsts {
     public static final String KOSKI_SCHOOL_OID = "koski.schooloid";
   }
 
-  public static class Perusopetus {
-    // Perusopetuksen uskonnon aineet. Elämänkatsomustieto (et) ei kuulu näihin, sille on oma lokeronsa.
-    public static final Set<String> USKONTO       = Set.of("ue", "uo", "ui");
-    
-    // Perusopetuksen uskonnon ainevalinnat. Elämänkatsomustieto (et) kuuluu näihin ja nämä on keskenään poissulkevia.
-    public static final Set<String> USKONTO_JA_ET = Set.of("ue", "uo", "ui", "et");
-  }
-
-  /**
-   * Lukion yleiset asetukset - ei ops-sidonnaisuutta
-   */
-  public static class Lukio {
-    // Lukion uskonnon aineet. Elämänkatsomustieto (et) ei kuulu näihin, sille on oma lokeronsa.
-    public static final Set<String> USKONTO       = Set.of("UE", "UO", "UI", "UK", "UJ", "UX");
-    
-    // Lukion uskonnon ainevalinnat. Elämänkatsomustieto (et) kuuluu näihin ja nämä on keskenään poissulkevia.
-    public static final Set<String> USKONTO_JA_ET = Set.of("UE", "UO", "UI", "UK", "UJ", "UX", "ET");
-  }
-  
   /**
    * Lukion opetussuunnitelma 2019
    */

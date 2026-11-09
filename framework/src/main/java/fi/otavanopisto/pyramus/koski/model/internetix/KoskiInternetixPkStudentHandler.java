@@ -16,15 +16,14 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
-import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
@@ -63,6 +62,7 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.PerusopetuksenOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 /**
  * Käsittelee Internetix-/aineopiskelijan peruskoulukurssien osuuden.
@@ -248,7 +248,7 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
      * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
      * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
      */
-    if (KoskiConsts.Perusopetus.USKONTO_JA_ET.contains(subjectCode)) {
+    if (PyramusConsts.Perusopetus.USKONTO_JA_ET.contains(subjectCode)) {
       // Vain ainevalinnoissa olevat uskonnon aineet ilmoitetaan
       if (!studentSubjects.isReligion(subjectCode)) {
         return null;
@@ -256,7 +256,7 @@ public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetu
       
       // Elämänkatsomustiedolla (et) on oma oppiaineensa, Muille
       // uskonnon oppiaineille käytetään ainekoodia KT
-      if (KoskiConsts.Perusopetus.USKONTO.contains(subjectCode)) {
+      if (PyramusConsts.Perusopetus.USKONTO.contains(subjectCode)) {
         subjectCode = "KT";
       }
     }

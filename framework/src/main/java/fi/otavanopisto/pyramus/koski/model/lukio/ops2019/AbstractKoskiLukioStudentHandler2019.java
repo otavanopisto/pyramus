@@ -19,8 +19,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.dao.grading.SpokenLanguageExamDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -53,6 +53,7 @@ import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.lukio.AbstractKoskiLukioStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler {
 
@@ -172,19 +173,42 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
     String subjectCode = subjectCode(subject);
 
     /*
-     * Uskonnon ainevalinta. Uskonnosta voi olla valittuna aina vain 
-     * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
-     * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
+     * Uskonnon ainevalinta. Uskonnosta voi tehdä yhden ainevalinnan.
      */
-    if (KoskiConsts.Lukio.USKONTO_JA_ET.contains(subjectCode)) {
-      // Vain ainevalinnoissa oleva uskonnon aine ilmoitetaan
+    if (PyramusConsts.Lukio.USKONTO_JA_ET.contains(subjectCode)) {
+      /*
+       * Jos kyseessä ei ole ensisijainen (l. ainevalinta) uskonnon aine, se käsitellään eri 
+       * tavalla riippuen siitä, onko opiskeluoikeus ollut aktiivinen 1.9.2026 vai ei. 
+       * 
+       * 1.9.2026 alkaen: 
+       * Jos opiskelija on tehnyt muita kuin ainevalitun uskonnon kursseja, ne merkitään muihin opintoihin.
+       * 
+       * Ennen 1.9.2026 päättyneet opiskeluoikeudet:
+       * Jos opiskelija on tehnyt useamman uskonnon kursseja samaan aikaan, toissijainen hyväksiluetaan 
+       * ohjaajan toimesta osaksi ensisijaista uskonnon ainetta. Vain ainevalinnoissa oleva uskonnon aine ilmoitetaan
+       */
       if (!studentSubjects.isReligion(subjectCode)) {
-        return null;
+        if (PyramusConsts.Lukio.uskonnonkirjaustapa2026(student)) {
+          // Uusi kirjaustapa, merkitään ei-valittu uskonto muihin opintoihin
+          if (map.containsKey("MS")) {
+            return map.get("MS");
+          }
+
+          LukionMuidenOpintojenTunniste2019 tunniste = new LukionMuidenOpintojenTunniste2019(LukionMuutOpinnot.MS);
+          LukionOsasuoritus2019 mo = new MuidenLukioOpintojenSuoritus2019(tunniste);
+          OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> os = new OppiaineenSuoritusWithSubject<>(subject, false, mo);
+          map.put("MS", os);
+          return os;
+        }
+        else {
+          // Vanha kirjaustapa, ei-ainevalittu uskonto ohitetaan
+          return null;
+        }
       }
       
       // Elämänkatsomustiedolla (ET) on oma oppiaineensa, Muille
       // uskonnon oppiaineille käytetään ainekoodia KT
-      if (KoskiConsts.Lukio.USKONTO.contains(subjectCode)) {
+      if (PyramusConsts.Lukio.USKONTO.contains(subjectCode)) {
         subjectCode = "KT";
       }
     }
