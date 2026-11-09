@@ -17,8 +17,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuistenPerusopetuksenHandler {
 
@@ -191,7 +192,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
      * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
      * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
      */
-    if (KoskiConsts.Perusopetus.USKONTO_JA_ET.contains(subjectCode)) {
+    if (PyramusConsts.Perusopetus.USKONTO_JA_ET.contains(subjectCode)) {
       // Vain ainevalinnoissa olevat uskonnon aineet ilmoitetaan
       if (!studentSubjects.isReligion(subjectCode)) {
         return null;
@@ -199,7 +200,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       
       // Elämänkatsomustiedolla (et) on oma oppiaineensa, Muille
       // uskonnon oppiaineille käytetään ainekoodia KT
-      if (KoskiConsts.Perusopetus.USKONTO.contains(subjectCode)) {
+      if (PyramusConsts.Perusopetus.USKONTO.contains(subjectCode)) {
         subjectCode = "KT";
       }
     }

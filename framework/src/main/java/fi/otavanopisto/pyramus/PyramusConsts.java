@@ -1,10 +1,18 @@
 package fi.otavanopisto.pyramus;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
 
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.util.DateUtils;
+import freemarker.template.Configuration;
+import freemarker.template.Version;
+
 public class PyramusConsts {
 
+  public static final Version FREEMARKER_COMPATIBILITY_VERSION = Configuration.VERSION_2_3_35;
+  
   // Study programme of paid course assessments
   public static final String STUDYPROGRAMME_PAID_ASSESSMENTS = "Aineopiskelu/lukio";
   
@@ -67,6 +75,12 @@ public class PyramusConsts {
     // Subject choices
     public static final Set<String> CHOICE_SUBJECTS = Set.of("MAA", "MAB", "ÄI", "S2", "UE", "UO", "UI", "UK", "UJ", "UX", "ET");
 
+    // Lukion uskonnon aineet. Elämänkatsomustieto (et) ei kuulu näihin, sille on oma lokeronsa.
+    public static final Set<String> USKONTO       = Set.of("UE", "UO", "UI", "UK", "UJ", "UX");
+    
+    // Lukion uskonnon ainevalinnat. Elämänkatsomustieto (et) kuuluu näihin ja nämä on keskenään poissulkevia.
+    public static final Set<String> USKONTO_JA_ET = Set.of("UE", "UO", "UI", "UK", "UJ", "UX", "ET");
+    
     /**
      * Default subject selections for lukio. Map where the key is the 
      * user variable name and value is the default subject code.
@@ -76,6 +90,19 @@ public class PyramusConsts {
         USERVARIABLE_SUBJECT_CHOICES_AIDINKIELI,       "ÄI",
         USERVARIABLE_SUBJECT_CHOICES_USKONTO,          "UE"
     );
+    
+    /**
+     * Returns true if the new religion reporting instructions which came in effect on 1.9.2026 apply to the given student.
+     * 
+     * @param student
+     * @return
+     */
+    public static boolean uskonnonkirjaustapa2026(Student student) {
+      LocalDate threshold = LocalDate.of(2026, 9, 1); // 1.9.2026
+      LocalDate studyEndDate = DateUtils.toLocalDate(student.getStudyEndDate());
+      
+      return studyEndDate == null || studyEndDate.isEqual(threshold) || studyEndDate.isAfter(threshold);
+    }
   }
   
   /**
@@ -92,6 +119,12 @@ public class PyramusConsts {
     
     // Grades allowed by the curriculum
     public static final Set<String> PASSING_GRADES = Set.of("5", "6", "7", "8", "9", "10", "S");
+    
+    // Perusopetuksen uskonnon aineet. Elämänkatsomustieto (et) ei kuulu näihin, sille on oma lokeronsa.
+    public static final Set<String> USKONTO       = Set.of("ue", "uo", "ui");
+    
+    // Perusopetuksen uskonnon ainevalinnat. Elämänkatsomustieto (et) kuuluu näihin ja nämä on keskenään poissulkevia.
+    public static final Set<String> USKONTO_JA_ET = Set.of("ue", "uo", "ui", "et");
     
     /**
      * Default subject selections for perusopetus. Map where the key is the 
@@ -123,7 +156,7 @@ public class PyramusConsts {
   public static final Set<String> CHOICE_SUBJECTS = Set.of("MAA", "MAB", "ÄI", "S2", "UE", "UO", "UI", "UK", "UJ", "UX", "ET");
   
   public static final String NOREPLY_EMAIL = "no-reply@muikkuverkko.fi";
-  
+
   /**
    * SettingKeys
    */

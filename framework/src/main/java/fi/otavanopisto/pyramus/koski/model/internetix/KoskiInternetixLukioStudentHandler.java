@@ -17,8 +17,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.PyramusConsts;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -30,7 +30,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
-import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
@@ -68,6 +67,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusVierasK
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
+import fi.otavanopisto.pyramus.util.StringUtils;
 
 public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
 
@@ -253,7 +253,7 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
      * yksi aine. Jos opiskelija opiskelee useampaa samaan aikaan,
      * toissijainen hyväksiluetaan osaksi ensisijaista uskonnon ainetta.
      */
-    if (KoskiConsts.Lukio.USKONTO_JA_ET.contains(subjectCode)) {
+    if (PyramusConsts.Lukio.USKONTO_JA_ET.contains(subjectCode)) {
       // Vain ainevalinnoissa oleva uskonnon aine ilmoitetaan
       if (!studentSubjects.isReligion(subjectCode)) {
         return null;
@@ -261,7 +261,7 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
       
       // Elämänkatsomustiedolla (ET) on oma oppiaineensa, Muille
       // uskonnon oppiaineille käytetään ainekoodia KT
-      if (KoskiConsts.Lukio.USKONTO.contains(subjectCode)) {
+      if (PyramusConsts.Lukio.USKONTO.contains(subjectCode)) {
         subjectCode = "KT";
       }
     }
