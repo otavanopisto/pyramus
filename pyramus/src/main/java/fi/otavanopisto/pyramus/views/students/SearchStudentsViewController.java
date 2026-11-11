@@ -21,8 +21,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.rest.controller.permissions.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
-import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 /**
  * ViewController to search for students.

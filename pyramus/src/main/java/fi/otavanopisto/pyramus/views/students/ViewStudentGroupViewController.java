@@ -26,8 +26,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.rest.controller.permissions.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
-import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 /**
  * The controller responsible of the View Student Group view of the application.

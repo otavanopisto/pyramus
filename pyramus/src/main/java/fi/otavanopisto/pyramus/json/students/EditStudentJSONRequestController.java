@@ -77,10 +77,10 @@ import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.rest.controller.permissions.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.ContactInfoUtils;
 import fi.otavanopisto.pyramus.util.DateUtils;
-import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 public class EditStudentJSONRequestController extends JSONRequestController2 {
 
