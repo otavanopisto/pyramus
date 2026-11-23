@@ -289,17 +289,15 @@ public class MuikkuRESTService {
       courseMatrix = new HopsCourseMatrix();
     }
     
-    // Käydään välilehdet läpi
+    // Käydään välilehdet läpi. Matematiikan ainevalinta setvitään pyydetyn opiskelijan perusteella
+    
+    String chosenMath = userVariableDAO.findByUserAndKey(initialStudent, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA);
+    if ("".equals(chosenMath)) {
+      chosenMath = null;
+    }
     
     for (Student student : students) {
 
-      // Matematiikan ainevalinta :|
-      
-      String chosenMath = userVariableDAO.findByUserAndKey(student, PyramusConsts.USERVARIABLE_SUBJECT_CHOICES_MATEMATIIKKA);
-      if ("".equals(chosenMath)) {
-        chosenMath = null;
-      }
-      
       // Hyväksiluvut (vain pohjana käytettävän opiskelijan OPSia vastaavat)
 
       if (courseId == null) {
