@@ -2471,8 +2471,8 @@
     <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
       <div>
         <a href="${pageContext.request.contextPath}/1/koski/persons/${person.id}/oppija" target="_blank">Oppija-JSON</a> |
-        <a href="#" onclick="koskiQueuePerson(event);" target="_blank">Lisää päivitysjonoon</a> |
-        <a href="#" onclick="koskiUpdateState(event);" target="_blank">Päivitä tila</a>
+        <a href="#" onclick="koskiQueuePerson(event);">Lisää päivitysjonoon</a> |
+        <a href="#" onclick="koskiUpdateState(event);">Päivitä tila</a>
       </div>
     </c:if>
     <div id="koski-status-details-log"></div>
