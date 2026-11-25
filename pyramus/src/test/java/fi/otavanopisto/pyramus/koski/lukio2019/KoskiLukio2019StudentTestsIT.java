@@ -44,7 +44,7 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     CourseAssessment courseAssessment = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 7l);
     try {
       Response response = given().headers(getAuthHeaders())
-        .get("/persons/persons/{ID}/oppija", person.getId());
+        .get("/koski/persons/{ID}/oppija", person.getId());
       
       response
         .then()
@@ -120,7 +120,7 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 8l, secondAssessmentDate);
     try {
       Response response = given().headers(getAuthHeaders())
-        .get("/persons/persons/{ID}/oppija", person.getId());
+        .get("/koski/persons/{ID}/oppija", person.getId());
       
       response
         .then()
@@ -196,7 +196,7 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 8l, secondAssessmentDate);
     try {
       Response response = given().headers(getAuthHeaders())
-        .get("/persons/persons/{ID}/oppija", person.getId());
+        .get("/koski/persons/{ID}/oppija", person.getId());
       
       response
         .then()
@@ -273,7 +273,7 @@ public class KoskiLukio2019StudentTestsIT extends AbstractRESTServiceTest {
     CourseAssessment courseAssessment2 = tools().createCourseAssessment(course.getId(), firstCourseModuleId(course), student.getId(), courseStudent.getId(), 8l, olderAssessmentDate);
     try {
       Response response = given().headers(getAuthHeaders())
-        .get("/persons/persons/{ID}/oppija", person.getId());
+        .get("/koski/persons/{ID}/oppija", person.getId());
       
       response
         .then()

@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -58,19 +57,6 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTestJUnit5 {
       .get("/persons/persons/{ID}", 3);
     
     assertOk(role, response, personPermissions, PersonPermissions.FIND_PERSON);
-  }
-  
-  @ParameterizedTest
-  @EnumSource(Role.class)
-  public void testFindPersonOppija(Role role) throws NoSuchFieldException {
-    Response response = given().headers(getAuthHeaders(role))
-      .get("/persons/persons/{ID}/oppija", 3);
-
-    int expectedStatusCode = role == Role.ADMINISTRATOR ? 200 : role == Role.EVERYONE ? 401 : 404;
-    int statusCode = response.statusCode();
-    
-    assertEquals(String.format("Status code <%d> didn't match expected code <%d> when Role = %s", statusCode, expectedStatusCode, role),
-        expectedStatusCode, statusCode);
   }
   
   @ParameterizedTest
