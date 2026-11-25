@@ -574,8 +574,8 @@
         setupRelatedCommandsBasic();
         setupTags();
 
-        Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
-        loadLogEntries(${person.id});
+        Event.observe($('koski-status'), 'click', Koski.toggleKoskiLogDetailsVisibility);
+        Koski.loadLogEntries(${person.id});
 
         var personVariables = JSDATA["personVariables"].evalJSON();
         if (personVariables && personVariables.length > 0) {
