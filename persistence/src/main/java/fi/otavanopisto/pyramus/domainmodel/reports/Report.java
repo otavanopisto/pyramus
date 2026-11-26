@@ -1,12 +1,16 @@
 package fi.otavanopisto.pyramus.domainmodel.reports;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -30,6 +35,7 @@ import org.hibernate.search.annotations.Indexed;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+import fi.otavanopisto.pyramus.reports.ReportLanguage;
 
 @Entity
 @Indexed
@@ -40,7 +46,7 @@ import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFa
      impl=ArchivedEntityFilterFactory.class
   )
 )
-public class Report implements ArchivableEntity{
+public class Report implements ArchivableEntity {
 
   public Long getId() {
     return id;
@@ -127,6 +133,19 @@ public class Report implements ArchivableEntity{
     this.format = format;
   }
 
+  @Transient
+  public boolean hasLanguage(ReportLanguage lang) {
+    return getLanguages() != null && getLanguages().contains(lang);
+  }
+  
+  public Set<ReportLanguage> getLanguages() {
+    return languages;
+  }
+
+  public void setLanguages(Set<ReportLanguage> languages) {
+    this.languages = languages;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Report")  
   @TableGenerator(name="Report", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -166,6 +185,12 @@ public class Report implements ArchivableEntity{
   @Column (nullable = false)
   @Enumerated (EnumType.STRING)
   private ReportFileFormat format;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @Enumerated (EnumType.STRING)
+  @Column (name = "lang")
+  @CollectionTable (name = "ReportLanguages", joinColumns = @JoinColumn(name = "report"))
+  private Set<ReportLanguage> languages;
   
   @Version
   @Column(nullable = false)

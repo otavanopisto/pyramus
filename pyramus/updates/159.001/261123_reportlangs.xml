@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table ReportLanguages (
+      report bigint not null,
+      lang varchar(255)
+    );
+  </sql>
+
+  <sql>
+    alter table ReportLanguages 
+      add constraint FKgu16eor8hf6mafoe9oact5x7b 
+      foreign key (report) 
+      references Report (id);
+  </sql>
+  
+  <sql>
+    insert into ReportLanguages (report, lang)
+    select id, 'fi' from Report;
+  </sql>
+
+</update>

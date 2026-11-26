@@ -14,9 +14,12 @@
     <div class="genericFormContainer">
       <h3>
         ${student.fullName} - ${report.name}
+        <c:forEach var="lang" items="${report.languages}">
+          <a href="${pageContext.request.contextPath}/1/students/students/${student.id}/reports/${report.id}?format=pdf&lang=${lang}" target="ftlReportFrame" class="GUI_headerLocaleSelectionLink">${lang}</a>
+        </c:forEach>
       </h3>
 
-      <iframe src="${pageContext.request.contextPath}/1/students/students/${student.id}/reports/${report.id}?format=pdf" width="100%" height="580px">
+      <iframe src="${pageContext.request.contextPath}/1/students/students/${student.id}/reports/${report.id}?format=pdf" name="ftlReportFrame" width="100%" height="580px">
       </iframe>
     </div>
 

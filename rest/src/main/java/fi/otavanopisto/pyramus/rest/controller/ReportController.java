@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
@@ -12,6 +13,7 @@ import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportCategory;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.reports.ReportLanguage;
 
 @Dependent
 @Stateless
@@ -21,8 +23,8 @@ public class ReportController {
   @Inject
   private ReportCategoryDAO reportCategoryDAO;
 
-  public Report createReport(String name, String data, ReportFileFormat format, User user) {
-    Report report = reportDAO.create(name, data, format, user);
+  public Report createReport(String name, String data, ReportFileFormat format, Set<ReportLanguage> langs, User user) {
+    Report report = reportDAO.create(name, data, format, langs, user);
     return report;
   }
   
@@ -61,8 +63,8 @@ public class ReportController {
     return reportCategory;
   }
   
-  public Report updateReport(Report report, String name, ReportCategory reportCategory) {
-    reportDAO.update(report, name, reportCategory);
+  public Report updateReport(Report report, String name, ReportCategory reportCategory, Set<ReportLanguage> langs) {
+    reportDAO.update(report, name, reportCategory, langs);
     return report;
   }
   

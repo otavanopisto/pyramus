@@ -42,6 +42,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReasonType;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.reports.FTLReportsController;
+import fi.otavanopisto.pyramus.reports.ReportLanguage;
 import fi.otavanopisto.pyramus.reports.FTLReportsController.ReportFormat;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -261,7 +262,8 @@ public class AtomiRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (handling = Handling.INLINE)
   public Response haeDokumentti(@PathParam("TUNNISTE") String opiskeluoikeudenTunniste, @PathParam("REPORTTYPE") AtomiReportType reportType,
-      @QueryParam("format") @DefaultValue("pdf") String formatArg) {
+      @QueryParam("format") @DefaultValue("pdf") String formatArg,
+      @QueryParam("lang") @DefaultValue("fi") ReportLanguage lang) {
     
     try {
       Long studentId = Long.parseLong(opiskeluoikeudenTunniste);
@@ -284,7 +286,11 @@ public class AtomiRESTService extends AbstractRESTService {
         return Response.status(Status.BAD_REQUEST).build();
       }
     
-      return Response.ok(certificateReportsController.renderFTLStudentReport(report, student, format)).type(format.getContentType()).build();
+      if (lang == null || !report.hasLanguage(lang)) {
+        return Response.status(Status.BAD_REQUEST).entity("Invalid language code").build();
+      }
+      
+      return Response.ok(certificateReportsController.renderFTLStudentReport(report, student, format, lang)).type(format.getContentType()).build();
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Atomi report generation failed", e);
       
