@@ -80,11 +80,11 @@ import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.rest.controller.permissions.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.ContactInfoUtils;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
-import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 

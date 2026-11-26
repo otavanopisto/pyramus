@@ -118,14 +118,6 @@ public class KoskiSettings {
         enabledStudyProgrammes.add(studyProgrammeId);
       }
       
-      if (studyProgramme.getBoolean("freeLodging")) {
-        freeLodgingStudyProgrammes.add(studyProgrammeId);
-      }
-      
-      if (studyProgramme.has("yksityisopiskelija") && studyProgramme.getBoolean("yksityisopiskelija")) {
-        yksityisopiskelijaStudyProgrammes.add(studyProgrammeId);
-      }
-      
       if (EnumUtils.isValidEnum(KoskiStudyProgrammeHandler.class, studyProgramme.getString("handler"))) {
         KoskiStudyProgrammeHandler handlerType = KoskiStudyProgrammeHandler.valueOf(studyProgramme.getString("handler"));
         handlerTypes.put(studyProgrammeId, handlerType);
@@ -235,16 +227,6 @@ public class KoskiSettings {
     return null;
   }
 
-  @Deprecated
-  public boolean isFreeLodging(Long studyProgrammeId) {
-    return freeLodgingStudyProgrammes.contains(studyProgrammeId);
-  }
-  
-  @Deprecated
-  public boolean isYksityisopiskelija(Long studyProgrammeId) {
-    return yksityisopiskelijaStudyProgrammes.contains(studyProgrammeId);
-  }
-  
   private String getSetting(String settingName) {
     SettingKey key = settingKeyDAO.findByName(settingName);
     if (key != null) {
@@ -373,8 +355,6 @@ public class KoskiSettings {
   private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
-  private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
-  @Deprecated private Set<Long> yksityisopiskelijaStudyProgrammes = new HashSet<Long>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, OpintojenRahoitus> opintojenRahoitus = new HashMap<>();
   private Map<Long, PerusopetuksenSuoritusTapa> perusopetuksenSuoritusTapa = new HashMap<>();

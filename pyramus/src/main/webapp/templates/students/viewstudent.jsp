@@ -1593,8 +1593,8 @@
         var personVariables = JSDATA["personVariables"].evalJSON();
         var studentAdditionalContactInfos = JSDATA["studentAdditionalContactInfos"].evalJSON();
 
-        Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
-        loadLogEntries(${person.id});
+        Event.observe($('koski-status'), 'click', Koski.toggleKoskiLogDetailsVisibility);
+        Koski.loadLogEntries(${person.id});
         <c:forEach var="student" items="${students}">
           <c:set var="isLukio" value="${student.studyProgramme.category.educationType.code == 'lukio'}"/>
 
@@ -2438,6 +2438,16 @@
           buttonElement.setAttribute("disabled", "disabled");
         }
       }
+      
+      function koskiQueuePerson(event) {
+        event.preventDefault();
+        Koski.queuePerson(${person.id});
+      }
+      
+      function koskiUpdateState(event) {
+        event.preventDefault();
+        Koski.loadLogEntries(${person.id});
+      }
     </script>
     
     <ix:extensionHook name="students.viewStudent.head" />
@@ -2460,7 +2470,9 @@
   <div id="koski-status-details" style="display: none;">
     <c:if test="${loggedUserRoles.contains(Role.ADMINISTRATOR)}">
       <div>
-        <a href="${pageContext.request.contextPath}/1/persons/persons/${person.id}/oppija" target="_blank">Oppija-JSON</a>
+        <a href="${pageContext.request.contextPath}/1/koski/persons/${person.id}/oppija" target="_blank">Oppija-JSON</a> |
+        <a href="#" onclick="koskiQueuePerson(event);">Lisää päivitysjonoon</a> |
+        <a href="#" onclick="koskiUpdateState(event);">Päivitä tila</a>
       </div>
     </c:if>
     <div id="koski-status-details-log"></div>

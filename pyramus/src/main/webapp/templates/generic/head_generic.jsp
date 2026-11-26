@@ -86,6 +86,36 @@
     };
   }
   
+  const Pyramus = (() => {
+    const baseUrl = GLOBAL_contextPath.replace(/\/$/, '') + "/1";
+    
+    async function request(path, options = {}) {
+      const { body, headers, ...rest } = options;
+      const response = await fetch(baseUrl + path, {
+        ...rest,
+        headers: { ...defaultHeaders(), ...headers },
+        body: body && typeof body === 'object' ? JSON.stringify(body) : body,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      return response.json();
+    }
+
+    function defaultHeaders() {
+      const h = {};
+      return h;
+    }
+
+    return {
+      get: (path) => request(path),
+      post: (path, body) => request(path, { method: 'POST', body }),
+      put: (path, body) => request(path, { method: 'PUT', body }),
+      delete: (path) => request(path, { method: 'DELETE' }),
+    };
+  })();
 </script>
 
 <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">

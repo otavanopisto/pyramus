@@ -1,9 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -23,17 +20,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
-import fi.otavanopisto.pyramus.koski.KoskiController;
-import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
@@ -59,9 +50,6 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 public class PersonRESTService extends AbstractRESTService {
 
   @Inject
-  private Logger logger;
-  
-  @Inject
   private RESTSecurity restSecurity;
   
   @Inject
@@ -81,9 +69,6 @@ public class PersonRESTService extends AbstractRESTService {
   
   @Inject
   private SessionController sessionController;
-  
-  @Inject
-  private KoskiController koskiController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -225,34 +210,6 @@ public class PersonRESTService extends AbstractRESTService {
     }
     
     return Response.ok(objectFactory.createModel(studentController.listStudentsByPerson(person))).build();
-  }
-
-  @Path("/persons/{ID:[0-9]*}/oppija")
-  @GET
-  @RESTPermit (handling = Handling.INLINE)
-  public Response getOppija(@PathParam("ID") Long id) {
-    if (sessionController.getUser() == null || !sessionController.getUser().hasRole(Role.ADMINISTRATOR)) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    Person person = personController.findPersonById(id);
-    if (person == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    try {
-      Oppija oppija = koskiController.personToOppija(person);
-      
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.registerModule(new JavaTimeModule());
-      mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-
-      return Response.ok(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oppija)).build();
-    } catch (Exception e) {
-      e.printStackTrace();
-      logger.log(Level.SEVERE, "Couldn't produce output", e);
-      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-    }
   }
 
   @Path("/persons/{ID:[0-9]*}/staffMembers")

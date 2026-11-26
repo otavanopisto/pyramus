@@ -33,8 +33,8 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController2;
 import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.rest.controller.permissions.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
-import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 /**
  * The controller responsible of modifying an existing student group.
