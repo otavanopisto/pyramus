@@ -83,6 +83,9 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   
   @Scope (PermissionScope.STUDENT_OWNER)
   public static final String STUDENT_OWNER = "STUDENT_OWNER";
+
+  @Scope (PermissionScope.STUDENT_OWNER)
+  public static final String STUDENT_OWNER_ALLOW_EXPIRED = "STUDENT_OWNER_ALLOW_EXPIRED";
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })

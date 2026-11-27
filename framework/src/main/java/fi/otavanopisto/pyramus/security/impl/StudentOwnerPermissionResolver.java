@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.util.StringUtils;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.User;
 
@@ -39,8 +40,9 @@ public class StudentOwnerPermissionResolver extends AbstractPermissionResolver i
       if (user1.getId().equals(user2.getId())) {
         if (Student.class.isInstance(user2)) {
           Student student = (Student) user2;
-          
-          return (student.getStudyEndDate() == null) || (student.getStudyEndDate().after(new Date()));
+          return StringUtils.equals(permission.getName(), "STUDENT_OWNER_ALLOW_EXPIRED") ||
+              student.getStudyEndDate() == null ||
+              student.getStudyEndDate().after(new Date());          
         }
       }
       return false;
