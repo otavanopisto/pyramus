@@ -106,6 +106,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.reports.FTLReportsController;
 import fi.otavanopisto.pyramus.reports.FTLReportsController.ReportFormat;
+import fi.otavanopisto.pyramus.reports.ReportLanguage;
 import fi.otavanopisto.pyramus.rest.annotation.AuthScope;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
@@ -3913,8 +3914,9 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/reports/{REPORTID:[0-9]*}")
   @GET
   @RESTPermit (handling = Handling.INLINE)
-  public Response findPaattotodistus(@PathParam("STUDENTID") Long studentId, @PathParam("REPORTID") Long reportId,
-      @QueryParam("format") @DefaultValue("html") String formatArg) {
+  public Response getFTLReport(@PathParam("STUDENTID") Long studentId, @PathParam("REPORTID") Long reportId,
+      @QueryParam("format") @DefaultValue("html") String formatArg,
+      @QueryParam("lang") @DefaultValue("fi") ReportLanguage lang) {
     
     // TODO correct?
     if (!sessionController.getUser().hasAnyRole(Role.ADMINISTRATOR, Role.MANAGER, Role.STUDY_PROGRAMME_LEADER)) {
@@ -3935,8 +3937,12 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
+    if (lang == null || !report.hasLanguage(lang)) {
+      return Response.status(Status.BAD_REQUEST).entity("Invalid language code").build();
+    }
+    
     try {
-      return Response.ok(certificateReportsController.renderFTLStudentReport(report, student, format)).type(format.getContentType()).build();
+      return Response.ok(certificateReportsController.renderFTLStudentReport(report, student, format, lang)).type(format.getContentType()).build();
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

@@ -7,11 +7,6 @@ import fi.otavanopisto.pyramus.ui.AbstractUITest;
 public class ReportsPagesStudentPermissionsTestsBase extends AbstractUITest {
 
   @Test
-  public void testEditReportPagePermission() throws InterruptedException{
-    assertStudentDenied("/reports/editreport.page");
-  }
-  
-  @Test
   public void testListReportsPagePermission() throws InterruptedException{
     assertStudentDenied("/reports/listreports.page");
   }

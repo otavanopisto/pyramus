@@ -41,10 +41,14 @@ public class FTLReportsController {
    * @return The byte data of the rendered report, either html or pdf depending on the format.
    * @throws Exception
    */
-  public byte[] renderFTLStudentReport(Report report, Student student, ReportFormat format) throws Exception {
+  public byte[] renderFTLStudentReport(Report report, Student student, ReportFormat format, ReportLanguage lang) throws Exception {
     // This method only works with FTLs
     if (report.getFormat() != ReportFileFormat.FTL) {
       throw new IllegalArgumentException();
+    }
+
+    if (lang == null) {
+      lang = ReportLanguage.fi;
     }
     
     Configuration freemarkerConfig = new Configuration(PyramusConsts.FREEMARKER_COMPATIBILITY_VERSION);
@@ -59,14 +63,15 @@ public class FTLReportsController {
     
     StudentTOR tor = StudentTORController.constructStudentTOR(student, EnumSet.of(StudentTORFlags.CURRICULUM, StudentTORFlags.MOVE_INCLUDED, StudentTORFlags.USE_SUBJECT_SELECTIONS));
   
-    Map<String, Object> studentInfo = new HashMap<>();
-    studentInfo.put("student", student);
-    studentInfo.put("studentTOR", tor);
+    Map<String, Object> dataModel = new HashMap<>();
+    dataModel.put("lang", lang.toString());
+    dataModel.put("student", student);
+    dataModel.put("studentTOR", tor);
 
     // Process the template
   
     StringWriter writer = new StringWriter();
-    freemarkerTemplate.process(studentInfo, writer);
+    freemarkerTemplate.process(dataModel, writer);
     String html = writer.toString();
   
     switch (format) {

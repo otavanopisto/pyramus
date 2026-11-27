@@ -8,7 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.Part;
 import javax.xml.parsers.DocumentBuilder;
@@ -16,7 +18,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,6 +45,7 @@ import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusFormViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.reports.ReportLanguage;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -65,6 +67,11 @@ public class ImportReportViewController extends PyramusFormViewController {
       contextTypes.add(contextType.toString());
       contextTypesJSON.add(contextType.toString());
     }
+    
+    JSONArray reportLanguagesJSON = new JSONArray();
+    for (ReportLanguage reportLanguage : ReportLanguage.values()) {
+      reportLanguagesJSON.add(reportLanguage.toString());
+    }
 
     JSONArray reportsJSON = new JSONArray();
     for (Report report : reports) {
@@ -77,9 +84,15 @@ public class ImportReportViewController extends PyramusFormViewController {
         rCtxs.add(ctx.getContext().toString());
       }
 
+      JSONArray langs = new JSONArray();
+      for (ReportLanguage reportLanguage : report.getLanguages()) {
+        langs.add(reportLanguage.toString());
+      }
+      
       rObj.put("id", report.getId().toString());
       rObj.put("name", report.getName());
       rObj.put("category", report.getCategory() != null ? report.getCategory().getId() : "");
+      rObj.put("langs", langs);
       rObj.put("contexts", rCtxs);
       
       reportsJSON.add(rObj);
@@ -100,9 +113,11 @@ public class ImportReportViewController extends PyramusFormViewController {
     
     setJsDataVariable(requestContext, "reports", reportsJSON.toString());
     setJsDataVariable(requestContext, "contextTypes", contextTypesJSON.toString());
+    setJsDataVariable(requestContext, "languages", reportLanguagesJSON.toString());
     
     requestContext.getRequest().setAttribute("reports", reports);
     requestContext.getRequest().setAttribute("reportCategories", categories);
+    requestContext.getRequest().setAttribute("reportLanguages", ReportLanguage.values());
     requestContext.getRequest().setAttribute("contextTypes", contextTypes);
     requestContext.setIncludeJSP("/templates/system/importreport.jsp");
   }
@@ -118,6 +133,13 @@ public class ImportReportViewController extends PyramusFormViewController {
     Part file = requestContext.getFile("file");
     String fileName = file.getSubmittedFileName();
     Long categoryId = requestContext.getLong("category");
+
+    Set<ReportLanguage> reportLanguages = new HashSet<>();
+    for (ReportLanguage lang : ReportLanguage.values()) {
+      if (Boolean.TRUE.equals(requestContext.getBoolean(String.format("lang.%s", lang.toString())))) {
+        reportLanguages.add(lang);
+      }
+    }
     
     try {
       String reportData = null;
@@ -146,14 +168,12 @@ public class ImportReportViewController extends PyramusFormViewController {
           requestContext.setRedirectURL(requestContext.getReferer(true));
         }
         else {
-          report = reportDAO.updateCategory(report, category, loggedUser);
-          
-          if (!StringUtils.isBlank(name)) {
-            reportDAO.updateName(report, name, loggedUser);
-          }
+          reportDAO.update(report, name, category, reportLanguages);
+
           if (reportData != null) {
             reportDAO.updateData(report, reportData, reportFormat, loggedUser);
           }
+          
           handleContexts(requestContext, report);
           if (report.getFormat() == ReportFileFormat.RPTDESIGN) {
             requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
@@ -162,7 +182,7 @@ public class ImportReportViewController extends PyramusFormViewController {
         }
       }
       else {
-        Report report = reportDAO.create(name, reportData, reportFormat, loggedUser);
+        Report report = reportDAO.create(name, reportData, reportFormat, reportLanguages, loggedUser);
         report = reportDAO.updateCategory(report, category, loggedUser);
         handleContexts(requestContext, report);
         if (report.getFormat() == ReportFileFormat.RPTDESIGN) {
