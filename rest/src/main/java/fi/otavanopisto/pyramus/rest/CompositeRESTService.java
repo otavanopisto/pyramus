@@ -165,7 +165,11 @@ public class CompositeRESTService {
         }
         assessmentRequest.setFirstName(firstName);
         assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
-        assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
+        String studyProgrammeName = courseStudent.getStudent().getStudyProgramme().getName();
+        if (courseStudent.getStudent().getStudyEndDate() != null) {
+          studyProgrammeName = String.format("%s*", studyProgrammeName);
+        }
+        assessmentRequest.setStudyProgramme(studyProgrammeName);
         assessmentRequest.setUserId(courseStudent.getStudent().getId());
         assessmentRequest.setDeadline(courseAssessmentRequest == null ? null : courseAssessmentRequest.getDeadline());
         assessmentRequests.add(assessmentRequest);
@@ -239,7 +243,11 @@ public class CompositeRESTService {
         }
         assessmentRequest.setFirstName(firstName);
         assessmentRequest.setLastName(courseAssessmentRequest.getCourseStudent().getStudent().getLastName());
-        assessmentRequest.setStudyProgramme(courseAssessmentRequest.getCourseStudent().getStudent().getStudyProgramme().getName());
+        String studyProgrammeName = courseAssessmentRequest.getCourseStudent().getStudent().getStudyProgramme().getName();
+        if (courseAssessmentRequest.getCourseStudent().getStudent().getStudyEndDate() != null) {
+          studyProgrammeName = String.format("%s*", studyProgrammeName);
+        }
+        assessmentRequest.setStudyProgramme(studyProgrammeName);
         assessmentRequest.setUserId(courseAssessmentRequest.getCourseStudent().getStudent().getId());
         assessmentRequest.setDeadline(courseAssessmentRequest.getDeadline());
         assessmentRequests.add(assessmentRequest);
