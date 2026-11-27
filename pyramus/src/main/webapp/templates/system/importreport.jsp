@@ -14,6 +14,7 @@
       function onChangeSelection() {
         var reports = JSDATA["reports"].evalJSON();
         var contextTypes = JSDATA["contextTypes"].evalJSON();
+        var languages = JSDATA["languages"].evalJSON();
         var selectedValue = $('reportSelect').value;
         
         document.importForm.category.value = "";
@@ -22,14 +23,22 @@
           document.importForm["context." + contextTypes[i]].checked = false;
         }
 
-        if (selectedValue == "")
+        for (var i = 0, l = languages.length; i < l; i++) {
+          document.importForm["lang." + languages[i]].checked = false;
+        }
+        
+        if (selectedValue == "") {
           document.importForm["context.Common"].checked = true;
+        }
         
         for (var i = 0, l = reports.length; i < l; i++) {
           if (reports[i].id == selectedValue) {
             document.importForm.category.value = reports[i].category;
             for (var j = 0, l2 = reports[i].contexts.length; j < l2; j++) {
               document.importForm["context." + reports[i].contexts[j]].checked = true;
+            }
+            for (var j = 0, l2 = reports[i].langs.length; j < l2; j++) {
+              document.importForm["lang." + reports[i].langs[j]].checked = true;
             }
             break;
           }
@@ -99,6 +108,20 @@
               </select>
             </div> 
 
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="system.importReport.languagesTitle"/>
+                <jsp:param name="helpLocale" value="system.importReport.languagesHelp"/>
+              </jsp:include>
+
+              <c:forEach var="reportLanguage" items="${reportLanguages}">
+                <div>
+                  <input type="checkbox" id="lang.${reportLanguage}" name="lang.${reportLanguage}" value="true"/>
+                  <label for="lang.${reportLanguage}">${reportLanguage}</label>
+                </div>
+              </c:forEach>
+            </div> 
+            
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="system.importReport.contextsTitle"/>

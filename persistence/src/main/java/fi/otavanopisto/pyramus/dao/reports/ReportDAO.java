@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.dao.reports;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -15,13 +16,14 @@ import fi.otavanopisto.pyramus.domainmodel.reports.ReportCategory;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.reports.ReportLanguage;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext_;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportFileFormat;
 
 @Stateless
 public class ReportDAO extends PyramusEntityDAO<Report> {
 
-  public Report create(String name, String data, ReportFileFormat format, User creatingUser) {
+  public Report create(String name, String data, ReportFileFormat format, Set<ReportLanguage> reportLanguages, User creatingUser) {
     Date now = new Date(System.currentTimeMillis());
     
     Report report = new Report();
@@ -29,6 +31,7 @@ public class ReportDAO extends PyramusEntityDAO<Report> {
     report.setData(data);
     report.setFormat(format);
     report.setName(name);
+    report.setLanguages(reportLanguages);
     report.setCreated(now);
     report.setCreator(creatingUser);
     report.setLastModified(now);
@@ -39,11 +42,12 @@ public class ReportDAO extends PyramusEntityDAO<Report> {
     return report;
   }
   
-  public void update(Report report, String name, ReportCategory reportCategory) {
+  public void update(Report report, String name, ReportCategory reportCategory, Set<ReportLanguage> reportLanguages) {
     EntityManager entityManager = getEntityManager();
 
     report.setName(name);
     report.setCategory(reportCategory);
+    report.setLanguages(reportLanguages);
     
     entityManager.persist(report);
   }
